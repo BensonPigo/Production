@@ -38,8 +38,10 @@ namespace Sci.Production.Shipping
         protected override void OnDetailEntered()
         {
             this.labelNotApprove.Text = this.CurrentMaintain["status"].ToString();
+            this.displayPortofDischarge.Text = "KH";
 
             this.ReCalculat();
+            this.InitReadOnly(true);
             base.OnDetailEntered();
         }
 
@@ -336,8 +338,8 @@ where vk.Refno = '{dr["Refno"]}'
            .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8), iseditingreadonly: false)
            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), settings: fty_setting, iseditingreadonly: true).Get(out this.col_Fty)
            .Date("ETA", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_ETA) // Edit on AddRow by hand
-           .Date("PortArrival", header: "Arrival Port Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_PortDate) // Edit on AddRow by hand
-           .Date("WhseArrival", header: "Arrival WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WHDate) // Edit on AddRow by hand
+           .Date("PortArrival", header: "Arrived Port Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_PortDate) // Edit on AddRow by hand
+           .Date("WhseArrival", header: "Arrived WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WHDate) // Edit on AddRow by hand
            .Text("ShipModeID", header: "ShipMode", width: Widths.AnsiChars(10), settings: shipMode_setting, iseditingreadonly: true).Get(out this.col_ShipMode) // Edit on AddRow by hand
            .Text("Vessel", header: "Vessel", width: Widths.AnsiChars(25), iseditingreadonly: true).Get(out this.col_Vessel) // Edit on AddRow by hand
            .Text("ExportPort", header: "Loading (Port)", width: Widths.AnsiChars(15), settings: port_setting, iseditingreadonly: true).Get(out this.col_Port) // Edit on AddRow by hand
@@ -423,7 +425,8 @@ select *
              , [KHCustomsItemUkey] = kc.Ukey
           from Export e 
           inner join Export_Detail ed on e.id=ed.ID 
-          left  join KHCustomsItem kc on kc.RefNo=ed.Refno and CustomsType in ('Fabric', 'Accessory', 'Machine')
+          left join PO_Supp_Detail po3 on po3.ID = ed.PoID and ed.Seq1 = po3.SEQ1 and ed.Seq2 = po3.SEQ2
+          left  join KHCustomsItem kc on kc.RefNo = po3.SCIRefno and CustomsType in ('Fabric', 'Accessory', 'Machine')
           left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=e.ImportPort          
           left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID
           left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = ed.UnitId         
@@ -602,21 +605,14 @@ where id = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
-            this.InitReadOnly(false);
             this.CurrentMaintain["Status"] = "New";
+            this.InitReadOnly(false);
             base.ClickNewAfter();
         }
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            // !EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
-            {
-                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -655,8 +651,20 @@ where id = '{this.CurrentMaintain["ID"]}'
         /// <param name="readOnly">bool</param>
         private void InitReadOnly(bool readOnly)
         {
+            // Status=New, 可以編輯
+            bool isNewStatus = false;
+            if (this.CurrentMaintain["Status"].EqualString("NEW") && this.EditMode)
+            {
+                isNewStatus = true;
+            }
+
             this.txtBLNo.ReadOnly = readOnly;
             this.txtImportPort.ReadOnly = readOnly;
+            this.dateCDate.ReadOnly = isNewStatus ? false : readOnly;
+            this.txtDeclareNo.ReadOnly = isNewStatus ? false : readOnly;
+            this.gridicon.Enabled = isNewStatus ? true : false;
+            this.detailgrid.IsEditable = isNewStatus ? true : false;
+            this.InsertDetailGridOnDoubleClick = isNewStatus ? true : false;
         }
 
         private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
@@ -716,6 +724,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 }
 
                 this.CurrentMaintain["ImportPort"] = item.GetSelecteds()[0]["ID"];
+                this.displayPortofDischarge.Text = "KH";
             }
         }
 
@@ -735,14 +744,39 @@ where id = '{this.CurrentMaintain["ID"]}'
                 else
                 {
                     this.CurrentMaintain["ImportPort"] = this.txtImportPort.Text;
+                    this.displayPortofDischarge.Text = "KH";
                 }
             }
         }
 
         private void TxtBLNo_Validating(object sender, CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtBLNo.Text))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
+
+                if (this.txtBLNo.Text != this.txtBLNo.OldValue)
+                {
+                    DialogResult questionResult = MyUtility.Msg.QuestionBox($@" It will clear detail records if change <B/L No.>.", caption: "Question", buttons: MessageBoxButtons.YesNo);
+
+                    // Yes 清空 No 保留
+                    if (questionResult == DialogResult.No)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        foreach (var item in this.DetailDatas)
+                        {
+                            item.Delete();
+                        }
+                    }
+                }
+
+                if (MyUtility.Check.Empty(this.txtBLNo.Text))
+                {
+                    return;
+                }
+
                 DataRow dr;
                 string sqlcmd = $@"select DeclareNo from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
                 if (MyUtility.Check.Seek(sqlcmd, out dr))

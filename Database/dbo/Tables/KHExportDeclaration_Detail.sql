@@ -9,13 +9,15 @@
     [POPrice]        NUMERIC (9, 4) CONSTRAINT [DF_KHExportDeclaration_Detail_POPrice] DEFAULT ((0)) NULL,
     [LocalINVNo]     VARCHAR (25)   CONSTRAINT [DF_KHExportDeclaration_Detail_LocalINVNo] DEFAULT ('') NULL,
     [NetKg]          NUMERIC (9, 2) CONSTRAINT [DF_KHExportDeclaration_Detail_NetKg] DEFAULT ((0)) NULL,
-    [WeightKg]       NUMERIC (9, 2) NULL,
+    [WeightKg]       NUMERIC (9, 2) CONSTRAINT [DF_KHExportDeclaration_Detail_WeightKg] DEFAULT ((0)) NULL,
     [HSCode]         VARCHAR (14)   CONSTRAINT [DF_KHExportDeclaration_Detail_HSCode] DEFAULT ('') NULL,
     [COFormType]     VARCHAR (20)   CONSTRAINT [DF_KHExportDeclaration_Detail_COFormType] DEFAULT ('') NULL,
     [COID]           VARCHAR (25)   CONSTRAINT [DF_KHExportDeclaration_Detail_COID] DEFAULT ('') NULL,
     [CODate]         DATE           NULL,
     CONSTRAINT [PK_KHExportDeclaration_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [INVNo] ASC, [OrderID] ASC)
 );
+
+
 
 
 GO

@@ -70,7 +70,7 @@
             this.masterpanel.Controls.Add(this.checkJunk);
             this.masterpanel.Controls.Add(this.txtCustomsDesc);
             this.masterpanel.Controls.Add(this.labCustomsDesc);
-            this.masterpanel.Size = new System.Drawing.Size(775, 148);
+            this.masterpanel.Size = new System.Drawing.Size(892, 148);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labCustomsDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomsDesc, 0);
@@ -89,7 +89,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 148);
-            this.detailpanel.Size = new System.Drawing.Size(775, 279);
+            this.detailpanel.Size = new System.Drawing.Size(892, 201);
             // 
             // gridicon
             // 
@@ -97,7 +97,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(775, 279);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 201);
             // 
             // detail2
             // 
@@ -110,19 +110,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(775, 465);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(775, 427);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 427);
-            this.detailbtm.Size = new System.Drawing.Size(775, 38);
             // 
             // browse
             // 
@@ -198,7 +185,7 @@
             "Fabric",
             "Accessory",
             "Machine",
-            "Chemical "});
+            "Chemical"});
             this.comboCustomsType.Location = new System.Drawing.Point(172, 14);
             this.comboCustomsType.Name = "comboCustomsType";
             this.comboCustomsType.OldText = "";
@@ -291,13 +278,14 @@
             this.DefaultControl = "comboCustomsType";
             this.DefaultControlForEdit = "comboCustomsType";
             this.GridAlias = "KHCustomsItem_Detail";
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "Ukey";
             this.KeyField2 = "KHCustomsItemUkey";
             this.Name = "B62";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "B62. KH Customer Item";
+            this.Text = "B62. KH Customs Item";
             this.WorkAlias = "KHCustomsItem";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();

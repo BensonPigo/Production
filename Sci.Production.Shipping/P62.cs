@@ -242,7 +242,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             // 取單號
             if (this.IsDetailInserting)
             {
-                string getID = MyUtility.GetValue.GetID(Env.User.Keyword + "KE", "KHImportDeclaration");
+                string getID = MyUtility.GetValue.GetID(Env.User.Keyword + "KE", "KHExportDeclaration");
                 if (MyUtility.Check.Empty(getID))
                 {
                     MyUtility.Msg.ErrorBox("Get ID fail !!");

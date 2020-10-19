@@ -18,16 +18,18 @@
     [UnitId]            VARCHAR (8)    CONSTRAINT [DF_KHImportDeclaration_Detail_UnitId] DEFAULT ('') NULL,
     [NetKg]             NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_Detail_NetKg] DEFAULT ((0)) NULL,
     [WeightKg]          NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_Detail_WeightKg] DEFAULT ((0)) NULL,
-    [KHCustomsItemUkey] BIGINT         CONSTRAINT [DF_KHImportDeclaration_Detail_KHCustomsItemUkey] DEFAULT ((0)) NOT NULL,
+    [KHCustomsItemUkey] BIGINT         CONSTRAINT [DF_KHImportDeclaration_Detail_KHCustomsItemUkey] DEFAULT ((0)) NULL,
     [CDCQty]            NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_Detail_CDCQty] DEFAULT ((0)) NULL,
     [CDCUnit]           NVARCHAR (50)  CONSTRAINT [DF_KHImportDeclaration_Detail_CDCUnit] DEFAULT ('') NULL,
     [CDCUnitPrice]      NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_Detail_CDCUnitPrice] DEFAULT ((0)) NULL,
     [ActNetKg]          NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_Detail_ActNetKg] DEFAULT ((0)) NULL,
     [ActWeightKg]       NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_Detail_ActWeightKg] DEFAULT ((0)) NULL,
     [ActAmount]         NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_Detail_ActAmount] DEFAULT ((0)) NULL,
-    [ActHSCode]         VARCHAR (14)   CONSTRAINT [DF_KHImportDeclaration_Detail_ActHSCode] DEFAULT ('') NOT NULL,
+    [ActHSCode]         VARCHAR (14)   CONSTRAINT [DF_KHImportDeclaration_Detail_ActHSCode] DEFAULT ('') NULL,
     CONSTRAINT [PK_KHImportDeclaration_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 GO

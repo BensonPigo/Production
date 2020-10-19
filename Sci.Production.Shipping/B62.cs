@@ -172,6 +172,13 @@ from view_KHImportItem where 1=1";
 
         }
 
+        protected override void OnDetailEntered()
+        {
+            this.txtCustomsDesc.BackColor = Color.FromArgb(183, 227, 255);
+            this.txtCustomsDesc.ForeColor = Color.FromArgb(0, 0, 255);
+            base.OnDetailEntered();
+        }
+
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
@@ -209,6 +216,38 @@ from view_KHImportItem where 1=1";
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            this.txtCustomsDesc.BackColor = Color.White;
+            this.txtCustomsDesc.ForeColor = Color.Red;
+            base.ClickEditAfter();
+        }
+
+        protected override void ClickNewAfter()
+        {
+            this.txtCustomsDesc.BackColor = Color.White;
+            this.txtCustomsDesc.ForeColor = Color.Red;
+            base.ClickNewAfter();
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+
+            if (this.DialogResult == DialogResult.OK)
+            {
+                this.txtCustomsDesc.BackColor = Color.FromArgb(183, 227, 255);
+                this.txtCustomsDesc.ForeColor = Color.FromArgb(0, 0, 255);
+            }
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            this.txtCustomsDesc.BackColor = Color.FromArgb(183, 227, 255);
+            this.txtCustomsDesc.ForeColor = Color.FromArgb(0, 0, 255);
+            base.ClickSaveAfter();
         }
     }
 }

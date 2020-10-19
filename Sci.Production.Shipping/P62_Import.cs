@@ -89,7 +89,7 @@ select selected = 0
 from GMTBooking g
 inner join packinglist pl on pl.invno=g.id
 inner join packinglist_detail pld on pl.id=pld.id
-inner join orders o on o.id=pl.orderid
+inner join orders o on o.id=pld.orderid
 inner join Buyer b2 on o.BrandID =b2.id
 inner join style s on s.ukey=o.styleukey
 outer apply (
@@ -102,9 +102,9 @@ where 1=1
 and g.ETD = @ETD
 and g.CustCDID = @CustCD
 and g.ShipModeID = @ShipMode
-and (b2.id= @Buyer or @Buyer is null)
-and (g.Forwarder = @Forwarder or @Forwarder is null)
-and (g.Dest = @Dest or @Dest is null)
+and (b2.id= @Buyer or @Buyer ='')
+and (g.Forwarder = @Forwarder or @Forwarder ='')
+and (g.Dest = @Dest or @Dest ='')
 and g.NonDeclare =0
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
 and (kd_status.status = 'New' or kd_status.Status is null)

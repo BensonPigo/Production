@@ -55,6 +55,13 @@ namespace Sci.Production.Shipping
             #endregion
         }
 
+        protected override void OnDetailEntered()
+        {
+            this.txtCustomsDesc.ReadOnly = true;
+            this.checkJunk.ReadOnly = true;
+            base.OnDetailEntered();
+        }
+
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {

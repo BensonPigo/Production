@@ -3,13 +3,13 @@
     [Cdate]      DATE          NULL,
     [DeclareNo]  VARCHAR (25)  CONSTRAINT [DF_KHExportDeclaration_DeclareNo] DEFAULT ('') NULL,
     [Status]     VARCHAR (15)  CONSTRAINT [DF_KHExportDeclaration_Status] DEFAULT ('') NULL,
-    [Shipper]    VARCHAR (8)   NULL,
+    [Shipper]    VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Shipper] DEFAULT ('') NULL,
     [Buyer]      VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Buyer] DEFAULT ('') NULL,
     [ShipModeID] VARCHAR (10)  CONSTRAINT [DF_KHExportDeclaration_ShipModeID] DEFAULT ('') NULL,
     [CustCDID]   VARCHAR (16)  CONSTRAINT [DF_KHExportDeclaration_CustCDID] DEFAULT ('') NULL,
     [Dest]       VARCHAR (2)   CONSTRAINT [DF_KHExportDeclaration_Dest] DEFAULT ('') NULL,
     [ETD]        DATE          NULL,
-    [Forwarder]  VARCHAR (6)   CONSTRAINT [DF_KHExportDeclaration_Forwarder] DEFAULT ('') NULL,
+    [Forwarder]  VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Forwarder] DEFAULT ('') NULL,
     [ExportPort] VARCHAR (20)  CONSTRAINT [DF_KHExportDeclaration_ExportPort] DEFAULT ('') NULL,
     [Remark]     VARCHAR (200) CONSTRAINT [DF_KHExportDeclaration_Remark] DEFAULT ('') NULL,
     [AddName]    VARCHAR (10)  CONSTRAINT [DF_KHExportDeclaration_AddName] DEFAULT ('') NULL,
@@ -18,6 +18,8 @@
     [EditDate]   DATETIME      NULL,
     CONSTRAINT [PK_KHExportDeclaration] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
