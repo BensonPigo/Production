@@ -82,6 +82,9 @@ else
 										and 
 										not exists (select 1 from #tmpDeleteOrder t where t.OrderID = Orders.ID)
 								FOR XML PATH('')),1,1,'') 
+
+								
+		----必須更新的訂單
 		if(@orderList is not null and @orderList <> '')
 		begin
 			exec dbo.SentOrdersToFinishingProcesses @orderList,'Orders,Order_QtyShip,Order_SizeCode,Order_Qty'
@@ -89,7 +92,7 @@ else
 		
 
 		SELECT @orderList =  Stuff((select concat( ',',OrderId) from #tmpDeleteOrder FOR XML PATH('')),1,1,'') 
-
+		----必須刪除的訂單
 		if(@orderList is not null and @orderList <> '')
 		begin
 			----若OrderID不存在資料表，才能使用Order_Delete
