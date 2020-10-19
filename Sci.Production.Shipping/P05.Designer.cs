@@ -115,6 +115,9 @@
             this.chkFoundry = new Sci.Win.UI.CheckBox();
             this.btnFoundryList = new Sci.Win.UI.Button();
             this.btnRemark = new Sci.Win.UI.Button();
+            this.labelDocumentRefNo = new Sci.Win.UI.Label();
+            this.txtDocumentRefNo = new Sci.Win.UI.TextBox();
+            this.btnDocumentRefNoFormat = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -131,6 +134,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnDocumentRefNoFormat);
+            this.masterpanel.Controls.Add(this.txtDocumentRefNo);
+            this.masterpanel.Controls.Add(this.labelDocumentRefNo);
             this.masterpanel.Controls.Add(this.btnRemark);
             this.masterpanel.Controls.Add(this.btnFoundryList);
             this.masterpanel.Controls.Add(this.chkFoundry);
@@ -306,6 +312,9 @@
             this.masterpanel.Controls.SetChildIndex(this.chkFoundry, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFoundryList, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDocumentRefNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtDocumentRefNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDocumentRefNoFormat, 0);
             // 
             // detailpanel
             // 
@@ -795,7 +804,7 @@
             this.labelShipPlanNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.labelShipPlanNo.Location = new System.Drawing.Point(550, 327);
             this.labelShipPlanNo.Name = "labelShipPlanNo";
-            this.labelShipPlanNo.Size = new System.Drawing.Size(93, 23);
+            this.labelShipPlanNo.Size = new System.Drawing.Size(126, 23);
             this.labelShipPlanNo.TabIndex = 47;
             this.labelShipPlanNo.Text = "Ship Plan No.";
             // 
@@ -932,7 +941,7 @@
             this.displayShipPlanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayShipPlanNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipPlanID", true));
             this.displayShipPlanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayShipPlanNo.Location = new System.Drawing.Point(646, 327);
+            this.displayShipPlanNo.Location = new System.Drawing.Point(679, 327);
             this.displayShipPlanNo.Name = "displayShipPlanNo";
             this.displayShipPlanNo.Size = new System.Drawing.Size(120, 23);
             this.displayShipPlanNo.TabIndex = 10;
@@ -1348,6 +1357,37 @@
             this.btnRemark.UseVisualStyleBackColor = true;
             this.btnRemark.Click += new System.EventHandler(this.BtnRemark_Click);
             // 
+            // labelDocumentRefNo
+            // 
+            this.labelDocumentRefNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelDocumentRefNo.Location = new System.Drawing.Point(550, 354);
+            this.labelDocumentRefNo.Name = "labelDocumentRefNo";
+            this.labelDocumentRefNo.Size = new System.Drawing.Size(98, 23);
+            this.labelDocumentRefNo.TabIndex = 88;
+            this.labelDocumentRefNo.Text = "Document Ref#";
+            // 
+            // txtDocumentRefNo
+            // 
+            this.txtDocumentRefNo.BackColor = System.Drawing.Color.White;
+            this.txtDocumentRefNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DocumentRefNo", true));
+            this.txtDocumentRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDocumentRefNo.Location = new System.Drawing.Point(651, 354);
+            this.txtDocumentRefNo.Name = "txtDocumentRefNo";
+            this.txtDocumentRefNo.Size = new System.Drawing.Size(120, 23);
+            this.txtDocumentRefNo.TabIndex = 89;
+            // 
+            // btnDocumentRefNoFormat
+            // 
+            this.btnDocumentRefNoFormat.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnDocumentRefNoFormat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDocumentRefNoFormat.Location = new System.Drawing.Point(772, 353);
+            this.btnDocumentRefNoFormat.Name = "btnDocumentRefNoFormat";
+            this.btnDocumentRefNoFormat.Size = new System.Drawing.Size(30, 25);
+            this.btnDocumentRefNoFormat.TabIndex = 90;
+            this.btnDocumentRefNoFormat.Text = "...";
+            this.btnDocumentRefNoFormat.UseVisualStyleBackColor = true;
+            this.btnDocumentRefNoFormat.Click += new System.EventHandler(this.BtnDocumentRefNoFormat_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1479,5 +1519,8 @@
         private Win.UI.CheckBox chkFoundry;
         private Win.UI.Button btnFoundryList;
         private Win.UI.Button btnRemark;
+        private Win.UI.TextBox txtDocumentRefNo;
+        private Win.UI.Label labelDocumentRefNo;
+        private Win.UI.Button btnDocumentRefNoFormat;
     }
 }

@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using Sci.Production.PublicPrg;
 using static Sci.Production.PublicPrg.Prgs;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Shipping
 {
@@ -667,9 +668,8 @@ where   pl.INVNo = '{0}'
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
-                if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+                if (this.IsKeyColumnEmpty())
                 {
-                    MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
                     return false;
                 }
             }
@@ -1324,9 +1324,8 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 this.CheckIDD();
-                if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+                if (this.IsKeyColumnEmpty())
                 {
-                    MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
                     return;
                 }
 
@@ -1483,9 +1482,8 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) || MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) || MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]))
+            if (this.IsKeyColumnEmpty())
             {
-                MyUtility.Msg.WarningBox("< S/O # > , < Terminal/Whse# > and < Cut-off Date > can't be empty!!");
                 return;
             }
 
@@ -2089,6 +2087,37 @@ where exists(select 1 from #tmp t where t.ID = pd.ID)
 
             Prgs.CheckIDDSame(listOrder_QtyShipKey);
             #endregion
+        }
+
+        private bool IsKeyColumnEmpty()
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SONo"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["ForwarderWhse_DetailUKey"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["CutOffDate"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["DocumentRefNo"]))
+            {
+                MyUtility.Msg.WarningBox(@"< S/O # > , < Terminal/Whse# >, < Cut-off Date > and < Document Ref#> can't be
+empty!!
+p.s. < Document Ref#> format as below
+-----------------------------------------
+ADI, RBK, LLL: GTN ASN#
+U.A: SNC ASN#
+N.FACE: NGC#
+DOME: EEM#
+NB: XPC#
+NIKE, REI, GYMSHARK: S/O#
+Offline Order: S/O#
+-----------------------------------------");
+                return true;
+            }
+
+            return false;
+        }
+
+        private void BtnDocumentRefNoFormat_Click(object sender, EventArgs e)
+        {
+            SelectItem selectItem = new SelectItem("select [Brand] = ID, [Content] = Name from DropDownList where Type = 'DocumentRefNoFormat' order by Seq", "18,12", string.Empty);
+            selectItem.ShowDialog();
         }
     }
 }
