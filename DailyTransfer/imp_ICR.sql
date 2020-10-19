@@ -103,6 +103,7 @@ SET
 	a.Description= b.Description,
 	a.Suggestion= b.Suggestion,
 	a.Remark= b.Remark,
+	a.BulkFTY= b.BulkFTY,
 	a.AddName= b.AddName,
 	a.AddDate= b.AddDate,
 	a.EditName= b.EditName,
@@ -146,6 +147,7 @@ INSERT INTO Production.dbo.ICR
       ,[Description]
       ,[Suggestion]
       ,[Remark]
+	  ,[BulkFTY]
       ,[AddName]
       ,[AddDate]
       ,[EditName]
@@ -184,6 +186,7 @@ SELECT
       ,[Description]
       ,[Suggestion]
       ,[Remark]
+	  ,[BulkFTY]
       ,[AddName]
       ,[AddDate]
       ,[EditName]
