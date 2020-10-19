@@ -51,6 +51,7 @@ namespace Production.Daily
                 isAuto = true;
                 this.chk_export.Checked = true;
                 this.chk_import.Checked = true;
+                this.OnFormLoaded();
             }
         }
 
@@ -87,7 +88,18 @@ namespace Production.Daily
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out _mailTo);
 
-            if (!result) { ShowErr(result); return; }
+            if (!result)
+            {
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
+            }
 
             mailTo = _mailTo.Rows[0];
 
@@ -162,7 +174,15 @@ namespace Production.Daily
 
             if (!result)
             {
-                ShowErr(result);
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
             }
             else if (!File.Exists(rarFile))
             {
@@ -229,8 +249,19 @@ namespace Production.Daily
                 desc = mailTo["Content"].ToString();
             }
             Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
-
-            mail.ShowDialog();
+            DualResult mailResult = mail.Send();
+            if (!mailResult)
+            {
+                if (this.isAuto)
+                {
+                    throw mailResult.GetException();
+                }
+                else
+                {
+                    this.ShowErr(mailResult);
+                }
+            }
+            //mail.ShowDialog();
         }
         #endregion
 
@@ -265,14 +296,32 @@ namespace Production.Daily
             if (!Sci.SQL.GetConnection(out conn)) { return; }
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
-            DualResult result = AsyncHelper.Current.DataProcess(this, () =>
+            DualResult result;
+
+            if (isAuto)
             {
-                return AsyncUpdateExport(conn);
-            });
+                result = AsyncUpdateExport(conn);
+            }
+            else
+            {
+                result = AsyncHelper.Current.DataProcess(this, () =>
+                {
+                    return AsyncUpdateExport(conn);
+                });
+            }
+
 
             if (!result)
             {
-                ShowErr(result);
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
             }
 
             conn.Close();
@@ -372,10 +421,10 @@ namespace Production.Daily
                 Thread.Sleep(2500);
             }
 
-            if (!result) 
+            if (!result)
             {
                 this.CallJobLogApi("PMS transfer data (FTP) ERROR", result.GetException().ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
-                return result; 
+                return result;
             }
 
             String exportRgCode = "";
@@ -386,7 +435,14 @@ namespace Production.Daily
             TransRegion importRegion;
 
             #region 取得轉出/轉入用的Region
-            exportFileName = this.CurrentData["RgCode"].ToString().Trim() + "_Reports.rar";
+            if (DBProxy.Current.DefaultModuleName == "PMS_Formal")
+            {
+                exportFileName = "PMS_TEST_REPORTS.RAR";
+            }
+            else
+            {
+                exportFileName = this.CurrentData["RgCode"].ToString().Trim() + "_Reports.rar";
+            }
             importFileName = this.CurrentData["ImportDataFileName"].ToString();
 
             exportRgCode = this.CurrentData["RgCode"].ToString();
@@ -427,7 +483,7 @@ namespace Production.Daily
             if (!File.Exists(exportRegion.DirName + exportRegion.RarName))
             {
                 subject = "PMS transfer data (New) ERROR";
-                desc = "Not found the ZIP(rar) file,pls advice Taipei's Programer";
+                desc = $"Not found the ZIP(rar) file,pls advice Taipei's Programer: {exportRegion.DirName + exportRegion.RarName}";
                 SendMail(subject, desc);
                 this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
             }
@@ -777,7 +833,7 @@ Where TransRegion.Is_Export = 0";
             }
 
             #endregion
-            
+
             //手動執行,才去判斷執行
             if (!isAuto)
             {
@@ -1156,7 +1212,19 @@ where p.PulloutDate <= @PullOutLock
                 string subject = "Pullout Report is pending Lock. - " + this.CurrentData["RgCode"].ToString().Trim();
                 string desc = "Attached is the data should be Lock but Pullout Report not yet encode.";
                 Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "Pullout_Lock_Notice@sportscity.com.tw", "", subject, path + "\\" + fileName, desc, true, true);
-                mail.ShowDialog();
+                DualResult mailResult = mail.Send();
+                if (!mailResult)
+                {
+                    if (this.isAuto)
+                    {
+                        throw mailResult.GetException();
+                    }
+                    else
+                    {
+                        this.ShowErr(mailResult);
+                    }
+                }
+                //mail.ShowDialog();
             }
         }
 

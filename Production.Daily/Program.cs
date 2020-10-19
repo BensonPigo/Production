@@ -29,7 +29,7 @@ namespace Production.Daily
 
             switch (pStartForm)
             {
-                case "DailyTransfer": Application.Run(new Main("")); break;
+                case "DailyTransfer": new Main(""); break;
                 case "": Application.Run(new Main()); break;
             }
                       
