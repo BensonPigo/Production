@@ -696,10 +696,10 @@ Insert into LocationTrans_Detail(   ID,
             {
                 if (!MyUtility.Check.Empty(updateItem["CutShadebandTime"]))
                 {
-                    string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+                    string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
                     sqlUpdateFIR_Shadebone += $@"
 UPDATE fs
-SET  fs.CutTime = '{cutTime}', Cutby = '{Sci.Env.User.UserID}'
+SET  fs.CutTime = {cutTime}, Cutby = iif({cutTime} is null, Cutby, '{Sci.Env.User.UserID}')
 FROM FIR f
 INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
 WHERE  f.ReceivingID='{updateItem["ID"]}'
@@ -708,7 +708,6 @@ AND f.Seq1 = '{updateItem["Seq1"]}'
 AND f.Seq2 ='{updateItem["Seq2"]}'
 AND fs.Roll = '{updateItem["Roll"]}'
 AND fs.Dyelot = '{updateItem["Dyelot"]}'
-AND isnull(fs.CutTime,'1900/01/01') <> '{cutTime}'
 ;
 ";
                 }
