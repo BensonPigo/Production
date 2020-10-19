@@ -694,10 +694,8 @@ Insert into LocationTrans_Detail(   ID,
             string sqlUpdateFIR_Shadebone = string.Empty;
             foreach (var updateItem in drArryCutShadebandTime)
             {
-                if (!MyUtility.Check.Empty(updateItem["CutShadebandTime"]))
-                {
-                    string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
-                    sqlUpdateFIR_Shadebone += $@"
+                string cutTime = MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem["CutShadebandTime"]).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
+                sqlUpdateFIR_Shadebone += $@"
 UPDATE fs
 SET  fs.CutTime = {cutTime}, Cutby = iif({cutTime} is null, Cutby, '{Sci.Env.User.UserID}')
 FROM FIR f
@@ -710,7 +708,6 @@ AND fs.Roll = '{updateItem["Roll"]}'
 AND fs.Dyelot = '{updateItem["Dyelot"]}'
 ;
 ";
-                }
             }
 
             Exception errMsg = null;
