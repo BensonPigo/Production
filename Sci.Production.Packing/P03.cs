@@ -1277,7 +1277,7 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
             if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
             {
                 // 不透過Call API的方式，自己組合，傳送API
-                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "Delete"))
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion

@@ -17,7 +17,7 @@ namespace Sci.Production.Automation
         public static bool IsGensong_FinishingProcessesEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
 
         /// <summary>
-        /// SentPackingListToFinishingProcesses
+        /// SentOrdersToFinishingProcesses_Gensong
         /// </summary>
         /// <param name="listID">List ID</param>
         /// <param name="actionType">Action Type</param>
@@ -28,7 +28,7 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            string apiThread = "SentPackingListToFinishingProcesses";
+            string apiThread = "SentOrdersToFinishingProcesses_Gensong";
             string suppAPIThread = "api/GensongFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -44,7 +44,7 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
-        /// SentPackingListToFinishingProcesses
+        /// SentPackingListToFinishingProcesses_Gensong
         /// </summary>
         /// <param name="listID">List ID</param>
         /// <param name="actionType">Action Type</param>
@@ -55,7 +55,7 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            string apiThread = "SentPackingListToFinishingProcesses";
+            string apiThread = "SentPackingListToFinishingProcesses_Gensong";
             string suppAPIThread = "api/GensongFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -71,7 +71,7 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
-        /// SentPackingListToFinishingProcesses
+        /// SentClogGarmentDisposeToFinishingProcesses_Gensong
         /// </summary>
         /// <param name="listID">List ID</param>
         /// <param name="actionType">Action Type</param>
@@ -82,7 +82,7 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            string apiThread = "SentClogGarmentDisposeToFinishingProcesses";
+            string apiThread = "SentClogGarmentDisposeToFinishingProcesses_Gensong";
             string suppAPIThread = "api/GensongFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
