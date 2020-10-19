@@ -340,6 +340,7 @@ Exists (
                 var rowSMNotice = dtSMNotice.AsEnumerable().FirstOrDefault();
                 if (rowSMNotice == null)
                 {
+                    scope.Dispose();
                     MyUtility.Msg.ErrorBox("can't find SMNotice data.(" + id + ")");
                     return ChangeFactoryResultEnum.Fail;
                 }
@@ -364,6 +365,7 @@ Exists (
                                 }
                                 else
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find Pattern/Marker data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -385,6 +387,7 @@ Exists (
                                 var dtSMNotice_Detail = helper.LoadTable("Select ID, Type, Factory, EditName, EditDate From SMNotice_Detail Where ID = @ID and Type in ('P', 'M')", "ID", id);
                                 if (dtSMNotice_Detail.Rows.Count == 0)
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find SMNotice_Detail data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -413,6 +416,7 @@ Exists (
                                 }
                                 else
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find IETMS data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -429,6 +433,7 @@ Exists (
                                 var dtSMNotice_Detail = helper.LoadTable("Select ID, Type, Factory, EditName, EditDate From SMNotice_Detail Where ID = @ID and Type = 'I'", "ID", id);
                                 if (dtSMNotice_Detail.Rows.Count == 0)
                                 {
+                                    scope.Dispose();
                                     MyUtility.Msg.ErrorBox("can't find SMNotice_Detail data.(" + id + ")");
                                     return ChangeFactoryResultEnum.Fail;
                                 }
@@ -451,6 +456,7 @@ Exists (
                             var dt = helper.LoadTable("Select ID, Version, ActFtyIE, EditName, EditDate From IETMS Where ID = @ID And Version = @Version", "ID", id, "Version", version);
                             if (dt.Rows.Count == 0)
                             {
+                                scope.Dispose();
                                 MyUtility.Msg.ErrorBox("can't find IETMS data.(" + id + ")");
                                 return ChangeFactoryResultEnum.Fail;
                             }
@@ -475,6 +481,7 @@ Exists (
                 }
                 catch (Exception ex)
                 {
+                    scope.Dispose();
                     MyUtility.Msg.ErrorBox("update factory failed: " + ex.Message);
                     return ChangeFactoryResultEnum.Fail;
                 }
@@ -745,7 +752,7 @@ Select
 From SMNotice sm
 Left Join Style s on s.Ukey = sm.StyleUkey
 Left Join Style_BOF bof on bof.StyleUkey = s.Ukey
-Inner Join Style_FabricCode fabricCode on fabricCode.Style_BOFUkey = bof.Ukey
+Inner Join Style_FabricCode fabricCode on fabricCode.StyleUkey = bof.StyleUkey and fabricCode.FabricCode = bof.FabricCode
 Outer Apply (
     Select Top 1 Concat(fabricCode.FabricCode, fabricCode.PatternPanel) as QTWith
     From Style_FabricCode_QT qt
@@ -785,9 +792,9 @@ Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID
             {
                 sqlX = @"
 Select fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
-	From Orders o
-	inner Join Order_BOF bof on bof.ID = o.ID
-	inner Join Order_FabricCode fabricCode on fabricCode.Order_BOFUkey = bof.Ukey
+From Orders o
+inner Join Order_BOF bof on bof.ID = o.ID
+inner Join Order_FabricCode fabricCode on fabricCode.Id = bof.Id and fabricCode.FabricCode = bof.FabricCode
 Outer Apply (
     Select Top 1 Concat(fabricCode.FabricCode, fabricCode.PatternPanel) as QTWith
     From Order_FabricCode_QT qt
@@ -1101,7 +1108,7 @@ From SMNotice sm
 inner join Style_BOF bof on bof.StyleUkey = sm.StyleUkey
 Left Join Fabric f on f.SCIRefno = bof.SCIRefno
 Left Join DropdownList ddl on ddl.Type = 'MatchFabric' and ddl.ID = bof.MatchFabric
-Outer Apply(Select Stuff((Select '/' + fc.FabricPanelCode from Style_FabricCode fc where fc.Style_BOFUkey = bof.Ukey for xml path('')), 1, 1, '') as FabricPanelCode) fc
+Outer Apply(Select Stuff((Select '/' + fc.FabricPanelCode from Style_FabricCode fc where fc.StyleUkey = bof.StyleUkey and fc.FabricCode = bof.FabricCode for xml path('')), 1, 1, '') as FabricPanelCode) fc
 Where sm.ID = @ID
 Order by fc.FabricPanelCode
 ";
@@ -1124,7 +1131,7 @@ inner join Order_BOF bof on bof.Id = o.ID
 Left Join Fabric f on f.SCIRefno = bof.SCIRefno
 LEFT JOIN Style_BOF sbof on sbof.StyleUkey = o.StyleUkey and sbof.FabricCode = bof.FabricCode
 Left Join DropdownList ddl on ddl.Type = 'MatchFabric' and ddl.ID = sbof.MatchFabric
-Outer Apply(Select Stuff((Select '/' + fc.FabricPanelCode from Order_FabricCode fc where fc.Order_BOFUkey = bof.Ukey for xml path('')), 1, 1, '') as FabricPanelCode) fc
+Outer Apply(Select Stuff((Select '/' + fc.FabricPanelCode from Order_FabricCode fc where fc.Id = bof.Id and fc.FabricCode = bof.FabricCode for xml path('')), 1, 1, '') as FabricPanelCode) fc
 Where o.ID = @ID
 Order by fc.FabricPanelCode
 ";
@@ -2068,7 +2075,7 @@ Where o.ID = @ID
 Select art.Article, fc.FabricPanelCode, color.ColorID, bof.Refno
 From SMNotice sm
 inner Join Style_BOF bof on bof.StyleUkey = sm.StyleUkey
-inner join Style_FabricCode fc on fc.Style_BOFUkey = bof.Ukey
+inner join Style_FabricCode fc on fc.StyleUkey = bof.StyleUkey and fc.FabricCode = bof.FabricCode
 inner join Style_Article art on art.StyleUkey = sm.StyleUkey
 inner Join Style_ColorCombo color on color.StyleUkey = sm.StyleUkey and color.FabricPanelCode = fc.FabricPanelCode and color.Article = art.Article and color.FabricCode <> ''
 Where sm.ID = @ID
@@ -2087,7 +2094,7 @@ Where sm.ID = @ID
 Select art.Article, fc.FabricPanelCode, color.ColorID, bof.Refno
 From Orders o
 inner Join Order_BOF bof on bof.Id = o.ID
-inner join Order_FabricCode fc on fc.Order_BOFUkey = bof.Ukey
+inner join Order_FabricCode fc on fc.Id = bof.Id and fc.FabricCode = bof.FabricCode
 inner join Order_Article art on art.id = o.ID
 inner Join Order_ColorCombo color on color.Id = o.ID and color.FabricPanelCode = fc.FabricPanelCode and color.Article = art.Article and color.FabricCode <> ''
 Where o.ID = @ID
@@ -2316,7 +2323,7 @@ select 1 as tp, color.FabricPanelCode as PNO, f.Refno as [REF#], f.Description, 
 From SMNotice sm
 Inner Join Style s on s.Ukey = sm.StyleUkey
 Inner Join Style_BOF bof on bof.StyleUkey = s.Ukey
-Inner Join Style_FabricCode fc on fc.Style_BOFUkey = bof.Ukey
+Inner Join Style_FabricCode fc on fc.StyleUkey = bof.StyleUkey and fc.FabricCode = bof.FabricCode
 Inner Join Style_ColorCombo color on color.StyleUkey = s.Ukey and color.FabricPanelCode = fc.FabricPanelCode
 Inner Join Fabric f on f.SCIRefno = bof.SCIRefno
 Inner Join Color_multiple cm on cm.ID = color.ColorID and cm.BrandID = s.BrandID

@@ -33,6 +33,9 @@
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.chkDP = new Sci.Win.UI.CheckBox();
+            this.chkIsSew = new Sci.Win.UI.CheckBox();
+            this.chkIsBD = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +50,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsBD);
+            this.detailcont.Controls.Add(this.chkIsSew);
+            this.detailcont.Controls.Add(this.chkDP);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayDescription);
             this.detailcont.Controls.Add(this.displayCode);
@@ -114,19 +120,55 @@
             this.displayDescription.Location = new System.Drawing.Point(140, 90);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(414, 23);
-            this.displayDescription.TabIndex = 1;
+            this.displayDescription.TabIndex = 5;
             // 
             // checkJunk
             // 
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(497, 44);
+            this.checkJunk.Location = new System.Drawing.Point(497, 42);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkJunk.TabIndex = 2;
+            this.checkJunk.TabIndex = 4;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
+            // 
+            // chkDP
+            // 
+            this.chkDP.AutoSize = true;
+            this.chkDP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsDP", true));
+            this.chkDP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkDP.Location = new System.Drawing.Point(285, 42);
+            this.chkDP.Name = "chkDP";
+            this.chkDP.Size = new System.Drawing.Size(46, 21);
+            this.chkDP.TabIndex = 1;
+            this.chkDP.Text = "DP";
+            this.chkDP.UseVisualStyleBackColor = true;
+            // 
+            // chkIsSew
+            // 
+            this.chkIsSew.AutoSize = true;
+            this.chkIsSew.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSew", true));
+            this.chkIsSew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsSew.Location = new System.Drawing.Point(389, 42);
+            this.chkIsSew.Name = "chkIsSew";
+            this.chkIsSew.Size = new System.Drawing.Size(53, 21);
+            this.chkIsSew.TabIndex = 2;
+            this.chkIsSew.Text = "Sew";
+            this.chkIsSew.UseVisualStyleBackColor = true;
+            // 
+            // chkIsBD
+            // 
+            this.chkIsBD.AutoSize = true;
+            this.chkIsBD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsBD", true));
+            this.chkIsBD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsBD.Location = new System.Drawing.Point(337, 42);
+            this.chkIsBD.Name = "chkIsBD";
+            this.chkIsBD.Size = new System.Drawing.Size(46, 21);
+            this.chkIsBD.TabIndex = 3;
+            this.chkIsBD.Text = "BD";
+            this.chkIsBD.UseVisualStyleBackColor = true;
             // 
             // B06
             // 
@@ -142,6 +184,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B06";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B06. Machine Group Type";
             this.UniqueExpress = "ID";
             this.WorkAlias = "MachineGroup";
@@ -165,5 +208,8 @@
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
+        private Win.UI.CheckBox chkIsBD;
+        private Win.UI.CheckBox chkIsSew;
+        private Win.UI.CheckBox chkDP;
     }
 }

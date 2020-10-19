@@ -411,11 +411,12 @@ and s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID
                 {
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out dtResult, "#tmp", conn: sqlConn)))
                     {
-                        throw new Exception(result.Messages.ToString());
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
                 }
                 catch (Exception ex)
                 {
@@ -423,16 +424,6 @@ and s.OrderID=t.OrderID and s.ColumnType=t.DropDownListID
                     result = new DualResult(false, "Commit transaction error.", ex);
                     return;
                 }
-                finally
-                {
-                    transactionscope.Dispose();
-                }
-            }
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
             }
 
             MyUtility.Msg.InfoBox("Save successful");

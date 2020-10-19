@@ -419,15 +419,11 @@ from #tmp
                 if (!(upResult = MyUtility.Tool.ProcessWithDatatable(seldt, string.Empty, insertsql, out DataTable odt)))
                 {
                     transactionscope.Dispose();
+                    this.ShowErr(upResult);
+                    return;
                 }
 
                 transactionscope.Complete();
-            }
-
-            if (!upResult)
-            {
-                this.ShowErr(upResult);
-                return;
             }
 
             MyUtility.Msg.WarningBox("Successfully");

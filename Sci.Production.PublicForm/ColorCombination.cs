@@ -272,26 +272,27 @@ ORDER BY o.FabricCode
         private void GetQTWith()
         {
             string sql = string.Format(
-                @"with 
-	            fabericCode as (Select StyleUkey as myKey, Style_BOFUkey as parentKey, * From Style_FabricCode WITH (NOLOCK) where StyleUkey = '{0}'),
-	            bof as (Select StyleUkey as myKey, * From Style_BOF WITH (NOLOCK) where StyleUkey = '{0}'),
-	            boa as (Select StyleUkey as myKey, * From Style_BOA WITH (NOLOCK) where StyleUkey = '{0}'),
-	            article as (Select StyleUkey as myKey, * From Style_Article WITH (NOLOCK) where StyleUKey = '{0}'),
-	            colorCombo as (Select StyleUkey as myKey, * From Style_ColorCombo WITH (NOLOCK) where StyleUkey = '{0}'),
-	            qt as (Select StyleUkey as myKey, * From Style_FabricCode_QT WITH (NOLOCK) where StyleUkey = '{0}')
+                @"
+with  fabericCode as (Select StyleUkey as myKey, * From Style_FabricCode WITH (NOLOCK) where StyleUkey = '{0}'),
+bof as (Select StyleUkey as myKey, * From Style_BOF WITH (NOLOCK) where StyleUkey = '{0}'),
+boa as (Select StyleUkey as myKey, * From Style_BOA WITH (NOLOCK) where StyleUkey = '{0}'),
+article as (Select StyleUkey as myKey, * From Style_Article WITH (NOLOCK) where StyleUKey = '{0}'),
+colorCombo as (Select StyleUkey as myKey, * From Style_ColorCombo WITH (NOLOCK) where StyleUkey = '{0}'),
+qt as (Select StyleUkey as myKey, * From Style_FabricCode_QT WITH (NOLOCK) where StyleUkey = '{0}')
 
-            Select f.myKey, f.StyleUkey, f.FabricPanelCode, f.PatternPanel, f.FabricCode, IsNull(q.IsQt, '') as IsQT
-            from bof b
-            Inner join fabericCode f on f.parentKey = b.Ukey
-            Outer Apply (
-                Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as IsQT
-                From qt
-                Where qt.myKey = f.myKey
-                and qt.FabricPanelCode = f.FabricPanelCode
-	            and qt.SeqNO > (Select distinct SeqNO From qt QR where QR.myKey = qt.myKey and QR.QTFabricPanelCode = f.FabricPanelCode)
-	            Order by qt.SeqNO
-            ) as q
-            Order by f.PatternPanel, f.FabricCode, f.FabricPanelCode;", this.Styleukey);
+Select f.myKey, f.StyleUkey, f.FabricPanelCode, f.PatternPanel, f.FabricCode, IsNull(q.IsQt, '') as IsQT
+from bof b
+Inner join fabericCode f on f.StyleUkey = b.StyleUkey and f.FabricCode = b.FabricCode
+Outer Apply (
+    Select Top 1 Concat(qt.QTFabricCode, qt.QTPatternPanel) as IsQT
+    From qt
+    Where qt.myKey = f.myKey
+    and qt.FabricPanelCode = f.FabricPanelCode
+	and qt.SeqNO > (Select distinct SeqNO From qt QR where QR.myKey = qt.myKey and QR.QTFabricPanelCode = f.FabricPanelCode)
+	Order by qt.SeqNO
+) as q
+Order by f.PatternPanel, f.FabricCode, f.FabricPanelCode;
+", this.Styleukey);
             DualResult sqlresult = DBProxy.Current.Select(null, sql, out this.dtQTWith);
             if (!sqlresult)
             {

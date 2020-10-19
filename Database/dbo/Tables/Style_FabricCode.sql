@@ -1,16 +1,17 @@
 ﻿CREATE TABLE [dbo].[Style_FabricCode] (
-    [StyleUkey]     BIGINT         CONSTRAINT [DF_Style_FabricCode_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [FabricPanelCode]    VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [FabricCode]    VARCHAR (3)    CONSTRAINT [DF_Style_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
-    [PatternPanel]  VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME       NULL,
-    [Style_BOFUkey] BIGINT         CONSTRAINT [DF_Style_FabricCode_Style_BOFUkey] DEFAULT ((0)) NULL,
-    [QTWidth] NUMERIC(3, 1) NULL DEFAULT ((0)), 
+    [StyleUkey]       BIGINT         CONSTRAINT [DF_Style_FabricCode_StyleUkey] DEFAULT ((0)) NOT NULL,
+    [FabricPanelCode] VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [FabricCode]      VARCHAR (3)    CONSTRAINT [DF_Style_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
+    [PatternPanel]    VARCHAR (2)    CONSTRAINT [DF_Style_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
+    [AddName]         VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_AddName] DEFAULT ('') NULL,
+    [AddDate]         DATETIME       NULL,
+    [EditName]        VARCHAR (10)   CONSTRAINT [DF_Style_FabricCode_EditName] DEFAULT ('') NULL,
+    [EditDate]        DATETIME       NULL,
+    [QTWidth]         NUMERIC (3, 1) DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Style_FabricCode] PRIMARY KEY CLUSTERED ([StyleUkey] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 GO

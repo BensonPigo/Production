@@ -1002,15 +1002,14 @@ else
 				t.AddName			= s.AddName,
 				t.AddDate			= s.AddDate,
 				t.EditName			= s.EditName,
-				t.EditDate			= s.EditDate,
-				t.Order_BOFUkey		= s.Order_BOFUkey
+				t.EditDate			= s.EditDate
 		when not matched by target then 
 			insert (
 				Id			, PatternPanel		, FabricCode	, FabricPanelCode	, AddName
-				, AddDate	, EditName			, EditDate		, Order_BOFUkey
+				, AddDate	, EditName			, EditDate
 			) values (
 				s.Id		, s.PatternPanel	, s.FabricCode	, s.FabricPanelCode	, s.AddName
-				, s.AddDate	, s.EditName		, s.EditDate	, s.Order_BOFUkey
+				, s.AddDate	, s.EditName		, s.EditDate
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;

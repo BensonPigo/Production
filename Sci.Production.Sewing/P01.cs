@@ -1081,7 +1081,7 @@ and SunriseNid = 0
             {
                 double qAqty = MyUtility.Convert.GetDouble(dr["QAQty"]);
                 double inLineQty = MyUtility.Convert.GetDouble(dr["InlineQty"]);
-                string rFT = MyUtility.Convert.GetString(Math.Round( qAqty / inLineQty * 100, 2)) + "%";
+                string rFT = MyUtility.Convert.GetString(Math.Round(qAqty / inLineQty * 100, 2)) + "%";
                 dr["RFT"] = rFT;
             }
 
@@ -2874,6 +2874,13 @@ where ID = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override void ClickSend()
         {
+            var dailylock = new P01_DailyLock();
+            if (dailylock.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            string datelock = ((DateTime)dailylock.LockDate).ToString("yyyy/MM/dd");
             base.ClickSend();
             string sqlcmdChk = $@"
 select 1
@@ -2881,18 +2888,13 @@ FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
 INNER JOIN Orders o ON o.ID = sd.OrderId
 where 1=1
-    and s.OutputDate < = CAST (GETDATE() AS DATE) 
+    and s.OutputDate < = CAST ('{datelock}' AS DATE) 
     and s.LockDate is null 
     and s.FactoryID  = '{Env.User.Factory}'
 ";
             if (!MyUtility.Check.Seek(sqlcmdChk))
             {
                 MyUtility.Msg.WarningBox("Already lock now!");
-                return;
-            }
-
-            if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
-            {
                 return;
             }
 
@@ -2904,7 +2906,7 @@ FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON sd.ID = s.ID
 INNER JOIN Orders o ON o.ID = sd.OrderId
 where 1=1
-    and s.OutputDate < = CAST (GETDATE() AS DATE) 
+    and s.OutputDate < = CAST ('{datelock}' AS DATE) 
     and s.LockDate is null 
     and s.FactoryID  = '{Env.User.Factory}'
 ";
@@ -2923,7 +2925,7 @@ Declare @AllQAQty int
 DECLARE Sewingoutput_cursor CURSOR FOR 
 	select S.ID,S.WorkHour,S.ManHour
 	from SewingOutput S with (nolock)
-	where S.Category='O' and s.FactoryID = '{Env.User.Factory}' and s.OutputDate <= GETDATE() and s.LockDate is null  and
+	where S.Category='O' and s.FactoryID = '{Env.User.Factory}' and s.OutputDate <= CAST ('{datelock}' AS DATE)  and s.LockDate is null  and
 		 exists(select 1  from  SewingOutput_Detail SD WITH (NOLOCK)
 					outer apply 
 					( 

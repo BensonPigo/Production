@@ -147,35 +147,18 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        throw new Exception(upResult.Messages.ToString());
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                 {
                     transactionscope.Dispose();
-                    upResult = new DualResult(false, "Commit transaction error.", ex);
+                    this.ShowErr(upResult);
+                    return;
                 }
-            }
 
-            if (!upResult)
-            {
-                this.ShowErr(upResult);
-                return;
+                transactionscope.Complete();
             }
 
             MyUtility.Msg.WarningBox("Successfully");
-            transactionscope.Dispose();
-            transactionscope = null;
-
             #endregion
-
         }
 
         /// <inheritdoc/>
@@ -208,28 +191,17 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        transactionscope.Dispose();
-                        return;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, updSql)))
                 {
                     transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    this.ShowErr(upResult);
                     return;
                 }
+
+                transactionscope.Complete();
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
+            MyUtility.Msg.WarningBox("Successfully");
         }
 
         /// <inheritdoc/>

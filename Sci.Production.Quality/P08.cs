@@ -530,6 +530,7 @@ inner join #tmp t on t.id = fs.ID and t.Roll = fs.Roll and t.Dyelot = fs.Dyelot
                         result = MyUtility.Tool.ProcessWithDatatable(selectedListDataRow.CopyToDataTable(), "ID,Roll,Dyelot,CutTime,PasteTime,PassQATime,ShadebandDocLocationID,Remark", sqlcmd, out DataTable dtUpdate, temptablename: "#tmp");
                         if (!result)
                         {
+                            transactionscope.Dispose();
                             throw result.GetException();
                         }
                     }

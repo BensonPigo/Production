@@ -1,23 +1,26 @@
 ﻿CREATE TABLE [dbo].[FIR_Shadebone] (
-    [ID]        BIGINT         CONSTRAINT [DF_FIR_Shadebone_ID] DEFAULT ((0)) NOT NULL,
-    [Roll]      VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]    VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Dyelot] DEFAULT ('') NOT NULL,
-    [Scale]     VARCHAR (5)    CONSTRAINT [DF_FIR_Shadebone_Scale] DEFAULT ('') NULL,
-    [Inspdate]  DATE           NULL,
-    [Inspector] VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_Inspector] DEFAULT ('') NULL,
-    [Result]    VARCHAR (5)    CONSTRAINT [DF_FIR_Shadebone_Result] DEFAULT ('') NULL,
-    [Remark]    NVARCHAR (100) CONSTRAINT [DF_FIR_Shadebone_Remark] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_AddName] DEFAULT ('') NULL,
-    [AddDate]   DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME       NULL,
-    [TicketYds] NUMERIC (8, 2) DEFAULT ((0)) NULL,
-    [CutTime] DATETIME NULL, 
-    [PasteTime] DATETIME NULL, 
-    [PassQATime] DATETIME NULL, 
-    [ShadebandDocLocationID] VARCHAR(10) NULL, 
+    [ID]                     BIGINT         CONSTRAINT [DF_FIR_Shadebone_ID] DEFAULT ((0)) NOT NULL,
+    [Roll]                   VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Roll] DEFAULT ('') NOT NULL,
+    [Dyelot]                 VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Dyelot] DEFAULT ('') NOT NULL,
+    [Scale]                  VARCHAR (5)    CONSTRAINT [DF_FIR_Shadebone_Scale] DEFAULT ('') NULL,
+    [Inspdate]               DATE           NULL,
+    [Inspector]              VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_Inspector] DEFAULT ('') NULL,
+    [Result]                 VARCHAR (5)    CONSTRAINT [DF_FIR_Shadebone_Result] DEFAULT ('') NULL,
+    [Remark]                 NVARCHAR (100) CONSTRAINT [DF_FIR_Shadebone_Remark] DEFAULT ('') NULL,
+    [AddName]                VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_AddName] DEFAULT ('') NULL,
+    [AddDate]                DATETIME       NULL,
+    [EditName]               VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_EditName] DEFAULT ('') NULL,
+    [EditDate]               DATETIME       NULL,
+    [TicketYds]              NUMERIC (8, 2) DEFAULT ((0)) NULL,
+    [CutTime]                DATETIME       NULL,
+    [PasteTime]              DATETIME       NULL,
+    [PassQATime]             DATETIME       NULL,
+    [ShadebandDocLocationID] VARCHAR (10)   NULL,
+    [CutBy]                  VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_CutBy] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FIR_Shadebone] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 
@@ -79,38 +82,21 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'剪下布的時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'FIR_Shadebone',
-    @level2type = N'COLUMN',
-    @level2name = N'CutTime'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ŤU�����ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutTime';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'貼到文件上的時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'FIR_Shadebone',
-    @level2type = N'COLUMN',
-    @level2name = N'PasteTime'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�K����W���ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'PasteTime';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'文件轉交給QA的時間',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'FIR_Shadebone',
-    @level2type = N'COLUMN',
-    @level2name = N'PassQATime'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�����浹QA���ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'PassQATime';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'文件存放的位置',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'FIR_Shadebone',
-    @level2type = N'COLUMN',
-    @level2name = N'ShadebandDocLocationID'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���s�񪺦�m', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'ShadebandDocLocationID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'負責剪 Shadeband 的人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutBy';
+

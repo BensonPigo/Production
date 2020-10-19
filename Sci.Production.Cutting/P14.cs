@@ -217,6 +217,7 @@ End
                 {
                     if (!(upResult = DBProxy.Current.Execute("SUNRISEEXCH", sqlupdatacmd, sqlParameters)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
                         this.IsSuccessful = false;
                         return;

@@ -42,29 +42,14 @@ namespace Sci.Production.Cutting
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                try
-                {
-                    if (!(dresult = DBProxy.Current.Execute(null, sqlcmd)))
-                    {
-                        throw new Exception(dresult.Messages.ToString());
-                    }
-
-                    transactionscope.Complete();
-                }
-                catch (Exception ex)
+                if (!(dresult = DBProxy.Current.Execute(null, sqlcmd)))
                 {
                     transactionscope.Dispose();
-                    dresult = new DualResult(false, "Commit transaction error.", ex);
+                    this.ShowErr(dresult);
+                    return;
                 }
-            }
 
-            transactionscope.Dispose();
-            transactionscope = null;
-
-            if (!dresult)
-            {
-                this.ShowErr(dresult);
-                return;
+                transactionscope.Complete();
             }
             #endregion
             #region 找出需新增或update 的Cutting
@@ -154,32 +139,17 @@ namespace Sci.Production.Cutting
                 updsql = updsql + string.Format("update cutting set SewInLine ='{0}',sewoffline = '{1}' where id = '{2}'; ", sewin, sewof, dr["cuttingsp"]);
             }
 
-            TransactionScope transactionscope2 = new TransactionScope();
-            using (transactionscope2)
+            transactionscope = new TransactionScope();
+            using (transactionscope)
             {
-                try
+                if (!(dresult = DBProxy.Current.Execute(null, updsql)))
                 {
-                    if (!(dresult = DBProxy.Current.Execute(null, updsql)))
-                    {
-                        throw new Exception(dresult.Messages.ToString());
-                    }
-
-                    transactionscope2.Complete();
+                    transactionscope.Dispose();
+                    this.ShowErr(dresult);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    transactionscope2.Dispose();
-                    dresult = new DualResult(false, "Commit transaction error.", ex);
-                }
-            }
 
-            transactionscope2.Dispose();
-            transactionscope2 = null;
-
-            if (!dresult)
-            {
-                this.ShowErr(dresult);
-                return;
+                transactionscope.Complete();
             }
 
             #endregion

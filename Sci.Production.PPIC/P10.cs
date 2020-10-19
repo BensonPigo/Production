@@ -1135,6 +1135,7 @@ VALUES('{tmpId}','{type}','{Env.User.Keyword}','{Env.User.Factory}',GETDATE(),'N
                 {
                     if (!(upResult = MyUtility.Tool.ProcessWithDatatable(ldt, string.Empty, sqlinsert, out a)))
                     {
+                        scope.Dispose();
                         this.ShowErr(upResult);
                         return;
                     }
