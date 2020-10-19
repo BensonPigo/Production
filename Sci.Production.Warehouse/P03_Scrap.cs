@@ -90,16 +90,18 @@ from
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 outer apply(
 select  location = stuff((select ',' + x.location								
-from(select location = stuff((select ',' + t.MtlLocationID 
+from(select distinct location = stuff((select ',' + t.MtlLocationID 
 		from
 			(SELECT MtlLocationID 
 				from FtyInventory fty 
 				join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-				Where sd.FromPOID = fty.poid and sd.Fromseq1 = fty.seq1 and sd.FromSeq2 = fty.seq2 and sd.FromRoll = fty.Roll and sd.FromRoll = fty.Dyelot
-				and MtlLocationID != '' and MtlLocationID is not null)t 
+				Where sd.FromPOID = fty.poid and sd.Fromseq1 = fty.seq1 and sd.FromSeq2 = fty.seq2 and sd.FromRoll = fty.Roll and sd.FromDyelot = fty.Dyelot
+                    and sd.FromStockType = fty.StockType
+				    and MtlLocationID != '' and MtlLocationID is not null)t 
 		for xml path('')),1,1,'') 
 from SubTransfer_Detail sd
-where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
+where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' and sd.FromDyelot = b.FromDyelot
+and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
 )x			
 for xml path('')),1,1,'') 
 ) MtlLocation  
@@ -116,24 +118,9 @@ for xml path('')),1,1,'')
 	,inqty = 0 
 	,outqty = 0
 	,adjustQty = (QtyAfter - QtyBefore) 
-	,MtlLocation.location
+	,Location  = ''
     ,a.EditDate , a.issuedate
-	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK)   
-	outer apply(
-select  location = stuff((select ',' + x.location								
-from(select location = stuff((select ',' + t.MtlLocationID 
-		from
-			(SELECT MtlLocationID 
-				from FtyInventory fty 
-				join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-				Where ad.poid = fty.poid and ad.seq1 = fty.seq1 and ad.seq2 = fty.seq2 and ad.Roll = fty.Roll and ad.Dyelot = fty.Dyelot
-				and MtlLocationID != '' and MtlLocationID is not null)t 
-		for xml path('')),1,1,'') 
-from Adjust_Detail ad
-where b.id = ad.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-)x			
-for xml path('')),1,1,'') 
-) MtlLocation       
+	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK)         
 	where  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
     and a.Status='Confirmed'
     and type in ('O','R')
