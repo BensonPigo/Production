@@ -327,11 +327,16 @@ order by bundlegroup";
                 }
             }
 
+            this.QueryBundle_Detail_Order();
+        }
+
+        private void QueryBundle_Detail_Order()
+        {
             string sqlcmd = $@"select distinct [SP#] = OrderID from Bundle_Detail_Order where ID = '{this.CurrentMaintain["ID"]}' order by OrderID";
-            dRes = DBProxy.Current.Select(null, sqlcmd, out this.dtBundle_Detail_Order);
-            if (!dRes)
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dtBundle_Detail_Order);
+            if (!result)
             {
-                this.ShowErr(dRes);
+                this.ShowErr(result);
             }
         }
 
@@ -346,6 +351,19 @@ order by bundlegroup";
             this.bundle_Detail_allpart_Tb.Clear();
             this.bundle_Detail_Art_Tb.Clear();
             this.bundle_Detail_Qty_Tb.Clear();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            this.QueryBundle_Detail_Order();
+            if (this.CurrentMaintain != null && this.dtBundle_Detail_Order.Rows.Count > 1)
+            {
+                MyUtility.Msg.WarningBox($"Cannot edit if SP# more than one, please delete this ID:{this.CurrentMaintain["ID"]} and create a new one.");
+                return false;
+            }
+
+            return base.ClickEditBefore();
         }
 
         /// <inheritdoc/>
