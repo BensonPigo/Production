@@ -85,26 +85,20 @@ from
 					   else 0 end 
 	,outqty=  case type when 'C' then (b.Qty) else 0 end
 	,adjustQty = 0
-	,Location  = MtlLocation.location
+	,Location  = ToLocation.location
     ,a.EditDate , a.issuedate
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 outer apply(
-select  location = stuff((select ',' + x.location								
-from(select distinct location = stuff((select ',' + t.MtlLocationID 
-		from
-			(SELECT MtlLocationID 
-				from FtyInventory fty 
-				join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-				Where sd.FromPOID = fty.poid and sd.Fromseq1 = fty.seq1 and sd.FromSeq2 = fty.seq2 and sd.FromRoll = fty.Roll and sd.FromDyelot = fty.Dyelot
-                    and sd.FromStockType = fty.StockType
-				    and MtlLocationID != '' and MtlLocationID is not null)t 
-		for xml path('')),1,1,'') 
-from SubTransfer_Detail sd
-where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' and sd.FromDyelot = b.FromDyelot
-and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
-)x			
-for xml path('')),1,1,'') 
-) MtlLocation  
+    select  location = stuff(
+        (
+            select ',' + x.location								
+            from(select distinct location = sd.ToLocation 
+            from SubTransfer_Detail sd
+            where Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}' 
+            and sd.FromDyelot = b.FromDyelot and sd.FromRoll = b.FromRoll and sd.FromStockType = b.FromStockType
+        )x			
+    for xml path('')),1,1,'') 
+) ToLocation  
 	where  Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
 	and a.id = b.id
     and a.Status='Confirmed'
@@ -152,7 +146,7 @@ for xml path('')),1,1,'')
             this.gridScrapList.DataSource = this.bindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridScrapList)
                  .Text("issuedate", header: "Date", width: Widths.AnsiChars(10))
-                 .Text("ID", header: "Transaction ID", width: Widths.AnsiChars(13))
+                 .Text("ID", header: "Transaction ID", width: Widths.AnsiChars(14))
                  .Text("Name", header: "Name", width: Widths.AnsiChars(35))
                  .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutQty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
@@ -169,7 +163,7 @@ for xml path('')),1,1,'')
                  .Numeric("OutQty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("adjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
-                 .Text("Location", header: "Location", width: Widths.AnsiChars(15))
+                 .Text("Location", header: "To Location", width: Widths.AnsiChars(15))
                  ;
         }
 
