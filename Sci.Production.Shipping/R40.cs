@@ -2829,6 +2829,8 @@ from (
         {
             this.InvokeRefreshGridExcelStatus(strExcelMsg, "Running");
             int excelMaxRow = 1000000;
+            int maxLoadRow = 500000;
+            int loadTimes = Convert.ToInt32(Math.Ceiling((decimal)excelMaxRow / (decimal)maxLoadRow));
             DataTable dt = new DataTable();
             DataTable dtCnt = new DataTable();
 
@@ -2859,31 +2861,47 @@ from (
                 excel.DisplayAlerts = false;
                 Utility.Report.ExcelCOM comDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excel);
 
-                int sheetCnt = (rowCnt / excelMaxRow) + 1;
+                int sheetCnt = Convert.ToInt32(Math.Ceiling((decimal)rowCnt / (decimal)excelMaxRow));
 
                 for (int i = 0; i < sheetCnt; i++)
                 {
-                    int startRow = (i * excelMaxRow) + 1;
-                    int endRow = (i + 1) * excelMaxRow;
-
-                    lock (this.connQueryData)
-                    {
-                        result = DBProxy.Current.SelectByConn(this.connQueryData, this.GetDetailDataSql(detailExcel, false, startRow, endRow), out dt);
-                    }
-
-                    if (!result)
-                    {
-                        this.InvokeRefreshGridExcelStatus(strExcelMsg, result.GetException().ToString());
-                        return;
-                    }
-
                     Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
                     Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 2];
                     worksheetA.Copy(worksheetB);
                     ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[i + 1]).Select();
-                    dt.Columns.RemoveAt(0);
-                    comDetail.WriteTable(dt, 3);
-                    this.DataTableClearAll(dt);
+
+                    int sheetMaxRow = (i + 1) * excelMaxRow;
+
+                    for (int j = 0; j < loadTimes; j++)
+                    {
+                        int startRow = (i * excelMaxRow) + (j * maxLoadRow) + 1;
+                        int endRow = startRow + maxLoadRow - 1;
+
+                        if (endRow > sheetMaxRow)
+                        {
+                            endRow = sheetMaxRow;
+                        }
+
+                        if (startRow > rowCnt)
+                        {
+                            break;
+                        }
+
+                        lock (this.connQueryData)
+                        {
+                            result = DBProxy.Current.SelectByConn(this.connQueryData, this.GetDetailDataSql(detailExcel, false, startRow, endRow), out dt);
+                        }
+
+                        if (!result)
+                        {
+                            this.InvokeRefreshGridExcelStatus(strExcelMsg, result.GetException().ToString());
+                            return;
+                        }
+
+                        dt.Columns.RemoveAt(0);
+                        comDetail.WriteTable(dt, (j * maxLoadRow) + 3);
+                        this.DataTableClearAll(dt);
+                    }
                 }
 
                 ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheetCnt + 1]).Delete();
