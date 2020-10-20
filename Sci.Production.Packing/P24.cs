@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Transactions;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -551,6 +552,10 @@ WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPi
 
             this.RenewData();
             this.ChangCell();
+
+            // 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         /// <inheritdoc/>
@@ -588,6 +593,10 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
         protected override void ClickDeleteAfter()
         {
             base.ClickDeleteAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
             this.ReloadDatas();
         }
 

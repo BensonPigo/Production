@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -145,6 +146,20 @@ ORDER BY CAST(pd.CTNStartNo as int)
             bool canCanEdit = Prgs.GetAuthority(Env.User.UserID, "P27. Shipping Mark Stamp (for GenSong)", "CanEdit");
 
             this.btnGenerate.Enabled = !this.EditMode && canCanEdit;
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDelete()
+        {
+            #region ISP20201607 資料交換 - Gensong
+            if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
+            return base.ClickDelete();
         }
 
         private void BtnGenerate_Click(object sender, EventArgs e)
