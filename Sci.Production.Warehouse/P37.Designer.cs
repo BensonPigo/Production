@@ -45,8 +45,8 @@
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.labelRefundReason = new Sci.Win.UI.Label();
             this.labelAction = new Sci.Win.UI.Label();
-            this.txtwhseReasonRefundReason = new Sci.Production.Class.TxtwhseReason();
             this.txtwhseRefundAction = new Sci.Production.Class.TxtwhseRefundAction();
+            this.txtwhseReasonRefundReason = new Sci.Production.Class.TxtwhseReason();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -331,10 +331,23 @@
             this.labelAction.TabIndex = 63;
             this.labelAction.Text = "Action";
             // 
+            // txtwhseRefundAction
+            // 
+            this.txtwhseRefundAction.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "actionid", true));
+            this.txtwhseRefundAction.DisplayBox1Binding = "";
+            this.txtwhseRefundAction.IsSupportJunk = false;
+            this.txtwhseRefundAction.Location = new System.Drawing.Point(128, 73);
+            this.txtwhseRefundAction.Name = "txtwhseRefundAction";
+            this.txtwhseRefundAction.Size = new System.Drawing.Size(451, 27);
+            this.txtwhseRefundAction.TabIndex = 2;
+            this.txtwhseRefundAction.TextBox1Binding = "";
+            this.txtwhseRefundAction.WhseReason = this.txtwhseReasonRefundReason;
+            // 
             // txtwhseReasonRefundReason
             // 
             this.txtwhseReasonRefundReason.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "whsereasonID", true));
             this.txtwhseReasonRefundReason.DisplayBox1Binding = "";
+            this.txtwhseReasonRefundReason.IsSupportJunk = false;
             this.txtwhseReasonRefundReason.Location = new System.Drawing.Point(130, 42);
             this.txtwhseReasonRefundReason.Name = "txtwhseReasonRefundReason";
             this.txtwhseReasonRefundReason.Size = new System.Drawing.Size(386, 27);
@@ -342,17 +355,6 @@
             this.txtwhseReasonRefundReason.TextBox1Binding = "";
             this.txtwhseReasonRefundReason.Type = "RR";
             this.txtwhseReasonRefundReason.Validated += new System.EventHandler(this.TxtwhseReasonRefundReason_Validated);
-            // 
-            // txtwhseRefundAction
-            // 
-            this.txtwhseRefundAction.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "actionid", true));
-            this.txtwhseRefundAction.DisplayBox1Binding = "";
-            this.txtwhseRefundAction.Location = new System.Drawing.Point(128, 73);
-            this.txtwhseRefundAction.Name = "txtwhseRefundAction";
-            this.txtwhseRefundAction.Size = new System.Drawing.Size(451, 27);
-            this.txtwhseRefundAction.TabIndex = 2;
-            this.txtwhseRefundAction.TextBox1Binding = "";
-            this.txtwhseRefundAction.WhseReason = this.txtwhseReasonRefundReason;
             // 
             // P37
             // 
@@ -370,6 +372,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P37";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P37. Return Receiving Material ";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";

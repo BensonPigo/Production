@@ -20,6 +20,12 @@ namespace Sci.Production.Class
         }
 
         /// <summary>
+        /// 是否要顯示 Junk 的資料
+        /// </summary>
+        [Description("是否要顯示 Junk 的資料")]
+        public bool IsSupportJunk { get; set; } = true;
+
+        /// <summary>
         /// 選擇畫面上的txtwhseReason自訂控制項名稱。例如：txtWhseReason1
         /// </summary>
         [Category("Custom Properties")]
@@ -52,10 +58,22 @@ namespace Sci.Production.Class
         {
           // base.OnValidating(e);
             string str = this.TextBox1.Text;
+            string sqlFilter = string.Empty;
+            if (!this.IsSupportJunk)
+            {
+                sqlFilter = " and Junk = 0";
+            }
+
             if (!string.IsNullOrWhiteSpace(str) && str != this.TextBox1.OldValue)
             {
                 string actionCode = MyUtility.GetValue.Lookup("actioncode", "RR" + this.WhseReason.TextBox1.Text, "WhseReason", "Type+ID");
-                string sqlcmd = string.Format(@"select Id, Description from WhseReason WITH (NOLOCK) where type ='RA'and id in ({0}) and id in ('{1}')", actionCode, str);
+                if (actionCode == string.Empty)
+                {
+                    MyUtility.Msg.WarningBox("cannot found data!", "Warning");
+                    return;
+                }
+
+                string sqlcmd = $@"select Id, Description from WhseReason WITH (NOLOCK) where type ='RA'and id in ({actionCode}) and id in ('{str}') {sqlFilter}";
 
                 // if (!MyUtility.Check.Seek(str, "WhseReason", "ID"))
                 if (!MyUtility.Check.Seek(sqlcmd))
@@ -69,7 +87,7 @@ namespace Sci.Production.Class
                 }
 
                 DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason WITH (NOLOCK) where ID='{0}' and Type='RA'", str), out temp))
+                if (MyUtility.Check.Seek($@"Select Description from WhseReason WITH (NOLOCK) where ID='{str}' and Type='RA' {sqlFilter}", out temp))
                 {
                     this.DisplayBox1.Text = temp[0].ToString();
                 }
@@ -88,14 +106,26 @@ namespace Sci.Production.Class
         // }
         private void TextBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            string sqlFilter = string.Empty;
+            if (!this.IsSupportJunk)
+            {
+                sqlFilter = " and Junk = 0";
+            }
+
             string actionCode = MyUtility.GetValue.Lookup("actioncode", "RR" + this.WhseReason.TextBox1.Text, "WhseReason", "Type+ID");
             if (actionCode == string.Empty)
             {
-                MyUtility.Msg.WarningBox("can't fount data!", "Warning");
+                MyUtility.Msg.WarningBox("cannot found data!", "Warning");
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select Id, Description from WhseReason WITH (NOLOCK) where type ='RA' " + string.Format(" and id in ({0})", actionCode), "10,30", this.TextBox1.Text);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                $@"
+select Id, Description from WhseReason WITH (NOLOCK) 
+where type ='RA' {$" and id in ({actionCode})"}
+{sqlFilter}
+", "10,30",
+                this.TextBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
