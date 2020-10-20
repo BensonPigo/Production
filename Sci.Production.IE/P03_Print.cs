@@ -992,6 +992,11 @@ order by NO
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
                 int m = 0;
 
+                if (listMax_ct.Count == 0)
+                {
+                    listMax_ct.Add(0);
+                }
+
                 norow = MyUtility.Convert.GetInt(endRow) - (listMax_ct[0] + 1);
                 foreach (DataRow nodr in nodist.Rows)
                 {
@@ -1124,6 +1129,11 @@ order by NO
                 worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
                 int m = 0;
+
+                if (listMax_ct.Count == 0)
+                {
+                    listMax_ct.Add(0);
+                }
 
                 norow = MyUtility.Convert.GetInt(endRow) - (listMax_ct[0] + 1);
                 foreach (DataRow nodr in nodist.Rows)
