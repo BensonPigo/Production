@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.BtnQuery = new Sci.Win.UI.Button();
             this.dateInvDate = new Sci.Win.UI.DateRange();
             this.comboShipper = new Sci.Win.UI.ComboBox();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
@@ -40,7 +41,6 @@
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
-            this.BtnQuery = new Sci.Win.UI.Button();
             this.BtnSave = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -61,8 +61,18 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1118, 64);
+            this.panel1.Size = new System.Drawing.Size(1144, 64);
             this.panel1.TabIndex = 115;
+            // 
+            // BtnQuery
+            // 
+            this.BtnQuery.Location = new System.Drawing.Point(1026, 16);
+            this.BtnQuery.Name = "BtnQuery";
+            this.BtnQuery.Size = new System.Drawing.Size(80, 30);
+            this.BtnQuery.TabIndex = 0;
+            this.BtnQuery.Text = "Query";
+            this.BtnQuery.UseVisualStyleBackColor = true;
+            this.BtnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // dateInvDate
             // 
@@ -136,7 +146,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 64);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1118, 398);
+            this.panel2.Size = new System.Drawing.Size(1144, 398);
             this.panel2.TabIndex = 116;
             // 
             // grid
@@ -160,7 +170,7 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1118, 398);
+            this.grid.Size = new System.Drawing.Size(1144, 398);
             this.grid.TabIndex = 1;
             this.grid.TabStop = false;
             // 
@@ -170,18 +180,8 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 412);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1118, 50);
+            this.panel3.Size = new System.Drawing.Size(1144, 50);
             this.panel3.TabIndex = 117;
-            // 
-            // BtnQuery
-            // 
-            this.BtnQuery.Location = new System.Drawing.Point(1026, 16);
-            this.BtnQuery.Name = "BtnQuery";
-            this.BtnQuery.Size = new System.Drawing.Size(80, 30);
-            this.BtnQuery.TabIndex = 0;
-            this.BtnQuery.Text = "Query";
-            this.BtnQuery.UseVisualStyleBackColor = true;
-            this.BtnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
             // 
             // BtnSave
             // 
@@ -197,7 +197,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1118, 462);
+            this.ClientSize = new System.Drawing.Size(1144, 462);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
