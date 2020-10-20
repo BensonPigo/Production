@@ -365,8 +365,8 @@ select 	 v.ID
         , v.BrandID
         , v.Category 
         , v.seasonid 
-        , va.Article
-        , vs.SizeCode
+        , vc.Article
+        , vc.SizeCode
         , vdd.HSCode
         , vdd.NLCode
         , vdd.RefNo
@@ -384,17 +384,18 @@ inner join (
 	select 	vc.StyleID
 			,vc.BrandID
 			,vc.Category
-            ,vc.sizecode
+            ,va.Article
+            ,vs.sizecode
 			,MAX(vc.CustomSP) as CustomSP
 	from VNConsumption vc WITH (NOLOCK) 
+    inner join VNConsumption_Article va WITH (NOLOCK)on  va.ID = vc.ID 
+    inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = vc.ID 
 	where vc.VNContractID = @contract
-	group by vc.StyleID,vc.BrandID,vc.Category,vc.sizecode
+	group by vc.StyleID,vc.BrandID,vc.Category ,va.Article, vs.sizecode
 ) vc on vc.CustomSP = v.CustomSP
 inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
 inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on vdd.ID = vd.ID 
                                                            and vdd.NLCode = vd.NLCode
-inner join VNConsumption_Article va WITH (NOLOCK)on  va.ID = v.ID 
-inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = v.ID 
 where v.VNContractID = @contract
 
 
@@ -738,6 +739,61 @@ from (
 ) a
 
 /*特定日期區間資料*/
+select  POID,
+        Seq1,
+        Seq2,
+        StockType,
+        Roll,
+        Dyelot,
+        [Qty] = sum(Qty)
+into   #SubTransfer
+from (
+    select	[POID] = b.FromPOID,
+    		[Seq1] = b.FromSeq1,
+    		[Seq2] = b.FromSeq2,
+    		[StockType] = b.FromStockType,
+    		[Roll] = b.FromRoll,
+    		[Dyelot] = b.FromDyelot,
+    		[Qty] = isnull(sum(b.Qty),0) 
+    from SubTransfer a
+    inner join SubTransfer_Detail b on a.Id=b.Id
+    where a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+    and a.Status='Confirmed'
+    and a.Type in ('E','D','A','B')
+    group by	b.FromPOID,
+    			b.FromSeq1,
+    			b.FromSeq2,
+    			b.FromStockType,
+    			b.FromRoll,
+    			b.FromDyelot
+    union all
+    select	[POID] = b.ToPOID,
+    		[Seq1] = b.ToSeq1,
+    		[Seq2] = b.ToSeq2,
+    		[StockType] = b.ToStockType,
+    		[Roll] = b.ToRoll,
+    		[Dyelot] = b.ToDyelot,
+    		[Qty] = - isnull(sum(b.Qty),0) 
+    from SubTransfer a
+    inner join SubTransfer_Detail b on a.Id=b.Id
+    where  a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
+    and a.Status='Confirmed'
+    and a.Type in ('C','A','B')
+    group by	b.ToPOID,
+    			b.ToSeq1,
+    			b.ToSeq2,
+    			b.ToStockType,
+    			b.ToRoll,
+    			b.ToDyelot
+    ) a
+group by    POID,
+            Seq1,
+            Seq2,
+            StockType,
+            Roll,
+            Dyelot
+
+
 select * 
 into #tmpWHQty2
 from (
@@ -757,11 +813,11 @@ from (
 		                            where fid.Ukey = fi.UKey 
 		                            for xml path(''))
 		                           ,'')
-	        ,[Qty] = IIF(WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty != 0, dbo.getVNUnitTransfer(
+	        ,[Qty] = IIF(WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty != 0, dbo.getVNUnitTransfer(
 			        isnull(f.Type, '')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit, '')
-			        ,WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty
+			        ,WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty
 			        ,isnull(f.Width,0)
 			        ,isnull(f.PcsWidth,0)
 			        ,isnull(f.PcsLength,0)
@@ -775,10 +831,12 @@ from (
                         ,default)
 			        , 0)
 	        , [W/House Unit] = f.CustomsUnit
-	        , [W/House Qty(Stock Unit)] = WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty
+	        , [W/House Qty(Stock Unit)] = WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty
 	        , [Stock Unit] = psd.StockUnit
 	from FtyInventory fi WITH (NOLOCK)  --EDIT
     inner join Orders o WITH (NOLOCK) on o.id= fi.POID
+    inner join #SubTransfer WHSubTransfer on   WHSubTransfer.PoId = fi.POID and WHSubTransfer.Seq1=fi.seq1 and WHSubTransfer.Seq2=fi.Seq2 and
+		                            WHSubTransfer.StockType = fi.StockType and WHSubTransfer.Roll = fi.Roll and WHSubTransfer.Dyelot = fi.Dyelot
 	left join PO_Supp_Detail psd WITH (NOLOCK) on fi.POID = psd.ID 
                                                   and psd.SEQ1 = fi.Seq1 
                                                   and psd.SEQ2 = fi.Seq2
@@ -842,26 +900,6 @@ from (
 		and a.Type in ('A','B')
 	)WH34_35
 	outer apply(
-		select Qty = isnull(sum(b.Qty),0) 
-		from SubTransfer a
-		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.FromFtyInventoryUkey = fi.Ukey and b.FromPOID = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
-		and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-		and a.Type in ('E','D')
-	)WHSubTransfer_Plus
-	outer apply(
-		select Qty = - isnull(sum(b.Qty),0) 
-		from SubTransfer a
-		inner join SubTransfer_Detail b on a.Id=b.Id
-		where b.ToPOID = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
-		and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
-		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
-		and a.Status='Confirmed'
-		and a.Type in ('C')
-	)WHSubTransfer_Reduce
-	outer apply(
 		select Qty = - isnull(sum(b.Qty),0) 
 		from TransferIn a
 		inner join TransferIn_Detail b on a.Id=b.Id
@@ -899,9 +937,8 @@ from (
 		and a.Status='Confirmed'
 		and a.Type in ('A','B')
 	)WHBorrowBack_Reduce
-
 	where (fi.StockType = 'B' or fi.StockType = 'I')
-    and WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer_Plus.Qty+WHSubTransfer_Reduce.Qty != 0
+    and WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty != 0
 		  and exists (
 			select 1 from Receiving a
 			inner join Receiving_Detail b on a.Id=b.Id
@@ -947,23 +984,6 @@ from (
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			and a.Type in ('A','B')
-			union all
-			select 1 from SubTransfer a
-			inner join SubTransfer_Detail b on a.Id=b.Id
-			where b.FromFtyInventoryUkey = fi.Ukey and b.FromPOID = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
-			and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
-			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('E','D')
-            union all
-			select 1 
-			from SubTransfer a
-			inner join SubTransfer_Detail b on a.Id=b.Id
-			where b.ToPOID = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
-			and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
-			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
-			and a.Status='Confirmed'
-			and a.Type in ('C')
 			union all
 			select 1 from TransferIn a
 			inner join TransferIn_Detail b on a.Id=b.Id
@@ -1540,50 +1560,84 @@ group by    POID	,
             CustomsUnit,
 	        StockUnit
 
-select  [HSCode] = IIF(tw.HSCode is not null, tw.HSCode, ti.HSCode)
-        , [NLCode] = IIF(tw.NLCode is not null, tw.NLCode, ti.NLCode)
-        , [POID] = IIF(tw.POID is not null, tw.POID, ti.POID)
-        , [Refno] = IIF(tw.Refno is not null, tw.Refno, ti.Refno)   
-        , [MaterialType] = IIF(tw.MaterialType is not null, tw.MaterialType, ti.MaterialType)   
-        , [Description] = IIF(tw.Description is not null, tw.Description, ti.Description)   
-        , [Qty] = isnull(ti.Qty,0) - isnull(tw.Qty,0)
-        , [CustomsUnit] = IIF(tw.CustomsUnit is not null, tw.CustomsUnit, ti.CustomsUnit)
-        , [StockQty] =
-			case when tw.StockUnit is not null and ti.StockUnit like '%cone%'  then -- 資料以 Already Sewing Output(#tmpSPNotCloseSewingOutput) 為主(單位)
-					isnull(ti.StockQty,0)*
-					isnull((select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = 'M')*
-					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = tw.StockUnit),1)
-					-
-					isnull(tw.StockQty,0)
-				when tw.StockUnit is not null then
-					isnull(ti.StockQty,0)*
-					isnull((select RateValue from dbo.View_Unitrate where FROM_U = ti.StockUnit and TO_U = tw.StockUnit),1)
-					-
-					isnull(tw.StockQty,0)					
-				when tw.StockUnit is null and tw.StockUnit like '%cone%' then
-					isnull(ti.StockQty,0)
-					-
-					isnull(tw.StockQty,0)*
-					isnull((select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = 'M')*
-					(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = ti.StockUnit),1)
-				else
-					isnull(ti.StockQty,0)
-					-
-					isnull(tw.StockQty,0)*
-					isnull((select RateValue from dbo.View_Unitrate where FROM_U = tw.StockUnit and TO_U = ti.StockUnit),1)
+select	HSCode, 
+		NLCode,
+		POID,
+		RefNo,
+		MaterialType,
+		Qty,
+		CustomsUnit,
+		StockQty,
+		StockUnit,
+        Description,
+		[NewStockUnit] = FIRST_VALUE(StockUnit) OVER (Partition by POID,HSCode,NLCode,Refno,MaterialType ORDER BY POID desc)
+into #tmpWIP_step1
+from (
+	select	HSCode, 
+			NLCode,
+			POID,
+			RefNo,
+			MaterialType,
+			[Qty] = -Qty,
+			CustomsUnit,
+			[StockQty] = -StockQty,
+			StockUnit,
+            Description
+	from #tmpSPNotCloseSewingOutput_forwip3
+	union all
+	select	HSCode, 
+			NLCode,
+			POID,
+			RefNo,
+			MaterialType,
+			Qty,
+			CustomsUnit,
+			StockQty,
+			StockUnit,
+            Description
+	from #tmpIssueQty_forwip3
+) a
 
-			end
-        , [StockUnit] = IIF(tw.StockUnit is not null,tw.StockUnit,ti.StockUnit)
-into #tmpWIPDetail
-from #tmpIssueQty_forwip3 ti
-full outer join #tmpSPNotCloseSewingOutput_forwip3 tw on tw.POID = ti.POID 
-                                                     and ti.HSCode = tw.HSCode 
-                                                     and tw.NLCode = ti.NLCode 
-                                                     and tw.Refno = ti.Refno 
-                                                     and tw.MaterialType = ti.MaterialType 
-                                                     and ti.CustomsUnit = tw.CustomsUnit 
-                                                     and ti.StockUnit = tw.StockUnit
-order by IIF(tw.POID is null,ti.POID,tw.POID)
+
+select	HSCode, 
+		NLCode,
+		POID,
+		RefNo,
+		MaterialType,
+		Qty,
+		CustomsUnit,
+        Description,
+		[StockQty] = case	when NewStockUnit = StockUnit then StockQty
+							when StockUnit like '%cone%' then isnull((select RateValue from dbo.View_Unitrate where FROM_U = StockUnit and TO_U = 'M')*
+																	(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = NewStockUnit),1) *
+															  StockQty
+							else isnull((select RateValue from dbo.View_Unitrate where FROM_U = StockUnit and TO_U = NewStockUnit),1) * 
+								 StockQty
+							end,
+		[StockUnit] = NewStockUnit
+into #tmpWIP_step2
+from #tmpWIP_step1
+
+select  HSCode, 
+		NLCode,
+		POID,
+		RefNo,
+		MaterialType,
+        Description,
+		[Qty] = sum(Qty),
+		CustomsUnit,
+		[StockQty] = sum(StockQty),
+		StockUnit
+into    #tmpWIPDetail
+from #tmpWIP_step2
+group by    HSCode, 
+		    NLCode,
+		    POID,
+		    RefNo,
+		    MaterialType,
+            Description,
+            CustomsUnit,
+            StockUnit
 
 ----------------------------------------------------------------
 --------- 04 Production成品庫存(Prod. Qty Detail) --------------
@@ -2761,6 +2815,7 @@ from (
                 Excel.Worksheet worksheetSummary = excelSummary.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 worksheetSummary.Cells[1, 1] = "Summary-" + this.contract + "(" + ftys + ")";
                 this.SaveExcelwithName(excelSummary, "Summary");
+                this.HideLoadingText();
                 this.HideWaitMessage();
             }
 
@@ -2773,7 +2828,7 @@ from (
         private void CreateExcel(string filename, DetailExcel detailExcel, string strExcelMsg, string ftys)
         {
             this.InvokeRefreshGridExcelStatus(strExcelMsg, "Running");
-            int excelMaxRow = 500000;
+            int excelMaxRow = 1000000;
             DataTable dt = new DataTable();
             DataTable dtCnt = new DataTable();
 
