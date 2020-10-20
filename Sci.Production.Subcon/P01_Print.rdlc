@@ -9,10 +9,10 @@
               <Width>3.08497cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.68382cm</Width>
+              <Width>4.41082cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.5226cm</Width>
+              <Width>1.8078cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.97102cm</Width>
@@ -136,7 +136,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -444,23 +444,23 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="poQTY">
+                    <Textbox Name="PoQTY">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!poQTY.Value</Value>
+                              <Value>=Fields!PoQTY.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Left</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>poQTY</rd:DefaultName>
+                      <rd:DefaultName>PoQTY</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -653,7 +653,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Left>0.54339cm</Left>
         <Height>1.27469cm</Height>
-        <Width>19.73581cm</Width>
+        <Width>19.74801cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2183,8 +2183,8 @@
           <DataField>PCS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="poQTY">
-          <DataField>poQTY</DataField>
+        <Field Name="PoQTY">
+          <DataField>PoQTY</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="QtyGMT">
