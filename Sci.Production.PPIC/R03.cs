@@ -1310,6 +1310,7 @@ With SubProcess  as (
 		outer apply(select  PUnit=iif('{3}'='true' and ProductionUnit = 'TMS','CPU',ProductionUnit))p
         WHERE   ProductionUnit <> '' 
                 and Classify in ({0}) 
+				and ID<> 'PRINTING PPU' 
         
         union all
         SELECT  ID
@@ -1545,10 +1546,10 @@ select  ot.ID
                                                   , '')
         , PoSupp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ap.Abb, ot.LocalSuppID) , '')
         , AUnitRno = a.rno 
-        , PUnitRno = a1.rno
+        , PUnitRno = iif(ot.ArtworkTypeID='PRINTING PPU', a.rno , a1.rno)
         , NRno = a2.rno
         , TAUnitRno = a3.rno
-        , TPUnitRno = a4.rno 
+        , TPUnitRno = iif(ot.ArtworkTypeID='PRINTING PPU', a3.rno, a4.rno )
         , TNRno = a5.rno  
 from Order_TmsCost ot WITH (NOLOCK) 
 left join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID

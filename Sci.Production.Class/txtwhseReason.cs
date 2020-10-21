@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -18,6 +19,12 @@ namespace Sci.Production.Class
         {
             this.InitializeComponent();
         }
+
+        /// <summary>
+        /// 是否要顯示 Junk 的資料
+        /// </summary>
+        [Description("是否要顯示 Junk 的資料")]
+        public bool IsSupportJunk { get; set; } = true;
 
         /// <summary>
         /// 填入Reason Type。例如：RR
@@ -53,10 +60,16 @@ namespace Sci.Production.Class
            // base.OnValidating(e);
             string str = this.TextBox1.Text;
 
+            string sqlFilter = string.Empty;
+            if (!this.IsSupportJunk)
+            {
+                sqlFilter = " and Junk = 0";
+            }
+
             // if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             if (!string.IsNullOrWhiteSpace(str))
             {
-                if (!MyUtility.Check.Seek(this.Type + str, "WhseReason", "type+ID"))
+                if (!MyUtility.Check.Seek($@"Select ID, Description from WhseReason WITH (NOLOCK) where ID='{str}' and Type='{this.Type}' {sqlFilter}"))
                 {
                     this.DisplayBox1.Text = string.Empty;
                     this.TextBox1.Text = string.Empty;
@@ -67,7 +80,7 @@ namespace Sci.Production.Class
                 }
 
                 DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Description from WhseReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, this.Type), out temp))
+                if (MyUtility.Check.Seek($@"Select Description from WhseReason WITH (NOLOCK) where ID='{str}' and Type='{this.Type}' {sqlFilter}", out temp))
                 {
                     this.DisplayBox1.Text = temp[0].ToString();
                 }
@@ -104,8 +117,14 @@ namespace Sci.Production.Class
         // }
         private void TextBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            string sqlFilter = string.Empty;
+            if (!this.IsSupportJunk)
+            {
+                sqlFilter = " and Junk = 0";
+            }
+
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                string.Format("Select Id, Description from WhseReason WITH (NOLOCK) where type='{0}' order by id", this.Type), "10,30", this.TextBox1.Text);
+                $@"Select Id, Description from WhseReason WITH (NOLOCK) where type='{this.Type}' {sqlFilter} order by id", "10,30", this.TextBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
