@@ -16,7 +16,9 @@ namespace Sci.Production.Quality
     {
         private readonly List<SqlParameter> Parameters = new List<SqlParameter>();
         private readonly StringBuilder Sqlcmd = new StringBuilder();
+        private string sqlCol;
         private DataTable PrintData;
+        private DataTable CustomColumnDt;
 
         /// <inheritdoc/>
         public R51(ToolStripMenuItem menuitem)
@@ -26,7 +28,7 @@ namespace Sci.Production.Quality
             this.comboMDivision1.SetDefalutIndex();
             this.comboFactory1.SetDataSource();
             MyUtility.Tool.SetupCombox(this.comboShift, 1, 1, ",Day,Night");
-            DualResult result = DBProxy.Current.Select(null, "select SubProcessID = '' union all select distinct SubProcessID from SubProDefectCode", out DataTable dt);
+            DualResult result = DBProxy.Current.Select(null, "select distinct SubProcessID from SubProDefectCode", out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -40,6 +42,8 @@ namespace Sci.Production.Quality
         {
             this.Parameters.Clear();
             this.Sqlcmd.Clear();
+            this.sqlCol = string.Empty;
+            this.CustomColumnDt = null;
             if (this.dateInspectionDate.Value1.Empty() && this.txtSP.Text.Empty())
             {
                 MyUtility.Msg.WarningBox("<Inspection Date>, <SP#> can not all empty!");
@@ -47,20 +51,48 @@ namespace Sci.Production.Quality
             }
 
             string formatCol;
+            string formatCol2 = string.Empty;
+            string formatCol3 = string.Empty;
             string formatJoin;
+            string s_d = $@"
+outer apply(select ttlMINUTE_RD = sum(DATEDIFF(MINUTE, StartResolveDate, EndResolveDate)) from SubProInsRecord_ResponseTeam where EndResolveDate is not null and SubProInsRecordUkey = SR.Ukey)ttlMINUTE_RD
+outer apply(
+	select SubProResponseTeamID = STUFF((
+		select CONCAT(',', SubProResponseTeamID)
+		from SubProInsRecord_ResponseTeam
+		where SubProInsRecordUkey = SR.Ukey
+		order by SubProResponseTeamID
+		for xml path('')
+	),1,1,'')
+)SubProResponseTeamID
+";
 
             if (this.radioSummary.Checked)
             {
                 formatJoin = @"outer apply (select [val] = sum(SRD.DefectQty)
                                             from SubProInsRecord_Defect SRD WITH(NOLOCK)
-		                                    where SR.Ukey=SRD.SubProInsRecordUkey ) DefectQty";
+		                                    where SR.Ukey=SRD.SubProInsRecordUkey ) DefectQty" + s_d;
                 formatCol = "DefectQty.val,";
+            }
+            else if (this.radioDetail_DefectType.Checked)
+            {
+                formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey" + s_d;
+                formatCol = @"  SRD.DefectCode,
+                                SRD.DefectQty,";
             }
             else
             {
-                formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey";
+                formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
+left join SubProInsRecord_ResponseTeam SRR on SRR.SubProInsRecordUkey = SR.Ukey
+outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveDate))ttlMINUTE_RD";
                 formatCol = @"  SRD.DefectCode,
                                 SRD.DefectQty,";
+                formatCol2 = $@"SRR.StartResolveDate,
+    SRR.EndResolveDate,
+";
+                formatCol3 = $@",CustomColumn1
+";
+                this.sqlCol = $@"select AssignColumn,DisplayName from SubProCustomColumn where SubProcessID = '{this.comboSubprocess.Text}' order by AssignColumn";
             }
 
             #region where
@@ -138,9 +170,16 @@ select
     AddDate2 = SR.AddDate,
     SR.RepairedDatetime,
 	RepairedTime = iif(RepairedDatetime is null,null,
-		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
-			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
-			isnull(ttlMINUTE_D_HR, 0)))
+		concat(IIF(ttlMINUTE >= 1440, ttlMINUTE / 1440, 0), ' ',
+			IIF(ttlMINUTE_D >= 60, ttlMINUTE_D / 60, 0), ':',
+			isnull(ttlMINUTE_D_HR, 0))),
+    {formatCol2}
+	ResolveTime = iif(isnull(ttlMINUTE_RD, 0) = 0,null,
+		concat(IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD / 1440, 0), ' ',
+			IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D / 60, 0), ':',
+			isnull(ttlMINUTE_RD_D_HR, 0))),
+	SubProResponseTeamID
+    {formatCol3}
 into #tmp
 from SubProInsRecord SR WITH (NOLOCK)
 Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
@@ -148,8 +187,11 @@ Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
 {formatJoin}
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
-outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
-outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
+outer apply(select ttlMINUTE_D = IIF(ttlMINUTE >= 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
+outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D >= 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
+
+outer apply(select ttlMINUTE_RD_D = IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD - (ttlMINUTE_RD / 1440) * 1440, ttlMINUTE_RD))ttlMINUTE_RD_D
+outer apply(select ttlMINUTE_RD_D_HR = IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D - (ttlMINUTE_RD_D / 60) * 60, ttlMINUTE_RD_D))ttlMINUTE_RD_D_HR
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere1);
@@ -175,17 +217,27 @@ select
     AddDate2 = SR.AddDate,
     SR.RepairedDatetime,
 	RepairedTime = iif(RepairedDatetime is null,null,
-		concat(IIF(ttlMINUTE > 1440, ttlMINUTE / 1440, 0), ' ',
-			IIF(ttlMINUTE_D > 60, ttlMINUTE_D / 60, 0), ':',
-			isnull(ttlMINUTE_D_HR, 0)))
+		concat(IIF(ttlMINUTE >= 1440, ttlMINUTE / 1440, 0), ' ',
+			IIF(ttlMINUTE_D >= 60, ttlMINUTE_D / 60, 0), ':',
+			isnull(ttlMINUTE_D_HR, 0))),
+    {formatCol2}
+	ResolveTime = iif(isnull(ttlMINUTE_RD, 0) = 0,null,
+		concat(IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD / 1440, 0), ' ',
+			IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D / 60, 0), ':',
+			isnull(ttlMINUTE_RD_D_HR, 0))),
+	SubProResponseTeamID
+    {formatCol3}
 from SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
 {formatJoin}
 outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
-outer apply(select ttlMINUTE_D = IIF(ttlMINUTE > 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
-outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D > 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
+outer apply(select ttlMINUTE_D = IIF(ttlMINUTE >= 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
+outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D >= 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
+
+outer apply(select ttlMINUTE_RD_D = IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD - (ttlMINUTE_RD / 1440) * 1440, ttlMINUTE_RD))ttlMINUTE_RD_D
+outer apply(select ttlMINUTE_RD_D_HR = IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D - (ttlMINUTE_RD_D / 60) * 60, ttlMINUTE_RD_D))ttlMINUTE_RD_D_HR
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere2);
@@ -201,12 +253,22 @@ or (BundleNoCT > 1 and isnull(t.Orderid, '') <> '')--綁包/補料其中一個�
 
 drop table #tmp,#tmp2
 ");
+
             return true;
         }
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            if (!this.sqlCol.Empty())
+            {
+                DualResult result = DBProxy.Current.Select(null, this.sqlCol, out this.CustomColumnDt);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
             return DBProxy.Current.Select(null, this.Sqlcmd.ToString(), this.Parameters, out this.PrintData);
         }
 
@@ -224,9 +286,19 @@ drop table #tmp,#tmp2
 
             this.PrintData.Columns.Remove("BundleNoCT");
 
-            string filename = this.radioSummary.Checked ? "Quality_R51_Summary.xltx" : "Quality_R51_Detail.xltx";
+            string filename = this.radioSummary.Checked ? "Quality_R51_Summary.xltx" : this.radioDetail_DefectType.Checked ? "Quality_R51_Detail_DefectType.xltx" : "Quality_R51_Detail_Responseteam.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+            if (this.radioDetail_Responseteam.Checked && this.CustomColumnDt != null)
+            {
+                int col = 24;
+                foreach (DataRow dr in this.CustomColumnDt.Rows)
+                {
+                    worksheet.Cells[1, col] = dr["DisplayName"];
+                    col++;
+                }
+            }
 
             excelApp.Visible = true;
             #region Save & Show Excel
