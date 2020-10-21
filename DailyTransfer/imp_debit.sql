@@ -11,7 +11,7 @@ BEGIN
 declare @Sayfty table(id varchar(10)) --¤u¼t¥N½X
 insert @Sayfty select id from Production.dbo.Factory
 
-	declare @Tdebit table(id varchar(13),isinsert bit)
+	declare @Tdebit table(id varchar(13),[action] varchar(6))
 -------------Merge update Production.Debit---------------------------
 	Merge Production.dbo.Debit as t
 	Using (select * from Trade_To_Pms.dbo.Debit WITH (NOLOCK) where ResponFTY in (select id from @Sayfty ) )as s
@@ -76,11 +76,11 @@ insert @Sayfty select id from Production.dbo.Factory
 				s.ResponFTY,SubName
 				)
 		
-		output inserted.id,iif(deleted.id is null,1,0) into @Tdebit ;
+		output inserted.id,$action into @Tdebit ;
 
 -----------------Production.Debit_detail
 	Merge Production.dbo.Debit_Detail as t
-	Using (select * from  Trade_To_Pms.dbo.debit_detail WITH (NOLOCK) where id in (select id from @Tdebit where isinsert=1))as s
+	Using (select * from  Trade_To_Pms.dbo.debit_detail WITH (NOLOCK) where id in (select id from @Tdebit where [action]in('INSERT','UPDATE')))as s
 	on t.TaipeiUkey =s.ukey
 	when matched then
 		update set 
@@ -98,9 +98,6 @@ insert @Sayfty select id from Production.dbo.Factory
 	when not matched by target then
 		insert(ID,ORDERID,REASONID,Description,PRICE,Amount,UnitID,SOURCEID,QTY,ReasonNM,TaipeiUkey)
 		values(s.ID,s.ORDERID,s.REASONID,s.Description,s.PRICE,s.Amount,s.UnitID,s.SOURCEID,s.QTY,s.Reason,s.ukey );
-		
-
-declare @tLocalDebit table (id varchar(13),isinsert bit)
 
 	--LocalDebit INSERT
 	Merge Production.dbo.LocalDebit as t
@@ -111,7 +108,7 @@ declare @tLocalDebit table (id varchar(13),isinsert bit)
 		values( '1'    , Id, BrandID  , Amount   , CurrencyID		,CurrencyID, AddDate,'SCIMIS','New',
 			isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.ResponFTY),'')
 			,s.adddate,ResponFTY )
-	output inserted.id,iif(deleted.id='',1,0) into @tLocalDebit;
+	;
 
 	
 	--LocalDebit UPDATE
