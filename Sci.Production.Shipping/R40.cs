@@ -2833,7 +2833,7 @@ from (
         {
             this.InvokeRefreshGridExcelStatus(strExcelMsg, "Running");
             int excelMaxRow = 1000000;
-            int maxLoadRow = 500000;
+            int maxLoadRow = 250000;
             int loadTimes = Convert.ToInt32(Math.Ceiling((decimal)excelMaxRow / (decimal)maxLoadRow));
             DataTable dt = new DataTable();
             DataTable dtCnt = new DataTable();
