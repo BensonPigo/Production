@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.labelPulloutQty);
             this.masterpanel.Controls.Add(this.txtCustomSPNo);
             this.masterpanel.Controls.Add(this.labelBalanceQty);
-            this.masterpanel.Size = new System.Drawing.Size(892, 212);
+            this.masterpanel.Size = new System.Drawing.Size(927, 212);
             this.masterpanel.Controls.SetChildIndex(this.labelBalanceQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPulloutQty, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(892, 137);
+            this.detailpanel.Size = new System.Drawing.Size(927, 218);
             // 
             // gridicon
             // 
@@ -153,7 +153,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 137);
+            this.detailgridcont.Size = new System.Drawing.Size(927, 218);
             // 
             // detail2
             // 
@@ -169,16 +169,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(927, 468);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(927, 430);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 430);
+            this.detailbtm.Size = new System.Drawing.Size(927, 38);
             // 
             // browse
             // 
@@ -547,6 +547,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "B42";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "B42. Custom SP# and Consumption";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
