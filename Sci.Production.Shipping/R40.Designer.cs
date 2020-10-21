@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelContractNo = new Sci.Win.UI.Label();
             this.labelHSCode = new Sci.Win.UI.Label();
             this.labelNLCode = new Sci.Win.UI.Label();
@@ -38,6 +39,9 @@
             this.txtNLCode = new Sci.Win.UI.TextBox();
             this.labGenerateDate = new Sci.Win.UI.Label();
             this.dateGenerate = new Sci.Win.UI.DateBox();
+            this.gridExcelStatus = new Sci.Win.UI.Grid();
+            this.label1 = new Sci.Win.UI.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.gridExcelStatus)).BeginInit();
             this.SuspendLayout();
             // 
             // print
@@ -54,11 +58,11 @@
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(214, 175);
+            this.checkUseCustomized.Location = new System.Drawing.Point(244, 37);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(20, 182);
+            this.txtVersion.Location = new System.Drawing.Point(267, 68);
             // 
             // labelContractNo
             // 
@@ -98,7 +102,7 @@
             // label5
             // 
             this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Location = new System.Drawing.Point(20, 156);
+            this.label5.Location = new System.Drawing.Point(181, 126);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(123, 23);
             this.label5.TabIndex = 99;
@@ -152,9 +156,57 @@
             this.dateGenerate.TabIndex = 106;
             this.dateGenerate.Validating += new System.ComponentModel.CancelEventHandler(this.DateGenerate_Validating);
             // 
+            // gridExcelStatus
+            // 
+            this.gridExcelStatus.AllowUserToAddRows = false;
+            this.gridExcelStatus.AllowUserToDeleteRows = false;
+            this.gridExcelStatus.AllowUserToResizeRows = false;
+            this.gridExcelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridExcelStatus.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridExcelStatus.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridExcelStatus.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridExcelStatus.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridExcelStatus.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridExcelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridExcelStatus.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridExcelStatus.Location = new System.Drawing.Point(10, 177);
+            this.gridExcelStatus.Name = "gridExcelStatus";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridExcelStatus.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridExcelStatus.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridExcelStatus.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridExcelStatus.RowTemplate.Height = 24;
+            this.gridExcelStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridExcelStatus.ShowCellToolTips = false;
+            this.gridExcelStatus.Size = new System.Drawing.Size(448, 333);
+            this.gridExcelStatus.TabIndex = 107;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(20, 151);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(141, 23);
+            this.label1.TabIndex = 108;
+            this.label1.Text = "Excel Creation Status";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
             // R40
             // 
-            this.ClientSize = new System.Drawing.Size(470, 228);
+            this.ClientSize = new System.Drawing.Size(470, 535);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.gridExcelStatus);
             this.Controls.Add(this.dateGenerate);
             this.Controls.Add(this.labGenerateDate);
             this.Controls.Add(this.txtNLCode);
@@ -185,6 +237,9 @@
             this.Controls.SetChildIndex(this.txtNLCode, 0);
             this.Controls.SetChildIndex(this.labGenerateDate, 0);
             this.Controls.SetChildIndex(this.dateGenerate, 0);
+            this.Controls.SetChildIndex(this.gridExcelStatus, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.gridExcelStatus)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -202,5 +257,7 @@
         private Win.UI.TextBox txtNLCode;
         private Win.UI.Label labGenerateDate;
         private Win.UI.DateBox dateGenerate;
+        private Win.UI.Grid gridExcelStatus;
+        private Win.UI.Label label1;
     }
 }
