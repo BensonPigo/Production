@@ -89,7 +89,7 @@ select
 	Fabric.WeaveTypeID,
 	Composition.Composition,
 	Fabric.width,
-	Weight = RD.Weight * 1000,
+	Weight = Fabric.WeightM2,
 	Fabric.ConstructionID,
 	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
 	RD.ShipQty,
@@ -139,7 +139,7 @@ select
 	Fabric.WeaveTypeID,
 	Composition.Composition,
 	Fabric.width,
-	Weight = TD.Weight * 1000,
+	Weight = Fabric.WeightM2,
 	Fabric.ConstructionID,
 	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
 	TD.Qty,
@@ -186,7 +186,7 @@ select
 	t.WeaveTypeID,
 	t.Composition,
 	t.Width,
-	Weight = SUM(t.Weight),
+	t.Weight,
 	t.ConstructionID,
 	t.Description,
 	ShippedQty = SUM(t.ShipQty * isnull(t.Rate,1)),
@@ -199,7 +199,7 @@ select
 	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
 	t.Physical
 from #tmp1 t
-Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,
+Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight,
 t.ConstructionID,t.Description,t.POID,t.ExportId,t.SEQ,t.Dyelot,t.Physical,ID
 
 union all
@@ -210,7 +210,7 @@ select
 	t.WeaveTypeID,
 	t.Composition,
 	t.Width,
-	Weight = SUM(t.Weight),
+	t.Weight,
 	t.ConstructionID,
 	t.Description,
 	ShippedQty = SUM(t.Qty),
@@ -223,7 +223,7 @@ select
 	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
 	t.Physical
 from #tmp2 t
-Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,
+Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight,
 t.ConstructionID,t.Description,t.POID,t.SEQ,t.Dyelot,t.Physical,ID
 
 --Defect_detail 分頁
@@ -248,6 +248,7 @@ select
 	Defect.DefectRecord,
 	fd.Type,
 	fd.DescriptionEN,
+    point = isnull(Defect.point,  0),
 	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
 		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
@@ -261,6 +262,7 @@ outer apply(
 	where FIR_PhysicalDetailUKey = t.DetailUkey
 	group by SUBSTRING(x.Data,1,1)
 )Defect
+
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
@@ -286,6 +288,7 @@ select
 	Defect.DefectRecord,
 	fd.Type,
 	fd.DescriptionEN,
+    point = isnull(Defect.point,  0),
 	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
 		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
