@@ -186,7 +186,7 @@ select
 	t.WeaveTypeID,
 	t.Composition,
 	t.Width,
-	Weight = SUM(t.Weight),
+	t.Weight,
 	t.ConstructionID,
 	t.Description,
 	ShippedQty = SUM(t.ShipQty * isnull(t.Rate,1)),
@@ -199,7 +199,7 @@ select
 	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
 	t.Physical
 from #tmp1 t
-Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,
+Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight
 t.ConstructionID,t.Description,t.POID,t.ExportId,t.SEQ,t.Dyelot,t.Physical,ID
 
 union all
@@ -210,7 +210,7 @@ select
 	t.WeaveTypeID,
 	t.Composition,
 	t.Width,
-	Weight = SUM(t.Weight),
+	t.Weight,
 	t.ConstructionID,
 	t.Description,
 	ShippedQty = SUM(t.Qty),
@@ -223,7 +223,7 @@ select
 	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
 	t.Physical
 from #tmp2 t
-Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,
+Group by t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight
 t.ConstructionID,t.Description,t.POID,t.SEQ,t.Dyelot,t.Physical,ID
 
 --Defect_detail 分頁
