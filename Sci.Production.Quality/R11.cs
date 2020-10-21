@@ -89,7 +89,7 @@ select
 	Fabric.WeaveTypeID,
 	Composition.Composition,
 	Fabric.width,
-	Weight = RD.Weight * 1000,
+	Weight = Fabric.WeightM2,
 	Fabric.ConstructionID,
 	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
 	RD.ShipQty,
@@ -139,7 +139,7 @@ select
 	Fabric.WeaveTypeID,
 	Composition.Composition,
 	Fabric.width,
-	Weight = TD.Weight * 1000,
+	Weight = Fabric.WeightM2,
 	Fabric.ConstructionID,
 	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
 	TD.Qty,
@@ -248,6 +248,7 @@ select
 	Defect.DefectRecord,
 	fd.Type,
 	fd.DescriptionEN,
+    point = isnull(Defect.point,  0),
 	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
 		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
@@ -261,6 +262,7 @@ outer apply(
 	where FIR_PhysicalDetailUKey = t.DetailUkey
 	group by SUBSTRING(x.Data,1,1)
 )Defect
+
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
@@ -286,6 +288,7 @@ select
 	Defect.DefectRecord,
 	fd.Type,
 	fd.DescriptionEN,
+    point = isnull(Defect.point,  0),
 	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
 		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
