@@ -813,11 +813,11 @@ from (
 		                            where fid.Ukey = fi.UKey 
 		                            for xml path(''))
 		                           ,'')
-	        ,[Qty] = IIF(WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty != 0, dbo.getVNUnitTransfer(
+	        ,[Qty] = IIF(WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+isnull(WHSubTransfer.Qty, 0) != 0, dbo.getVNUnitTransfer(
 			        isnull(f.Type, '')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit, '')
-			        ,WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty
+			        ,WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+isnull(WHSubTransfer.Qty, 0)
 			        ,isnull(f.Width,0)
 			        ,isnull(f.PcsWidth,0)
 			        ,isnull(f.PcsLength,0)
@@ -835,7 +835,7 @@ from (
 	        , [Stock Unit] = psd.StockUnit
 	from FtyInventory fi WITH (NOLOCK)  --EDIT
     inner join Orders o WITH (NOLOCK) on o.id= fi.POID
-    inner join #SubTransfer WHSubTransfer on   WHSubTransfer.PoId = fi.POID and WHSubTransfer.Seq1=fi.seq1 and WHSubTransfer.Seq2=fi.Seq2 and
+    left join #SubTransfer WHSubTransfer on   WHSubTransfer.PoId = fi.POID and WHSubTransfer.Seq1=fi.seq1 and WHSubTransfer.Seq2=fi.Seq2 and
 		                            WHSubTransfer.StockType = fi.StockType and WHSubTransfer.Roll = fi.Roll and WHSubTransfer.Dyelot = fi.Dyelot
 	left join PO_Supp_Detail psd WITH (NOLOCK) on fi.POID = psd.ID 
                                                   and psd.SEQ1 = fi.Seq1 
@@ -938,8 +938,12 @@ from (
 		and a.Type in ('A','B')
 	)WHBorrowBack_Reduce
 	where (fi.StockType = 'B' or fi.StockType = 'I')
-    and WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+WHSubTransfer.Qty != 0
+    and WH_Issue.Qty+WH07_08.Qty+WH15_16.Qty+WH17.Qty+WH18.Qty+WH19.Qty+WH34_35.Qty+WH37.Qty+WHBorrowBack_Plus.Qty+WHBorrowBack_Reduce.Qty+isnull(WHSubTransfer.Qty, 0) != 0
 		  and exists (
+            select 1 from #SubTransfer b 
+            where   b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2 and
+		            b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
+            union all
 			select 1 from Receiving a
 			inner join Receiving_Detail b on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
@@ -2869,7 +2873,7 @@ from (
                     Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 2];
                     worksheetA.Copy(worksheetB);
                     ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[i + 1]).Select();
-
+                    worksheetA.Cells[1, 1] = $"{strExcelMsg}-" + this.contract + "(" + ftys + ")";
                     int sheetMaxRow = (i + 1) * excelMaxRow;
 
                     for (int j = 0; j < loadTimes; j++)
