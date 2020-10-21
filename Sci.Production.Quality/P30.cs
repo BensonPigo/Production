@@ -12,12 +12,13 @@ using Ict.Win.UI;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P30 : Win.Tems.Input6
     {
-        protected DataRow motherData;
         private Size thisSize;
-        private readonly bool FirstTime = true;
+        private bool FirstTime = true;
 
+        /// <inheritdoc/>
         // (menuitem, args= 參數)
         public P30(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -53,16 +54,19 @@ namespace Sci.Production.Quality
             this.Button_enable();
         }
 
+        /// <inheritdoc/>
         public void ColorSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.ColorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
+        /// <inheritdoc/>
         public void ColorSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
         {
             this.ColorSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
+        /// <inheritdoc/>
         public void ColorSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             if (eButton == MouseButtons.Right)
@@ -105,16 +109,19 @@ order by RowNum", this.txtSP.Text.ToString());
             }
         }
 
+        /// <inheritdoc/>
         public void ItemSelect_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.ItemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
+        /// <inheritdoc/>
         public void ItemSelect_CellMouseClick(object sender, DataGridViewEditingControlMouseEventArgs e)
         {
             this.ItemSelect_CellMouseClick(e.Button, e.RowIndex);
         }
 
+        /// <inheritdoc/>
         public void ItemSelect_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             DataRow dr1 = this.detailgrid.GetDataRow<DataRow>(eRowIndex);

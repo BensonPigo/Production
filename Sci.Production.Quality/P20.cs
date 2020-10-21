@@ -11,12 +11,14 @@ using Ict;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P20 : Win.Tems.Input6
     {
         private string sql;
         private DataRow ROW;
         private bool isNew = false;
 
+        /// <inheritdoc/>
         public P20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -532,8 +534,9 @@ order by GarmentDefectCodeID,GarmentDefectTypeID
                 @"select * from rft WITH (NOLOCK) where OrderID='{0}' and CDate='{1}' and SewinglineID = '{2}' 
   and FactoryID='{3}' and [Shift]='{4}' and Team='{5}' ", this.txtSP.Text, ((DateTime)this.dateDate.Value).ToShortDateString(), this.txtLine.Text, this.displayFactory.Text, this.comboShift.SelectedValue, this.comboTeam.Text);
             DBProxy.Current.Select(null, sql, out dt);
-            if (dt.Rows.Count > 0 && this.isNew) // 如果是新增,才判斷ＳＰ＃是否存在
+            if (dt.Rows.Count > 0 && this.isNew)
             {
+                // 如果是新增,才判斷ＳＰ＃是否存在
                 MyUtility.Msg.WarningBox(" SP#,Shift,Team,Date,Factory can't be same in dataBase,please pick one least to change!");
                 return false;
             }

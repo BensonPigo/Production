@@ -10,8 +10,10 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class R09 : Win.Tems.PrintForm
     {
+        /// <inheritdoc/>
         public R09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

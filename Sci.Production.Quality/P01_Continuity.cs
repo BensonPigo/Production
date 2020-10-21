@@ -13,6 +13,7 @@ using System.Reflection;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_Continuity : Win.Subs.Input4
     {
         private readonly DataRow maindr;
@@ -20,6 +21,7 @@ namespace Sci.Production.Quality
         private readonly string keyWord = Env.User.Keyword;
         private string excelFile;
 
+        /// <inheritdoc/>
         public P01_Continuity(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -191,8 +193,9 @@ namespace Sci.Production.Quality
                     return; // 沒東西 return
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     dr["Ticketyds"] = 0.00;
@@ -327,10 +330,12 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            if (!MyUtility.Convert.GetBool(this.maindr["ContinuityEncode"])) // Encode
+            if (!MyUtility.Convert.GetBool(this.maindr["ContinuityEncode"]))
             {
-                if (!MyUtility.Convert.GetBool(this.maindr["nonContinuity"])) // 只要沒勾選就要判斷，有勾選就可直接Encode
+                // Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonContinuity"]))
                 {
+                    // 只要沒勾選就要判斷，有勾選就可直接Encode
                     // if (MyUtility.GetValue.Lookup("WeaveTypeID", maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
                     // {
                     // 當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
@@ -421,8 +426,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
             }
-            else // Amend
+            else
             {
+                // Amend
                 #region  寫入虛擬欄位
                 this.maindr["Continuity"] = string.Empty;
                 this.maindr["ContinuityDate"] = DBNull.Value;

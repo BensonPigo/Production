@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R31 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
@@ -25,8 +26,9 @@ namespace Sci.Production.Quality
         private string FactoryID;
         private string Brand;
         private bool exSis;
-        private readonly List<string> categoryList = new List<string>();
+        private List<string> categoryList = new List<string>();
 
+        /// <inheritdoc/>
         public R31(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -317,7 +319,6 @@ WHERE 1=1
 
             // 客製化欄位，記得設定this.IsSupportCopy = true
             // this.CreateCustomizedExcel(ref objSheets);
-
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R31");
             objApp.ActiveWorkbook.SaveAs(strExcelName);

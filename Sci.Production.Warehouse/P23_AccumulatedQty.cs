@@ -7,11 +7,13 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P23_AccumulatedQty : Win.Subs.Base
     {
         public Win.Tems.Base P23;
         protected DataRow dr;
 
+        /// <inheritdoc/>
         public P23_AccumulatedQty(DataRow data)
         {
             this.InitializeComponent();

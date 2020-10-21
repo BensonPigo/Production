@@ -90,7 +90,7 @@ AND Junk = 1
             };
             this.Helper.Controls.Grid.Generator(this.grid)
                 .ComboBox("StickerSizeID", header: "Mark Size", width: Widths.AnsiChars(20), settings: col_StickerSize)
-                .Text("TemplateName", header: "Template Name", width: Widths.AnsiChars(60),iseditingreadonly:true)
+                .Text("TemplateName", header: "Template Name", width: Widths.AnsiChars(60), iseditingreadonly: true)
                 .Button("Upload", null, header: "Upload", width: Widths.AnsiChars(5), onclick: this.BtnUpload)
             ;
 
@@ -168,7 +168,6 @@ AND Junk = 1
                 {
                     this.ShowErr(ex);
                 }
-
             }
         }
 

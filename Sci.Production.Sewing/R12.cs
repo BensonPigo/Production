@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class R12 : Win.Tems.PrintForm
     {
         private DataTable[] printData;
@@ -17,6 +18,7 @@ namespace Sci.Production.Sewing
         private DateTime? Delivery1;
         private DateTime? Delivery2;
 
+        /// <inheritdoc/>
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

@@ -396,7 +396,6 @@ where oq.id = '{this.masterData["ID"]}'
                  .Numeric("B", header: "Bottom", width: Widths.AnsiChars(6), settings: this.b_combo)
                  .Numeric("I", header: "Inner", width: Widths.AnsiChars(6), settings: this.i_combo)
                  .Numeric("O", header: "Outer", width: Widths.AnsiChars(6), settings: this.o_combo);
-            ;
 
             #region 控制Column是否可被看見
             this.gridComboSP.Columns[5].Visible = false;

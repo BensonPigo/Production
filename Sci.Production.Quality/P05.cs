@@ -10,8 +10,13 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P05 : Win.Tems.Input6
     {
+        private new readonly bool IsSupportEdit = true;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string Factory = Env.User.Keyword;
+
         // 宣告Context Menu Item
         private ToolStripMenuItem add;
 
@@ -20,10 +25,8 @@ namespace Sci.Production.Quality
 
         // 宣告Context Menu Item
         private ToolStripMenuItem delete;
-        private readonly string loginID = Env.User.UserID;
-        private readonly string Factory = Env.User.Keyword;
-        private new readonly bool IsSupportEdit = true;
 
+        /// <inheritdoc/>
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -318,14 +321,16 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
 
             this.add.Enabled = true;
 
-            if (dr == null) // oven 空的
+            if (dr == null)
             {
+                // oven 空的
                 this.edit.Enabled = false;
                 this.delete.Enabled = false;
                 return;
             }
-            else // oven 有東西
+            else
             {
+                // oven 有東西
                 DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where POID='{0}'", this.displaySP.Text.ToString()), out dtCheckDelete);
                 DBProxy.Current.Select(null, string.Format("select * from oven WITH (NOLOCK) where id='{0}'", this.CurrentDetailData["ID"].ToString()), out dtCheck);
                 if (dtCheckDelete.Rows.Count <= 0)

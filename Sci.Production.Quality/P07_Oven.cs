@@ -9,6 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P07_Oven : Win.Subs.Input2A
     {
         private readonly DataRow maindr;
@@ -20,6 +21,7 @@ namespace Sci.Production.Quality
         private string sql;
         private DataRow DR;
 
+        /// <inheritdoc/>
         public P07_Oven(bool canedit, string id, string poid, string seq1, string seq2, DataRow mainDr)
         {
             this.InitializeComponent();

@@ -9,6 +9,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R05 : Win.Tems.PrintForm
     {
         private DateTime? DateSCIStart; private DateTime? DateSCIEnd;
@@ -26,6 +27,7 @@ namespace Sci.Production.Quality
         private string cmdAccessorySummary;
         private string MaterialType = string.Empty;
 
+        /// <inheritdoc/>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -479,8 +481,9 @@ and ai.Status='Confirmed'
 
             if ("Fabric".EqualString(this.comboMaterialType.Text))
             {
-                if (this.radioDetail.Checked) // ("Detail".EqualString(this.radioDetail.Text))
+                if (this.radioDetail.Checked)
                 {
+                    // ("Detail".EqualString(this.radioDetail.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtFabricDetail.Rows.Count);
                     if (this.dtFabricDetail == null || this.dtFabricDetail.Rows.Count == 0)
@@ -500,8 +503,9 @@ and ai.Status='Confirmed'
                     sxr.Save();
                 }
 
-                if (this.radioSummary.Checked) // ("Summary".EqualString(this.radioSummary.Text))
+                if (this.radioSummary.Checked)
                 {
+                    // ("Summary".EqualString(this.radioSummary.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtFabricSummary.Rows.Count);
                     if (this.dtFabricSummary == null || this.dtFabricSummary.Rows.Count == 0)
@@ -523,8 +527,9 @@ and ai.Status='Confirmed'
             }
             else if ("Accessory".EqualString(this.comboMaterialType.Text))
             {
-                if (this.radioDetail.Checked) // ("Detail".EqualString(this.radioDetail.Text))
+                if (this.radioDetail.Checked)
                 {
+                    // ("Detail".EqualString(this.radioDetail.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtAccessoryDetail.Rows.Count);
                     if (this.dtAccessoryDetail == null || this.dtAccessoryDetail.Rows.Count == 0)
@@ -544,8 +549,9 @@ and ai.Status='Confirmed'
                     sxr.Save();
                 }
 
-                if (this.radioSummary.Checked) // ("Summary".EqualString(this.radioSummary.Text))
+                if (this.radioSummary.Checked)
                 {
+                    // ("Summary".EqualString(this.radioSummary.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtAccessorySummary.Rows.Count);
                     if (this.dtAccessorySummary == null || this.dtAccessorySummary.Rows.Count == 0)

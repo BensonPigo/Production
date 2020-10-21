@@ -10,15 +10,18 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P60_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
 
+        /// <inheritdoc/>
         // bool flag;
-       // string poType;
+        // string poType;
         protected DataTable dtArtwork;
 
+        /// <inheritdoc/>
         public P60_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

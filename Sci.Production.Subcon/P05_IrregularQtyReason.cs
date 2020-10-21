@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P05_IrregularQtyReason : Win.Subs.Base
     {
         private DataRow _masterData;
@@ -22,6 +23,8 @@ namespace Sci.Production.Subcon
         private Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
         private P05 p05;
         private Func<string, string> sqlGetBuyBackDeduction;
+
+        /// <inheritdoc/>
         public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
@@ -120,6 +123,7 @@ namespace Sci.Production.Subcon
             this.listControlBindingSource1.DataSource = this.GetData();
         }
 
+        /// <inheritdoc/>
         public DataTable Check_Irregular_Qty()
         {
             DataTable dt = this.GetData();

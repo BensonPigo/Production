@@ -16,12 +16,14 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P03_Crocking : Win.Subs.Input4
     {
         private readonly string loginID = Env.User.UserID;
-        private DataRow maindr;
         private readonly string ID;
+        private DataRow maindr;
 
+        /// <inheritdoc/>
         public P03_Crocking(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -396,8 +398,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -451,8 +454,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -847,8 +851,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 return;
             }
 
-            if (!MyUtility.Convert.GetBool(this.maindr["CrockingEncode"])) // Encode
+            if (!MyUtility.Convert.GetBool(this.maindr["CrockingEncode"]))
             {
+                // Encode
                 #region 判斷Crocking Result
                 DataTable gridDt = (DataTable)this.gridbs.DataSource;
                 DataRow[] resultAry = gridDt.Select("Result='Fail'");
@@ -893,8 +898,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 #endregion
 
             }
-            else // Amend
+            else
             {
+                // Amend
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set CrockingDate = null,CrockingEncode= 0,Crocking = '',CrockingInspector = '' where id ='{0}'", this.maindr["ID"]);

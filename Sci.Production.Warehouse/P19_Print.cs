@@ -13,11 +13,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P19_Print : Win.Tems.PrintForm
     {
         private DataRow mainCurrentMaintain;
         private DataTable dtResult;
 
+        /// <inheritdoc/>
         public P19_Print(DataRow drMain)
         {
             this.InitializeComponent();
@@ -60,14 +62,13 @@ namespace Sci.Production.Warehouse
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 DataTable dt;
-                DualResult result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"select  b.name 
+                string cmd = $@"select  b.name 
             from dbo.TransferOut a WITH (NOLOCK) 
             inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dt);
+            and a.id = @ID";
+                DualResult result = DBProxy.Current.Select(string.Empty, cmd, pars, out dt);
                 if (!result)
                 {
                     this.ShowErr(result);

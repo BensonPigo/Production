@@ -21,6 +21,8 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P13 : Win.Tems.Input6
     {
+        private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
+        private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private ReportViewer viewer;
 
         /// <inheritdoc/>
@@ -528,7 +530,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out DataTable resulttb, "#TmpSource")))
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -660,7 +663,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #endregion 檢查負數庫存
 
             #region 更新表頭狀態資料
-
             sqlupd3 = $@"update Issue set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
 
             #endregion 更新表頭狀態資料
@@ -705,7 +707,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             {
                 try
                 {
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out DataTable resulttb, "#TmpSource")))
+                    DataTable resulttb;
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B.ToString(), out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);

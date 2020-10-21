@@ -13,18 +13,20 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P06_Detail : Win.Subs.Input4
     {
         private readonly string loginID = Env.User.UserID;
         private readonly DataRow maindr;
-        private DualResult result;
+        private readonly bool isSee = false;
+        private readonly bool canEdit = true;
         private readonly string PoID;
+        private DualResult result;
         private string ID;
         private DataTable dtColorFastness;  // dtOven
         private bool newOven = false;
-        private readonly bool isSee = false;
-        private readonly bool canEdit = true;
 
+        /// <inheritdoc/>
         public P06_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string poid)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -225,6 +227,7 @@ namespace Sci.Production.Quality
 
         }
 
+        /// <inheritdoc/>
         public string SQlText(string sqlInput, int maxLength)
         {
             if (!MyUtility.Check.Empty(sqlInput))
@@ -539,8 +542,9 @@ namespace Sci.Production.Quality
                     return; // 沒東西 return
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     dr.EndEdit();
@@ -939,8 +943,9 @@ namespace Sci.Production.Quality
                 // 新增
                 if (dr.RowState == DataRowState.Added)
                 {
-                    if (this.newOven) // insert 新資料進ColorFastness
+                    if (this.newOven)
                     {
+                        // insert 新資料進ColorFastness
                         this.ID = MyUtility.GetValue.GetID(Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
                         this.KeyValue1 = this.ID;
                         string insCmd = @"                                            

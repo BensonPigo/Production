@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07_ModifyRollDyelot : Win.Subs.Base
     {
         private DataTable source;
@@ -22,6 +23,7 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActQty;
 
+        /// <inheritdoc/>
         public P07_ModifyRollDyelot(object data, string data2)
         {
             this.InitializeComponent();
@@ -536,18 +538,18 @@ from (
                 //    .Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1)
                 var checkList = allDatas.GroupBy(o => new { POID = o["POID"].ToString(), Seq = o["Seq"].ToString(), Roll = o["Roll"].ToString(), Dyelot = o["Dyelot"].ToString() }).Select(g => new { g.Key.POID, g.Key.Seq, g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Where(o => o.ct > 1).ToList();
 
-                List<string> _duplicateList = new List<string>();
+                List<string> duplicate_List = new List<string>();
 
                 foreach (var item in checkList)
                 {
-                    _duplicateList.Add($"{item.POID}-{item.Seq}-{item.Roll}-{item.Dyelot}");
+                    duplicate_List.Add($"{item.POID}-{item.Seq}-{item.Roll}-{item.Dyelot}");
                 }
 
                 MyUtility.Msg.WarningBox(@"Roll# & Dyelot# already existed!!"
 + Environment.NewLine
 + "Duplicate list SP# - Seq - Roll# - Dyelot as below."
 + Environment.NewLine
-+ _duplicateList.JoinToString(Environment.NewLine));
++ duplicate_List.JoinToString(Environment.NewLine));
 
                 // MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
                 return;

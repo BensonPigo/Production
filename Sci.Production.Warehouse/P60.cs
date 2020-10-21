@@ -16,11 +16,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P60 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
+        /// <inheritdoc/>
         public P60(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -35,6 +37,7 @@ namespace Sci.Production.Warehouse
             };
         }
 
+        /// <inheritdoc/>
         public P60(ToolStripMenuItem menuitem, string transID)
             : this(menuitem)
         {
@@ -778,12 +781,12 @@ Where a.id = '{0}' ", masterID);
             DataTable dt;
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
-            DualResult result = DBProxy.Current.Select(
-                string.Empty,
-                @"select l.localsuppid + s.Abb as Supplier
-            from Localreceiving l WITH (NOLOCK) 
-            left join localsupp s WITH (NOLOCK) on l.LocalSuppID=s.id
-            where l.id = @ID", pars, out dt);
+            string cmd = $@"
+select l.localsuppid + s.Abb as Supplier
+from Localreceiving l WITH (NOLOCK) 
+left join localsupp s WITH (NOLOCK) on l.LocalSuppID=s.id
+where l.id = @ID";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmd, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);

@@ -11,11 +11,9 @@ using System.IO;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P27 : Win.Tems.QueryForm
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
-        private DataTable gridData;
         private readonly IList<string> comboBox2_RowSource1 = new List<string>();
         private readonly IList<string> comboBox2_RowSource2 = new List<string>();
         private readonly IList<string> comboBox2_RowSource3 = new List<string>();
@@ -24,8 +22,12 @@ namespace Sci.Production.Quality
         private readonly IList<string> comboBox3_RowSource = new List<string>();
         private BindingSource comboxbs1;
         private BindingSource comboxbs2;
-        private readonly string selectDataTable_DefaultView_Sort = string.Empty;
+        private string selectDataTable_DefaultView_Sort = string.Empty;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
+        private DataTable gridData;
 
+        /// <inheritdoc/>
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

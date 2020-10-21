@@ -9,8 +9,10 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P05 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

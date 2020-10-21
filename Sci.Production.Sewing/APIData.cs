@@ -10,40 +10,6 @@ using Sci.Data;
 namespace Sci.Production.Sewing
 {
     /// <inheritdoc/>
-    public class APIData
-    {
-        /// <inheritdoc/>
-        public DateTime Date { get; set; }
-
-        /// <inheritdoc/>
-        public decimal SewTtlManpower { get; set; }
-
-        /// <inheritdoc/>
-        public decimal SewTtlManhours { get; set; }
-
-        /// <inheritdoc/>
-        public decimal TransManpowerIn { get; set; }
-
-        /// <inheritdoc/>
-        public decimal TransManpowerOut { get; set; }
-
-        /// <inheritdoc/>
-        public decimal TransManhoursIn { get; set; }
-
-        /// <inheritdoc/>
-        public decimal TransManhoursOut { get; set; }
-
-        /// <inheritdoc/>
-        public int Holiday { get; set; }
-
-        /// <inheritdoc/>
-        public string YyyyMM { get; set; }
-
-        /// <inheritdoc/>
-        public List<APIData> results;
-    }
-
-    /// <inheritdoc/>
     public static partial class GetApiData
     {
         /// <inheritdoc/>
@@ -84,5 +50,39 @@ namespace Sci.Production.Sewing
 
             return true;
         }
+    }
+
+    /// <inheritdoc/>
+    public class APIData
+    {
+        /// <inheritdoc/>
+        public DateTime Date { get; set; }
+
+        /// <inheritdoc/>
+        public decimal SewTtlManpower { get; set; }
+
+        /// <inheritdoc/>
+        public decimal SewTtlManhours { get; set; }
+
+        /// <inheritdoc/>
+        public decimal TransManpowerIn { get; set; }
+
+        /// <inheritdoc/>
+        public decimal TransManpowerOut { get; set; }
+
+        /// <inheritdoc/>
+        public decimal TransManhoursIn { get; set; }
+
+        /// <inheritdoc/>
+        public decimal TransManhoursOut { get; set; }
+
+        /// <inheritdoc/>
+        public int Holiday { get; set; }
+
+        /// <inheritdoc/>
+        public string YyyyMM { get; set; }
+
+        /// <inheritdoc/>
+        public List<APIData> results;
     }
 }

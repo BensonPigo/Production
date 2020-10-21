@@ -12,8 +12,10 @@ using System.Runtime.InteropServices;
 // using Ict.Win.Tools;
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R26 : Win.Tems.PrintForm
     {
+        /// <inheritdoc/>
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -154,7 +156,7 @@ namespace Sci.Production.Subcon
                 this.lis.Add(new SqlParameter("@Location_Poid2", this.Location_Poid2));
             }
 
-            if (!this.Factory1.Empty()) // (Factory != "")
+            if (!this.Factory1.Empty())
             {
                 this.sqlWheres.Add("a.factoryid =@Factory");
                 this.lis.Add(new SqlParameter("@Factory", this.Factory1));
@@ -395,7 +397,7 @@ drop table #tmp;
             {
                 // if (this.comboBox1.Text == "PO Form")
                 #region PO Form
-                this.result = DBProxy.Current.Select(string.Empty, @"
+                string cmd = @"
 select  e.NameEN [Title1] 
         ,e.AddressEN [Title2]
         ,e.Tel [Title3]
@@ -429,7 +431,8 @@ inner join LocalPO_Detail b WITH (NOLOCK) on b.id=a.Id
 left join orders c WITH (NOLOCK) on c.id=b.OrderId
 left join LocalSupp d WITH (NOLOCK) on a.LocalSuppID=d.ID
 left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
-" + this.sqlWhere + " " + this.all, this.lis, out this.dt);
+" + this.sqlWhere + " " + this.all;
+                this.result = DBProxy.Current.Select(string.Empty, cmd, this.lis, out this.dt);
 
                 if (!this.result)
                 {
@@ -657,8 +660,6 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             this.checkShippingMark.Checked = false;
 
             if (this.txtartworktype_ftyCategory.Text.TrimEnd().Equals("CARTON", StringComparison.OrdinalIgnoreCase))
-
-            // if (txtartworktype_fty1.Text.EqualString ("CARTON"))
             {
                 this.checkShippingMark.Enabled = true;
                 this.toexcel.Enabled = true;

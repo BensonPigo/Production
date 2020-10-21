@@ -18,6 +18,7 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P33 : Win.Tems.Input8
     {
         private StringBuilder sbSizecode;
@@ -30,6 +31,7 @@ namespace Sci.Production.Warehouse
 
         private P33_Detail subform = new P33_Detail();
 
+        /// <inheritdoc/>
         public P33(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -55,6 +57,7 @@ namespace Sci.Production.Warehouse
             this.DoSubForm = new P33_Detail();
         }
 
+        /// <inheritdoc/>
         public P33(ToolStripMenuItem menuitem, string transID)
             : this(menuitem)
         {
@@ -2354,10 +2357,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             #region Title
             DataTable dt;
-            DBProxy.Current.Select(string.Empty, @"
+            string cmdText = @"
 select NameEN 
 from MDivision 
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+            DBProxy.Current.Select(string.Empty, cmdText, pars, out dt);
             string rptTitle = dt.Rows[0]["NameEN"].ToString();
 
             #endregion
@@ -2714,7 +2718,7 @@ WHERE o.id = '{currentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     string pOID = key["POID"].ToString();
                     string sCIRefno = key["SCIRefno"].ToString();
                     string colorID = key["ColorID"].ToString();
-                    string SuppColor = key["SuppColor"].ToString();
+                    string suppColor1 = key["SuppColor"].ToString();
                     string refno = key["Refno"].ToString();
                     string descDetail = key["DescDetail"].ToString();
                     string qty = MyUtility.Check.Empty(key["@Qty"].ToString()) ? "0" : key["@Qty"].ToString();
@@ -2736,7 +2740,7 @@ WHERE o.id = '{currentOrderID}'  AND o.sewline != '') t FOR xml path('')
                     nRow["SCIRefno"] = sCIRefno;
                     nRow["Refno"] = refno;
                     nRow["ColorID"] = colorID;
-                    nRow["SuppColor"] = SuppColor;
+                    nRow["SuppColor"] = suppColor1;
                     nRow["DescDetail"] = descDetail;
                     nRow["@Qty"] = Convert.ToDecimal(qty);
                     nRow["Use Qty By Stock Unit"] = useQtyByStockUnit;
@@ -3230,6 +3234,7 @@ order by [OrderID],[Article]
             }
         }
 
+        /// <inheritdoc/>
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp")
         {
             result = null;
@@ -3434,12 +3439,16 @@ order by [OrderID],[Article]
         #endregion
     }
 
+    /// <inheritdoc/>
     public class IssueQtyBreakdown
     {
+        /// <inheritdoc/>
         public string OrderID { get; set; }
 
+        /// <inheritdoc/>
         public string Article { get; set; }
 
+        /// <inheritdoc/>
         public int Qty { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class R10 : Win.Tems.PrintForm
     {
         private DataTable PrintData;

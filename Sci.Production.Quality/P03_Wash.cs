@@ -15,13 +15,15 @@ using System.Collections;       // file使用Hashtable時，必須引入這個�
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P03_Wash : Win.Subs.Input4
     {
         private readonly string loginID = Env.User.UserID;
         private DataRow maindr;
-        private readonly string ID;
-        private readonly Hashtable ht = new Hashtable();
+        private string ID;
+        private Hashtable ht = new Hashtable();
 
+        /// <inheritdoc/>
         public P03_Wash(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -362,8 +364,9 @@ this.ID);
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -417,8 +420,9 @@ this.ID);
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -1248,8 +1252,9 @@ this.ID);
                 }
                 #endregion
             }
-            else// Amend
+            else
             {
+                // Amend
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set WashDate = null,WashEncode= 0,Wash = '', WashInspector='' where id ='{0}'", this.maindr["ID"]);

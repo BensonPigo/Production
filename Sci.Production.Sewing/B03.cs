@@ -9,8 +9,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class B03 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public B03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

@@ -18,12 +18,16 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P15 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+
+        /// <inheritdoc/>
         protected ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -41,6 +45,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P15(ToolStripMenuItem menuitem, string transID, string callFrom = "")
             : base(menuitem)
         {
@@ -63,6 +68,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         // PPIC_P15 Called
         public static void Call(string pPIC_id, Form mdiParent)
         {
@@ -889,10 +895,11 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'",
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmd = @"
 select NameEn
 from MDivision
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmd, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -919,7 +926,8 @@ where id = @MDivision", pars, out dt);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select(string.Empty, @"
+
+            string cmdText = @"
 select a.POID
     ,a.Seq1+'-'+a.seq2 as SEQ
 	,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
@@ -937,7 +945,9 @@ left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 an
 left join dbo.Lack_Detail c WITH (NOLOCK) on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
-where a.id= @ID", pars, out dd);
+where a.id= @ID";
+
+            result = DBProxy.Current.Select(string.Empty, cmdText, pars, out dd);
             if (!result)
             {
                 this.ShowErr(result);

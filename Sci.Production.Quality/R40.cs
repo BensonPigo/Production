@@ -11,8 +11,10 @@ using Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R40 : Win.Tems.PrintForm
     {
+        /// <inheritdoc/>
         public R40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,7 +33,7 @@ namespace Sci.Production.Quality
         private System.Data.DataTable alltemp;
         private System.Data.DataTable alltemp_All;
         private System.Data.DataTable[] alltemps;
-        private readonly string userfactory = Env.User.Factory;
+        private string userfactory = Env.User.Factory;
 
         /// <inheritdoc/>
         protected override bool ValidateInput()

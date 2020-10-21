@@ -14,12 +14,14 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P17_ExcelImport : Win.Subs.Base
     {
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;
         private DataRow master;
 
+        /// <inheritdoc/>
         public P17_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
@@ -88,8 +90,9 @@ namespace Sci.Production.Warehouse
         private void BtnAddExcel_Click(object sender, EventArgs e)
         {
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
-            if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                // 開窗且有選擇檔案
                 DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
                 dr["Filename"] = this.openFileDialog1.SafeFileName;
                 dr["Status"] = string.Empty;

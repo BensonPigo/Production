@@ -1470,7 +1470,6 @@ order by LocationText DESC
                 this.numTwisTingBottom.ReadOnly = false;
                 this.numTwisTingInner.ReadOnly = false;
                 this.numTwisTingOuter.ReadOnly = false;
-
             }
 
             this.EditMode = !this.EditMode;

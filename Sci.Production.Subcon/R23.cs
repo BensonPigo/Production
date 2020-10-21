@@ -8,6 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R23 : Win.Tems.PrintForm
     {
         private string artworktype;
@@ -26,6 +27,7 @@ namespace Sci.Production.Subcon
         private DateTime? SciDelivery2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -263,8 +265,9 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.ordertype))
             {
-                if (this.ordertypeindex >= 4) // include Forecast
+                if (this.ordertypeindex >= 4)
                 {
+                    // include Forecast
                     sqlFilter1.Add(string.Format(@"(O.category in {0} OR O.IsForecast =1)", this.ordertype));
                 }
                 else

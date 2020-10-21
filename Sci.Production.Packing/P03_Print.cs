@@ -242,6 +242,7 @@ namespace Sci.Production.Packing
             return true;
         }
 
+        /// <inheritdoc/>
         public DualResult PrintShippingmark()
         {
             #region.
@@ -372,6 +373,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
+        /// <inheritdoc/>
         public DualResult PrintShippingmark_ToChina()
         {
             #region PrintShippingmark_ToChina
@@ -519,6 +521,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
+        /// <inheritdoc/>
         public DualResult PrintShippingmark_ToUsaInd()
         {
             #region PrintShippingmark_ToUsaInd

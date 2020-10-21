@@ -19,12 +19,11 @@ namespace Sci.Production.Quality
     /// <inheritdoc/>
     public partial class P31 : Win.Tems.Input6
     {
-        public string type = string.Empty;
-        private List<string> _Articles = new List<string>();
-        private List<string> _Articles_c = new List<string>();
-
         // 每一Article底下的Size數量
         private readonly Dictionary<string, int> Size_per_Article = new Dictionary<string, int>();
+        private string type = string.Empty;
+        private List<string> _Articles = new List<string>();
+        private List<string> _Articles_c = new List<string>();
 
         /// <inheritdoc/>
         public P31(ToolStripMenuItem menuitem, string type)

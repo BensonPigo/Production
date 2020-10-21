@@ -20,13 +20,19 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P17 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+
+        /// <inheritdoc/>
         protected ReportViewer viewer;
+
+        /// <inheritdoc/>
         protected DataTable dtBorrow;
 
+        /// <inheritdoc/>
         public P17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -49,6 +55,7 @@ namespace Sci.Production.Warehouse
             };
         }
 
+        /// <inheritdoc/>
         public P17(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -123,10 +130,11 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmdText = @"
 select NameEn
 from MDivision
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmdText, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -589,6 +597,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                         {
                             dr["Location"] = selectItem2.GetSelecteds().Select(o => MyUtility.Convert.GetString(o["ID"])).JoinToString(",");
                         }
+
                         dr.EndEdit();
                     }
                 }

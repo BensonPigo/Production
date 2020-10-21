@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_RollTransaction : Win.Subs.Base
     {
         private DataRow dr;
@@ -22,6 +23,7 @@ namespace Sci.Production.Warehouse
         private decimal useQty = 0;
         private bool bUseQty = false;
 
+        /// <inheritdoc/>
         public P03_RollTransaction(DataRow data)
         {
             this.InitializeComponent();
@@ -517,7 +519,7 @@ where   a.id = @ID
                 return;
             }
 
-            DBProxy.Current.Select(string.Empty, @"
+            string cmdText = @"
 select  c.Roll[Roll]
         , c.Dyelot [Dyelot]
         , [Stock_Type] = Case c.StockType 
@@ -533,7 +535,8 @@ select  c.Roll[Roll]
 from dbo.FtyInventory c WITH (NOLOCK) 
 where   c.poid = @ID 
         and c.seq1 = @seq1 
-        and c.seq2 = @seq2", pars, out dtt);
+        and c.seq2 = @seq2";
+            DBProxy.Current.Select(string.Empty, cmdText, pars, out dtt);
             if (dtt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");

@@ -7,6 +7,17 @@ using Ict;
 
 namespace Sci.Production.Cutting
 {
+    /// <summary>
+    /// Itemx
+    /// </summary>
+    public static class Itemx
+    {
+        /// <summary>
+        /// WKETA
+        /// </summary>
+        public static DateTime? WKETA { get; set; }
+    }
+
     /// <inheritdoc/>
     public partial class P02_WKETA : Win.Tems.QueryForm
     {
@@ -98,16 +109,5 @@ ORDER BY ETA
             this.DialogResult = DialogResult.No;
             this.Close();
         }
-    }
-
-    /// <summary>
-    /// Itemx
-    /// </summary>
-    public static class Itemx
-    {
-        /// <summary>
-        /// WKETA
-        /// </summary>
-        public static DateTime? WKETA { get; set; }
     }
 }

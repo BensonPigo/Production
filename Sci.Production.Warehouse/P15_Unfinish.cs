@@ -6,12 +6,17 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P15_Unfinish : Win.Subs.Base
     {
+        /// <inheritdoc/>
         public static string TypeFabric = "F";
-        public static string TypeAccessory = "A";
-        protected string FabricType;
 
+        /// <inheritdoc/>
+        public static string TypeAccessory = "A";
+        private string FabricType;
+
+        /// <inheritdoc/>
         public P15_Unfinish(string fabricType, string title)
         {
             this.Text = title.ToString();

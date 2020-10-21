@@ -22,6 +22,7 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P24 : Sci.Win.Tems.Input6
     {
         private string destination_path; // 放的路徑
@@ -31,6 +32,7 @@ namespace Sci.Production.Packing
         private List<ShippingMarkPic_Detail> readToSave;
         private List<ShippingMarkPic_Detail> readToDelete;
 
+        /// <inheritdoc/>
         public P24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -323,7 +325,6 @@ ORDER BY CAST(pd.CTNStartNo as int)
             if ((!this.EditMode && !MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"])) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
             {
                 // MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) = 0，表示為新增
-
                 if (this.readToSave.Any(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
                                             && x.ShippingMarkPicUkey == 0))
@@ -1041,6 +1042,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <summary>
         /// Determine of specified type is nullable
         /// </summary>
+        /// <param name="t">t</param>
         /// <returns>bool</returns>
         public static bool IsNullable(Type t)
         {
@@ -1050,6 +1052,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <summary>
         /// Return underlying type if type is Nullable otherwise return the type
         /// </summary>
+        /// <param name="t">t</param>
         /// <returns>Type</returns>
         public static Type GetCoreType(Type t)
         {
@@ -1076,6 +1079,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
             {
                 return;
             }
+
             string firstDetailSP = string.Empty;
             DataRow drOrder = null;
             if (this.detailgrid.Rows.Count > 0)
@@ -1495,6 +1499,7 @@ WHERE [Sticker Combination] IS NULL
         }
     }
 
+    /// <inheritdoc/>
     public class ShippingMarkPic_Detail
     {
         /// <inheritdoc/>

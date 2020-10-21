@@ -15,8 +15,10 @@ using Sci.Win;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P36 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P36(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -361,8 +363,9 @@ Where a.id = '{0}' order by orderid ", masterID);
             DualResult result;
             string insertCmd, updateCmd;
             List<SqlParameter> paraList = new List<SqlParameter>();
-            if (seleReason) // 要選原因的代表狀態回復到上一個狀態或Junk。
+            if (seleReason)
             {
+                // 要選原因的代表狀態回復到上一個狀態或Junk。
                 DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to do it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
                 if (dResult == DialogResult.No)
                 {
@@ -446,8 +449,9 @@ values ('LocalDebit',@id,@oldvalue,@newvalue,'','',@addname,getdate())";
                         return;
                     }
 
-                    if (newValue.ToUpper() == "CONFIRMED") // Confirm時，要回寫資料至Debit
+                    if (newValue.ToUpper() == "CONFIRMED")
                     {
+                        // Confirm時，要回寫資料至Debit
                         if (!(result = DBProxy.Current.Execute(null, string.Format(
                             @"update debit set LCLName ='{0}' , LCLCurrency='{1}' ,LCLAmount={2}, LCLRate={3} ,editdate=getdate()
 where id = '{4}'",
@@ -463,8 +467,9 @@ where id = '{4}'",
                         }
                     }
 
-                    if (oldvalue.ToUpper() == "CONFIRMED") // UnConfirm時，要清掉Debit & Debit_Schedule資料
+                    if (oldvalue.ToUpper() == "CONFIRMED")
                     {
+                        // UnConfirm時，要清掉Debit & Debit_Schedule資料
                         if (!(result = DBProxy.Current.Execute(null, string.Format(
                             @"update debit set LCLName ='' , LCLCurrency='' ,LCLAmount=0, LCLRate=0  
                             where id = '{0}'",

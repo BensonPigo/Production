@@ -2,8 +2,10 @@
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class B02 : Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

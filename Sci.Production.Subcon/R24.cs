@@ -8,6 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R24 : Win.Tems.PrintForm
     {
         private string artworktype;
@@ -27,6 +28,7 @@ namespace Sci.Production.Subcon
         private DateTime? GLdate2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -376,8 +378,9 @@ where 1=1
                 sqlCmd.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
             }
 
-            if (this.ordertypeindex >= 4) // include Forecast
+            if (this.ordertypeindex >= 4)
             {
+                // include Forecast
                 sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
             }
             else

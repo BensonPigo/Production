@@ -361,6 +361,7 @@ declare @TTLZ nvarchar(max) =
 )from #atall for xml path(''))" : " ")}
 
 
+
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
 {(this.chk_Include_Artwork.Checked ?
@@ -375,6 +376,7 @@ from
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
 where orderid is not null
 --group by orderid" : " ")}
+
 
 '
 +N'

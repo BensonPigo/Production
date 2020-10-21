@@ -328,7 +328,6 @@ namespace Sci.Production.PublicPrg
             double criteria_Max_Item85 = 0;
 
             // Criteria欄位視作公分
-            double cmMin = -999999;
             double cmMax = 2;
 
             switch (mtlTypeID)

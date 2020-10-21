@@ -12,12 +12,16 @@ using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P51 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+
+        /// <inheritdoc/>
         protected ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P51(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -28,6 +32,7 @@ namespace Sci.Production.Warehouse
             this.di_fabrictype.Add("O", "Other");
         }
 
+        /// <inheritdoc/>
         public P51(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {

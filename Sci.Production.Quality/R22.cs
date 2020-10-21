@@ -8,12 +8,14 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R22 : Win.Tems.PrintForm
     {
         private DateTime? AuditDate1;
         private DateTime? AuditDate2;
         private System.Data.DataTable printData;
 
+        /// <inheritdoc/>
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -738,6 +740,7 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         protected string IntToExcelcolumn(int cc) // 將數字轉換EXCEL的英文欄位;例27→AA
         {
             int cc1 = 0, cc2 = 0;
@@ -897,8 +900,9 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 #region 依據欄位數量,指定合併,框線,底色
-                for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++) // 第3列,在date之後要做幾次合併
+                for (int i = 1; i < ((this.printData.Columns.Count - 1) / 3) + 1; i++)
                 {
+                    // 第3列,在date之後要做幾次合併
                     string s1 = this.IntToExcelcolumn(-1 + (i * 3)) + "3";
                     string s2 = this.IntToExcelcolumn(1 + (i * 3)) + "3";
                     string s3 = this.IntToExcelcolumn(1 + (i * 3));

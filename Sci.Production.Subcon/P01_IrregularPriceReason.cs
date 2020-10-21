@@ -692,6 +692,7 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
                     #region 準備 A：DB現有的 "價格異常紀錄"
 
                     sql.Clear();
+
                     sql.Append(" alter table #TmpSource alter column OrderID varchar(13)  " + Environment.NewLine);
                     sql.Append(" alter table #TmpSource alter column ArtworkTypeID varchar(20)  " + Environment.NewLine);
                     sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);

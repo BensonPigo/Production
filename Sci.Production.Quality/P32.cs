@@ -425,7 +425,6 @@ WHERE a.ID ='{masterID}'
                     this.disBrand.Value = this._sourceHeader.Brand;
                     this.disSeason.Value = this._sourceHeader.Season;
                     this.CurrentMaintain["MDivisionid"] = this._sourceHeader.M;
-                    // this.CurrentMaintain["FactoryID"] = this._sourceHeader.Factory;
                     this.disOrderQty.Value = this._sourceHeader.OrderQty;
                     this.disDest.Value = this._sourceHeader.Dest;
                     this.disArticle.Value = this._sourceHeader.Article;
@@ -1734,7 +1733,6 @@ AND a.ID  != '{this.CurrentMaintain["ID"]}'
 
             if (this.CFAInspectionRecord_OrderSEQ.Rows.Count > 0)
             {
-
                 this.topOrderID = MyUtility.Convert.GetString(this.CFAInspectionRecord_OrderSEQ.AsEnumerable().FirstOrDefault()["OrderID"]);
                 this.topSeq = MyUtility.Convert.GetString(this.CFAInspectionRecord_OrderSEQ.AsEnumerable().FirstOrDefault()["Seq"]);
 
@@ -1750,30 +1748,43 @@ AND a.ID  != '{this.CurrentMaintain["ID"]}'
         }
     }
 
+    /// <inheritdoc/>
     public class P32Header
     {
+        /// <inheritdoc/>
         public string OrderID { get; set; }
 
+        /// <inheritdoc/>
         public string Seq { get; set; }
 
+        /// <inheritdoc/>
         public string PO { get; set; }
 
+        /// <inheritdoc/>
         public string Style { get; set; }
 
+        /// <inheritdoc/>
         public string Brand { get; set; }
 
+        /// <inheritdoc/>
         public string Season { get; set; }
 
+        /// <inheritdoc/>
         public string M { get; set; }
 
+        /// <inheritdoc/>
         public string Factory { get; set; }
 
+        /// <inheritdoc/>
         public string BuyerDev { get; set; }
 
+        /// <inheritdoc/>
         public string OrderQty { get; set; }
 
+        /// <inheritdoc/>
         public string Dest { get; set; }
 
+        /// <inheritdoc/>
         public string Article { get; set; }
     }
 }

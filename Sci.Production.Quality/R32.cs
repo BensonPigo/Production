@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R32 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
@@ -27,6 +28,7 @@ namespace Sci.Production.Quality
         private string Stage;
         private string reportType;
 
+        /// <inheritdoc/>
         public R32(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -599,14 +601,14 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
                     nRow["OrderID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["OrderID"])).JoinToString(Environment.NewLine);
-                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);//
-                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);//
+                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);
+                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);
 
-                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);//
-                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);//
-                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);//
+                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);
+                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);
+                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);
                     nRow["SewingLineID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["SewingLineID"]);
-                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);//
+                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);
 
                     nRow["ClogReceivedPercentage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ClogReceivedPercentage"]);
                     nRow["MDivisionid"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["MDivisionid"]);
@@ -690,14 +692,14 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
                     nRow["OrderID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["OrderID"])).JoinToString(Environment.NewLine);
-                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);//
-                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);//
+                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);
+                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);
 
-                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);//
-                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);//
-                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);//
+                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);
+                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);
+                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);
                     nRow["SewingLineID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["SewingLineID"]);
-                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);//
+                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);
 
                     nRow["ClogReceivedPercentage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ClogReceivedPercentage"]);
                     nRow["MDivisionid"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["MDivisionid"]);
@@ -766,7 +768,6 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
 
             // 客製化欄位，記得設定this.IsSupportCopy = true
             // this.CreateCustomizedExcel(ref objSheets);
-
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R32");
             objApp.ActiveWorkbook.SaveAs(strExcelName);

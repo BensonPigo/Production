@@ -14,6 +14,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_PhysicalInspection : Win.Subs.Input4
     {
         private readonly DataRow maindr;
@@ -22,6 +23,7 @@ namespace Sci.Production.Quality
         private string excelFile = string.Empty;
         private DataTable Fir_physical_Defect;
 
+        /// <inheritdoc/>
         public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -191,6 +193,7 @@ namespace Sci.Production.Quality
             this.Get_total_point();
         }
 
+        /// <inheritdoc/>
         protected void Get_total_point()
         {
             double double_ActualYds = MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]);
@@ -417,8 +420,9 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
                     return; // 沒東西 return
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     dr["Ticketyds"] = 0.00;
@@ -801,10 +805,12 @@ Where DetailUkey = {15};",
                 return;
             }
 
-            if (!MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"])) // Encode
+            if (!MyUtility.Convert.GetBool(this.maindr["PhysicalEncode"]))
             {
-                if (!MyUtility.Convert.GetBool(this.maindr["nonPhysical"])) // 只要沒勾選就要判斷，有勾選就可直接Encode
+                // Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonPhysical"]))
                 {
+                    // 只要沒勾選就要判斷，有勾選就可直接Encode
                     // 至少收料的每ㄧ缸都要有檢驗紀錄 ,找尋有收料的缸沒在檢驗出現
                     DataTable dyeDt;
                     string cmd = string.Format(
@@ -870,8 +876,9 @@ and not exists
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
             }
-            else // Amend
+            else
             {
+                // Amend
                 #region  寫入虛擬欄位
                 this.maindr["Physical"] = string.Empty;
                 this.maindr["PhysicalDate"] = DBNull.Value;
@@ -1102,8 +1109,9 @@ and not exists
                 if (dtBasic.Rows[i]["type"].ToString() != typeColumn && dtBasic.Rows[i]["type"].ToString() != null)
                 {
                     int_X = 6;
-                    if (int_Y == 2 && int_z == 0) // first time
+                    if (int_Y == 2 && int_z == 0)
                     {
+                        // first time
                         worksheet.Cells[6, int_Y - 1] = "Code";
                         typeColumn = dtBasic.Rows[i]["type"].ToString();
                         worksheet.Cells[6, int_Y + 1] = typeColumn.ToString();

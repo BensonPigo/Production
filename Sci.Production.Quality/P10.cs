@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
-using Sci.Win.Tools;
 using Sci.Data;
-using System.Linq;
-using System.Data.SqlClient;
+using Sci.Win.Tools;
 using static Sci.Production.PublicPrg.Prgs;
-using System.Text;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P10 : Win.Tems.Input6
     {
         private readonly string loginID = Env.User.UserID;
@@ -20,6 +21,7 @@ namespace Sci.Production.Quality
         private int ReportNoCount = 0;
         private ToolStripMenuItem edit;
 
+        /// <inheritdoc/>
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

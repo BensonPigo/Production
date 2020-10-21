@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P02_Detail : Win.Subs.Input6A
     {
         #region 改版原因事項
@@ -24,10 +25,11 @@ namespace Sci.Production.Quality
         private readonly bool canedit;
         private string id;
         private string receivingID;
-        private readonly string poid;
+        private string poid;
         private string seq1;
         private string seq2;
 
+        /// <inheritdoc/>
         public P02_Detail(bool canEdit, string airID, string spNo)
         {
             this.InitializeComponent();
@@ -533,7 +535,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         /// 將CurrentData 返回原來的值
         /// 特別針對Undo去處理
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">data</param>
         protected override void OnAttached(DataRow data)
         {
             data.RejectChanges();

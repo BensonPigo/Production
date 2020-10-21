@@ -901,9 +901,9 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')",
                             // 布料，且都有值了才檢查
                             if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
                             {
-                                bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                                bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                                if (!ChkFtyInventory)
+                                if (!chkFtyInventory1)
                                 {
                                     MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
 
@@ -1094,8 +1094,8 @@ WHERE   StockType='{0}'
 
             #region Roll驗證
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Roll_setting = new DataGridViewGeneratorTextColumnSettings();
-            Roll_setting.CellValidating += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings roll_setting1 = new DataGridViewGeneratorTextColumnSettings();
+            roll_setting1.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -1128,9 +1128,9 @@ WHERE   StockType='{0}'
                 // 布料，且都有值了才檢查
                 if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
                 {
-                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                    bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                    if (!ChkFtyInventory)
+                    if (!chkFtyInventory1)
                     {
                         MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
 
@@ -1146,9 +1146,9 @@ WHERE   StockType='{0}'
 
             #region Dyelot驗證
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Dyelot_setting = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings dyelot_setting1 = new DataGridViewGeneratorTextColumnSettings();
 
-            Dyelot_setting.CellValidating += (s, e) =>
+            dyelot_setting1.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -1181,9 +1181,9 @@ WHERE   StockType='{0}'
                 // 布料，且都有值了才檢查
                 if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
                 {
-                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                    bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                    if (!ChkFtyInventory)
+                    if (!chkFtyInventory1)
                     {
                         MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
 

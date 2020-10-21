@@ -9,6 +9,7 @@ using System.Transactions;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01 : Win.Tems.Input6
     {
         private readonly string loginID = Env.User.UserID;
@@ -19,6 +20,7 @@ namespace Sci.Production.Quality
         private string find = string.Empty;
         private DataRow[] find_dr;
 
+        /// <inheritdoc/>
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,6 +42,7 @@ namespace Sci.Production.Quality
             this.boolFromP01 = false;
         }
 
+        /// <inheritdoc/>
         public P01(string poid) // for Form直接call form
         {
             this.InitializeComponent();
@@ -641,11 +644,13 @@ and ActualYds > 0
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         // 判斷並回寫Physical OverallResult, Status string[0]=Result, string[1]=status
         public void FinalResult(DataRow dr)
         {
-            if (this.EditMode) // Status = Confirm 才會判斷
+            if (this.EditMode)
             {
+                // Status = Confirm 才會判斷
                 string[] returnstr = PublicPrg.Prgs.GetOverallResult_Status(dr);
 
                 dr["Result"] = returnstr[0];

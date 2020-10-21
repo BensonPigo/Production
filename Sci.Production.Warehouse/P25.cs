@@ -16,8 +16,10 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P25 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -34,6 +36,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Remove.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P25(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -884,9 +887,7 @@ Where a.id = '{0}'", masterID);
             #endregion
             #region -- 撈表身資料 --
             DataTable dtDetail;
-            result = DBProxy.Current.Select(
-                string.Empty,
-                @"
+            string cmd = @"
 select  frompoid
         ,SEQ = a.fromseq1+'-'+a.fromseq2
         ,a.FromRoll
@@ -907,7 +908,8 @@ from dbo.Subtransfer_detail a WITH (NOLOCK)
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
-where a.id= @ID", pars, out dtDetail);
+where a.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, cmd, pars, out dtDetail);
             if (!result)
             {
                 this.ShowErr(result);

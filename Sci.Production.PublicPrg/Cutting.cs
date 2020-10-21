@@ -229,9 +229,9 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// Get Days
         /// </summary>
-        /// <param name="leadtime">int</param>
-        /// <param name="date_where">DateTime</param>
-        /// <param name="ftyFroup">List<string></param>
+        /// <param name="leadtime">leadtime</param>
+        /// <param name="date_where">date_where</param>
+        /// <param name="ftyFroup">ftyFroup</param>
         /// <returns>List<Day></returns>
         public static List<Day> GetDays(int leadtime, DateTime date_where, List<string> ftyFroup)
         {
@@ -308,8 +308,10 @@ AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
             int days = (int)(date2.Date - date1.Date).TotalDays;
             for (int day1 = 0; day1 <= days; day1++)
             {
-                Day day = new Day();
-                day.Date = date2.AddDays(-day1).Date;
+                Day day = new Day
+                {
+                    Date = date2.AddDays(-day1).Date,
+                };
 
                 // 是否行事曆設定假日
                 bool isHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == day.Date).Any();
@@ -327,11 +329,12 @@ AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
             return dayList;
         }
 
+        /// <inheritdoc/>
         /// <summary>
         /// 取得 by APSNo & 每日 的標準數
         /// </summary>
-        /// <param name="orderIDs">List<string> OrderID</param>
-        /// <returns>List DailyStdQty</returns>
+        /// <param name="orderIDs">orderIDs</param>
+        /// <returns>List<DailyStdQty></returns>
         public static List<DailyStdQty> GetStdQty(List<string> orderIDs)
         {
             string sqlcmd = $@"
@@ -523,10 +526,11 @@ order by o.SewInLine
 
         #region Cal WIP
 
+        /// <inheritdoc/>
         /// <summary>
         /// 取得Cutting成套的數量
         /// </summary>
-        /// <param name="orderIDs">List<string> orderIDs</param>
+        /// <param name="orderIDs">orderIDs</param>
         /// <returns>List<GarmentQty></returns>
         public static List<GarmentQty> GetCutPlanQty(List<string> orderIDs)
         {
@@ -678,10 +682,10 @@ ORDER BY WOD.OrderID
         }
 
         /// <summary>
-        /// 取得 by FabricPanelCode 每日的 Cut Plan Qty
+        ///  取得 by FabricPanelCode 每日的 Cut Plan Qty
         /// </summary>
-        /// <param name="orderIDs">List<string> orderIDs</param>
-        /// <returns>List<FabricPanelCodeCutPlanQty></returns>
+        /// <param name="orderIDs">orderIDs</param>
+        /// <returns>FabricPanelCodeCutPlanQty</returns>
         public static List<FabricPanelCodeCutPlanQty> GetSPFabricPanelCodeList(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
@@ -722,8 +726,8 @@ order by o.ID,cons.FabricPanelCode
         /// <summary>
         /// 取得 by FabricPanelCode 每日的 Cut Plan Qty
         /// </summary>
-        /// <param name="orderIDs">List<string> orderIDs</param>
-        /// <returns>List<FabricPanelCodeCutPlanQty></returns>
+        /// <param name="orderIDs">orderIDs</param>
+        /// <returns>FabricPanelCodeCutPlanQty</returns>
         public static List<FabricPanelCodeCutPlanQty> GetCutPlanQty_byFabricPanelCode(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可

@@ -16,16 +16,21 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P13_Detail : Win.Subs.Input4
     {
         private const int CB_SETITEMHEIGHT = 0x153;
+        private readonly string id;
+        private readonly bool isSee = false;
         private DataRow masterDr;
         private DataRow Detaildr;
         private string reportNo;
-        private readonly string id;
-        private readonly bool isSee = false;
         private string status;
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+
+        /// <inheritdoc/>
         public P13_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, string status)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -109,9 +114,6 @@ namespace Sci.Production.Quality
 
             // label1.Text = item["id"].ToString();
         }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         private void SetComboBoxHeight(IntPtr comboBoxHandle, int comboBoxDesiredHeight)
         {
@@ -836,8 +838,10 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
         }
     }
 
+    /// <inheritdoc/>
     public partial class ComboxBoxEx : Win.UI.ComboBox
     {
+        /// <inheritdoc/>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
@@ -846,25 +850,46 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
+        /// <inheritdoc/>
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
-            public int Left;        // x position of upper-left corner
-            public int Top;         // y position of upper-left corner
-            public int Right;       // x position of lower-right corner
-            public int Bottom;      // y position of lower-right corner
+            /// <inheritdoc/>
+            // x position of upper-left corner
+            public int Left;
+
+            /// <inheritdoc/>
+            // y position of upper-left corner
+            public int Top;
+
+            /// <inheritdoc/>
+            // x position of lower-right corner
+            public int Right;
+
+            /// <inheritdoc/>
+            // y position of lower-right corner
+            public int Bottom;
         }
 
+        /// <inheritdoc/>
         public const int SWP_NOZORDER = 0x0004;
+
+        /// <inheritdoc/>
         public const int SWP_NOACTIVATE = 0x0010;
+
+        /// <inheritdoc/>
         public const int SWP_FRAMECHANGED = 0x0020;
+
+        /// <inheritdoc/>
         public const int SWP_NOOWNERZORDER = 0x0200;
 
+        /// <inheritdoc/>
         public const int WM_CTLCOLORLISTBOX = 0x0134;
 
         private int _hwndDropDown = 0;
 
-        internal List<int> ItemHeights = new List<int>();
+        /// <inheritdoc/>
+        public List<int> ItemHeights = new List<int>();
 
         /// <inheritdoc/>
         protected override void WndProc(ref Message m)

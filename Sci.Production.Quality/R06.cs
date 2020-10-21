@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R06 : Win.Tems.PrintForm
     {
         private DateTime? DateArrStart; private DateTime? DateArrEnd;
@@ -23,6 +24,7 @@ namespace Sci.Production.Quality
         private string season;
         private string reportType;
 
+        /// <inheritdoc/>
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -219,6 +221,7 @@ FROM #tmpsd t
 WHERE NOT EXISTS(SELECT * FROM #All_Fir_shadebone b WHERE  b.Suppid=t.SuppID AND b.Dyelot = t.Dyelot AND b.Result <> 'Pass')
 GROUP BY t.SuppID
 " : string.Empty)}
+
 
 
 ------------Total Point----------
