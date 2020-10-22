@@ -231,7 +231,7 @@ namespace Sci.Production.Quality
                 }
 
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
-                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
+                if ((dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value) && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -613,7 +613,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
+                if ((dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value) && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -627,7 +627,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
+                if ((dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value) && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -641,7 +641,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -1097,6 +1097,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 		,gd.MtlTypeID
 		,f.Criteria
 		,f.Criteria2
+        ,[IsInPercentage] = cast(iif(f.Type = 'spirality: Garment - in percentage (average)', 1, 0) as bit)
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1146,16 +1147,39 @@ order by LocationText DESC";
             DataTable gridFGWT = (DataTable)this.gridFGWT.DataSource;
 
             string cmd = $@"
-  merge GarmentTest_Detail_FGWT t
-  using #tmp s
-  on s.id = t.id and s.no = t.no and s.Location = t.Location and s.Type	= t.Type
-  when matched then
-  update set
-	t.[BeforeWash]  = s.[BeforeWash],
-	t.[SizeSpec]  = s.[SizeSpec],
-    t.[AfterWash]	= s.[AfterWash],
-    t.[Shrinkage]	= s.Shrinkage,
-    t.[Scale]	= s.[Scale]
+update gf
+	set gf.[BeforeWash]  = t.[BeforeWash],
+		gf.[SizeSpec]  = t.[SizeSpec],
+		gf.[AfterWash]	= t.[AfterWash],
+		gf.[Shrinkage]	= iif(gf.Type = 'spirality: Garment - in percentage (average)', iif(sl.Location in ('B','T','S') , gt.Twisting, 0), t.Shrinkage),
+		gf.[Scale]	= t.[Scale] 
+from GarmentTest_Detail_FGWT gf
+inner join #tmp t on gf.ID =t.ID and gf.No = t.No and gf.Location = t.Location and gf.Type = t.Type
+outer apply (
+	select distinct
+		[Location] = iif (slC.cnt > 1, 'S', sl.Location)
+	from GarmentTest g
+	inner join Style s on g.StyleID = s.ID and g.BrandID = s.BrandID and g.SeasonID = s.SeasonID
+	inner join Style_Location sl on s.Ukey = sl.StyleUkey
+	outer apply (
+		select cnt = count(*)
+		from Style_Location sl 
+		where s.Ukey = sl.StyleUkey
+		and sl.Location in ('B', 'T')
+	)slC
+	where gf.ID = g.ID
+)sl 
+outer apply (
+	select Twisting = sum(Twisting)
+	from (
+		select Twisting = case when sl.Location in ('B','T') then gt.Twisting
+					when sl.Location = 'S' and gt.Location = 'B' then gt.Twisting
+					else 0
+					end
+		from GarmentTest_Detail_Twisting gt
+		where gf.ID = gt.ID and gf.No = gt.No
+	)gt
+)gt
 	;
 
 select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
@@ -1195,6 +1219,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 		,gd.MtlTypeID
 		,f.Criteria
 		,f.Criteria2
+        ,[IsInPercentage] = cast(iif(f.Type = 'spirality: Garment - in percentage (average)', 1, 0) as bit)
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
