@@ -115,8 +115,10 @@ where   mo.Junk = 0
         and f.IsProduceFty = 1",
                                 Env.User.Factory);
 
-                            SelectItem item = new SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand");
-                            item.Size = new System.Drawing.Size(700, 600);
+                            SelectItem item = new SelectItem(sqlCmd, "15,13,15,5,10", dr["OrderID"].ToString(), "ID,MockupID,Style,Season,Brand")
+                            {
+                                Size = new System.Drawing.Size(700, 600),
+                            };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {

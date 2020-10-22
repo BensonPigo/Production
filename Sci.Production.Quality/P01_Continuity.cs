@@ -688,8 +688,10 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #endregion
 
             // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
             frm.Show();
         }
     }

@@ -172,8 +172,10 @@ order by RowNum", this.txtSP.Text.ToString());
             #region OnClick Right Click Even
             DataGridViewGeneratorTextColumnSettings colorSelect = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings itemSelect = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings typeSetting = new DataGridViewGeneratorTextColumnSettings();
-            typeSetting.CharacterCasing = CharacterCasing.Normal;
+            DataGridViewGeneratorTextColumnSettings typeSetting = new DataGridViewGeneratorTextColumnSettings
+            {
+                CharacterCasing = CharacterCasing.Normal,
+            };
             colorSelect.CellMouseClick += this.ColorSelect_CellMouseClick;
             colorSelect.EditingMouseDown += this.ColorSelect_CellMouseClick;
             itemSelect.CellEditable += (s, e) =>

@@ -93,8 +93,10 @@ WHERE Junk = 0
 	  {0}
 ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             #endregion
-            SelectItem item = new SelectItem(strSQLCmd, "15,5", this.Text);
-            item.Size = new System.Drawing.Size(400, 530);
+            SelectItem item = new SelectItem(strSQLCmd, "15,5", this.Text)
+            {
+                Size = new System.Drawing.Size(400, 530),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

@@ -1234,13 +1234,15 @@ and not exists
 
                 DataTable dtRealTime;
 
-                if (!(result = DBProxy.Current.Select("Production", $@"
+                string cmd = $@"
 SELECT Yards,FabricdefectID,count(1) cnt
 FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] 
 where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]} 
 group by Yards,FabricdefectID
 order by Yards
-", out dtRealTime)))
+";
+
+                if (!(result = DBProxy.Current.Select("Production", cmd, out dtRealTime)))
                 {
                     this.ShowErr(result);
                     return false;

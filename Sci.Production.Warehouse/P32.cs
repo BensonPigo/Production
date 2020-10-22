@@ -131,7 +131,6 @@ on b.id = a.mdivisionid
 where b.id = a.mdivisionid
 and a.id = @ID";
             DualResult result1 = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dt1);
-            if (!result1)
             {
                 this.ShowErr(result1);
             }

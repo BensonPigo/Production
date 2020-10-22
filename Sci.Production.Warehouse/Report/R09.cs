@@ -84,23 +84,35 @@ namespace Sci.Production.Warehouse
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
-            System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
-            sp_spno1.ParameterName = "@spno1";
+            System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@spno1",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_spno2 = new System.Data.SqlClient.SqlParameter();
-            sp_spno2.ParameterName = "@spno2";
+            System.Data.SqlClient.SqlParameter sp_spno2 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@spno2",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-            sp_mdivision.ParameterName = "@MDivision";
+            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@MDivision",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
-            sp_factory.ParameterName = "@Factory";
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@Factory",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter();
-            sp_refno1.ParameterName = "@refno1";
+            System.Data.SqlClient.SqlParameter sp_refno1 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@refno1",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_refno2 = new System.Data.SqlClient.SqlParameter();
-            sp_refno2.ParameterName = "@refno2";
+            System.Data.SqlClient.SqlParameter sp_refno2 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@refno2",
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion

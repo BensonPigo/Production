@@ -88,14 +88,20 @@ Where  1=1
         and Factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion
 
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@sp1";
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@sp1",
+                };
 
-                System.Data.SqlClient.SqlParameter seq1 = new System.Data.SqlClient.SqlParameter();
-                seq1.ParameterName = "@seq1";
+                System.Data.SqlClient.SqlParameter seq1 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@seq1",
+                };
 
-                System.Data.SqlClient.SqlParameter seq2 = new System.Data.SqlClient.SqlParameter();
-                seq2.ParameterName = "@seq2";
+                System.Data.SqlClient.SqlParameter seq2 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@seq2",
+                };
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 

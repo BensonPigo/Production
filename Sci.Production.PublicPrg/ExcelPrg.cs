@@ -49,8 +49,10 @@ namespace Sci.Production.Prg
                 }
             }
 
-            MsExcel.Application app = new MsExcel.Application();
-            app.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
+            MsExcel.Application app = new MsExcel.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+            };
             MsExcel.Worksheet sheet = null;
             try
             {

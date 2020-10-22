@@ -20,23 +20,27 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P18 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
+        private ReportViewer viewer;
         private bool IsAutomation;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Roll;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Dyelot;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ttlqty;
 
+        /// <inheritdoc/>
         public P18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
-            this.viewer = new ReportViewer();
-            this.viewer.Dock = DockStyle.Fill;
+            this.viewer = new ReportViewer
+            {
+                Dock = DockStyle.Fill,
+            };
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
 
@@ -55,6 +59,7 @@ namespace Sci.Production.Warehouse
             };
         }
 
+        /// <inheritdoc/>
         public P18(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -137,12 +142,13 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmdd = @"
 select  b.name 
 from dbo.Transferin  a WITH (NOLOCK) 
 inner join dbo.mdivision  b WITH (NOLOCK) on b.id = a.mdivisionid
 where   b.id = a.mdivisionid
-        and a.id = @ID", pars, out dt);
+        and a.id = @ID";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -172,7 +178,7 @@ where   b.id = a.mdivisionid
             #endregion
             #region -- 撈表身資料 --
             DataTable dtDetail;
-            result = DBProxy.Current.Select(string.Empty, @"
+            string tmp = @"
 select  a.POID
         , a.Seq1 + '-' + a.seq2 as SEQ
         , a.Roll
@@ -196,7 +202,8 @@ inner join FtyInventory f WITH (NOLOCK) on  f.POID = a.poid
 		                                    And f.Roll =  a.roll
 		                                    And f.Dyelot = a.dyelot
 		                                    And f.StockType = a.stocktype
-where a.id = @ID", pars, out dtDetail);
+where a.id = @ID";
+            result = DBProxy.Current.Select(string.Empty, tmp, pars, out dtDetail);
             if (!result)
             {
                 this.ShowErr(result);
@@ -242,8 +249,10 @@ where a.id = @ID", pars, out dtDetail);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
             frm.Show();
 
             return true;
@@ -511,8 +520,10 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                     Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         dt,
                         "Seq,refno,description",
-                        "6,8,20", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description");
-                    selepoitem.Width = 480;
+                        "6,8,20", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description")
+                    {
+                        Width = 480,
+                    };
 
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -1778,8 +1789,10 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         // Accumulated Form
         private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new P18_AccumulatedQty(this.CurrentMaintain);
-            frm.P18 = this;
+            var frm = new P18_AccumulatedQty(this.CurrentMaintain)
+            {
+                P18 = this,
+            };
             frm.ShowDialog(this);
         }
 

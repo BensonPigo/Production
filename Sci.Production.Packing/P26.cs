@@ -69,9 +69,11 @@ namespace Sci.Production.Packing
 
         private void BtnSelectFile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "ZPL files (*.zpl)|*.zpl|(*.pdf)|*.pdf";
-            openFileDialog1.Multiselect = true;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                Filter = "ZPL files (*.zpl)|*.zpl|(*.pdf)|*.pdf",
+                Multiselect = true,
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -80,8 +82,10 @@ namespace Sci.Production.Packing
                 this.GridDt.Rows.Clear();
                 this.listControlBindingSource1.DataSource = null;
                 this.File_Name_Object.Clear();
-                this._File_Name_Object_List = new File_Name_Object_List();
-                this._File_Name_Object_List.File_Name_Object2s = new List<File_Name_Object2>();
+                this._File_Name_Object_List = new File_Name_Object_List
+                {
+                    File_Name_Object2s = new List<File_Name_Object2>(),
+                };
                 this.File_Name_PDF.Clear();
                 this.wattingForConvert.Clear();
 
@@ -383,14 +387,16 @@ namespace Sci.Production.Packing
                     string shipQty = this.GetShipQtyFromZPL(content);
                     string custCTN = this.GetCustCTNFromZPL(content);
 
-                    ZPL zz = new ZPL();
-                    zz.CustPONo = custPONo;
-                    zz.StyleID = styleID;
-                    zz.Article = article;
-                    zz.SizeCode = sizeCode;
-                    zz.CTNStartNo = ctnStartno;
-                    zz.ShipQty = shipQty;
-                    zz.CustCTN = custCTN;
+                    ZPL zz = new ZPL
+                    {
+                        CustPONo = custPONo,
+                        StyleID = styleID,
+                        Article = article,
+                        SizeCode = sizeCode,
+                        CTNStartNo = ctnStartno,
+                        ShipQty = shipQty,
+                        CustCTN = custCTN,
+                    };
                     list.Add(zz);
                 }
                 else
@@ -408,18 +414,20 @@ namespace Sci.Production.Packing
                         return null;
                     }
 
-                    ZPL zz = new ZPL();
-                    zz.CustPONo = custPONo;
-                    zz.ShipQty = string.Empty;
-                    zz.SizeCode = string.Empty;
+                    ZPL zz = new ZPL
+                    {
+                        CustPONo = custPONo,
+                        ShipQty = string.Empty,
+                        SizeCode = string.Empty,
 
-                    // 現階段只有混尺碼情況，若有多色組則排除
-                    zz.StyleID = sizeObjects.FirstOrDefault().StyleID;
-                    zz.Article = sizeObjects.FirstOrDefault().Article;
+                        // 現階段只有混尺碼情況，若有多色組則排除
+                        StyleID = sizeObjects.FirstOrDefault().StyleID,
+                        Article = sizeObjects.FirstOrDefault().Article,
 
-                    zz.CTNStartNo = ctnStartno;
-                    zz.CustCTN = custCTN;
-                    zz.Size_Qty_List = sizeObjects;
+                        CTNStartNo = ctnStartno,
+                        CustCTN = custCTN,
+                        Size_Qty_List = sizeObjects,
+                    };
                     list.Add(zz);
                 }
             }
@@ -484,9 +492,11 @@ namespace Sci.Production.Packing
                     int groupID = 1;
                     foreach (var key in keys)
                     {
-                        PDF_Model m = new PDF_Model();
-                        m.GroupID = groupID.ToString();
-                        m.UpdateModels = zPLs.Where(o => o.CustPONo == key.CustPONo && o.StyleID == key.StyleID).ToList();
+                        PDF_Model m = new PDF_Model
+                        {
+                            GroupID = groupID.ToString(),
+                            UpdateModels = zPLs.Where(o => o.CustPONo == key.CustPONo && o.StyleID == key.StyleID).ToList(),
+                        };
 
                         pDF_Models.Add(m);
                         groupID++;
@@ -594,8 +604,10 @@ namespace Sci.Production.Packing
                     // 開啟新視窗 New Form
                     if (isUserSlect && this.NewFormModels.Count > 0)
                     {
-                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL);
-                        form.Width = 800;
+                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL)
+                        {
+                            Width = 800,
+                        };
                         form.ShowDialog();
                         this.canConvert = form.canConvert;
                         if (this.canConvert)

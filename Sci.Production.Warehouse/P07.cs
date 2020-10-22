@@ -19,6 +19,7 @@ using static Sci.Production.Automation.Gensong_AutoWHFabric;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
@@ -33,6 +34,7 @@ namespace Sci.Production.Warehouse
         private string UserID = Env.User.UserID;
         private bool isSetZero = false;
 
+        /// <inheritdoc/>
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -57,6 +59,7 @@ namespace Sci.Production.Warehouse
             this.IsAutomation = UtilityAutomation.IsAutomationEnable;
         }
 
+        /// <inheritdoc/>
         public P07(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -513,13 +516,14 @@ where p.junk = 1
 
             if (!MyUtility.Check.Empty(this.DetailDatas) && this.DetailDatas.Count > 0)
             {
-                MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "poid,seq1", @"
+                string cmdd = @"
 select  #tmp.*
 from #tmp,dbo.po_supp WITH (NOLOCK) ,dbo.supp WITH (NOLOCK) 
 where   #tmp.poid = dbo.po_supp.id
         and #tmp.seq1 = dbo.po_supp.seq1
         and dbo.po_supp.suppid = dbo.supp.id
-        and dbo.supp.thirdcountry = 1 ", out result, "#tmp");
+        and dbo.supp.thirdcountry = 1 ";
+                MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "poid,seq1", cmdd, out result, "#tmp");
 
                 if (!MyUtility.Check.Empty(result) && result.Rows.Count > 0)
                 {
@@ -773,8 +777,10 @@ Order By e.Seq1, e.Seq2, e.Refno", this.CurrentDetailData["poid"], this.CurrentM
                         Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                             poitems,
                             "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,BalanceQty,linvqty",
-                            "6,15,25,8,10,6,6,6,6,6,6", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
-                        item.Width = 1024;
+                            "6,15,25,8,10,6,6,6,6,6,6", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty")
+                        {
+                            Width = 1024,
+                        };
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
@@ -2444,8 +2450,10 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         // Accumulated Qty
         private void BtAccumulated_Click(object sender, EventArgs e)
         {
-            var frm = new P07_AccumulatedQty(this.CurrentMaintain);
-            frm.P07 = this;
+            var frm = new P07_AccumulatedQty(this.CurrentMaintain)
+            {
+                P07 = this,
+            };
             frm.ShowDialog(this);
         }
 
@@ -2568,8 +2576,10 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 .Distinct()
                 .ToList();
 
-            P07_Print p = new P07_Print(poidList);
-            p.CurrentDataRow = this.CurrentMaintain;
+            P07_Print p = new P07_Print(poidList)
+            {
+                CurrentDataRow = this.CurrentMaintain,
+            };
 
             // p.CurrentDataRow = this.CurrentDataRow;
             p.ShowDialog();

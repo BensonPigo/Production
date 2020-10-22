@@ -97,14 +97,16 @@ namespace Sci.Production.Class
             grid.RowHeadersWidth = 20;
             grid.RowTemplate.Height = 19; // 小於19 的話會導致 checkBox column 不見
 
-            DataGridViewCellStyle headerStyle = new DataGridViewCellStyle();
-            headerStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            headerStyle.BackColor = Color.DimGray;
-            headerStyle.Font = new Font("Microsoft Sans Serif", 8F, FontStyle.Bold);
-            headerStyle.ForeColor = Color.WhiteSmoke;
-            headerStyle.SelectionBackColor = SystemColors.Highlight;
-            headerStyle.SelectionForeColor = SystemColors.HighlightText;
-            headerStyle.WrapMode = DataGridViewTriState.True;
+            DataGridViewCellStyle headerStyle = new DataGridViewCellStyle
+            {
+                Alignment = DataGridViewContentAlignment.MiddleLeft,
+                BackColor = Color.DimGray,
+                Font = new Font("Microsoft Sans Serif", 8F, FontStyle.Bold),
+                ForeColor = Color.WhiteSmoke,
+                SelectionBackColor = SystemColors.Highlight,
+                SelectionForeColor = SystemColors.HighlightText,
+                WrapMode = DataGridViewTriState.True,
+            };
 
             grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             grid.ColumnHeadersDefaultCellStyle = headerStyle;
@@ -283,8 +285,10 @@ namespace Sci.Production.Class
         /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
         public static DataGridViewGeneratorTextColumnSettings InputMaskCell(int maxlenght)
         {
-            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-            ts.MaxLength = (int)maxlenght;
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings
+            {
+                MaxLength = (int)maxlenght,
+            };
             ts.CellFormatting += (s, e) =>
             {
                 e.Value = e.Value.ToString().PadLeft(maxlenght, '0');
@@ -301,8 +305,10 @@ namespace Sci.Production.Class
         /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
         public static DataGridViewGeneratorTextColumnSettings InputMaskCell()
         {
-            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-            ts.InputRestrict = Ict.Win.UI.TextBoxInputsRestrict.Digit;
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings
+            {
+                InputRestrict = Ict.Win.UI.TextBoxInputsRestrict.Digit,
+            };
             return ts;
         }
 

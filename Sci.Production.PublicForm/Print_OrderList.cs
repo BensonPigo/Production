@@ -200,14 +200,18 @@ namespace Sci.Production.PublicForm
 
         private void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign alignment)
         {
-            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName);
-            xlc1.NumberFormate = "@";
+            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName)
+            {
+                NumberFormate = "@",
+            };
             tbl.LisColumnInfo.Add(xlc1);
 
             for (int i = 1; i < tbl.Columns.Count; i++)
             {
-                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName);
-                xlc.Alignment = alignment;
+                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName)
+                {
+                    Alignment = alignment,
+                };
                 tbl.LisColumnInfo.Add(xlc);
             }
         }

@@ -658,8 +658,10 @@ where p.id ='{0}'
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
-            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty", "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
-            selepoitem.Width = 1024;
+            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty", "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty")
+            {
+                Width = 1024,
+            };
 
             return selepoitem;
         }
@@ -711,8 +713,10 @@ WHERE   StockType='{0}'
         and junk != '1'", stocktype);
             }
 
-            Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd, "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null);
-            selectlocation.Width = 1024;
+            Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd, "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null)
+            {
+                Width = 1024,
+            };
 
             return selectlocation;
         }

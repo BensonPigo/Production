@@ -168,8 +168,10 @@ where 1=1 ");
                         "ID,Name",
                         "5,150",
                         this.gridImport.GetDataRow(this.gridImport.GetSelectedRowIndex())["reasonid"].ToString(),
-                        "ID,Name");
-                    item.Width = 600;
+                        "ID,Name")
+                    {
+                        Width = 600,
+                    };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

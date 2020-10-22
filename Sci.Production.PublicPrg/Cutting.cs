@@ -252,8 +252,10 @@ AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
             // 開始組合時間軸
             for (int day1 = 0; day1 <= leadtime; day1++)
             {
-                Day day = new Day();
-                day.Date = date_where.AddDays(-day1).Date;
+                Day day = new Day
+                {
+                    Date = date_where.AddDays(-day1).Date,
+                };
 
                 // 是否行事曆設定假日
                 bool isHoliday = dt2.AsEnumerable().Where(o => MyUtility.Convert.GetDate(o["HolidayDate"]) == day.Date).Any();
@@ -670,10 +672,12 @@ ORDER BY WOD.OrderID
 
                 if (qty > 0)
                 {
-                    GarmentQty gar = new GarmentQty();
-                    gar.OrderID = key.OrderID;
-                    gar.EstCutDate = key.EstCutDate;
-                    gar.Qty = qty;
+                    GarmentQty gar = new GarmentQty
+                    {
+                        OrderID = key.OrderID,
+                        EstCutDate = key.EstCutDate,
+                        Qty = qty,
+                    };
                     garmentQtys.Add(gar);
                 }
             }
@@ -855,11 +859,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 DateTime start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
                 DateTime end = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
 
-                InOffLineList nOnj = new InOffLineList();
-
-                // SP#
-                nOnj.OrderID = orderID;
-                nOnj.InOffLines = new List<InOffLine>();
+                InOffLineList nOnj = new InOffLineList
+                {
+                    // SP#
+                    OrderID = orderID,
+                    InOffLines = new List<InOffLine>(),
+                };
 
                 // 所有Order ID、以及相對應 要扣去的Lead Time(天)
                 int leadTime = leadTimeList.Where(o => o.OrderID == orderID).FirstOrDefault().LeadTimeDay;
@@ -981,9 +986,11 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 {
                 }
 
-                InOffLineList n = new InOffLineList();
-                n.OrderID = bySP.OrderID;
-                n.InOffLines = new List<InOffLine>();
+                InOffLineList n = new InOffLineList
+                {
+                    OrderID = bySP.OrderID,
+                    InOffLines = new List<InOffLine>(),
+                };
                 var groupData = bySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.CutQty, o.StdQty, o.AccuCutQty, o.AccuStdQty })
                                 .Select(x => new InOffLine
                                 {
@@ -1086,12 +1093,13 @@ order by WOD.OrderID,EstCutDate.EstCutDate
                 DateTime start = sameOrderId.Min(o => Convert.ToDateTime(o["Inline"]));
                 DateTime end = sameOrderId.Max(o => Convert.ToDateTime(o["offline"]));
 
-                InOffLineList_byFabricPanelCode nOnj = new InOffLineList_byFabricPanelCode();
-
-                // SP#
-                nOnj.OrderID = orderID;
-                nOnj.FabricPanelCode = fabricPanelCode;
-                nOnj.InOffLines = new List<InOffLine>();
+                InOffLineList_byFabricPanelCode nOnj = new InOffLineList_byFabricPanelCode
+                {
+                    // SP#
+                    OrderID = orderID,
+                    FabricPanelCode = fabricPanelCode,
+                    InOffLines = new List<InOffLine>(),
+                };
 
                 // 所有Order ID、以及相對應 要扣去的Lead Time
                 int leadTime = leadTimeList.Where(o => o.OrderID == orderID).FirstOrDefault().LeadTimeDay;
@@ -1209,10 +1217,12 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             #region 相同日期GROUP BY
             foreach (var bySP in allDataTmp)
             {
-                InOffLineList_byFabricPanelCode n = new InOffLineList_byFabricPanelCode();
-                n.OrderID = bySP.OrderID;
-                n.FabricPanelCode = bySP.FabricPanelCode;
-                n.InOffLines = new List<InOffLine>();
+                InOffLineList_byFabricPanelCode n = new InOffLineList_byFabricPanelCode
+                {
+                    OrderID = bySP.OrderID,
+                    FabricPanelCode = bySP.FabricPanelCode,
+                    InOffLines = new List<InOffLine>(),
+                };
                 var groupData = bySP.InOffLines.GroupBy(o => new { o.DateWithLeadTime, o.CutQty, o.StdQty, o.AccuCutQty, o.AccuStdQty })
                                 .Select(x => new InOffLine
                                 {

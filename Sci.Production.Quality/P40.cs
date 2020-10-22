@@ -255,8 +255,10 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 string sqlGetSupplier = this.GetSupplierSql(string.Empty, true);
-                SelectItem selectItem = new SelectItem(sqlGetSupplier, "10,50,5", string.Empty, string.Empty);
-                selectItem.Width = 900;
+                SelectItem selectItem = new SelectItem(sqlGetSupplier, "10,50,5", string.Empty, string.Empty)
+                {
+                    Width = 900,
+                };
                 DialogResult dialogResult = selectItem.ShowDialog();
                 if (dialogResult != DialogResult.OK)
                 {

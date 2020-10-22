@@ -169,8 +169,10 @@ where Type='TP' and Junk=0";
 
         private void BtnImportBarcode_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "txt files (*.txt)|*.txt";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "txt files (*.txt)|*.txt",
+            };
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string importFileName = openFileDialog.FileName;

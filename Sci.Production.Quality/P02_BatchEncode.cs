@@ -11,10 +11,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P02_BatchEncode : Win.Tems.QueryForm
     {
         private readonly string masterID;
 
+        /// <inheritdoc/>
         public P02_BatchEncode(string masterID)
         {
             this.InitializeComponent();
@@ -258,12 +260,14 @@ WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToStri
 
                         case "Pass":
 
-                            chkresult = DBProxy.Current.Select(null, $@"
+                            string cmd = $@"
 SELECT DISTINCT  Result
 FROM AIR
 WHERE POID='{item["POID"].ToString().Trim()}' AND Seq1='{item["Seq1"].ToString().Trim()} ' AND Seq2='{item["Seq2"].ToString().Trim()}'
 AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].ToString().Trim()}'
-", out dt);
+";
+
+                            chkresult = DBProxy.Current.Select(null, cmd, out dt);
                             if (!chkresult)
                             {
                                 this.ShowErr("Commit transaction error.", chkresult);

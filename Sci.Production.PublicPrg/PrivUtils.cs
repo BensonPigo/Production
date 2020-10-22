@@ -258,10 +258,12 @@ namespace Sci.Production.Prg
                     // EXCEL.XlSaveAsAccessMode.xlShared, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                     if (mode == "N")
                     {
-                        System.Windows.Forms.SaveFileDialog openDlg = new System.Windows.Forms.SaveFileDialog();
-                        openDlg.Filter = "Excel workbook (*.xls;*.xlsx)|*.xls;*.xlsx";
-                        openDlg.InitialDirectory = Directory.Exists(@"\\TsClient\D") ? @"\\TsClient\D" : @"D:\";
-                        openDlg.FileName = Path.GetFileName(templatefile);
+                        System.Windows.Forms.SaveFileDialog openDlg = new System.Windows.Forms.SaveFileDialog
+                        {
+                            Filter = "Excel workbook (*.xls;*.xlsx)|*.xls;*.xlsx",
+                            InitialDirectory = Directory.Exists(@"\\TsClient\D") ? @"\\TsClient\D" : @"D:\",
+                            FileName = Path.GetFileName(templatefile),
+                        };
                         if (openDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
                             excel.DisplayAlerts = false;

@@ -181,13 +181,13 @@ WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                             break;
 
                         case "Pass":
-
-                            chkresult = DBProxy.Current.Select(null, $@"
+                            string cmd = $@"
 SELECT DISTINCT  Result
 FROM AIR
 WHERE POID='{this.poid}' AND Seq1='{this.seq1} ' AND Seq2='{this.seq2}'
 AND ID<>'{this.id}' AND ReceivingID<>'{this.receivingID}'
-", out dt);
+";
+                            chkresult = DBProxy.Current.Select(null, cmd, out dt);
                             if (!chkresult)
                             {
                                 this.ShowErr("Commit transaction error.", chkresult);

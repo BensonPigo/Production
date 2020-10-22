@@ -192,21 +192,29 @@ namespace Sci.Production.Quality
                             }
 
                             #region 準備sql參數資料
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                            sp1.ParameterName = "@CFALocationID";
-                            sp1.Value = currentRow["CFALocationID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@CFALocationID",
+                                Value = currentRow["CFALocationID"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                            sp3.ParameterName = "@id";
-                            sp3.Value = currentRow["ID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@id",
+                                Value = currentRow["ID"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                            sp5.ParameterName = "@ctnStartNo";
-                            sp5.Value = currentRow["CTNStartNo"].ToString();
+                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@ctnStartNo",
+                                Value = currentRow["CTNStartNo"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                            sp6.ParameterName = "@remark";
-                            sp6.Value = currentRow["Remark"].ToString();
+                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@remark",
+                                Value = currentRow["Remark"].ToString(),
+                            };
 
                             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
                             System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();

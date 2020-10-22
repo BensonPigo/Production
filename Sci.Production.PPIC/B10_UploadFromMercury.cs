@@ -26,9 +26,10 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings();
-
-            col_Selected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings
+            {
+                HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None,
+            };
             col_Selected.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);

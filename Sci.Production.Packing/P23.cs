@@ -641,8 +641,10 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
 
                 finalData.Rows.Add(nRow);
 
-                Utility.Excel.SaveXltReportCls.XltRptTable xDt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalData);
-                xDt.ShowHeader = false;
+                Utility.Excel.SaveXltReportCls.XltRptTable xDt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalData)
+                {
+                    ShowHeader = false,
+                };
 
                 x1.DicDatas.Add("##ControlNo" + indexStr, finalData.Rows[0]["ControlNo"]);
                 x1.DicDatas.Add("##SP" + indexStr, finalData.Rows[0]["SP"]);

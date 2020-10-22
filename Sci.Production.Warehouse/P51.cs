@@ -398,17 +398,15 @@ namespace Sci.Production.Warehouse
                             this.CurrentDetailData["stocktype"] = this.CurrentMaintain["stocktype"].ToString();
                         }
 
-                        if (!MyUtility.Check.Seek(
-                            string.Format(
-                            @"select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
-                                 ,dbo.Getlocation(a.ukey) as location 
-                                 ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description] 
-                                        from dbo.ftyinventory a WITH (NOLOCK) where poid='{0}' and seq1='{1}' and seq2='{2}' 
-                                        and stocktype='{3}' and roll='{4}' and lock =0", this.CurrentDetailData["poid"],
-                            this.CurrentDetailData["seq1"],
-                            this.CurrentDetailData["seq2"],
-                            this.CurrentDetailData["stocktype"],
-                            e.FormattedValue.ToString()), out dr, null))
+                        string cmd = $@"
+select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
+,dbo.Getlocation(a.ukey) as location 
+,dbo.getmtldesc('{this.CurrentDetailData["poid"]}','{this.CurrentDetailData["seq1"]}','{this.CurrentDetailData["seq2"]}',2,0) as [description] 
+from dbo.ftyinventory a WITH (NOLOCK) where poid='{this.CurrentDetailData["poid"]}' and seq1='{this.CurrentDetailData["seq1"]}' and seq2='{this.CurrentDetailData["seq2"]}' 
+and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValue.ToString()}' and lock =0
+";
+
+                        if (!MyUtility.Check.Seek(cmd, out dr, null))
                         {
                             e.Cancel = true;
                             MyUtility.Msg.WarningBox("Data not found! or Item is lock!!", "Roll#");

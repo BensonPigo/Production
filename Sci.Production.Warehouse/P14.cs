@@ -16,8 +16,10 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P14 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -662,10 +664,11 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmdd = @"
 select NameEn
 from MDivision
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+            DualResult result = DBProxy.Current.Select(string.Empty,  cmdd, pars, out dt);
 
             if (!result)
             {

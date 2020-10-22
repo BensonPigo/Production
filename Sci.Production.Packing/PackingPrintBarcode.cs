@@ -30,9 +30,11 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Word._Application winword = new Word.Application();
-            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
-            winword.Visible = false;
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
             object printFile;
             Word._Document document;
             Word.Table tables = null;
@@ -268,9 +270,11 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Word._Application winword = new Word.Application();
-            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
-            winword.Visible = false;
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
             object printFile;
             Word._Document document;
             Word.Table tables = null;
@@ -381,9 +385,11 @@ namespace Sci.Production.Packing
                 return new DualResult(false, "Data not found.");
             }
 
-            Word._Application winword = new Word.Application();
-            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
-            winword.Visible = false;
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
             object printFile;
             Word._Document document;
             Word.Table tables = null;
@@ -486,14 +492,16 @@ namespace Sci.Production.Packing
         /// <returns>Image</returns>
         private Bitmap NewBarcode(string strBarcode)
         {
-            Linear code = new Linear();
-            code.Type = BarcodeType.CODE128;
-            code.Data = strBarcode;
-            code.Format = ImageFormat.Bmp;
-            code.X = 4;
-            code.Y = 160;
-            code.TextFont = new Font("Arial", 18f, FontStyle.Regular);
-            code.Resolution = 600;
+            Linear code = new Linear
+            {
+                Type = BarcodeType.CODE128,
+                Data = strBarcode,
+                Format = ImageFormat.Bmp,
+                X = 4,
+                Y = 160,
+                TextFont = new Font("Arial", 18f, FontStyle.Regular),
+                Resolution = 600,
+            };
             code.drawBarcode("c#-barcode.Bmp");
             return code.drawBarcode();
         }

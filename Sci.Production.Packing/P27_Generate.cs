@@ -39,9 +39,10 @@ namespace Sci.Production.Packing
         {
             base.OnFormLoaded();
             this.EditMode = true;
-            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings();
-
-            col_Selected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings
+            {
+                HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None,
+            };
             col_Selected.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);

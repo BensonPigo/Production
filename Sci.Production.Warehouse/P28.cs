@@ -97,8 +97,10 @@ namespace Sci.Production.Warehouse
 
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
             #region -- transfer qty valid --
-            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.IsSupportNegative = true;
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings
+            {
+                IsSupportNegative = true,
+            };
             ns.CellValidating += (s, e) =>
             {
                 // if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))

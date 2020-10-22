@@ -284,8 +284,10 @@ where	pd.CTNStartNo != '' and
 
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                Filter = "txt files (*.txt)|*.txt",
+            };
 
             // 開窗且有選擇檔案
             if (openFileDialog1.ShowDialog() == DialogResult.OK)

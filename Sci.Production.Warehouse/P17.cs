@@ -37,8 +37,10 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.viewer = new ReportViewer();
-            this.viewer.Dock = DockStyle.Fill;
+            this.viewer = new ReportViewer
+            {
+                Dock = DockStyle.Fill,
+            };
             this.Controls.Add(this.viewer);
 
             // MDivisionID 是 P17 寫入 => Sci.Env.User.Keyword
@@ -227,8 +229,10 @@ where a.id= @ID";
             #endregion
 
             // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
             frm.Show();
 
             return true;
@@ -504,8 +508,10 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                                                             AND seq2= '{2}' 
                                                         order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
                         Win.Tools.SelectItem item
-                            = new Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,");
-                        item.Width = 600;
+                            = new Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,")
+                            {
+                                Width = 600,
+                            };
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -1149,8 +1155,10 @@ Where a.id = '{0}'", masterID);
 
         private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new P17_AccumulatedQty(this.CurrentMaintain);
-            frm.P17 = this;
+            var frm = new P17_AccumulatedQty(this.CurrentMaintain)
+            {
+                P17 = this,
+            };
             frm.ShowDialog(this);
         }
 

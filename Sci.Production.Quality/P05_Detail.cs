@@ -242,8 +242,10 @@ and a.seq1=@seq1";
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
-            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
+            DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings
+            {
+                TextMaskFormat = MaskFormat.ExcludePromptAndLiterals,
+            };
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();

@@ -82,7 +82,8 @@ namespace Sci.Production.Warehouse
                 #region  抓表身資料
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
-                result = DBProxy.Current.Select(string.Empty, @"
+
+                string tmp = @"
 select a.POID
     ,a.Seq1+'-'+a.seq2 as SEQ
 	,a.Roll,a.Dyelot
@@ -105,7 +106,9 @@ from dbo.TransferOut_Detail a WITH (NOLOCK)
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
-where a.id= @ID", pars, out this.dtResult);
+where a.id= @ID";
+
+                result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
                 {
                     this.ShowErr(result);

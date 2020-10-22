@@ -23,6 +23,11 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P16 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
+        private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
+        private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+
+        /// <inheritdoc/>
         private ReportViewer viewer;
 
         /// <inheritdoc/>
@@ -69,7 +74,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        /// PPIC_P15 Called
+        // PPIC_P15 Called
         public static void Call(string pPIC_id, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
@@ -927,6 +932,7 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
+
             string sqlcmd = @"
 select b.ApvDate
 from dbo.Issuelack  a WITH (NOLOCK) 
@@ -935,6 +941,7 @@ on b.id = a.requestid
 where b.id = a.requestid
 and a.id = @ID";
             DualResult apvResult = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtApv);
+
             if (!apvResult)
             {
                 this.ShowErr(apvResult);
@@ -980,6 +987,7 @@ left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 where a.id= @ID";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
+
             if (!result)
             {
                 this.ShowErr(result);

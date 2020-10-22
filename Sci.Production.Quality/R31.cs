@@ -244,16 +244,20 @@ WHERE 1=1
             if (!MyUtility.Check.Empty(this.sp1))
             {
                 sqlCmd.Append($"AND oq.ID >= @sp1" + Environment.NewLine);
-                SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar);
-                p.Value = this.sp1;
+                SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar)
+                {
+                    Value = this.sp1,
+                };
                 paramList.Add(p);
             }
 
             if (!MyUtility.Check.Empty(this.sp2))
             {
                 sqlCmd.Append($"AND oq.ID <= @sp2" + Environment.NewLine);
-                SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar);
-                p.Value = this.sp2;
+                SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar)
+                {
+                    Value = this.sp2,
+                };
                 paramList.Add(p);
             }
 

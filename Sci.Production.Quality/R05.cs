@@ -494,9 +494,11 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricDetail);
-                    dt.ShowHeader = false;
-                    dt.BoAddFilter = true;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricDetail)
+                    {
+                        ShowHeader = false,
+                        BoAddFilter = true,
+                    };
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
                     sxr.BoOpenFile = true;
@@ -516,8 +518,10 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricSummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricSummary);
-                    dt.ShowHeader = false;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricSummary)
+                    {
+                        ShowHeader = false,
+                    };
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
@@ -540,9 +544,11 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessoryDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessoryDetail);
-                    dt.ShowHeader = false;
-                    dt.BoAddFilter = true;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessoryDetail)
+                    {
+                        ShowHeader = false,
+                        BoAddFilter = true,
+                    };
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
                     sxr.BoOpenFile = true;
@@ -562,8 +568,10 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessorySummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessorySummary);
-                    dt.ShowHeader = false;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessorySummary)
+                    {
+                        ShowHeader = false,
+                    };
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);

@@ -51,8 +51,10 @@ namespace Sci.Production.IE
         private string SelectSewingLine(string line)
         {
             string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) {0}", MyUtility.Check.Empty(this.comboFactory.Text) ? string.Empty : string.Format(" where FactoryID = '{0}'", this.comboFactory.Text));
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "3", line, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

@@ -179,7 +179,12 @@ order by psd.Refno,isd.POID,isd.Roll
                 {
                     new SqlParameter("@MDivision", Env.User.Keyword),
                 };
-                result = DBProxy.Current.Select(string.Empty, "select NameEN from MDivision where id = @MDivision", pars, out DataTable dt);
+                DataTable dt;
+                string cmdd = @"
+select NameEN
+from MDivision
+where id = @MDivision";
+                result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt);
                 if (!result)
                 {
                     this.ShowErr(result);

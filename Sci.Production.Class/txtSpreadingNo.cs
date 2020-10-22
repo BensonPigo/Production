@@ -48,8 +48,10 @@ namespace Sci.Production.Class
             }
 
             sql = "select distinct id,CutCell= CutCellID from SpreadingNo WITH (NOLOCK) " + this.Where;
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, string.Empty, this.Text, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, string.Empty, this.Text, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

@@ -19,12 +19,14 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P37 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
+        private ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P37(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,6 +42,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P37(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -122,15 +125,15 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt1;
-            DualResult result1 = DBProxy.Current.Select(
-                string.Empty,
+            string cmdd =
                 @"select    
             b.nameEN 
             from dbo.ReturnReceipt  a WITH (NOLOCK) 
             inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dt1);
+            and a.id = @ID";
+            DualResult result1 = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt1);
             if (!result1)
             {
                 this.ShowErr(result1);
@@ -145,13 +148,12 @@ namespace Sci.Production.Warehouse
 
             DataTable dtRefund;
             string refundResult;
-            DBProxy.Current.Select(
-                string.Empty,
-                @"Select R.whsereasonid,W.Description
+            cmdd = @"Select R.whsereasonid,W.Description
             from dbo.returnReceipt R WITH (NOLOCK) 
 		    LEFT join dbo.WhseReason W WITH (NOLOCK) 
 		    ON W.type='RR'AND W.ID = R.WhseReasonId
-		    WHERE R.id = @ID", pars, out dtRefund);
+		    WHERE R.id = @ID";
+            DBProxy.Current.Select(string.Empty, cmdd, pars, out dtRefund);
             if (dtRefund.Rows.Count == 0)
             {
                 refundResult = string.Empty;
@@ -165,12 +167,11 @@ namespace Sci.Production.Warehouse
 
             DataTable dtAction;
             string actionResult;
-            DBProxy.Current.Select(
-                string.Empty,
-                @"Select  R.whsereasonid,[desc] = W.Description   
+            cmdd = @"Select  R.whsereasonid,[desc] = W.Description   
                 from dbo.returnReceipt R WITH (NOLOCK) 
 		        LEFT join dbo.WhseReason W WITH (NOLOCK) 	ON W.type='RA'AND W.ID = R.ActionID
-		        WHERE R.id = @ID", pars, out dtAction);
+		        WHERE R.id = @ID";
+            DBProxy.Current.Select(string.Empty, cmdd, pars, out dtAction);
             if (dtAction.Rows.Count == 0)
             {
                 actionResult = string.Empty;

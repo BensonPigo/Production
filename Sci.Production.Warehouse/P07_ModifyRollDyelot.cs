@@ -483,9 +483,7 @@ from (
 
             // 上下grid連動, Balance需要依照IssueDate , ID 排序後重新計算
             DataTable dt = new DataTable();
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(
-                this.dtGridDyelot,
-                string.Empty,
+            string cmdd =
                 $@"
             select  IssueDate,inqty = iif(adjust>0,inqty+adjust,inqty),outqty = iif(adjust < 0,abs(adjust) + abs(outqty), abs(outqty))
             ,adjust,id,Remark,location,name,POID,Seq1,Seq2, Roll,Dyelot,[Seq] 
@@ -495,7 +493,10 @@ from (
             and roll='{dr["roll"]}' and dyelot='{dr["dyelot"]}'
             group by IssueDate,inqty,outqty,adjust,id,Remark,location,name,POID,Seq1,Seq2, Roll,Dyelot,Seq
             order by IssueDate,id,name
-            ", out dt);
+            ";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(
+                this.dtGridDyelot,
+                string.Empty, cmdd, out dt);
             if (dt.Rows.Count == 0)
             {
                 this.gridDyelot.DataSource = null;

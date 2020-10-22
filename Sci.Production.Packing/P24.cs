@@ -289,11 +289,13 @@ ORDER BY CAST(pd.CTNStartNo as int)
             }
 
             // 呼叫File 選擇視窗
-            OpenFileDialog file = new OpenFileDialog();
-            file.InitialDirectory = "c:\\"; // 預設路徑
-            file.Filter = "Image Files(*.BMP;)|*.BMP"; // 使用檔名
-            file.FilterIndex = 1;
-            file.RestoreDirectory = true;
+            OpenFileDialog file = new OpenFileDialog
+            {
+                InitialDirectory = "c:\\", // 預設路徑
+                Filter = "Image Files(*.BMP;)|*.BMP", // 使用檔名
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
             if (file.ShowDialog() == DialogResult.OK)
             {
                 string local_path_file = file.FileName;
@@ -811,8 +813,10 @@ AND NOT EXISTS(
                 return;
             }
 
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "Excel files (*.xlsx;*.xls;*.xlt)|*.xlsx;*.xls;*.xlt";
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                Filter = "Excel files (*.xlsx;*.xls;*.xlt)|*.xlsx;*.xls;*.xlt",
+            };
 
             // 開窗且有選擇檔案
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -971,8 +975,10 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         {
             try
             {
-                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application();
-                xlsApp.Visible = false;
+                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application
+                {
+                    Visible = false,
+                };
                 Microsoft.Office.Interop.Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
                 Microsoft.Office.Interop.Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
                 Microsoft.Office.Interop.Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");

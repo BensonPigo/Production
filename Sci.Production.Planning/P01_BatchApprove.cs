@@ -332,21 +332,29 @@ and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0) ",
 ,ot.LocalSuppID,ot.ArtworkInLine,ods.SciDelivery";
 
                 #region 準備sql參數資料
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@sp1";
-                sp1.Value = sp_b.TrimEnd();
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@sp1",
+                    Value = sp_b.TrimEnd(),
+                };
 
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                sp2.ParameterName = "@sp2";
-                sp2.Value = sp_e.TrimEnd();
+                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@sp2",
+                    Value = sp_e.TrimEnd(),
+                };
 
-                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                sp3.ParameterName = "@artworktypeid";
-                sp3.Value = artworktype;
+                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@artworktypeid",
+                    Value = artworktype,
+                };
 
-                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                sp4.ParameterName = "@factoryid";
-                sp4.Value = factory;
+                System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@factoryid",
+                    Value = factory,
+                };
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(sp1);

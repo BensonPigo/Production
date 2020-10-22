@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         // bool flag;
         // string poType;
-        protected DataTable dtArtwork;
+        private DataTable dtArtwork;
 
         /// <inheritdoc/>
         public P60_Import(DataRow master, DataTable detail)
@@ -116,16 +116,12 @@ Where b.Qty - b.InQty >0
 
             if (!MyUtility.Check.Empty(issueDate1))
             {
-                strSQLCmd += string.Format(
-                    @" and a.issuedate between '{0}' and '{1}'",
-                    Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
+                strSQLCmd += $@" and a.issuedate between '{Convert.ToDateTime(issueDate1).ToString("d")}' and '{Convert.ToDateTime(issueDate2).ToString("d")}'";
             }
 
             if (!MyUtility.Check.Empty(deliveryDate1))
             {
-                strSQLCmd += string.Format(
-                    @" and o.BuyerDelivery between '{0}' and '{1}'",
-                    Convert.ToDateTime(deliveryDate1).ToString("d"), Convert.ToDateTime(deliveryDate2).ToString("d"));
+                strSQLCmd += $@" and o.BuyerDelivery between '{Convert.ToDateTime(deliveryDate1).ToString("d")}' and '{Convert.ToDateTime(deliveryDate2).ToString("d")}'";
             }
 
             if (!MyUtility.Check.Empty(spno1))
@@ -303,9 +299,7 @@ where	Junk != 1
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = this.dt_detail.Select(string.Format(
-                    "localpoid = '{0}' and localpo_detailUkey = {1} ",
-                    tmp["localpoid"].ToString(), tmp["localpo_detailUkey"].ToString()));
+                DataRow[] findrow = this.dt_detail.Select($@"localpoid = '{tmp["localpoid"].ToString()}' and localpo_detailUkey = {tmp["localpo_detailUkey"].ToString()}");
 
                 if (findrow.Length > 0)
                 {

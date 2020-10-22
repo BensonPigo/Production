@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P05 : Win.Tems.QueryForm
     {
         private string para_Wkno;
@@ -14,6 +15,7 @@ namespace Sci.Production.Warehouse
         private string para_Seq1;
         private string para_Seq2;
 
+        /// <inheritdoc/>
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

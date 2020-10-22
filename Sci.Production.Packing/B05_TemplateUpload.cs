@@ -44,9 +44,10 @@ FROM StickerSize WITH (NOLOCK)
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorComboBoxColumnSettings col_StickerSize = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorTextColumnSettings col_TemplateName = new DataGridViewGeneratorTextColumnSettings();
-
-            col_TemplateName.MaxLength = 30;
+            DataGridViewGeneratorTextColumnSettings col_TemplateName = new DataGridViewGeneratorTextColumnSettings
+            {
+                MaxLength = 30,
+            };
 
             // sideComboCell
             Dictionary<long, string> size = new Dictionary<long, string>();
@@ -146,11 +147,13 @@ AND Junk = 1
             }
 
             // 呼叫File 選擇視窗
-            OpenFileDialog file = new OpenFileDialog();
-            file.InitialDirectory = "c:\\"; // 預設路徑
-            file.Filter = "All Files(*.tff;)|*.tff"; // 使用檔名
-            file.FilterIndex = 1;
-            file.RestoreDirectory = true;
+            OpenFileDialog file = new OpenFileDialog
+            {
+                InitialDirectory = "c:\\", // 預設路徑
+                Filter = "All Files(*.tff;)|*.tff", // 使用檔名
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
             if (file.ShowDialog() == DialogResult.OK)
             {
                 try

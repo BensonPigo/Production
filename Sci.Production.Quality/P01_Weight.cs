@@ -690,18 +690,22 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             this.ShowWaitMessage("To PDF Processing...");
-            Excel.Application objApp = new Excel.Application();
-            objApp.DisplayAlerts = false;
+            Excel.Application objApp = new Excel.Application
+            {
+                DisplayAlerts = false,
+            };
             objApp.Workbooks.Add();
             Excel.Sheets exlSheets = objApp.Worksheets;
             Excel.Worksheet newSheet = exlSheets.Item[1];
             exlSheets.Item[1].Delete();
             exlSheets.Item[1].Delete();
 
-            ExcelHeadData excelHeadData = new ExcelHeadData();
-            excelHeadData.SPNo = this.maindr["POID"].ToString();
-            excelHeadData.Brand = this.displayBrand.Text;
-            excelHeadData.StyleNo = this.displayStyle.Text;
+            ExcelHeadData excelHeadData = new ExcelHeadData
+            {
+                SPNo = this.maindr["POID"].ToString(),
+                Brand = this.displayBrand.Text,
+                StyleNo = this.displayStyle.Text,
+            };
 
             DataRow drOrder;
             MyUtility.Check.Seek(

@@ -430,14 +430,20 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
             string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
-            sxrc sxr = new sxrc(xltPath, keepApp: true);
-            sxr.BoOpenFile = true;
-            sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
-            xrtSummery1.ShowHeader = false;
+            sxrc sxr = new sxrc(xltPath, keepApp: true)
+            {
+                BoOpenFile = true,
+            };
+            sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1])
+            {
+                ShowHeader = false,
+            };
             sxr.DicDatas.Add("##Summery", xrtSummery1);
 
-            sxrc.XltRptTable xrtDetail = new sxrc.XltRptTable(this.dtList[0]);
-            xrtDetail.ShowHeader = false;
+            sxrc.XltRptTable xrtDetail = new sxrc.XltRptTable(this.dtList[0])
+            {
+                ShowHeader = false,
+            };
             sxr.DicDatas.Add("##detail", xrtDetail);
 
             Microsoft.Office.Interop.Excel.Workbook wkb = sxr.ExcelApp.ActiveWorkbook;

@@ -3265,37 +3265,51 @@ and ID != '{1}'",
 set TotalShipQty = @ttlShipQty, TotalCTNQty = @ttlCTNQty, TotalNW = @ttlNW, TotalNNW = @ttlNNW, TotalGW = @ttlGW, TotalCBM = @ttlCBM
 where ID = @INVNo";
                     #region 準備sql參數資料
-                    SqlParameter sp1 = new SqlParameter();
-                    sp1.ParameterName = "@ttlShipQty";
-                    sp1.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(currentMaintain["ShipQty"]);
+                    SqlParameter sp1 = new SqlParameter
+                    {
+                        ParameterName = "@ttlShipQty",
+                        Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["ShipQty"]) + MyUtility.Convert.GetInt(currentMaintain["ShipQty"]),
+                    };
 
-                    SqlParameter sp2 = new SqlParameter();
-                    sp2.ParameterName = "@ttlCTNQty";
-                    sp2.Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(currentMaintain["CTNQty"]);
+                    SqlParameter sp2 = new SqlParameter
+                    {
+                        ParameterName = "@ttlCTNQty",
+                        Value = MyUtility.Convert.GetInt(summaryData.Rows[0]["CTNQty"]) + MyUtility.Convert.GetInt(currentMaintain["CTNQty"]),
+                    };
 
-                    SqlParameter sp3 = new SqlParameter();
-                    sp3.ParameterName = "@ttlNW";
-                    sp3.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(currentMaintain["NW"]), 2);
+                    SqlParameter sp3 = new SqlParameter
+                    {
+                        ParameterName = "@ttlNW",
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NW"]) + MyUtility.Convert.GetDouble(currentMaintain["NW"]), 2),
+                    };
 
-                    SqlParameter sp4 = new SqlParameter();
-                    sp4.ParameterName = "@ttlNNW";
-                    sp4.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(currentMaintain["NNW"]), 2);
+                    SqlParameter sp4 = new SqlParameter
+                    {
+                        ParameterName = "@ttlNNW",
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["NNW"]) + MyUtility.Convert.GetDouble(currentMaintain["NNW"]), 2),
+                    };
 
-                    SqlParameter sp5 = new SqlParameter();
-                    sp5.ParameterName = "@ttlGW";
+                    SqlParameter sp5 = new SqlParameter
+                    {
+                        ParameterName = "@ttlGW",
 
-                    // ISP20181015 GW抓到小數點後3位
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(currentMaintain["GW"]), 3);
+                        // ISP20181015 GW抓到小數點後3位
+                        Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(currentMaintain["GW"]), 3),
+                    };
 
-                    SqlParameter sp6 = new SqlParameter();
-                    sp6.ParameterName = "@ttlCBM";
+                    SqlParameter sp6 = new SqlParameter
+                    {
+                        ParameterName = "@ttlCBM",
 
-                    // ISP20181015 CBM抓到小數點後4位
-                    sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(currentMaintain["CBM"]);
+                        // ISP20181015 CBM抓到小數點後4位
+                        Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(currentMaintain["CBM"]),
+                    };
 
-                    SqlParameter sp7 = new SqlParameter();
-                    sp7.ParameterName = "@INVNo";
-                    sp7.Value = currentMaintain["INVNo"].ToString();
+                    SqlParameter sp7 = new SqlParameter
+                    {
+                        ParameterName = "@INVNo",
+                        Value = currentMaintain["INVNo"].ToString(),
+                    };
 
                     IList<SqlParameter> cmds = new List<SqlParameter>();
                     cmds.Add(sp1);

@@ -33,8 +33,10 @@ namespace Sci.Production.IE
             base.OnFormLoaded();
 
             // 新增Import From Barcode按鈕
-            Win.UI.Button btn = new Win.UI.Button();
-            btn.Text = "Import From Excel";
+            Win.UI.Button btn = new Win.UI.Button
+            {
+                Text = "Import From Excel",
+            };
             btn.Click += new EventHandler(this.Btn_Click);
             this.browsetop.Controls.Add(btn);
             btn.Size = new Size(165, 30); // 預設是(80,30)
