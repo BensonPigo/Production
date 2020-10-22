@@ -1,5 +1,5 @@
 ﻿
-CREATE VIEW [dbo].[view_KHImportItem]
+CREATE VIEW [dbo].[View_KHImportItem]
 AS
 SELECT TOP (100) PERCENT Refno, Description, CustomsType, Unit, Junk
 FROM              
@@ -10,7 +10,7 @@ FROM
 	WHERE           (Type IN ('F', 'A'))
 	UNION ALL
 	SELECT          ID AS Refno, Description, 'Machine' AS CustomsType, 'SET' AS Unit, Junk
-	FROM              Machine.dbo.MachineMasterGroup
+	FROM              SciMachine_MachineMasterGroup
 	UNION ALL
 	SELECT          m.MaterialCode AS Refno, m.Description, 'Chemical' AS CustomsType, mu.UnitName AS Unit, 
 	m.Junk
