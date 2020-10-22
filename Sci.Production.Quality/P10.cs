@@ -93,6 +93,7 @@ where sd.id='{0}' order by sd.No
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnSend(object sender, EventArgs e)
         {
             if (this.EditMode == true)
@@ -130,6 +131,7 @@ where sd.id='{0}' order by sd.No
             email.ShowDialog(this);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnReceive(object sender, EventArgs e)
         {
             if (this.EditMode == true)

@@ -48,6 +48,7 @@ namespace Sci.Production.Quality
         private System.Data.DataTable allFactory = null;
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.dtt_All = null;

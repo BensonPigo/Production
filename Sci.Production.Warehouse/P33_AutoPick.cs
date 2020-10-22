@@ -18,10 +18,7 @@ namespace Sci.Production.Warehouse
         private string poid;
         private string issueid;
         private string orderid;
-        private DataTable BOA;
-        private DataTable BOA_Orderlist;
         private DataTable BOA_PO;
-        private DataTable BOA_PO_Size;
         private DataTable dtIssueBreakDown;
         private Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
         private List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
@@ -83,10 +80,7 @@ namespace Sci.Production.Warehouse
             DataSet dataSet = new DataSet();
             DataTable result = null;
 
-            this.BOA = null;
-            this.BOA_Orderlist = null;
             this.BOA_PO = null;
-            this.BOA_PO_Size = null;
 
             // 整理出#tmp傳進 SQL 使用
             DataTable issueBreakDown_Dt = new DataTable();
@@ -401,6 +395,7 @@ GROUP BY Article
 
         }
 
+        /// <inheritdoc/>
         public void Sum_subDetail(DataRow target, DataTable source)
         {
             DataTable tmpDt = source;
@@ -451,6 +446,7 @@ GROUP BY Article
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
 
+        /// <inheritdoc/>
         public static void ProcessWithDatatable2(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp")
         {
             result = null;
@@ -563,24 +559,28 @@ GROUP BY Article
             }
         }
 
+        /// <inheritdoc/>
         public DataTable GetAutoDetailDataTable(int rowIndex)
         {
             DataTable tmpDt = this.dictionaryDatas[this.gridAutoPick.GetDataRow(rowIndex)];
             return tmpDt;
         }
 
+        /// <inheritdoc/>
         public DataRow GetAutoDetailDataRow(int rowIndex)
         {
             DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
+        /// <inheritdoc/>
         public DataRow GetNeedChangeDataRow(int rowIndex)
         {
             DataRow tmpDt = this.gridAutoPick.GetDataRow<DataRow>(rowIndex);
             return tmpDt;
         }
 
+        /// <inheritdoc/>
         public void DictionaryDatasRejectChanges()
         {
             var d = this.dictionaryDatas.AsEnumerable().ToList();
@@ -597,6 +597,7 @@ GROUP BY Article
             // }
         }
 
+        /// <inheritdoc/>
         public void DictionaryDatasAcceptChanges()
         {
             // 批次RejectChanges

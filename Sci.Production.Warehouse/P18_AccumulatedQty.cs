@@ -7,6 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P18_AccumulatedQty : Win.Subs.Base
     {
         /// <inheritdoc/>
@@ -14,6 +15,7 @@ namespace Sci.Production.Warehouse
         public Win.Tems.Base P18;
         private DataRow dr;
 
+        /// <inheritdoc/>
         public P18_AccumulatedQty(DataRow data)
         {
             this.InitializeComponent();
@@ -21,6 +23,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

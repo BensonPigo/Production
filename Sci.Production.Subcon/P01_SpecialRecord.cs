@@ -8,6 +8,7 @@ using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P01_SpecialRecord : Win.Subs.Base
     {
         private DataTable dt_artworkpo_detail;
@@ -17,11 +18,13 @@ namespace Sci.Production.Subcon
         private string poType;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <inheritdoc/>
         public P01_SpecialRecord()
         {
             this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         public P01_SpecialRecord(DataRow data, DataTable detail, string fuc)
         {
             this.InitializeComponent();
@@ -80,6 +83,7 @@ namespace Sci.Production.Subcon
             this.gridSpecialRecord.Columns["Amount"].Visible = this.flag;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string orderID = this.txtSPNo.Text;

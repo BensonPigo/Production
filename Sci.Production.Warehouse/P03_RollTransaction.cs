@@ -32,6 +32,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

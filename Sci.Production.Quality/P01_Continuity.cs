@@ -321,6 +321,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;

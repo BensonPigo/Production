@@ -182,6 +182,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
             this.Close();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnImport_Click(object sender, EventArgs e)
         {
             this.gridRollNo.ValidateControl();

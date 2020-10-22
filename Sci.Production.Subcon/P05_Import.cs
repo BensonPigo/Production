@@ -32,7 +32,6 @@ namespace Sci.Production.Subcon
         private string MasterSP;
         private bool isNeedPlanningB03Quote = false;
         private bool IsSintexSubcon = false;
-        private bool fromPlanningB03Quote = false;
         private P05 p05;
 
         /// <summary>
@@ -132,7 +131,6 @@ namespace Sci.Production.Subcon
             }
 
             string strSQLCmd = string.Empty;
-            this.fromPlanningB03Quote = false;
             if (this.isNeedPlanningB03Quote)
             {
                 if (this.IsSintexSubcon && Prgs.CheckIsArtworkorUseArtwork(MyUtility.Convert.GetString(this.dr_artworkReq["artworktypeid"])))
@@ -142,7 +140,6 @@ namespace Sci.Production.Subcon
                 else
                 {
                     strSQLCmd = this.QuoteFromPlanningB03(sqlwhere);
-                    this.fromPlanningB03Quote = true;
                 }
             }
             else

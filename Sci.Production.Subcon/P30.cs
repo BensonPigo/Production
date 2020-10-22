@@ -351,6 +351,7 @@ where a.RequestID <> '' and lpd.qty-lld.qty-a.Qty<0";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult ClickSave()
         {
             string sqlupd2 = string.Empty, ids = string.Empty;
@@ -704,6 +705,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult ClickDelete()
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
@@ -897,6 +899,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         // Detail Grid 設定
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailGridSetup()
         {
             #region SP# Vaild 判斷此sp#的cateogry存在 order_tmscost
@@ -1510,6 +1513,7 @@ where refno = '{0}'
         /// Check事件
         /// </summary>
         /// 只有狀態 " New " 才可以Check
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickCheck()
         {
             base.ClickCheck();
@@ -1558,6 +1562,7 @@ where refno = '{0}'
         /// Uncheck事件
         /// </summary>
         /// 只有狀態 " Locked " 才可以Check
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUncheck()
         {
             base.ClickUncheck();
@@ -1612,6 +1617,7 @@ where refno = '{0}'
         /// Confirm事件
         /// </summary>
         /// 只有狀態 " Locked " 才可以Confirm
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -1658,6 +1664,7 @@ where refno = '{0}'
         /// UnConfirm事件
         /// </summary>
         /// 只有狀態 " Approved " 才可以UnConfirm
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -1720,6 +1727,7 @@ where refno = '{0}'
         /// Close事件
         /// </summary>
         /// 只有狀態 " Approved " 才可以Close
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickClose()
         {
             base.ClickClose();
@@ -1759,6 +1767,7 @@ where refno = '{0}'
         /// Unclose事件
         /// </summary>
         /// 只有狀態 " Closed " 才可以Unclose
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
@@ -1979,6 +1988,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
+        /// <inheritdoc/>
         public void Reload()
         {
             // 避免User先關 P30再關P30_BatchApprove

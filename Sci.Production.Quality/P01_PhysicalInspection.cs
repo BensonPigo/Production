@@ -130,6 +130,7 @@ namespace Sci.Production.Quality
         private DataTable datas2;
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnRequeryPost(DataTable datas)
         {
             this.datas2 = datas;
@@ -323,6 +324,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
@@ -673,6 +675,7 @@ DROP TABLE #default,#withBrandID ,#BrandInfo
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnSave()
         {
             DualResult upResult = new DualResult(true);
@@ -796,6 +799,7 @@ Where DetailUkey = {15};",
             return upResult;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -1031,6 +1035,7 @@ and not exists
             this.ToExcel(false, "DefectYds");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private bool ToExcel(bool isSendMail, string type)
         {
             #region DataTables && 共用變數

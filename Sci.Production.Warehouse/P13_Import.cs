@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P13_Import : Win.Subs.Base
     {
         private DataRow dr_master;
@@ -20,6 +21,7 @@ namespace Sci.Production.Warehouse
         // string poType;
         private DataTable dtArtwork;
 
+        /// <inheritdoc/>
         public P13_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -33,6 +35,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();

@@ -161,6 +161,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Check & Import
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnCheckImport_Click(object sender, EventArgs e)
         {
             #region -- 判斷第一個Grid是否有資料 --

@@ -828,6 +828,7 @@ for xml path('') ";
         #endregion
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static IList<DataRow> Autopick(DataRow materials, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
@@ -1200,6 +1201,7 @@ where   poid = '{materials["StockPOID"]}'
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static IList<DataRow> AutoPickTape(DataRow materials, string cutplanid, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
@@ -1478,6 +1480,7 @@ where    psd.ID = '{material["poid"]}'
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static bool P22confirm(DataRow dr, DataTable dt)
         {
             StringBuilder upd_MD_8T = new StringBuilder();
@@ -1738,6 +1741,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult P23confirm(string subTransfer_ID)
         {
             string upd_MD_4T = string.Empty;
@@ -2139,6 +2143,7 @@ when matched then
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult P24confirm(string subTransfer_ID)
         {
             string upd_MD_16T = string.Empty;

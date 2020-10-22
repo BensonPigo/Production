@@ -37,6 +37,7 @@ namespace Sci.Production.Quality
         // refresh
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailEntered()
         {
             List<SqlParameter> spam = new List<SqlParameter>();

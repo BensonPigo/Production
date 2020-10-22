@@ -45,6 +45,7 @@ namespace Sci.Production.Warehouse
                  .Date("issuedate", header: "Date", width: Widths.AnsiChars(13));
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void SelectData()
         {
             string selectCmd = string.Format(

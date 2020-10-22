@@ -9,10 +9,13 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_InspectionList : Win.Subs.Base
     {
         private DataRow dr;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public P03_InspectionList(DataRow data)
         {
             this.InitializeComponent();
@@ -145,6 +148,7 @@ Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = 
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             StringBuilder sqlcmd = new StringBuilder();

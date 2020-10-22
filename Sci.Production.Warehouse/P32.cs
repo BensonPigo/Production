@@ -246,6 +246,7 @@ where t.id= @ID";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -438,6 +439,7 @@ where t.id= @ID";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -750,6 +752,7 @@ else
                             return;
                         }
                     }
+
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, string.Empty, upd_Fty_26F, out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
@@ -811,6 +814,7 @@ else
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -1247,6 +1251,7 @@ Where a.id = '{0}'", masterID);
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void TxtBorrowID_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtBorrowID.Text))
@@ -1288,6 +1293,7 @@ Where a.id = '{0}'", masterID);
         /// 確認 SP# & Seq 是否已經有重複的 Roll
         /// </summary>
         /// <returns>bool</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private bool CheckRoll()
         {
             // 判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收

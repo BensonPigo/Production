@@ -6,10 +6,12 @@ using Ict;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P01_Ap : Win.Subs.Base
     {
         private DataRow dr;
 
+        /// <inheritdoc/>
         public P01_Ap(DataRow data)
         {
             this.InitializeComponent();
@@ -17,6 +19,7 @@ namespace Sci.Production.Subcon
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

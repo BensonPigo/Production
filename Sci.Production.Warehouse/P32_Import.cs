@@ -38,6 +38,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             string sqlcmd;
@@ -314,6 +315,7 @@ drop table #tmp,#tmp2
         }
 
         // Import
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -391,6 +393,7 @@ drop table #tmp,#tmp2
             this.Close();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private bool CheckAndShowInfo(string sp, string seq1, string seq2)
         {
             this.displaySizeSpec.Value = string.Empty;
@@ -434,6 +437,7 @@ where id ='{sp}' and seq1 = '{seq1}' and seq2 = '{seq2}'";
             this.gridImport.ValidateControl();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void CheckBorrowReturnQty(int rowIndex, decimal qty)
         {
             // check 判斷總數在 Stock or Return 超過

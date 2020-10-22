@@ -94,6 +94,7 @@ namespace Sci.Production.Quality
             this.OnRequery();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void OnRequery()
         {
              this.sql = string.Format(
@@ -155,6 +156,7 @@ namespace Sci.Production.Quality
         }
 
         // [Encode][Amend]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             if (this.btnEncode.Text == "Encode")
@@ -314,6 +316,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             base.OnFormClosed(e);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (this.btnEdit.Text == "Edit")

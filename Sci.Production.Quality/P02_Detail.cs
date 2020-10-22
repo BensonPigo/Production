@@ -74,6 +74,7 @@ namespace Sci.Production.Quality
             this.Button_enable(this.canedit);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnAmend_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -293,6 +294,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         }
 
         // Save and Edit
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             string strSqlcmd = string.Empty;

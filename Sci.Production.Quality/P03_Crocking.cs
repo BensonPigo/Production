@@ -842,6 +842,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             return upResult;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -966,6 +967,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             this.txtsupplierSupp.TextBox1.ReadOnly = true;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;

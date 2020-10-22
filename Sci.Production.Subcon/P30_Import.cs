@@ -30,6 +30,7 @@ namespace Sci.Production.Subcon
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNoStart.Text;

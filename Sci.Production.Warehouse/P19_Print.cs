@@ -178,6 +178,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnToPrint(ReportDefinition report)
         {
             this.SetCount(this.dtResult.Rows.Count);

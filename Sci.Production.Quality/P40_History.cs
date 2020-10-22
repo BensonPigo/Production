@@ -2,8 +2,10 @@
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P40_History : P40
     {
+        /// <inheritdoc/>
         public P40_History(string iD)
         {
             this.InitializeComponent();
@@ -12,6 +14,7 @@ namespace Sci.Production.Quality
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();

@@ -31,6 +31,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             if (this.comboStockType.SelectedIndex < 0)
@@ -312,6 +313,8 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             this.Close();
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static List<string> ToSeqSplit(string toSeq)
         {
             List<string> result = new List<string>();

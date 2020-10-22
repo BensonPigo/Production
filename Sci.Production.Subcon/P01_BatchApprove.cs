@@ -7,10 +7,12 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P01_BatchApprove : Win.Subs.Base
     {
         private Action delegateAct;
 
+        /// <inheritdoc/>
         public P01_BatchApprove(Action reload)
         {
             this.InitializeComponent();
@@ -129,6 +131,7 @@ namespace Sci.Production.Subcon
             this.Close();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnApprove_Click(object sender, EventArgs e)
         {
             DataSet ds = (DataSet)this.listControlBindingSource1.DataSource;

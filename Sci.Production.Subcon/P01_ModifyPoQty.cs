@@ -70,6 +70,7 @@ namespace Sci.Production.Subcon
         {
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!(this.dr["apqty"] == DBNull.Value) && (this.numPOQty.Value < int.Parse(this.dr["apqty"].ToString())))

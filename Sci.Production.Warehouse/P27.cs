@@ -13,8 +13,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P27 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -122,6 +124,7 @@ namespace Sci.Production.Warehouse
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();

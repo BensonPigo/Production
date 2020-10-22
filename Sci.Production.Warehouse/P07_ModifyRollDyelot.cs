@@ -34,6 +34,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -462,6 +463,7 @@ from (
             this.HideWaitMessage();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void Grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (this.dtGridDyelot == null)
@@ -509,6 +511,7 @@ from (
             this.gridDyelot.AutoResizeColumns();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnCommit_Click(object sender, EventArgs e)
         {
             var modifyDrList = this.source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);

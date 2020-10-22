@@ -37,6 +37,7 @@ namespace Sci.Production.Subcon
         // Refresh
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -358,6 +359,7 @@ Where a.id = '{0}' order by orderid ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void UpdateStatus(string oldvalue, string newValue, bool seleReason, string reasonType = "DebitNote_LS")
         {
             DualResult result;

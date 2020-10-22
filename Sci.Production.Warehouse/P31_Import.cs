@@ -39,6 +39,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
@@ -289,6 +290,7 @@ AND Orders.Category <> 'A' ");
         }
 
         // Import
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnImport_Click(object sender, EventArgs e)
         {
             StringBuilder warningmsg = new StringBuilder();
