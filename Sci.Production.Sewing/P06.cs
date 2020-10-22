@@ -183,6 +183,7 @@ where	pd.CTNStartNo != '' and
             e.Cancel = true;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         private class PackDataResult
         {
             public DataRow Dr;

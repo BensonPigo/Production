@@ -12,13 +12,18 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P36_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         protected DataTable dtScrap;
 
+        /// <inheritdoc/>
         public P36_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

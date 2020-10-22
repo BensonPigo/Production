@@ -6,10 +6,12 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P01_FarmOutList : Win.Subs.Base
     {
-        protected DataRow dr;
+        private DataRow dr;
 
+        /// <inheritdoc/>
         public P01_FarmOutList(DataRow data)
         {
             this.InitializeComponent();

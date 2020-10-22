@@ -8,12 +8,17 @@ using System.Linq;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class B40_RFIDReaderSetting : Win.Subs.Input4
     {
         private string ID;
         private DataRow Master;
+
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public DataTable DetailDT;
 
+        /// <inheritdoc/>
         public B40_RFIDReaderSetting(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master, DataTable dt)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {

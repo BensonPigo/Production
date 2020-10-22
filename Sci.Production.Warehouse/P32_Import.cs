@@ -19,7 +19,10 @@ namespace Sci.Production.Warehouse
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private DataTable dtBorrow;
+
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
+        protected DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private int grid2SelectIndex = 0;
 

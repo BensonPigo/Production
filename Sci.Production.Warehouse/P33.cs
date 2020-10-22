@@ -3440,6 +3440,7 @@ order by [OrderID],[Article]
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class IssueQtyBreakdown
     {
         /// <inheritdoc/>

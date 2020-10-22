@@ -29,11 +29,13 @@ namespace Sci.Production.Subcon
         /// <summary>
         ///  異常價格視窗Grid的異動後DataSource，僅提供P01新增模式下使用
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static DataTable tmp_ModifyTable;
 
         /// <summary>
         ///  異常價格視窗Grid的異動前DataSource，僅提供P01新增模式下使用
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static DataTable tmp_OriginDT_FromDB;
 
         private string artworkunit;

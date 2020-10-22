@@ -8,11 +8,13 @@ using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P01_ModifyPoQty : Win.Subs.Base
     {
-        protected DataRow dr;
-        protected int sum_order_qty = 0;
+        private DataRow dr;
+        private int sum_order_qty = 0;
 
+        /// <inheritdoc/>
         public P01_ModifyPoQty(DataRow data)
         {
             this.InitializeComponent();

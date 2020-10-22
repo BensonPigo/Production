@@ -1749,6 +1749,7 @@ AND a.ID  != '{this.CurrentMaintain["ID"]}'
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class P32Header
     {
         /// <inheritdoc/>

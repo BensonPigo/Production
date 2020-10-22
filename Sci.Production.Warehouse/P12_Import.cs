@@ -7,6 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P12_Import : Win.Subs.Base
     {
         private DataRow dr_master;
@@ -14,9 +15,10 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         // bool flag;
-       // string poType;
-        protected DataTable dtArtwork;
+        // string poType;
+        private DataTable dtArtwork;
 
+        /// <inheritdoc/>
         public P12_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

@@ -8,14 +8,15 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P35_Import : Win.Subs.Base
     {
         private DataRow dr_localAp;
         private DataTable dt_localApDetail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private DataTable dtlocal;
 
-        protected DataTable dtlocal;
-
+        /// <inheritdoc/>
         public P35_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

@@ -19,12 +19,14 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P19 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
+        private ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P19(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

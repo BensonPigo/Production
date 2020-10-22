@@ -10,9 +10,11 @@ namespace Sci.Production.Warehouse
     public partial class P15_Unfinish : Win.Subs.Base
     {
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static string TypeFabric = "F";
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static string TypeAccessory = "A";
         private string FabricType;
 

@@ -1042,6 +1042,7 @@ where bof.id='{this.maindr["POID"].ToString()}' and p.seq1='{this.maindr["Seq1"]
             return Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         private class ExcelHeadData
         {
             /// <inheritdoc/>

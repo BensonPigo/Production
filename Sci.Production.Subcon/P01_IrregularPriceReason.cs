@@ -22,6 +22,7 @@ namespace Sci.Production.Subcon
         private DataTable _detailDatas;
         private DataRow _masterData;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public int ReasonNullCount = 0;
         private string _ArtWorkPO_ID = string.Empty;
         private string _FactoryID = string.Empty;
@@ -29,13 +30,16 @@ namespace Sci.Production.Subcon
         /// <summary>
         /// 用於存放使用者輸入"後"的異常價格，僅限新增模式使用
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static List<Tmp_IrregularPriceReason> tmp_IrregularPriceReason_List = new List<Tmp_IrregularPriceReason>();
 
         /// <summary>
         /// 用於存放使用者所輸入"前"的異常價格，用於Undo還原Grid上的欄位，僅限新增模式使用
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static List<Tmp_IrregularPriceReason> tmp_IrregularPriceReason_List_Ori = new List<Tmp_IrregularPriceReason>();
 
+        /// <inheritdoc/>
         public P01_IrregularPriceReason(string artWorkPO_ID, string factoryID, DataRow masterData, DataTable detailDatas)
         {
             this.InitializeComponent();
@@ -1334,6 +1338,7 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
     /// <summary>
     /// Grid上的異常價格資料列
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class Tmp_IrregularPriceReason
     {
         public string POID { get; set; }

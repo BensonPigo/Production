@@ -10,6 +10,7 @@ using Sci.Data;
 namespace Sci.Production.Sewing
 {
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public static partial class GetApiData
     {
         /// <inheritdoc/>
@@ -53,6 +54,7 @@ namespace Sci.Production.Sewing
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
     public class APIData
     {
         /// <inheritdoc/>

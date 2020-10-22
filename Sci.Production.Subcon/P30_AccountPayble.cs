@@ -6,10 +6,12 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P30_AccountPayble : Win.Subs.Base
     {
-        protected string Detailukey;
+        private string Detailukey;
 
+        /// <inheritdoc/>
         public P30_AccountPayble(string detailukey)
         {
             this.InitializeComponent();

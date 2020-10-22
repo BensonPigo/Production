@@ -34,6 +34,7 @@ namespace Sci.Production.Quality
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1513:ClosingBraceMustBeFollowedByBlankLine", Justification = "Reviewed.")]
         protected override bool ValidateInput()
         {
             this.lis = new List<SqlParameter>();

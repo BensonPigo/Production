@@ -10,6 +10,7 @@ namespace Sci.Production.Cutting
     /// <summary>
     /// Itemx
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public static class Itemx
     {
         /// <summary>

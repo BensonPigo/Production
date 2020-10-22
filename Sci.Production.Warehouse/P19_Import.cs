@@ -11,14 +11,16 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P19_Import : Win.Subs.Base
     {
         private DataRow dr_master;  // 抓主頁的表頭資料用
         private DataTable dt_detail;    // 將匯入資料寫入主頁的明細用
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtImportData;
+        private DataTable dtImportData;
 
+        /// <inheritdoc/>
         public P19_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

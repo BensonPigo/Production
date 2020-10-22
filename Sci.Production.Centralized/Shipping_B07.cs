@@ -328,6 +328,7 @@ when not matched by target then
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class PortByBrandShipmode
     {
         /// <inheritdoc/>

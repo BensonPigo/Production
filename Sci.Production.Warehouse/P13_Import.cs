@@ -16,9 +16,9 @@ namespace Sci.Production.Warehouse
         private bool IsReason06 = false;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-       // bool flag;
-       // string poType;
-        protected DataTable dtArtwork;
+        // bool flag;
+        // string poType;
+        private DataTable dtArtwork;
 
         public P13_Import(DataRow master, DataTable detail)
         {

@@ -9,8 +9,10 @@ namespace Sci.Production.Warehouse
 {
     public partial class P16_AccumulatedQty : Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Tems.Base P16;
-        protected DataRow dr;
+        private DataRow dr;
 
         public P16_AccumulatedQty(DataRow data)
         {

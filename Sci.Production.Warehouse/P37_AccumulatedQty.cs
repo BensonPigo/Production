@@ -7,11 +7,15 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P37_AccumulatedQty : Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Tems.Base P37;
-        protected DataRow dr;
+        private DataRow dr;
 
+        /// <inheritdoc/>
         public P37_AccumulatedQty(DataRow data)
         {
             this.InitializeComponent();

@@ -11,7 +11,7 @@ namespace Sci.Production.Warehouse
     {
         private DataRow dr;
         private DataTable selectDataTable1;
-        protected Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
+        private Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
 
         public P03_Refno(DataRow data)
         {

@@ -191,6 +191,7 @@ where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and s
     /// <summary>
     /// OrderChangeModel
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class OrderChangeModel
     {
         /// <summary>

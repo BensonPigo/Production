@@ -27,9 +27,6 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
         /// <inheritdoc/>
-        protected ReportViewer viewer;
-
-        /// <inheritdoc/>
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

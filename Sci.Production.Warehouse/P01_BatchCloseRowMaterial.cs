@@ -17,7 +17,7 @@ namespace Sci.Production.Warehouse
         private DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable[] dtBatch;
+        private DataTable[] dtBatch;
 
         public P01_BatchCloseRowMaterial()
         {

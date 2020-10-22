@@ -11,23 +11,28 @@ using System.Text;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P33_AutoPick : Win.Subs.Base
     {
         private StringBuilder sbSizecode;
         private string poid;
         private string issueid;
         private string orderid;
-        public DataTable BOA;
-        public DataTable BOA_Orderlist;
-        public DataTable BOA_PO;
-        public DataTable BOA_PO_Size;
-        public DataTable dtIssueBreakDown;
-        public DataRow[] importRows;
-        public List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
+        private DataTable BOA;
+        private DataTable BOA_Orderlist;
+        private DataTable BOA_PO;
+        private DataTable BOA_PO_Size;
+        private DataTable dtIssueBreakDown;
+        private Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
+        private List<IssueQtyBreakdown> _IssueQtyBreakdownList = new List<IssueQtyBreakdown>();
         private bool combo;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public Dictionary<DataRow, DataTable> dictionaryDatas = new Dictionary<DataRow, DataTable>();
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
+        public DataRow[] importRows;
+
+        /// <inheritdoc/>
         public P33_AutoPick(string issueid, string poid, string orderid, DataTable dtIssueBreakDown, StringBuilder sbSizecode, bool combo, List<IssueQtyBreakdown> issueQtyBreakdownList)
         {
             this.InitializeComponent();

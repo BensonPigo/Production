@@ -21,7 +21,7 @@ namespace Sci.Production.PPIC
         private DataGridViewGeneratorNumericColumnSettings b = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings i = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings o = new DataGridViewGeneratorNumericColumnSettings();
-        private DataGridViewGeneratorNumericColumnSettings t_combo = new DataGridViewGeneratorNumericColumnSettings();
+        private DataGridViewGeneratorNumericColumnSettings combo = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings b_combo = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings i_combo = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings o_combo = new DataGridViewGeneratorNumericColumnSettings();
@@ -343,7 +343,7 @@ where oq.id = '{this.masterData["ID"]}'
                 }
             };
 
-            this.t_combo.CellMouseDoubleClick += (s, e) =>
+            this.combo.CellMouseDoubleClick += (s, e) =>
             {
                 if (e.Button == MouseButtons.Left)
                 {
@@ -392,7 +392,7 @@ where oq.id = '{this.masterData["ID"]}'
                  .Text("SizeCode", header: "Size", width: Widths.AnsiChars(7))
                  .Numeric("OrderQty", header: "Order Q'ty", width: Widths.AnsiChars(6))
                  .Numeric("SewQty", header: "Sewing Q'ty", width: Widths.AnsiChars(6), settings: this.sewingqtyCombo)
-                 .Numeric("T", header: "Top", width: Widths.AnsiChars(6), settings: this.t_combo)
+                 .Numeric("T", header: "Top", width: Widths.AnsiChars(6), settings: this.combo)
                  .Numeric("B", header: "Bottom", width: Widths.AnsiChars(6), settings: this.b_combo)
                  .Numeric("I", header: "Inner", width: Widths.AnsiChars(6), settings: this.i_combo)
                  .Numeric("O", header: "Outer", width: Widths.AnsiChars(6), settings: this.o_combo);

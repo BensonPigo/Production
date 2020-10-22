@@ -17,12 +17,16 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P30 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
         private Form batchapprove;
 
+        /// <inheritdoc/>
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

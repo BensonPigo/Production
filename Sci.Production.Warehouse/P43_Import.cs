@@ -11,13 +11,15 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P43_Import : Win.Forms.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtInventory;
+        private DataTable dtInventory;
 
+        /// <inheritdoc/>
         public P43_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

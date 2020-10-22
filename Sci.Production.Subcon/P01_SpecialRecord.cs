@@ -13,7 +13,7 @@ namespace Sci.Production.Subcon
         private DataTable dt_artworkpo_detail;
         private DataRow dr;
         private bool flag;
-        protected DataTable dtArtwork;
+        private DataTable dtArtwork;
         private string poType;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 

@@ -15,8 +15,9 @@ namespace Sci.Production.Warehouse
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
+        private ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P50(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

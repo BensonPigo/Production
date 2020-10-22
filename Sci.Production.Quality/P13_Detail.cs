@@ -819,6 +819,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public partial class ComboxBoxEx : Win.UI.ComboBox
     {
         /// <inheritdoc/>
@@ -869,6 +870,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
         private int _hwndDropDown = 0;
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public List<int> ItemHeights = new List<int>();
 
         /// <inheritdoc/>

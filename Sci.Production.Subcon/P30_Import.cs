@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         /// <inheritdoc/>
-        protected DataTable dtlocal;
+        private DataTable dtlocal;
 
         /// <inheritdoc/>
         public P30_Import(DataRow master, DataTable detail)

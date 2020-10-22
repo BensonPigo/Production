@@ -10,6 +10,7 @@ using System.Globalization;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P50_Import : Win.Subs.Base
     {
         private DataRow dr_master;
@@ -19,10 +20,11 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-      // bool flag;
-      //  string poType;
-        protected DataTable dtFtyinventory;
+        // bool flag;
+        //  string poType;
+        private DataTable dtFtyinventory;
 
+        /// <inheritdoc/>
         public P50_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
