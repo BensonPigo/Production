@@ -1,17 +1,20 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P31_Import : Win.Subs.Base
     {
         private DataRow dr_master;
@@ -19,10 +22,10 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
-
-        protected DataTable dtBorrow;
+        private DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
+        /// <inheritdoc/>
         public P31_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -38,7 +41,6 @@ namespace Sci.Production.Warehouse
             StringBuilder strSQLCmd = new StringBuilder();
             string sp = this.txtToSP.Text.TrimEnd();
             string fromSP = this.txtBorrowFromSP.Text.TrimEnd();
-            int intNoLock = this.chkNoLock.Checked ? 1 : 0;
 
             if (string.IsNullOrWhiteSpace(sp) || this.txtSeq.CheckSeq1Empty()
                 || this.txtSeq.CheckSeq2Empty() || string.IsNullOrWhiteSpace(fromSP))
@@ -50,9 +52,7 @@ namespace Sci.Production.Warehouse
             else
             {
                 #region Get SizeSpec, Refno, Color, Desc
-                DataTable dt;
-                string strSQL = string.Format(
-                    @"
+                string strSQL = $@"
 select  po.SizeSpec
         , po.Refno
         , po.ColorID
@@ -60,13 +60,13 @@ select  po.SizeSpec
 from PO_Supp_Detail po
 left join Fabric f on po.SCIRefno = f.SCIRefno
 LEFT JOIN Orders o ON o.ID=po.ID
-where   po.id = '{0}' 
-        and po.seq1 = '{1}' 
-        and po.seq2='{2}'
+where   po.id = '{sp}' 
+        and po.seq1 = '{this.txtSeq.Seq1}' 
+        and po.seq2='{this.txtSeq.Seq2}'
 		AND o.Category<>'A'
-", sp, this.txtSeq.Seq1, this.txtSeq.Seq2);
+";
 
-                DBProxy.Current.Select(null, strSQL, out dt);
+                DBProxy.Current.Select(null, strSQL, out DataTable dt);
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     this.displaySizeSpec.Text = dt.Rows[0]["SizeSpec"].ToString();
@@ -111,6 +111,7 @@ select  selected = 0
         ,toFactoryID = (select FactoryID from Orders where b.id = Orders.id)
         ,a.fabrictype
         ,c.Lock
+        ,ToLocation = ''
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.poid = Orders.id
@@ -187,6 +188,53 @@ AND Orders.Category <> 'A' ");
                     }
                 };
 
+            DataGridViewGeneratorTextColumnSettings toLocation = new DataGridViewGeneratorTextColumnSettings();
+            toLocation.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
+
+                    SelectItem2 selectItem2 = Prgs.SelectLocation("B", MyUtility.Convert.GetString(dr["ToLocation"]));
+
+                    selectItem2.ShowDialog();
+                    if (selectItem2.DialogResult == DialogResult.OK)
+                    {
+                        dr["ToLocation"] = selectItem2.GetSelecteds().Select(o => MyUtility.Convert.GetString(o["ID"])).JoinToString(",");
+                    }
+
+                    dr.EndEdit();
+                }
+            };
+
+            toLocation.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
+                    string oldValue = dr["ToLocation"].ToString();
+                    string newValue = e.FormattedValue.ToString().Split(',').ToList().Where(o => !MyUtility.Check.Empty(o)).Distinct().JoinToString(",");
+                    if (oldValue.Equals(newValue))
+                    {
+                        return;
+                    }
+
+                    string notLocationExistsList = newValue.Split(',').ToList().Where(o => !Prgs.CheckLocationExists("B", o)).JoinToString(",");
+
+                    if (!MyUtility.Check.Empty(notLocationExistsList))
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"ToLocation<{notLocationExistsList}> not Found");
+                        return;
+                    }
+                    else
+                    {
+                        dr["ToLocation"] = newValue;
+                        dr.EndEdit();
+                    }
+                }
+            };
+
             this.gridImport.CellValueChanged += (s, e) =>
             {
                 if (this.gridImport.Columns[e.ColumnIndex].Name == this.col_chk.Name)
@@ -206,8 +254,6 @@ AND Orders.Category <> 'A' ");
                 }
             };
 
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
-
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
@@ -217,14 +263,18 @@ AND Orders.Category <> 'A' ");
                 .Text("fromseq", header: "From" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 3
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) // 4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 5
-                .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 6
+                .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype) // 6
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 7
                 .Text("location", header: "From Location", iseditingreadonly: true) // 8
                 .Text("toseq", header: "To" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
                 .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)).Get(out this.col_roll) // 10
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns).Get(out this.col_qty) // 11
+                .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), settings: toLocation)
                ;
 
+            this.gridImport.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
@@ -267,9 +317,7 @@ AND Orders.Category <> 'A' ");
             {
                 if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["toroll"]) || MyUtility.Check.Empty(row["todyelot"])))
                 {
-                    warningmsg.Append(string.Format(
-                        @"To SP#: {0} To Seq#: {1}-{2} To Roll#:{3} To Dyelot:{4} Roll and Dyelot can't be empty",
-                        row["topoid"], row["toseq1"], row["toseq2"], row["toroll"], row["todyelot"]) + Environment.NewLine);
+                    warningmsg.Append($@"To SP#: {row["topoid"]} To Seq#: {row["toseq1"]}-{row["toseq2"]} To Roll#:{row["toroll"]} To Dyelot:{row["todyelot"]} Roll and Dyelot can't be empty" + Environment.NewLine);
                 }
 
                 if (row["fabrictype"].ToString().ToUpper() != "F")
@@ -295,6 +343,7 @@ AND Orders.Category <> 'A' ");
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["ToLocation"] = tmp["ToLocation"];
                 }
                 else
                 {
@@ -311,39 +360,39 @@ AND Orders.Category <> 'A' ");
         // To SP# Valid
         private void TxtToSP_Validating(object sender, CancelEventArgs e)
         {
-// string sp = textBox1.Text.TrimEnd();
+            // string sp = textBox1.Text.TrimEnd();
 
-// DataRow tmp;
+            // DataRow tmp;
 
-// if (MyUtility.Check.Empty(sp)) return;
+            // if (MyUtility.Check.Empty(sp)) return;
 
-// if (txtSeq1.checkEmpty(showErrMsg: false))
-//            {
-//                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
-//                    , sp), null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP# is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//            }
-//            else
-//            {
-//                if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
-//                        from po_supp_detail WITH (NOLOCK) where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, txtSeq1.seq1, txtSeq1.seq2), out tmp, null))
-//                {
-//                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
-//                    e.Cancel = true;
-//                    return;
-//                }
-//                else
-//                {
-//                    this.displayBox2.Value = tmp["sizespec"];
-//                    this.displayBox3.Value = tmp["refno"];
-//                    this.displayBox4.Value = tmp["colorid"];
-//                    this.editBox1.Text = tmp["description"].ToString();
-//                }
-//            }
+            // if (txtSeq1.checkEmpty(showErrMsg: false))
+            //            {
+            //                if (!MyUtility.Check.Seek(string.Format("select 1 where exists(select * from po_supp_detail WITH (NOLOCK) where id ='{0}')"
+            //                    , sp), null))
+            //                {
+            //                    MyUtility.Msg.WarningBox("SP# is not found!!");
+            //                    e.Cancel = true;
+            //                    return;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (!MyUtility.Check.Seek(string.Format(@"select sizespec,refno,colorid,dbo.getmtldesc(id,seq1,seq2,2,0) as [description]
+            //                        from po_supp_detail WITH (NOLOCK) where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, txtSeq1.seq1, txtSeq1.seq2), out tmp, null))
+            //                {
+            //                    MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
+            //                    e.Cancel = true;
+            //                    return;
+            //                }
+            //                else
+            //                {
+            //                    this.displayBox2.Value = tmp["sizespec"];
+            //                    this.displayBox3.Value = tmp["refno"];
+            //                    this.displayBox4.Value = tmp["colorid"];
+            //                    this.editBox1.Text = tmp["description"].ToString();
+            //                }
+            //            }
         }
 
         private void ChkNoLock_CheckedChanged(object sender, EventArgs e)
