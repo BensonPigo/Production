@@ -1378,7 +1378,6 @@
             // 
             // btnDocumentRefNoFormat
             // 
-            this.btnDocumentRefNoFormat.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnDocumentRefNoFormat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDocumentRefNoFormat.Location = new System.Drawing.Point(772, 353);
             this.btnDocumentRefNoFormat.Name = "btnDocumentRefNoFormat";
