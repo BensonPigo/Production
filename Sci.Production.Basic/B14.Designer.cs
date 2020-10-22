@@ -559,7 +559,7 @@
             this.chkIsShowinIEP03.ReadOnly = true;
             this.chkIsShowinIEP03.Size = new System.Drawing.Size(245, 21);
             this.chkIsShowinIEP03.TabIndex = 31;
-            this.chkIsShowinIEP03.Text = "是否在加入IE P03(Add into IE P03)";
+            this.chkIsShowinIEP03.Text = "是否加入IE P03(Add into IE P03)";
             this.chkIsShowinIEP03.UseVisualStyleBackColor = true;
             // 
             // chkIsShowinIEP01
@@ -572,7 +572,7 @@
             this.chkIsShowinIEP01.ReadOnly = true;
             this.chkIsShowinIEP01.Size = new System.Drawing.Size(245, 21);
             this.chkIsShowinIEP01.TabIndex = 30;
-            this.chkIsShowinIEP01.Text = "是否在加入IE P01(Add into IE P01)";
+            this.chkIsShowinIEP01.Text = "是否加入IE P01(Add into IE P01)";
             this.chkIsShowinIEP01.UseVisualStyleBackColor = true;
             // 
             // lbFactory1

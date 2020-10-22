@@ -393,7 +393,7 @@
             this.chkIsShowinIEP01.Name = "chkIsShowinIEP01";
             this.chkIsShowinIEP01.Size = new System.Drawing.Size(245, 21);
             this.chkIsShowinIEP01.TabIndex = 21;
-            this.chkIsShowinIEP01.Text = "是否在加入IE P01(Add into IE P01)";
+            this.chkIsShowinIEP01.Text = "是否加入IE P01(Add into IE P01)";
             this.chkIsShowinIEP01.UseVisualStyleBackColor = true;
             // 
             // chkIsShowinIEP03
@@ -404,7 +404,7 @@
             this.chkIsShowinIEP03.Name = "chkIsShowinIEP03";
             this.chkIsShowinIEP03.Size = new System.Drawing.Size(245, 21);
             this.chkIsShowinIEP03.TabIndex = 22;
-            this.chkIsShowinIEP03.Text = "是否在加入IE P03(Add into IE P03)";
+            this.chkIsShowinIEP03.Text = "是否加入IE P03(Add into IE P03)";
             this.chkIsShowinIEP03.UseVisualStyleBackColor = true;
             // 
             // chkIsSewingline

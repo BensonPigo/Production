@@ -135,6 +135,7 @@
             // 
             this.comboType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.comboType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Type", true));
+            this.comboType.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
@@ -150,6 +151,7 @@
             this.editDescriptionEnglish.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescriptionEnglish.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescEN", true));
             this.editDescriptionEnglish.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescriptionEnglish.IsSupportEditMode = false;
             this.editDescriptionEnglish.Location = new System.Drawing.Point(121, 113);
             this.editDescriptionEnglish.Multiline = true;
             this.editDescriptionEnglish.Name = "editDescriptionEnglish";
@@ -162,6 +164,7 @@
             this.editDescriptionChinese.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescriptionChinese.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescCH", true));
             this.editDescriptionChinese.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.editDescriptionChinese.IsSupportEditMode = false;
             this.editDescriptionChinese.Location = new System.Drawing.Point(121, 177);
             this.editDescriptionChinese.Multiline = true;
             this.editDescriptionChinese.Name = "editDescriptionChinese";
@@ -174,6 +177,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkJunk.IsSupportEditMode = false;
             this.checkJunk.Location = new System.Drawing.Point(468, 33);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.ReadOnly = true;
