@@ -154,7 +154,7 @@
             this.LabShippMode.Name = "LabShippMode";
             this.LabShippMode.Size = new System.Drawing.Size(124, 23);
             this.LabShippMode.TabIndex = 13;
-            this.LabShippMode.Text = "Shipp Mode";
+            this.LabShippMode.Text = "Ship Mode";
             // 
             // txtDecNo1
             // 

@@ -754,7 +754,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
 
-                if (this.txtBLNo.Text != this.txtBLNo.OldValue)
+                if (this.txtBLNo.Text != this.txtBLNo.OldValue && !MyUtility.Check.Empty(this.txtBLNo.OldValue))
                 {
                     DialogResult questionResult = MyUtility.Msg.QuestionBox($@" It will clear detail records if change <B/L No.>.", caption: "Question", buttons: MessageBoxButtons.YesNo);
 

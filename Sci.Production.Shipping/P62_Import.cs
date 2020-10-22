@@ -74,11 +74,11 @@ select selected = 0
     , [ShipModeSeqQty] = sum(pld.ShipQty)
     , [CTNQty] = sum(pld.CTNQty)
     , [Forwarder] = g.Forwarder
-    , [NetKg]  = (case when @ShipMode in ('A/C','A/P') then g.TotalNW
-        else (g.TotalNW+( g.TotalNW*0.05))
+    , [NetKg]  = (case when @ShipMode in ('A/C','A/P') then sum(pld.NW)
+        else (sum(pld.NW) + ( sum(pld.NW) * 0.05))
 		end)
-    , [WeightKg] = (case when @ShipMode in ('A/C','A/P') then g.TotalGW
-        else (g.TotalGW+( g.TotalGW*0.05))
+    , [WeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pld.GW)
+        else (sum(pld.GW) + ( sum(pld.GW) * 0.05))
     end) 
 	, [LocalINVNo] = g.id
 	, s.Description

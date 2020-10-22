@@ -20,6 +20,11 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Visible = false;
+
+            // 關閉表身Grid DoubleClick 會新增row的功能
+            this.InsertDetailGridOnDoubleClick = false;
         }
 
         /// <inheritdoc/>
