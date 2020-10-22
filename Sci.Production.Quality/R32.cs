@@ -464,6 +464,7 @@ SELECT
 	)
 	,NULL)
 	, [Action]= cd.Action
+	,[CFAInspectionRecord_Detail_Key]=cd.ID+cd.GarmentDefectCodeID
 INTO #tmp
 FROm #MainData  c
 LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
@@ -483,8 +484,9 @@ FROM PackingList_Detail pd
 INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ 
 
 
-SELECT  /*t.ID
-        ,*/AuditDate
+SELECT   t.ID
+		,CFAInspectionRecord_Detail_Key
+        ,AuditDate
 		,BuyerDelivery
 		,OrderID
 		,CustPoNo
@@ -635,6 +637,9 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
 
             if (this.reportType == "Detail")
             {
+                List<string> idList = this.final.AsEnumerable().Select(o => MyUtility.Convert.GetString(o["CFAInspectionRecord_Detail_Key"])).Distinct().ToList();
+                List<DataRow> orderList = this.final.AsEnumerable().OrderBy(o => MyUtility.Convert.GetString(o["OrderID"])).ToList();
+
                 this.printData.ColumnsStringAdd("AuditDate");
                 this.printData.ColumnsStringAdd("BuyerDelivery");
                 this.printData.ColumnsStringAdd("OrderID");
@@ -674,13 +679,13 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 this.printData.ColumnsStringAdd("NoOfDefect");
                 this.printData.ColumnsStringAdd("Remark");
                 this.printData.ColumnsStringAdd("Action");
-                this.printData = this.final.Copy();
+                // this.printData = this.final.Copy();
 
-                /* ISP20201551 的Detail寫法，先保留
+                // ISP20201551 的Detail寫法，先保留
                 foreach (var cFAInspectionRecord_ID in idList)
                 {
                     DataRow nRow = this.printData.NewRow();
-                    List<DataRow> sameIDs = orderList.Where(o => MyUtility.Convert.GetString(o["ID"]) == cFAInspectionRecord_ID).ToList();
+                    List<DataRow> sameIDs = orderList.Where(o => MyUtility.Convert.GetString(o["CFAInspectionRecord_Detail_Key"]) == cFAInspectionRecord_ID).ToList();
 
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
@@ -724,7 +729,6 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
 
                     this.printData.Rows.Add(nRow);
                 }
-                */
             }
 
             return Result.True;
