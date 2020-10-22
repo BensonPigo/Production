@@ -1453,6 +1453,11 @@ select * from [GarmentTest_Detail_Shrinkage]  where id = {this.Deatilrow["ID"]} 
 
         private void Tab2TwistingSave()
         {
+            this.numTwisTingTop.Value = this.numTopL.Value.Empty() ? 0 : (((this.numTopS1.Value + this.numTopS2.Value) / 2) / this.numTopL.Value) * 100;
+            this.numTwisTingInner.Value = this.numInnerL.Value.Empty() ? 0 : (((this.numInnerS1.Value + this.numInnerS2.Value) / 2) / this.numInnerL.Value) * 100;
+            this.numTwisTingOuter.Value = this.numOuterL.Value.Empty() ? 0 : (((this.numOuterS1.Value + this.numOuterS2.Value) / 2) / this.numOuterL.Value) * 100;
+            this.numTwisTingBottom.Value = this.numBottomL.Value.Empty() ? 0 : this.numBottomS1.Value / this.numBottomL.Value * 100;
+
             string savetab2Twisting = $@"
 update [GarmentTest_Detail_Twisting] set S1={this.numTopS1.Value},S2={this.numTopS2.Value},L={this.numTopL.Value},Twisting={this.numTwisTingTop.Value} where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='T'
 update [GarmentTest_Detail_Twisting] set S1={this.numInnerS1.Value},S2={this.numInnerS2.Value},L={this.numInnerL.Value},Twisting={this.numTwisTingInner.Value} where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='I'
