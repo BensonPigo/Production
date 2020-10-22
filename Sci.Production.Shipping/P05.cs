@@ -448,6 +448,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 this.gridicon.Remove.Enabled = false;
                 this.txtCutoffDate.ReadOnly = true;
                 this.txtTerminalWhse.ReadOnly = true;
+                this.txtDocumentRefNo.ReadOnly = true;
             }
             else
             {
