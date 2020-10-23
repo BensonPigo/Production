@@ -24,8 +24,8 @@ namespace Sci.Production.Quality
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Description", header: "Description", width: Widths.AnsiChars(3))
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(2))
+                .Text("Description", header: "Description", width: Widths.AnsiChars(22))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25))
                 ;
         }
 
@@ -66,20 +66,17 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            return base.ClickSaveBefore();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult ClickSave()
-        {
-            var result = base.ClickSave();
-            string msg = result.ToString().ToUpper();
-            if (msg.Contains("PK") && msg.Contains("DUPLICAT"))
+            if (this.IsDetailInserting)
             {
-                result = Ict.Result.F("SubProcess, Assign Column duplicated", result.GetException());
+                string sqlchk = $@"select 1 from SubProCustomColumn where SubProcessID = '{this.CurrentMaintain["SubProcessID"]}' and AssignColumn = '{this.CurrentMaintain["AssignColumn"]}'";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    MyUtility.Msg.WarningBox("SubProcess, Assign Column duplicated");
+                    return false;
+                }
             }
 
-            return result;
+            return base.ClickSaveBefore();
         }
 
         private void TxtSubProcessID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

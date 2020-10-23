@@ -39,20 +39,17 @@ namespace Sci.Production.Quality
                 return false;
             }
 
-            return base.ClickSaveBefore();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult ClickSave()
-        {
-            var result = base.ClickSave();
-            string msg = result.ToString().ToUpper();
-            if (msg.Contains("PK") && msg.Contains("DUPLICAT"))
+            if (this.IsDetailInserting)
             {
-                result = Ict.Result.F("Response Team, SubProcess duplicated", result.GetException());
+                string sqlchk = $@"select 1 from SubProResponseTeam where id = '{this.CurrentMaintain["ID"]}' and SubProcessID = '{this.CurrentMaintain["SubProcessID"]}'";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    MyUtility.Msg.WarningBox("Response Team, SubProcess duplicated");
+                    return false;
+                }
             }
 
-            return result;
+            return base.ClickSaveBefore();
         }
 
         private void TxtSubProcessID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)

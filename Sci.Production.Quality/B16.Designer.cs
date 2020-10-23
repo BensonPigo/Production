@@ -56,7 +56,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.txtSubProcessID);
             this.masterpanel.Controls.Add(this.lbSubprocess);
-            this.masterpanel.Size = new System.Drawing.Size(938, 109);
+            this.masterpanel.Size = new System.Drawing.Size(938, 78);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbSubprocess, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSubProcessID, 0);
@@ -67,12 +67,13 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 109);
-            this.detailpanel.Size = new System.Drawing.Size(938, 210);
+            this.detailpanel.Location = new System.Drawing.Point(0, 78);
+            this.detailpanel.Size = new System.Drawing.Size(938, 241);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 74);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Location = new System.Drawing.Point(835, 41);
             // 
             // refresh
             // 
@@ -80,7 +81,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(938, 210);
+            this.detailgridcont.Size = new System.Drawing.Size(938, 241);
             // 
             // detail2
             // 
