@@ -959,7 +959,10 @@
     <None Include="XLT\Quality_R50_Summary.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R51_Detail.xltx">
+    <None Include="XLT\Quality_R51_Detail_Responseteam.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R51_Detail_DefectType.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Quality_R51_Summary.xltx">

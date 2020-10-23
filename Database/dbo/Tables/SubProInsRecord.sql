@@ -11,8 +11,11 @@
     [Editname]         VARCHAR (10)   NULL,
     [RepairedDatetime] DATETIME       NULL,
     [RepairedName]     VARCHAR (10)   NULL,
+    [CustomColumn1]    VARCHAR (50)   NULL,
     CONSTRAINT [PK_SubProInsRecord] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
