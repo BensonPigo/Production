@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
@@ -21,6 +22,7 @@ namespace AdidasEfficiencyReport
         private string eMailPwd = "orpxof";
         private string[] mailTO = ConfigurationManager.AppSettings["MailList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string[] mailTOCC = ConfigurationManager.AppSettings["MailListCC"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+        private string[] settingFactoryList = ConfigurationManager.AppSettings["SettingFactoryList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries); 
 
         bool isAuto = false;
         private List<string> factorys = new List<string>();
@@ -36,6 +38,10 @@ namespace AdidasEfficiencyReport
         {
             InitializeComponent();
             isAuto = !_isAuto.Empty();
+            if (isAuto)
+            {
+                this.OnFormLoaded();
+            }
         }
 
         protected override void OnFormLoaded()
@@ -70,20 +76,20 @@ namespace AdidasEfficiencyReport
                 if (!result)
                 {
                     Ict.Logs.APP.LogInfo("Query PMSDB Error : " + result.ToString());
-                    this.Close();
+                    return;
                 }
 
                 result = Query();
                 if (!result)
                 {
                     Ict.Logs.APP.LogInfo("Query Error : " + result.ToString());
-                    this.Close();
+                    return;
                 }
 
                 // SendMail & Create Excel
                 this.CreateXLTandSend();
 
-                this.Close();
+                return;
             }
         }
 
@@ -124,6 +130,17 @@ namespace AdidasEfficiencyReport
                 return result;
             }
 
+            List<string> newfactoryList = settingFactoryList
+                                    .Where(x => !x.EqualString("PMSDB_TSR"))
+                                    .Select(x => x.Replace("PMSDB_", ""))
+                                    .ToList();
+
+            if (newfactoryList.Count == 0)
+            {
+                return result;
+            }
+
+            string sqlwhere = string.Join("','", newfactoryList);
             sql = string.Format(@"
 select s.Region
 from 
@@ -141,10 +158,11 @@ from
 	 and s.Succeeded = 1
 	 and  OperationName like '%Complete' 
 	 and (CHARINDEX('Production', s.FilePath) > 0  or CHARINDEX('ManufacturingExecution', s.FilePath) > 0)
+     and s.Region in ('{0}')
 	 group by s.Region, s.FilePath
 )s
 group by s.Region
-having count(*) = 2");
+having count(*) = 2", sqlwhere);
 
             result = DBProxy.Current.Select("MIS", sql, out dt);
             if (!result)
@@ -153,7 +171,7 @@ having count(*) = 2");
             }
 
             result = new DualResult(false);
-            if (dt.Rows.Count == 10)
+            if (dt.Rows.Count == newfactoryList.Count)
             {
                 result = new DualResult(true);
             }
@@ -165,9 +183,14 @@ having count(*) = 2");
         {
             DualResult result = new DualResult(false);
             string sqlCmd;
+            if (isAuto)
+            {
+                this.factorys = settingFactoryList.ToList();
+            }
+
             if (this.factorys.Count == 0)
             {
-                return result;
+                return result = new DualResult(false, "settingFactoryList :" + settingFactoryList.ToList().Count.ToString()); ;
             }
 
             DBProxy.Current.DefaultTimeout = 1800;
@@ -226,8 +249,14 @@ select t.OutputDate
 	, t.WFT
 from #tmp t
 left join Style s on t.StyleID = s.Id and t.BrandID = s.BrandID and t.SeasonID = s.SeasonID
-left join Style_Quotation sq on s.Ukey = sq.StyleUkey and sq.ArtworkTypeID = 'SEWING' and sq.Article = ''
-left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location";
+left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location
+outer apply (
+	select TMS = sum(sq.TMS)
+	from Style_Quotation sq
+	where s.Ukey = sq.StyleUkey and sq.Article = ''
+	and sq.ArtworkTypeID in ('SEWING', 'PRESSING', 'PACKING')
+)sq
+";
 
                 DBProxy.Current.OpenConnection("Trade", out SqlConnection sqlConnection);
                 result = MyUtility.Tool.ProcessWithDatatable(this.printData, null, sqlCmd, out this.printData, conn: sqlConnection);
