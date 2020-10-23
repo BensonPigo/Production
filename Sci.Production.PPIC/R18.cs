@@ -123,7 +123,8 @@ select
     ICR.IrregularPOCostID,
     ICR.Status,
     [AddDate] = format(ICR.AddDate, 'yyyy/MM/dd'), 
-    ICR.CFMDate
+    ICR.CFMDate,
+    FTY = iif(ICR.Responsible = 'S', ICR.BulkFTY, o.FactoryID)
 into #tmpBaseICR
 from ICR with (nolock)
 left join Orders o with (nolock) on ICR.OrderID = o.ID
@@ -138,6 +139,7 @@ begin
         ICR.Status,
         ICR.MDivisionID,
         ICR.Department,
+        ICR.FTY,
         ICR.KPICode,
         ICR.OrderID,
         ICR.StyleID,
@@ -182,6 +184,7 @@ begin
         ICR.Status,
         ICR.MDivisionID,
         ICR.Department,
+        ICR.FTY,
         ICR.KPICode,
         ICR.OrderID,
         ICR.StyleID,
