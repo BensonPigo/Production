@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
 
             if (this.IsDetailInserting)
             {
-                string sqlchk = $@"select 1 from SubProMachine where id = '{this.CurrentMaintain["ID"]}'and factory = '{this.CurrentMaintain["FactoryID"]}' and SubProcessID = '{this.CurrentMaintain["SubProcessID"]}'";
+                string sqlchk = $@"select 1 from SubProMachine where id = '{this.CurrentMaintain["ID"]}'and FactoryID = '{this.CurrentMaintain["FactoryID"]}' and SubProcessID = '{this.CurrentMaintain["SubProcessID"]}'";
                 if (MyUtility.Check.Seek(sqlchk))
                 {
                     MyUtility.Msg.WarningBox("Factory, SubProcess, Machine# duplicated");
