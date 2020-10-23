@@ -67,6 +67,7 @@ outer apply(
 )SubProResponseTeamID
 ";
 
+            this.sqlCol = $@"select AssignColumn,DisplayName from SubProCustomColumn where SubProcessID = '{this.comboSubprocess.Text}' order by AssignColumn";
             if (this.radioSummary.Checked)
             {
                 formatJoin = @"outer apply (select [val] = sum(SRD.DefectQty)
@@ -90,9 +91,6 @@ outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveD
                 formatCol2 = $@"SRR.StartResolveDate,
     SRR.EndResolveDate,
 ";
-                formatCol3 = $@",CustomColumn1
-";
-                this.sqlCol = $@"select AssignColumn,DisplayName from SubProCustomColumn where SubProcessID = '{this.comboSubprocess.Text}' order by AssignColumn";
             }
 
             #region where
@@ -179,7 +177,7 @@ select
 			IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D / 60, 0), ':',
 			isnull(ttlMINUTE_RD_D_HR, 0))),
 	SubProResponseTeamID
-    {formatCol3}
+    ,CustomColumn1
 into #tmp
 from SubProInsRecord SR WITH (NOLOCK)
 Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
@@ -226,7 +224,7 @@ select
 			IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D / 60, 0), ':',
 			isnull(ttlMINUTE_RD_D_HR, 0))),
 	SubProResponseTeamID
-    {formatCol3}
+    ,CustomColumn1
 from SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
@@ -290,9 +288,9 @@ drop table #tmp,#tmp2
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
-            if (this.radioDetail_Responseteam.Checked && this.CustomColumnDt != null)
+            if (this.CustomColumnDt != null)
             {
-                int col = 24;
+                int col = this.radioSummary.Checked ? 21 : this.radioDetail_DefectType.Checked ? 22 : 24;
                 foreach (DataRow dr in this.CustomColumnDt.Rows)
                 {
                     worksheet.Cells[1, col] = dr["DisplayName"];
