@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Win;
 using Sci.Win.Tools;
+using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1727,6 +1728,36 @@ update Express set Status = 'Junk', StatusUpdateDate = GETDATE(), EditName = '{0
                 return;
             }
 
+            string sqlchk = $@"
+select distinct t.PackingListID
+from #tmp t
+inner join PackingList pl on pl.ID = t.PackingListID
+where pl.Status!='Confirmed' and pl.Type='F'";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, sqlchk, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                MsgGridForm m = new MsgGridForm(dt, "TFOC P/L has not yet confirmed, Can't confirm this HC. Please refer to the following data.");
+                m.grid1.Columns[0].Width = 140;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                this.FormClosing += (s, args) =>
+                {
+                    if (m.Visible)
+                    {
+                        m.Close();
+                    }
+                };
+                m.Show(this);
+                return;
+            }
+
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Approve > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == DialogResult.No)
             {
@@ -1747,7 +1778,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
             string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
             updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}' and type = 'F'";
 
-            DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Approve data faile.\r\n" + result.ToString());
