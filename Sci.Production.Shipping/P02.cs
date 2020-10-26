@@ -1742,7 +1742,7 @@ where pl.Status!='Confirmed' and pl.Type='F'";
 
             if (dt.Rows.Count > 0)
             {
-                MsgGridForm m = new MsgGridForm(dt, "TFOC P/L has not yet confirmed, Can't confirm this HC. Please refer to the following data.");
+                MsgGridForm m = new MsgGridForm(dt, "FOC P/L has not yet confirmed, Can't confirm this HC. Please refer to the following data.");
                 m.grid1.Columns[0].Width = 140;
                 m.text_Find.Width = 140;
                 m.btn_Find.Location = new Point(150, 6);
