@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R26 : Win.Tems.PrintForm
     {
         private DataTable dt;
@@ -25,6 +26,7 @@ namespace Sci.Production.Warehouse
         private string SP2;
         private bool WHP21only;
 
+        /// <inheritdoc/>
         public R26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -124,7 +126,7 @@ select
 	LD.Dyelot,
 	PSD.Refno,
 	PSD.ColorID,
-	RD.ActualQty,
+	X.Qty,
     LD.fromLocation,
 	Location = STUFF((
 				select concat(',',MtlLocationID)
@@ -132,9 +134,9 @@ select
 				where fd.Ukey = FI.Ukey
 				for xml path('')
 			), 1, 1,''),
-	RD.Weight,
-	RD.ActualWeight,
-	Differential = isnull(RD.ActualWeight, 0)- isnull(RD.Weight, 0),
+	X.Weight,
+	X.ActualWeight,
+	Differential = isnull(X.ActualWeight, 0)- isnull(X.Weight, 0),
 	L.Remark,
 	EditName=dbo.getPass1(L.EditName),
 	L.EditDate,
@@ -144,8 +146,24 @@ inner join LocationTrans_detail LD on L.id=LD.ID
 inner join orders O on LD.Poid=O.ID
 inner join PO_Supp_Detail PSD on LD.Poid=PSD.ID and LD.Seq1=PSD.SEQ1 and LD.Seq2=PSD.SEQ2
 left join FtyInventory FI on LD.FtyInventoryUkey=FI.UKEY
-left join Receiving_Detail RD on LD.Poid=RD.PoId and LD.Seq1=RD.Seq1 and LD.Seq2=RD.Seq2 and LD.Roll=RD.Roll and LD.Dyelot=RD.Dyelot
-left join Receiving R on RD.ID=R.Id
+outer  apply(
+	select top 1 R.ExportId,Qty=RD.ActualQty,RD.Weight,RD.ActualWeight
+	from Receiving_Detail RD
+	inner join Receiving R on RD.ID=R.Id
+	where LD.Poid=RD.PoId and LD.Seq1=RD.Seq1 and LD.Seq2=RD.Seq2 and LD.Roll=RD.Roll and LD.Dyelot=RD.Dyelot
+)R
+outer  apply(
+	select top 1  *
+	from(
+		select R.Qty, R.Weight, R.ActualWeight
+
+		union all
+		select TD.Qty,TD.Weight,TD.ActualWeight
+		from TransferIn_Detail TD
+		where LD.Poid=TD.PoId and LD.Seq1=TD.Seq1 and LD.Seq2=TD.Seq2 and LD.Roll=TD.Roll and LD.Dyelot=TD.Dyelot
+	)x
+	where Qty is not null
+)X
 where L.status='Confirmed'
 {where}
 ";
