@@ -231,7 +231,7 @@ namespace Sci.Production.Quality
                 }
 
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
-                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
+                if ((dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value) && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -613,7 +613,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
+                if ((dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value) && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -627,7 +627,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value)
+                if ((dr["Criteria"] != DBNull.Value || dr["Criteria2"] != DBNull.Value) && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -641,7 +641,7 @@ namespace Sci.Production.Quality
             {
                 DataRow dr = this.gridFGWT.GetDataRow(eve.RowIndex);
 
-                if (dr["Scale"] != DBNull.Value)
+                if (dr["Scale"] != DBNull.Value && !MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                 {
                     eve.IsEditable = true;
                 }
@@ -1077,7 +1077,8 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
-	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
+	        ,IIF( (f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL)
+                  or (f.Type = 'spirality: Garment - in percentage (average)')
 					,( IIF( TestDetail = '%' OR TestDetail = 'Range%'   -- % 為ISP20201331舊資料、Range% 為ISP20201606加上的新資料，兩者都視作百分比
 								---- 百分比 判斷方式
 								,IIF( ISNULL(f.Criteria,0)  <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria2,0)
@@ -1097,6 +1098,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 		,gd.MtlTypeID
 		,f.Criteria
 		,f.Criteria2
+        ,[IsInPercentage] = cast(iif(f.Type = 'spirality: Garment - in percentage (average)', 1, 0) as bit)
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1146,16 +1148,39 @@ order by LocationText DESC";
             DataTable gridFGWT = (DataTable)this.gridFGWT.DataSource;
 
             string cmd = $@"
-  merge GarmentTest_Detail_FGWT t
-  using #tmp s
-  on s.id = t.id and s.no = t.no and s.Location = t.Location and s.Type	= t.Type
-  when matched then
-  update set
-	t.[BeforeWash]  = s.[BeforeWash],
-	t.[SizeSpec]  = s.[SizeSpec],
-    t.[AfterWash]	= s.[AfterWash],
-    t.[Shrinkage]	= s.Shrinkage,
-    t.[Scale]	= s.[Scale]
+update gf
+	set gf.[BeforeWash]  = t.[BeforeWash],
+		gf.[SizeSpec]  = t.[SizeSpec],
+		gf.[AfterWash]	= t.[AfterWash],
+		gf.[Shrinkage]	= iif(gf.Type = 'spirality: Garment - in percentage (average)', iif(sl.Location in ('B','T','S') , gt.Twisting, 0), t.Shrinkage),
+		gf.[Scale]	= t.[Scale] 
+from GarmentTest_Detail_FGWT gf
+inner join #tmp t on gf.ID =t.ID and gf.No = t.No and gf.Location = t.Location and gf.Type = t.Type
+outer apply (
+	select distinct
+		[Location] = iif (slC.cnt > 1, 'S', sl.Location)
+	from GarmentTest g
+	inner join Style s on g.StyleID = s.ID and g.BrandID = s.BrandID and g.SeasonID = s.SeasonID
+	inner join Style_Location sl on s.Ukey = sl.StyleUkey
+	outer apply (
+		select cnt = count(*)
+		from Style_Location sl 
+		where s.Ukey = sl.StyleUkey
+		and sl.Location in ('B', 'T')
+	)slC
+	where gf.ID = g.ID
+)sl 
+outer apply (
+	select Twisting = sum(Twisting)
+	from (
+		select Twisting = case when sl.Location in ('B','T') then gt.Twisting
+					when sl.Location = 'S' and gt.Location = 'B' then gt.Twisting
+					else 0
+					end
+		from GarmentTest_Detail_Twisting gt
+		where gf.ID = gt.ID and gf.No = gt.No
+	)gt
+)gt
 	;
 
 select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
@@ -1175,7 +1200,8 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
         ,f.TestDetail
         ,[Result]=IIF(f.Scale IS NOT NULL
 	        ,IIF( f.Scale='4-5' OR f.Scale ='5','Pass',IIF(f.Scale='','','Fail'))
-	        ,IIF( f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL
+	        ,IIF( (f.BeforeWash IS NOT NULL AND f.AfterWash IS NOT NULL AND f.Criteria IS NOT NULL AND f.Shrinkage IS NOT NULL)
+                  or (f.Type = 'spirality: Garment - in percentage (average)')
 					,( IIF( TestDetail = '%' OR TestDetail = 'Range%'   -- % 為ISP20201331舊資料、Range% 為ISP20201606加上的新資料，兩者都視作百分比
 								---- 百分比 判斷方式
 								,IIF( ISNULL(f.Criteria,0)  <= ISNULL(f.Shrinkage,0) AND ISNULL(f.Shrinkage,0) <= ISNULL(f.Criteria2,0)
@@ -1195,6 +1221,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 		,gd.MtlTypeID
 		,f.Criteria
 		,f.Criteria2
+        ,[IsInPercentage] = cast(iif(f.Type = 'spirality: Garment - in percentage (average)', 1, 0) as bit)
 from GarmentTest_Detail_FGWT f 
 LEFT JOIN GarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
@@ -1428,6 +1455,11 @@ select * from [GarmentTest_Detail_Shrinkage]  where id = {this.Deatilrow["ID"]} 
 
         private void Tab2TwistingSave()
         {
+            this.numTwisTingTop.Value = this.numTopL.Value.Empty() ? 0 : (((this.numTopS1.Value + this.numTopS2.Value) / 2) / this.numTopL.Value) * 100;
+            this.numTwisTingInner.Value = this.numInnerL.Value.Empty() ? 0 : (((this.numInnerS1.Value + this.numInnerS2.Value) / 2) / this.numInnerL.Value) * 100;
+            this.numTwisTingOuter.Value = this.numOuterL.Value.Empty() ? 0 : (((this.numOuterS1.Value + this.numOuterS2.Value) / 2) / this.numOuterL.Value) * 100;
+            this.numTwisTingBottom.Value = this.numBottomL.Value.Empty() ? 0 : this.numBottomS1.Value / this.numBottomL.Value * 100;
+
             string savetab2Twisting = $@"
 update [GarmentTest_Detail_Twisting] set S1={this.numTopS1.Value},S2={this.numTopS2.Value},L={this.numTopL.Value},Twisting={this.numTwisTingTop.Value} where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='T'
 update [GarmentTest_Detail_Twisting] set S1={this.numInnerS1.Value},S2={this.numInnerS2.Value},L={this.numInnerL.Value},Twisting={this.numTwisTingInner.Value} where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='I'
