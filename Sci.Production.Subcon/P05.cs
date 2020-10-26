@@ -322,12 +322,12 @@ outer apply (
 where f.IsProduceFty=1
 and o.category in ('B','S')
 and o.MDivisionID='{Sci.Env.User.Keyword}' 
-and ot.ArtworkTypeID like '{this.CurrentMaintain["artworktypeid"]}%' 
+and ot.ArtworkTypeID = '{this.CurrentMaintain["artworktypeid"]}' 
 and o.Junk=0
 and o.id = '{dr["OrderID"]}'
 and isnull(oa.PatternCode,'') = '{dr["PatternCode"]}'
 and isnull(oa.PatternDesc,'') = '{dr["PatternDesc"]}'
-and isnull(oa.ArtworkID,ot.ArtworkTypeID) like '{dr["ArtworkId"]}%'
+and isnull(oa.ArtworkID,ot.ArtworkTypeID) = '{dr["ArtworkId"]}'
 and ((o.Category = 'B' and  ot.InhouseOSP = 'O') or (o.category = 'S'))
 group by ReqQty.value,PoQty.value";
                         #endregion
@@ -485,6 +485,42 @@ group by ReqQty.value,PoQty.value";
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            DataTable dtCheck = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                DataRow drCheck = dtCheck.NewRow();
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    drCheck["OrderID"] = dr["OrderID", DataRowVersion.Original];
+                    drCheck["ArtworkID"] = dr["ArtworkID", DataRowVersion.Original];
+                    drCheck["PatternCode"] = dr["PatternCode", DataRowVersion.Original];
+                    drCheck["PatternDesc"] = dr["PatternDesc", DataRowVersion.Original];
+                    drCheck["ReqQty"] = 0;
+                }
+                else
+                {
+                    drCheck["OrderID"] = dr["OrderID"];
+                    drCheck["ArtworkID"] = dr["ArtworkID"];
+                    drCheck["PatternCode"] = dr["PatternCode"];
+                    drCheck["PatternDesc"] = dr["PatternDesc"];
+                    drCheck["ReqQty"] = dr["ReqQty"];
+                }
+
+                dtCheck.Rows.Add(drCheck);
+            }
+
+            DualResult result = this.UpdateIrregularStatusByDelete(dtCheck);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -694,6 +730,25 @@ where id = '{this.CurrentMaintain["id"]}'";
             }
 
             return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            DataTable dtDelete = this.DetailDatas.CopyToDataTable();
+
+            foreach (DataRow item in dtDelete.Rows)
+            {
+                item["ReqQty"] = 0;
+            }
+
+            DualResult result = this.UpdateIrregularStatusByDelete(dtDelete);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickDeletePost();
         }
 
         // print
@@ -1197,5 +1252,88 @@ outer apply (   select val = isnull(sum(AD.ReqQty), 0)
 
             return sql;
         }
+
+        private DualResult UpdateIrregularStatusByDelete(DataTable dtDelete)
+        {
+
+            if (dtDelete.Rows.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            var irregularQtyReason = new Sci.Production.Subcon.P05_IrregularQtyReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain, dtDelete, this.SqlGetBuyBackDeduction);
+
+            DataTable dtIrregular = irregularQtyReason.GetData();
+
+            if (dtIrregular.Rows.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            string sqlUpdateIrregular = $@"
+alter table #tmp alter column OrderID varchar(13)
+alter table #tmp alter column ArtworkTypeID varchar(20)
+
+delete  ArtworkReq_IrregularQty
+where   exists(select 1 from #tmp t where t.OrderID = ArtworkReq_IrregularQty.OrderID and t.ArtworkTypeID = ArtworkReq_IrregularQty.ArtworkTypeID and t.NeedDelete = 1)
+
+update  ai set  ai.StandardQty = t.StandardQty,
+                ai.ReqQty = t.ReqQty
+from    ArtworkReq_IrregularQty ai
+inner join #tmp t on t.OrderID = ai.OrderID and t.ArtworkTypeID = ai.ArtworkTypeID and t.NeedUpdate = 1
+
+select  *
+into #ArtworkReq
+from ArtworkReq ar with (nolock)
+where   exists(select 1 from #tmp t 
+            inner join ArtworkReq_Detail ard with (nolock) on t.OrderID = ard.OrderID
+            where t.NeedDelete = 1 and t.ArtworkTypeID = ar.ArtworkTypeID and ard.ID =  ar.ID) and
+        Exceed = 1
+
+select * from #ArtworkReq
+
+select  *
+from ArtworkReq_Detail
+where ID in (select ID from #ArtworkReq)
+";
+
+            DataTable[] dtResult;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtIrregular, string.Empty, sqlUpdateIrregular, out dtResult);
+            if (result == false)
+            {
+                return result;
+            }
+
+            DataTable dtArtworkReq = dtResult[0];
+            var dtAllArtworkReq_Detail = dtResult[1].AsEnumerable();
+
+            if (dtArtworkReq.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dtArtworkReq.Rows)
+                {
+                    DataTable dtArtworkReq_Detail = dtAllArtworkReq_Detail.Where(s => s["ID"].ToString() == dr["ID"].ToString()).CopyToDataTable();
+                    var irregularCheck = new Sci.Production.Subcon.P05_IrregularQtyReason(dr["ID"].ToString(), dr, dtArtworkReq_Detail, this.SqlGetBuyBackDeduction);
+
+                    DataTable dtIrregularCheck = irregularCheck.GetData();
+
+                    if (dtIrregularCheck.Rows.Count > 0)
+                    {
+                        continue;
+                    }
+
+                    string sqlFixExceed = $@"update ArtworkReq set Exceed = 0 where ID = '{dr["ID"]}'
+update ArtworkReq_Detail set ExceedQty = 0 where ID = '{dr["ID"]}'
+";
+                    result = DBProxy.Current.Execute(null, sqlFixExceed);
+                    if (!result)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return new DualResult(true);
+        }
+
     }
 }
