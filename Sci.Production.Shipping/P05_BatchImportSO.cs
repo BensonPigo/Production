@@ -117,6 +117,7 @@ from  ForwarderWhse fw
                .Text("InvDate", header: "Invoice Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
                .Text("SoNo", header: "S/O#", iseditingreadonly: false, width: Widths.AnsiChars(15))
                .Text("ForwarderWhse_DetailUKey_ForShow", header: "Terminal/Whse#", iseditingreadonly: false, width: Widths.AnsiChars(6), settings: setTerminal)
+               .Text("DocumentRefNo", header: "Document Ref#", iseditingreadonly: false, width: Widths.AnsiChars(15))
                .Date("CutOffDate", header: "Cut-Off Date", iseditingreadonly: false)
                .Date("SOCFMDate", header: "S/O Cfm Date", iseditingreadonly: false)
               ;
@@ -149,11 +150,11 @@ from  ForwarderWhse fw
             // 2. 檢查 [S/O], [Terminal/Whse#], [Cut-Off Date], [S/O Cfm Date] 有一個為空則警示
             #region
 
-            DataRow[] emptyRows = selected.CopyToDataTable().Select("SONo='' OR ForwarderWhse_DetailUKey=NULL OR ForwarderWhse_DetailUKey=0 OR CutOffDate IS NULL OR SOCFMDate IS NULL ");
+            DataRow[] emptyRows = selected.CopyToDataTable().Select("SONo='' or DocumentRefNo = '' OR ForwarderWhse_DetailUKey=NULL OR ForwarderWhse_DetailUKey=0 OR CutOffDate IS NULL OR SOCFMDate IS NULL ");
 
             if (emptyRows.Length > 0)
             {
-                string msg = " Below [Invoice No.] needs to fill up [S/O], [Terminal/Whse#], [Cut-Off Date], [S/O Cfm Date]!" + Environment.NewLine;
+                string msg = " Below [Invoice No.] needs to fill up [S/O], [Terminal/Whse#], [Cut-Off Date], [S/O Cfm Date], [Document Ref#]!" + Environment.NewLine;
 
                 foreach (DataRow item in emptyRows)
                 {
@@ -172,7 +173,7 @@ from  ForwarderWhse fw
             foreach (DataRow item in selected)
             {
                 // 3-1 修改GMTBooking
-                sqlCmd.Append($@"UPDATE GMTBooking SET SONo='{item["SONo"]}' , ForwarderWhse_DetailUKey ={item["ForwarderWhse_DetailUKey"]} , CutOffDate='{Convert.ToDateTime(item["CutOffDate"]).ToString("yyyy/MM/dd hh:mm:ss")}' , SOCFMDate='{Convert.ToDateTime(item["SOCFMDate"]).ToString("yyyy/MM/dd hh:mm:ss")}' WHERE ID = '{item["ID"]}' " + Environment.NewLine + Environment.NewLine);
+                sqlCmd.Append($@"UPDATE GMTBooking SET SONo='{item["SONo"]}', DocumentRefNo = '{item["DocumentRefNo"]}', ForwarderWhse_DetailUKey ={item["ForwarderWhse_DetailUKey"]} , CutOffDate='{Convert.ToDateTime(item["CutOffDate"]).ToString("yyyy/MM/dd hh:mm:ss")}' , SOCFMDate='{Convert.ToDateTime(item["SOCFMDate"]).ToString("yyyy/MM/dd hh:mm:ss")}' WHERE ID = '{item["ID"]}' " + Environment.NewLine + Environment.NewLine);
 
                 // 3-2 P05_SOCFMDate.cs 35-50行做對應的更新
                 bool firstCFM = !MyUtility.Check.Seek($"SELECT ID FROM GMTBooking_History WITH (NOLOCK) WHERE ID = '{item["ID"]}' AND HisType = 'SOCFMDate'");
@@ -241,6 +242,7 @@ VALUES (
     ,[SOCFMDate]
     ,g.Forwarder 
     ,g.ShipModeID 
+    ,g.DocumentRefNo
 FROM GMTBooking g
 LEFT JOIN ForwarderWhse_Detail fwd ON  g.ForwarderWhse_DetailUKey=fwd.UKey
 LEFT JOIN ForwarderWhse fw ON  fw.ID = fwd.ID
