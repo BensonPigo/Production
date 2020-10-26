@@ -692,23 +692,6 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
                     #region 準備 A：DB現有的 "價格異常紀錄"
 
                     sql.Clear();
-
-                    // sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
-
-                    // sql.Append(" FROM ArtWorkPO a" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN ArtworkPO_IrregularPrice al ON al.POID = o.POID AND al.ArtworkTypeID = ad.ArtworkTypeID" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
-                    // sql.Append(" WHERE a.ID = @artWorkPO_ID" + Environment.NewLine);
-
-                    // result = DBProxy.Current.Select(null, sql.ToString(), parameters, out IrregularPriceReason_InDB);
-                    // if (!result)
-                    // {
-                    //    ShowErr(sql.ToString(), result);
-                    // }
-                    // IrregularPriceReason_InDB = MyUtility.Check.Empty(IrregularPriceReason_InDB) ? new DataTable() : IrregularPriceReason_InDB;
-
                     sql.Append(" alter table #TmpSource alter column OrderID varchar(13)  " + Environment.NewLine);
                     sql.Append(" alter table #TmpSource alter column ArtworkTypeID varchar(20)  " + Environment.NewLine);
                     sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
@@ -734,15 +717,6 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
 
                     irregularPriceReason_New = btable.AsEnumerable().Count() > 0 ? btable.AsEnumerable().CopyToDataTable() : new DataTable();
 
-                    #endregion
-
-                    #region 準備 D：找出實際紀錄 與 DB紀錄 重複的部分
-
-                    // var Rep = from c in IrregularPriceReason_InDB.AsEnumerable()
-                    //          where !IrregularPriceReason_Real.AsEnumerable().Any(o => o["POID"].ToString() == c["POID"].ToString() && o["ArtworkTypeID"].ToString() == c["ArtworkTypeID"].ToString())
-                    //          select c;
-
-                    // IrregularPriceReason_Repeat = Rep.AsEnumerable().Count() > 0 ? Rep.AsEnumerable().CopyToDataTable() : new DataTable();
                     #endregion
 
                     DataTable subconReason;
