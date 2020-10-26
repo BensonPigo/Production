@@ -86,13 +86,6 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            string sqlchk = $@"select 1 from packinglist where id = '{this.txtFOCPL.Text}' and status <> 'Confirmed'";
-            if (MyUtility.Check.Seek(sqlchk))
-            {
-                MyUtility.Msg.WarningBox("FOC P/L has not yet confirmed, Can't import to HC.");
-                return;
-            }
-
             #region PackingListID 存在Pullout 則不能匯入
             List<SqlParameter> listParameter = new List<SqlParameter>();
             listParameter.Add(new SqlParameter("@PackingID", this.txtFOCPL.Text));
