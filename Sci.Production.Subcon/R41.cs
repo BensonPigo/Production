@@ -369,10 +369,10 @@ outer apply(
     and bda.SubprocessId = s.ID
 ) as ps
 outer apply(
-    select sub = 1
+    select top 1 sub = 1
     from Bundle_Detail_Art bda with (nolock, index(ID_Bundleno_SubID))
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
-    and bda.SubprocessId = s.ID
+    --and bda.SubprocessId = s.ID
 ) as nbs 
 outer apply (
 select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' then Stuff((select distinct concat( ',',ls.Abb)
