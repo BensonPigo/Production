@@ -1,0 +1,943 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sci.Andy</name>
+    </assembly>
+    <members>
+        <member name="T:Sci.Andy.OnAsyncCallSubForm">
+            <summary>
+            Andy => 提供在非同步處理資料時(報表取資料), 呼叫子From
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.myIO">
+            <summary>
+            Andy -> 提供有 IO 的相關工具
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myIO.GetFile(System.String,System.Boolean)">
+            <summary>
+            ANdy -> 取得已存在或新的完整檔名.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myIO.GetExistsFile(System.String)">
+            <summary>
+            Andy -> 取得已存在的完整檔名.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myIO.DeleteFile(System.String)">
+            <summary>
+            Andy -> 刪除指定的檔案
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myIO.ConnectExcel(System.String)">
+            <summary>
+            Andy -> 開啟指定的 Excel
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myIO.ConnectWord(System.String)">
+            <summary>
+            Andy -> 開啟指定的 Word
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyAdapter">
+            <summary>
+            Andy -> 將 SqlDataAdapter 的常用語法簡化以方便使用, 但只能對單一DataTable作存取
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyAdapter.workTable">
+            <summary>
+            DataAdapter 存取的 Datatable
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyAdapter.autoDetectFeildInfo">
+            <summary>
+            是否要自動判斷 updateAddInfo,updateEditInfo
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.#ctor(System.String)">
+            <summary>
+            Andy -> schemaText 可以是 SqlTable or select 語法
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.#ctor(System.String,System.Data.SqlClient.SqlConnection)">
+            <summary>
+            schemaText 可以是 SqlTable or select 語法, sqlConn 使用指定的 SqlConnection
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter._GetSchema(System.String)">
+            <summary>
+            第一次 Fill 時要將限制取消
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.Fill(System.String)">
+            <summary>
+            將資料填入Datatable->workTable
+            </summary>
+            <param name="cmdText">SQL Command - Select</param>
+            <returns>Fill的筆數</returns>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.Fill(System.String,System.Data.DataRow[]@)">
+            <summary>
+            將資料填入Datatable->workTable, 並 out 新加入的 DataRow[]
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.Refill(System.Int32)">
+            <summary>
+            指定要那一筆rowIndex要從 SQL Server  重新下載
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.Insert">
+            <summary>
+            Add NewRow() 並回傳
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.FillorInsert(System.String)">
+            <summary>
+            Fill 時如果沒有任何記錄則新增一筆 DataRow 並回傳
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.FindorInsert(System.Object[])">
+            <summary>
+            利用 workTable.PrimaryKey 搜尋若找的到則回傳, 如果找不到. 新增一筆記錄並回傳.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.SetPrimaryKey(System.String[])">
+            <summary>
+            根據傳入的 columnNames 建立 workTable.PrimaryKey, 同時設定 AllowDBNull = true
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.MappingSqlTable(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            根據 Select 語法與 SQL Table Mapping 自動做 Insert / Update / Delete, 回傳 SQL上多出/減少的筆數
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.ColumnOrdinal(System.String)">
+            <summary>
+            傳回 ColumnName 的 Ordinal 運用在 ItemArray
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.Update">
+            <summary>
+            更新資料庫, 
+            </summary>
+            <returns>成功或失敗.訊息記錄在 message</returns>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter._AutoDetectFeildInfo">
+            <summary>
+            自動判斷更新 AddDate, AddName, EditDate, EditName
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapter.ToList``1">
+            <summary>
+            將 DataTable 變成物件化的 List; T 必須是繼承 MyDataModel 的類別.
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyAdapter.DataAdapter">
+            <summary>
+            取得處理中的 DataAdapter
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyAdapter.IsUpdateIdentityField">
+            <summary>
+            若有 Identity 欄位時, 是否在存入 SQL 時要將值回寫.( 要回寫速度會變慢很多 )
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyAdapter.FillRecords">
+            <summary>
+            Andy -> 記錄最後一次 Fill() 的筆數
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyAdapter.Message">
+            <summary>
+            // 取得 Update() 訊息
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyAdapter.ReportProgressBar">
+            <summary>
+            顯示的存檔進度表的物件
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyAdapter.DataClass">
+            <summary>
+            測試 DataTable 結合 Class 使用
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyAdapters">
+            <summary>
+            Andy-> 針對多個 MyAdapter 做 TransactionScope() 的存檔, 可跨 DB 及 SqlServer, 內定 Time out 5分鐘
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyAdapters.adapters">
+            <summary>
+            記錄 MyAdapter 的陣列
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyAdapters.message">
+            <summary>
+            記錄 Update() 訊息
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapters.#ctor(System.String,System.String[])">
+            <summary>
+            Andy -> 利用連接字串及SQL Select 同時產生多個 MyAdapter
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapters.#ctor(Sci.Andy.MyAdapter[])">
+            <summary>
+            Andy->直接傳入已存在的 MyAdapter
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapters.Update(System.TimeSpan)">
+            <summary>
+            更新並指定TimeOut的時間. TimeSpan( 時, 分, 秒)
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyAdapters.Update">
+            <summary>
+            更新, 內定TimeOut時間 五分鐘
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyCursorUpdateTable">
+            <summary>
+            Andy-> 利用 DataTable 更新 SQLTable. 使用 DataAdapter
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyCursorUpdateTable.IsUpdateOK">
+            <summary>
+            記錄更新是否成功
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyCursorUpdateTable.autoDetectFeildInfo">
+            <summary>
+            是否要自動判斷 updateAddInfo,updateEditInfo
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyCursorUpdateTable.#ctor(System.Data.DataTable,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Andy-> 利用 DataTable 更新 SQLTable. 使用 DataAdapter
+            </summary>
+            <param name="dtCursor">Datatable暫存檔</param>
+            <param name="sqlTable">SQLTable名稱</param>
+            <param name="connName">連接字串 null 使用內定</param>
+            <param name="isSupportInsert">執行新增</param>
+            <param name="isSupportUpdate">執行修改</param>
+            <param name="isSupportDelete">執行除</param>
+        </member>
+        <member name="M:Sci.Andy.MyCursorUpdateTable.Update">
+            <summary>
+            更新 SQL Server 
+            </summary>
+            <returns>成功或失敗</returns>
+        </member>
+        <member name="T:Sci.Andy.ExtensionMethods.ExtensionObject">
+            <summary>
+             針對 object , string, int ,double, datetime... 等基本變數型態物件的擴充功能
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToDouble(System.Object)">
+            <summary>
+            Andy -> object to double
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToDecimal(System.Object)">
+            <summary>
+            Andy -> object to decimal
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToFloat(System.Object)">
+            <summary>
+            Andy -> object to float
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToInt(System.Object)">
+            <summary>
+            Andy -> object to int
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToInt64(System.Object)">
+            <summary>
+            Andy -> object to Int64
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToBool(System.Object)">
+            <summary>
+            Andy -> object to bool
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToDateTimeNullable(System.Object)">
+            <summary>
+            Andy -> object to DateTime?, 失敗傳回 null
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToSqlDateTime(System.Object)">
+            <summary>
+            Andy -> object ToString("yyyy-MM-dd HH:mm:ss"); null 回傳 "";
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToUSDateString(System.DateTime)">
+            <summary>
+            Andy -> DateTime.ToString("d,MMM,yyyy",new System.Globalization.CultureInfo("en-US")); null 回傳 "";
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToTenMinutes(System.DateTime)">
+            <summary>
+            Andy -> return sender.Subtract(new DateTime(2000, 1, 1)).TotalMinutes/10;
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToDateTime(System.Object)">
+            <summary>
+            Andy -> object to DateTime -> 失敗回傳 new DateTime()
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToTimeSpan(System.Object)">
+            <summary>
+            Andy -> object to TimeSpan
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToTimeSpinString(System.Object)">
+            <summary>
+            Andy -> object to String 型態的 TimeSpan. 主要是排除 "  :"  or ":" 的問題
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.IsEmpty(System.Object)">
+            <summary>
+            Andy -> 判斷判斷物件是否為空白 或 Null, 使用 TypeCode 分類
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.Compute(System.Object)">
+            <summary>
+            Andy ->  "1+2" = 3, "3*2+1" = 7 , 失敗回傳  0, 'aa'>='bb' = FALSE
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToRound(System.Object,System.Int32)">
+            <summary>
+            Andy -> 傳回指定的四捨五入. decimal 型別
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.Between(System.String,System.String,System.String)">
+            <summary>
+            Andy -> 傳回字串是否介於指定的字串區間
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.ToExcelColumnName(System.Int32)">
+            <summary>
+            Andy -> 將數字變成字串 1->A, 2->B, 26->Z, 27->AA, 28->AB
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.DaysInMonth(System.DateTime)">
+            <summary>
+            Andy -> 求這個月有幾天 DateTime.DaysInMonth()
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.FirstDateInMonth(System.DateTime)">
+            <summary>
+            Andy -> 求這個月的第一天
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.LastDateInMonth(System.DateTime)">
+            <summary>
+            Andy -> 求這個月的最後一天
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionObject.Split(System.String,System.String)">
+            <summary>
+            Andy -> 簡化 Split 的語法, 會傳回 sender.Split(new string[] {splitString}, StringSplitOptions.None)
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.ExtensionMethods.ExtensionDataTable">
+            <summary>
+            Andy -> 針對 DataTable 物件的擴充功能
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.CacnelConstraints(System.Data.DataTable)">
+            <summary>
+            Andy=> 重設 DataColumns.AllowDBNull=true; DataColumns.ReadOnly=false;
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.Lookup(System.Data.DataTable,System.String,System.String)">
+            <summary>
+            Andy=> 利用 DataTable.Select() 傳回指定的欄位值
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.Lookup(System.Data.DataTable,System.String,System.Object)">
+            <summary>
+            Andy=> 利用 DataTable.Rows.Find(key) 傳回指定的欄位值 - 單一鍵
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.Lookup(System.Data.DataTable,System.String,System.Object[])">
+            <summary>
+            Andy => 利用 DataTable.Rows.Find(keys) 傳回指定的欄位值 - 複合鍵
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.SetPrimaryKey(System.Data.DataTable,System.String[])">
+            <summary>
+            根據傳入的 columnNames 建立 workTable.PrimaryKey, 同時設定 AllowDBNull = true
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.UpdateSql(System.Data.DataTable,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Andy => 利用 MyCursorUpdateTable() 去更新 SQL 表格
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.SetFields(System.Data.DataTable,System.String)">
+            <summary>
+            Andy=> 設定 sender.ExtendedProperties["Fields"]的值. 範例 SetFields("Id,Name,Tel,Fax"), 以提供 ScatterFields() 及 GatherFields() 使用
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.GetFields(System.Data.DataTable)">
+            <summary>
+            Andy=> 取出 sender.ExtendedProperties["Fields"] 的值
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.ScatterFields(System.Data.DataRow)">
+            <summary>
+            Andy=> 依據 sender.Table.ExtendedProperties["Fields"] 定義的欄位及順序將值轉成陣列傳出
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.GatherFields(System.Data.DataRow,System.Object[])">
+            <summary>
+            Andy=> 將 values 依據 sender.Table.ExtendedProperties["Fields"] 定義的欄位及順序寫入欄位中
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.AssignDefaultValue(System.Data.DataRow)">
+            <summary>
+            Andy=> 自動根據資料型別給初值 => 字元="", 數字=0, 邏輯 = false;
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.Browse(System.Data.DataTable)">
+            <summary>
+            對 DataTable 做 Browse
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.ToCSV(System.Data.DataTable,System.String)">
+            <summary>
+            Andy=>  將 DataTable 匯出至指定的CSV檔, IncludeHeader, UTF8, TabDelimited
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.ToCSV(System.Data.DataTable,System.String,System.Boolean,System.Text.Encoding,System.String)">
+            <summary>
+            Andy=>  將 DataTable 匯出至指定的CSV檔, 內定編碼=Encoding.GetEncoding("big5")
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionDataTable.ToCsvString(System.Object)">
+            <summary>
+            Andy -> 提供給 DataTable to CSV 專用的 Method
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.ExtensionMethods.ExtensionControls">
+            <summary>
+            Andy -> 針對 Winform Controls 的擴充功能
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.InitDataSource(System.Windows.Forms.ComboBox,System.Int32,System.String)">
+            <summary>
+            Andy=> 自動設定 DataSource, DisplayMember, ValueMember ; rowSource="值1,值2,..." or "select ..."
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.InitDataSource(System.Windows.Forms.ComboBox,System.Int32,System.Data.DataTable)">
+            <summary>
+            Andy=> 設定comboBox 的 DataSource, DisplayMember, ValueMember 
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.SetColumnsSortMode(System.Windows.Forms.DataGridView,System.Boolean)">
+            <summary>
+            Andy -> 設定 DataGridView.Columns.SortMode = DataGridViewColumnSortMode.NotSortable || Automatic
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.InitColumnName(System.Windows.Forms.DataGridView)">
+            <summary>
+            Andy -> 若 DataGridView 未設定 Column.Name 則自動等於 Column.DataPropertyName
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.ToExcel(System.Windows.Forms.DataGridView,System.String)">
+            <summary>
+            Andy -> 將 DataGridView 的資料直接匯出至 Excel
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.Remove(System.Windows.Forms.Control)">
+            <summary>
+            Andy -> 將 Windows.Form 控制項重Form 中移出, 並 Dispose()
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.Field``1(System.Windows.Forms.BindingSource,System.String)">
+            <summary>
+            Andy -> 傳回目前 mtbs.current 的欄位值, 並轉換成指定的型別
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionControls.Field(System.Windows.Forms.BindingSource,System.String)">
+            <summary>
+            Andy -> 傳回目前 mtbs.current 的欄位值(object 型別)
+            </summary>
+        </member>
+        <!-- 忽略成員 "M:Sci.Andy.ExtensionMethods.ExtensionControls.ToDataRows(System.Data.IDataReader)" 中格式錯誤的 XML 註解 -->
+        <member name="T:Sci.Andy.ExtensionMethods.ExtensionOffice">
+            <summary>
+            Andy -> 提供 Office 相關元件的擴允功能
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.ExtensionMethods.ExtensionOffice.FindAndReplace(Microsoft.Office.Interop.Word.Application,System.String,System.String)">
+            <summary>
+            Andy -> 在 Word 中 將指定的字串取代成新的字串
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.myDataTable">
+            <summary>
+            跟 DataTable 相關的 static methods
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myDataTable.SelectExcel(System.String,System.Int32)">
+            <summary>
+            Andy -> 將Excel 變成 DataTable 傳回
+            filePath: 完整的檔案名稱含路徑, sheetNum: Excel 的 Sheet Number start with 1, **若Sheet 的名稱是中文有時會有問題
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myDataTable.SelectCSV(System.String)">
+            <summary>
+            Andy -> 將CSV 變成 DataTable 傳回,  指定編碼  CharacterSet = 65001=>UTF8, TabDelimited
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myDataTable.SelectCSV(System.String,System.String)">
+            <summary>
+            Andy -> 將CSV 變成 DataTable 傳回, 你也可以不傳利用 Schema.ini 來設定
+            CharacterSet: 65001=>UTF8, 950=>Big5, 936=>GB, 1258=>VN, https://msdn.microsoft.com/zh-tw/library/windows/desktop/dd317756(v=vs.85).aspx
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myDataTable.CSVReader(System.String,System.String)">
+            <summary>
+            Andy -> 將CSV 變成 DataTable 傳回, 固定 Delimited=Tab and Encoding.UTF8
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myDataTable.CSVReader(System.String,System.String,System.String,System.Text.Encoding)">
+            <summary>
+            Andy -> 將CSV 變成 DataTable 傳回, 自行指定 Delimited and Encoding
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myDataTable.LinqToDataTable``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Andy ->  將使用 Linq 查詢的結果變成 DataTable
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyItemArray">
+            <summary>
+            Andy -> 結合 DataRow and object[] 來加速 DataRow 存入速度, 利用 MyDataRow["ColumnName"] 存取
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyItemArray._values">
+            <summary>
+            存取 object[]
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyItemArray.#ctor">
+            <summary>
+            Andy -> 先建立物件, 之後再設定資料來源(DataRow)
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyItemArray.#ctor(System.Data.DataRow)">
+            <summary>
+            Andy -> 傳入 DataRow
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyItemArray.Item(System.String)">
+            <summary>
+            利用 ColumnName  存取 obejct[]
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyItemArray.Item(System.Int32)">
+            <summary>
+            利用 Index 存取 obejct[]
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyItemArray.ItemArray">
+            <summary>
+            存取 Array 的值
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyItemArray.Row">
+            <summary>
+            初始化 ItemArray 的值, 資料來源(DataRow)
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyDataRow">
+            <summary>
+            Andy -> 結合 DataRow and object[] 來加速 DataRow 存入速度, 利用 MyDataRow["ColumnName"] 存取, 最後用 Update() 將 object[] 存入 DataRow
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataRow.Update">
+            <summary>
+            將 ItemArray 的值存入 DataRow
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataRow.RowToItemArray">
+            <summary>
+            重新將 DataRow 的值寫至 ItemArray
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataRow.#ctor">
+            <summary>
+            Andy -> 先建立物件, 之後再設定資料來源(DataRow)
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataRow.#ctor(System.Data.DataRow)">
+            <summary>
+            Andy -> 傳入 DataRow
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyDataRow.Row">
+            <summary>
+            存取 DataRow
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyDataModel">
+            <summary>
+            Andy -> (這時過時的用法, 請改用繼承MyDataRow) 利用 MyDataRow 來將 Table物件化
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataModel.#ctor">
+            <summary>
+            Andy -> 建立資料模型
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataModel.#ctor(System.Data.DataRow)">
+            <summary>
+            建立資料模型. row => class 要存取的 DataRow
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataModel.ItemArrayToRow">
+            <summary>
+            ** 將 ItemArray 的值存入 DataRow; 為了與舊版相容, 新版新改用 Update()
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataModel.Update">
+            <summary>
+            ** 將 ItemArray 的值存入 DataRow;
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataModel.RowToItemArray">
+            <summary>
+            將 DataRow 的值寫至 ItemArray
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyDataModel.ItemValue">
+            <summary>
+            利用 ColumnName / Index 來對 ItemArray 存取. 以加快速度
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyDataModel.Row">
+            <summary>
+            Andy -> 存取 DataRow
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyDataModel.AccessItemArray">
+            <summary>
+            利用 Indexor 提供對 ItemArray 的存取, 以加快速度.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyDataModel.AccessItemArray.#ctor(Sci.Andy.MyDataRow)">
+            <summary>
+            利用 Indexor 提供對 ItemArray 的存取, 以加快速度.
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyDataModel.AccessItemArray.Item(System.String)">
+            <summary>
+            利用 ColumnName 存取 ItemArray
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyDataModel.AccessItemArray.Item(System.Int32)">
+            <summary>
+            利用 Index 存取 ItemArray
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.mySqlClient">
+            <summary>
+            Andy -> 提供有關 MSSQL 有關的查詢工具
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.Select(System.String,System.String)">
+            <summary>
+            Andy->  執行 DBProxy.Current.Select 直接回傳 Datatable, 若SQL失敗, 會出現警示訊息回傳 null
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.SelectByConn(System.Data.SqlClient.SqlConnection,System.String)">
+            <summary>
+            Andy ->  執行 DBProxy.Current.Select 直接回傳 Datatable, 若SQL失敗, 會出現警示訊息回傳 null
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.FindRow(System.String,System.String)">
+            <summary>
+            Andy-> 回傳找到的第一筆 DataRow, 若找不到回傳 null
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.OpenConnection(System.String)">
+            <summary>
+            Andy-> 根據 Connection String 打開 SqlConnection 並回傳 
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.GetConnection(System.String)">
+            <summary>
+            Andy-> 根據 Connection String 取得 SqlConnection 並回傳. 但會關閉 Connection
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.ExecusteReader(System.String,System.String)">
+            <summary>
+            Andy->  根據 Sql Command ,傳回 SQL Command Read, 若SQL失敗, 會出現警示訊息回傳 null
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.ExecusteReaderByConn(System.Data.SqlClient.SqlConnection,System.String)">
+            <summary>
+            Andy->  根據 Sql Command ,傳回 SQL Command Read, 若SQL失敗, 會出現警示訊息回傳 null
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.mySqlClient.BuilderInExpression(System.String,System.String,System.String)">
+            <summary>
+            Andy=> 根據選擇的條件傳票SQL 條件是要用 IN 或 = , 以優化查詢效率
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MySqlExplorer.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MySqlExplorer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Andy.MySqlExplorer.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.myVfpClient">
+            <summary>
+            Andy -> 針對  VPF Data 的存取
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.GetOdbcConnection(System.String)">
+            <summary>
+            Andy -> 取得 VFP 的  OdbcConnection, vfpDataPath 可以是目錄或是 DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OdbcSelect(System.String,System.String)">
+            <summary>
+            Andy -> 使用 VFP ODBC 取得資料, selectSQL. 查詢語法, vfpDataPath 可以是目錄或是 DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OdbcSelect(System.String,System.Data.Odbc.OdbcConnection)">
+            <summary>
+            Andy -> 使用 VFP ODBC 取得資料, selectSQL. 查詢語法, connection. 已經存在的 OdbcConnection.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OdbcExecuteNonQuery(System.String,System.String)">
+            <summary>
+            Andy -> 使用 VFP ODBC 更新資料, sqlCommand->Insert, Update, Delete;  vfpDataPath -> 可以是目錄或是 DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OdbcExecuteNonQuery(System.String,System.Data.Odbc.OdbcConnection)">
+            <summary>
+            Andy -> 使用 VFP ODBC 更新資料, sqlCommand->Insert, Update, Delete;  connection. 已經存在的 OleDbConnection.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.GetOleDbConnection(System.String,System.Int32)">
+            <summary>
+            Andy -> 取得 VFP 的  OleDbConnection, vfpDataPath 可以是目錄或是 DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OleDbSelect(System.String,System.String)">
+            <summary>
+            Andy -> 使用 VFP oleDb 取得資料, selectSQL. 查詢語法, vfpDataPath 可以是目錄或是 DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OleDbSelect(System.String,System.Data.OleDb.OleDbConnection)">
+            <summary>
+            Andy -> 使用 VFP oleDb 取得資料, selectSQL. 查詢語法, connection. 已經存在的 OleDbConnection.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OleDbExecuteNonQuery(System.String,System.String)">
+            <summary>
+            Andy -> 使用 VFP oleDb 更新資料, sqlCommand->Insert, Update, Delete;  vfpDataPath -> 可以是目錄或是 DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.myVfpClient.OleDbExecuteNonQuery(System.String,System.Data.OleDb.OleDbConnection)">
+            <summary>
+            Andy -> 使用 VFP oleDb 更新資料, sqlCommand->Insert, Update, Delete;  connection. 已經存在的 OleDbConnection.
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyBrowser.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyBrowser.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Andy.MyBrowser.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.MyVfpAdapter">
+            <summary>
+            Andy -> 將 OleDbDataAdapter 存取 VFP DBF 的常用語法簡化以方便使用, 但只能對單一 DataTable 作存取
+            </summary>
+        </member>
+        <member name="F:Sci.Andy.MyVfpAdapter.autoDetectFeildInfo">
+            <summary>
+            是否要自動判斷 updateAddInfo,updateEditInfo
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.#ctor(System.String,System.String,System.Int32)">
+            <summary>
+            schemaText 可以是 VFP Table Name 或 Select 語法, dbfPath VFP Data 存放的目錄例如 D:\Emp.2007\Data\Emp.DBC
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.Fill(System.String)">
+            <summary>
+            將資料填入Datatable->workTable
+            </summary>
+            <param name="cmdText">SQL Command - Select</param>
+            <returns>Fill的筆數</returns>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.Fill(System.String,System.Data.DataRow[]@)">
+            <summary>
+            將資料填入Datatable->workTable, 並 out 新加入的 DataRow[]
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.Refill(System.Int32)">
+            <summary>
+            指定要那一筆rowIndex要從 SQL Server  重新下載
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.Insert">
+            <summary>
+            Add NewRow() 並回傳
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.DeleteNotExist(System.String)">
+            <summary>
+            根據 Select 語法刪除不存在 Datatable 中的資料, 傳回刪除的筆數
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.FillorInsert(System.String)">
+            <summary>
+            Andy -> Fill 時如果沒有任何記錄則新增一筆 DataRow 並回傳
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter.Update">
+            <summary>
+            Andy -> 更新資料庫
+            </summary>
+            <returns>成功或失敗.訊息記錄在 Message</returns>
+        </member>
+        <member name="M:Sci.Andy.MyVfpAdapter._AutoDetectFeildInfo">
+            <summary>
+            Andy -> 自動判斷更新 AddDate, AddName, EditDate, EditName
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyVfpAdapter.WorkTable">
+            <summary>
+            DataAdapter 存取的 Datatable
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.MyVfpAdapter.FillRecords">
+            <summary>
+            Andy -> 記錄最後一次 Fill() 的筆數
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.WaitingDual">
+            <summary>
+            Andy -> 會在 Form 的正中央同時顯示進度表及文字 , 並可在中途變更進度或文字 , 離開時用 Close() 關閉訊息.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.WaitingDual.#ctor(System.Windows.Forms.Form,System.String,System.Int32)">
+            <summary>
+            Andy -> 在指定的Form 加上 WaitingText and WaitingProgressBar
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.WaitingDual.Close">
+            <summary>
+            關閉並移除 WaitingText and WaitingProgressBar
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingDual.ProgressBar">
+            <summary>
+            取得 ProgressBar
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingDual.Text">
+            <summary>
+            顯示的文字
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingDual.Value">
+            <summary>
+            ProgressBar 顯示的進度
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.WaitingText">
+            <summary>
+            Andy -> 會在 Form 的正中央顯示指定訊息, 並可在中途變更文字, 離開時用 Close() 關閉訊息.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.WaitingText.#ctor(System.Windows.Forms.Form,System.String)">
+            <summary>
+            Andy -> 在指定的 Form上 , 加上 Label 控制項
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.WaitingText.Close">
+            <summary>
+            關閉並移除 Label
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingText.Text">
+            <summary>
+            顯示的文字
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingText.Location">
+            <summary>
+            取得或設定 label 的 Location
+            </summary>
+        </member>
+        <member name="T:Sci.Andy.WaitingProgressBar">
+            <summary>
+            Andy -> 會在 Form 的正中央顯示進度表, 並可在中途變更進度, 離開時用 Close() 關閉訊息.
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.WaitingProgressBar.#ctor(System.Windows.Forms.Form,System.Int32)">
+            <summary>
+            Andy. 在指定的Form 加上 ProgressBar 控制項 
+            </summary>
+        </member>
+        <member name="M:Sci.Andy.WaitingProgressBar.Close">
+            <summary>
+            關閉並移除 ProgressBar
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingProgressBar.ProgressBar">
+            <summary>
+            取得 ProgressBar
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingProgressBar.Value">
+            <summary>
+            ProgressBar.Value 顯示的進度
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingProgressBar.Maximum">
+            <summary>
+            ProgressBar 的最大長度
+            </summary>
+        </member>
+        <member name="P:Sci.Andy.WaitingProgressBar.Location">
+            <summary>
+            取得或設定 ProgressBar的Location
+            </summary>
+        </member>
+    </members>
+</doc>

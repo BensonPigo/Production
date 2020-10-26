@@ -1821,7 +1821,8 @@ namespace Sci.Production.Quality
                 }
                 else
                 {
-                    if (dr["BeforeWash"] != DBNull.Value && dr["AfterWash"] != DBNull.Value && dr["Shrinkage"] != DBNull.Value)
+                    if ((dr["BeforeWash"] != DBNull.Value && dr["AfterWash"] != DBNull.Value && dr["Shrinkage"] != DBNull.Value)
+                        || MyUtility.Convert.GetBool(dr["IsInPercentage"]))
                     {
                         // TestDetail  % 或Range% 視作相同
                         if (MyUtility.Convert.GetString(dr["TestDetail"]).Contains("%"))

@@ -99,13 +99,13 @@
       <HintPath>..\_Dll\PostJobLog.dll</HintPath>
     </Reference>
     <Reference Include="Sci">
-      <HintPath>..\_Dll\Sci.dll</HintPath>
+      <HintPath>..\_Dll_For_Daily\Sci.dll</HintPath>
     </Reference>
     <Reference Include="Sci.Machine.Class">
       <HintPath>..\_Dll\Sci.Machine.Class.dll</HintPath>
     </Reference>
     <Reference Include="Sci.Proj">
-      <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
+      <HintPath>..\_Dll_For_Daily\Sci.Proj.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

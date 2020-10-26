@@ -47,8 +47,8 @@ namespace Sci.Production.PPIC
                 ;
 
             this.Helper.Controls.Grid.Generator(this.gridICR_ResponsibilityDept)
-                .Text("FactoryID", "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(21), iseditingreadonly: true)
+                .Text("FactoryID", "Incharge Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("DepartmentID", "Incharge Dept.", width: Widths.AnsiChars(21), iseditingreadonly: true)
                 .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 0, integer_places: 10)
                 .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(13), iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                 ;
