@@ -223,6 +223,7 @@ BEGIN
 	FromBottom				[numeric](8, 2) NOT NULL DEFAULT ((0)),
 	Width					[int] NOT NULL DEFAULT ((0)),
 	Length					[int] NOT NULL DEFAULT ((0)),
+	DPI						[int] NOT NULL DEFAULT ((0)),
 	Junk					[bit] NOT NULL DEFAULT ((0)),
  CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
 (
@@ -240,6 +241,7 @@ BEGIN
 	EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'SunriseUpdated'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'GenSong是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'GenSongUpdated'
 	EXECUTE sp_addextendedproperty N'MS_Description', N'圖片二進位制資料', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'Image'
+	EXECUTE sp_addextendedproperty N'MS_Description', N'轉 HTML 的 DPI', N'SCHEMA', N'dbo', N'TABLE', N'ShippingMarkPic_Detail', N'COLUMN', N'DPI'
 END
 
 IF OBJECT_ID(N'ShippingMarkStamp_Detail') IS NULL
@@ -258,6 +260,7 @@ BEGIN
 		[Width] [int] NOT NULL,
 		[Length] [int] NOT NULL,
 		[CmdTime] [dateTime] NOT NULL,
+		DPI	[int] NOT NULL,
 		GenSongUpdated bit NOT NULL,
 		Junk bit NOT NULL,
  CONSTRAINT [PK_ShippingMarkStamp_Detail] PRIMARY KEY CLUSTERED 
@@ -280,6 +283,7 @@ BEGIN
 	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Length]  DEFAULT ((0)) FOR [Length]
 	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_GenSongUpdated]  DEFAULT ((0)) FOR [GenSongUpdated]
 	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_Junk]  DEFAULT ((0)) FOR [Junk]
+	ALTER TABLE [dbo].[ShippingMarkStamp_Detail] ADD  CONSTRAINT [DF_ShippingMarkStamp_Detail_DPI]  DEFAULT ((0)) FOR [DPI]
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裝箱清單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'PackingListID'
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI箱號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'SCICtnNo'
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipping Mark 種類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'ShippingMarkTypeUkey'
@@ -295,6 +299,7 @@ BEGIN
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI寫入/更新此筆資料時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'CmdTime'
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'GenSong是否已轉製' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'GenSongUpdated'
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'判斷資料是否需要移除' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'Junk'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'轉 HTML 的 DPI' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ShippingMarkStamp_Detail', @level2type=N'COLUMN',@level2name=N'DPI'
 END
 
 IF OBJECT_ID(N'StickerSize') IS NULL
@@ -574,6 +579,7 @@ USING(
 	,s1.FromBottom
 	,s1.Width
 	,s1.Length
+	,[DPI]=0
 	FROM Production.dbo.ShippingMarkPic_Detail s1
 	inner join Production.dbo.ShippingMarkPic s2 on s2.ukey = s1.ShippingMarkPicUkey
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
@@ -596,12 +602,13 @@ UPDATE SET
 	,t.FromBottom=s.FromBottom
 	,t.Width=s.Width
 	,t.Length=s.Length
+	,t.DPI = s.DPI
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
 (SCICtnNo	,Side	,Seq	,FilePath	,FileName	,CmdTime	,SunriseUpdated	,GenSongUpdated	,Image	,ShippingMarkTypeUkey
-	,PackingListID	,Is2Side	,IsHorizontal	,IsSSCC	,FromRight	,FromBottom	,Width	,Length)
+	,PackingListID	,Is2Side	,IsHorizontal	,IsSSCC	,FromRight	,FromBottom	,Width	,Length	,DPI)
 VALUES(s.[SCICtnNo],s.[Side],s.[Seq],s.[FilePath],s.[FileName],s.[CmdTime],s.[SunriseUpdated],s.[GenSongUpdated],s.[Image],s.ShippingMarkTypeUkey
-	,s.PackingListID	,s.Is2Side	,s.IsHorizontal	,s.IsSSCC	,s.FromRight	,s.FromBottom	,s.Width	,s.Length
+	,s.PackingListID	,s.Is2Side	,s.IsHorizontal	,s.IsSSCC	,s.FromRight	,s.FromBottom	,s.Width	,s.Length	,s.DPI
 );
 
 UPDATE fps
@@ -634,6 +641,7 @@ USING(
 	,s1.FromBottom
 	,s1.Width
 	,s1.Length
+	,[DPI]=300
 	FROM Production.dbo.ShippingMarkStamp_Detail s1
 	inner join Production.dbo.ShippingMarkStamp s2 on s2.PackingListID = s1.PackingListID
 	where (convert(date,AddDate) = @cDate or convert(date,EditDate) = @cDate)
@@ -652,13 +660,14 @@ UPDATE SET
 	,t.FromBottom=s.FromBottom
 	,t.Width=s.Width
 	,t.Length=s.Length
+	,t.DPI=s.DPI
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
 (PackingListID	,SCICtnNo	,ShippingMarkTypeUkey	,FilePath	,FileName	,Image	,Side	,Seq
-           ,FromRight	,FromBottom	,Width	,Length	,CmdTime	,GenSongUpdated)
+           ,FromRight	,FromBottom	,Width	,Length	,CmdTime	,GenSongUpdated	,DPI)
 VALUES
 (s.PackingListID	,s.SCICtnNo	,s.ShippingMarkTypeUkey	,s.FilePath	,s.FileName	,s.Image	,s.Side		,s.Seq
-           ,s.FromRight	,s.FromBottom	,s.Width	,s.Length	,s.CmdTime	,s.GenSongUpdated);
+           ,s.FromRight	,s.FromBottom	,s.Width	,s.Length	,s.CmdTime	,s.GenSongUpdated	,s.DPI);
 
 UPDATE fps
 SET Junk = 1 , GenSongUpdated = 0 ,CmdTime = GetDate()
