@@ -706,6 +706,7 @@ order by NO
 
             // 寫此行目的是要將Excel畫面上顯示Copy給取消
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
+            worksheet.Select();
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("IE_P03_Print");
