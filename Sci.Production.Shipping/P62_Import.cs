@@ -86,6 +86,7 @@ select selected = 0
 	, [COFormType] = ''
 	, [COID] = ''
 	, [CODate] = null
+    , [StyleUkey] = s.Ukey
 from GMTBooking g
 inner join packinglist pl on pl.invno=g.id
 inner join packinglist_detail pld on pl.id=pld.id
@@ -109,7 +110,7 @@ and g.NonDeclare =0
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
 and (kd_status.status = 'New' or kd_status.Status is null)
 group by g.ID,pld.OrderID,o.StyleID,s.Description,g.BrandID,g.ShipModeID,o.PoPrice
-,g.Forwarder,g.TotalNW,g.TotalGW
+,g.Forwarder,g.TotalNW,g.TotalGW,s.Ukey
 ";
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out dt))

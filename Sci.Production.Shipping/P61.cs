@@ -275,8 +275,8 @@ where vk.Refno = '{e.FormattedValue}'
 
                 if (e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = @"Select Refno,Description,Unit from view_KHImportItem where Junk = 0";
-                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "23,35,10", this.CurrentDetailData["Refno"].ToString(), "Refno,Description,Unit");
+                    string sqlcmd = @"Select SCIRefno,Refno,CustomsType,Description,Unit from view_KHImportItem where Junk = 0";
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "23,20,12,35,10", this.CurrentDetailData["Refno"].ToString(), "SCIRefno,Refno,CustomsType,Description,Unit");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -284,7 +284,7 @@ where vk.Refno = '{e.FormattedValue}'
                     }
 
                     DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    dr["Refno"] = item.GetSelecteds()[0]["Refno"];
+                    dr["Refno"] = item.GetSelecteds()[0]["SCIRefno"];
                     dr.EndEdit();
                 }
             };
@@ -343,7 +343,7 @@ where vk.Refno = '{dr["Refno"]}'
            .Text("ShipModeID", header: "ShipMode", width: Widths.AnsiChars(10), settings: shipMode_setting, iseditingreadonly: true).Get(out this.col_ShipMode) // Edit on AddRow by hand
            .Text("Vessel", header: "Vessel", width: Widths.AnsiChars(25), iseditingreadonly: true).Get(out this.col_Vessel) // Edit on AddRow by hand
            .Text("ExportPort", header: "Loading (Port)", width: Widths.AnsiChars(15), settings: port_setting, iseditingreadonly: true).Get(out this.col_Port) // Edit on AddRow by hand
-           .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(23), settings: refno_setting, iseditingreadonly: true).Get(out this.col_Refno) // Edit on AddRow by hand
+           .Text("RefNo", header: "RefNo", width: Widths.AnsiChars(23), settings: refno_setting, iseditingreadonly: true).Get(out this.col_Refno) // Edit on AddRow by hand
            .Text("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("Qty", header: "Q'ty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, settings: qty_setting, iseditingreadonly: true).Get(out this.col_Qty) // Edit on AddRow by hand
            .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -391,8 +391,36 @@ where vk.Refno = '{dr["Refno"]}'
             string sqlcmd = $@"
 declare @BLNo varchar(30) = '{blNo}'
 
+;with tmpExport as (
+	select e.Consignee,e.FactoryID,e.Eta,po3.SCIRefno,ed.UnitId,e.ID
+	,Qty = sum(ed.Qty)
+	,NW = sum(ed.NetKg)
+	,GW = sum(ed.WeightKg)
+	from Export e 
+	inner join Export_Detail ed on e.id=ed.ID  
+	left join PO_Supp_Detail po3 on po3.ID = ed.PoID and ed.Seq1 = po3.SEQ1 and ed.Seq2 = po3.SEQ2
+	where 1=1 
+	and e.NonDeclare=0
+	and e.Blno = @BLNo
+	group by e.Consignee,e.FactoryID,e.Eta,po3.SCIRefno,ed.UnitId,e.ID
+)
+,tmpFtyExport as (
+	select fe.Consignee,f2.SCIRefno,fed.UnitId,fe.id
+	,Qty = sum(fed.Qty)
+	,NW = sum(fed.NetKg)
+	,GW = sum(fed.WeightKg)
+	from FtyExport fe 
+    inner join FtyExport_Detail fed on fed.id=fe.ID 
+    inner join Fabric f2 on f2.SCIRefno =fed.SCIRefno 
+	where 1=1 
+	and fe.NonDeclare=0
+	and fe.type in ('1','2','4') 
+	and fe.Blno = @BLNo
+	group by fe.Consignee,f2.SCIRefno,fed.UnitId,fe.ID
+) 
 select *
-  from (select [ExportID] = e.ID
+  from (
+select distinct [ExportID] = e.ID
              , [BlNo] = e.Blno
              , [Consignee] = e.Consignee 
              , [FactoryID] = e.FactoryID
@@ -402,39 +430,35 @@ select *
              , [ShipModeID] = e.ShipModeID
              , [Vessel] = e.Vessel
              , [ExportPort] = e.ExportPort
-             --, [ImportPort] = e.ImportPort 
              , [RefNo] = kc.Refno
              , [Description] = kc.Description 
-             , [QTY] = ed.Qty
-			 , [Price] = ed.Price
-             , [UnitID] = ed.UnitId 
-             , [NetKg] = ed.NetKg 
-             , [WeightKg] = ed.WeightKg  
+             , [QTY] = s.Qty
+             , [UnitID] = s.UnitId 
+             , [NetKg] = s.NW 
+             , [WeightKg] = s.GW
              , [CustomsType] = kc.CustomsType  
              , [CustomsDescription] = kc.KHCustomsDescriptionID  
-             , [CDCQty] = ed.Qty*kdd.Ratio 
+             , [CDCQty] = s.Qty*kdd.Ratio 
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
-             , [CDCAmount] = (ed.Qty*kdd.Ratio)*kc.CDCUnitPrice  
-             , [ActNetKg] = ed.NetKg  
-             , [ActWeightKg] = ed.WeightKg  
-             , [ActAmount] = (ed.Qty*kdd.Ratio)*kc.CDCUnitPrice  
-             , [NWDiff] = (ed.NetKg-ed.NetKg)  
+             , [CDCAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [ActNetKg] = s.NW  
+             , [ActWeightKg] = s.GW  
+             , [ActAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [NWDiff] = (s.NW-s.nw)  
              , [HSCode] = kcd.HSCode  
              , [ActHSCode] = kcd.HSCode     
-             , [KHCustomsItemUkey] = kc.Ukey
-          from Export e 
-          inner join Export_Detail ed on e.id=ed.ID 
-          left join PO_Supp_Detail po3 on po3.ID = ed.PoID and ed.Seq1 = po3.SEQ1 and ed.Seq2 = po3.SEQ2
-          left  join KHCustomsItem kc on kc.RefNo = po3.SCIRefno and CustomsType in ('Fabric', 'Accessory', 'Machine')
-          left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=e.ImportPort          
-          left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID
-          left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = ed.UnitId         
-         where 1=1
-           and e.NonDeclare=0
-           and e.Blno =@BLNo
-         union ALL 
-        select [ExportID] = FE.ID  
+             , [KHCustomsItemUkey] = kc.Ukey 
+from tmpExport s
+inner join Export e on s.ID = e.ID
+inner join KHCustomsItem kc on kc.RefNo = s.SCIRefno and CustomsType in ('Fabric', 'Accessory', 'Machine')
+left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=e.ImportPort          
+left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID
+left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = s.UnitId   
+
+union all
+
+select [ExportID] = FE.ID  
              , [BlNo] = fe.Blno
              , [Consignee] = FE.Consignee  
              , [FactoryID] = ''  
@@ -444,38 +468,32 @@ select *
              , [ShipModeID] = fe.ShipModeID   
              , [Vessel] = fe.Vessel  
              , [ExportPort] = fe.ExportPort  
-             --, [ImportPort] = fe.ImportPort  
              , [RefNo] = kc.Refno  
              , [Description] = kc.Description  
-             , [QTY] = fed.Qty  
-			 , [Price] = fed.Price
-             , [UnitID] = fed.UnitID   
-             , [NetKg] = fed.NetKg  
-             , [WeightKg] = fed.WeightKg  
+             , [QTY] = s.Qty  
+             , [UnitID] = s.UnitID   
+             , [NetKg] = s.NW  
+             , [WeightKg] = s.GW  
              , [CustomsType] = kc.CustomsType  
              , [CustomsDescription] = kc.KHCustomsDescriptionID  
-             , [CDCQty] = fed.Qty*kdd.Ratio  
+             , [CDCQty] = s.Qty*kdd.Ratio  
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
-             , [CDCAmount] = (fed.Qty*kdd.Ratio)*kc.CDCUnitPrice  
-             , [ActNetKg] = fed.NetKg  
-             , [ActWeightKg] = fed.WeightKg  
-             , [ActAmount] = (fed.Qty*kdd.Ratio)*kc.CDCUnitPrice  
-             , [NWDiff] = (fed.NetKg-fed.NetKg)  
+             , [CDCAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [ActNetKg] = s.NW  
+             , [ActWeightKg] = s.GW  
+             , [ActAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [NWDiff] = (s.NW-s.NW)  
              , [HSCode] = kcd.HSCode  
              , [ActHSCode] = kcd.HSCode  
 			 , [KHCustomsItemUkey] = kc.Ukey
-          from FtyExport fe 
-          inner join FtyExport_Detail fed on fed.id=fe.ID 
-          inner join Fabric f2 on f2.SCIRefno =fed.SCIRefno 
-          left  join KHCustomsItem kc on kc.RefNo=fed.SCIRefno and CustomsType in ('Fabric', 'Accessory')
-          left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=fe.ImportPort        
-          left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID          
-          left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = fed.UnitId 
-         where 1=1
-           and fe.NonDeclare=0
-           and fe.type in ('1','2','4') 
-           and Blno =@BLNo) a
+from tmpFtyExport s
+inner join FtyExport fe on s.ID = fe.ID  
+inner  join KHCustomsItem kc on kc.RefNo = s.SCIRefno and CustomsType in ('Fabric', 'Accessory')
+left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=fe.ImportPort        
+left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID          
+left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = s.UnitId 
+) a
  where 1=1
    and not EXISTS (select * from KHImportDeclaration where Blno =@BLNo)
 ";
@@ -753,7 +771,6 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
-
                 if (this.txtBLNo.Text != this.txtBLNo.OldValue && !MyUtility.Check.Empty(this.txtBLNo.OldValue))
                 {
                     DialogResult questionResult = MyUtility.Msg.QuestionBox($@" It will clear detail records if change <B/L No.>.", caption: "Question", buttons: MessageBoxButtons.YesNo);
@@ -778,10 +795,10 @@ where id = '{this.CurrentMaintain["ID"]}'
                 }
 
                 DataRow dr;
-                string sqlcmd = $@"select DeclareNo from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
+                string sqlcmd = $@"select id from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
                 if (MyUtility.Check.Seek(sqlcmd, out dr))
                 {
-                    MyUtility.Msg.WarningBox($"<B/L No> has <Declaration#>: {dr["DeclareNo"]}");
+                    MyUtility.Msg.WarningBox($"<B/L No> has already in ID: {dr["id"]}");
                     this.txtBLNo.Select();
                     e.Cancel = true;
                     return;

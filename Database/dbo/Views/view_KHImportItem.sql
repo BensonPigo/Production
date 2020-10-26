@@ -1,22 +1,21 @@
 ﻿
 CREATE VIEW [dbo].[View_KHImportItem]
 AS
-SELECT TOP (100) PERCENT Refno, Description, CustomsType, Unit, Junk
+SELECT TOP (100) PERCENT SCIRefno, Refno, Description, CustomsType, Unit, Junk
 FROM              
-(	SELECT          SCIRefno AS Refno, DescDetail AS Description, 
-	(CASE Type WHEN 'F' THEN 'Fabric' ELSE 'Accessory' END) AS CustomsType, UsageUnit AS Unit, 
-	Junk
+(	SELECT          SCIRefno , Refno, DescDetail AS Description, 
+	(CASE Type WHEN 'F' THEN 'Fabric' ELSE 'Accessory' END) AS CustomsType, UsageUnit AS Unit, Junk	
 	FROM               dbo.Fabric
 	WHERE           (Type IN ('F', 'A'))
 	UNION ALL
-	SELECT          ID AS Refno, Description, 'Machine' AS CustomsType, 'SET' AS Unit, Junk
+	SELECT          [SCIRefno] = ID , [Refno] = ID, Description, 'Machine' AS CustomsType, 'SET' AS Unit, Junk
 	FROM              SciMachine_MachineMasterGroup
 	UNION ALL
-	SELECT          m.MaterialCode AS Refno, m.Description, 'Chemical' AS CustomsType, mu.UnitName AS Unit, 
-	m.Junk
+	SELECT          [SCIRefno] = m.MaterialCode ,[Refno] = m.MaterialCode, m.Description, 'Chemical' AS CustomsType, mu.UnitName AS Unit, m.Junk
 	FROM              PRINTING.dbo.Material AS m INNER JOIN
 	PRINTING.dbo.MaterialUnit AS mu ON m.MaterialID = mu.FK_MaterialID
-	WHERE          (mu.UnitType = 2)) AS src
+	WHERE          (mu.UnitType = 2)
+) AS src
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_DiagramPaneCount', @value = 1, @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'view_KHImportItem';
 

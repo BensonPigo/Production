@@ -35,12 +35,14 @@
             this.labCustomsDesc = new Sci.Win.UI.Label();
             this.comboCustomsType = new Sci.Win.UI.ComboBox();
             this.labCustomsType = new Sci.Win.UI.Label();
-            this.labRef = new Sci.Win.UI.Label();
-            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.labSCIRef = new Sci.Win.UI.Label();
+            this.txtSCIRefno = new Sci.Win.UI.TextBox();
             this.txtDesc = new Sci.Win.UI.TextBox();
             this.labDesc = new Sci.Win.UI.Label();
             this.numUnitPrice = new Sci.Win.UI.NumericBox();
             this.labCDCPrice = new Sci.Win.UI.Label();
+            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.labRefno = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -57,12 +59,14 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtRefno);
+            this.masterpanel.Controls.Add(this.labRefno);
             this.masterpanel.Controls.Add(this.labCDCPrice);
             this.masterpanel.Controls.Add(this.numUnitPrice);
             this.masterpanel.Controls.Add(this.txtDesc);
             this.masterpanel.Controls.Add(this.labDesc);
-            this.masterpanel.Controls.Add(this.txtRefno);
-            this.masterpanel.Controls.Add(this.labRef);
+            this.masterpanel.Controls.Add(this.txtSCIRefno);
+            this.masterpanel.Controls.Add(this.labSCIRef);
             this.masterpanel.Controls.Add(this.labCustomsType);
             this.masterpanel.Controls.Add(this.comboCustomsType);
             this.masterpanel.Controls.Add(this.txtCDCUnit);
@@ -70,7 +74,7 @@
             this.masterpanel.Controls.Add(this.checkJunk);
             this.masterpanel.Controls.Add(this.txtCustomsDesc);
             this.masterpanel.Controls.Add(this.labCustomsDesc);
-            this.masterpanel.Size = new System.Drawing.Size(892, 148);
+            this.masterpanel.Size = new System.Drawing.Size(775, 145);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labCustomsDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomsDesc, 0);
@@ -79,25 +83,27 @@
             this.masterpanel.Controls.SetChildIndex(this.txtCDCUnit, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboCustomsType, 0);
             this.masterpanel.Controls.SetChildIndex(this.labCustomsType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labRef, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtRefno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labSCIRef, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSCIRefno, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.numUnitPrice, 0);
             this.masterpanel.Controls.SetChildIndex(this.labCDCPrice, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labRefno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRefno, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 148);
-            this.detailpanel.Size = new System.Drawing.Size(892, 201);
+            this.detailpanel.Location = new System.Drawing.Point(0, 145);
+            this.detailpanel.Size = new System.Drawing.Size(775, 282);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(667, 110);
+            this.gridicon.Location = new System.Drawing.Point(667, 107);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 201);
+            this.detailgridcont.Size = new System.Drawing.Size(775, 282);
             // 
             // detail2
             // 
@@ -110,6 +116,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(775, 465);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(775, 427);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 427);
+            this.detailbtm.Size = new System.Drawing.Size(775, 38);
             // 
             // browse
             // 
@@ -167,9 +186,9 @@
             // 
             // labCustomsDesc
             // 
-            this.labCustomsDesc.Location = new System.Drawing.Point(25, 76);
+            this.labCustomsDesc.Location = new System.Drawing.Point(33, 76);
             this.labCustomsDesc.Name = "labCustomsDesc";
-            this.labCustomsDesc.Size = new System.Drawing.Size(144, 23);
+            this.labCustomsDesc.Size = new System.Drawing.Size(136, 23);
             this.labCustomsDesc.TabIndex = 9;
             this.labCustomsDesc.Text = "Customs Description";
             this.labCustomsDesc.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
@@ -194,33 +213,33 @@
             // 
             // labCustomsType
             // 
-            this.labCustomsType.Location = new System.Drawing.Point(25, 16);
+            this.labCustomsType.Location = new System.Drawing.Point(33, 16);
             this.labCustomsType.Name = "labCustomsType";
-            this.labCustomsType.Size = new System.Drawing.Size(144, 23);
+            this.labCustomsType.Size = new System.Drawing.Size(136, 23);
             this.labCustomsType.TabIndex = 18;
             this.labCustomsType.Text = "Customs Type";
             this.labCustomsType.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // labRef
+            // labSCIRef
             // 
-            this.labRef.Location = new System.Drawing.Point(25, 46);
-            this.labRef.Name = "labRef";
-            this.labRef.Size = new System.Drawing.Size(144, 23);
-            this.labRef.TabIndex = 19;
-            this.labRef.Text = "Ref#";
-            this.labRef.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.labSCIRef.Location = new System.Drawing.Point(33, 46);
+            this.labSCIRef.Name = "labSCIRef";
+            this.labSCIRef.Size = new System.Drawing.Size(136, 23);
+            this.labSCIRef.TabIndex = 19;
+            this.labSCIRef.Text = "SCIRefNo";
+            this.labSCIRef.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtRefno
+            // txtSCIRefno
             // 
-            this.txtRefno.BackColor = System.Drawing.Color.White;
-            this.txtRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RefNo", true));
-            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno.Location = new System.Drawing.Point(172, 46);
-            this.txtRefno.Name = "txtRefno";
-            this.txtRefno.Size = new System.Drawing.Size(151, 23);
-            this.txtRefno.TabIndex = 20;
-            this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefno_PopUp);
-            this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefno_Validating);
+            this.txtSCIRefno.BackColor = System.Drawing.Color.White;
+            this.txtSCIRefno.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RefNo", true));
+            this.txtSCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSCIRefno.Location = new System.Drawing.Point(172, 46);
+            this.txtSCIRefno.Name = "txtSCIRefno";
+            this.txtSCIRefno.Size = new System.Drawing.Size(151, 23);
+            this.txtSCIRefno.TabIndex = 20;
+            this.txtSCIRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSCIRefno_PopUp);
+            this.txtSCIRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSCIRefno_Validating);
             // 
             // txtDesc
             // 
@@ -235,9 +254,9 @@
             // 
             // labDesc
             // 
-            this.labDesc.Location = new System.Drawing.Point(25, 107);
+            this.labDesc.Location = new System.Drawing.Point(33, 107);
             this.labDesc.Name = "labDesc";
-            this.labDesc.Size = new System.Drawing.Size(144, 23);
+            this.labDesc.Size = new System.Drawing.Size(136, 23);
             this.labDesc.TabIndex = 22;
             this.labDesc.Text = "Description";
             this.labDesc.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
@@ -248,7 +267,7 @@
             this.numUnitPrice.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDCUnitPrice", true));
             this.numUnitPrice.DecimalPlaces = 3;
             this.numUnitPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numUnitPrice.Location = new System.Drawing.Point(462, 46);
+            this.numUnitPrice.Location = new System.Drawing.Point(462, 76);
             this.numUnitPrice.Name = "numUnitPrice";
             this.numUnitPrice.NullValue = new decimal(new int[] {
             0,
@@ -265,12 +284,32 @@
             // 
             // labCDCPrice
             // 
-            this.labCDCPrice.Location = new System.Drawing.Point(352, 46);
+            this.labCDCPrice.Location = new System.Drawing.Point(352, 76);
             this.labCDCPrice.Name = "labCDCPrice";
             this.labCDCPrice.Size = new System.Drawing.Size(107, 23);
             this.labCDCPrice.TabIndex = 82;
             this.labCDCPrice.Text = "CDC Unit Price";
             this.labCDCPrice.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtRefno
+            // 
+            this.txtRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtRefno.IsSupportEditMode = false;
+            this.txtRefno.Location = new System.Drawing.Point(462, 46);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.ReadOnly = true;
+            this.txtRefno.Size = new System.Drawing.Size(151, 23);
+            this.txtRefno.TabIndex = 84;
+            // 
+            // labRefno
+            // 
+            this.labRefno.Location = new System.Drawing.Point(352, 46);
+            this.labRefno.Name = "labRefno";
+            this.labRefno.Size = new System.Drawing.Size(107, 23);
+            this.labRefno.TabIndex = 83;
+            this.labRefno.Text = "RefNo";
+            this.labRefno.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // B62
             // 
@@ -309,7 +348,7 @@
 
         #endregion
 
-        private Win.UI.Label labRef;
+        private Win.UI.Label labSCIRef;
         private Win.UI.Label labCustomsType;
         private Win.UI.ComboBox comboCustomsType;
         private Win.UI.TextBox txtCDCUnit;
@@ -317,10 +356,12 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.TextBox txtCustomsDesc;
         private Win.UI.Label labCustomsDesc;
-        private Win.UI.TextBox txtRefno;
+        private Win.UI.TextBox txtSCIRefno;
         private Win.UI.TextBox txtDesc;
         private Win.UI.Label labDesc;
         private Win.UI.Label labCDCPrice;
         private Win.UI.NumericBox numUnitPrice;
+        private Win.UI.TextBox txtRefno;
+        private Win.UI.Label labRefno;
     }
 }

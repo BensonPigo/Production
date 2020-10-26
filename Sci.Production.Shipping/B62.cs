@@ -20,41 +20,13 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
         }
 
-        private void TxtRefno_Validating(object sender, CancelEventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
-            {
-                MyUtility.Msg.InfoBox("Please select [Customs Type] first!");
-                this.comboCustomsType.Select();
-                return;
-            }
-
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtRefno.Text))
-            {
-                DataRow dr;
-                string sqlcmd = this.GetRefNoSqlCmd();
-                sqlcmd += Environment.NewLine + $" and RefNo= '{this.txtRefno.Text}'";
-
-                if (!MyUtility.Check.Seek(sqlcmd, out dr))
-                {
-                    MyUtility.Msg.WarningBox("Cannot find this [Ref#].");
-                    this.txtRefno.Select();
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    this.CurrentMaintain["Refno"] = this.txtRefno.Text;
-                    this.CurrentMaintain["Description"] = dr["Description"];
-                }
-            }
-        }
-
         private string GetRefNoSqlCmd()
         {
             string sqlcmd = @"
-select  Refno , Description
-from view_KHImportItem where 1=1";
+select SCIRefno ,Refno, Description
+from view_KHImportItem 
+where 1=1
+";
             switch (this.comboCustomsType.Text)
             {
                 case "Fabric":
@@ -72,30 +44,6 @@ from view_KHImportItem where 1=1";
             }
 
             return sqlcmd;
-        }
-
-        private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
-            {
-                MyUtility.Msg.InfoBox("Please select [Customs Type] first!");
-                this.comboCustomsType.Select();
-                return;
-            }
-
-            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
-            {
-                string sqlcmd = this.GetRefNoSqlCmd();
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "30,50", this.CurrentMaintain["Refno"].ToString(), "Refno,Description");
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                this.CurrentMaintain["Refno"] = item.GetSelecteds()[0]["Refno"];
-                this.CurrentMaintain["Description"] = item.GetSelecteds()[0]["Description"];
-            }
         }
 
         private void TxtCustomsDesc_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -172,6 +120,7 @@ from view_KHImportItem where 1=1";
 
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.txtCustomsDesc.BackColor = Color.FromArgb(183, 227, 255);
@@ -193,7 +142,7 @@ from view_KHImportItem where 1=1";
             string sqlcmd = $@"select 1 from KHCustomsItem where RefNo='{this.CurrentMaintain["RefNo"]}' and CustomsType='{this.CurrentMaintain["CustomsType"]}' and ukey != '{this.CurrentMaintain["ukey"]}'";
             if (MyUtility.Check.Seek(sqlcmd))
             {
-                MyUtility.Msg.WarningBox(@"Save failed. [Customs Type]:xxx [Refno#]: xxx has already existed.");
+                MyUtility.Msg.WarningBox($@"Save failed. [Customs Type]: {this.CurrentMaintain["CustomsType"]} [Refno#]: {this.CurrentMaintain["RefNo"]} has already existed.");
                 return false;
             }
 
@@ -218,6 +167,7 @@ from view_KHImportItem where 1=1";
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             this.txtCustomsDesc.BackColor = Color.White;
@@ -225,6 +175,7 @@ from view_KHImportItem where 1=1";
             base.ClickEditAfter();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.txtCustomsDesc.BackColor = Color.White;
@@ -232,6 +183,7 @@ from view_KHImportItem where 1=1";
             base.ClickNewAfter();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             base.ClickUndo();
@@ -243,11 +195,68 @@ from view_KHImportItem where 1=1";
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             this.txtCustomsDesc.BackColor = Color.FromArgb(183, 227, 255);
             this.txtCustomsDesc.ForeColor = Color.FromArgb(0, 0, 255);
             base.ClickSaveAfter();
+        }
+
+        private void TxtSCIRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
+            {
+                MyUtility.Msg.InfoBox("Please select [Customs Type] first!");
+                this.comboCustomsType.Select();
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
+            {
+                string sqlcmd = this.GetRefNoSqlCmd();
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "25,20,50", this.CurrentMaintain["Refno"].ToString(), "SCIRefno,Refno,Description");
+                DialogResult result = item.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.CurrentMaintain["Refno"] = item.GetSelecteds()[0]["SCIRefno"];
+                this.CurrentMaintain["Description"] = item.GetSelecteds()[0]["Description"];
+                this.txtRefno.Text = item.GetSelecteds()[0]["Refno"].ToString();
+            }
+        }
+
+        private void TxtSCIRefno_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["CustomsType"]))
+            {
+                MyUtility.Msg.InfoBox("Please select [Customs Type] first!");
+                this.comboCustomsType.Select();
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.txtSCIRefno.Text))
+            {
+                DataRow dr;
+                string sqlcmd = this.GetRefNoSqlCmd();
+                sqlcmd += Environment.NewLine + $" and SCIRefNo= '{this.txtSCIRefno.Text}'";
+
+                if (!MyUtility.Check.Seek(sqlcmd, out dr))
+                {
+                    MyUtility.Msg.WarningBox("Cannot find this [Ref#].");
+                    this.txtSCIRefno.Select();
+                    e.Cancel = true;
+                    return;
+                }
+                else
+                {
+                    this.CurrentMaintain["Refno"] = this.txtSCIRefno.Text;
+                    this.CurrentMaintain["Description"] = dr["Description"];
+                    this.txtRefno.Text = dr["Refno"].ToString();
+                }
+            }
         }
     }
 }

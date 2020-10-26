@@ -55,6 +55,7 @@ namespace Sci.Production.Shipping
             #endregion
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             this.txtCustomsDesc.ReadOnly = true;
