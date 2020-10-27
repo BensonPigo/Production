@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].ShippingMarkType_Detail(
 	ShippingMarkTypeUkey bigint		NOT NULL ,
 	StickerSizeID		 bigint		NOT NULL ,
-	TemplateName		 varchar(30) NOT NULL CONSTRAINT [DF_ShippingMarkType_Detail_TemplateName] DEFAULT(''),
+	TemplateName		 varchar(50) NOT NULL CONSTRAINT [DF_ShippingMarkType_Detail_TemplateName] DEFAULT(''),
 	CONSTRAINT [PK_ShippingMarkType_Detail] PRIMARY KEY CLUSTERED 
 (
 	ShippingMarkTypeUkey ASC ,StickerSizeID ASC
