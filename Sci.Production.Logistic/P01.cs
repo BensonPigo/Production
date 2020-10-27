@@ -1,4 +1,6 @@
-﻿using Sci.Production.PublicForm;
+﻿using Ict;
+using Sci.Data;
+using Sci.Production.PublicForm;
 using System;
 using System.Data;
 using System.Drawing;
@@ -54,7 +56,58 @@ namespace Sci.Production.Logistic
             }
 
             this.displayActPullout.Value = this.CurrentMaintain["PulloutComplete"].ToString().ToUpper() == "TRUE" ? "OK" : MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct ID) as CntID from Pullout_Detail where OrderID = '{0}' and ShipQty > 0", this.CurrentMaintain["ID"].ToString()));
-            this.displayCFAFinalInspDate.Value = this.CurrentMaintain["InspResult"].ToString() == "P" ? "Pass" : this.CurrentMaintain["InspResult"].ToString() == "F" ? "Fail" : string.Empty;
+            this.dateCFAFinalInspDate.Value = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup($@"
+select CFAFinalInspectDate = Max(CFAFinalInspectDate) from Order_QtyShip
+where Id = '{this.CurrentMaintain["ID"]}'
+"));
+
+            // 顯示CFA Final insp. Result
+            string sqlcmd = $@"
+select CFAFinalInspectResult = 
+	case when CFAFinalInspectResult in('Pass','Fail but release') then 'Pass'
+	else CFAFinalInspectResult end 
+, cnt = count(*)
+,ttlcnt = ttlcnt.cnt
+from Order_QtyShip t
+outer apply(
+	select count(1) cnt
+	from Order_QtyShip
+	where id = t.Id
+)ttlcnt
+where id='{this.CurrentMaintain["ID"]}'
+group by case when CFAFinalInspectResult in('Pass','Fail but release') then 'Pass' else CFAFinalInspectResult end
+,ttlcnt.cnt
+";
+            DataTable dt;
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt)))
+            {
+                this.ShowErr(result);
+            }
+
+            string finalResult = string.Empty;
+            int ttlcnt = 0;
+            if (dt != null || dt.Rows.Count > 0)
+            {
+                ttlcnt = MyUtility.Convert.GetInt(dt.Rows[0]["ttlcnt"]);
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (string.Compare(dr["CFAFinalInspectResult"].ToString(), "Fail", true) == 0)
+                {
+                    finalResult = "Fail";
+                    break;
+                }
+                else if (string.Compare(dr["CFAFinalInspectResult"].ToString(), "Pass", true) == 0)
+                {
+                    finalResult = "Pass";
+                }
+            }
+
+            this.txtCFAFinalInspDate.Text = finalResult;
+            this.txtCFAFinalInspDate.BackColor = (ttlcnt > 1) ? Color.Yellow : Color.FromArgb(183, 227, 255);
+
             this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(
                 $@"
 SELECT isnull(sum(b.CTNQty),0)
@@ -214,6 +267,18 @@ SELECT isnull(sum(b.CTNQty),0)
         {
             P01_BatchUpdateIDD p01_BatchUpdateIDD = new P01_BatchUpdateIDD();
             p01_BatchUpdateIDD.ShowDialog();
+        }
+
+        private void TxtCFAFinalInspDate_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            P01_CFAFinalinspResult cFAFinalinspResult = new P01_CFAFinalinspResult(this.CurrentMaintain["ID"].ToString());
+            cFAFinalinspResult.ShowDialog();
+        }
+
+        private void TxtCFAFinalInspDate_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            P01_CFAFinalinspResult cFAFinalinspResult = new P01_CFAFinalinspResult(this.CurrentMaintain["ID"].ToString());
+            cFAFinalinspResult.ShowDialog();
         }
     }
 }
