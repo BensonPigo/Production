@@ -1,25 +1,29 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P32_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtBorrow;
+        private DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private int grid2SelectIndex = 0;
 
+        /// <inheritdoc/>
         public P32_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -30,15 +34,11 @@ namespace Sci.Production.Warehouse
             this.di_stocktype.Add("I", "Inventory");
         }
 
-        // Form Load
-
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             string sqlcmd;
             base.OnFormLoaded();
-
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
             this.gridFromPoId.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridFromPoId.DataSource = this.listControlBindingSource2;
@@ -46,18 +46,18 @@ namespace Sci.Production.Warehouse
                 .Text("FromPoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 0
                 .Text("fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 1
                 .Text("fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 2
-                .ComboBox("fromstockType", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false, width: Widths.AnsiChars(6)).Get(out cbb_stocktype) // 3
+                .ComboBox("fromstockType", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false, width: Widths.AnsiChars(6)).Get(out Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype) // 3
                 .Numeric("BorrowQty", header: "Borrow" + Environment.NewLine + "Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 4
                 .Numeric("AccuReturn", header: "Accu." + Environment.NewLine + "Return", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 5
                 .Numeric("balance", header: "Accu. Diff." + Environment.NewLine + "ReturnQty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 6
                 .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6));
+
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
             #region -- 依借料單號搜尋內容 --
-            sqlcmd = string.Format(
-                @"
+            sqlcmd = $@"
 ;with cte1 as(
     select  bd.FromPoId
             , bd.FromSeq1
@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
     from borrowback_detail bd WITH (NOLOCK) 
 	inner join Orders orders on bd.FromPOID = orders.ID
 	inner join Factory factory on orders.FtyGroup = factory.ID
-    where bd.id = '{0}' and factory.MDivisionID = '{1}'  and orders.Category <> 'A'
+    where bd.id = '{this.dr_master["BorrowId"]}' and factory.MDivisionID = '{Env.User.Keyword}'  and orders.Category <> 'A'
     group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype
     )
 ,cte2 as(
@@ -80,7 +80,7 @@ namespace Sci.Production.Warehouse
     inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
 	inner join Orders orders on bd.FromPOID = orders.ID
 	inner join Factory factory on orders.FtyGroup = factory.ID
-    where b.BorrowId='{0}' and b.Status = 'Confirmed' and factory.MDivisionID = '{1}'
+    where b.BorrowId='{this.dr_master["BorrowId"]}' and b.Status = 'Confirmed' and factory.MDivisionID = '{Env.User.Keyword}'
     group by bd.ToPoid, bd.ToSeq1, bd.ToSeq2, bd.ToStocktype
     )
 select  cte1.FromPoId
@@ -95,9 +95,8 @@ select  cte1.FromPoId
 from cte1 
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
     and cte2.ToStocktype = cte1.FromStocktype;
-", this.dr_master["BorrowId"], Env.User.Keyword);
-            DataTable datas;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out datas);
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable datas);
 
             this.listControlBindingSource2.DataSource = datas;
 
@@ -130,6 +129,53 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 }
             };
 
+            DataGridViewGeneratorTextColumnSettings toLocation = new DataGridViewGeneratorTextColumnSettings();
+            toLocation.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
+
+                    SelectItem2 selectItem2 = Prgs.SelectLocation("B", MyUtility.Convert.GetString(dr["ToLocation"]));
+
+                    selectItem2.ShowDialog();
+                    if (selectItem2.DialogResult == DialogResult.OK)
+                    {
+                        dr["ToLocation"] = selectItem2.GetSelecteds().Select(o => MyUtility.Convert.GetString(o["ID"])).JoinToString(",");
+                    }
+
+                    dr.EndEdit();
+                }
+            };
+
+            toLocation.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
+                    string oldValue = dr["ToLocation"].ToString();
+                    string newValue = e.FormattedValue.ToString().Split(',').ToList().Where(o => !MyUtility.Check.Empty(o)).Distinct().JoinToString(",");
+                    if (oldValue.Equals(newValue))
+                    {
+                        return;
+                    }
+
+                    string notLocationExistsList = newValue.Split(',').ToList().Where(o => !Prgs.CheckLocationExists("B", o)).JoinToString(",");
+
+                    if (!MyUtility.Check.Empty(notLocationExistsList))
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"ToLocation<{notLocationExistsList}> not Found");
+                        return;
+                    }
+                    else
+                    {
+                        dr["ToLocation"] = newValue;
+                        dr.EndEdit();
+                    }
+                }
+            };
+
             // Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.listControlBindingSource1;
@@ -147,11 +193,13 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 10
                 .Numeric("AccuDiffQty", header: "Accu. Diff. Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 11
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 12
+                .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), settings: toLocation)
                 .ComboBox("FromStocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 13
                 ;
 
             this.gridImport.Columns["ToRoll"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -227,6 +275,7 @@ select  distinct selected = 0
         , [description] = dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) 
         , p.StockUnit
         , p.FabricType
+        , ToLocation=''
 from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
 INNER join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
 INNER join PO_Supp_Detail p WITH (NOLOCK) on p.ID= #tmp.ToPOID AND #tmp.BrandId=p.BrandId  and #tmp.Refno=p.Refno and #tmp.ColorID=p.ColorID  and #tmp.SizeSpec=p.SizeSpec
@@ -246,10 +295,10 @@ OUTER apply(
 where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
       and  c.StockType='B'
 drop table #tmp,#tmp2
-", this.dr_master["BorrowId"], Env.User.Keyword);
+", this.dr_master["BorrowId"],
+                Env.User.Keyword);
 
-            DataTable grid1Datas;
-            result = DBProxy.Current.Select(null, sqlcmd, out grid1Datas);
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable grid1Datas);
 
             this.listControlBindingSource1.DataSource = grid1Datas;
             #endregion
@@ -294,9 +343,7 @@ drop table #tmp,#tmp2
             {
                 if (row["fabrictype"].ToString().ToUpper() == "F" && (MyUtility.Check.Empty(row["toroll"]) || MyUtility.Check.Empty(row["todyelot"])))
                 {
-                    warningmsg.Append(string.Format(
-                        @"To SP#: {0} To Seq#: {1}-{2} To Roll#:{3} To Dyelot:{4} Roll and Dyelot can't be empty",
-                        row["topoid"], row["toseq1"], row["toseq2"], row["toroll"], row["todyelot"]) + Environment.NewLine);
+                    warningmsg.Append($@"To SP#: {row["topoid"]} To Seq#: {row["toseq1"]}-{row["toseq2"]} To Roll#:{row["toroll"]} To Dyelot:{row["todyelot"]} Roll and Dyelot can't be empty" + Environment.NewLine);
                 }
 
                 if (row["fabrictype"].ToString().ToUpper() != "F")
@@ -307,9 +354,7 @@ drop table #tmp,#tmp2
 
                 if (decimal.Parse(row["balance"].ToString()) < decimal.Parse(row["qty"].ToString()))
                 {
-                    warningmsg.Append(string.Format(
-                        @"From SP#: {0} From Seq#: {1}-{2} From Roll#:{3} From Dyelot:{4} Issue Qty can't over Stock Qty!",
-                        row["frompoid"], row["fromseq1"], row["fromseq2"], row["fromroll"], row["fromdyelot"]) + Environment.NewLine);
+                    warningmsg.Append($@"From SP#: {row["frompoid"]} From Seq#: {row["fromseq1"]}-{row["fromseq2"]} From Roll#:{row["fromroll"]} From Dyelot:{row["fromdyelot"]} Issue Qty can't over Stock Qty!" + Environment.NewLine);
                 }
             }
 
@@ -329,6 +374,7 @@ drop table #tmp,#tmp2
                 if (findrow.Length > 0)
                 {
                     findrow[0]["qty"] = tmp["qty"];
+                    findrow[0]["ToLocation"] = tmp["ToLocation"];
                 }
                 else
                 {
@@ -349,16 +395,14 @@ drop table #tmp,#tmp2
             this.displayColorID.Value = string.Empty;
             this.editDesc.Text = string.Empty;
 
-            DataRow tmp;
-            if (!MyUtility.Check.Seek(
-                string.Format(
-                @"
+            string sqlcmd = $@"
 select  sizespec
         ,refno
         ,colorid
         ,[description] = dbo.getmtldesc(id,seq1,seq2,2,0) 
 from po_supp_detail WITH (NOLOCK) 
-where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, null))
+where id ='{sp}' and seq1 = '{seq1}' and seq2 = '{seq2}'";
+            if (!MyUtility.Check.Seek(sqlcmd, out DataRow tmp, null))
             {
                 MyUtility.Msg.WarningBox("SP#-Seq is not found!!");
                 return true;
@@ -413,13 +457,10 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
                 checkGrid2Return = true;
             }
 
-            findrow = null;
             #endregion
 
             #region sum(Grid1.Qty) <= balance
-            findrow = this.gridImport.GetTable().Select(string.Format(
-                "toPoid = '{0}' and toSeq1 = '{1}' and toSeq2 = '{2}' and toRoll = '{3}' and toDyelot = '{4}' and FromStockType = '{5}'",
-                grid1Dr["toPoid"], grid1Dr["toSeq1"], grid1Dr["toSeq2"], grid1Dr["toRoll"], grid1Dr["toDyelot"], grid1Dr["FromStockType"]));
+            findrow = this.gridImport.GetTable().Select($"toPoid = '{grid1Dr["toPoid"]}' and toSeq1 = '{grid1Dr["toSeq1"]}' and toSeq2 = '{grid1Dr["toSeq2"]}' and toRoll = '{grid1Dr["toRoll"]}' and toDyelot = '{grid1Dr["toDyelot"]}' and FromStockType = '{grid1Dr["FromStockType"]}'");
             foreach (DataRow dr in findrow)
             {
                 sumReturn += Convert.ToDecimal(dr["qty"]);
