@@ -342,7 +342,6 @@
             this.txtwhseReason.TabIndex = 1;
             this.txtwhseReason.TextBox1Binding = "";
             this.txtwhseReason.Type = "IR";
-            this.txtwhseReason.Enter += new System.EventHandler(this.TxtwhseReason_Enter);
             this.txtwhseReason.Leave += new System.EventHandler(this.TxtwhseReason_Leave);
             this.txtwhseReason.Validated += new System.EventHandler(this.TxtwhseReason_Validated);
             // 

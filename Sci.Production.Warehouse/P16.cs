@@ -1,38 +1,40 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using System.Reflection;
-using Microsoft.Reporting.WinForms;
-using System.Data.SqlClient;
-using Sci.Win;
-using System.Threading.Tasks;
-using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P16 : Win.Tems.Input6
     {
-        private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
+        private ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.InsertDetailGridOnDoubleClick = false;
-            this.viewer = new ReportViewer();
-            this.viewer.Dock = DockStyle.Fill;
+            this.viewer = new ReportViewer
+            {
+                Dock = DockStyle.Fill,
+            };
             this.Controls.Add(this.viewer);
 
             // MDivisionID 是 P16 寫入 => Sci.Env.User.Keyword
@@ -43,6 +45,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P16(ToolStripMenuItem menuitem, string transID, string callFrom = "")
             : base(menuitem)
         {
@@ -65,7 +68,8 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
-        // PPIC_P15 Called
+        /// <inheritdoc/>
+        /// PPIC_P15 Called
         public static void Call(string pPIC_id, Form mdiParent)
         {
             foreach (Form form in Application.OpenForms)
@@ -106,8 +110,10 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            P16 call = new P16(p16MenuItem, pPIC_id, "PPIC.P16");
-            call.MdiParent = mdiParent;
+            P16 call = new P16(p16MenuItem, pPIC_id, "PPIC.P16")
+            {
+                MdiParent = mdiParent,
+            };
             call.Show();
         }
 
@@ -116,8 +122,10 @@ namespace Sci.Production.Warehouse
         {
             base.OnFormLoaded();
             #region 新增Batch Shipment Finished按鈕
-            Win.UI.Button btnUnFinish = new Win.UI.Button();
-            btnUnFinish.Text = "UnFinish";
+            Win.UI.Button btnUnFinish = new Win.UI.Button
+            {
+                Text = "UnFinish",
+            };
             btnUnFinish.Click += new EventHandler(this.Unfinish);
             this.browsetop.Controls.Add(btnUnFinish);
             btnUnFinish.Size = new Size(180, 30); // 預設是(80,30)
@@ -129,15 +137,15 @@ namespace Sci.Production.Warehouse
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            Dictionary<string, string> di_type = new Dictionary<string, string>();
-            di_type.Add("L", "Lacking");
-            di_type.Add("R", "Replacement");
+            Dictionary<string, string> di_type = new Dictionary<string, string>
+            {
+                { "L", "Lacking" },
+                { "R", "Replacement" },
+            };
             this.comboBox1.DataSource = new BindingSource(di_type, null);
             this.comboBox1.ValueMember = "Key";
             this.comboBox1.DisplayMember = "Value";
         }
-
-        // 新增時預設資料
 
         /// <inheritdoc/>
         protected override void ClickNewAfter()
@@ -151,8 +159,6 @@ namespace Sci.Production.Warehouse
             this.txtLocalSupp1.TextBox1.ReadOnly = true;
         }
 
-        // delete前檢查
-
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
@@ -164,8 +170,6 @@ namespace Sci.Production.Warehouse
 
             return base.ClickDeleteBefore();
         }
-
-        // edit前檢查
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
@@ -191,8 +195,6 @@ namespace Sci.Production.Warehouse
         {
             e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));
         }
-
-        // save前檢查 & 取id
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
@@ -220,17 +222,12 @@ namespace Sci.Production.Warehouse
             {
                 if (MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"]))
                 {
-                    warningmsg.Append(string.Format(
-                        @"SP#: {0} Seq#: {1}-{2} can't be empty",
-                        row["poid"], row["seq1"], row["seq2"])
-                        + Environment.NewLine);
+                    warningmsg.Append($@"SP#: {row["poid"]} Seq#: {row["seq1"]}-{row["seq2"]} can't be empty" + Environment.NewLine);
                 }
 
                 if (MyUtility.Check.Empty(row["Qty"]))
                 {
-                    warningmsg.Append(string.Format(
-                        @"SP#: {0} Seq#: {1}-{2} Roll#:{3} Dyelot:{4} Issue Qty can't be empty",
-                        row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"]) + Environment.NewLine);
+                    warningmsg.Append($@"SP#: {row["poid"]} Seq#: {row["seq1"]}-{row["seq2"]} Roll#:{row["roll"]} Dyelot:{row["dyelot"]} Issue Qty can't be empty" + Environment.NewLine);
                 }
             }
 
@@ -262,16 +259,6 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
-
-        /// <inheritdoc/>
-        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
-        {
-            return base.OnRenewDataDetailPost(e);
-        }
-
-        // refresh
-
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
@@ -285,8 +272,7 @@ namespace Sci.Production.Warehouse
             // Lack.ApvDate
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]))))
             {
-                DataRow dr;
-                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName,Dept from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out dr))
+                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName,Dept from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]), out DataRow dr))
                 {
                     this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
                     this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
@@ -302,16 +288,12 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        // detail 新增時設定預設值
-
         /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
             this.CurrentDetailData["Stocktype"] = 'B';
         }
-
-        // Detail Grid 設定
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
@@ -330,8 +312,6 @@ namespace Sci.Production.Warehouse
             #endregion 欄位設定
         }
 
-        // Confirm
-
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
@@ -346,7 +326,6 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlupd4 = new StringBuilder();
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2, result3;
-            DataTable datacheck;
             string sqlupd2_FIO = string.Empty;
             string sqlupd2_B = string.Empty;
 
@@ -366,7 +345,7 @@ namespace Sci.Production.Warehouse
 from dbo.IssueLack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
-                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
                 {
                     this.ShowErr(sqlcmd, result2);
                     return;
@@ -377,9 +356,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     {
                         foreach (DataRow tmp in datacheck.Rows)
                         {
-                            ids += string.Format(
-                                "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine,
-                                tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
+                            ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} is locked!!" + Environment.NewLine;
                         }
 
                         MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
@@ -406,9 +383,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     {
                         foreach (DataRow tmp in datacheck.Rows)
                         {
-                            ids += string.Format(
-                                "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
-                                tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                            ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than issue qty: {tmp["qty"]}" + Environment.NewLine;
                         }
 
                         MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -424,19 +399,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
             #region -- 更新表頭狀態資料 --
             string nowtime = DateTime.Now.ToAppDateTimeFormatString();
-            sqlupd3 = string.Format(
-                @"update IssueLack set status='Confirmed', editname = '{0}' , editdate = '{2}',apvname = '{0}',apvdate = '{2}'
-                                where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"], nowtime);
+            sqlupd3 = $@"update IssueLack set status='Confirmed', editname = '{Env.User.UserID}' , editdate = '{nowtime}',apvname = '{Env.User.UserID}',apvdate = '{nowtime}' where id = '{this.CurrentMaintain["id"]}'";
 
             #endregion 更新表頭狀態資料
             #region -- update Lack.issuelackid & Lack.issuelackdt
-            sqlupd4.Append(string.Format(
-                @"update dbo.Lack set dbo.Lack.IssueLackDT='{0}'
-, IssueLackId = '{1}' where id = '{2}';", nowtime, this.CurrentMaintain["id"], this.CurrentMaintain["requestid"]));
+            sqlupd4.Append($@"update dbo.Lack set dbo.Lack.IssueLackDT='{nowtime}'
+, IssueLackId = '{this.CurrentMaintain["id"]}' where id = '{this.CurrentMaintain["requestid"]}';");
             sqlupd4.Append(Environment.NewLine);
 
-            sqlupd4.Append(string.Format(
-                @"
+            sqlupd4.Append($@"
 update dbo.Lack_Detail  
 set IssueQty = t.qty
 from (
@@ -444,12 +415,12 @@ from (
            , seq2
            , sum(qty) qty 
     from dbo.IssueLack_Detail WITH (NOLOCK) 
-    where id = '{0}' 
+    where id = '{this.CurrentMaintain["id"]}' 
     group by seq1, seq2
 ) t
-where dbo.Lack_Detail.id = '{1}' 
+where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}' 
       and dbo.Lack_Detail.seq1 = t.Seq1 
-      and dbo.Lack_Detail.seq2 = t.Seq2", this.CurrentMaintain["id"], this.CurrentMaintain["requestid"]));
+      and dbo.Lack_Detail.seq2 = t.Seq2");
             #endregion
 
             TransactionScope transactionscope = new TransactionScope();
@@ -459,7 +430,6 @@ where dbo.Lack_Detail.id = '{1}'
                 {
                     if (this.CurrentMaintain["type"].ToString() == "R")
                     {
-                        DataTable resulttb;
                         var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                                    group b by new
                                    {
@@ -477,8 +447,7 @@ where dbo.Lack_Detail.id = '{1}'
                                        Stocktype = m.First().Field<string>("stocktype"),
                                        Qty = m.Sum(w => w.Field<decimal>("qty")),
                                    }).ToList();
-                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb,
-                            "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out DataTable resulttb, "#TmpSource")))
                         {
                             transactionscope.Dispose();
                             this.ShowErr(result);
@@ -522,13 +491,10 @@ where dbo.Lack_Detail.id = '{1}'
             }
         }
 
-        // Unconfirm
-
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            DataTable datacheck;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to unconfirme it?");
@@ -559,7 +525,7 @@ where dbo.Lack_Detail.id = '{1}'
 from dbo.IssueLack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
-                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
                 {
                     this.ShowErr(sqlcmd, result2);
                     return;
@@ -570,9 +536,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     {
                         foreach (DataRow tmp in datacheck.Rows)
                         {
-                            ids += string.Format(
-                                "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine,
-                                tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
+                            ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} is locked!!" + Environment.NewLine;
                         }
 
                         MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
@@ -599,9 +563,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     {
                         foreach (DataRow tmp in datacheck.Rows)
                         {
-                            ids += string.Format(
-                                "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
-                                tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                            ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than issue qty: {tmp["qty"]}" + Environment.NewLine;
                         }
 
                         MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -617,15 +579,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
             #region -- 更新表頭狀態資料 --
 
-            sqlupd3 = string.Format(
-                @"update IssueLack set status='New', editname = '{0}' , editdate = GETDATE(),apvname = '',apvdate = null
-                                where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+            sqlupd3 = $@"update IssueLack set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE(),apvname = '',apvdate = null
+where id = '{this.CurrentMaintain["id"]}'";
 
             #endregion 更新表頭狀態資料
             #region -- update Lack.issuelackid & Lack.issuelackdt
-            sqlupd4.Append(string.Format(
-                @"update dbo.Lack set dbo.Lack.IssueLackDT= DEFAULT
-, IssueLackId = DEFAULT where id = '{2}';", this.CurrentMaintain["issuedate"], this.CurrentMaintain["id"], this.CurrentMaintain["requestid"]));
+            sqlupd4.Append($@"update dbo.Lack set dbo.Lack.IssueLackDT= DEFAULT
+, IssueLackId = DEFAULT where id = '{this.CurrentMaintain["requestid"]}';");
             sqlupd4.Append(Environment.NewLine);
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = DEFAULT where dbo.Lack_Detail.id = '{0}' ", this.CurrentMaintain["requestid"]));
             #endregion
@@ -637,7 +597,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     if (this.CurrentMaintain["type"].ToString() == "R")
                     {
-                        DataTable resulttb;
                         var bs1 = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                                    group b by new
                                    {
@@ -668,8 +627,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                                          dyelot = m.Field<string>("dyelot"),
                                      }).ToList();
 
-                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out resulttb,
-                            "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(bs1, string.Empty, sqlupd2_B, out DataTable resulttb, "#TmpSource")))
                         {
                             transactionscope.Dispose();
                             this.ShowErr(result);
@@ -772,10 +730,7 @@ and ik.id = '{this.CurrentMaintain["ID"]}'
         protected override void ClickClose()
         {
             base.ClickClose();
-            string sqlcmd;
-            sqlcmd = string.Format(
-                "update IssueLack set status = 'Closed' , editname = '{0}' , editdate = GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+            string sqlcmd = $"update IssueLack set status = 'Closed' , editname = '{Env.User.UserID}', editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -796,9 +751,7 @@ and ik.id = '{this.CurrentMaintain["ID"]}'
             }
 
             string sqlcmd;
-            sqlcmd = string.Format(
-                "update IssueLack set status = 'Confirmed' , editname = '{0}' , editdate = GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
+            sqlcmd = $"update IssueLack set status = 'Confirmed' , editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -807,8 +760,6 @@ and ik.id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
         }
-
-        // 寫明細撈出的sql command
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -861,8 +812,10 @@ Where a.id = '{0}'", masterID);
                 return;
             }
 
-            var frm = new P16_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.comboBox1.Text, "P16_Import");
-            frm.P16 = this;
+            var frm = new P16_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.comboBox1.Text, "P16_Import")
+            {
+                P16 = this,
+            };
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -870,8 +823,10 @@ Where a.id = '{0}'", masterID);
         // Accumulated Qty
         private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new P16_AccumulatedQty(this.CurrentMaintain);
-            frm.P16 = this;
+            var frm = new P16_AccumulatedQty(this.CurrentMaintain)
+            {
+                P16 = this,
+            };
             frm.ShowDialog(this);
         }
 
@@ -904,12 +859,9 @@ Where a.id = '{0}'", masterID);
         // Request ID
         private void TxtRequestNo_Validating(object sender, CancelEventArgs e)
         {
-            DataRow dr;
             if (!MyUtility.Check.Seek(
-                string.Format(
-                @"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) 
-where id='{0}' and fabrictype='F' and mdivisionid='{1}'",
-                this.txtRequestNo.Text, Env.User.Keyword), out dr, null))
+                $@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) 
+where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.User.Keyword}'", out DataRow dr))
             {
                 e.Cancel = true;
                 MyUtility.Msg.WarningBox("Please check requestid is Fabric.", "Data not found!!");
@@ -940,8 +892,6 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'",
             this.txtLocalSupp1.TextBox1.Text = dr["SubconName"].ToString();
         }
 
-        // Print
-
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
@@ -958,14 +908,12 @@ where id='{0}' and fabrictype='F' and mdivisionid='{1}'",
             string remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             #region -- 撈表頭資料 --
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
-select NameEN
-from MDivision
-where id = @MDivision", pars, out dt);
+            List<SqlParameter> pars = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", id),
+                new SqlParameter("@MDivision", Env.User.Keyword),
+            };
+            DualResult result = DBProxy.Current.Select(string.Empty, @"select NameEN from MDivision where id = @MDivision", pars, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -979,17 +927,14 @@ where id = @MDivision", pars, out dt);
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
-
-            DataTable dtApv;
-            DualResult apvResult = DBProxy.Current.Select(
-                string.Empty,
-                @"select    
-            b.ApvDate
-            from dbo.Issuelack  a WITH (NOLOCK) 
-            left join dbo.lack  b WITH (NOLOCK) 
-            on b.id = a.requestid
-            where b.id = a.requestid
-            and a.id = @ID", pars, out dtApv);
+            string sqlcmd = @"
+select b.ApvDate
+from dbo.Issuelack  a WITH (NOLOCK) 
+left join dbo.lack  b WITH (NOLOCK) 
+on b.id = a.requestid
+where b.id = a.requestid
+and a.id = @ID";
+            DualResult apvResult = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtApv);
             if (!apvResult)
             {
                 this.ShowErr(apvResult);
@@ -1010,19 +955,21 @@ where id = @MDivision", pars, out dt);
             #endregion
 
             #region -- 撈表身資料 --
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dtDetail;
-            result = DBProxy.Current.Select(string.Empty, @"
+            pars = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", id),
+            };
+            sqlcmd = @"
 select  a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
         ,a.Roll
         ,a.Dyelot 
-        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
-	        AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-	        AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-	    ,''
-        ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[Description]
+        ,[Description] =IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
+					AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
+					AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
+					,''
+					,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
+		,MDesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = b.Refno)
         ,b.StockUnit
         ,a.Qty
         ,dbo.Getlocation(fi.ukey)[Location] 
@@ -1031,7 +978,8 @@ from dbo.IssueLack_detail a WITH (NOLOCK)
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-where a.id= @ID", pars, out dtDetail);
+where a.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
             if (!result)
             {
                 this.ShowErr(result);
@@ -1052,6 +1000,7 @@ where a.id= @ID", pars, out dtDetail);
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["DYELOT"].ToString().Trim(),
                     DESC = row1["Description"].ToString().Trim(),
+                    MDESC = row1["MDesc"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["QTY"]),
                     Location = row1["Location"].ToString().Trim(),
@@ -1066,8 +1015,7 @@ where a.id= @ID", pars, out dtDetail);
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
             string reportResourceName = "P16_Print.rdlc";
 
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
             {
                 // this.ShowException(result);
                 return false;
@@ -1076,8 +1024,10 @@ where a.id= @ID", pars, out dtDetail);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
             frm.Show();
 
             return true;

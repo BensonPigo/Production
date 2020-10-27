@@ -12,6 +12,8 @@
 
         public string DESC { get; set; }
 
+        public string MDESC { get; set; }
+
         public string StockUnit { get; set; }
 
         public decimal QTY { get; set; }
