@@ -622,7 +622,6 @@ where id = '{this.CurrentMaintain["id"]}'";
                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                            Location = string.Join(",", m.Select(r => r.Field<string>("Tolocation")).Distinct()),
                        }).ToList();
-            sqlupd2_A = Prgs.UpdateMPoDetail(2, bs2, true);
             #endregion
 
             #region -- 更新庫存數量  ftyinventory --
@@ -752,14 +751,6 @@ else
                             return;
                         }
                     }
-
-                    if (!(result = MyUtility.Tool.ProcessWithObject(bs2, string.Empty, sqlupd2_A, out resulttb, "#TmpSource")))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
-                    }
-
                     if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, string.Empty, upd_Fty_26F, out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
@@ -792,6 +783,14 @@ else
                     {
                         transactionscope.Dispose();
                         this.ShowErr(sqlupd2.ToString(), result2);
+                        return;
+                    }
+
+                    sqlupd2_A = Prgs.UpdateMPoDetail(2, bs2, true);
+                    if (!(result = MyUtility.Tool.ProcessWithObject(bs2, string.Empty, sqlupd2_A, out resulttb, "#TmpSource")))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
                         return;
                     }
 
