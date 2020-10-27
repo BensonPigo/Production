@@ -12,6 +12,7 @@
 	FromBottom		numeric(8, 2)	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_FromBottom] DEFAULT(0),
 	Width		int	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_Width] DEFAULT(0),
 	Length		int	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_Length] DEFAULT(0),
+	[DPI] INT NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_DPI] DEFAULT 0, 
 	CONSTRAINT [PK_ShippingMarkStamp_Detail] PRIMARY KEY CLUSTERED 
 (
 	PackingListID ASC ,SCICtnNo ASC ,ShippingMarkTypeUkey ASC
@@ -95,5 +96,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'標籤長�
 	, @level0type = N'SCHEMA', @level0name = N'dbo'
 	, @level1type = N'TABLE', @level1name = N'ShippingMarkStamp_Detail'
 	, @level2type = N'COLUMN', @level2name = N'Length';
+;
+GO	
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉 HTML 的 DPI'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'ShippingMarkStamp_Detail'
+	, @level2type = N'COLUMN', @level2name = N'DPI';
 ;
 GO	

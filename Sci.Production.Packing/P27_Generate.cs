@@ -24,6 +24,13 @@ namespace Sci.Production.Packing
         private DateTime? SCIDelivery_s;
         private DateTime? SCIDelivery_e;
 
+        /*
+測試用路徑
+UPDATE System
+SET ShippingMarkTemplatePath='I:\MIS\Personal\Benson\TFORMer Test\ShippingMarkTemplatePath測試路徑\'
+,ShippingMarkPath='I:\MIS\Personal\Benson\TFORMer Test\ShippingMarkPath路徑\'
+*/
+
         /// <inheritdoc/>
         public P27_Generate()
         {
@@ -504,6 +511,7 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
         {
             string headInsert = string.Empty;
             string bodyInsert = string.Empty;
+            int dPI = MyUtility.Convert.GetInt(ConfigurationManager.AppSettings["TFORMer_HTML_DPI"]);
 
             // 表頭
             foreach (var packingListID in p27_Templates.Select(o => o.PackingListID).Distinct())
@@ -531,7 +539,7 @@ END
                 bodyInsert += $@"
 
 INSERT INTO ShippingMarkStamp_Detail
-           (PackingListID ,SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length)
+           (PackingListID ,SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
      VALUES
            ('{p27_Template.PackingListID}'
            ,'{p27_Template.SCICtnNo}'
@@ -544,7 +552,8 @@ INSERT INTO ShippingMarkStamp_Detail
            ,{p27_Template.FromRight}
            ,{p27_Template.FromBottom}
            ,{p27_Template.Width}
-           ,{p27_Template.Length})
+           ,{p27_Template.Length}
+           ,{dPI} )
 ;
 ";
             }
