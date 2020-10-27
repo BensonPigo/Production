@@ -820,6 +820,7 @@ outer apply(
 	from Production.dbo.FtyInventory
 	where POID = i2.POID and Seq1=i2.Seq1
 	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
+    and StockType = i2.StockType 
 )fty
 where i.Type = 'D'
 and exists(
