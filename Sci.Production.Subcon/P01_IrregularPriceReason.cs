@@ -295,13 +295,13 @@ namespace Sci.Production.Subcon
                         }
                     }
 
-                    P01.tmp_ModifyTable = modifyTable;
-                    P01.tmp_OriginDT_FromDB = this.OriginDT_FromDB;
+                    P01.Tmp_ModifyTable = modifyTable;
+                    P01.Tmp_OriginDT_FromDB = this.OriginDT_FromDB;
                 }
                 else
                 {
-                    P01.tmp_ModifyTable = null;
-                    P01.tmp_OriginDT_FromDB = null;
+                    P01.Tmp_ModifyTable = null;
+                    P01.Tmp_OriginDT_FromDB = null;
                     if (!MyUtility.Check.Empty(sql.ToString()))
                     {
                         using (TransactionScope scope = new TransactionScope())
@@ -455,7 +455,7 @@ namespace Sci.Production.Subcon
             this.listControlBindingSource1.DataSource = this.ModifyDT_FromP01.Copy();
 
             // 存入靜態物件，以便於在P01 Save的時候執行異常價格SQL
-            P01.tmp_ModifyTable = this.ModifyDT_FromP01.Copy();
+            P01.Tmp_ModifyTable = this.ModifyDT_FromP01.Copy();
         }
 
         /// 重新計算價格並產生DataSource
@@ -874,7 +874,7 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
         {
             // 是否有價格異常，用以區別P01的按鈕要不要變色
             bool has_Irregular_Price = false;
-            P01.tmp_ModifyTable = null;
+            P01.Tmp_ModifyTable = null;
 
             // 採購價 > 標準價 =異常
             #region 變數宣告
@@ -1278,7 +1278,7 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
                         }
 
                         this.ModifyDT_FromP01 = iPR_Grid.Copy();
-                        P01.tmp_ModifyTable = iPR_Grid.Copy();
+                        P01.Tmp_ModifyTable = iPR_Grid.Copy();
                         this.ReasonNullCount = iPR_Grid.Select("SubconReasonID=''").Length;
                     }
                     else
