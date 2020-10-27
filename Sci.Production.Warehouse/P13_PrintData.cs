@@ -8,6 +8,8 @@
 
         public string DESC { get; set; }
 
+        public string MDESC { get; set; }
+
         public string Location { get; set; }
 
         public string StockUnit { get; set; }

@@ -968,8 +968,8 @@ select  a.POID
 					AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
 					AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
 					,''
-					,concat(dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0)
-                    ,char(10) + 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = b.Refno)))
+					,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
+		,MDesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = b.Refno)
         ,b.StockUnit
         ,a.Qty
         ,dbo.Getlocation(fi.ukey)[Location] 
@@ -1000,6 +1000,7 @@ where a.id= @ID";
                     Roll = row1["Roll"].ToString().Trim(),
                     DYELOT = row1["DYELOT"].ToString().Trim(),
                     DESC = row1["Description"].ToString().Trim(),
+                    MDESC = row1["MDesc"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     QTY = Convert.ToDecimal(row1["QTY"]),
                     Location = row1["Location"].ToString().Trim(),

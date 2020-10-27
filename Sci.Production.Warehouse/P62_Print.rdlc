@@ -444,6 +444,18 @@
                               </TextRuns>
                               <Style />
                             </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(Fields!Desc.Value="", "", Fields!MDesc.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Desc</rd:DefaultName>
                           <Left>5.38961cm</Left>
@@ -815,6 +827,7 @@
         </TablixRowHierarchy>
         <RepeatColumnHeaders>true</RepeatColumnHeaders>
         <RepeatRowHeaders>true</RepeatRowHeaders>
+        <Top>0.0000cm</Top>
         <Left>0.05292cm</Left>
         <Height>0.88576in</Height>
         <Width>7.94794in</Width>
@@ -1462,6 +1475,10 @@
       <Fields>
         <Field Name="Desc">
           <DataField>Desc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MDesc">
+          <DataField>MDesc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Dyelot">

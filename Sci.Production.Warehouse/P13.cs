@@ -181,7 +181,8 @@ select t.POID,
 			    AND(p.seq1 = lag(p.seq1,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll))
 			    AND(p.seq2 = lag(p.seq2,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll))) 
 			    ,''
-                ,concat(dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0),iif(FabricType='F', char(10) + 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''))),
+                ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0)),
+        MDesc = iif(FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
 	    t.Roll,
 	    t.Dyelot,
 	    t.Qty,
@@ -214,6 +215,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                     POID = row1["POID"].ToString().Trim(),
                     SEQ = row1["SEQ"].ToString().Trim(),
                     DESC = row1["desc"].ToString().Trim(),
+                    MDESC = row1["Mdesc"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim(),
                     StockUnit = row1["StockUnit"].ToString().Trim(),
                     Roll = row1["Roll"].ToString().Trim(),
