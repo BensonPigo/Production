@@ -1738,7 +1738,10 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'"
                 DataRow row = this.detailgrid.GetDataRow(i);
                 if (!MyUtility.Convert.GetBool(row["IsShow"]))
                 {
+                    CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
+                    currencyManager.SuspendBinding();
                     this.detailgrid.Rows[i].Visible = false;
+                    currencyManager.ResumeBinding();
                 }
             }
 
