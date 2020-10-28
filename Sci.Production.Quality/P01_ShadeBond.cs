@@ -21,7 +21,6 @@ namespace Sci.Production.Quality
     {
         private readonly DataRow maindr;
         private readonly string loginID = Env.User.UserID;
-        private readonly string keyWord = Env.User.Keyword;
         private string excelFile;
         private string ID;
 
@@ -65,8 +64,7 @@ namespace Sci.Production.Quality
             this.txtuserApprover.TextBox1.ReadOnly = true;
 
             string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
-            DataRow order_dr;
-            if (MyUtility.Check.Seek(order_cmd, out order_dr))
+            if (MyUtility.Check.Seek(order_cmd, out DataRow order_dr))
             {
                 this.displayBrand.Text = order_dr["Brandid"].ToString();
                 this.displayStyle.Text = order_dr["Styleid"].ToString();
@@ -78,8 +76,7 @@ namespace Sci.Production.Quality
             }
 
             string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", this.maindr["POID"], this.maindr["seq1"]);
-            DataRow po_dr;
-            if (MyUtility.Check.Seek(po_cmd, out po_dr))
+            if (MyUtility.Check.Seek(po_cmd, out DataRow po_dr))
             {
                 this.txtsupplier.TextBox1.Text = po_dr["suppid"].ToString();
             }
@@ -89,8 +86,7 @@ namespace Sci.Production.Quality
             }
 
             string receiving_cmd = string.Format("select b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", this.maindr["id"]);
-            DataRow rec_dr;
-            if (MyUtility.Check.Seek(receiving_cmd, out rec_dr))
+            if (MyUtility.Check.Seek(receiving_cmd, out DataRow rec_dr))
             {
                 this.displayRefno.Text = rec_dr["Refno"].ToString();
             }
@@ -100,8 +96,7 @@ namespace Sci.Production.Quality
             }
 
             string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", this.maindr["POID"], this.maindr["seq1"], this.maindr["seq2"]);
-            DataRow po_supp_detail_dr;
-            if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
+            if (MyUtility.Check.Seek(po_supp_detail_cmd, out DataRow po_supp_detail_dr))
             {
                 this.displayColor.Text = po_supp_detail_dr["colorid"].ToString();
             }
@@ -292,8 +287,6 @@ namespace Sci.Production.Quality
                 }
 
                 dr["Inspector"] = newvalue;
-
-                // dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{newvalue}'");
             };
             #endregion
 
@@ -304,6 +297,7 @@ namespace Sci.Production.Quality
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
             .Text("Scale", header: "Scale", width: Widths.AnsiChars(5), settings: scalecell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: resulCell)
+            .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(8))
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name", settings: inspectorCell)
             .Text("Name", header: "Name", width: Widths.AnsiChars(20))
@@ -321,6 +315,7 @@ namespace Sci.Production.Quality
             this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.MistyRose;
 
             this.grid.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
+            this.grid.Columns["Tone"].DefaultCellStyle.ForeColor = Color.Red;
 
             return true;
         }
@@ -328,7 +323,6 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override void OnInsert()
         {
-            DataTable dt = (DataTable)this.gridbs.DataSource;
             base.OnInsert();
 
             DataRow selectDr = ((DataRowView)this.grid.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -341,14 +335,6 @@ namespace Sci.Production.Quality
             selectDr["SEQ1"] = this.maindr["SEQ1"];
             selectDr["SEQ2"] = this.maindr["SEQ2"];
             selectDr["scale"] = string.Empty;
-        }
-
-        /// <inheritdoc/>
-        protected override bool OnSaveBefore()
-        {
-            DataTable gridTb = (DataTable)this.gridbs.DataSource;
-
-            return base.OnSaveBefore();
         }
 
         private void BtnEncode_Click(object sender, EventArgs e)
@@ -457,7 +443,6 @@ namespace Sci.Production.Quality
                     if (MyUtility.GetValue.Lookup("WeaveTypeID", this.maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
                     {
                         // 當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
-                        DataTable dyeDt;
                         string cmd = string.Format(
                         @"
 Select distinct dyelot from Receiving_Detail a WITH (NOLOCK) where 
@@ -476,7 +461,7 @@ and not exists
                         this.maindr["seq1"],
                         this.maindr["seq2"]);
 
-                        DualResult dResult = DBProxy.Current.Select(null, cmd, out dyeDt);
+                        DualResult dResult = DBProxy.Current.Select(null, cmd, out DataTable dyeDt);
                         if (dResult)
                         {
                             if (dyeDt.Rows.Count > 0)
@@ -517,7 +502,6 @@ and not exists
                 #endregion
 
                 // *****Send Excel Email 尚未完成 需寄給Encoder的Teamleader 與 Supervisor*****
-                DataTable dt_Leader;
                 string cmd_leader = string.Format(
                     @"
 select ToAddress = stuff ((select concat (';', tmp.email)
@@ -528,7 +512,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 						  ) tmp
 						  for xml path('')
 						 ), 1, 1, '')", Env.User.UserID);
-                DBProxy.Current.Select(string.Empty, cmd_leader, out dt_Leader);
+                DBProxy.Current.Select(string.Empty, cmd_leader, out DataTable dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader)
                     && dt_Leader.Rows.Count > 0)
                 {
@@ -606,8 +590,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
         private void BtnApprove_Click(object sender, EventArgs e)
         {
-            string updatesql = string.Empty;
-
+            string updatesql;
             if (this.maindr["Status"].ToString() == "Confirmed")
             {
                 this.maindr["Status"] = "Approved";
@@ -696,11 +679,10 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.btnPrintFormatReport.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", this.loginID, "Pass1", "ID");
-            DataRow pass2_dr;
             string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             int lApprove = 0; // 有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
             int lCheck = 0;
-            if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
+            if (MyUtility.Check.Seek(pass2_cmd, out DataRow pass2_dr))
             {
                 lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
                 lCheck = pass2_dr["CanCheck"].ToString() == "True" ? 1 : 0;
@@ -724,40 +706,44 @@ select ToAddress = stuff ((select concat (';', tmp.email)
         private bool ToExcel(bool isSendMail)
         {
             #region Excel Grid Value
-            DataTable dt;
-            DualResult xresult;
             string sql = string.Format(
                 @"
 select Roll,Dyelot,TicketYds,Scale,Result
 ,[Inspdate]=convert(varchar,Inspdate, 111) 
 ,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", this.ID);
-            if (xresult = DBProxy.Current.Select("Production", sql, out dt))
+            DualResult xresult = DBProxy.Current.Select("Production", sql, out DataTable dt);
+            if (!xresult)
             {
-                if (dt.Rows.Count <= 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return false;
-                }
+                this.ShowErr(xresult);
+                return false;
+            }
+
+            if (dt.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
             }
             #endregion
             #region Excel 表頭值
-            DataTable dt1;
-            string seasonID = string.Empty;
-            string continuityEncode = string.Empty;
             sql = string.Format("select Roll,Dyelot,Scale,a.Result,a.Inspdate,Inspector,a.Remark,B.ContinuityEncode,C.SeasonID from FIR_Shadebone a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.ID);
-            DualResult xresult1;
-            if (xresult1 = DBProxy.Current.Select("Production", sql, out dt1))
+            xresult = DBProxy.Current.Select("Production", sql, out DataTable dt1);
+            if (!xresult)
             {
-                if (dt1.Rows.Count == 0)
-                {
-                    seasonID = string.Empty;
-                    continuityEncode = string.Empty;
-                }
-                else
-                {
-                    seasonID = dt1.Rows[0]["SeasonID"].ToString();
-                    continuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
-                }
+                this.ShowErr(xresult);
+                return false;
+            }
+
+            string seasonID;
+            string continuityEncode;
+            if (dt1.Rows.Count == 0)
+            {
+                seasonID = string.Empty;
+                continuityEncode = string.Empty;
+            }
+            else
+            {
+                seasonID = dt1.Rows[0]["SeasonID"].ToString();
+                continuityEncode = dt1.Rows[0]["ContinuityEncode"].ToString();
             }
             #endregion
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBand_Report.xltx"); // 預先開啟excel app
@@ -812,28 +798,30 @@ select Roll,Dyelot,TicketYds,Scale,Result
 
         private void BtnPrintFormatReport_Click(object sender, EventArgs e)
         {
-            DataTable dt_title;
-            DataTable dt_Exp;
             DualResult result;
             string btnName = ((Button)sender).Name;
 
             // 抓表頭資料
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", Env.User.Factory));
+            List<SqlParameter> pars = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", Env.User.Factory),
+            };
             result = DBProxy.Current.Select(
                 string.Empty,
                 @"select NameEN from Factory WITH (NOLOCK) where id=@ID ",
                 pars,
-                out dt_title);
+                out DataTable dt_title);
             if (!result)
             {
                 this.ShowErr(result);
             }
 
             // 抓Invo,ETA 資料
-            List<SqlParameter> par_Exp = new List<SqlParameter>();
-            par_Exp.Add(new SqlParameter("@wkno", this.displayWKNo.Text));
-            result = DBProxy.Current.Select(string.Empty, @"select id,Eta from Export where id=@wkno ", par_Exp, out dt_Exp);
+            List<SqlParameter> par_Exp = new List<SqlParameter>
+            {
+                new SqlParameter("@wkno", this.displayWKNo.Text),
+            };
+            result = DBProxy.Current.Select(string.Empty, @"select id,Eta from Export where id=@wkno ", par_Exp, out DataTable dt_Exp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -930,8 +918,7 @@ select Roll,Dyelot,TicketYds,Scale,Result
                 reportResourceName = "P01_ShadeBond_Print_8.rdlc";
             }
 
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
             {
                 return;
             }
