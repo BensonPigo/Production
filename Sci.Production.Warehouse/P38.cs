@@ -290,7 +290,6 @@ and fi2.MtlLocationID ='{this.txtMtlLocation.Text}'");
             }
 
             strSQLCmd.Append($@"
-
 --#tmp_FIR_Result1
 select f.POID,f.SEQ1,f.SEQ2,f.Dyelot,f.Roll
 	,max(fp.Result) as PhyResult, max(fw.Result) as WeightResult , max(FS.Result) AS ShadeboneResult, max(FC.Result) AS ContinuityResult, max(FO.Result) AS OdorResult
@@ -339,6 +338,14 @@ from (
 	) a
 	group by  a.POID,a.SEQ1,a.SEQ2,a.Dyelot
 )a
+
+--#tmp_FIR_3
+select f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,Scale = max(fs.Scale),Tone = max(fs.Tone)
+into #tmp_FIR_3
+from #tmp_FtyInventory fi
+inner join fir f on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
+inner join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fi.Dyelot =fs.Dyelot and fi.Roll=fs.Roll
+group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll 
 
 --#tmp_WashLab
 select distinct f.POID,f.SEQ1,f.SEQ2
@@ -423,16 +430,15 @@ select distinct fi.*
 							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
 								then 'Blank'
 							else 'Pass' end 
-        ,fs.Scale, fs.Tone
+        ,f3.Scale, f3.Tone
 from #tmp_FtyInventory fi
 left join #tmp_FIR_Result1 FIR_Result1 on FIR_Result1.POID=fi.POID	and FIR_Result1.SEQ1 = fi.Seq1 and FIR_Result1.SEQ2 = fi.Seq2 and FIR_Result1.Dyelot=fi.Dyelot AND FIR_Result1.Roll=fi.Roll
 left join #tmp_FIR_Result2 FIR_Result2 on FIR_Result2.POID=fi.POID	and FIR_Result2.SEQ1 = fi.Seq1 and FIR_Result2.SEQ2 = fi.Seq2 and FIR_Result2.Dyelot=fi.Dyelot 
+left join #tmp_FIR_3 f3 on f3.POID=fi.POID	and f3.SEQ1 = fi.Seq1 and f3.SEQ2 = fi.Seq2 and f3.Dyelot=fi.Dyelot AND f3.Roll=fi.Roll
 left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq1 and WashLab.SEQ2 = fi.Seq2 
 left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
 left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
 left join #tmp_PointRate PointRate on PointRate.POID=fi.POID	and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
-left join fir f on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
-left join FIR_Shadebone fs on f.id=fs.ID AND f.ShadebondEncode=1 and fi.Dyelot =fs.Dyelot and fi.Roll=fs.Roll
 
 drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate
 ");
