@@ -793,6 +793,7 @@ Select
 	, a.Ukey
 	, FabricKind.FabricKind
 	, TTLCutQty = (select SUM(qty) from WorkOrder_Distribute b with(nolock) where b.WorkOrderUkey = a.Ukey {distru_where})
+	, CreatedBundleQty = (select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref)
 from  workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on ord.ID = a.id and ord.cuttingsp = a.id
 outer apply(
@@ -1247,11 +1248,12 @@ order by ArticleGroup";
             }
 
             DataRow dr = this.gridCutRef.CurrentDataRow;
-            this.labelBalanceValue.Text = (this.ArticleSizeTb.Select($"Ukey = '{dr["Ukey"]}'").AsEnumerable()
+            this.labelBalanceValue.Text = (MyUtility.Convert.GetInt(dr["TTLCutQty"]) -
+                MyUtility.Convert.GetInt(dr["CreatedBundleQty"]) -
+                this.ArticleSizeTb.Select($"Ukey = '{dr["Ukey"]}'").AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted)
                 .Select(s => MyUtility.Convert.GetInt(s["CutOutput"]))
-                .Sum()
-                 - MyUtility.Convert.GetInt(dr["TTLCutQty"])).ToString();
+                .Sum()).ToString();
         }
 
         /// <inheritdoc/>
