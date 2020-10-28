@@ -87,7 +87,7 @@ group by case when CFAFinalInspectResult in('Pass','Fail but release') then 'Pas
 
             string finalResult = string.Empty;
             int ttlcnt = 0;
-            if (dt != null || dt.Rows.Count > 0)
+            if (dt != null && dt.Rows.Count > 0)
             {
                 ttlcnt = MyUtility.Convert.GetInt(dt.Rows[0]["ttlcnt"]);
             }

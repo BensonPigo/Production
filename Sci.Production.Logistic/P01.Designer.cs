@@ -980,7 +980,6 @@
             // 
             // dateCFAFinalInspDate
             // 
-            this.dateCFAFinalInspDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspDate", true));
             this.dateCFAFinalInspDate.IsSupportEditMode = false;
             this.dateCFAFinalInspDate.Location = new System.Drawing.Point(831, 250);
             this.dateCFAFinalInspDate.Name = "dateCFAFinalInspDate";
