@@ -1,23 +1,15 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
-using Ict;
-using Ict.Win;
-using Sci;
-using Sci.Data;
-using Sci.Production;
-
-using Sci.Production.PublicPrg;
-using System.Linq;
-using System.Data.SqlClient;
-using Sci.Win;
-using System.Reflection;
-using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
@@ -29,14 +21,12 @@ namespace Sci.Production.Subcon
         /// <summary>
         ///  異常價格視窗Grid的異動後DataSource，僅提供P01新增模式下使用
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
-        public static DataTable tmp_ModifyTable;
+        public static DataTable Tmp_ModifyTable { get; set; }
 
         /// <summary>
         ///  異常價格視窗Grid的異動前DataSource，僅提供P01新增模式下使用
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
-        public static DataTable tmp_OriginDT_FromDB;
+        public static DataTable Tmp_OriginDT_FromDB { get; set; }
 
         private string artworkunit;
         private bool isNeedPlanningB03Quote = false;
@@ -102,18 +92,14 @@ namespace Sci.Production.Subcon
             }
 
             // sql參數準備
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@id";
-            sp1.Value = this.CurrentMaintain["id"].ToString();
-            IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>();
-            paras.Add(sp1);
+            IList<System.Data.SqlClient.SqlParameter> paras = new List<System.Data.SqlClient.SqlParameter>
+            {
+                new System.Data.SqlClient.SqlParameter("@id", this.CurrentMaintain["id"].ToString()),
+            };
 
             // FarmOut_Detail/FarmIn_Detail
-            string sqlcmd;
-            sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a WITH (NOLOCK) where a.ID=@id";
-
-            DataTable dt;
-            DBProxy.Current.Select(null, sqlcmd, paras, out dt);
+            string sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a WITH (NOLOCK) where a.ID=@id";
+            DBProxy.Current.Select(null, sqlcmd, paras, out DataTable dt);
 
             // 有則return
             if (dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmin"]) > 0) ||
@@ -321,6 +307,34 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             this.CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
             this.CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)this.CurrentMaintain["vatrate"] / 100, exact);
 
+            // 除了sample單, 表身不重複欄位 id,artworkid,patterncode,OrderId,ArtworkReqID,Article,SizeCode
+            bool dup = this.DetailDatas.AsEnumerable().Where(w => w["Category"].ToString() != "S")
+                .GroupBy(g => new
+                {
+                    id = MyUtility.Convert.GetString(g["id"]),
+                    artworkid = MyUtility.Convert.GetString(g["artworkid"]),
+                    patterncode = MyUtility.Convert.GetString(g["patterncode"]),
+                    OrderId = MyUtility.Convert.GetString(g["OrderId"]),
+                    ArtworkReqID = MyUtility.Convert.GetString(g["ArtworkReqID"]),
+                    Article = MyUtility.Convert.GetString(g["Article"]),
+                    SizeCode = MyUtility.Convert.GetString(g["SizeCode"]),
+                })
+                .Select(s => new
+                {
+                    s.Key.id,
+                    s.Key.artworkid,
+                    s.Key.patterncode,
+                    s.Key.OrderId,
+                    s.Key.ArtworkReqID,
+                    s.Key.Article,
+                    s.Key.SizeCode,
+                    ct = s.Count(),
+                }).Any(a => a.ct > 1);
+            if (dup)
+            {
+                MyUtility.Msg.WarningBox("id,artworkid,patterncode,OrderId,ArtworkReqID,Article,SizeCode detail key cannot duplicate.");
+                return false;
+            }
             #endregion
             return base.ClickSaveBefore();
         }
@@ -328,16 +342,16 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            if (P01.tmp_ModifyTable != null && P01.tmp_OriginDT_FromDB != null)
+            if (P01.Tmp_ModifyTable != null && P01.Tmp_OriginDT_FromDB != null)
             {
                 // 新增模式下的異常價格紀錄寫入DB，是在這裡執行，內容與 P01_IrregularPriceReason 一樣
                 StringBuilder sql = new StringBuilder();
 
                 // ModifyTable 去掉 OriginDT_FromDB，剩下的不是新增就是修改
-                var insert_Or_Update = tmp_ModifyTable.AsEnumerable().Except(tmp_OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
+                var insert_Or_Update = Tmp_ModifyTable.AsEnumerable().Except(Tmp_OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
 
                 // 抓出ReasonID為空的出來刪除
-                var delete = tmp_ModifyTable.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
+                var delete = Tmp_ModifyTable.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
 
                 foreach (var item in delete)
                 {
@@ -355,9 +369,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                     decimal pOPrice = item.Field<decimal>("POPrice");
                     decimal standardPrice = item.Field<decimal>("StdPrice");
 
-                    DataTable dt;
-
-                    DualResult result = DBProxy.Current.Select(null, $"SELECT * FROM ArtworkPO_IrregularPrice WHERE POID='{pOID}' AND ArtworkTypeID='{artworkType}'", out dt);
+                    DualResult result = DBProxy.Current.Select(null, $"SELECT * FROM ArtworkPO_IrregularPrice WHERE POID='{pOID}' AND ArtworkTypeID='{artworkType}'", out DataTable dt);
                     if (result)
                     {
                         if (dt.Rows.Count > 0)
@@ -389,8 +401,8 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                     }
                 }
 
-                P01.tmp_ModifyTable = null;
-                P01.tmp_OriginDT_FromDB = null;
+                P01.Tmp_ModifyTable = null;
+                P01.Tmp_OriginDT_FromDB = null;
             }
 
             #region update ArtworkReq_Detail.ArtworkPOID
@@ -747,9 +759,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             base.ClickUnconfirm();
             DualResult result;
             string checksql = string.Format("select ApQty from ArtworkPO_Detail WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["id"]);
-            DataTable checkdt;
             string sqlcmd;
-            if (!(result = DBProxy.Current.Select(null, checksql, out checkdt)))
+            if (!(result = DBProxy.Current.Select(null, checksql, out DataTable checkdt)))
             {
                 this.ShowErr(checksql, result);
                 return;
@@ -887,8 +898,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 }
 
                 drr["Price"] = (decimal)drr["unitprice"] * (decimal)drr["qtygarment"];
-                DataTable order_dt;
-                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", drr["orderid"].ToString()), out order_dt);
+                DBProxy.Current.Select(null, string.Format("select styleid, sewinline, scidelivery from orders WITH (NOLOCK) where id='{0}'", drr["orderid"].ToString()), out DataTable order_dt);
                 if (order_dt.Rows.Count == 0)
                 {
                     break;
@@ -968,32 +978,26 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
-            if (((DataTable)this.detailgridbs.DataSource).Rows.Count == 0)
+            if (this.DetailDatas.Count == 0)
             {
                 return;
             }
 
-            DataTable detailDatas = (DataTable)this.detailgridbs.DataSource;
-
-            string chkp10exists = string.Format(
-                @"
+            string chkp10exists = $@"
 select distinct aad.orderid,aad.id
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
-where  apd.id = '{0}' and apd.ukey = '{1}'
-",
-                this.CurrentMaintain["id"],
-                this.CurrentDetailData["Ukey"]);
+where  apd.id = '{this.CurrentMaintain["id"]}' and apd.ukey = '{this.CurrentDetailData["Ukey"]}'
+";
             DualResult result;
-            DataTable dt;
-            if (result = DBProxy.Current.Select(null, chkp10exists, out dt))
+            if (result = DBProxy.Current.Select(null, chkp10exists, out DataTable dt))
             {
                 if (dt.Rows.Count > 0)
                 {
                     StringBuilder p10exists = new StringBuilder();
                     foreach (DataRow dr in dt.Rows)
                     {
-                        p10exists.Append(string.Format("Please delete [Subcon][P10]:{0} {1} first !! \r\n", dr["id"], dr["orderid"]));
+                        p10exists.Append($"Please delete [Subcon][P10]:{dr["id"]} {dr["orderid"]} first !! \r\n");
                     }
 
                     MyUtility.Msg.WarningBox(p10exists.ToString());
@@ -1193,7 +1197,7 @@ where id = '{spNo}' and Category = 'S'
 
             var irregularPriceReason = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
 
-            P01.tmp_ModifyTable = null;
+            P01.Tmp_ModifyTable = null;
 
             // P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Clear();
             bool has_Irregular_Price = false;
