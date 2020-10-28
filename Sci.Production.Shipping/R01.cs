@@ -97,37 +97,38 @@ namespace Sci.Production.Shipping
 
             if (this.reportType == "1")
             {
-                sqlCmd.Append(string.Format(@"select 
-g.ID
-,g.Shipper
-,g.BrandID
-,g.InvDate
-,g.FCRDate
-,g.CustCDID
-,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
-,g.ShipModeID
-,g.CYCFS
-,g.ShipTermID
-,[Handle] = dbo.getPass1(g.Handle)
-,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
-,g.Vessel
-,g.ETD
-,g.ETA
-,g.SONo
-,g.SOCFMDate
-,g.CutOffDate
-,g.ShipPlanID
-,sp.Status
-,g.TotalShipQty
-,g.TotalCTNQty
-,isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck
-,g.TotalGW
-,g.TotalCBM
-,g.AddDate
-,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
-,g.Remark
-,[PulloutComplete]=IIF(PulloutIdCount.Value = PulloutIdConfirmLockCount.Value AND PulloutIdCount.Value > 0 ,'True' ,'False')
-
+                sqlCmd.Append(string.Format(@"
+select 
+    g.ID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,g.FCRDate
+    ,g.CustCDID
+    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
+    ,g.ShipModeID
+    ,g.CYCFS
+    ,g.ShipTermID
+    ,[Handle] = dbo.getPass1(g.Handle)
+    ,g.DocumentRefNo
+    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
+    ,g.Vessel
+    ,g.ETD
+    ,g.ETA
+    ,g.SONo
+    ,g.SOCFMDate
+    ,g.CutOffDate
+    ,g.ShipPlanID
+    ,sp.Status
+    ,g.TotalShipQty
+    ,g.TotalCTNQty
+    ,isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck
+    ,g.TotalGW
+    ,g.TotalCBM
+    ,g.AddDate
+    ,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+    ,g.Remark
+    ,[PulloutComplete]=IIF(PulloutIdCount.Value = PulloutIdConfirmLockCount.Value AND PulloutIdCount.Value > 0 ,'True' ,'False')
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -284,64 +285,64 @@ OUTER APPLY(
 
                 sqlCmd.Append(string.Format(@"
 select DISTINCT
-
-g.ID
-,g.Shipper
-,g.BrandID
-,g.InvDate
-,pl.MDivisionID
-,isnull(pl.ID,'') as PackID
-,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
-                            from (
-                                select distinct o.CustPONo
-                                from PackingList_Detail pd WITH (NOLOCK) 
-								left join orders o WITH (NOLOCK) on o.id = pd.OrderID
-                                where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
-                            ) a 
-                            for xml path('')
-                          ), 1, 1, '') 
-,pl.PulloutDate
---
-,g.CutOffDate
-,[SoConfirmDate]=g.SOCFMDate
-,[Terminal/Whse#]= fd.WhseNo
-,g.ETD
-,g.ETA
-,PulloutReportConfirmDate.PulloutReportConfirmDate
-,[PulloutID]=pl.PulloutID
---
-,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
-,isnull(pl.GW,0) as GW
-,isnull(pl.CBM,0) as CBM
-,g.CustCDID
-,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
-,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
-,g.AddName+' '+isnull(p.Name,'') as AddName
-,g.AddDate
-,g.Remark
-,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
-,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
-, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
-,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
-,[OrderShipmodeSeq] = 
-STUFF ((
-select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
-    from (
-        select distinct pd.OrderShipmodeSeq 
-        from PackingList_Detail pd WITH (NOLOCK) 
-        left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
-        and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
-        where pd.ID = pl.id
-        group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
-    ) a 
-    for xml path('')
-), 1, 1, '') 
-, g.SONo
-, g.ShipModeID
-, g.CYCFS
-, g.Vessel
-, g.BLNo
-, g.BL2No
+    g.ID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,pl.MDivisionID
+    ,isnull(pl.ID,'') as PackID
+    ,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
+                                from (
+                                    select distinct o.CustPONo
+                                    from PackingList_Detail pd WITH (NOLOCK) 
+								    left join orders o WITH (NOLOCK) on o.id = pd.OrderID
+                                    where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
+                                ) a 
+                                for xml path('')
+                              ), 1, 1, '') 
+    ,pl.PulloutDate
+    --
+    ,g.CutOffDate
+    ,[SoConfirmDate]=g.SOCFMDate
+    ,[Terminal/Whse#]= fd.WhseNo
+    ,g.ETD
+    ,g.ETA
+    ,PulloutReportConfirmDate.PulloutReportConfirmDate
+    ,[PulloutID]=pl.PulloutID
+    --
+    ,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
+    ,isnull(pl.GW,0) as GW
+    ,isnull(pl.CBM,0) as CBM
+    ,g.CustCDID
+    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+    ,g.DocumentRefNo
+    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
+    ,g.AddName+' '+isnull(p.Name,'') as AddName
+    ,g.AddDate
+    ,g.Remark
+    ,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
+    ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
+    , Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
+    ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+    ,[OrderShipmodeSeq] = 
+    STUFF ((
+    select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+        from (
+            select distinct pd.OrderShipmodeSeq 
+            from PackingList_Detail pd WITH (NOLOCK) 
+            left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+            and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+            where pd.ID = pl.id
+            group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+        ) a 
+        for xml path('')
+    ), 1, 1, '') 
+    , g.SONo
+    , g.ShipModeID
+    , g.CYCFS
+    , g.Vessel
+    , g.BLNo
+    , g.BL2No
 from GMTBooking g WITH (NOLOCK) 
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
