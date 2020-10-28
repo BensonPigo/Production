@@ -126,7 +126,6 @@
             this.btnOrderRemark = new Sci.Win.UI.Button();
             this.btnFabricInspectionList = new Sci.Win.UI.Button();
             this.btnCFARFTList = new Sci.Win.UI.Button();
-            this.displayCFAFinalInspDate = new Sci.Win.UI.DisplayBox();
             this.txtdropdownlistCategory = new Sci.Production.Class.Txtdropdownlist();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
@@ -138,6 +137,7 @@
             this.numCtnTransit = new Sci.Win.UI.NumericBox();
             this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
             this.btnBatchUpdateIDD = new Sci.Win.UI.Button();
+            this.txtCFAFinalInspDate = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -154,11 +154,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtCFAFinalInspDate);
             this.detailcont.Controls.Add(this.btnIntendedDeliveryDate);
             this.detailcont.Controls.Add(this.panel7);
             this.detailcont.Controls.Add(this.btnAccessoryInspectionList);
             this.detailcont.Controls.Add(this.txtdropdownlistCategory);
-            this.detailcont.Controls.Add(this.displayCFAFinalInspDate);
             this.detailcont.Controls.Add(this.btnCFARFTList);
             this.detailcont.Controls.Add(this.btnFabricInspectionList);
             this.detailcont.Controls.Add(this.btnOrderRemark);
@@ -883,11 +883,11 @@
             // 
             // labelCFAFinalInspDate
             // 
-            this.labelCFAFinalInspDate.Location = new System.Drawing.Point(702, 250);
+            this.labelCFAFinalInspDate.Location = new System.Drawing.Point(690, 250);
             this.labelCFAFinalInspDate.Name = "labelCFAFinalInspDate";
-            this.labelCFAFinalInspDate.Size = new System.Drawing.Size(125, 23);
+            this.labelCFAFinalInspDate.Size = new System.Drawing.Size(137, 23);
             this.labelCFAFinalInspDate.TabIndex = 60;
-            this.labelCFAFinalInspDate.Text = "CFA final insp. date";
+            this.labelCFAFinalInspDate.Text = "CFA Final insp. Date";
             // 
             // displayFactory
             // 
@@ -980,7 +980,6 @@
             // 
             // dateCFAFinalInspDate
             // 
-            this.dateCFAFinalInspDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspDate", true));
             this.dateCFAFinalInspDate.IsSupportEditMode = false;
             this.dateCFAFinalInspDate.Location = new System.Drawing.Point(831, 250);
             this.dateCFAFinalInspDate.Name = "dateCFAFinalInspDate";
@@ -1325,15 +1324,6 @@
             this.btnCFARFTList.UseVisualStyleBackColor = true;
             this.btnCFARFTList.Click += new System.EventHandler(this.BtnCFARFTList_Click);
             // 
-            // displayCFAFinalInspDate
-            // 
-            this.displayCFAFinalInspDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCFAFinalInspDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCFAFinalInspDate.Location = new System.Drawing.Point(932, 250);
-            this.displayCFAFinalInspDate.Name = "displayCFAFinalInspDate";
-            this.displayCFAFinalInspDate.Size = new System.Drawing.Size(40, 23);
-            this.displayCFAFinalInspDate.TabIndex = 96;
-            // 
             // txtdropdownlistCategory
             // 
             this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
@@ -1493,6 +1483,20 @@
             this.btnBatchUpdateIDD.UseVisualStyleBackColor = true;
             this.btnBatchUpdateIDD.Click += new System.EventHandler(this.BtnBatchUpdateIDD_Click);
             // 
+            // txtCFAFinalInspDate
+            // 
+            this.txtCFAFinalInspDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCFAFinalInspDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCFAFinalInspDate.IsSupportEditMode = false;
+            this.txtCFAFinalInspDate.Location = new System.Drawing.Point(932, 252);
+            this.txtCFAFinalInspDate.Name = "txtCFAFinalInspDate";
+            this.txtCFAFinalInspDate.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtCFAFinalInspDate.ReadOnly = true;
+            this.txtCFAFinalInspDate.Size = new System.Drawing.Size(39, 23);
+            this.txtCFAFinalInspDate.TabIndex = 101;
+            this.txtCFAFinalInspDate.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCFAFinalInspDate_PopUp);
+            this.txtCFAFinalInspDate.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TxtCFAFinalInspDate_MouseDoubleClick);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(984, 662);
@@ -1585,7 +1589,6 @@
         private Win.UI.Label labelStyleNo;
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelSPNo;
-        private Win.UI.DisplayBox displayCFAFinalInspDate;
         private Win.UI.Button btnCFARFTList;
         private Win.UI.Button btnFabricInspectionList;
         private Win.UI.Button btnOrderRemark;
@@ -1635,5 +1638,6 @@
         private Win.UI.Label label4;
         private Win.UI.Button btnIntendedDeliveryDate;
         private Win.UI.Button btnBatchUpdateIDD;
+        private Win.UI.TextBox txtCFAFinalInspDate;
     }
 }
