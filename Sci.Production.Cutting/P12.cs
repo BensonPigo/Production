@@ -13,6 +13,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Linq;
+using Sci.Andy.ExtensionMethods;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Cutting
 {
@@ -229,7 +232,7 @@ namespace Sci.Production.Cutting
             string sqlcmd;
             if (this.checkExtendAllParts.Checked)
             {
-                #region SQL
+                #region 有勾[Extend All Parts]
 
                 DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
@@ -286,6 +289,7 @@ select
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
+	, [BundleID] = b.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -372,6 +376,7 @@ select
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
+	, [BundleID] = b.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -447,7 +452,7 @@ OPTION (RECOMPILE)"
             }
             else
             {
-                #region SQL
+                #region 沒勾[Extend All Parts]
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Env.User.Keyword}'
 declare @Cut_Ref varchar(6) = '{this.Cut_Ref}'
@@ -502,6 +507,7 @@ select
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
+	, [BundleID] = b.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -588,6 +594,7 @@ select
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
+	, [BundleID] = b.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -875,6 +882,66 @@ where bd.BundleNo = '{item.Barcode}'");
         private void P12_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Dispose();
+        }
+
+        private void BtnBundleCardRF_Click(object sender, EventArgs e)
+        {
+            var bundleIDs = this.dtt.AsEnumerable()
+                .Where(x => x["selected"].ToBool())
+                .GroupBy(x => new
+                {
+                    BundleID = x["BundleID"],
+                    BundleNO = x["Bundle"],
+                })
+                .Select(x => new
+                {
+                    x.Key.BundleID,
+                    x.Key.BundleNO,
+                })
+                .ToList();
+
+            if (bundleIDs.Count == 0)
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            string sqlWhere = "and bd.BundleNO = @bundleNO";
+            string sqlCmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, sqlWhere);
+            foreach (var item in bundleIDs)
+            {
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", item.BundleID),
+                    new SqlParameter("@bundleNO", item.BundleNO),
+                };
+
+                DataTable dt = new DataTable();
+                DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
+                if (!this.result)
+                {
+                    MyUtility.Msg.ErrorBox(this.result.ToString());
+                    return;
+                }
+
+                try
+                {
+                    result = Prg.BundleRFCard.BundleRFCardPrint(dt);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                        return;
+                    }
+
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                }
+                catch (Exception ex)
+                {
+                    MyUtility.Msg.ErrorBox(ex.ToString());
+                    return;
+                }
+            }
         }
     }
 }
