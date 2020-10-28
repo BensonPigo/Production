@@ -978,22 +978,17 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
         /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
-            if (((DataTable)this.detailgridbs.DataSource).Rows.Count == 0)
+            if (this.DetailDatas.Count == 0)
             {
                 return;
             }
 
-            DataTable detailDatas = (DataTable)this.detailgridbs.DataSource;
-
-            string chkp10exists = string.Format(
-                @"
+            string chkp10exists = $@"
 select distinct aad.orderid,aad.id
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
-where  apd.id = '{0}' and apd.ukey = '{1}'
-",
-                this.CurrentMaintain["id"],
-                this.CurrentDetailData["Ukey"]);
+where  apd.id = '{this.CurrentMaintain["id"]}' and apd.ukey = '{this.CurrentDetailData["Ukey"]}'
+";
             DualResult result;
             if (result = DBProxy.Current.Select(null, chkp10exists, out DataTable dt))
             {
@@ -1002,7 +997,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
                     StringBuilder p10exists = new StringBuilder();
                     foreach (DataRow dr in dt.Rows)
                     {
-                        p10exists.Append(string.Format("Please delete [Subcon][P10]:{0} {1} first !! \r\n", dr["id"], dr["orderid"]));
+                        p10exists.Append($"Please delete [Subcon][P10]:{dr["id"]} {dr["orderid"]} first !! \r\n");
                     }
 
                     MyUtility.Msg.WarningBox(p10exists.ToString());
