@@ -18,9 +18,11 @@ using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Transactions;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P24 : Sci.Win.Tems.Input6
     {
         private string destination_path; // 放的路徑
@@ -30,6 +32,7 @@ namespace Sci.Production.Packing
         private List<ShippingMarkPic_Detail> readToSave;
         private List<ShippingMarkPic_Detail> readToDelete;
 
+        /// <inheritdoc/>
         public P24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -286,11 +289,13 @@ ORDER BY CAST(pd.CTNStartNo as int)
             }
 
             // 呼叫File 選擇視窗
-            OpenFileDialog file = new OpenFileDialog();
-            file.InitialDirectory = "c:\\"; // 預設路徑
-            file.Filter = "Image Files(*.BMP;)|*.BMP"; // 使用檔名
-            file.FilterIndex = 1;
-            file.RestoreDirectory = true;
+            OpenFileDialog file = new OpenFileDialog
+            {
+                InitialDirectory = "c:\\", // 預設路徑
+                Filter = "Image Files(*.BMP;)|*.BMP", // 使用檔名
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
             if (file.ShowDialog() == DialogResult.OK)
             {
                 string local_path_file = file.FileName;
@@ -322,7 +327,6 @@ ORDER BY CAST(pd.CTNStartNo as int)
             if ((!this.EditMode && !MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"])) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
             {
                 // MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) = 0，表示為新增
-
                 if (this.readToSave.Any(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
                                             && x.ShippingMarkPicUkey == 0))
@@ -551,6 +555,10 @@ WHERE SCICtnNo='{body.SCICtnNo}' /*AND ShippingMarkPicUkey='{body.ShippingMarkPi
 
             this.RenewData();
             this.ChangCell();
+
+            // 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         /// <inheritdoc/>
@@ -588,6 +596,10 @@ delete ShippingMarkPic_Detail where ShippingMarkPicUkey = {this.CurrentMaintain[
         protected override void ClickDeleteAfter()
         {
             base.ClickDeleteAfter();
+            #region ISP20200757 資料交換 - Sunrise
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
             this.ReloadDatas();
         }
 
@@ -801,8 +813,10 @@ AND NOT EXISTS(
                 return;
             }
 
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "Excel files (*.xlsx;*.xls;*.xlt)|*.xlsx;*.xls;*.xlt";
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                Filter = "Excel files (*.xlsx;*.xls;*.xlt)|*.xlsx;*.xls;*.xlt",
+            };
 
             // 開窗且有選擇檔案
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -961,8 +975,10 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         {
             try
             {
-                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application();
-                xlsApp.Visible = false;
+                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application
+                {
+                    Visible = false,
+                };
                 Microsoft.Office.Interop.Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
                 Microsoft.Office.Interop.Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
                 Microsoft.Office.Interop.Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
@@ -1032,6 +1048,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <summary>
         /// Determine of specified type is nullable
         /// </summary>
+        /// <param name="t">t</param>
         /// <returns>bool</returns>
         public static bool IsNullable(Type t)
         {
@@ -1041,6 +1058,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
         /// <summary>
         /// Return underlying type if type is Nullable otherwise return the type
         /// </summary>
+        /// <param name="t">t</param>
         /// <returns>Type</returns>
         public static Type GetCoreType(Type t)
         {
@@ -1067,6 +1085,7 @@ AND b.ShippingMarkTypeUkey='{item.ShippingMarkTypeUkey}'";
             {
                 return;
             }
+
             string firstDetailSP = string.Empty;
             DataRow drOrder = null;
             if (this.detailgrid.Rows.Count > 0)
@@ -1486,6 +1505,8 @@ WHERE [Sticker Combination] IS NULL
         }
     }
 
+    /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class ShippingMarkPic_Detail
     {
         /// <inheritdoc/>

@@ -11,7 +11,7 @@ namespace Sci.Production.Subcon
     {
         private DataTable dt_artworkpo_detail;
         private DataRow dr;
-        protected DataTable dtArtwork;
+        private DataTable dtArtwork;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         public P05_SpecialRecord()

@@ -6,11 +6,14 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_BulkLocation : Win.Subs.Base
     {
         private DataRow dr;
         private string stocktype;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public P03_BulkLocation(DataRow data, string stocktype)
         {
             this.InitializeComponent();

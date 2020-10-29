@@ -44,8 +44,10 @@ namespace Sci.Production.Class
                 sqlcmd = sqlcmd + " and Status = 'Confirmed' ";
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,10,10", this.Text, headercaptions: "Contract No.,Start Date, End Date");
-            item.Size = new System.Drawing.Size(550, 375);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,10,10", this.Text, headercaptions: "Contract No.,Start Date, End Date")
+            {
+                Size = new System.Drawing.Size(550, 375),
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

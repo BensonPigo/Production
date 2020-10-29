@@ -378,6 +378,7 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
     /// <summary>
     /// 開窗選擇一個檔案，用於替帶原生的OpenFileDialog
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public static class SciFileDialog
     {
         /// <summary>

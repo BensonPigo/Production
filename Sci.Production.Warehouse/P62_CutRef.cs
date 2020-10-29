@@ -11,11 +11,16 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P62_CuttingRef : Sci.Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Tems.Base P62;
-        protected DataRow dr;
+        private DataRow dr;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public P62_CuttingRef(DataRow data)
         {
             this.InitializeComponent();

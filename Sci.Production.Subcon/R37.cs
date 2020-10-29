@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R37 : Win.Tems.PrintForm
     {
         private string reportType;
@@ -22,6 +23,7 @@ namespace Sci.Production.Subcon
         private string handle; private string smr;
         private string fac; private string Pay;
 
+        /// <inheritdoc/>
         public R37(ToolStripMenuItem menuitem)
             : base(menuitem)
          {
@@ -368,8 +370,9 @@ where a.type='F' and " + sqlWhere + ' ' + sqlHaving);
 
                     break;
                 default:
-                    if (this.dtList == null || this.dtList.Rows.Count == 0) // 預設
+                    if (this.dtList == null || this.dtList.Rows.Count == 0)
                     {
+                        // 預設
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }

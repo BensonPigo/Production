@@ -46,31 +46,31 @@
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(404, 106);
+            this.print.Location = new System.Drawing.Point(434, 106);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(404, 12);
+            this.toexcel.Location = new System.Drawing.Point(434, 12);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(404, 48);
+            this.close.Location = new System.Drawing.Point(434, 48);
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(361, 142);
+            this.buttonCustomized.Location = new System.Drawing.Point(391, 142);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(387, 178);
+            this.checkUseCustomized.Location = new System.Drawing.Point(417, 178);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(384, 205);
+            this.txtVersion.Location = new System.Drawing.Point(414, 205);
             // 
             // dateArriveWHDate
             // 
@@ -96,7 +96,7 @@
             // label10
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.Location = new System.Drawing.Point(392, 81);
+            this.label10.Location = new System.Drawing.Point(422, 81);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(92, 22);
             this.label10.TabIndex = 97;
@@ -125,7 +125,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(232, 44);
+            this.label11.Location = new System.Drawing.Point(264, 47);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(16, 17);
             this.label11.TabIndex = 140;
@@ -137,16 +137,16 @@
             this.txtSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSP1.Location = new System.Drawing.Point(126, 41);
             this.txtSP1.Name = "txtSP1";
-            this.txtSP1.Size = new System.Drawing.Size(100, 23);
+            this.txtSP1.Size = new System.Drawing.Size(132, 23);
             this.txtSP1.TabIndex = 138;
             // 
             // txtSP2
             // 
             this.txtSP2.BackColor = System.Drawing.Color.White;
             this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP2.Location = new System.Drawing.Point(254, 41);
+            this.txtSP2.Location = new System.Drawing.Point(286, 41);
             this.txtSP2.Name = "txtSP2";
-            this.txtSP2.Size = new System.Drawing.Size(100, 23);
+            this.txtSP2.Size = new System.Drawing.Size(132, 23);
             this.txtSP2.TabIndex = 139;
             // 
             // label1
@@ -204,7 +204,7 @@
             // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(496, 257);
+            this.ClientSize = new System.Drawing.Size(543, 153);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtRefno1);
             this.Controls.Add(this.txtRefno2);

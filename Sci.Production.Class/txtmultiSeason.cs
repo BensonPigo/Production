@@ -35,8 +35,10 @@ namespace Sci.Production.Class
                 selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.BrandObjectName.Text);
             }
 
-            item = new Win.Tools.SelectItem2(selectCommand, "Season ID", this.Text, null, null, null);
-            item.Width = 300;
+            item = new Win.Tools.SelectItem2(selectCommand, "Season ID", this.Text, null, null, null)
+            {
+                Width = 300,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

@@ -186,8 +186,10 @@ namespace Sci.Production.Planning
 
             if (this.intReportType == 1 || this.intReportType == 2)
             {
-                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_01.xltx");
-                sxrc.BoOpenFile = true;
+                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_01.xltx")
+                {
+                    BoOpenFile = true,
+                };
                 sxrc.DicDatas.Add("##Year", strYear);
                 sxrc.DicDatas.Add("##Month", strMonth);
                 sxrc.DicDatas.Add("##ReportType", strReportType);
@@ -205,8 +207,10 @@ namespace Sci.Production.Planning
                 sxrc.DicDatas.Add("##Pct6", this.GetGetTarget("SDol 0"));
                 sxrc.DicDatas.Add("##Pct7", this.GetGetTarget("SLT PDP"));
 
-                SaveXltReportCls.XltRptTable xrt = new SaveXltReportCls.XltRptTable(this.dsData[1]);
-                xrt.ShowHeader = false;
+                SaveXltReportCls.XltRptTable xrt = new SaveXltReportCls.XltRptTable(this.dsData[1])
+                {
+                    ShowHeader = false,
+                };
                 xrt.Borders.DependOnColumn.Add(1, 3);
 
                 sxrc.DicDatas.Add("##tbl", xrt);
@@ -241,8 +245,10 @@ namespace Sci.Production.Planning
             }
             else
             {
-                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_02.xltx");
-                sxrc.BoOpenFile = true;
+                SaveXltReportCls sxrc = new SaveXltReportCls("Planning_R13_02.xltx")
+                {
+                    BoOpenFile = true,
+                };
                 sxrc.DicDatas.Add("##Year", strYear);
                 sxrc.DicDatas.Add("##Month", strMonth);
                 sxrc.DicDatas.Add("##ReportType", strReportType);

@@ -158,8 +158,14 @@ select t.OutputDate
 	, t.WFT
 from #tmp t
 left join Style s on t.StyleID = s.Id and t.BrandID = s.BrandID and t.SeasonID = s.SeasonID
-left join Style_Quotation sq on s.Ukey = sq.StyleUkey and sq.ArtworkTypeID = 'SEWING' and sq.Article = ''
-left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location";
+left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location
+outer apply (
+	select TMS = sum(sq.TMS)
+	from Style_Quotation sq
+	where s.Ukey = sq.StyleUkey and sq.Article = ''
+	and sq.ArtworkTypeID in ('SEWING', 'PRESSING', 'PACKING')
+)sq
+";
 
                 DBProxy.Current.OpenConnection("Trade", out SqlConnection sqlConnection);
                 result = MyUtility.Tool.ProcessWithDatatable(this.printData, null, sqlCmd, out this.printData, conn: sqlConnection);

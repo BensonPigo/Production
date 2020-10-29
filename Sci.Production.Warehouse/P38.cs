@@ -121,6 +121,7 @@ namespace Sci.Production.Warehouse
             this.Close();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
@@ -195,8 +196,10 @@ where   f.MDivisionID = '{Env.User.Keyword}'
         and fi.POID like @poid1 
 ");
 
-            System.Data.SqlClient.SqlParameter sp1_1 = new System.Data.SqlClient.SqlParameter();
-            sp1_1.ParameterName = "@poid1";
+            System.Data.SqlClient.SqlParameter sp1_1 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@poid1",
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             sp1_1.Value = sp1;

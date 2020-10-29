@@ -39,15 +39,30 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(324, 21);
+            this.print.Location = new System.Drawing.Point(356, 21);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(324, 57);
+            this.toexcel.Location = new System.Drawing.Point(356, 57);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(324, 93);
+            this.close.Location = new System.Drawing.Point(356, 93);
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCustomized.Location = new System.Drawing.Point(310, 125);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkUseCustomized.Location = new System.Drawing.Point(336, 134);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVersion.Location = new System.Drawing.Point(336, 134);
             // 
             // radioFabricSticker
             // 
@@ -133,11 +148,13 @@
             // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(416, 224);
+            this.ClientSize = new System.Drawing.Size(448, 224);
             this.Controls.Add(this.radioGroup1);
             this.Name = "P10_Print";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "() ";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

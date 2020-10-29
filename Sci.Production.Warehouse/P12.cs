@@ -16,11 +16,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P12 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
+        /// <inheritdoc/>
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,6 +42,7 @@ namespace Sci.Production.Warehouse
             };
         }
 
+        /// <inheritdoc/>
         public P12(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -107,6 +110,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -211,6 +215,7 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailGridSetup()
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
@@ -387,6 +392,7 @@ namespace Sci.Production.Warehouse
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -553,6 +559,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -799,10 +806,11 @@ Where a.id = '{0}'", masterID);
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmdd = @"
 select NameEn
 from MDivision
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -820,7 +828,7 @@ where id = @MDivision", pars, out dt);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtt;
-            result = DBProxy.Current.Select(string.Empty, @"
+            cmdd = @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 	        ,IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
@@ -834,7 +842,8 @@ from dbo.Issue_Detail a WITH (NOLOCK)
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2   
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
-where a.id= @ID", pars, out dtt);
+where a.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dtt);
             if (!result)
             {
                 this.ShowErr(result);

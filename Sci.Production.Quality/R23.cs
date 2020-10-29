@@ -12,8 +12,13 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R23 : Win.Tems.PrintForm
     {
+        private readonly Color FontRed = Color.FromArgb(255, 0, 0);
+        private readonly Color BackGreen = Color.FromArgb(167, 255, 190);
+        private readonly Color FontGreen = Color.FromArgb(0, 126, 15);
+        private readonly Color BackGray = Color.FromArgb(217, 217, 217);
         private string F;
         private string M;
         private string Gap;
@@ -26,12 +31,9 @@ namespace Sci.Production.Quality
         private List<string> listSQLFilter;
         private string boolHoliday;
         private StringBuilder sbFtycode;
-        private readonly Color BackRed = Color.FromArgb(255, 155, 155);
-        private readonly Color FontRed = Color.FromArgb(255, 0, 0);
-        private readonly Color BackGreen = Color.FromArgb(167, 255, 190);
-        private readonly Color FontGreen = Color.FromArgb(0, 126, 15);
-        private readonly Color BackGray = Color.FromArgb(217, 217, 217);
+        private Color BackRed = Color.FromArgb(255, 155, 155);
 
+        /// <inheritdoc/>
         public R23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -428,14 +430,20 @@ drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
             string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
-            sxrc sxr = new sxrc(xltPath, keepApp: true);
-            sxr.BoOpenFile = true;
-            sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1]);
-            xrtSummery1.ShowHeader = false;
+            sxrc sxr = new sxrc(xltPath, keepApp: true)
+            {
+                BoOpenFile = true,
+            };
+            sxrc.XltRptTable xrtSummery1 = new sxrc.XltRptTable(this.dtList[1])
+            {
+                ShowHeader = false,
+            };
             sxr.DicDatas.Add("##Summery", xrtSummery1);
 
-            sxrc.XltRptTable xrtDetail = new sxrc.XltRptTable(this.dtList[0]);
-            xrtDetail.ShowHeader = false;
+            sxrc.XltRptTable xrtDetail = new sxrc.XltRptTable(this.dtList[0])
+            {
+                ShowHeader = false,
+            };
             sxr.DicDatas.Add("##detail", xrtDetail);
 
             Microsoft.Office.Interop.Excel.Workbook wkb = sxr.ExcelApp.ActiveWorkbook;

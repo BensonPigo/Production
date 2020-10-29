@@ -13,12 +13,14 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P18_ExcelImport : Win.Subs.Base
     {
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;
         private DataRow master;
 
+        /// <inheritdoc/>
         public P18_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
@@ -124,6 +126,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Check & Import
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnCheckImport_Click(object sender, EventArgs e)
         {
             #region -- 判斷第一個Grid是否有資料 --
@@ -550,6 +553,7 @@ where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
             this.DialogResult = DialogResult.OK;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnDownloadTempExcel_Click(object sender, EventArgs e)
         {
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P18_ExcelImport.xltx"); // 預先開啟excel app

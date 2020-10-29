@@ -41,8 +41,10 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
 
             // 新增Import From Barcode按鈕
-            Win.UI.Button btn = new Win.UI.Button();
-            btn.Text = "Batch Create";
+            Win.UI.Button btn = new Win.UI.Button
+            {
+                Text = "Batch Create",
+            };
             btn.Click += new EventHandler(this.Btn_Click);
             this.browsetop.Controls.Add(btn);
 
@@ -52,8 +54,10 @@ namespace Sci.Production.Shipping
             this.grid.Columns[0].Visible = false;
 
             // 新增Import From Batch按鈕
-            Win.UI.Button btn2 = new Win.UI.Button();
-            btn2.Text = "Batch Import";
+            Win.UI.Button btn2 = new Win.UI.Button
+            {
+                Text = "Batch Import",
+            };
             btn2.Click += this.Btn2_Click;
             this.browsetop.Controls.Add(btn2);
 
@@ -861,12 +865,14 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
             string[] colorway = this.editColorway.Text.Split(',');
 
             #region 取得VNConsumption_Detail_Detail資料
-            Prgs.ParGetVNConsumption_Detail_Detail parData = new Prgs.ParGetVNConsumption_Detail_Detail();
-            parData.StyleUkey = MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]);
-            parData.SizeCode = MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]);
-            parData.Article = colorway[0];
-            parData.Category = this.comboCategory.Text;
-            parData.ContractID = this.CurrentMaintain["VNContractID"].ToString();
+            Prgs.ParGetVNConsumption_Detail_Detail parData = new Prgs.ParGetVNConsumption_Detail_Detail
+            {
+                StyleUkey = MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
+                SizeCode = MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]),
+                Article = colorway[0],
+                Category = this.comboCategory.Text,
+                ContractID = this.CurrentMaintain["VNContractID"].ToString(),
+            };
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out queryDetail2Data);
             if (!result)
             {

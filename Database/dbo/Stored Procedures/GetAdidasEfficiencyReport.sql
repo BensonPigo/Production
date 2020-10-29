@@ -44,7 +44,7 @@ Inner Join [Production].[dbo].Orders o with (nolock) on sd.OrderId = o.ID
 Inner join [Production].[dbo].Factory f with (nolock) on o.FactoryID=f.ID
 Outer apply (
 	select [RejectWIP] = Sum(i.RejectWIP)
-	from [ManufacturingExecution].[dbo].[InlineInspection] i with (nolock)
+	from SciMES_InlineInspection i with (nolock)
 	where  s.OutputDate = i.InspectionDate 
 	and s.SewingLineID = i.Line 
 	and s.FactoryID = i.FactoryID 
@@ -55,7 +55,7 @@ Outer apply (
 )InlineInspection
 Outer apply (
 	select cnt = Count(*)
-	from [ManufacturingExecution].[dbo].[Inspection] i with (nolock) 
+	from SciMES_Inspection i with (nolock) 
 	where s.OutputDate = i.InspectionDate 
 	and s.SewingLineID = i.Line 
 	and s.FactoryID = i.FactoryID 

@@ -41,10 +41,12 @@ namespace Sci.Production.PPIC
                 this.numTotal.Value = (decimal)this.CurrentMaintain["RMtlAmtUSD"] + (decimal)this.CurrentMaintain["ActFreightUSD"] + (decimal)this.CurrentMaintain["OtherAmtUSD"];
 
                 string sqlcmd = $@"
-select o.Poid,o.StyleID , o.Qty, [OrderID] = o.id, o.BrandID, o.FactoryID, o.ProgramID, o.MRHandle, [OrderSMR] = o.SMR
-,[PoCombo] = (select isnull([dbo].getPOComboList(o.ID, o.POID),''))
-,PO.POHandle, [POSMR] = PO.POSMR
-,[SumQty] = PoQty.value
+select o.Poid,o.StyleID , o.Qty, [OrderID] = o.id, o.BrandID
+    ,o.FactoryID
+    ,o.ProgramID, o.MRHandle, [OrderSMR] = o.SMR
+    ,[PoCombo] = (select isnull([dbo].getPOComboList(o.ID, o.POID),''))
+    ,PO.POHandle, [POSMR] = PO.POSMR
+    ,[SumQty] = PoQty.value
 from orders o WITH (NOLOCK)
 inner join po WITH (NOLOCK) on po.id = o.poid
 outer apply(
@@ -57,7 +59,7 @@ where o.id = '{this.CurrentMaintain["OrderID"]}'
                 if (MyUtility.Check.Seek(sqlcmd, out DataRow drOrder))
                 {
                     this.txtBrand.Text = drOrder["BrandID"].ToString();
-                    this.txtFactory.Text = drOrder["FactoryID"].ToString();
+                    this.txtFactory.Text = MyUtility.Convert.GetString(this.CurrentMaintain["Responsible"]) == "S" ? MyUtility.Convert.GetString(this.CurrentMaintain["BulkFTY"]) : drOrder["FactoryID"].ToString();
                     this.txtStyle.Text = drOrder["StyleID"].ToString();
                     this.txtProgram.Text = drOrder["ProgramID"].ToString();
                     this.editPoCombo.Text = drOrder["PoCombo"].ToString();
@@ -71,6 +73,7 @@ where o.id = '{this.CurrentMaintain["OrderID"]}'
                 {
                     this.txtBrand.Text = string.Empty;
                     this.txtFactory.Text = string.Empty;
+                    this.txtFactory.Text = MyUtility.Convert.GetString(this.CurrentMaintain["Responsible"]) == "S" ? MyUtility.Convert.GetString(this.CurrentMaintain["BulkFTY"]) : string.Empty;
                     this.txtStyle.Text = string.Empty;
                     this.txtProgram.Text = string.Empty;
                     this.editPoCombo.Text = string.Empty;
@@ -150,7 +153,7 @@ ICR2.Seq1
 	(SELECT SCIRefno FROM PO_Supp_Detail WHERE ID = o.POID AND Seq1 = ICR2.Seq1 AND Seq2 = ICR2.Seq2))
 from ICR_Detail ICR2
 inner join ICR on ICR.Id = ICR2.ID
-inner join Orders o on o.ID = ICR.OrderID
+left join Orders o on o.ID = ICR.OrderID
 outer apply(
 	select DropDownList.Name
 	, [amt] = (Select * from GetAmountByUnit(ICR2.PriceUSD, ICR2.ICRQty, PO_Supp_Detail.POUnit,2))

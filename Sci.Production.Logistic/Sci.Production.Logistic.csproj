@@ -180,6 +180,12 @@
     <Compile Include="P01_CFAAndRFTList.Designer.cs">
       <DependentUpon>P01_CFAAndRFTList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_CFAFinalinspResult.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_CFAFinalinspResult.Designer.cs">
+      <DependentUpon>P01_CFAFinalinspResult.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_BatchReceiving.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -337,6 +343,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_CFAAndRFTList.resx">
       <DependentUpon>P01_CFAAndRFTList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_CFAFinalinspResult.resx">
+      <DependentUpon>P01_CFAFinalinspResult.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_BatchReceiving.resx">
       <DependentUpon>P02_BatchReceiving.cs</DependentUpon>

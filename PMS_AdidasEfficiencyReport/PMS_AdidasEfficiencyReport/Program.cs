@@ -19,10 +19,9 @@ namespace AdidasEfficiencyReport
             Sci.Env.AppInit();
 
             DBProxy.Current.DefaultTimeout = 999999999;
-
             switch (pStartForm)
             {
-                case "AdidasEfficiency": Application.Run(new Form1("AdidasEfficiency")); break;
+                case "AdidasEfficiency": new Form1("AdidasEfficiency"); break;
                 case "": Application.Run(new Form1()); break;
             }
             Sci.Env.AppShutdown();

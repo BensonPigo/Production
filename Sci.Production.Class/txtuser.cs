@@ -95,8 +95,10 @@ namespace Sci.Production.Class
                         DataTable selectTable;
                         if (dtName.Rows.Count > 0)
                         {
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.TextBox1.Text);
-                            item.Size = new System.Drawing.Size(828, 509);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(dtName, "ID,Name,ExtNo,Factory", "10,22,5,40", this.TextBox1.Text)
+                            {
+                                Size = new System.Drawing.Size(828, 509),
+                            };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -111,8 +113,10 @@ namespace Sci.Production.Class
                         {
                             selectCommand = string.Format("select ID, Name, ExtNo, REPLACE(Factory,' ','') Factory from Pass1 WITH (NOLOCK) where ExtNo = '{0}' order by ID", textValue.Trim());
                             DBProxy.Current.Select(null, selectCommand, out selectTable);
-                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.TextBox1.Text);
-                            item.Size = new System.Drawing.Size(828, 509);
+                            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectTable, "ID,Name,ExtNo,Factory", "10,22,5,40", this.TextBox1.Text)
+                            {
+                                Size = new System.Drawing.Size(828, 509),
+                            };
                             DialogResult returnResult = item.ShowDialog();
                             if (returnResult == DialogResult.Cancel)
                             {
@@ -151,8 +155,10 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null order by ID", "10,22,5,40", this.TextBox1.Text);
-            item.Size = new System.Drawing.Size(828, 509);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID, Name, ExtNo, replace(Factory,' ','')factory from Pass1 WITH (NOLOCK) where Resign is null order by ID", "10,22,5,40", this.TextBox1.Text)
+            {
+                Size = new System.Drawing.Size(828, 509),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

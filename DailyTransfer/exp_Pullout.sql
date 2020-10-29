@@ -187,6 +187,7 @@ from (
 		   , HCID
 		   , Abb
 		   , [IsShippingAPApprove] 
+		   , DocumentRefNo
 	from #tmpFtyBooking1
 
 	union all
@@ -230,6 +231,7 @@ from (
 		   , HCID
 		   , Abb = null
 		   , [IsShippingAPApprove]
+		   , [DocumentRefNo] = ''
 	from #tmpFtyBooking2
 ) a 
 

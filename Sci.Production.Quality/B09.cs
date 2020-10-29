@@ -76,11 +76,13 @@ namespace Sci.Production.Quality
         private void BtnAttach_Click(object sender, EventArgs e)
         {
             // 呼叫File 選擇視窗
-            OpenFileDialog file = new OpenFileDialog();
-            file.InitialDirectory = "c:\\"; // 預設路徑
-            file.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"; // 使用檔名
-            file.FilterIndex = 1;
-            file.RestoreDirectory = true;
+            OpenFileDialog file = new OpenFileDialog
+            {
+                InitialDirectory = "c:\\", // 預設路徑
+                Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*", // 使用檔名
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
             if (file.ShowDialog() == DialogResult.OK)
             {
                 string local_path_file = file.FileName;

@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labICRNo = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
-            this.labFactory = new Sci.Win.UI.Label();
+            this.labResponsible = new Sci.Win.UI.Label();
             this.labRMtl = new Sci.Win.UI.Label();
             this.labOther = new Sci.Win.UI.Label();
             this.labSDPKPICode = new Sci.Win.UI.Label();
@@ -91,6 +92,7 @@
             this.btnBatchConfirmResponsibilityDept = new Sci.Win.UI.Button();
             this.lbStatus = new Sci.Win.UI.Label();
             this.btnBatchReCalculateResponsibilityDeptAmt = new Sci.Win.UI.Button();
+            this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -109,6 +111,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboDropDownList1);
             this.masterpanel.Controls.Add(this.lbStatus);
             this.masterpanel.Controls.Add(this.lblConfirmDept);
             this.masterpanel.Controls.Add(this.txtVoucher);
@@ -133,16 +136,16 @@
             this.masterpanel.Controls.Add(this.labOther);
             this.masterpanel.Controls.Add(this.labSDPKPICode);
             this.masterpanel.Controls.Add(this.labRMtl);
-            this.masterpanel.Controls.Add(this.labFactory);
+            this.masterpanel.Controls.Add(this.labResponsible);
             this.masterpanel.Controls.Add(this.txtID);
             this.masterpanel.Controls.Add(this.labICRNo);
             this.masterpanel.Controls.Add(this.dateVoucherDate);
-            this.masterpanel.Size = new System.Drawing.Size(875, 307);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 307);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateVoucherDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labICRNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labResponsible, 0);
             this.masterpanel.Controls.SetChildIndex(this.labRMtl, 0);
             this.masterpanel.Controls.SetChildIndex(this.labSDPKPICode, 0);
             this.masterpanel.Controls.SetChildIndex(this.labOther, 0);
@@ -167,11 +170,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtVoucher, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblConfirmDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboDropDownList1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 307);
-            this.detailpanel.Size = new System.Drawing.Size(875, 0);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 153);
             // 
             // gridicon
             // 
@@ -185,7 +189,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(875, 0);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 153);
             // 
             // detail2
             // 
@@ -199,9 +203,13 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 621);
+            // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 226);
+            this.detailcont.Size = new System.Drawing.Size(1000, 460);
             // 
             // detailbtm
             // 
@@ -213,8 +221,8 @@
             this.detailbtm.Controls.Add(this.label13);
             this.detailbtm.Controls.Add(this.label12);
             this.detailbtm.Controls.Add(this.dateConfirmedDate);
-            this.detailbtm.Location = new System.Drawing.Point(0, 226);
-            this.detailbtm.Size = new System.Drawing.Size(892, 161);
+            this.detailbtm.Location = new System.Drawing.Point(0, 460);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 161);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -276,13 +284,13 @@
             this.txtID.Size = new System.Drawing.Size(110, 23);
             this.txtID.TabIndex = 4;
             // 
-            // labFactory
+            // labResponsible
             // 
-            this.labFactory.Location = new System.Drawing.Point(233, 20);
-            this.labFactory.Name = "labFactory";
-            this.labFactory.Size = new System.Drawing.Size(81, 23);
-            this.labFactory.TabIndex = 5;
-            this.labFactory.Text = "Factory";
+            this.labResponsible.Location = new System.Drawing.Point(233, 20);
+            this.labResponsible.Name = "labResponsible";
+            this.labResponsible.Size = new System.Drawing.Size(81, 23);
+            this.labResponsible.TabIndex = 5;
+            this.labResponsible.Text = "Responsible";
             // 
             // labRMtl
             // 
@@ -335,7 +343,7 @@
             // 
             // labReplaceReport
             // 
-            this.labReplaceReport.Location = new System.Drawing.Point(426, 18);
+            this.labReplaceReport.Location = new System.Drawing.Point(709, 20);
             this.labReplaceReport.Name = "labReplaceReport";
             this.labReplaceReport.Size = new System.Drawing.Size(167, 23);
             this.labReplaceReport.TabIndex = 12;
@@ -582,7 +590,7 @@
             // btnResponsibilitydept
             // 
             this.btnResponsibilitydept.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnResponsibilitydept.Location = new System.Drawing.Point(825, 39);
+            this.btnResponsibilitydept.Location = new System.Drawing.Point(709, 143);
             this.btnResponsibilitydept.Name = "btnResponsibilitydept";
             this.btnResponsibilitydept.Size = new System.Drawing.Size(164, 33);
             this.btnResponsibilitydept.TabIndex = 7;
@@ -624,7 +632,7 @@
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(710, 145);
+            this.label15.Location = new System.Drawing.Point(709, 238);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(99, 23);
             this.label15.TabIndex = 45;
@@ -632,7 +640,7 @@
             // 
             // label16
             // 
-            this.label16.Location = new System.Drawing.Point(710, 117);
+            this.label16.Location = new System.Drawing.Point(709, 210);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(99, 23);
             this.label16.TabIndex = 44;
@@ -651,7 +659,7 @@
             this.txtDepartment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDepartment.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Department", true));
             this.txtDepartment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDepartment.Location = new System.Drawing.Point(317, 20);
+            this.txtDepartment.Location = new System.Drawing.Point(444, 19);
             this.txtDepartment.Name = "txtDepartment";
             this.txtDepartment.ReadOnly = true;
             this.txtDepartment.Size = new System.Drawing.Size(99, 23);
@@ -787,7 +795,7 @@
             this.dateVoucherDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VoucherDate", true));
             this.dateVoucherDate.IsSupportCalendar = false;
             this.dateVoucherDate.IsSupportEditMode = false;
-            this.dateVoucherDate.Location = new System.Drawing.Point(812, 145);
+            this.dateVoucherDate.Location = new System.Drawing.Point(811, 238);
             this.dateVoucherDate.Name = "dateVoucherDate";
             this.dateVoucherDate.ReadOnly = true;
             this.dateVoucherDate.Size = new System.Drawing.Size(110, 23);
@@ -810,36 +818,36 @@
             this.gridReplacement.AllowUserToOrderColumns = true;
             this.gridReplacement.AllowUserToResizeRows = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridReplacement.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.gridReplacement.DefaultCellStyle = dataGridViewCellStyle11;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridReplacement.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReplacement.Location = new System.Drawing.Point(599, 17);
+            this.gridReplacement.Location = new System.Drawing.Point(709, 54);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
@@ -890,7 +898,7 @@
             this.txtVoucher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtVoucher.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "VoucherID", true));
             this.txtVoucher.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtVoucher.Location = new System.Drawing.Point(812, 119);
+            this.txtVoucher.Location = new System.Drawing.Point(811, 212);
             this.txtVoucher.Name = "txtVoucher";
             this.txtVoucher.ReadOnly = true;
             this.txtVoucher.Size = new System.Drawing.Size(120, 23);
@@ -911,7 +919,7 @@
             // 
             this.lblConfirmDept.BackColor = System.Drawing.Color.Transparent;
             this.lblConfirmDept.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold);
-            this.lblConfirmDept.Location = new System.Drawing.Point(813, 73);
+            this.lblConfirmDept.Location = new System.Drawing.Point(709, 176);
             this.lblConfirmDept.Name = "lblConfirmDept";
             this.lblConfirmDept.Size = new System.Drawing.Size(183, 34);
             this.lblConfirmDept.TabIndex = 58;
@@ -934,7 +942,7 @@
             this.lbStatus.BackColor = System.Drawing.Color.Transparent;
             this.lbStatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
             this.lbStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold);
-            this.lbStatus.Location = new System.Drawing.Point(828, 1);
+            this.lbStatus.Location = new System.Drawing.Point(546, 11);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(161, 35);
             this.lbStatus.TabIndex = 59;
@@ -950,6 +958,22 @@
             this.btnBatchReCalculateResponsibilityDeptAmt.Text = "Batch Re-Calculate Responsibility Dept. Amt";
             this.btnBatchReCalculateResponsibilityDeptAmt.UseVisualStyleBackColor = true;
             this.btnBatchReCalculateResponsibilityDeptAmt.Click += new System.EventHandler(this.BtnBatchReCalculateResponsibilityDeptAmt_Click);
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboDropDownList1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Responsible", true));
+            this.comboDropDownList1.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(317, 19);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.ReadOnly = true;
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 60;
+            this.comboDropDownList1.Type = "Responsible";
             // 
             // P21
             // 
@@ -1000,7 +1024,7 @@
         #endregion
         private Win.UI.Label labICRNo;
         private Win.UI.Label labRMtl;
-        private Win.UI.Label labFactory;
+        private Win.UI.Label labResponsible;
         private Win.UI.TextBox txtID;
         private Win.UI.Label labReplaceReport;
         private Win.UI.Label labTotal;
@@ -1058,5 +1082,6 @@
         private Win.UI.Button btnBatchConfirmResponsibilityDept;
         private Win.UI.Label lbStatus;
         private Win.UI.Button btnBatchReCalculateResponsibilityDeptAmt;
+        private Class.ComboDropDownList comboDropDownList1;
     }
 }

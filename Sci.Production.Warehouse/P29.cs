@@ -94,8 +94,10 @@ namespace Sci.Production.Warehouse
             };
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
             #region -- transfer qty valid --
-            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.IsSupportNegative = true;
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings
+            {
+                IsSupportNegative = true,
+            };
             ns.CellValidating += (s, e) =>
             {
                 if (this.EditMode && e.FormattedValue != null)
@@ -1048,9 +1050,8 @@ from #tmp";
             }
         }
 
-      private void P29_Load(object sender, EventArgs e)
+        private void P29_Load(object sender, EventArgs e)
       {
-
       }
    }
 }

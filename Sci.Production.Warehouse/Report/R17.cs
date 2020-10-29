@@ -9,12 +9,14 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R17 : Win.Tems.PrintForm
     {
         private DataTable dt;
 
         private int selectindex = 0;
 
+        /// <inheritdoc/>
         public R17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -122,10 +124,12 @@ namespace Sci.Production.Warehouse
             DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2)) // SCI Delivery empty
+            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd)) // Location empty
+                // SCI Delivery empty
+                if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd))
                 {
+                    // Location empty
                     sqlcmd.Append(@"
 select distinct 
         Factory		= orders.Factoryid ,

@@ -98,20 +98,30 @@ namespace Sci.Production.Planning
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sql parameters declare --
-            System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter();
-            sp_spno1.ParameterName = "@spno1";
+            System.Data.SqlClient.SqlParameter sp_spno1 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@spno1",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_spno2 = new System.Data.SqlClient.SqlParameter();
-            sp_spno2.ParameterName = "@spno2";
+            System.Data.SqlClient.SqlParameter sp_spno2 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@spno2",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter();
-            sp_style.ParameterName = "@style";
+            System.Data.SqlClient.SqlParameter sp_style = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@style",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
-            sp_factory.ParameterName = "@factory";
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@factory",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-            sp_mdivision.ParameterName = "@MDivision";
+            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@MDivision",
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             #endregion

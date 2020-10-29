@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -106,7 +106,6 @@ select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.
         , [GroupPoid] = t.poid 
         , [GroupSeq] = t.seq1+ '-' +t.seq2 
         , [desc] = IIF((t.poid = lag(t.poid, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)
-
                           AND(t.seq1 = lag(t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
 			              AND(t.seq2 = lag(t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
 				        , ''
@@ -117,7 +116,8 @@ select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.
                                             , char (10)
                                             , (Select concat(ID, '-', Name) from Color WITH(NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
                                         )
-                            FROM fabric fbr WITH(NOLOCK) WHERE SCIRefno = p.SCIRefno))
+									FROM fabric fbr WITH(NOLOCK) WHERE SCIRefno = p.SCIRefno))
+		, Mdesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
         , t.Roll
         , t.Dyelot
         , t.Qty
@@ -167,6 +167,7 @@ where t.id= @ID";
                         Poid = row1["poid"].ToString().Trim(),
                         Seq = row1["SEQ"].ToString().Trim(),
                         Desc = row1["desc"].ToString().Trim(),
+                        MDesc = row1["Mdesc"].ToString().Trim(),
                         Location = row1["Location"].ToString().Trim(),
                         Unit = row1["StockUnit"].ToString().Trim(),
                         Roll = row1["Roll"].ToString().Trim(),

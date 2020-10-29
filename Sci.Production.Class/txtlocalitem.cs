@@ -118,13 +118,17 @@ namespace Sci.Production.Class
                 }
 
                 string sqlcom = "Select Refno,junk from localItem WITH (NOLOCK) " + this.where;
-                System.Data.SqlClient.SqlParameter categoryIlist = new System.Data.SqlClient.SqlParameter();
-                categoryIlist.ParameterName = "@Category";
-                categoryIlist.Value = this.category.PadRight(20);
+                System.Data.SqlClient.SqlParameter categoryIlist = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@Category",
+                    Value = this.category.PadRight(20),
+                };
 
-                System.Data.SqlClient.SqlParameter localsuppIlist = new System.Data.SqlClient.SqlParameter();
-                localsuppIlist.ParameterName = "@LocalSupp";
-                localsuppIlist.Value = this.localSupp.PadRight(8);
+                System.Data.SqlClient.SqlParameter localsuppIlist = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@LocalSupp",
+                    Value = this.localSupp.PadRight(8),
+                };
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                 cmds.Add(categoryIlist);

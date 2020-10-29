@@ -7,12 +7,14 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_Refno : Win.Subs.Base
     {
         private DataRow dr;
         private DataTable selectDataTable1;
-        protected Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
+        private Win.UI.ContextMenuStrip myCMS = new Win.UI.ContextMenuStrip();
 
+        /// <inheritdoc/>
         public P03_Refno(DataRow data)
         {
             this.InitializeComponent();
@@ -240,6 +242,7 @@ where id = '{0}'", Env.User.Keyword));
             this.HideWaitMessage();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void Combo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.cmbFactory.SelectedValue == null || this.comboSize.SelectedValue == null || this.comboColor.SelectedValue == null)

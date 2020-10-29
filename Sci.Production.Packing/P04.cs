@@ -1199,14 +1199,17 @@ AND s.ShipGroup <> (
                                         set  TotalCBM = @ttlCBM
                                         where ID = @INVNo";
 
-                            System.Data.SqlClient.SqlParameter ttlCBM = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter ttlCBM = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@ttlCBM",
+                                Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString()),
+                            };
 
-                            ttlCBM.ParameterName = "@ttlCBM";
-                            ttlCBM.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString());
-
-                            System.Data.SqlClient.SqlParameter iNVNo = new System.Data.SqlClient.SqlParameter();
-                            iNVNo.ParameterName = "@INVNo";
-                            iNVNo.Value = this.CurrentMaintain["INVNo"].ToString();
+                            System.Data.SqlClient.SqlParameter iNVNo = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@INVNo",
+                                Value = this.CurrentMaintain["INVNo"].ToString(),
+                            };
 
                             IList<System.Data.SqlClient.SqlParameter> parameters = new List<System.Data.SqlClient.SqlParameter>();
                             parameters.Add(ttlCBM);

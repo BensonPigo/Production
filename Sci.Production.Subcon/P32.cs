@@ -12,11 +12,13 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P32 : Win.Tems.QueryForm
     {
-        protected DataTable dtGrid1;
-        protected DataTable dtGrid2;
-        protected DataTable dtGrid_NoCarton; private DataSet dataSet;
+        private DataTable dtGrid1;
+        private DataTable dtGrid2;
+        private DataTable dtGrid_NoCarton;
+        private DataSet dataSet;
         private string SP1;
         private string SP2;
         private string M; private string POID; private string sqlWhere = string.Empty;
@@ -27,6 +29,7 @@ namespace Sci.Production.Subcon
         private List<string> sqlWheres = new List<string>();
         private StringBuilder sqlcmd = new StringBuilder();
 
+        /// <inheritdoc/>
         public P32(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

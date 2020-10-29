@@ -132,8 +132,10 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10", this.TextBox1.Text);
-            item.Width = 640;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) order by ID", "15,30,10", this.TextBox1.Text)
+            {
+                Width = 640,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

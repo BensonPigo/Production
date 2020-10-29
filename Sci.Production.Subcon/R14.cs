@@ -8,6 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R14 : Win.Tems.PrintForm
     {
         private string artworktype;
@@ -26,6 +27,7 @@ namespace Sci.Production.Subcon
         private DateTime? GLdate2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -101,6 +103,7 @@ namespace Sci.Production.Subcon
         // 非同步取資料
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --
@@ -476,8 +479,9 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            if (this.ordertypeindex >= 4) // include Forecast
+            if (this.ordertypeindex >= 4)
             {
+                // include Forecast
                 sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
             }
             else

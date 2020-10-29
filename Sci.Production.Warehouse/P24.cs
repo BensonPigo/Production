@@ -16,8 +16,10 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P24 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P24(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,6 +34,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P24(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -92,6 +95,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -302,6 +306,7 @@ WHERE   StockType='{0}'
         // Unconfirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -662,6 +667,7 @@ Where a.id = '{0}'", masterID);
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickPrint()
         {
             DataRow row = this.CurrentMaintain;
@@ -697,7 +703,7 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select(string.Empty, @"
+            string cmdd = @"
 select a.FromPOID
         ,a.FromSeq1+'-'+a.FromSeq2 as SEQ
 	    ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
@@ -720,7 +726,8 @@ from dbo.SubTransfer_Detail a WITH (NOLOCK)
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype and a.fromDyelot = fi.Dyelot
-where a.id= @ID", pars, out dd);
+where a.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dd);
             if (!result)
             {
                 this.ShowErr(result);

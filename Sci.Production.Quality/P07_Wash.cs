@@ -9,6 +9,7 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P07_Wash : Win.Subs.Input2A
     {
         private readonly DataRow maindr;
@@ -20,6 +21,7 @@ namespace Sci.Production.Quality
         private string sql;
         private DataRow DR;
 
+        /// <inheritdoc/>
         public P07_Wash(bool canedit, string id, string poid, string seq1, string seq2, DataRow mainDr)
         {
             this.InitializeComponent();
@@ -87,6 +89,7 @@ namespace Sci.Production.Quality
             this.OnRequery();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void OnRequery()
         {
             this.sql = string.Format(
@@ -148,6 +151,7 @@ namespace Sci.Production.Quality
         }
 
         // [Encode][Amend]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             if (this.btnEncode.Text == "Encode")
@@ -299,6 +303,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             this.Close();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             if (this.btnEdit.Text == "Edit")

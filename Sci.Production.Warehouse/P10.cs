@@ -20,8 +20,10 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P10 : Win.Tems.Input8
     {
+        /// <inheritdoc/>
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -47,6 +49,7 @@ namespace Sci.Production.Warehouse
             this.DoSubForm = new P10_Detail();
         }
 
+        /// <inheritdoc/>
         public P10(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -192,6 +195,7 @@ namespace Sci.Production.Warehouse
         // 寫明細撈出的sql command
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -506,6 +510,7 @@ outer apply(
             this.detailgrid.SelectRowToPrev();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void TxtRequest_Validating(object sender, CancelEventArgs e)
         {
             DataTable dt;
@@ -662,6 +667,7 @@ outer apply(
         // refresh
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -692,6 +698,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -870,6 +877,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -1087,6 +1095,7 @@ outer apply(
 	from Production.dbo.FtyInventory
 	where POID = i2.POID and Seq1=i2.Seq1
 	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
+    and StockType = i2.StockType
 )fty
 where i.Type = 'A'
 and exists(

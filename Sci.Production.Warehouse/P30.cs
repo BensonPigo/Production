@@ -16,6 +16,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P30 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -29,6 +30,7 @@ namespace Sci.Production.Warehouse
 
         private Msg p30_msg = new Msg();
 
+        /// <inheritdoc/>
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -541,6 +543,7 @@ drop table #tmp
              this.gridRel.ValidateControl();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnAutoPick_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.master))

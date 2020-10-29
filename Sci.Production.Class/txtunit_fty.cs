@@ -22,8 +22,10 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from Unit WITH (NOLOCK) order by ID", "10,40", this.Text, false, ",");
-            item.Width = 580;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from Unit WITH (NOLOCK) order by ID", "10,40", this.Text, false, ",")
+            {
+                Width = 580,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

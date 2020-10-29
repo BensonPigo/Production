@@ -11,6 +11,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P01_BatchReTransferMtlToScrap : Win.Subs.Base
     {
         private DataRow dr_master;
@@ -18,8 +19,9 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable dtReTransferToScrapList;
-        protected DataTable[] dtBatch;
+        private DataTable[] dtBatch;
 
+        /// <inheritdoc/>
         public P01_BatchReTransferMtlToScrap()
         {
             this.InitializeComponent();

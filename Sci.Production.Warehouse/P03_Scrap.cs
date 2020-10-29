@@ -6,10 +6,13 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_Scrap : Win.Subs.Base
     {
         private DataRow dr;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public P03_Scrap(DataRow data)
         {
             this.InitializeComponent();
@@ -20,6 +23,7 @@ this.dr["seq2"].ToString());
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

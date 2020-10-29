@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_Odor : Win.Subs.Input4
     {
         private readonly DataRow maindr;
@@ -18,6 +19,7 @@ namespace Sci.Production.Quality
         private readonly string keyWord = Env.User.Keyword;
         private string excelFile;
 
+        /// <inheritdoc/>
         public P01_Odor(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -302,6 +304,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -566,6 +569,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.ToExcel(false);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private bool ToExcel(bool isSendMail)
         {
             DataTable dt;

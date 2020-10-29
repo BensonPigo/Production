@@ -547,6 +547,18 @@
                           </TextRuns>
                           <Style />
                         </Paragraph>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=iif(Fields!DESC.Value="","",Fields!MDESC.Value)</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>DESC</rd:DefaultName>
                       <Style>
@@ -1679,6 +1691,10 @@
       <Fields>
         <Field Name="DESC">
           <DataField>DESC</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MDESC">
+          <DataField>MDESC</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="DYELOT">

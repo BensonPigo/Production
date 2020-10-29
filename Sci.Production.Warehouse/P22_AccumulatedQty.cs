@@ -7,11 +7,15 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P22_AccumulatedQty : Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Tems.Base P22;
-        protected DataRow dr;
+        private DataRow dr;
 
+        /// <inheritdoc/>
         public P22_AccumulatedQty(DataRow data)
         {
             this.InitializeComponent();
@@ -19,6 +23,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

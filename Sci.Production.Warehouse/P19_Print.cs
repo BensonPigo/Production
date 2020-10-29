@@ -13,11 +13,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P19_Print : Win.Tems.PrintForm
     {
         private DataRow mainCurrentMaintain;
         private DataTable dtResult;
 
+        /// <inheritdoc/>
         public P19_Print(DataRow drMain)
         {
             this.InitializeComponent();
@@ -60,14 +62,13 @@ namespace Sci.Production.Warehouse
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 DataTable dt;
-                DualResult result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"select  b.name 
+                string cmd = $@"select  b.name 
             from dbo.TransferOut a WITH (NOLOCK) 
             inner join dbo.mdivision  b WITH (NOLOCK) 
             on b.id = a.mdivisionid
             where b.id = a.mdivisionid
-            and a.id = @ID", pars, out dt);
+            and a.id = @ID";
+                DualResult result = DBProxy.Current.Select(string.Empty, cmd, pars, out dt);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -81,7 +82,8 @@ namespace Sci.Production.Warehouse
                 #region  抓表身資料
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
-                result = DBProxy.Current.Select(string.Empty, @"
+
+                string tmp = @"
 select a.POID
     ,a.Seq1+'-'+a.seq2 as SEQ
 	,a.Roll,a.Dyelot
@@ -104,7 +106,9 @@ from dbo.TransferOut_Detail a WITH (NOLOCK)
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
-where a.id= @ID", pars, out this.dtResult);
+where a.id= @ID";
+
+                result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -174,6 +178,7 @@ where ID = '{this.mainCurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnToPrint(ReportDefinition report)
         {
             this.SetCount(this.dtResult.Rows.Count);

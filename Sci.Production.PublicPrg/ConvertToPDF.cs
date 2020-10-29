@@ -20,8 +20,10 @@ namespace Sci.Production.PublicPrg
             Microsoft.Office.Interop.Excel.Workbook workBook = null;
             try
             {
-                application = new Microsoft.Office.Interop.Excel.Application();
-                application.Visible = false;
+                application = new Microsoft.Office.Interop.Excel.Application
+                {
+                    Visible = false,
+                };
                 workBook = application.Workbooks.Open(excelPath);
                 workBook.ExportAsFixedFormat(targetType, pdfPath);
                 result = true;
@@ -68,8 +70,10 @@ namespace Sci.Production.PublicPrg
 
             try
             {
-                application = new Microsoft.Office.Interop.Word.Application();
-                application.Visible = false;
+                application = new Microsoft.Office.Interop.Word.Application
+                {
+                    Visible = false,
+                };
                 document = application.Documents.Open(wordPath);
                 document.ExportAsFixedFormat(pdfPath, exportFormat);
                 result = true;

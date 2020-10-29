@@ -22,6 +22,7 @@ namespace Sci.Production.Subcon
         private DataTable _detailDatas;
         private DataRow _masterData;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public int ReasonNullCount = 0;
         private string _ArtWorkPO_ID = string.Empty;
         private string _FactoryID = string.Empty;
@@ -29,13 +30,16 @@ namespace Sci.Production.Subcon
         /// <summary>
         /// 用於存放使用者輸入"後"的異常價格，僅限新增模式使用
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static List<Tmp_IrregularPriceReason> tmp_IrregularPriceReason_List = new List<Tmp_IrregularPriceReason>();
 
         /// <summary>
         /// 用於存放使用者所輸入"前"的異常價格，用於Undo還原Grid上的欄位，僅限新增模式使用
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static List<Tmp_IrregularPriceReason> tmp_IrregularPriceReason_List_Ori = new List<Tmp_IrregularPriceReason>();
 
+        /// <inheritdoc/>
         public P01_IrregularPriceReason(string artWorkPO_ID, string factoryID, DataRow masterData, DataTable detailDatas)
         {
             this.InitializeComponent();
@@ -295,13 +299,13 @@ namespace Sci.Production.Subcon
                         }
                     }
 
-                    P01.tmp_ModifyTable = modifyTable;
-                    P01.tmp_OriginDT_FromDB = this.OriginDT_FromDB;
+                    P01.Tmp_ModifyTable = modifyTable;
+                    P01.Tmp_OriginDT_FromDB = this.OriginDT_FromDB;
                 }
                 else
                 {
-                    P01.tmp_ModifyTable = null;
-                    P01.tmp_OriginDT_FromDB = null;
+                    P01.Tmp_ModifyTable = null;
+                    P01.Tmp_OriginDT_FromDB = null;
                     if (!MyUtility.Check.Empty(sql.ToString()))
                     {
                         using (TransactionScope scope = new TransactionScope())
@@ -455,7 +459,7 @@ namespace Sci.Production.Subcon
             this.listControlBindingSource1.DataSource = this.ModifyDT_FromP01.Copy();
 
             // 存入靜態物件，以便於在P01 Save的時候執行異常價格SQL
-            P01.tmp_ModifyTable = this.ModifyDT_FromP01.Copy();
+            P01.Tmp_ModifyTable = this.ModifyDT_FromP01.Copy();
         }
 
         /// 重新計算價格並產生DataSource
@@ -693,22 +697,6 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
 
                     sql.Clear();
 
-                    // sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
-
-                    // sql.Append(" FROM ArtWorkPO a" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN ArtworkPO_IrregularPrice al ON al.POID = o.POID AND al.ArtworkTypeID = ad.ArtworkTypeID" + Environment.NewLine);
-                    // sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
-                    // sql.Append(" WHERE a.ID = @artWorkPO_ID" + Environment.NewLine);
-
-                    // result = DBProxy.Current.Select(null, sql.ToString(), parameters, out IrregularPriceReason_InDB);
-                    // if (!result)
-                    // {
-                    //    ShowErr(sql.ToString(), result);
-                    // }
-                    // IrregularPriceReason_InDB = MyUtility.Check.Empty(IrregularPriceReason_InDB) ? new DataTable() : IrregularPriceReason_InDB;
-
                     sql.Append(" alter table #TmpSource alter column OrderID varchar(13)  " + Environment.NewLine);
                     sql.Append(" alter table #TmpSource alter column ArtworkTypeID varchar(20)  " + Environment.NewLine);
                     sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
@@ -734,15 +722,6 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
 
                     irregularPriceReason_New = btable.AsEnumerable().Count() > 0 ? btable.AsEnumerable().CopyToDataTable() : new DataTable();
 
-                    #endregion
-
-                    #region 準備 D：找出實際紀錄 與 DB紀錄 重複的部分
-
-                    // var Rep = from c in IrregularPriceReason_InDB.AsEnumerable()
-                    //          where !IrregularPriceReason_Real.AsEnumerable().Any(o => o["POID"].ToString() == c["POID"].ToString() && o["ArtworkTypeID"].ToString() == c["ArtworkTypeID"].ToString())
-                    //          select c;
-
-                    // IrregularPriceReason_Repeat = Rep.AsEnumerable().Count() > 0 ? Rep.AsEnumerable().CopyToDataTable() : new DataTable();
                     #endregion
 
                     DataTable subconReason;
@@ -900,7 +879,7 @@ DROP TABLE #tmp_AllOrders --,#BePurchased
         {
             // 是否有價格異常，用以區別P01的按鈕要不要變色
             bool has_Irregular_Price = false;
-            P01.tmp_ModifyTable = null;
+            P01.Tmp_ModifyTable = null;
 
             // 採購價 > 標準價 =異常
             #region 變數宣告
@@ -1304,7 +1283,7 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
                         }
 
                         this.ModifyDT_FromP01 = iPR_Grid.Copy();
-                        P01.tmp_ModifyTable = iPR_Grid.Copy();
+                        P01.Tmp_ModifyTable = iPR_Grid.Copy();
                         this.ReasonNullCount = iPR_Grid.Select("SubconReasonID=''").Length;
                     }
                     else
@@ -1359,6 +1338,7 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
     /// <summary>
     /// Grid上的異常價格資料列
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class Tmp_IrregularPriceReason
     {
         public string POID { get; set; }

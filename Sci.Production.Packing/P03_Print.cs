@@ -242,6 +242,7 @@ namespace Sci.Production.Packing
             return true;
         }
 
+        /// <inheritdoc/>
         public DualResult PrintShippingmark()
         {
             #region.
@@ -286,9 +287,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return new DualResult(false, "Data not found.");
             }
 
-            Word._Application winword = new Word.Application();
-            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
-            winword.Visible = false;
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
             object printFile;
             Word._Document document;
             Word.Table tables = null;
@@ -372,6 +375,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
+        /// <inheritdoc/>
         public DualResult PrintShippingmark_ToChina()
         {
             #region PrintShippingmark_ToChina
@@ -434,9 +438,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return new DualResult(false, "Data not found.");
             }
 
-            Word._Application winword = new Word.Application();
-            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
-            winword.Visible = false;
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
             object printFile;
             Word._Document document;
             Word.Table tables = null;
@@ -519,6 +525,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
+        /// <inheritdoc/>
         public DualResult PrintShippingmark_ToUsaInd()
         {
             #region PrintShippingmark_ToUsaInd
@@ -575,9 +582,11 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 return new DualResult(false, "Data not found.");
             }
 
-            Word._Application winword = new Word.Application();
-            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
-            winword.Visible = false;
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
             object printFile;
             Word._Document document;
             Word.Table tables = null;

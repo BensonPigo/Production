@@ -16,6 +16,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class B05 : Sci.Win.Tems.Input1
     {
         /// <inheritdoc/>

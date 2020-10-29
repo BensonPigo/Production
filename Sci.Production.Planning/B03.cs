@@ -152,8 +152,10 @@ from LocalSupp l WITH (NOLOCK)
 WHERE l.Junk=0  AND l.IsFactory = 0
 order by ID
 ";
-                    item = new Win.Tools.SelectItem(sqlcmd, "10,15,5", null);
-                    item.Size = new System.Drawing.Size(480, 500);
+                    item = new Win.Tools.SelectItem(sqlcmd, "10,15,5", null)
+                    {
+                        Size = new System.Drawing.Size(480, 500),
+                    };
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {

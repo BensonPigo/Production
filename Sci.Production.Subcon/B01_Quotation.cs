@@ -6,13 +6,14 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class B01_Quotation : Win.Tems.Input1
     {
-        protected DataRow dr;
-        protected DataRow dr_detail;
+        private DataRow dr;
         private bool _canedit;
         private bool _canconfirm;
 
+        /// <inheritdoc/>
         public B01_Quotation(bool canedit, DataRow data, bool cancomfirmed)
         {
             this.InitializeComponent();

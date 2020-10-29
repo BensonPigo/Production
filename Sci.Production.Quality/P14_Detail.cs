@@ -16,15 +16,17 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P14_Detail : Win.Subs.Input4
     {
         private DataRow masterDr;
         private DataRow Detaildr;
         private string reportNo;
-        private readonly string id;
-        private readonly bool isSee = false;
+        private string id;
+        private bool isSee = false;
         private string status;
 
+        /// <inheritdoc/>
         public P14_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, string status)
             : base(canedit, id, keyvalue2, keyvalue3)
         {

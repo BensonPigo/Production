@@ -12,6 +12,8 @@
 
         public string Desc { get; set; }
 
+        public string MDesc { get; set; }
+
         public string Location { get; set; }
 
         public string Unit { get; set; }

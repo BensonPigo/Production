@@ -20,19 +20,27 @@ using Sci.Win.Tools;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P17 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
-        protected DataTable dtBorrow;
 
+        /// <inheritdoc/>
+        private ReportViewer viewer;
+
+        /// <inheritdoc/>
+        private DataTable dtBorrow;
+
+        /// <inheritdoc/>
         public P17(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.viewer = new ReportViewer();
-            this.viewer.Dock = DockStyle.Fill;
+            this.viewer = new ReportViewer
+            {
+                Dock = DockStyle.Fill,
+            };
             this.Controls.Add(this.viewer);
 
             // MDivisionID 是 P17 寫入 => Sci.Env.User.Keyword
@@ -49,6 +57,7 @@ namespace Sci.Production.Warehouse
             };
         }
 
+        /// <inheritdoc/>
         public P17(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -123,10 +132,11 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmdText = @"
 select NameEn
 from MDivision
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmdText, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -219,8 +229,10 @@ where a.id= @ID";
             #endregion
 
             // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
             frm.Show();
 
             return true;
@@ -236,6 +248,7 @@ where a.id= @ID";
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -352,6 +365,7 @@ where a.id= @ID";
         // Detail Grid 設定
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
@@ -496,8 +510,10 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                                                             AND seq2= '{2}' 
                                                         order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
                         Win.Tools.SelectItem item
-                            = new Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,");
-                        item.Width = 600;
+                            = new Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,")
+                            {
+                                Width = 600,
+                            };
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -589,6 +605,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                         {
                             dr["Location"] = selectItem2.GetSelecteds().Select(o => MyUtility.Convert.GetString(o["ID"])).JoinToString(",");
                         }
+
                         dr.EndEdit();
                     }
                 }
@@ -640,6 +657,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -874,6 +892,7 @@ where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -1050,6 +1069,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         /// <summary>
         ///  AutoWHFabric WebAPI for Gensong
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void SentToGensong_AutoWHFabric()
         {
             if (true)
@@ -1140,11 +1160,14 @@ Where a.id = '{0}'", masterID);
 
         private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new P17_AccumulatedQty(this.CurrentMaintain);
-            frm.P17 = this;
+            var frm = new P17_AccumulatedQty(this.CurrentMaintain)
+            {
+                P17 = this,
+            };
             frm.ShowDialog(this);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void TxtTransfer_Validating(object sender, CancelEventArgs e)
         {
             if (!this.EditMode)

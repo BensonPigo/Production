@@ -36,8 +36,10 @@ namespace Sci.Production.Class
             string sqlWhere = "SELECT Id,NameCH,NameEN FROM Production.dbo.Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             if (this.multi_select)
             {
-                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, string.Empty, "10,29,35", string.Empty, null, null, null);
-                item.Size = new System.Drawing.Size(810, 666);
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlWhere, string.Empty, "10,29,35", string.Empty, null, null, null)
+                {
+                    Size = new System.Drawing.Size(810, 666),
+                };
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
@@ -48,8 +50,10 @@ namespace Sci.Production.Class
             }
             else
             {
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "10,29,35", this.Text, false, ",");
-                item.Size = new System.Drawing.Size(777, 666);
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "10,29,35", this.Text, false, ",")
+                {
+                    Size = new System.Drawing.Size(777, 666),
+                };
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {

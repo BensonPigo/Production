@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P02_Detail : Win.Subs.Input6A
     {
         #region 改版原因事項
@@ -24,10 +25,11 @@ namespace Sci.Production.Quality
         private readonly bool canedit;
         private string id;
         private string receivingID;
-        private readonly string poid;
+        private string poid;
         private string seq1;
         private string seq2;
 
+        /// <inheritdoc/>
         public P02_Detail(bool canEdit, string airID, string spNo)
         {
             this.InitializeComponent();
@@ -72,6 +74,7 @@ namespace Sci.Production.Quality
             this.Button_enable(this.canedit);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnAmend_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -179,13 +182,13 @@ WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                             break;
 
                         case "Pass":
-
-                            chkresult = DBProxy.Current.Select(null, $@"
+                            string cmd = $@"
 SELECT DISTINCT  Result
 FROM AIR
 WHERE POID='{this.poid}' AND Seq1='{this.seq1} ' AND Seq2='{this.seq2}'
 AND ID<>'{this.id}' AND ReceivingID<>'{this.receivingID}'
-", out dt);
+";
+                            chkresult = DBProxy.Current.Select(null, cmd, out dt);
                             if (!chkresult)
                             {
                                 this.ShowErr("Commit transaction error.", chkresult);
@@ -291,6 +294,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         }
 
         // Save and Edit
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             string strSqlcmd = string.Empty;
@@ -533,7 +537,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
         /// 將CurrentData 返回原來的值
         /// 特別針對Undo去處理
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">data</param>
         protected override void OnAttached(DataRow data)
         {
             data.RejectChanges();

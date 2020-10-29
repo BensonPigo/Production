@@ -12,11 +12,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P22 : Win.Tems.QueryForm
     {
         private DataTable dtDBSource;
         private string excelFile;
 
+        /// <inheritdoc/>
         public P22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -209,10 +211,7 @@ order by p2.ID,p2.Seq";
              有不同資料的再跑迴圈
             */
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, @"
-select distinct a.* from #tmp a
-inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
-where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
+            MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, @"select distinct a.* from #tmp a inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno where a.CFANeedInsp <> b.CFANeedInsp and b.DisposeFromClog= 0", out selectData);
 
             foreach (DataRow dr in selectData.Rows)
             {
@@ -264,9 +263,7 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
 
             #region to Excel
 
-            MyUtility.Tool.ProcessWithDatatable(selectData, string.Empty, @"
-select * from #tmp 
-where CFANeedInsp = 1 ", out dtToExcel);
+            MyUtility.Tool.ProcessWithDatatable(selectData, string.Empty, @"select * from #tmp where CFANeedInsp = 1 ", out dtToExcel);
             if (dtToExcel != null && dtToExcel.Rows.Count > 0)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); // 預先開啟excel app;

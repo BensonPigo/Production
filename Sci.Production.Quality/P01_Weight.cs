@@ -15,6 +15,7 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_Weight : Win.Subs.Input4
     {
         private readonly DataRow maindr;
@@ -22,6 +23,7 @@ namespace Sci.Production.Quality
         private readonly string keyWord = Env.User.Keyword;
         private string excelFile;
 
+        /// <inheritdoc/>
         public P01_Weight(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
@@ -190,8 +192,9 @@ namespace Sci.Production.Quality
                     return; // 沒東西 return
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -340,6 +343,7 @@ namespace Sci.Production.Quality
             return base.OnSaveBefore();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -349,10 +353,12 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            if (!MyUtility.Convert.GetBool(this.maindr["WeightEncode"])) // Encode
+            if (!MyUtility.Convert.GetBool(this.maindr["WeightEncode"]))
             {
-                if (!MyUtility.Convert.GetBool(this.maindr["nonWeight"])) // 只要沒勾選就要判斷，有勾選就可直接Encode
+                // Encode
+                if (!MyUtility.Convert.GetBool(this.maindr["nonWeight"]))
                 {
+                    // 只要沒勾選就要判斷，有勾選就可直接Encode
                     if (MyUtility.GetValue.Lookup("WeaveTypeID", this.maindr["SCIRefno"].ToString(), "Fabric", "SciRefno") == "KNIT")
                     {
                         // 當Fabric.WeaveTypdID = 'Knit' 時必須每ㄧ缸都要有檢驗
@@ -441,8 +447,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 this.maindr["Result"] = returnstr[0];
                 this.maindr["Status"] = returnstr[1];
             }
-            else // Amend
+            else
             {
+                // Amend
                 #region  寫入虛擬欄位
                 this.maindr["Weight"] = string.Empty;
                 this.maindr["WeightDate"] = DBNull.Value;
@@ -619,9 +626,10 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             string seasonID = string.Empty;
             string continuityEncode = string.Empty;
             DualResult xresult1;
+            string cmd = $@"select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{this.textID.Text}'";
+            xresult1 = DBProxy.Current.Select("Production", cmd, out dt1);
 
-            if (xresult1 = DBProxy.Current.Select("Production", string.Format(
-               "select Roll,Dyelot,WeightM2,averageWeightM2,Difference,A.Result,A.Inspdate,Inspector,B.ContinuityEncode,C.SeasonID from FIR_Weight a WITH (NOLOCK) left join FIR b WITH (NOLOCK) on a.ID=b.ID LEFT JOIN ORDERS C ON B.POID=C.ID where a.ID='{0}'", this.textID.Text), out dt1))
+            if (xresult1)
             {
                 if (dt1.Rows.Count > 0)
                 {
@@ -683,18 +691,22 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             }
 
             this.ShowWaitMessage("To PDF Processing...");
-            Excel.Application objApp = new Excel.Application();
-            objApp.DisplayAlerts = false;
+            Excel.Application objApp = new Excel.Application
+            {
+                DisplayAlerts = false,
+            };
             objApp.Workbooks.Add();
             Excel.Sheets exlSheets = objApp.Worksheets;
             Excel.Worksheet newSheet = exlSheets.Item[1];
             exlSheets.Item[1].Delete();
             exlSheets.Item[1].Delete();
 
-            ExcelHeadData excelHeadData = new ExcelHeadData();
-            excelHeadData.SPNo = this.maindr["POID"].ToString();
-            excelHeadData.Brand = this.displayBrand.Text;
-            excelHeadData.StyleNo = this.displayStyle.Text;
+            ExcelHeadData excelHeadData = new ExcelHeadData
+            {
+                SPNo = this.maindr["POID"].ToString(),
+                Brand = this.displayBrand.Text,
+                StyleNo = this.displayStyle.Text,
+            };
 
             DataRow drOrder;
             MyUtility.Check.Seek(
@@ -1031,19 +1043,43 @@ where bof.id='{this.maindr["POID"].ToString()}' and p.seq1='{this.maindr["Seq1"]
             return Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         private class ExcelHeadData
         {
+            /// <inheritdoc/>
             public string SubmitDate;
+
+            /// <inheritdoc/>
             public string ReportDate;
+
+            /// <inheritdoc/>
             public string SPNo;
+
+            /// <inheritdoc/>
             public string Brand;
+
+            /// <inheritdoc/>
             public string StyleNo;
+
+            /// <inheritdoc/>
             public string PONumber;
+
+            /// <inheritdoc/>
             public string ArticleNo;
+
+            /// <inheritdoc/>
             public string StyleName;
+
+            /// <inheritdoc/>
             public string ArriveQty;
+
+            /// <inheritdoc/>
             public string FabricRefNo;
+
+            /// <inheritdoc/>
             public string FabricColor;
+
+            /// <inheritdoc/>
             public string FabricDesc;
         }
     }

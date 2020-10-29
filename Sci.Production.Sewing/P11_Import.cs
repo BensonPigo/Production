@@ -12,10 +12,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P11_Import : Win.Tems.QueryForm
     {
         private DataTable DetailDatas;
 
+        /// <inheritdoc/>
         public P11_Import(DataTable dt)
         {
             this.InitializeComponent();

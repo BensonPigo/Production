@@ -13,8 +13,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P06 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -181,6 +183,7 @@ where	pd.CTNStartNo != '' and
             e.Cancel = true;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         private class PackDataResult
         {
             public DataRow Dr;
@@ -282,8 +285,10 @@ where	pd.CTNStartNo != '' and
 
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                Filter = "txt files (*.txt)|*.txt",
+            };
 
             // 開窗且有選擇檔案
             if (openFileDialog1.ShowDialog() == DialogResult.OK)

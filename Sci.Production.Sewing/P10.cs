@@ -5,8 +5,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P10 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

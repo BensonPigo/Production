@@ -9,10 +9,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P08 : Win.Tems.QueryForm
     {
         private DataTable dt = new DataTable();
 
+        /// <inheritdoc/>
         public P08(ToolStripMenuItem menuitem)
            : base(menuitem)
         {

@@ -12,13 +12,18 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P36_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         protected DataTable dtScrap;
 
+        /// <inheritdoc/>
         public P36_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -27,6 +32,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             StringBuilder strSQLCmd = new StringBuilder();
@@ -88,14 +94,20 @@ Where  1=1
         and Factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion
 
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@sp1";
+                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@sp1",
+                };
 
-                System.Data.SqlClient.SqlParameter seq1 = new System.Data.SqlClient.SqlParameter();
-                seq1.ParameterName = "@seq1";
+                System.Data.SqlClient.SqlParameter seq1 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@seq1",
+                };
 
-                System.Data.SqlClient.SqlParameter seq2 = new System.Data.SqlClient.SqlParameter();
-                seq2.ParameterName = "@seq2";
+                System.Data.SqlClient.SqlParameter seq2 = new System.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@seq2",
+                };
 
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 

@@ -106,7 +106,8 @@ SET
 	a.AddName= b.AddName,
 	a.AddDate= b.AddDate,
 	a.EditName= b.EditName,
-	a.EditDate= b.EditDate
+	a.EditDate= b.EditDate,
+	a.BulkFTY = isnull(b.BulkFTY, '')
 from Production.dbo.ICR as a 
 inner join #Trade_ICR as b ON a.id=b.id
 
@@ -150,6 +151,7 @@ INSERT INTO Production.dbo.ICR
       ,[AddDate]
       ,[EditName]
       ,[EditDate]
+	  ,[BulkFTY]
 )
 SELECT 
 	  [Id]
@@ -188,6 +190,7 @@ SELECT
       ,[AddDate]
       ,[EditName]
       ,[EditDate]
+	  ,isnull([BulkFTY], '')
 from #Trade_ICR as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.ICR as a WITH (NOLOCK) where a.id = b.id)
 

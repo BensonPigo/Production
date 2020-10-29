@@ -72,8 +72,10 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from Unit WITH (NOLOCK) where junk = 0 order by ID", "10,38", this.TextBox1.Text);
-            item.Size = new System.Drawing.Size(570, 530);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Description from Unit WITH (NOLOCK) where junk = 0 order by ID", "10,38", this.TextBox1.Text)
+            {
+                Size = new System.Drawing.Size(570, 530),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

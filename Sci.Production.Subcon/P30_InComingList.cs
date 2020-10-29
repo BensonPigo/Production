@@ -8,7 +8,7 @@ namespace Sci.Production.Subcon
 {
     public partial class P30_InComingList : Win.Subs.Base
     {
-        protected string Detailukey;
+        private string Detailukey;
 
         public P30_InComingList(string detailukey)
         {

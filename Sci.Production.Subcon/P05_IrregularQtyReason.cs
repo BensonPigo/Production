@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P05_IrregularQtyReason : Win.Subs.Base
     {
         private DataRow _masterData;
@@ -22,6 +23,8 @@ namespace Sci.Production.Subcon
         private Ict.Win.UI.DataGridViewTextBoxColumn txt_SubReason;
         private P05 p05;
         private Func<string, string> sqlGetBuyBackDeduction;
+
+        /// <inheritdoc/>
         public P05_IrregularQtyReason(string artWorkReq_ID, DataRow masterData, DataTable detailDatas, Func<string, string> sqlGetBuyBackDeduction)
         {
             this.InitializeComponent();
@@ -120,6 +123,7 @@ namespace Sci.Production.Subcon
             this.listControlBindingSource1.DataSource = this.GetData();
         }
 
+        /// <inheritdoc/>
         public DataTable Check_Irregular_Qty()
         {
             DataTable dt = this.GetData();
@@ -220,7 +224,7 @@ VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GE
             this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
-        private DataTable GetData()
+        public DataTable GetData()
         {
             string sqlcmd = string.Empty;
 
@@ -239,7 +243,7 @@ select  t.OrderID,
         t.PatternDesc,
         [LocalSuppID] = '',
         [OrderQty] = o.Qty,
-        [ReqQty] = sum(ReqQty)
+        [ReqQty] = sum(t.ReqQty)
 into #FinalArtworkReq
 from #tmp t
 inner join orders o with (nolock) on o.ID = t.OrderID
@@ -269,7 +273,8 @@ o.FactoryID
 ,ArtworkID=''
 ,PatternCode=''
 ,PatternDesc=''
-,[BuyBackArtworkReq] = 0
+,[NeedUpdate] = 0
+,[NeedDelete] = 0
 into #tmpDB
 from ArtworkReq_IrregularQty ai
 inner join Orders o on o.ID = ai.OrderID
@@ -328,27 +333,44 @@ outer apply(
 	and a.ArtworkTypeID = '{this._masterData["ArtworkTypeID"]}'
     and a.status != 'Closed'
 )ReqQty
-where not exists(
-	select 1 from #tmpDB
-	where orderID = o.ID and ArtworkTypeID like '{this._masterData["ArtworkTypeID"]}%'
-)
 group by o.FactoryID,o.ID,o.StyleID,o.BrandID,ReqQty.value,PoQty.value,s.ReqQty
 ,s.ArtworkID,s.PatternCode,s.PatternDesc,isnull(tbbd.BuyBackArtworkReq,0)
 having ReqQty.value + PoQty.value + s.ReqQty + isnull(tbbd.BuyBackArtworkReq,0) > sum(oq.Qty) 
 
-select * 
-,row = ROW_NUMBER() over(partition by orderid,ArtworkTypeID order by  ReqQty desc)
-into #tmpFinal
-from
-(
-	select * from #tmpCurrent
-	union all 
-	select * from #tmpDB
-) a
+select  FactoryID,
+        ArtworkTypeID,
+        OrderID,
+        StyleID,
+        BrandID,
+        StandardQty,
+        [ReqQty] = Max(ReqQty)
+into #tmpCurrentFinal
+from #tmpCurrent
+group by    FactoryID,
+            ArtworkTypeID,
+            OrderID,
+            StyleID,
+            BrandID,
+            StandardQty
 
-select * from #tmpFinal where row = 1
 
-drop table #tmpCurrent,#tmpFinal,#tmpDB
+MERGE #tmpDB AS T
+USING #tmpCurrentFinal AS S
+ON (T.ArtworkTypeID = S.ArtworkTypeID and T.OrderID = S.OrderID) 
+WHEN NOT MATCHED BY TARGET 
+    THEN INSERT(FactoryID, ArtworkTypeID, OrderID, StyleID, BrandID, StandardQty, ReqQty, SubconReasonID, ReasonDesc, CreateBy, CreateDate, EditBy, EditDate, ArtworkID, PatternCode, PatternDesc, NeedUpdate, NeedDelete) 
+            VALUES(S.FactoryID, S.ArtworkTypeID, S.OrderID, S.StyleID, S.BrandID, S.StandardQty, S.ReqQty, '', '', '', getdate(), '', null, '', '', '', 0, 0)
+WHEN MATCHED 
+    THEN UPDATE SET T.StandardQty = S.StandardQty,
+                    T.ReqQty = S.ReqQty,
+                    T.NeedUpdate = 1
+WHEN NOT MATCHED BY SOURCE
+    THEN UPDATE SET T.NeedDelete = 1
+	;
+
+select * from #tmpDB 
+
+drop table #tmpCurrent,#tmpDB,#tmpCurrentFinal
 
 ";
 

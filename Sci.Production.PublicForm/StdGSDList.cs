@@ -361,13 +361,15 @@ order by seq
 
             string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.RestoreDirectory = true;
-            dlg.InitialDirectory = myDocumentsPath;     // 指定"我的文件"路徑
-            dlg.Title = "Save as Excel File";
+            SaveFileDialog dlg = new SaveFileDialog
+            {
+                RestoreDirectory = true,
+                InitialDirectory = myDocumentsPath,     // 指定"我的文件"路徑
+                Title = "Save as Excel File",
 
-            // dlg.FileName = "StdGSDList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-            dlg.Filter = "Excel Files (*.xls)|*.xls";            // Set filter for file extension and default file extension
+                // dlg.FileName = "StdGSDList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
+                Filter = "Excel Files (*.xls)|*.xls",            // Set filter for file extension and default file extension
+            };
 
             // if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             // {

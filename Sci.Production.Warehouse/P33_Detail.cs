@@ -8,14 +8,15 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P33_Detail : Win.Subs.Input8A
     {
+        /// <inheritdoc/>
         public DataTable DtIssueBreakDown { get; set; }
 
-        public bool combo;
-        public bool isSave;
         private string oriSuppColor = string.Empty;
 
+        /// <inheritdoc/>
         public P33_Detail()
         {
             this.InitializeComponent();
@@ -23,7 +24,7 @@ namespace Sci.Production.Warehouse
             this.KeyField2 = "Issue_SummaryUkey";
         }
 
-        ///Issue_Detail
+        /// <inheritdoc/>
         protected override void OnSubDetailInsert(int index = -1)
         {
             var frm = new P33_Detail_Detail(this.CurrentDetailData, (DataTable)this.gridbs.DataSource, this.CurrentDetailData["AccuIssued"].ToString(), this.CurrentDetailData["Use Qty By Stock Unit"].ToString());
@@ -45,8 +46,7 @@ namespace Sci.Production.Warehouse
             {
                 DataTable dtFtyinventory;
                 DualResult result;
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                        temp, string.Empty, @"  
+                string c = @"  
 
 select t.poid
        , t.Seq1
@@ -73,7 +73,9 @@ OUTER APPLY(
 	), 1, 1, '') 
 )Location
 WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
-", out dtFtyinventory, "#tmp")))
+";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                        temp, string.Empty,  c, out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
@@ -175,7 +177,6 @@ WHERE (FTY.stocktype = 'B' OR FTY.stocktype IS NULL)
         /// <inheritdoc/>
         protected override bool OnUndo()
         {
-            this.isSave = false;
             this.CurrentDetailData["SuppColor"] = this.oriSuppColor;
             return base.OnUndo();
         }
@@ -254,7 +255,6 @@ AND Seq1 = '{seq1}' AND Seq2 = '{seq2}'
 
         private void Save_Click(object sender, EventArgs e)
         {
-            this.isSave = true;
         }
 
         private void Delete_Click(object sender, EventArgs e)

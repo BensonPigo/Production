@@ -7,8 +7,11 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     internal static class P18_Utility
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult CheckDetailPOID(string poID, string fromFtyID, out string dataFrom)
         {
             dataFrom = "Po_Supp_Detail";
@@ -51,6 +54,8 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult CheckDetailSeq(string seq, string fromFtyID, DataRow currentDetailData)
         {
             // check Seq Length
@@ -158,6 +163,8 @@ where   InventoryPOID = '{0}'
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult CheckDetailStockTypeLocation(string stockType, string curLocation, out string newLocation)
         {
             newLocation = string.Empty;
@@ -200,6 +207,8 @@ WHERE   StockType='{0}'
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult CheckRollExists(string transferInID, DataRow checkRow)
         {
             DataRow dr;

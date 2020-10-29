@@ -23,6 +23,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P26 : Sci.Win.Tems.Base
     {
         private DataTable GridDt = new DataTable();
@@ -39,8 +40,8 @@ namespace Sci.Production.Packing
         private DataTable FileCountError_Table;
         private List<string> mappingFailFileName = new List<string>();
 
-        public bool canConvert = false;
-        public string ErrorMessage = string.Empty;
+        private bool canConvert = false;
+        private string ErrorMessage = string.Empty;
 
         private List<List<UpdateModel>> UpdateModel_List = new List<List<UpdateModel>>();
         private List<NewFormModel> NewFormModels = new List<NewFormModel>();
@@ -68,9 +69,11 @@ namespace Sci.Production.Packing
 
         private void BtnSelectFile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "ZPL files (*.zpl)|*.zpl|(*.pdf)|*.pdf";
-            openFileDialog1.Multiselect = true;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                Filter = "ZPL files (*.zpl)|*.zpl|(*.pdf)|*.pdf",
+                Multiselect = true,
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -79,8 +82,10 @@ namespace Sci.Production.Packing
                 this.GridDt.Rows.Clear();
                 this.listControlBindingSource1.DataSource = null;
                 this.File_Name_Object.Clear();
-                this._File_Name_Object_List = new File_Name_Object_List();
-                this._File_Name_Object_List.File_Name_Object2s = new List<File_Name_Object2>();
+                this._File_Name_Object_List = new File_Name_Object_List
+                {
+                    File_Name_Object2s = new List<File_Name_Object2>(),
+                };
                 this.File_Name_PDF.Clear();
                 this.wattingForConvert.Clear();
 
@@ -382,14 +387,16 @@ namespace Sci.Production.Packing
                     string shipQty = this.GetShipQtyFromZPL(content);
                     string custCTN = this.GetCustCTNFromZPL(content);
 
-                    ZPL zz = new ZPL();
-                    zz.CustPONo = custPONo;
-                    zz.StyleID = styleID;
-                    zz.Article = article;
-                    zz.SizeCode = sizeCode;
-                    zz.CTNStartNo = ctnStartno;
-                    zz.ShipQty = shipQty;
-                    zz.CustCTN = custCTN;
+                    ZPL zz = new ZPL
+                    {
+                        CustPONo = custPONo,
+                        StyleID = styleID,
+                        Article = article,
+                        SizeCode = sizeCode,
+                        CTNStartNo = ctnStartno,
+                        ShipQty = shipQty,
+                        CustCTN = custCTN,
+                    };
                     list.Add(zz);
                 }
                 else
@@ -407,74 +414,22 @@ namespace Sci.Production.Packing
                         return null;
                     }
 
-                    ZPL zz = new ZPL();
-                    zz.CustPONo = custPONo;
-                    zz.ShipQty = string.Empty;
-                    zz.SizeCode = string.Empty;
+                    ZPL zz = new ZPL
+                    {
+                        CustPONo = custPONo,
+                        ShipQty = string.Empty,
+                        SizeCode = string.Empty,
 
-                    // 現階段只有混尺碼情況，若有多色組則排除
-                    zz.StyleID = sizeObjects.FirstOrDefault().StyleID;
-                    zz.Article = sizeObjects.FirstOrDefault().Article;
+                        // 現階段只有混尺碼情況，若有多色組則排除
+                        StyleID = sizeObjects.FirstOrDefault().StyleID,
+                        Article = sizeObjects.FirstOrDefault().Article,
 
-                    zz.CTNStartNo = ctnStartno;
-                    zz.CustCTN = custCTN;
-                    zz.Size_Qty_List = sizeObjects;
+                        CTNStartNo = ctnStartno,
+                        CustCTN = custCTN,
+                        Size_Qty_List = sizeObjects,
+                    };
                     list.Add(zz);
                 }
-
-                /*
-                // 根據ZPL的標題文字、座標，找到這張ZPL，屬於哪一種Type
-                foreach (var type in this.ZplTypes)
-                {
-                    ZplTitlePosition titlePosition = type.Value;
-
-                    bool po = content.ToUpper().Contains(titlePosition.PO);
-                    bool sku = content.ToUpper().Contains(titlePosition.SKU);
-                    bool qty = content.ToUpper().Contains(titlePosition.Qty);
-                    bool box = content.ToUpper().Contains(titlePosition.BOX);
-
-                    if (po && sku && qty && box)
-                    {
-                        zplType = type.Key;
-                        break;
-                    }
-                }
-
-                ZPL z = new ZPL();
-
-                // 不同Type對應不同拆解方式
-                switch (zplType)
-                {
-                    case "A":
-                        z = this.SplitZLContent(content, custCTNno, isMixed,
-                                custPONo_Spliter1: "^FDPO#:^FS^FT225,850^A0B,40,50^FD",
-                                custPONo_Spliter2: "^FS^FT280,950^A0B,40,50^FDSKU:^FS",
-                                detail_Spliter1: "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD",
-                                detail_Spliter_Mixed: "^FS^FT",
-                                detail_Spliter_NotMix: "^FS^FT400,950^A0B,40,50^FDQTY:",
-                                detail_Spliter2: "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD",
-                                detail_Spliter3: "^FS^FO425,700^BY3^B3B,N,75,N,N^FD",
-                                detail_Spliter4: "^FDBOX:^FS^FT700,590^A0B,48,65^FD",
-                                detail_Spliter5: "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD");
-                        list.Add(z);
-                        break;
-                    case "B":
-                        z = this.SplitZLContent(content, custCTNno, isMixed,
-                                custPONo_Spliter1: "^FDPO#:^FS^FT325,790^A0B,75,80^FD",
-                                custPONo_Spliter2: "^FS^FT460,950^A0B,75,80^FDSKU:^FS",
-                                detail_Spliter1: "^FS^FT460,950^A0B,75,80^FDSKU:^FS^FT457,785^A0B,60,55^FD",
-                                detail_Spliter_Mixed: "^FS^FT",
-                                detail_Spliter_NotMix: "^FS^FT380,950^FT750,950^A0B,75,80^FDQTY:",
-                                detail_Spliter2: "^FS^FT380,950^FT750,950^A0B,75,80^FDQTY:^FS^FT750,750^A0B,75,100^FD",
-                                detail_Spliter3: "^FS^FT600,950^A0B,75,80^FD",
-                                detail_Spliter4: "^FDBOX:^FS^FT600,750^A0B,75,100^FD",
-                                detail_Spliter5: "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD");
-                        list.Add(z);
-                        break;
-                    default:
-                        break;
-                }
-                */
             }
 
             return list;
@@ -537,9 +492,11 @@ namespace Sci.Production.Packing
                     int groupID = 1;
                     foreach (var key in keys)
                     {
-                        PDF_Model m = new PDF_Model();
-                        m.GroupID = groupID.ToString();
-                        m.UpdateModels = zPLs.Where(o => o.CustPONo == key.CustPONo && o.StyleID == key.StyleID).ToList();
+                        PDF_Model m = new PDF_Model
+                        {
+                            GroupID = groupID.ToString(),
+                            UpdateModels = zPLs.Where(o => o.CustPONo == key.CustPONo && o.StyleID == key.StyleID).ToList(),
+                        };
 
                         pDF_Models.Add(m);
                         groupID++;
@@ -547,19 +504,19 @@ namespace Sci.Production.Packing
 
                     foreach (var item in pDF_Models)
                     {
-                        List<ZPL> ZPLs = item.UpdateModels;
+                        List<ZPL> zPLs1 = item.UpdateModels;
                         this.tmp_NewFormModels = new List<NewFormModel>();
-                        bool isMixed = ZPLs.Where(o => o.SizeCode == string.Empty || o.SizeCode.ToUpper() == "MIXED").Any();
+                        bool isMixed = zPLs1.Where(o => o.SizeCode == string.Empty || o.SizeCode.ToUpper() == "MIXED").Any();
 
-                        List<UpdateModel> updateModels = this.PDF_Mapping(ZPLs, isMixed: isMixed);
+                        List<UpdateModel> updateModels = this.PDF_Mapping(zPLs1, isMixed: isMixed);
 
                         if (this.tmp_NewFormModels.Count == 0)
                         {
                             this.UpdateModel_List.Add(updateModels);
                         }
-                        else if (this.tmp_NewFormModels.Count != ZPLs.Count && (isMixed && this.tmp_NewFormModels.FirstOrDefault().ZPL_List.Select(o => o.CTNStartNo).Distinct().Count() != ZPLs.Count))
+                        else if (this.tmp_NewFormModels.Count != zPLs1.Count && (isMixed && this.tmp_NewFormModels.FirstOrDefault().ZPL_List.Select(o => o.CTNStartNo).Distinct().Count() != zPLs1.Count))
                         {
-                            foreach (var zpl in ZPLs)
+                            foreach (var zpl in zPLs1)
                             {
                                 if (!this.ErrorMessage.Contains($"Carton count not mapping."))
                                 {
@@ -575,7 +532,7 @@ namespace Sci.Production.Packing
                         else
                         {
                             // 每一張都mapping到兩個ID才需要開新視窗
-                            if (ZPLs.Count == this.tmp_NewFormModels.Count || (isMixed && this.tmp_NewFormModels.FirstOrDefault().ZPL_List.Select(o => o.CTNStartNo).Distinct().Count() == ZPLs.Count))
+                            if (zPLs1.Count == this.tmp_NewFormModels.Count || (isMixed && this.tmp_NewFormModels.FirstOrDefault().ZPL_List.Select(o => o.CTNStartNo).Distinct().Count() == zPLs1.Count))
                             {
                                 this.NewFormModels.AddRange(this.tmp_NewFormModels);
                                 isUserSlect = true;
@@ -647,8 +604,10 @@ namespace Sci.Production.Packing
                     // 開啟新視窗 New Form
                     if (isUserSlect && this.NewFormModels.Count > 0)
                     {
-                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL);
-                        form.Width = 800;
+                        Sci.Production.Packing.P26_AssignPackingList form = new P26_AssignPackingList(this.NewFormModels, (DataTable)this.listControlBindingSource1.DataSource, this.currentFileType.ToString(), this.wattingForConvert, this.File_Name_PDF, this.wattingForConvert_contentsOfZPL)
+                        {
+                            Width = 800,
+                        };
                         form.ShowDialog();
                         this.canConvert = form.canConvert;
                         if (this.canConvert)
@@ -759,6 +718,7 @@ namespace Sci.Production.Packing
             }
         }
 
+        /// <inheritdoc/>
         public List<UpdateModel> ZPL_Mapping(List<ZPL> zPLs, string fileName, bool isMixed = false, string selected_PackingListID = "")
         {
             DataTable[] mappingInfo;
@@ -856,21 +816,21 @@ namespace Sci.Production.Packing
                     string custPONo = key.CustPONO;
                     string styleID = key.StyleID;
                     string article = key.Article;
-                    string SizeCode = key.SizeCode;
-                    string ShipQty = key.ShipQty;
+                    string sizeCode1 = key.SizeCode;
+                    string shipQty1 = key.ShipQty;
 
                     // 相同Article SizeCode ShipQty可能不只有一箱，因此要把已經對應過的CustCTN記錄下來，不能重複
                     List<string> packingList_Detail_CustCTNs = new List<string>();
 
                     DataTable dt;
-
-                    DBProxy.Current.Select(null, $@"
+                    string cmd = $@"
 SELECT *
 FROM PackingList_Detail
 WHERE ID='{selected_PackingListID}'
 AND Article='{article}'
-AND SizeCode='{SizeCode}'
-AND ShipQty={ShipQty} ", out dt);
+AND SizeCode='{sizeCode1}'
+AND ShipQty={shipQty1} ";
+                    DBProxy.Current.Select(null, cmd, out dt);
 
                     foreach (DataRow dr in dt.Rows)
                     {
@@ -907,12 +867,12 @@ AND ShipQty={ShipQty} ", out dt);
                 string custPONo = key.CustPONO;
                 string styleID = key.StyleID;
                 string article = key.Article;
-                string SizeCode = key.SizeCode;
-                string ShipQty = key.ShipQty;
+                string sizeCode = key.SizeCode;
+                string shipQty1 = key.ShipQty;
 
                 // 相同Article SizeCode ShipQty可能不只有一箱，因此要把已經對應過的CustCTN記錄下來，不能重複
                 List<string> packingList_Detail_Ukeys = new List<string>();
-                List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == SizeCode && o.ShipQty == ShipQty).ToList();
+                List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == sizeCode && o.ShipQty == shipQty1).ToList();
 
                 foreach (var zPL in sameZPL)
                 {
@@ -1009,7 +969,6 @@ AND ShipQty={ShipQty} ", out dt);
                     // {
                     //    this.packingList_IxMixed.Add(packingID, isMixPack);
                     // }
-
                     if (mapped_PackingLisID_Count == 1)
                     {
                         if (totalCount == fileCount)
@@ -1187,6 +1146,7 @@ WHERE p.Type ='B'
             return upateModel_List;
         }
 
+        /// <inheritdoc/>
         public List<UpdateModel> PDF_Mapping(List<ZPL> zPLs, bool isMixed = false, string selected_PackingListID = "")
         {
             DataTable[] mappingInfo;
@@ -1244,20 +1204,21 @@ WHERE p.Type ='B'
                     string custPONo = key.CustPONO;
                     string styleID = key.StyleID;
                     string article = key.Article;
-                    string SizeCode = key.SizeCode;
-                    string ShipQty = key.ShipQty;
+                    string sizeCode1 = key.SizeCode;
+                    string shipQty1 = key.ShipQty;
                     List<string> packingList_Detail_CustCTNs = new List<string>();
                     DataTable dt;
 
-                    List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == SizeCode && o.ShipQty == ShipQty).ToList();
+                    List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == sizeCode1 && o.ShipQty == shipQty1).ToList();
 
-                    DBProxy.Current.Select(null, $@"
+                    string cmd = $@"
 SELECT *
 FROM PackingList_Detail
 WHERE ID='{selected_PackingListID}'
 AND Article='{article}'
-AND SizeCode='{SizeCode}'
-AND ShipQty={ShipQty} ", out dt);
+AND SizeCode='{sizeCode1}'
+AND ShipQty={shipQty1} ";
+                    DBProxy.Current.Select(null, cmd, out dt);
 
                     foreach (DataRow dr in dt.Rows)
                     {
@@ -1589,6 +1550,7 @@ WHERE p.Type ='B'
             return upateModel_List;
         }
 
+        /// <inheritdoc/>
         public bool P03_Database_Update(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false)
         {
             DualResult result;
@@ -1782,6 +1744,16 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             return true;
         }
 
+        /// <summary>
+        /// 檢查該箱是否為混尺碼
+        /// </summary>
+        /// <param name="upateModel_List">upateModel_List</param>
+        /// <param name="uploadType">uploadType</param>
+        /// <param name="isFromNewForm">isFromNewForm</param>
+        /// <param name="wattingForConvert">wattingForConvert</param>
+        /// <param name="file_Name_PDF">file_Name_PDF</param>
+        /// <param name="wattingForConvert_contentsOfZPL">wattingForConvert_contentsOfZPL</param>
+        /// <returns>bool</returns>
         public bool P24_Database_Update(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false, List<string> wattingForConvert = null, Dictionary<string, string> file_Name_PDF = null, List<string> wattingForConvert_contentsOfZPL = null)
         {
             DualResult result;
@@ -2372,11 +2344,11 @@ DROP TABLE #tmpOrders,#tmp_PackingListDetail,#tmp,#StdComb ,#Current_ShippingMar
         /// <summary>
         /// 檢查該箱是否為混尺碼
         /// </summary>
-        /// <param name="custPONo"></param>
-        /// <param name="styleID"></param>
-        /// <param name="article"></param>
-        /// <param name="sizeCode"></param>
-        /// <param name="shipQty"></param>
+        /// <param name="custPONo">custPONo</param>
+        /// <param name="styleID">styleID</param>
+        /// <param name="article">article</param>
+        /// <param name="sizeCode">sizeCode</param>
+        /// <param name="shipQty">shipQty</param>
         /// <returns>bool</returns>
         private bool Chk_Carton_Mix(string custPONo, string styleID, string article, string sizeCode, string shipQty)
         {
@@ -2620,12 +2592,14 @@ where o.CustPONo='{pono}'
 
         #region 類別定義
 
+        /// <inheritdoc/>
         public class ZipHelper
         {
+            /// <inheritdoc/>
             /// <summary>
             /// 將串入的ZPL檔案轉成Zip檔資料流存在記憶體
             /// </summary>
-            /// <returns>Q</returns>
+            /// <param name="data">data</param>
             public static byte[] ZipData(Dictionary<string, byte[]> data)
             {
                 using (var zipStream = new MemoryStream())
@@ -2648,45 +2622,64 @@ where o.CustPONo='{pono}'
             }
         }
 
+        /// <inheritdoc/>
         public class MixedCompare
         {
+            /// <inheritdoc/>
             public string Text { get; set; }
 
+            /// <inheritdoc/>
             public bool IsInt { get; set; }
         }
 
+        /// <inheritdoc/>
         public class SizeObject
         {
+            /// <inheritdoc/>
             public string Size { get; set; }
 
+            /// <inheritdoc/>
             public int Qty { get; set; }
 
+            /// <inheritdoc/>
             public string StyleID { get; set; }
 
+            /// <inheritdoc/>
             public string Article { get; set; }
         }
 
+        /// <inheritdoc/>
         public class ZPL
         {
+            /// <inheritdoc/>
             public string CustPONo { get; set; }
 
+            /// <inheritdoc/>
             public string StyleID { get; set; }
 
+            /// <inheritdoc/>
             public string Article { get; set; }
 
+            /// <inheritdoc/>
             public string SizeCode { get; set; }
 
+            /// <inheritdoc/>
             public string ShipQty { get; set; }
 
+            /// <inheritdoc/>
             public string CustCTN { get; set; }
 
+            /// <inheritdoc/>
             public string CTNStartNo { get; set; }
 
+            /// <inheritdoc/>
             public List<SizeObject> Size_Qty_List { get; set; } // 混尺碼用
 
+            /// <inheritdoc/>
             public string FileName { get; set; }
         }
 
+        /// <inheritdoc/>
         public class UpdateModel
         {
             /// <inheritdoc/>
@@ -2720,6 +2713,7 @@ where o.CustPONo='{pono}'
             public string FileName { get; set; }
         }
 
+        /// <inheritdoc/>
         public class NewFormModel
         {
             /// <inheritdoc/>
@@ -2747,12 +2741,14 @@ where o.CustPONo='{pono}'
             public List<ZPL> UpdateModels { get; set; }
         }
 
+        /// <inheritdoc/>
         public class File_Name_Object_List
         {
             /// <inheritdoc/>
             public List<File_Name_Object2> File_Name_Object2s { get; set; }
         }
 
+        /// <inheritdoc/>
         public class File_Name_Object2
         {
             /// <inheritdoc/>
@@ -2882,7 +2878,7 @@ where o.CustPONo='{pono}'
         /// <param name="endPageNum">從PDF文件的第幾頁開始停止轉換</param>
         /// <param name="imageFormat">設定所需圖片格式</param>
         /// <param name="definition">設定圖片的清晰度，數字越大越清晰</param>
-        public void ConvertPDF2Image(string pdfInputPath, string imageOutputPath, string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
+        private void ConvertPDF2Image(string pdfInputPath, string imageOutputPath, string imageName, int startPageNum, int endPageNum, ImageFormat imageFormat, Definition definition)
         {
             PdfDocument doc = new PdfDocument();
             doc.LoadFromFile(pdfInputPath);
@@ -2933,7 +2929,6 @@ where o.CustPONo='{pono}'
 
             // 將切割後的圖片存檔
             // pic.Save(imageOutputPath + imageName + "_Cut.bmp");
-
             doc.Dispose();
             bmp.Dispose();
 
@@ -3010,7 +3005,7 @@ AND sd.Seq = (
             PDF,
         }
 
-        public enum Definition
+        private enum Definition
         {
             One = 1,
             Two = 2,

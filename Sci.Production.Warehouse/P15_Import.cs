@@ -9,16 +9,20 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P15_Import : Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Tems.Base P15;
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-       // bool flag;
-       // string poType;
-        protected DataTable dtlack;
+        /// <inheritdoc/>
+        // bool flag;
+        // string poType;
+        private DataTable dtlack;
         private string Type;
 
         public P15_Import(DataRow master, DataTable detail, string type, string title)

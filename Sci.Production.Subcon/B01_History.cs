@@ -6,10 +6,12 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class B01_History : Win.Subs.Base
     {
-        protected DataRow motherData;
+        private DataRow motherData;
 
+        /// <inheritdoc/>
         public B01_History(DataRow data)
         {
             this.InitializeComponent();

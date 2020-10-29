@@ -198,8 +198,10 @@ namespace Sci.Production.PPIC
 
         private string PopUpTPEUser(string userID)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID);
-            item.Width = 510;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,ExtNo from TPEPass1 WITH (NOLOCK) ", "10,23,5", userID)
+            {
+                Width = 510,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

@@ -1,31 +1,32 @@
-﻿using Ict;
-using Ict.Win;
-using Sci.Data;
-using Sci.Production.PublicPrg;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using System.Reflection;
+using Ict;
+using Ict.Win;
 using Microsoft.Reporting.WinForms;
-using System.Data.SqlClient;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using static Sci.Production.PublicPrg.Prgs;
-using Sci.Production.Automation;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P23 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P23(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,6 +41,7 @@ namespace Sci.Production.Warehouse
             this.di_stocktype.Add("I", "Inventory");
         }
 
+        /// <inheritdoc/>
         public P23(ToolStripMenuItem menuitem, string transID)
             : this(menuitem)
         {
@@ -95,6 +97,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -309,6 +312,7 @@ WHERE   StockType='{0}'
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -823,6 +827,7 @@ Where a.id = '{0}'", masterID);
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickPrint()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());

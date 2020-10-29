@@ -1,12 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 using TECIT.TFORMer;
@@ -37,9 +39,10 @@ namespace Sci.Production.Packing
         {
             base.OnFormLoaded();
             this.EditMode = true;
-            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings();
-
-            col_Selected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            DataGridViewGeneratorCheckBoxColumnSettings col_Selected = new DataGridViewGeneratorCheckBoxColumnSettings
+            {
+                HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None,
+            };
             col_Selected.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
@@ -349,6 +352,17 @@ WHERE td.TemplateName <> ''
 
             if (success)
             {
+                #region ISP20201690 資料交換 - Sunrise
+
+                foreach (var packingListID in tList.Select(o => o.PackingListID).Distinct())
+                {
+                    // 不透過Call API的方式，自己組合，傳送API
+                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(packingListID, string.Empty))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                #endregion
+
                 MyUtility.Msg.InfoBox("Success!!");
                 this.Query();
             }
@@ -564,6 +578,7 @@ INSERT INTO ShippingMarkStamp_Detail
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class P27_Template
     {
         /// <inheritdoc/>
@@ -622,6 +637,7 @@ INSERT INTO ShippingMarkStamp_Detail
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class DefineColumn
     {
         /// <inheritdoc/>

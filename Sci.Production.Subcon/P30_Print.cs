@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P30_Print : Win.Tems.PrintForm
     {
         private DualResult result;
@@ -22,6 +23,7 @@ namespace Sci.Production.Subcon
         private string currentID;
         private string currentdate;
 
+        /// <inheritdoc/>
         public P30_Print(DataRow row, string iD, string issuedate)
         {
             this.InitializeComponent();
@@ -57,8 +59,8 @@ namespace Sci.Production.Subcon
                 #region  抓表頭資料
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", this.currentID));
-                DualResult result = DBProxy.Current.Select(
-                    string.Empty,
+
+                string tmp =
                     @"select b.NameEN [RptTitle]
 	                ,a.LocalSuppID+'-'+c.Name [Supplier]
 	                ,c.Tel [Tel]
@@ -71,7 +73,9 @@ namespace Sci.Production.Subcon
             inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
             where b.id = a.factoryid
-            and a.id = @ID", pars, out this.dtHeader);
+            and a.id = @ID";
+
+                DualResult result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtHeader);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -82,9 +86,8 @@ namespace Sci.Production.Subcon
                 #region  抓表身資料
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", this.currentID));
-                result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"
+
+                string cmdd = @"
 select 	
         Sort = ROW_NUMBER() Over (Partition By a.Delivery, a.Refno Order By a.Delivery, a.Refno)
 		,a.OrderId [SP]
@@ -113,7 +116,9 @@ order by a.Delivery, a.Refno
 --from #tmp
 --order by Sort
 --
---drop table #tmp", pars, out this.dtBody);
+--drop table #tmp";
+
+                result = DBProxy.Current.Select(string.Empty, cmdd, pars, out this.dtBody);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -127,9 +132,7 @@ order by a.Delivery, a.Refno
                 #region  抓表頭資料
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", this.currentID));
-                DualResult result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"select b.NameEN [RptTitle]
+                string cmdd = @"select b.NameEN [RptTitle]
 	                ,a.LocalSuppID+'-'+c.Name [Supplier]
 	                ,c.Tel [Tel]
 	                ,c.Address [Address]
@@ -143,7 +146,8 @@ order by a.Delivery, a.Refno
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
             left join dbo.Pass1 p with (nolock) on p.id = a.AddName
             where b.id = a.factoryid
-            and a.id = @ID", pars, out this.dtHeader);
+            and a.id = @ID";
+                DualResult result = DBProxy.Current.Select(string.Empty, cmdd, pars, out this.dtHeader);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -154,9 +158,7 @@ order by a.Delivery, a.Refno
                 #region 表身資料
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", this.currentID));
-                result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"
+                cmdd = @"
 select 	 
 		[Refno] = a.Refno 
 		,[Delivery] = a.delivery
@@ -175,7 +177,8 @@ group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery,b.apvname,b.Lockname
 select Sort = ROW_NUMBER() Over (Partition By Delivery Order By Delivery),* 
 from #temp
 order by delivery,refno
-", pars, out this.dtBody);
+";
+                result = DBProxy.Current.Select(string.Empty, cmdd, pars, out this.dtBody);
                 if (!result)
                 {
                     this.ShowErr(result);

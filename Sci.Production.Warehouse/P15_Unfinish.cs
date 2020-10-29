@@ -6,12 +6,19 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P15_Unfinish : Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public static string TypeFabric = "F";
-        public static string TypeAccessory = "A";
-        protected string FabricType;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
+        public static string TypeAccessory = "A";
+        private string FabricType;
+
+        /// <inheritdoc/>
         public P15_Unfinish(string fabricType, string title)
         {
             this.Text = title.ToString();
@@ -38,6 +45,7 @@ namespace Sci.Production.Warehouse
                  .Date("issuedate", header: "Date", width: Widths.AnsiChars(13));
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void SelectData()
         {
             string selectCmd = string.Format(

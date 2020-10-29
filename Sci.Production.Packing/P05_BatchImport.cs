@@ -196,21 +196,29 @@ drop table #tmp;
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@mdivisionid", this.displayM.Value);
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderID1", this.txtSPNoStart.Text);
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@orderID2", this.txtSPNoEnd.Text);
-            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-            sp5.ParameterName = "@buyerDelivery1";
-            sp5.Value = !MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) ? this.dateBuyerDelivery.Value1 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@buyerDelivery1",
+                Value = !MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) ? this.dateBuyerDelivery.Value1 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-            sp6.ParameterName = "@buyerDelivery2";
-            sp6.Value = !MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) ? this.dateBuyerDelivery.Value2 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@buyerDelivery2",
+                Value = !MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) ? this.dateBuyerDelivery.Value2 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-            sp7.ParameterName = "@sciDelivery1";
-            sp7.Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? this.dateSCIDelivery.Value1 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@sciDelivery1",
+                Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? this.dateSCIDelivery.Value1 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
-            sp8.ParameterName = "@sciDelivery2";
-            sp8.Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? this.dateSCIDelivery.Value2 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@sciDelivery2",
+                Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? this.dateSCIDelivery.Value2 : DateTime.Now,
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);

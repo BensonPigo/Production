@@ -9,8 +9,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R25 : Win.Tems.PrintForm
     {
+        /// <inheritdoc/>
         public R25(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -96,8 +98,9 @@ namespace Sci.Production.Subcon
                 lis.Add(new SqlParameter("@Supplier", this.Supplier));
             }
 
-            if (this.Factory != string.Empty) // (!this.comboBox1.Text.Empty())
+            if (this.Factory != string.Empty)
             {
+                // (!this.comboBox1.Text.Empty())
                 sqlWheres.Add("lr.factoryid =@Factory");
                 lis.Add(new SqlParameter("@Factory", this.Factory));
             }
@@ -160,10 +163,7 @@ left join dbo.LocalItem li WITH (NOLOCK) on li.RefNo=lrd.Refno
             this.ShowWaitMessage("Excel Processing...");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.Sheets[1];
             worksheet.Cells[2, 1] = string.Format(
-                "Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ",
-                MyUtility.Check.Empty(this.ReceiveDate) ? string.Empty : Convert.ToDateTime(this.ReceiveDate).ToString("yyyy/MM/dd"),
-                MyUtility.Check.Empty(this.ReceiveDate2) ? string.Empty : Convert.ToDateTime(this.ReceiveDate2).ToString("yyyy/MM/dd"),
-                this.SP, this.Refno, this.Category, this.Supplier, this.Factory);
+                "Receive Date: {0}~{1}  ,SP#:{2}  ,Refno:{3} Category:{4}  Supplier:{5}  ,Factory:{6}  ", MyUtility.Check.Empty(this.ReceiveDate) ? string.Empty : Convert.ToDateTime(this.ReceiveDate).ToString("yyyy/MM/dd"), MyUtility.Check.Empty(this.ReceiveDate2) ? string.Empty : Convert.ToDateTime(this.ReceiveDate2).ToString("yyyy/MM/dd"), this.SP, this.Refno, this.Category, this.Supplier, this.Factory);
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Subcon_R25");

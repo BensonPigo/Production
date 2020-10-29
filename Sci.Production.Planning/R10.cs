@@ -623,8 +623,10 @@ namespace Sci.Production.Planning
                     return false;
                 }
 
-                SaveXltReportCls xl = new SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true);
-                xl.BoOpenFile = true;
+                SaveXltReportCls xl = new SaveXltReportCls("Planning_R10_ProuctionStatus.xltx", keepApp: true)
+                {
+                    BoOpenFile = true,
+                };
 
                 SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(this.dt);
                 Microsoft.Office.Interop.Excel.Worksheet wks = xl.ExcelApp.ActiveSheet;
@@ -632,8 +634,10 @@ namespace Sci.Production.Planning
                 dt1.ShowHeader = false;
                 xl.DicDatas.Add("##dt", dt1);
 
-                SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(this.dt2All);
-                dt2.ShowHeader = false;
+                SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(this.dt2All)
+                {
+                    ShowHeader = false,
+                };
                 xl.DicDatas.Add("##dt2", dt2);
 
                 SaveXltReportCls.ReplaceAction a = this.SetRow1;
@@ -2286,8 +2290,10 @@ namespace Sci.Production.Planning
 
         private void TxtZone_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",");
-            item.Size = new Size(300, 250);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select distinct zone from Factory WITH (NOLOCK) where isSCI=1 and junk=0 ", "8", this.Text, false, ",")
+            {
+                Size = new Size(300, 250),
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

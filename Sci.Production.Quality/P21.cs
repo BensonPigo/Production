@@ -11,13 +11,15 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P21 : Win.Tems.Input6
     {
         private readonly string loginID = Env.User.UserID;
         private string tmpId;
 
-        private readonly Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
+        private Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
 
+        /// <inheritdoc/>
         public P21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

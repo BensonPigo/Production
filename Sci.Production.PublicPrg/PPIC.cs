@@ -8,32 +8,6 @@ using Sci.Production.Prg;
 namespace Sci.Production.PublicPrg
 {
     /// <summary>
-    /// OrderChangeModel
-    /// </summary>
-    public class OrderChangeModel
-    {
-        /// <summary>
-        /// ID
-        /// </summary>
-        public string ID { get; set; }
-
-        /// <summary>
-        /// Status
-        /// </summary>
-        public string Status { get; set; }
-
-        /// <summary>
-        /// EditName
-        /// </summary>
-        public string EditName { get; set; }
-
-        /// <summary>
-        /// FTYComments
-        /// </summary>
-        public string FTYComments { get; set; }
-    }
-
-    /// <summary>
     /// Prgs
     /// </summary>
     public static partial class Prgs
@@ -212,5 +186,32 @@ where OrderID = '{orderid}' and od.Seq = '{seq}' and status != 'Confirmed' and s
 ";
             return !MyUtility.Check.Seek(sqlcmd);
         }
+    }
+
+    /// <summary>
+    /// OrderChangeModel
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
+    public class OrderChangeModel
+    {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public string ID { get; set; }
+
+        /// <summary>
+        /// Status
+        /// </summary>
+        public string Status { get; set; }
+
+        /// <summary>
+        /// EditName
+        /// </summary>
+        public string EditName { get; set; }
+
+        /// <summary>
+        /// FTYComments
+        /// </summary>
+        public string FTYComments { get; set; }
     }
 }

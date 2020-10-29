@@ -3,8 +3,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P18_MessageBox : Form
     {
+        /// <inheritdoc/>
         public P18_MessageBox()
         {
             this.InitializeComponent();

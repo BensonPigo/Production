@@ -7,11 +7,14 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_TaipeiInventory : Win.Subs.Base
     {
         private DataRow dr;
         private DataTable selectDataTable1;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public P03_TaipeiInventory(DataRow data)
         {
             this.InitializeComponent();

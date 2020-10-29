@@ -11,11 +11,9 @@ using System.IO;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P27 : Win.Tems.QueryForm
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
-        private DataTable gridData;
         private readonly IList<string> comboBox2_RowSource1 = new List<string>();
         private readonly IList<string> comboBox2_RowSource2 = new List<string>();
         private readonly IList<string> comboBox2_RowSource3 = new List<string>();
@@ -24,8 +22,12 @@ namespace Sci.Production.Quality
         private readonly IList<string> comboBox3_RowSource = new List<string>();
         private BindingSource comboxbs1;
         private BindingSource comboxbs2;
-        private readonly string selectDataTable_DefaultView_Sort = string.Empty;
+        private string selectDataTable_DefaultView_Sort = string.Empty;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_location;
+        private DataTable gridData;
 
+        /// <inheritdoc/>
         public P27(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -190,21 +192,29 @@ namespace Sci.Production.Quality
                             }
 
                             #region 準備sql參數資料
-                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                            sp1.ParameterName = "@CFALocationID";
-                            sp1.Value = currentRow["CFALocationID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@CFALocationID",
+                                Value = currentRow["CFALocationID"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                            sp3.ParameterName = "@id";
-                            sp3.Value = currentRow["ID"].ToString();
+                            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@id",
+                                Value = currentRow["ID"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                            sp5.ParameterName = "@ctnStartNo";
-                            sp5.Value = currentRow["CTNStartNo"].ToString();
+                            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@ctnStartNo",
+                                Value = currentRow["CTNStartNo"].ToString(),
+                            };
 
-                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                            sp6.ParameterName = "@remark";
-                            sp6.Value = currentRow["Remark"].ToString();
+                            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+                            {
+                                ParameterName = "@remark",
+                                Value = currentRow["Remark"].ToString(),
+                            };
 
                             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
                             System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();

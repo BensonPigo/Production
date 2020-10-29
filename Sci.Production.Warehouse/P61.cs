@@ -13,8 +13,10 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P61 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P61(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -28,6 +30,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string iD = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -449,6 +452,7 @@ where LID.ID = @ID";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();

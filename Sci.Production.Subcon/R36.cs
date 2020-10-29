@@ -9,6 +9,7 @@ using Ict;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R36 : Win.Tems.PrintForm
     {
         private string reportType;
@@ -34,6 +35,7 @@ namespace Sci.Production.Subcon
         private DateTime? SettledDate1; private DateTime? SettledDate2;
         private string payment;
 
+        /// <inheritdoc/>
         public R36(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -682,8 +684,9 @@ OUTER APPLY(
 
                     break;
                 default:
-                    if (this.dt == null || this.dt.Rows.Count == 0) // 預設
+                    if (this.dt == null || this.dt.Rows.Count == 0)
                     {
+                        // 預設
                         MyUtility.Msg.ErrorBox("Data not found");
                         return false;
                     }

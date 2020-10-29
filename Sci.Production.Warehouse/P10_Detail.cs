@@ -8,11 +8,13 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P10_Detail : Win.Subs.Input8A
     {
         private int Type = 0;
         private string RequestID;
 
+        /// <inheritdoc/>
         public P10_Detail(int type = 0, string requestID = "")
         {
             this.InitializeComponent();
@@ -44,8 +46,7 @@ namespace Sci.Production.Warehouse
             {
                 DataTable dtFtyinventory;
                 DualResult result;
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(
-                        temp, string.Empty, @"          
+                string cmdd = @"          
 select t.poid
        , t.Seq1
        , t.Seq2
@@ -95,7 +96,9 @@ outer apply (select  TOP 1 fc.Result
 	        inner join dbo.FIR_Odor fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
 	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
 			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Odor
-order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp")))
+order by GroupQty desc, t.dyelot, balanceqty desc";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(
+                        temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;

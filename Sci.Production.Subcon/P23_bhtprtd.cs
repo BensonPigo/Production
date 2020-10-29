@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class DllInvoke
     {
         [DllImport("Kernel32.dll")]

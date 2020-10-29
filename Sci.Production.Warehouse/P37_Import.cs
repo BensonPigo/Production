@@ -9,13 +9,16 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P37_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtScrap;
 
+        private DataTable dtScrap;
+
+        /// <inheritdoc/>
         public P37_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

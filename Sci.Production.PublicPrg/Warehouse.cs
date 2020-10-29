@@ -19,6 +19,7 @@ namespace Sci.Production.PublicPrg
     {
         #region -- UpdatePO_Supp_Detail --
 
+        /// <inheritdoc/>
         /// <summary>
         /// UpdatePO_Supp_Detail()
         /// *   更新 Po3 的庫存
@@ -36,12 +37,11 @@ namespace Sci.Production.PublicPrg
         /// *   16. 更新LObQty
         /// *   32. 更新AdQty
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="String Poid"></param>
-        /// <param name="String Seq1"></param>
-        /// <param name="String Seq2"></param>
-        /// <param name="decimal qty"</param>
-        /// <returns>String Sqlcmd</returns>
+        /// <param name="type">type</param>
+        /// <param name="datas">datas</param>
+        /// <param name="encoded">encoded</param>
+        /// <param name="attachLocation">attachLocation</param>
+        /// <param name="sqlConn">sqlConn</param>
         // (整批) A & B倉
         public static string UpdateMPoDetail(int type, List<Prgs_POSuppDetailData> datas, bool encoded, bool attachLocation = true, SqlConnection sqlConn = null)
         {
@@ -279,6 +279,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         #endregion
         #region -- UpdateFtyInventory --
 
+        /// <inheritdoc/>
         /// <summary>
         /// UpdateFtyInventory()
         /// *   更新 FtyInventory 的庫存
@@ -293,17 +294,11 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// *   8.  更新AdjustQty
         /// *   26. 更新Location
         /// </summary>
-        /// <param name="Int Type"></param>
-        /// <param name="String Poid"></param>
-        /// <param name="String Seq1"></param>
-        /// <param name="String Seq2"></param>
-        /// <param name="decimal qty"</param>
-        /// <param name="roll"></param>
-        /// <param name="dyelot"></param>
-        /// <param name="char stocktype"></param>
-        /// <param name="bool encoded"></param>
-        /// <param name="location"></param>
-        /// <returns>String Sqlcmd</returns>
+        /// <param name="type">type</param>
+        /// <param name="datas">datas</param>
+        /// <param name="encoded">encoded</param>
+        /// <param name="mtlAutoLock">mtlAutoLock</param>
+        /// <returns>w</returns>
         // (整批)
         public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int mtlAutoLock = 0)
         {
@@ -644,9 +639,10 @@ where p.id ='{0}'
         /// <summary>
         /// 右鍵開窗選取採購項
         /// </summary>
-        /// <param name="poid"></param>
-        /// <param name="defaultseq"></param>
-        /// <param name="filters"></param>
+        /// <param name="poid">poid</param>
+        /// <param name="defaultseq">defaultseq</param>
+        /// <param name="filters">filters</param>
+        /// <param name="junk">junk</param>
         /// <returns>Sci.Win.Tools.SelectItem</returns>
         public static Win.Tools.SelectItem SelePoItem(string poid, string defaultseq, string filters = null, bool junk = true)
         {
@@ -662,11 +658,10 @@ where p.id ='{0}'
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
-            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
-                dt,
-                "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty",
-                "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
-            selepoitem.Width = 1024;
+            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty", "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty")
+            {
+                Width = 1024,
+            };
 
             return selepoitem;
         }
@@ -676,8 +671,8 @@ where p.id ='{0}'
         /// <summary>
         /// 右鍵開窗選取物料儲位
         /// </summary>
-        /// <param name="stocktype"></param>
-        /// <param name="defaultseq"></param>
+        /// <param name="stocktype">stocktype</param>
+        /// <param name="defaultseq">defaultseq</param>
         /// <returns>Sci.Win.Tools.SelectItem2</returns>
         public static Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
         {
@@ -718,15 +713,16 @@ WHERE   StockType='{0}'
         and junk != '1'", stocktype);
             }
 
-            Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(
-                sqlcmd,
-                "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null);
-            selectlocation.Width = 1024;
+            Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd, "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null)
+            {
+                Width = 1024,
+            };
 
             return selectlocation;
         }
         #endregion
 
+        /// <inheritdoc/>
         public static bool CheckLocationExists(string stocktype, string location)
         {
             if (MyUtility.Check.Empty(location))
@@ -774,6 +770,8 @@ WHERE   StockType='{stocktype}'
         }
 
         #region-- GetLocation --
+
+        /// <inheritdoc/>
         public static string GetLocation(int ukey, SqlConnection conn = null)
         {
             // string rtn = "";
@@ -793,10 +791,11 @@ for xml path('') ", ukey), out dr);
             }
             else
             {
-                DBProxy.Current.SelectByConn(conn, string.Format(
-                    @"select cast(tmp.MtlLocationID as nvarchar) +','
-from (select f.MtlLocationID from dbo.FtyInventory_Detail f WITH (NOLOCK) where f.Ukey = {0}) tmp
-for xml path('') ", ukey), out dt);
+                string cmdText = $@"
+select cast(tmp.MtlLocationID as nvarchar) +','
+from (select f.MtlLocationID from dbo.FtyInventory_Detail f WITH (NOLOCK) where f.Ukey = {ukey}) tmp
+for xml path('') ";
+                DBProxy.Current.SelectByConn(conn, cmdText, out dt);
                 if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
                 {
                     return string.Empty;
@@ -813,7 +812,7 @@ for xml path('') ", ukey), out dt);
         /// <summary>
         /// 將字串依逗點分隔拆開，剔除重覆後重新以逗點分隔連接字串
         /// </summary>
-        /// <param name="str"></param>
+        /// <param name="str">str</param>
         /// <returns>String</returns>
         public static string DistinctString(string str)
         {
@@ -828,6 +827,8 @@ for xml path('') ", ukey), out dt);
         }
         #endregion
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static IList<DataRow> Autopick(DataRow materials, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
@@ -836,11 +837,10 @@ for xml path('') ", ukey), out dt);
             decimal request; // 需求總數
 
             decimal accu_issue = 0m;
-            if (isIssue) // P10 Auto Pick
+            if (isIssue)
             {
                 request = decimal.Parse(materials["requestqty"].ToString()) - decimal.Parse(materials["accu_issue"].ToString());
-                sqlcmd = string.Format(
-                    @"
+                sqlcmd = $@"
 with cte as (
     select  Dyelot
             , sum(inqty-OutQty+AdjustQty) as GroupQty
@@ -848,11 +848,11 @@ with cte as (
     inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                       and p.seq1 = a.Seq1 
                                                       and p.seq2 = a.Seq2
-    where   poid = '{1}' 
-            and Stocktype = '{4}' 
+    where   poid = '{materials["poid"]}' 
+            and Stocktype = '{stocktype}' 
             and inqty - OutQty + AdjustQty > 0
-            and p.SCIRefno = '{2}' 
-            and p.ColorID = '{3}' 
+            and p.SCIRefno = '{materials["scirefno"]}' 
+            and p.ColorID = '{materials["colorid"]}' 
             and a.Seq1 BETWEEN '00' AND '99'
     Group by Dyelot
 ) 
@@ -884,14 +884,15 @@ inner join dbo.FtyInventory a WITH (NOLOCK) on a.Dyelot=c.Dyelot
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                   and p.seq1 = a.Seq1 
                                                   and p.seq2 = a.Seq2
-where   poid = '{1}' 
-        and Stocktype = '{4}' 
+where   poid = '{materials["poid"]}' 
+        and Stocktype = '{stocktype}' 
         and inqty - OutQty + AdjustQty > 0
-        and p.SCIRefno = '{2}' 
-        and p.ColorID = '{3}' 
-        and a.Seq1 BETWEEN '00' AND '99'", Env.User.Keyword, materials["poid"], materials["scirefno"], materials["colorid"], stocktype);
+        and p.SCIRefno = '{materials["scirefno"]}' 
+        and p.ColorID = '{materials["colorid"]}' 
+        and a.Seq1 BETWEEN '00' AND '99'
+";
             }
-            else if (isIssue == false && stocktype == "B") // P28 Auto Pick
+            else if (isIssue == false && stocktype == "B")
             {
                 request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(
@@ -946,8 +947,9 @@ where   a.lock = 0
         and p.seq1 = '{2}' 
         and p.seq2 = '{3}'", Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
-            else// P29,P30 Auto Pick
+            else
             {
+                // P29,P30 Auto Pick
                 request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = $@"
 with cte as (
@@ -1013,8 +1015,9 @@ where   poid = '{materials["StockPOID"]}'
                  * 若有則該項直接帶出
                  * 否則用 AutoPick 規則挑選
                  */
-                if (isIssue == false && stocktype == "B") // P28 Auto Pick
+                if (isIssue == false && stocktype == "B")
                 {
+                    // P28 Auto Pick
                     decimal blance = request - accu_issue;
                     List<long> num = new List<long>(); // 紀錄已分配
 
@@ -1037,10 +1040,10 @@ where   poid = '{materials["StockPOID"]}'
                             // 找出符合的dyelot資料, 筆數最小,若筆數一樣要qty的標準差最小 ,直接order by第一筆即是結果
                             string s = "select  top 1 dyelot,c=count(1),std = stdev(qty) from #tmp group by dyelot order by c ,std";
                             DataTable ct_std;
-                            DualResult Result = MyUtility.Tool.ProcessWithDatatable(dyelotS, "dyelot,qty", s, out ct_std);
-                            if (!Result)
+                            DualResult result1 = MyUtility.Tool.ProcessWithDatatable(dyelotS, "dyelot,qty", s, out ct_std);
+                            if (!result1)
                             {
-                                MyUtility.Msg.ErrorBox(Result.ToString());
+                                MyUtility.Msg.ErrorBox(result1.ToString());
                                 break;
                             }
 
@@ -1133,16 +1136,18 @@ where   poid = '{materials["StockPOID"]}'
                             }
                         }
 
-                        if (accu_issue < request && findrow != null) // 累計發料數小於需求數時，再反向取得最後一塊料。
+                        if (accu_issue < request && findrow != null)
                         {
+                            // 累計發料數小於需求數時，再反向取得最後一塊料。
                             decimal balance = request - accu_issue;
 
                             // dt.DefaultView.Sort = "Dyelot,location,Seq1,seq2,Qty asc";
                             for (int i = findrow.Rows.Count - 1; i >= 0; i--)
                             {
                                 DataRow find = items.Find(item => item["ftyinventoryukey"].ToString() == findrow.Rows[i]["ftyinventoryukey"].ToString());
-                                if (MyUtility.Check.Empty(find)) // if overlape
+                                if (MyUtility.Check.Empty(find))
                                 {
+                                    // if overlape
                                     if (balance > 0m)
                                     {
                                         if (balance >= (decimal)findrow.Rows[i]["qty"])
@@ -1150,8 +1155,9 @@ where   poid = '{materials["StockPOID"]}'
                                             items.Add(findrow.Rows[i]);
                                             balance -= (decimal)findrow.Rows[i]["qty"];
                                         }
-                                        else// 最後裁切
+                                        else
                                         {
+                                            // 最後裁切
                                             // P10最後裁切若有小數點需無條件進位
                                             if (isIssue)
                                             {
@@ -1194,6 +1200,8 @@ where   poid = '{materials["StockPOID"]}'
             return items;
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static IList<DataRow> AutoPickTape(DataRow materials, string cutplanid, bool isIssue = true, string stocktype = "B")
         {
             List<DataRow> items = new List<DataRow>();
@@ -1257,6 +1265,7 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
                 MyUtility.Msg.WarningBox(sqlcmd, "Sql Error");
                 return null;
             }
+
             if (dt.Rows.Count == 0 || dt.Select("balanceqty<>0").Length == 0)
             {
                 return null;
@@ -1309,7 +1318,8 @@ drop table #tmp", materials["poid"], cutplanid, stocktype, materials["ColorID"])
         /// <summary>
         /// 目的：自動產生可以寫入Issue_Detail的DataRow
         /// </summary>
-        /// <param name="materials">P33表身</param>
+        /// <param name="material">P33表身</param>
+        /// <param name="accuIssued">accuIssued</param>
         /// <returns>準備寫入P33第三層的DataRow (資料結構: Issue_Detail)</returns>
         public static List<DataRow> Thread_AutoPick(DataRow material, decimal accuIssued)
         {
@@ -1425,9 +1435,9 @@ where    psd.ID = '{material["poid"]}'
         /// <summary>
         /// 檢查實際到倉日不可早於到港日
         /// </summary>
-        /// <param name="arrivedPortDate"></param>
-        /// <param name="arrivedWhseDate"></param>
-        /// <param name="msg"></param>
+        /// <param name="arrivedPortDate">arrivedPortDate</param>
+        /// <param name="arrivedWhseDate">arrivedWhseDate</param>
+        /// <param name="msg">msg</param>
         /// <returns>bool</returns>
         public static bool CheckArrivedWhseDateWithArrivedPortDate(DateTime arrivedPortDate, DateTime arrivedWhseDate, out string msg)
         {
@@ -1444,9 +1454,9 @@ where    psd.ID = '{material["poid"]}'
         /// <summary>
         /// 檢查實際到倉日若早於ETA 3天或晚於 15天都回傳訊息。
         /// </summary>
-        /// <param name="eta"></param>
-        /// <param name="arrivedWhseDate"></param>
-        /// <param name="msg"></param>
+        /// <param name="eta">eta</param>
+        /// <param name="arrivedWhseDate">arrivedWhseDate</param>
+        /// <param name="msg">msg</param>
         /// <returns>bool</returns>
         public static bool CheckArrivedWhseDateWithEta(DateTime eta, DateTime arrivedWhseDate, out string msg)
         {
@@ -1469,6 +1479,8 @@ where    psd.ID = '{material["poid"]}'
             return true;
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static bool P22confirm(DataRow dr, DataTable dt)
         {
             StringBuilder upd_MD_8T = new StringBuilder();
@@ -1504,9 +1516,7 @@ where f.lock=1 and d.Id = '{0}'", dr["id"]);
                     {
                         foreach (DataRow tmp in datacheck.Rows)
                         {
-                            ids += string.Format(
-                                "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine,
-                                tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine, tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
                         }
 
                         MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
@@ -1536,9 +1546,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine,
-                            tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine, tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
 
                     MyUtility.Msg.WarningBox("Bulk balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -1732,6 +1740,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             return true;
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult P23confirm(string subTransfer_ID)
         {
             string upd_MD_4T = string.Empty;
@@ -2132,6 +2142,8 @@ when matched then
             return result;
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public static DualResult P24confirm(string subTransfer_ID)
         {
             string upd_MD_16T = string.Empty;
@@ -2389,12 +2401,13 @@ Where a.id = '{subTransfer_ID}'";
 
                 // 從MDivisionPoDetail出現有的Location
                 DataTable dT_MDivisionPoDetail;
-                DBProxy.Current.Select(null, $@"
+                string cmdText = $@"
 SELECt CLocation
 FROM MDivisionPoDetail
 WHERE POID='{pOID}'
 AND Seq1='{seq11}' AND Seq2='{seq21}'
-", out dT_MDivisionPoDetail);
+";
+                DBProxy.Current.Select(null, cmdText, out dT_MDivisionPoDetail);
 
                 List<string> dB_CLocations = dT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != string.Empty).ToList();
 
@@ -2522,6 +2535,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
             return result;
         }
 
+        /// <inheritdoc/>
         public static DualResult FillIssueDetailBarcodeNo(IList<DataRow> result)
         {
             int nCount = 0;
@@ -2553,6 +2567,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
             return new DualResult(true);
         }
 
+        /// <inheritdoc/>
         public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1, int ignoreSeq = 0, string orderByCol = "")
         {
             List<string> iDList = new List<string>();
@@ -2673,6 +2688,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
             return iDList;
         }
 
+        /// <inheritdoc/>
         public static string GetNextValue(string strValue, int sequenceMode)
         {
             char[] charValue = strValue.ToArray();
@@ -2698,8 +2714,9 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
                         else
                         {
                             sequenceValue = 1;
-                            if (charAscii == 72 || charAscii == 78) // I or O略過
+                            if (charAscii == 72 || charAscii == 78)
                             {
+                                // I or O略過
                                 charValue[0] = Convert.ToChar(charAscii + 2);
                             }
                             else
@@ -2739,20 +2756,22 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
                 {
                     charAscii = Convert.ToInt32(charValue[i]);
 
-                    if (charAscii == 57) // 遇9跳A
-                    {
+                    if (charAscii == 57)
+                    { // 遇9跳A
                         charValue[i] = 'A';
                         break;
                     }
 
-                    if (charAscii == 72 || charAscii == 78) // I or O略過
+                    if (charAscii == 72 || charAscii == 78)
                     {
+                        // I or O略過
                         charValue[i] = Convert.ToChar(charAscii + 2);
                         break;
                     }
 
-                    if (charAscii == 90) // 當字母為Z
+                    if (charAscii == 90)
                     {
+                        // 當字母為Z
                         if (i > 0)
                         {
                             charValue[i] = '0';
@@ -2774,6 +2793,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
             return returnValue;
         }
 
+        /// <inheritdoc/>
         public static DataTable RollTranscation(string poID, string seq1, string seq2)
         {
             DataTable dt = new DataTable();
@@ -2970,6 +2990,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             }
         }
 
+        /// <inheritdoc/>
         public static DualResult ReTransferMtlToScrapByPO(string poID, List<DataRow> listMtlItem)
         {
             string sqlRetransferToScrap = $@"
@@ -3011,6 +3032,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             return DBProxy.Current.Execute(null, sqlRetransferToScrap);
         }
 
+        /// <inheritdoc/>
         public static bool ChkFtyInventory(string sp, string seq1, string seq2, string roll, string dyelot, string stockType)
         {
             string cmd = $"select COUNT(Ukey) from FtyInventory where POID='{sp}' AND SEQ1='{seq1}' AND SEQ2='{seq2}' AND Roll='{roll}' AND Dyelot='{dyelot}' AND StockType = '{stockType}' AND InQty > 0";
@@ -3027,6 +3049,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             }
         }
 
+        /// <inheritdoc/>
         public static List<string> GetBarcodeNo(string tableName, string keyWord, int batchNumber = 1, int dateType = 3, string checkColumn = "Barcode", string connectionName = null, int sequenceMode = 1, int sequenceLength = 0)
         {
             List<string> iDList = new List<string>();
@@ -3156,6 +3179,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             public List<string> DB_CLocations { get; set; }
         }
 
+        /// <inheritdoc/>
         public static DualResult UpdateFtyInventoryMDivisionPoDetail(IList<DataRow> detailDatas)
         {
             StringBuilder sqlupd2 = new StringBuilder();
@@ -3168,8 +3192,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             foreach (DataRow item in detailDatas.Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != string.Empty).ToList())
             {
                 string pOID = item["POID"].ToString();
-                string Seq1 = item["Seq"].ToString().Split(' ')[0];
-                string Seq2 = item["Seq"].ToString().Split(' ')[1];
+                string seq11 = item["Seq"].ToString().Split(' ')[0];
+                string seq21 = item["Seq"].ToString().Split(' ')[1];
 
                 DataTable dT_MDivisionPoDetail;
 
@@ -3178,7 +3202,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
 SELECt CLocation
 FROM MDivisionPoDetail
 WHERE POID='{pOID}'
-AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+AND Seq1='{seq11}' AND Seq2='{seq21}'
 ";
                 DBProxy.Current.Select(null, c, out dT_MDivisionPoDetail);
 
@@ -3187,8 +3211,8 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                 NowDetail nData = new NowDetail()
                 {
                     POID = pOID,
-                    Seq1 = Seq1,
-                    Seq2 = Seq2,
+                    Seq1 = seq11,
+                    Seq2 = seq21,
                     DB_CLocations = dB_CLocations,
                 };
                 nowDetails.Add(nData);
@@ -3240,15 +3264,15 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                 foreach (DataRow item in detailDatas.Where(o => o["StockType"].ToString() == "O" && o["ToLocation"].ToString() != string.Empty))
                 {
                     string pOID = item["POID"].ToString();
-                    string Seq1 = item["Seq"].ToString().Split(' ')[0];
-                    string Seq2 = item["Seq"].ToString().Split(' ')[1];
+                    string seq11 = item["Seq"].ToString().Split(' ')[0];
+                    string seq21 = item["Seq"].ToString().Split(' ')[1];
 
-                    List<string> new_CLocationList = detailDatas.Where(o => o["POID"].ToString() == pOID && o["Seq"].ToString() == (Seq1 + " " + Seq2) && o["ToLocation"].ToString() != string.Empty)
+                    List<string> new_CLocationList = detailDatas.Where(o => o["POID"].ToString() == pOID && o["Seq"].ToString() == (seq11 + " " + seq21) && o["ToLocation"].ToString() != string.Empty)
                         .Select(o => o["ToLocation"].ToString())
                         .Distinct().ToList();
 
                     // List<string> DB_CLocations = DT_MDivisionPoDetail.Rows[0]["CLocation"].ToString().Split(',').Where(o => o != "").ToList();
-                    List<string> dB_CLocations = nowDetails.Where(o => o.POID == pOID && o.Seq1 == Seq1 && o.Seq2 == Seq2).FirstOrDefault().DB_CLocations;
+                    List<string> dB_CLocations = nowDetails.Where(o => o.POID == pOID && o.Seq1 == seq11 && o.Seq2 == seq21).FirstOrDefault().DB_CLocations;
 
                     List<string> fincal = new List<string>();
 
@@ -3274,7 +3298,7 @@ AND Seq1='{Seq1}' AND Seq2='{Seq2}'
                     string cmd = $@"
 UPDATE MDivisionPoDetail
 SET CLocation='{fincal.Distinct().ToList().JoinToString(",")}'
-WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
+WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
 
 ";
                     updateMDivisionPODetailCLocation += cmd;
@@ -3335,18 +3359,26 @@ WHERE POID='{pOID}' AND Seq1='{Seq1}' AND Seq2='{Seq2}'
         }
     }
 
+    /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class Prgs_POSuppDetailData
     {
+        /// <inheritdoc/>
         public string Poid { get; set; }
 
+        /// <inheritdoc/>
         public string Seq1 { get; set; }
 
+        /// <inheritdoc/>
         public string Seq2 { get; set; }
 
+        /// <inheritdoc/>
         public string Stocktype { get; set; }
 
+        /// <inheritdoc/>
         public decimal Qty { get; set; }
 
+        /// <inheritdoc/>
         public string Location { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P11_IssueBreakDown : Win.Subs.Base
     {
         private DataRow Master;
@@ -19,12 +20,14 @@ namespace Sci.Production.Warehouse
         private DataTable DtModifyIssueBDown;
         private StringBuilder sbSizecode;
 
+        /// <inheritdoc/>
         public P11_IssueBreakDown()
         {
             this.InitializeComponent();
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         public P11_IssueBreakDown(DataRow master, DataTable dtIssueBreakDown, DataTable dtSizeCode)
             : this()
         {
@@ -43,6 +46,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -161,10 +165,10 @@ order by [OrderID], [Article]", this.Master["orderid"], this.sbSizecode.ToString
         }
 
         /// <summary>
-        /// Header自動勾選
+        ///  Header自動勾選
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void GridIssueBreakDown_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (this.DtModifyIssueBDown == null)

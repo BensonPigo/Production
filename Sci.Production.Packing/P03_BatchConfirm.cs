@@ -8,11 +8,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P03_BatchConfirm : Win.Subs.Base
     {
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <inheritdoc/>
         public P03_BatchConfirm()
         {
             this.InitializeComponent();
@@ -75,6 +77,7 @@ namespace Sci.Production.Packing
             this.QueryData(false);
         }
 
+        /// <inheritdoc/>
         public void QueryData(bool autoQuery)
         {
             DateTime? pulloutdate1;

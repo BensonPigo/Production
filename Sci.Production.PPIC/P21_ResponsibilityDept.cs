@@ -371,8 +371,8 @@ namespace Sci.Production.PPIC
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("FactoryID", "Factory", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_Factory)
-                .Text("DepartmentID", "Dept.", width: Widths.AnsiChars(21), iseditingreadonly: false, settings: col_Dept)
+                .Text("FactoryID", "Incharge Factory", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_Factory)
+                .Text("DepartmentID", "Incharge Dept.", width: Widths.AnsiChars(21), iseditingreadonly: false, settings: col_Dept)
                 .Numeric("Percentage", header: "%", width: Widths.AnsiChars(10), iseditingreadonly: false, decimal_places: 0, integer_places: 10, settings: col_Percentage)
                 .Numeric("Amount", header: "Amt", width: Widths.AnsiChars(13), iseditingreadonly: false, decimal_places: 2, integer_places: 10, settings: col_Amt)
                 ;

@@ -208,8 +208,10 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                 }
             };
             #endregion
-            DataGridViewGeneratorNumericColumnSettings stockQtySetting = new DataGridViewGeneratorNumericColumnSettings();
-            stockQtySetting.IsSupportNegative = true;
+            DataGridViewGeneratorNumericColumnSettings stockQtySetting = new DataGridViewGeneratorNumericColumnSettings
+            {
+                IsSupportNegative = true,
+            };
 
             base.OnDetailGridSetup();
 

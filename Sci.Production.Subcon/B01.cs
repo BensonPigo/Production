@@ -11,8 +11,10 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class B01 : Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public B01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -33,13 +35,14 @@ namespace Sci.Production.Subcon
             this.comboCartonDimension.ValueMember = "Value";
 
             DataTable dt2 = new DataTable();
-            DBProxy.Current.Select(null, @"
+            string cmd = @"
 SELECT  [Text]=Name, [Value]= CASE WHEN Name = 'Manual' THEN 0
                                    WHEN Name = 'Auto' THEN 1
                               ELSE 0  END
 FROM DropDownList
 WHERE Type='Pms_LocalItem_UnPack'
-", out dt2);
+";
+            DBProxy.Current.Select(null, cmd, out dt2);
 
             this.dropDownUnpack.DataSource = dt2;
             this.dropDownUnpack.DisplayMember = "Text";
@@ -568,6 +571,9 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
+        /// <summary>
+        /// Reload
+        /// </summary>
         public void Reload()
         {
             this.ReloadDatas();
@@ -582,11 +588,6 @@ WHERE Type='Pms_LocalItem_UnPack'
             }
         }
 
-        /// <summary>
-        /// B01_FormLoaded
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void B01_FormLoaded(object sender, EventArgs e)
         {
             MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,Exclude Junk,1,Include Junk");

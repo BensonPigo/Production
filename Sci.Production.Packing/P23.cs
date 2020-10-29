@@ -346,18 +346,15 @@ order by pd.ID,pd.Seq";
                 #region 比對DB和Form的資料，看誰有被異動
 
                 DataTable selectData = null;
-                MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, @"
-            --select distinct a.* 
-            --FROM #tmp a
-            --INNER JOIN PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
-            --where a.CFANeedInsp <> b.CFANeedInsp 
+                string cmd = @"
 SELECT DISTINCT a.* 
 FROM #tmp a
 INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey and b.DisposeFromClog= 0
 WHERE (b.FtyReqReturnDate IS NULL AND a.Selected = 1)   --若FtyReqReturnDate IS NULL，表示不應該勾選，但在FORM上的被勾選了   = 有異動
 OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS NOT NULL，表示應該勾選，但在FORM上的沒勾選了 = 有異動
 OR a.FtyReqReturnReason <> b.FtyReqReturnReason  --Reason異動
-", out selectData);
+";
+                MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, cmd, out selectData);
 
                 if (selectData.Rows.Count == 0)
                 {
@@ -548,13 +545,14 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 
             #region 比對DB和Form的資料，檢驗是否有異動 且 沒存檔
 
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, @"
+            string cmd = $@"
 SELECT DISTINCT a.* 
 FROM #tmp a
 INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey and b.DisposeFromClog= 0
 WHERE (b.FtyReqReturnDate IS NULL AND a.Selected = 1)   --若FtyReqReturnDate IS NULL，表示不應該勾選，但在FORM上的被勾選了   = 有異動
 OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS NOT NULL，表示應該勾選，但在FORM上的沒勾選了 = 有異動
-", out selectData);
+";
+            MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, cmd, out selectData);
 
             // 有異動，但沒click Save
             if (selectData.Rows.Count > 0)
@@ -643,8 +641,10 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
 
                 finalData.Rows.Add(nRow);
 
-                Utility.Excel.SaveXltReportCls.XltRptTable xDt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalData);
-                xDt.ShowHeader = false;
+                Utility.Excel.SaveXltReportCls.XltRptTable xDt = new Utility.Excel.SaveXltReportCls.XltRptTable(finalData)
+                {
+                    ShowHeader = false,
+                };
 
                 x1.DicDatas.Add("##ControlNo" + indexStr, finalData.Rows[0]["ControlNo"]);
                 x1.DicDatas.Add("##SP" + indexStr, finalData.Rows[0]["SP"]);

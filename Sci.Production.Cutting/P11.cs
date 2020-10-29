@@ -139,8 +139,10 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     string sql = string.Format(
                         @"Select DISTINCT ID  From SewingLine WITH (NOLOCK) 
                         where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{0}')", Env.User.Keyword);
-                    sele = new SelectItem(sql, "10", dr["SewingLine"].ToString());
-                    sele.Width = 300;
+                    sele = new SelectItem(sql, "10", dr["SewingLine"].ToString())
+                    {
+                        Width = 300,
+                    };
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -172,8 +174,10 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 if (e.Button == MouseButtons.Right)
                 {
                     SelectItem sele;
-                    sele = new SelectItem("Select SewingCell from Sewingline WITH (NOLOCK) where SewingCell!='' group by SewingCell", "10", dr["SewingCell"].ToString());
-                    sele.Width = 300;
+                    sele = new SelectItem("Select SewingCell from Sewingline WITH (NOLOCK) where SewingCell!='' group by SewingCell", "10", dr["SewingCell"].ToString())
+                    {
+                        Width = 300,
+                    };
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -1095,10 +1099,11 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             // 若有勾則自動分配Excess
             if (!this.chkAEQ.Checked && this.ExcessTb.Rows.Count > 0)
             {
-                MsgGridForm m = new MsgGridForm(this.ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
-
-                // var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
-                m.Width = 650;
+                MsgGridForm m = new MsgGridForm(this.ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning")
+                {
+                    // var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
+                    Width = 650,
+                };
                 m.grid1.Columns[1].Width = 140;
                 m.text_Find.Width = 140;
                 m.btn_Find.Location = new Point(150, 6);
@@ -1991,9 +1996,10 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             if (cutrefAy.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["item"]).Length > 20).Any())
             {
                 DataTable wdt = this.CutRefTb.Select("Sel=1 and len(item) > 20").CopyToDataTable();
-                MsgGridForm m = new MsgGridForm(wdt, "Item string length can not more 20", "Warning");
-
-                m.Width = 800;
+                MsgGridForm m = new MsgGridForm(wdt, "Item string length can not more 20", "Warning")
+                {
+                    Width = 800,
+                };
 
                 m.grid1.Columns[0].Visible = false;
                 m.grid1.Columns[2].Visible = false;

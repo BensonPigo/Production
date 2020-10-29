@@ -8,6 +8,7 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R16 : Win.Tems.PrintForm
     {
         private string artworktype;
@@ -24,6 +25,7 @@ namespace Sci.Production.Subcon
         private DateTime? Issuedate2; // , GLdate1, GLdate2;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R16(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -94,6 +96,7 @@ namespace Sci.Production.Subcon
         // 非同步取資料
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region -- sqlparameter delcare --

@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P46 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P46(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -68,6 +70,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -206,6 +209,7 @@ where AL2.Id='{0}' ", masterID);
         // 表身資料設定
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailGridSetup()
         {
             #region -- Current Qty Vaild 判斷 --
@@ -324,6 +328,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -407,6 +412,7 @@ WHERE  AL2.id = '{0}' ", this.CurrentMaintain["id"]);
         // UnConfirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();

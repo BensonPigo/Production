@@ -45,11 +45,12 @@
             this.txtShiftTime1 = new Sci.Win.UI.TextBox();
             this.txtShiftTime2 = new Sci.Win.UI.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new Sci.Win.UI.Label();
             this.comboSubprocess = new Sci.Win.UI.ComboBox();
-            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.radioDetail_DefectType = new Sci.Win.UI.RadioButton();
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.label9 = new Sci.Win.UI.Label();
+            this.radioDetail_Responseteam = new Sci.Win.UI.RadioButton();
+            this.label8 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -124,7 +125,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(18, 70);
+            this.label2.Location = new System.Drawing.Point(18, 99);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(105, 23);
             this.label2.TabIndex = 120;
@@ -218,10 +219,10 @@
             this.txtstyle1.BackColor = System.Drawing.Color.White;
             this.txtstyle1.BrandObjectName = null;
             this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle1.Location = new System.Drawing.Point(126, 70);
+            this.txtstyle1.Location = new System.Drawing.Point(126, 99);
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle1.TabIndex = 2;
+            this.txtstyle1.TabIndex = 3;
             this.txtstyle1.TarBrand = null;
             this.txtstyle1.TarSeason = null;
             // 
@@ -259,36 +260,28 @@
             this.label7.TabIndex = 131;
             this.label7.Text = "～";
             // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(18, 99);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(105, 23);
-            this.label8.TabIndex = 133;
-            this.label8.Text = "Subprocess";
-            // 
             // comboSubprocess
             // 
             this.comboSubprocess.BackColor = System.Drawing.Color.White;
             this.comboSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSubprocess.FormattingEnabled = true;
             this.comboSubprocess.IsSupportUnselect = true;
-            this.comboSubprocess.Location = new System.Drawing.Point(126, 98);
+            this.comboSubprocess.Location = new System.Drawing.Point(126, 69);
             this.comboSubprocess.Name = "comboSubprocess";
             this.comboSubprocess.OldText = "";
             this.comboSubprocess.Size = new System.Drawing.Size(130, 24);
-            this.comboSubprocess.TabIndex = 3;
+            this.comboSubprocess.TabIndex = 2;
             // 
-            // radioDetail
+            // radioDetail_DefectType
             // 
-            this.radioDetail.AutoSize = true;
-            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(126, 249);
-            this.radioDetail.Name = "radioDetail";
-            this.radioDetail.Size = new System.Drawing.Size(82, 21);
-            this.radioDetail.TabIndex = 137;
-            this.radioDetail.Text = "By Detail";
-            this.radioDetail.UseVisualStyleBackColor = true;
+            this.radioDetail_DefectType.AutoSize = true;
+            this.radioDetail_DefectType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail_DefectType.Location = new System.Drawing.Point(126, 249);
+            this.radioDetail_DefectType.Name = "radioDetail_DefectType";
+            this.radioDetail_DefectType.Size = new System.Drawing.Size(167, 21);
+            this.radioDetail_DefectType.TabIndex = 137;
+            this.radioDetail_DefectType.Text = "By detail(Defect Type)";
+            this.radioDetail_DefectType.UseVisualStyleBackColor = true;
             // 
             // radioSummary
             // 
@@ -311,14 +304,34 @@
             this.label9.TabIndex = 135;
             this.label9.Text = "Format";
             // 
+            // radioDetail_Responseteam
+            // 
+            this.radioDetail_Responseteam.AutoSize = true;
+            this.radioDetail_Responseteam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail_Responseteam.Location = new System.Drawing.Point(126, 276);
+            this.radioDetail_Responseteam.Name = "radioDetail_Responseteam";
+            this.radioDetail_Responseteam.Size = new System.Drawing.Size(191, 21);
+            this.radioDetail_Responseteam.TabIndex = 138;
+            this.radioDetail_Responseteam.Text = "By Detail(Response team)";
+            this.radioDetail_Responseteam.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(18, 70);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(105, 23);
+            this.label8.TabIndex = 139;
+            this.label8.Text = "SubProcess";
+            // 
             // R51
             // 
-            this.ClientSize = new System.Drawing.Size(496, 306);
-            this.Controls.Add(this.radioDetail);
+            this.ClientSize = new System.Drawing.Size(496, 340);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.radioDetail_Responseteam);
+            this.Controls.Add(this.radioDetail_DefectType);
             this.Controls.Add(this.radioSummary);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.comboSubprocess);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.txtShiftTime2);
             this.Controls.Add(this.txtShiftTime1);
@@ -360,11 +373,12 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.comboSubprocess, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.radioSummary, 0);
-            this.Controls.SetChildIndex(this.radioDetail, 0);
+            this.Controls.SetChildIndex(this.radioDetail_DefectType, 0);
+            this.Controls.SetChildIndex(this.radioDetail_Responseteam, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -387,10 +401,11 @@
         private Win.UI.TextBox txtShiftTime1;
         private Win.UI.TextBox txtShiftTime2;
         private System.Windows.Forms.Label label7;
-        private Win.UI.Label label8;
         private Win.UI.ComboBox comboSubprocess;
-        private Win.UI.RadioButton radioDetail;
+        private Win.UI.RadioButton radioDetail_DefectType;
         private Win.UI.RadioButton radioSummary;
         private Win.UI.Label label9;
+        private Win.UI.RadioButton radioDetail_Responseteam;
+        private Win.UI.Label label8;
     }
 }
