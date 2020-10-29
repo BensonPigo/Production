@@ -29,31 +29,131 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.btnSelectFile = new Sci.Win.UI.Button();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panel5 = new Sci.Win.UI.Panel();
+            this.gridSelectedFile = new Sci.Win.UI.Grid();
+            this.panel4 = new Sci.Win.UI.Panel();
+            this.panel3 = new Sci.Win.UI.Panel();
+            this.panel2 = new Sci.Win.UI.Panel();
             this.panel1 = new Sci.Win.UI.Panel();
             this.btnProcessing = new Sci.Win.UI.Button();
-            this.panel2 = new Sci.Win.UI.Panel();
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.grid1 = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel1.SuspendLayout();
-            this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.btnSelectFile = new Sci.Win.UI.Button();
+            this.panel10 = new Sci.Win.UI.Panel();
+            this.gridMatch = new Sci.Win.UI.Grid();
+            this.panel9 = new Sci.Win.UI.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panel8 = new Sci.Win.UI.Panel();
+            this.panel7 = new Sci.Win.UI.Panel();
+            this.panel6 = new Sci.Win.UI.Panel();
+            this.btnConfirm = new Sci.Win.UI.Button();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSelectedFile)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridMatch)).BeginInit();
+            this.panel9.SuspendLayout();
+            this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnSelectFile
+            // splitContainer1
             // 
-            this.btnSelectFile.Location = new System.Drawing.Point(23, 21);
-            this.btnSelectFile.Name = "btnSelectFile";
-            this.btnSelectFile.Size = new System.Drawing.Size(134, 28);
-            this.btnSelectFile.TabIndex = 1;
-            this.btnSelectFile.Text = "Select File";
-            this.btnSelectFile.UseVisualStyleBackColor = true;
-            this.btnSelectFile.Click += new System.EventHandler(this.BtnSelectFile_Click);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel5);
+            this.splitContainer1.Panel1.Controls.Add(this.panel4);
+            this.splitContainer1.Panel1.Controls.Add(this.panel3);
+            this.splitContainer1.Panel1.Controls.Add(this.panel2);
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel10);
+            this.splitContainer1.Panel2.Controls.Add(this.panel9);
+            this.splitContainer1.Panel2.Controls.Add(this.panel8);
+            this.splitContainer1.Panel2.Controls.Add(this.panel7);
+            this.splitContainer1.Panel2.Controls.Add(this.panel6);
+            this.splitContainer1.Size = new System.Drawing.Size(1032, 629);
+            this.splitContainer1.SplitterDistance = 426;
+            this.splitContainer1.TabIndex = 10;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.gridSelectedFile);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(10, 35);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(406, 584);
+            this.panel5.TabIndex = 14;
+            // 
+            // gridSelectedFile
+            // 
+            this.gridSelectedFile.AllowUserToAddRows = false;
+            this.gridSelectedFile.AllowUserToDeleteRows = false;
+            this.gridSelectedFile.AllowUserToResizeRows = false;
+            this.gridSelectedFile.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSelectedFile.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSelectedFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSelectedFile.DataSource = this.listControlBindingSource1;
+            this.gridSelectedFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridSelectedFile.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSelectedFile.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSelectedFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSelectedFile.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSelectedFile.Location = new System.Drawing.Point(0, 0);
+            this.gridSelectedFile.Name = "gridSelectedFile";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSelectedFile.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridSelectedFile.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSelectedFile.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSelectedFile.RowTemplate.Height = 24;
+            this.gridSelectedFile.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSelectedFile.ShowCellToolTips = false;
+            this.gridSelectedFile.Size = new System.Drawing.Size(406, 584);
+            this.gridSelectedFile.TabIndex = 0;
+            // 
+            // panel4
+            // 
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(10, 619);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(406, 10);
+            this.panel4.TabIndex = 13;
+            // 
+            // panel3
+            // 
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel3.Location = new System.Drawing.Point(416, 35);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(10, 594);
+            this.panel3.TabIndex = 12;
+            // 
+            // panel2
+            // 
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel2.Location = new System.Drawing.Point(0, 35);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(10, 594);
+            this.panel2.TabIndex = 11;
             // 
             // panel1
             // 
@@ -62,13 +162,13 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(574, 61);
-            this.panel1.TabIndex = 5;
+            this.panel1.Size = new System.Drawing.Size(426, 35);
+            this.panel1.TabIndex = 10;
             // 
             // btnProcessing
             // 
             this.btnProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnProcessing.Location = new System.Drawing.Point(450, 21);
+            this.btnProcessing.Location = new System.Drawing.Point(315, 2);
             this.btnProcessing.Name = "btnProcessing";
             this.btnProcessing.Size = new System.Drawing.Size(101, 30);
             this.btnProcessing.TabIndex = 2;
@@ -76,107 +176,160 @@
             this.btnProcessing.UseVisualStyleBackColor = true;
             this.btnProcessing.Click += new System.EventHandler(this.BtnProcessing_Click);
             // 
-            // panel2
+            // btnSelectFile
             // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel2.Location = new System.Drawing.Point(0, 61);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(23, 405);
-            this.panel2.TabIndex = 6;
+            this.btnSelectFile.Location = new System.Drawing.Point(10, 3);
+            this.btnSelectFile.Name = "btnSelectFile";
+            this.btnSelectFile.Size = new System.Drawing.Size(134, 28);
+            this.btnSelectFile.TabIndex = 1;
+            this.btnSelectFile.Text = "Select File";
+            this.btnSelectFile.UseVisualStyleBackColor = true;
+            this.btnSelectFile.Click += new System.EventHandler(this.BtnSelectFile_Click);
             // 
-            // panel3
+            // panel10
             // 
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(551, 61);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(23, 405);
-            this.panel3.TabIndex = 7;
+            this.panel10.Controls.Add(this.gridMatch);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel10.Location = new System.Drawing.Point(10, 35);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(582, 552);
+            this.panel10.TabIndex = 18;
             // 
-            // panel4
+            // gridMatch
             // 
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(23, 456);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(528, 10);
-            this.panel4.TabIndex = 8;
+            this.gridMatch.AllowUserToAddRows = false;
+            this.gridMatch.AllowUserToDeleteRows = false;
+            this.gridMatch.AllowUserToResizeRows = false;
+            this.gridMatch.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridMatch.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridMatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridMatch.DataSource = this.listControlBindingSource2;
+            this.gridMatch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridMatch.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridMatch.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridMatch.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridMatch.Location = new System.Drawing.Point(0, 0);
+            this.gridMatch.Name = "gridMatch";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridMatch.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridMatch.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridMatch.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridMatch.RowTemplate.Height = 24;
+            this.gridMatch.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMatch.ShowCellToolTips = false;
+            this.gridMatch.Size = new System.Drawing.Size(582, 552);
+            this.gridMatch.TabIndex = 0;
             // 
-            // panel5
+            // panel9
             // 
-            this.panel5.Controls.Add(this.grid1);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(23, 61);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(528, 395);
-            this.panel5.TabIndex = 9;
+            this.panel9.Controls.Add(this.label1);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel9.Location = new System.Drawing.Point(10, 0);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(582, 35);
+            this.panel9.TabIndex = 17;
             // 
-            // grid1
+            // label1
             // 
-            this.grid1.AllowUserToAddRows = false;
-            this.grid1.AllowUserToDeleteRows = false;
-            this.grid1.AllowUserToResizeRows = false;
-            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.listControlBindingSource1;
-            this.grid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 0);
-            this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid1.RowTemplate.Height = 24;
-            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(528, 395);
-            this.grid1.TabIndex = 0;
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.label1.Location = new System.Drawing.Point(272, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 22);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Match";
+            // 
+            // panel8
+            // 
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel8.Location = new System.Drawing.Point(592, 0);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(10, 587);
+            this.panel8.TabIndex = 16;
+            // 
+            // panel7
+            // 
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel7.Location = new System.Drawing.Point(0, 0);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(10, 587);
+            this.panel7.TabIndex = 15;
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.btnConfirm);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel6.Location = new System.Drawing.Point(0, 587);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(602, 42);
+            this.panel6.TabIndex = 14;
+            // 
+            // btnConfirm
+            // 
+            this.btnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConfirm.Location = new System.Drawing.Point(502, 6);
+            this.btnConfirm.Name = "btnConfirm";
+            this.btnConfirm.Size = new System.Drawing.Size(87, 30);
+            this.btnConfirm.TabIndex = 0;
+            this.btnConfirm.Text = "Confirm";
+            this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // P26
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(574, 466);
-            this.Controls.Add(this.panel5);
-            this.Controls.Add(this.panel4);
-            this.Controls.Add(this.panel3);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(1032, 629);
+            this.Controls.Add(this.splitContainer1);
             this.IsToolbarVisible = false;
             this.Name = "P26";
             this.OnLineHelpID = "Sci.Win.Tems.Base";
             this.Text = "P26. Upload Sticker File";
-            this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.panel2, 0);
-            this.Controls.SetChildIndex(this.panel3, 0);
-            this.Controls.SetChildIndex(this.panel4, 0);
-            this.Controls.SetChildIndex(this.panel5, 0);
-            this.panel1.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.Controls.SetChildIndex(this.splitContainer1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridSelectedFile)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridMatch)).EndInit();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private Win.UI.Button btnSelectFile;
-        private Win.UI.Panel panel1;
-        private Win.UI.Panel panel2;
-        private Win.UI.Panel panel3;
-        private Win.UI.Panel panel4;
-        private Win.UI.Panel panel5;
-        private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private Win.UI.Panel panel5;
+        private Win.UI.Grid gridSelectedFile;
+        private Win.UI.Panel panel4;
+        private Win.UI.Panel panel3;
+        private Win.UI.Panel panel2;
+        private Win.UI.Panel panel1;
         private Win.UI.Button btnProcessing;
+        private Win.UI.Button btnSelectFile;
+        private Win.UI.Panel panel10;
+        private Win.UI.Grid gridMatch;
+        private Win.UI.Panel panel9;
+        private Win.UI.Panel panel8;
+        private Win.UI.Panel panel7;
+        private Win.UI.Panel panel6;
+        private Win.UI.Button btnConfirm;
+        private System.Windows.Forms.Label label1;
+        private Win.UI.ListControlBindingSource listControlBindingSource2;
     }
 }

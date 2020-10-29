@@ -2559,6 +2559,7 @@
     <Build Include="dbo\Tables\SubProInsRecord_ResponseTeam.sql" />
     <Build Include="dbo\Tables\SubProCustomColumn_Detail.sql" />
     <Build Include="dbo\Tables\SubProCustomColumn.sql" />
+    <Build Include="dbo\Functions\CheckShippingMarkSetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
