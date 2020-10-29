@@ -3688,6 +3688,36 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
 
 ");
                         }
+                        else if (fGWT.Type.ToUpper() == "SPIRALITY: GARMENT - IN PERCENTAGE (AVERAGE)")
+                        {
+                            insertCmd.Append($@"
+
+INSERT INTO SampleGarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2, SystemType, Seq, Shrinkage)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}
+           , @Criteria{idx} 
+           , @Criteria2_{idx}
+           , @SystemType{idx}
+           , @Seq{idx}
+           ,iif(@Location{idx} in ('B','T','S') ,(select sum(Twisting)
+	                                                from (
+	                                                	select Twisting = case when @Location{idx} in ('B','T') then gt.Twisting
+	                                                				when @Location{idx} = 'S' and gt.Location = 'B' then gt.Twisting
+	                                                				else 0
+	                                                				end
+	                                                	from SampleGarmentTest_Detail_Twisting gt
+	                                                	where gt.ID = {garmentTest_Detail_ID} and gt.No = {garmentTest_Detail_No}
+	                                                )gt),0
+               )
+           )
+
+");
+                        }
                         else
                         {
                             insertCmd.Append($@"
