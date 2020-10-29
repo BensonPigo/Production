@@ -2714,6 +2714,7 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
         private void ChangeLabelTotalCutOutputValue()
         {
             this.labelToalCutOutputValue.Text = this.ArticleSizeTb.Compute("sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+            this.labelAccumulateQty.Text = this.ArticleSizeTb.Compute("max(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
         }
 
         private void ChangeLabelBalanceValue()

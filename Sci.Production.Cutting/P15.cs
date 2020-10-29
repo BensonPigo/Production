@@ -1215,6 +1215,7 @@ order by ArticleGroup";
             this.qtyTb.DefaultView.RowFilter = $"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}";
             this.numNoOfBundle.Value = this.qtyTb.DefaultView.Count;
             this.labelToalCutOutputValue.Text = this.gridCutRef.CurrentDataRow["TTLCutQty"].ToString();
+            this.labelAccumulateQty.Text = this.gridCutRef.CurrentDataRow["CreatedBundleQty"].ToString();
             this.GetBalancebyWorkOrder();
             this.ChangeRowGridQty();
         }

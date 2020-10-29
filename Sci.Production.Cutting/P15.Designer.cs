@@ -84,6 +84,8 @@
             this.labelGroup = new Sci.Win.UI.Label();
             this.BtnClose = new Sci.Win.UI.Button();
             this.BtnBatchCreate = new Sci.Win.UI.Button();
+            this.labelAccumulateQty = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -142,7 +144,9 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.labelBalance);
+            this.splitContainer1.Panel1.Controls.Add(this.labelAccumulateQty);
             this.splitContainer1.Panel1.Controls.Add(this.labelBalanceValue);
+            this.splitContainer1.Panel1.Controls.Add(this.label6);
             this.splitContainer1.Panel1.Controls.Add(this.labelToalCutOutputValue);
             this.splitContainer1.Panel1.Controls.Add(this.labelTotalCutOutput);
             this.splitContainer1.Panel1.Controls.Add(this.BtnQuery);
@@ -159,46 +163,52 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1262, 644);
+            this.splitContainer1.Size = new System.Drawing.Size(1289, 644);
             this.splitContainer1.SplitterDistance = 34;
             this.splitContainer1.TabIndex = 0;
             // 
             // labelBalance
             // 
             this.labelBalance.BackColor = System.Drawing.Color.Transparent;
-            this.labelBalance.Location = new System.Drawing.Point(1135, 6);
+            this.labelBalance.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelBalance.Location = new System.Drawing.Point(1194, 5);
             this.labelBalance.Name = "labelBalance";
-            this.labelBalance.Size = new System.Drawing.Size(54, 23);
+            this.labelBalance.Size = new System.Drawing.Size(50, 23);
             this.labelBalance.TabIndex = 120;
-            this.labelBalance.Text = "Balance:";
+            this.labelBalance.Text = "Balance";
             this.labelBalance.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelBalanceValue
             // 
             this.labelBalanceValue.BackColor = System.Drawing.Color.Transparent;
-            this.labelBalanceValue.Location = new System.Drawing.Point(1189, 6);
+            this.labelBalanceValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelBalanceValue.Location = new System.Drawing.Point(1244, 5);
             this.labelBalanceValue.Name = "labelBalanceValue";
-            this.labelBalanceValue.Size = new System.Drawing.Size(63, 23);
+            this.labelBalanceValue.Size = new System.Drawing.Size(40, 23);
             this.labelBalanceValue.TabIndex = 121;
-            this.labelBalanceValue.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBalanceValue.Text = "0";
+            this.labelBalanceValue.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // labelToalCutOutputValue
             // 
             this.labelToalCutOutputValue.BackColor = System.Drawing.Color.Transparent;
-            this.labelToalCutOutputValue.Location = new System.Drawing.Point(1067, 6);
+            this.labelToalCutOutputValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelToalCutOutputValue.Location = new System.Drawing.Point(1044, 5);
             this.labelToalCutOutputValue.Name = "labelToalCutOutputValue";
-            this.labelToalCutOutputValue.Size = new System.Drawing.Size(68, 23);
+            this.labelToalCutOutputValue.Size = new System.Drawing.Size(39, 23);
             this.labelToalCutOutputValue.TabIndex = 122;
-            this.labelToalCutOutputValue.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelToalCutOutputValue.Text = "0";
+            this.labelToalCutOutputValue.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // labelTotalCutOutput
             // 
             this.labelTotalCutOutput.BackColor = System.Drawing.Color.Transparent;
-            this.labelTotalCutOutput.Location = new System.Drawing.Point(856, 6);
+            this.labelTotalCutOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelTotalCutOutput.Location = new System.Drawing.Point(856, 5);
             this.labelTotalCutOutput.Name = "labelTotalCutOutput";
-            this.labelTotalCutOutput.Size = new System.Drawing.Size(211, 23);
+            this.labelTotalCutOutput.Size = new System.Drawing.Size(188, 23);
             this.labelTotalCutOutput.TabIndex = 123;
-            this.labelTotalCutOutput.Text = "Total Allocated Planned Cut QTY:";
+            this.labelTotalCutOutput.Text = "Total Allocated Planned Cut QTY";
             this.labelTotalCutOutput.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // BtnQuery
@@ -326,7 +336,7 @@
             this.splitContainer2.Panel2.Controls.Add(this.BtnClose);
             this.splitContainer2.Panel2.Controls.Add(this.BtnBatchCreate);
             this.splitContainer2.Panel2MinSize = 45;
-            this.splitContainer2.Size = new System.Drawing.Size(1262, 606);
+            this.splitContainer2.Size = new System.Drawing.Size(1289, 606);
             this.splitContainer2.SplitterDistance = 557;
             this.splitContainer2.TabIndex = 1;
             // 
@@ -344,7 +354,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer7);
-            this.splitContainer3.Size = new System.Drawing.Size(1262, 557);
+            this.splitContainer3.Size = new System.Drawing.Size(1289, 557);
             this.splitContainer3.SplitterDistance = 241;
             this.splitContainer3.TabIndex = 2;
             // 
@@ -361,8 +371,8 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(1262, 241);
-            this.splitContainer4.SplitterDistance = 559;
+            this.splitContainer4.Size = new System.Drawing.Size(1289, 241);
+            this.splitContainer4.SplitterDistance = 570;
             this.splitContainer4.TabIndex = 3;
             // 
             // gridCutRef
@@ -393,7 +403,7 @@
             this.gridCutRef.RowTemplate.Height = 24;
             this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutRef.ShowCellToolTips = false;
-            this.gridCutRef.Size = new System.Drawing.Size(559, 241);
+            this.gridCutRef.Size = new System.Drawing.Size(570, 241);
             this.gridCutRef.TabIndex = 6;
             this.gridCutRef.TabStop = false;
             this.gridCutRef.SelectionChanged += new System.EventHandler(this.GridCutRef_SelectionChanged);
@@ -412,7 +422,7 @@
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.gridArticleSize);
-            this.splitContainer5.Size = new System.Drawing.Size(699, 241);
+            this.splitContainer5.Size = new System.Drawing.Size(715, 241);
             this.splitContainer5.SplitterDistance = 131;
             this.splitContainer5.TabIndex = 4;
             // 
@@ -529,7 +539,7 @@
             this.gridArticleSize.RowTemplate.Height = 24;
             this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridArticleSize.ShowCellToolTips = false;
-            this.gridArticleSize.Size = new System.Drawing.Size(564, 241);
+            this.gridArticleSize.Size = new System.Drawing.Size(580, 241);
             this.gridArticleSize.TabIndex = 9;
             this.gridArticleSize.TabStop = false;
             // 
@@ -574,7 +584,7 @@
             // splitContainer7.Panel2
             // 
             this.splitContainer7.Panel2.Controls.Add(this.splitContainer8);
-            this.splitContainer7.Size = new System.Drawing.Size(1262, 312);
+            this.splitContainer7.Size = new System.Drawing.Size(1289, 312);
             this.splitContainer7.SplitterDistance = 28;
             this.splitContainer7.TabIndex = 0;
             // 
@@ -594,7 +604,7 @@
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label5.Location = new System.Drawing.Point(594, 3);
+            this.label5.Location = new System.Drawing.Point(638, 3);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(116, 23);
             this.label5.TabIndex = 106;
@@ -605,7 +615,7 @@
             // 
             this.BtnGarmentList.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.BtnGarmentList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnGarmentList.Location = new System.Drawing.Point(481, 0);
+            this.BtnGarmentList.Location = new System.Drawing.Point(525, 0);
             this.BtnGarmentList.Name = "BtnGarmentList";
             this.BtnGarmentList.Size = new System.Drawing.Size(97, 28);
             this.BtnGarmentList.TabIndex = 102;
@@ -617,7 +627,7 @@
             // 
             this.BtnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnColorComb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnColorComb.Location = new System.Drawing.Point(1014, 0);
+            this.BtnColorComb.Location = new System.Drawing.Point(1104, 0);
             this.BtnColorComb.Name = "BtnColorComb";
             this.BtnColorComb.Size = new System.Drawing.Size(97, 28);
             this.BtnColorComb.TabIndex = 103;
@@ -638,8 +648,8 @@
             // splitContainer8.Panel2
             // 
             this.splitContainer8.Panel2.Controls.Add(this.splitContainer9);
-            this.splitContainer8.Size = new System.Drawing.Size(1262, 280);
-            this.splitContainer8.SplitterDistance = 559;
+            this.splitContainer8.Size = new System.Drawing.Size(1289, 280);
+            this.splitContainer8.SplitterDistance = 570;
             this.splitContainer8.TabIndex = 0;
             // 
             // gridCutpart
@@ -671,7 +681,7 @@
             this.gridCutpart.RowTemplate.Height = 24;
             this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutpart.ShowCellToolTips = false;
-            this.gridCutpart.Size = new System.Drawing.Size(559, 280);
+            this.gridCutpart.Size = new System.Drawing.Size(570, 280);
             this.gridCutpart.TabIndex = 80;
             this.gridCutpart.TabStop = false;
             // 
@@ -712,7 +722,7 @@
             // splitContainer9.Panel2
             // 
             this.splitContainer9.Panel2.Controls.Add(this.gridAllPart);
-            this.splitContainer9.Size = new System.Drawing.Size(699, 280);
+            this.splitContainer9.Size = new System.Drawing.Size(715, 280);
             this.splitContainer9.SplitterDistance = 41;
             this.splitContainer9.TabIndex = 1;
             // 
@@ -767,7 +777,7 @@
             this.gridAllPart.RowTemplate.Height = 24;
             this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAllPart.ShowCellToolTips = false;
-            this.gridAllPart.Size = new System.Drawing.Size(654, 280);
+            this.gridAllPart.Size = new System.Drawing.Size(670, 280);
             this.gridAllPart.TabIndex = 77;
             this.gridAllPart.TabStop = false;
             // 
@@ -800,7 +810,7 @@
             this.radioGroup1.Controls.Add(this.radioWithcuto);
             this.radioGroup1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.radioGroup1.IsSupportEditMode = false;
-            this.radioGroup1.Location = new System.Drawing.Point(802, 1);
+            this.radioGroup1.Location = new System.Drawing.Point(892, 1);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(114, 45);
             this.radioGroup1.TabIndex = 19;
@@ -835,7 +845,7 @@
             this.labelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelGroup.BackColor = System.Drawing.Color.Transparent;
             this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Location = new System.Drawing.Point(764, 14);
+            this.labelGroup.Location = new System.Drawing.Point(854, 14);
             this.labelGroup.Name = "labelGroup";
             this.labelGroup.Size = new System.Drawing.Size(35, 23);
             this.labelGroup.TabIndex = 20;
@@ -847,7 +857,7 @@
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnClose.Location = new System.Drawing.Point(1031, 11);
+            this.BtnClose.Location = new System.Drawing.Point(1121, 11);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(80, 30);
             this.BtnClose.TabIndex = 22;
@@ -859,7 +869,7 @@
             // 
             this.BtnBatchCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnBatchCreate.Location = new System.Drawing.Point(925, 11);
+            this.BtnBatchCreate.Location = new System.Drawing.Point(1015, 11);
             this.BtnBatchCreate.Name = "BtnBatchCreate";
             this.BtnBatchCreate.Size = new System.Drawing.Size(100, 30);
             this.BtnBatchCreate.TabIndex = 21;
@@ -867,11 +877,33 @@
             this.BtnBatchCreate.UseVisualStyleBackColor = true;
             this.BtnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
+            // labelAccumulateQty
+            // 
+            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelAccumulateQty.Location = new System.Drawing.Point(1153, 5);
+            this.labelAccumulateQty.Name = "labelAccumulateQty";
+            this.labelAccumulateQty.Size = new System.Drawing.Size(41, 23);
+            this.labelAccumulateQty.TabIndex = 104;
+            this.labelAccumulateQty.Text = "0";
+            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label6.Location = new System.Drawing.Point(1083, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 23);
+            this.label6.TabIndex = 103;
+            this.label6.Text = "Accumulate";
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P15
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1262, 644);
+            this.ClientSize = new System.Drawing.Size(1289, 644);
             this.Controls.Add(this.splitContainer1);
             this.DefaultControl = "txtCutRef";
             this.DefaultControlForEdit = "txtCutRef";
@@ -985,5 +1017,7 @@
         private Win.UI.ContextMenuStrip ArticleSizeMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem InsertAS_MenuItem;
         private System.Windows.Forms.ToolStripMenuItem DeleteAS_MenuItem;
+        private Win.UI.Label labelAccumulateQty;
+        private Win.UI.Label label6;
     }
 }

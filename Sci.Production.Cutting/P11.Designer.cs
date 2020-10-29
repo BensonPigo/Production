@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.radioWithcuto = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.radiobegin1 = new Sci.Win.UI.RadioButton();
@@ -92,6 +92,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.chkTone = new Sci.Win.UI.CheckBox();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
+            this.label6 = new Sci.Win.UI.Label();
+            this.labelAccumulateQty = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
@@ -452,14 +454,14 @@
             this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutpart.Location = new System.Drawing.Point(0, 0);
             this.gridCutpart.Name = "gridCutpart";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutpart.RowTemplate.Height = 24;
@@ -506,14 +508,14 @@
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridArticleSize.Location = new System.Drawing.Point(0, 0);
             this.gridArticleSize.Name = "gridArticleSize";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
@@ -540,14 +542,14 @@
             this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridAllPart.Location = new System.Drawing.Point(0, 0);
             this.gridAllPart.Name = "gridAllPart";
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAllPart.RowTemplate.Height = 24;
@@ -594,14 +596,14 @@
             this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQty.Location = new System.Drawing.Point(0, 0);
             this.gridQty.Name = "gridQty";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQty.RowTemplate.Height = 24;
@@ -626,14 +628,14 @@
             this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutRef.Location = new System.Drawing.Point(0, 0);
             this.gridCutRef.Name = "gridCutRef";
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;
@@ -768,6 +770,8 @@
             // 
             // splitContainer5.Panel1
             // 
+            this.splitContainer5.Panel1.Controls.Add(this.labelAccumulateQty);
+            this.splitContainer5.Panel1.Controls.Add(this.label6);
             this.splitContainer5.Panel1.Controls.Add(this.txtSpreadingNo1);
             this.splitContainer5.Panel1.Controls.Add(this.label2);
             this.splitContainer5.Panel1.Controls.Add(this.chkAEQ);
@@ -825,44 +829,44 @@
             // 
             // labelBalance
             // 
-            this.labelBalance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelBalance.BackColor = System.Drawing.Color.Transparent;
-            this.labelBalance.Location = new System.Drawing.Point(1043, 27);
+            this.labelBalance.Location = new System.Drawing.Point(1032, 24);
             this.labelBalance.Name = "labelBalance";
             this.labelBalance.Size = new System.Drawing.Size(54, 23);
             this.labelBalance.TabIndex = 98;
-            this.labelBalance.Text = "Balance:";
+            this.labelBalance.Text = "Balance";
             this.labelBalance.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelBalanceValue
             // 
-            this.labelBalanceValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelBalanceValue.BackColor = System.Drawing.Color.Transparent;
-            this.labelBalanceValue.Location = new System.Drawing.Point(1097, 27);
+            this.labelBalanceValue.Location = new System.Drawing.Point(1088, 24);
             this.labelBalanceValue.Name = "labelBalanceValue";
+            this.labelBalanceValue.RectStyle.Color = System.Drawing.Color.Transparent;
             this.labelBalanceValue.Size = new System.Drawing.Size(63, 23);
             this.labelBalanceValue.TabIndex = 98;
-            this.labelBalanceValue.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelBalanceValue.Text = "0";
+            this.labelBalanceValue.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // labelToalCutOutputValue
             // 
-            this.labelToalCutOutputValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelToalCutOutputValue.BackColor = System.Drawing.Color.Transparent;
-            this.labelToalCutOutputValue.Location = new System.Drawing.Point(975, 27);
+            this.labelToalCutOutputValue.Location = new System.Drawing.Point(817, 24);
             this.labelToalCutOutputValue.Name = "labelToalCutOutputValue";
+            this.labelToalCutOutputValue.RectStyle.Color = System.Drawing.Color.Transparent;
             this.labelToalCutOutputValue.Size = new System.Drawing.Size(68, 23);
             this.labelToalCutOutputValue.TabIndex = 98;
-            this.labelToalCutOutputValue.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelToalCutOutputValue.Text = "0";
+            this.labelToalCutOutputValue.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // labelTotalCutOutput
             // 
-            this.labelTotalCutOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTotalCutOutput.BackColor = System.Drawing.Color.Transparent;
-            this.labelTotalCutOutput.Location = new System.Drawing.Point(763, 27);
+            this.labelTotalCutOutput.Location = new System.Drawing.Point(605, 24);
             this.labelTotalCutOutput.Name = "labelTotalCutOutput";
             this.labelTotalCutOutput.Size = new System.Drawing.Size(212, 23);
             this.labelTotalCutOutput.TabIndex = 98;
-            this.labelTotalCutOutput.Text = "Total Allocated Planned Cut QTY:";
+            this.labelTotalCutOutput.Text = "Total Allocated Planned Cut QTY";
             this.labelTotalCutOutput.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // splitContainer6
@@ -987,6 +991,27 @@
             this.splitContainer8.SplitterDistance = 273;
             this.splitContainer8.TabIndex = 0;
             // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Location = new System.Drawing.Point(885, 24);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(74, 23);
+            this.label6.TabIndex = 101;
+            this.label6.Text = "Accumulate";
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labelAccumulateQty
+            // 
+            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Location = new System.Drawing.Point(969, 24);
+            this.labelAccumulateQty.Name = "labelAccumulateQty";
+            this.labelAccumulateQty.RectStyle.Color = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Size = new System.Drawing.Size(63, 23);
+            this.labelAccumulateQty.TabIndex = 102;
+            this.labelAccumulateQty.Text = "0";
+            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
             // P11
             // 
             this.ClientSize = new System.Drawing.Size(1169, 630);
@@ -1106,5 +1131,7 @@
         private Win.UI.NumericBox numTone;
         private Win.UI.Label label3;
         private Win.UI.CheckBox chkTone;
+        private Win.UI.Label labelAccumulateQty;
+        private Win.UI.Label label6;
     }
 }
