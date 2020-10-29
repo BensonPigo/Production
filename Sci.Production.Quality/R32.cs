@@ -466,7 +466,7 @@ SELECT
 	)
 	,NULL)
 	, [Action]= cd.Action
-	,[CFAInspectionRecord_Detail_Key]= c.ID
+	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,iif(isnull(cd.GarmentDefectCodeID, '') = '', concat(row_Number()over(order by c.ID),''), cd.GarmentDefectCodeID))
 INTO #tmp
 FROm #MainData  c
 LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
