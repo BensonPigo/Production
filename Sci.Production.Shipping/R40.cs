@@ -1573,7 +1573,7 @@ select	HSCode,
 		CustomsUnit,
 		StockQty,
 		StockUnit,
-        Description,
+        [Description] = FIRST_VALUE(Description) OVER (Partition by POID,HSCode,NLCode,Refno,MaterialType ORDER BY POID desc),
 		[NewStockUnit] = FIRST_VALUE(StockUnit) OVER (Partition by POID,HSCode,NLCode,Refno,MaterialType ORDER BY POID desc)
 into #tmpWIP_step1
 from (
@@ -1639,9 +1639,9 @@ group by    HSCode,
 		    POID,
 		    RefNo,
 		    MaterialType,
-            Description,
             CustomsUnit,
-            StockUnit
+            StockUnit,
+            Description
 
 ----------------------------------------------------------------
 --------- 04 Production成品庫存(Prod. Qty Detail) --------------
