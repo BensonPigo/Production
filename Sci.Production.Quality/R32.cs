@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R32 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
@@ -27,6 +28,7 @@ namespace Sci.Production.Quality
         private string Stage;
         private string reportType;
 
+        /// <inheritdoc/>
         public R32(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -120,17 +122,13 @@ WHERE 1=1
                 if (!MyUtility.Check.Empty(this.sp1))
                 {
                     sqlCmd.Append($"AND co.OrderID  >= @sp1" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar);
-                    p.Value = this.sp1;
-                    paramList.Add(p);
+                    paramList.Add(new SqlParameter("@sp1", SqlDbType.VarChar, 13) { Value = this.sp1 });
                 }
 
                 if (!MyUtility.Check.Empty(this.sp2))
                 {
                     sqlCmd.Append($"AND co.OrderID  <= @sp2" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar);
-                    p.Value = this.sp2;
-                    paramList.Add(p);
+                    paramList.Add(new SqlParameter("@sp2", SqlDbType.VarChar, 13) { Value = this.sp2 });
                 }
 
                 if (!MyUtility.Check.Empty(this.Stage))
@@ -392,16 +390,20 @@ WHERE 1=1
                 if (!MyUtility.Check.Empty(this.sp1))
                 {
                     sqlCmd.Append($"AND co.OrderID  >= @sp1" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar);
-                    p.Value = this.sp1;
+                    SqlParameter p = new SqlParameter("@sp1", SqlDbType.VarChar)
+                    {
+                        Value = this.sp1,
+                    };
                     paramList.Add(p);
                 }
 
                 if (!MyUtility.Check.Empty(this.sp2))
                 {
                     sqlCmd.Append($"AND co.OrderID  <= @sp2" + Environment.NewLine);
-                    SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar);
-                    p.Value = this.sp2;
+                    SqlParameter p = new SqlParameter("@sp2", SqlDbType.VarChar)
+                    {
+                        Value = this.sp2,
+                    };
                     paramList.Add(p);
                 }
 
@@ -464,7 +466,7 @@ SELECT
 	)
 	,NULL)
 	, [Action]= cd.Action
-	,[CFAInspectionRecord_Detail_Key]=cd.ID+cd.GarmentDefectCodeID
+	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,iif(isnull(cd.GarmentDefectCodeID, '') = '', concat(row_Number()over(order by c.ID),''), cd.GarmentDefectCodeID))
 INTO #tmp
 FROm #MainData  c
 LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
@@ -599,14 +601,14 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
                     nRow["OrderID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["OrderID"])).JoinToString(Environment.NewLine);
-                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);//
-                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);//
+                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);
+                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);
 
-                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);//
-                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);//
-                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);//
+                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);
+                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);
+                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);
                     nRow["SewingLineID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["SewingLineID"]);
-                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);//
+                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);
 
                     nRow["ClogReceivedPercentage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ClogReceivedPercentage"]);
                     nRow["MDivisionid"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["MDivisionid"]);
@@ -626,8 +628,9 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["InsCtn"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["InsCtn"]);
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
 
-                    nRow["InspectQty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["InspectQty"]));
-                    nRow["DefectQty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["DefectQty"]));
+                    // 表頭 CFAInspectionRecord 的值, 不重複加總
+                    nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);
+                    nRow["DefectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["DefectQty"]);
                     nRow["SQR"] = MyUtility.Convert.GetDecimal(sameIDs.FirstOrDefault()["SQR"]);
                     nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
 
@@ -679,8 +682,8 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 this.printData.ColumnsStringAdd("NoOfDefect");
                 this.printData.ColumnsStringAdd("Remark");
                 this.printData.ColumnsStringAdd("Action");
-                // this.printData = this.final.Copy();
 
+                // this.printData = this.final.Copy();
                 // ISP20201551 的Detail寫法，先保留
                 foreach (var cFAInspectionRecord_ID in idList)
                 {
@@ -690,14 +693,14 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
                     nRow["OrderID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["OrderID"])).JoinToString(Environment.NewLine);
-                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);//
-                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);//
+                    nRow["CustPoNo"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["CustPoNo"])).JoinToString(Environment.NewLine);
+                    nRow["StyleID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["StyleID"])).JoinToString(Environment.NewLine);
 
-                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);//
-                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);//
-                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);//
+                    nRow["BrandID"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["BrandID"])).JoinToString(Environment.NewLine);
+                    nRow["Dest"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Dest"])).JoinToString(Environment.NewLine);
+                    nRow["Seq"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Seq"])).JoinToString(Environment.NewLine);
                     nRow["SewingLineID"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["SewingLineID"]);
-                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);//
+                    nRow["VasShas"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["VasShas"])).JoinToString(Environment.NewLine);
 
                     nRow["ClogReceivedPercentage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["ClogReceivedPercentage"]);
                     nRow["MDivisionid"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["MDivisionid"]);
@@ -738,43 +741,23 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.SetCount(this.printData.Rows.Count);
-            StringBuilder c = new StringBuilder();
-            if (this.printData.Rows.Count <= 0)
+            if (this.printData.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            string templateName = string.Empty;
-
-            switch (this.reportType)
-            {
-                case "Summary":
-                    templateName = "Quality_R32_Summary";
-                    break;
-                case "Detail":
-                    templateName = "Quality_R32_Detail";
-                    break;
-                default:
-                    break;
-            }
-
+            string templateName = this.reportType == "Summary" ? "Quality_R32_Summary" : "Quality_R32_Detail";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{templateName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{templateName}.xltx", 2, false, null, objApp); // 將datatable copy to excel
 
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-
             // 客製化欄位，記得設定this.IsSupportCopy = true
             // this.CreateCustomizedExcel(ref objSheets);
-
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R32");
+            string strExcelName = Class.MicrosoftFile.GetName("Quality_R32");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
-            objApp.Quit();
-            Marshal.ReleaseComObject(objSheets);
+            objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
-
-            strExcelName.OpenFile();
             #endregion
             return true;
         }
