@@ -2498,7 +2498,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 return;
             }
 
-            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString());
+            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -2776,7 +2776,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 return;
             }
 
-            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString());
+            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
         }

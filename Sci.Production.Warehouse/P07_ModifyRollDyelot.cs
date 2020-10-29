@@ -18,19 +18,21 @@ namespace Sci.Production.Warehouse
         private DataTable source;
         private DataTable dtGridDyelot;
         private string docno = string.Empty;
+        private string gridAlias;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActQty;
 
         /// <inheritdoc/>
-        public P07_ModifyRollDyelot(object data, string data2)
+        public P07_ModifyRollDyelot(object data, string data2, string gridAlias)
         {
             this.InitializeComponent();
             this.source = (DataTable)data;
             this.docno = data2;
             this.Text += " - " + this.docno;
             this.EditMode = true;
+            this.gridAlias = gridAlias;
         }
 
         /// <inheritdoc/>
@@ -41,7 +43,7 @@ namespace Sci.Production.Warehouse
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
             this.listControlBindingSource1.DataSource = this.source;
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype = new Ict.Win.UI.DataGridViewComboBoxColumn();
             DataGridViewGeneratorNumericColumnSettings actqty = new DataGridViewGeneratorNumericColumnSettings();
             actqty.CellValidating += (s, e) =>
             {
@@ -78,14 +80,30 @@ namespace Sci.Production.Warehouse
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out this.col_roll) // 3
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out this.col_dyelot) // 4
-            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out this.col_ActQty) // 5
-            .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 6
-            .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 8
-            .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 9
-            .Text("Location", header: "Location", iseditingreadonly: true) // 10
-            .Text("remark", header: "Remark", iseditingreadonly: true) // 11
             ;
+
+            if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
+            {
+                this.Helper.Controls.Grid.Generator(this.gridModifyRoll)
+                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out this.col_ActQty) // 5
+                .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 6
+                .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
+                .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 8
+                .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype) // 9
+                .Text("Location", header: "Location", iseditingreadonly: true) // 10
+                .Text("remark", header: "Remark", iseditingreadonly: true) // 11
+                ;
+            }
+            else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
+            {
+                this.Helper.Controls.Grid.Generator(this.gridModifyRoll)
+                .Numeric("Qty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0).Get(out this.col_ActQty)
+                .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
+                .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)
+                .Text("Location", header: "Location", iseditingreadonly: true)
+                .Text("remark", header: "Remark", iseditingreadonly: true)
+                ;
+            }
 
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -259,7 +277,7 @@ namespace Sci.Production.Warehouse
             string selectCommand1 =
                 string.Format(
                     @"
-SELECT DISTINCT POID,Seq1,Seq2,Roll,Dyelot,id into #tmp FROM Receiving_Detail WHERE id = '{0}'
+SELECT DISTINCT POID,Seq1,Seq2,Roll,Dyelot,id into #tmp FROM {1} WHERE id = '{0}'
 
 select IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,POID,Seq1,Seq2, Roll,Dyelot,[Seq] = Seq1 + ' ' + Seq2
 from (
@@ -389,7 +407,7 @@ from (
 								for XML PATH('')) as Location
 		from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
 		inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.roll = t.Roll and b.Dyelot = t.Dyelot
-		where Status='Confirmed' and a.id = b.id
+		where Status='Confirmed' and a.id = b.id and a.id!='{0}'
 		group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.remark,a.IssueDate         
 		                                                                        
 		union all
@@ -450,7 +468,8 @@ from (
 ) tmp
             order by IssueDate,name,id
             ",
-                    this.docno);
+                    this.docno,
+                    this.gridAlias);
             #endregion
 
             DualResult result;
@@ -571,9 +590,9 @@ from (
                 // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
                 sqlcmd = string.Format(
                     @"
-select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
+select 1 from dbo.{6} WITH (NOLOCK) 
 where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}' and ( roll!='{4}' and dyelot!='{5}')
-", this.docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
+", this.docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"], this.gridAlias);
 
                 if (MyUtility.Check.Seek(sqlcmd, null))
                 {
@@ -610,12 +629,12 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
 		    ,[Dyelot]=r.Dyelot
 		    ,[StockQty]=r.StockQty
 		    ,r.Ukey
-    FROM Receiving_Detail r
+    FROM {6} r
     INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
     INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
     WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
     and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
-    ", this.docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"], drModify["poid"]);
+    ", this.docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"], drModify["poid"], this.gridAlias);
 
                         if (MyUtility.Check.Seek(sqlcmd, null))
                     {
@@ -642,15 +661,23 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                 string original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
                 string current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
 
+                string original_Qty = "0";
+                string current_Qty = "0";
+
                 string firID = MyUtility.GetValue.Lookup($@"
 SELECT   [FirID]=f.ID
-FROM Receiving_Detail r
+FROM {this.gridAlias} r
 INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
 INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
 WHERE r.ID='{this.docno}' AND p.FabricType='F' AND ROLL='{drModify["roll"]}' AND  r.Dyelot='{drModify["dyelot"]}'
 ");
 
-                sqlupd1 += $@"
+                if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
+                {
+                    original_Qty = MyUtility.Convert.GetInt(MyUtility.Convert.GetDouble(drModify["ActualQty", DataRowVersion.Original])).ToString();
+                    current_Qty = MyUtility.Convert.GetInt(MyUtility.Convert.GetDouble(drModify["ActualQty", DataRowVersion.Current])).ToString();
+
+                    sqlupd1 += $@"
 update dbo.receiving_detail 
 set roll = '{drModify["roll"]}' 
 ,dyelot = '{drModify["dyelot"]}' 
@@ -658,7 +685,8 @@ set roll = '{drModify["roll"]}'
 ,StockQty  = '{drModify["stockqty"]}'
 ,ShipQty = '{drModify["ActualQty"]}'
 where ukey = '{drModify["ukey"]}';";
-                sqlupd2 += $@"
+
+                    sqlupd2 += $@"
 update dbo.ftyinventory 
 set roll = '{drModify["roll"]}'
 ,dyelot  = '{drModify["dyelot"]}'
@@ -668,8 +696,6 @@ and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}'
 and roll='{original_Roll}' and dyelot='{original_Dyelot}' 
 and stocktype = '{drModify["stocktype"]}';
 
-
-
 UPDATE FIR_Shadebone SET 
 Roll = '{drModify["roll"]}'
 ,Dyelot  = '{drModify["dyelot"]}'
@@ -677,6 +703,53 @@ Roll = '{drModify["roll"]}'
 ,EditName = '{Env.User.UserID}'
 ,EditDate = GETDATE()
 WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+";
+                }
+                else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
+                {
+                    original_Qty = MyUtility.Convert.GetInt(MyUtility.Convert.GetDouble(drModify["Qty", DataRowVersion.Original])).ToString();
+                    current_Qty = MyUtility.Convert.GetInt(MyUtility.Convert.GetDouble(drModify["Qty", DataRowVersion.Current])).ToString();
+
+                    sqlupd1 += $@"
+update dbo.TransferIn_detail 
+set roll = '{drModify["roll"]}' 
+,dyelot = '{drModify["dyelot"]}' 
+,Qty = '{drModify["Qty"]}'
+where ukey = '{drModify["ukey"]}';";
+
+                    sqlupd2 += $@"
+update dbo.ftyinventory 
+set roll = '{drModify["roll"]}'
+,dyelot  = '{drModify["dyelot"]}'
+,InQty   = '{drModify["Qty"]}'
+where poid ='{drModify["poid"]}' 
+and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}' 
+and roll='{original_Roll}' and dyelot='{original_Dyelot}' 
+and stocktype = '{drModify["stocktype"]}';
+
+UPDATE FIR_Shadebone SET 
+Roll = '{drModify["roll"]}'
+,Dyelot  = '{drModify["dyelot"]}'
+,TicketYds   = '{drModify["Qty"]}'
+,EditName = '{Env.User.UserID}'
+,EditDate = GETDATE()
+WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
+";
+                }
+
+                sqlupd2 += $@"
+update dbo.MDivisionPoDetail
+set InQty   = InQty + ({current_Qty} - {original_Qty})
+where poid ='{drModify["poid"]}' 
+and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}' 
+
+if 'I' = '{drModify["stocktype"]}'
+begin
+    update dbo.MDivisionPoDetail
+    set LInvQty= LInvQty + ({current_Qty} - {original_Qty})
+    where poid ='{drModify["poid"]}' 
+    and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}' 
+end
 ";
             }
 
@@ -733,23 +806,14 @@ WHERE  roll='{original_Roll}' AND dyelot='{original_Dyelot}' AND ID='{firID}'
 
             DataTable dt;
             string selectCommand1 = string.Format(
-                @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,a.shipqty
-,a.Weight
-,a.ActualWeight
-,a.Roll
-,a.Dyelot
-,a.ActualQty
-,a.PoUnit
-,a.StockQty
-,a.StockUnit
-,a.StockType
-,a.Location
-,a.remark
-,a.ukey
-from dbo.Receiving_Detail a WITH (NOLOCK) 
+                @"
+SELECT DISTINCT a.POID, a.Seq1, a.Seq2, a.id 
+FROM {0} a 
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-Where a.id = '{0}' and p1.FabricType='F'", this.docno);
+Where a.id = '{1}' 
+and p1.FabricType = 'F'",
+                this.gridAlias,
+                this.docno);
 
             if (!(result = DBProxy.Current.Select(null, selectCommand1, out dt)))
             {
@@ -758,20 +822,30 @@ Where a.id = '{0}' and p1.FabricType='F'", this.docno);
             else
             {
                 string sqlupdate = string.Empty;
-
                 foreach (DataRow dr in dt.Rows)
                 {
-                    sqlupdate += $@"
+                    sqlupdate += string.Format(
+                        @"
 update FIR
-set ArriveQty = (select sum(StockQty) 
-from Receiving_Detail r
-where FIR.ReceivingID=r.Id and FIR.POID=r.PoId 
-and FIR.SEQ1=r.Seq1 and FIR.SEQ2=r.Seq2)
-from FIR 
-where ReceivingID='{dr["id"]}'
-and POID='{dr["Poid"]}'
-and SEQ1='{dr["Seq1"]}' and SEQ2='{dr["Seq2"]}'
-";
+set ArriveQty = (
+    select sum({1})
+    from {0} r
+    where FIR.ReceivingID = r.Id 
+    and FIR.POID = r.PoId
+    and FIR.SEQ1 = r.Seq1 
+    and FIR.SEQ2 = r.Seq2
+)
+from FIR
+where ReceivingID = '{2}'
+and POID = '{3}'
+and SEQ1 = '{4}' and SEQ2 = '{5}'
+",
+                        this.gridAlias,
+                        this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL") ? "StockQty" : "Qty",
+                        dr["id"],
+                        dr["Poid"],
+                        dr["Seq1"],
+                        dr["Seq2"]);
                 }
 
                 if (!(result = DBProxy.Current.Execute(string.Empty, sqlupdate)))
@@ -779,10 +853,7 @@ and SEQ1='{dr["Seq1"]}' and SEQ2='{dr["Seq2"]}'
                     this.ShowErr(sqlupdate, result);
                 }
 
-                this.source = dt;
-                this.gridModifyRoll.DataSource = dt;
-                this.LoadDate();
-
+                this.btnCommit.Enabled = false;
                 this.Close();
             }
         }

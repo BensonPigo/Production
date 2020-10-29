@@ -50,6 +50,9 @@
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lbPackages = new Sci.Win.UI.Label();
             this.numericPackages = new Sci.Win.UI.NumericBox();
+            this.btnUpdateWeight = new Sci.Win.UI.Button();
+            this.btnModifyRollDyelot = new Sci.Win.UI.Button();
+            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,6 +69,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnUpdateWeight);
+            this.masterpanel.Controls.Add(this.btnModifyRollDyelot);
             this.masterpanel.Controls.Add(this.numericPackages);
             this.masterpanel.Controls.Add(this.lbPackages);
             this.masterpanel.Controls.Add(this.txtInvNo);
@@ -86,7 +91,7 @@
             this.masterpanel.Controls.Add(this.ArriveWHDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(988, 184);
+            this.masterpanel.Size = new System.Drawing.Size(988, 249);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.ArriveWHDate, 0);
@@ -108,16 +113,18 @@
             this.masterpanel.Controls.SetChildIndex(this.txtInvNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbPackages, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericPackages, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnModifyRollDyelot, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateWeight, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(988, 293);
+            this.detailpanel.Location = new System.Drawing.Point(0, 249);
+            this.detailpanel.Size = new System.Drawing.Size(988, 230);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(837, 144);
+            this.gridicon.Location = new System.Drawing.Point(838, 206);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -127,7 +134,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(988, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(988, 230);
             // 
             // detail2
             // 
@@ -143,24 +150,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(988, 515);
+            this.detail.Size = new System.Drawing.Size(988, 517);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(988, 477);
+            this.detailcont.Size = new System.Drawing.Size(988, 479);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Location = new System.Drawing.Point(0, 479);
             this.detailbtm.Size = new System.Drawing.Size(988, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(988, 515);
+            this.browse.Size = new System.Drawing.Size(988, 517);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(996, 544);
+            this.tabs.Size = new System.Drawing.Size(996, 546);
             // 
             // createby
             // 
@@ -225,7 +232,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(988, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(988, 249);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -240,7 +247,7 @@
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(279, 144);
+            this.btnFind.Location = new System.Drawing.Point(280, 206);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 7;
@@ -253,14 +260,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
+            this.txtLocateForSP.Location = new System.Drawing.Point(129, 210);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 6;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(16, 148);
+            this.labelLocateForSP.Location = new System.Drawing.Point(17, 210);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -269,7 +276,7 @@
             // btnClearQtyIsEmpty
             // 
             this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(356, 206);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 8;
@@ -366,8 +373,6 @@
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer2.Name = "shapeContainer2";
-            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape1});
             this.shapeContainer2.Size = new System.Drawing.Size(988, 184);
             this.shapeContainer2.TabIndex = 54;
             this.shapeContainer2.TabStop = false;
@@ -401,10 +406,44 @@
             0,
             0});
             // 
+            // btnUpdateWeight
+            // 
+            this.btnUpdateWeight.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnUpdateWeight.Location = new System.Drawing.Point(793, 164);
+            this.btnUpdateWeight.Name = "btnUpdateWeight";
+            this.btnUpdateWeight.Size = new System.Drawing.Size(161, 30);
+            this.btnUpdateWeight.TabIndex = 73;
+            this.btnUpdateWeight.Text = "Update Weight";
+            this.btnUpdateWeight.UseVisualStyleBackColor = true;
+            this.btnUpdateWeight.Click += new System.EventHandler(this.BtnUpdateWeight_Click);
+            // 
+            // btnModifyRollDyelot
+            // 
+            this.btnModifyRollDyelot.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnModifyRollDyelot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnModifyRollDyelot.Location = new System.Drawing.Point(793, 115);
+            this.btnModifyRollDyelot.Name = "btnModifyRollDyelot";
+            this.btnModifyRollDyelot.Size = new System.Drawing.Size(161, 43);
+            this.btnModifyRollDyelot.TabIndex = 72;
+            this.btnModifyRollDyelot.Text = "Modify Roll & Dyelot";
+            this.btnModifyRollDyelot.UseVisualStyleBackColor = true;
+            this.btnModifyRollDyelot.Click += new System.EventHandler(this.BtnModifyRollDyelot_Click);
+            // 
+            // shapeContainer3
+            // 
+            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape1});
+            this.shapeContainer3.Size = new System.Drawing.Size(1007, 215);
+            this.shapeContainer3.TabIndex = 54;
+            this.shapeContainer3.TabStop = false;
+            // 
             // P18
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(996, 577);
+            this.ClientSize = new System.Drawing.Size(996, 579);
             this.DefaultControl = "txtFromFactory";
             this.DefaultControlForEdit = "txtFromFactory";
             this.DefaultOrder = "ISSUEDATE,ID";
@@ -467,5 +506,8 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
         private Win.UI.NumericBox numericPackages;
         private Win.UI.Label lbPackages;
+        private Win.UI.Button btnUpdateWeight;
+        private Win.UI.Button btnModifyRollDyelot;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
     }
 }
