@@ -945,6 +945,18 @@ WHERE t.ID = s.ID AND t.OrderID = s.OrderID AND t.Seq = s.Seq
         }
 
         /// <inheritdoc/>
+        protected override bool ClickDeleteBefore()
+        {
+            if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
+            {
+                MyUtility.Msg.WarningBox("The record status is confimed, you can not delete.");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
             string updateCmd = $@"
