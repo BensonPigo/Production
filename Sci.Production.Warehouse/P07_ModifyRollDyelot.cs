@@ -624,22 +624,30 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                         // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
                         sqlcmd = string.Format(
                             @"
-    SELECT   [FirID]=f.ID
-		    ,[Roll]=r.Roll
-		    ,[Dyelot]=r.Dyelot
-		    ,[StockQty]=r.StockQty
-		    ,r.Ukey
-    FROM {6} r
-    INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
-    INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
-    WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
-    and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
-    ", this.docno, drModify["roll"], drModify["dyelot"], drModify["Seq1"], drModify["Seq2"], drModify["poid"], this.gridAlias);
+SELECT   [FirID]= f.ID
+	    ,[Roll]= r.Roll
+	    ,[Dyelot]= r.Dyelot
+	    ,[StockQty]= r.{7}
+	    ,r.Ukey
+FROM {6} r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
+WHERE r.ID='{0}' AND p.FabricType='F' AND p.FabricType='F' AND  roll='{1}' AND dyelot='{2}'
+and r.seq1='{3}' and r.seq2='{4}' and r.poid='{5}' 
+",
+                            this.docno,
+                            drModify["roll"],
+                            drModify["dyelot"],
+                            drModify["Seq1"],
+                            drModify["Seq2"],
+                            drModify["poid"],
+                            this.gridAlias,
+                            this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL") ? "StockQty" : "Qty");
 
                         if (MyUtility.Check.Seek(sqlcmd, null))
-                    {
-                        duplicateList.Add($"{drModify["poid"]} - {drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()} - {drModify["roll"]} - {drModify["dyelot"]}");
-                    }
+                        {
+                            duplicateList.Add($"{drModify["poid"]} - {drModify["seq1"].ToString() + " " + drModify["seq2"].ToString()} - {drModify["roll"]} - {drModify["dyelot"]}");
+                        }
                 }
             }
 
