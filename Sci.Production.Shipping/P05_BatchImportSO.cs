@@ -10,16 +10,14 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class P05_BatchImportSO : Win.Subs.Base
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P05_BatchImportSO"/> class.
-        /// </summary>
+        /// <inheritdoc/>
         public P05_BatchImportSO()
         {
             this.InitializeComponent();
-            DataTable shipperID;
-            DBProxy.Current.Select(null, "select '' as ShipperID union all SELECT DISTINCT [ShipperID]=Shipper FROM GMTBooking WITH (NOLOCK) ", out shipperID);
+            DBProxy.Current.Select(null, "select '' as ShipperID union all SELECT DISTINCT [ShipperID]=Shipper FROM GMTBooking WITH (NOLOCK) ", out DataTable shipperID);
             MyUtility.Tool.SetupCombox(this.comboShipper, 1, shipperID);
             this.comboShipper.Text = Env.User.Keyword;
         }
@@ -41,7 +39,6 @@ namespace Sci.Production.Shipping
                 {
                     DataRow cuttentDr = this.grid.GetDataRow(e.RowIndex);
 
-                    DataTable dt;
                     string sqlcmd = string.Empty;
 
                     sqlcmd = $@"
@@ -58,7 +55,7 @@ from  ForwarderWhse fw
         and fw.ShipModeID = '{cuttentDr["ShipModeID"]}'
  order by fwd.WhseNo
 ";
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
 
                     Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", string.Empty);
 
@@ -75,37 +72,34 @@ from  ForwarderWhse fw
                 }
             };
 
-// setTerminal.CellValidating += (s, e) =>
-//            {
-//                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+            setTerminal.CellValidating += (s, e) =>
+            {
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
 
-// if (!MyUtility.Check.Empty(e.FormattedValue))
-//                {
-//                    DataTable dt;
-//                    string sqlCmd = $@"
-// select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK)
-// where fw.ID = fwd.ID
-// and fwd.whseno = '{e.FormattedValue}'
-// order by fwd.WhseNo";
+                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                string sqlCmd = $@"
+select fwd.UKey
+from ForwarderWhse fw WITH (NOLOCK) 
+inner join ForwarderWhse_Detail fwd WITH (NOLOCK) on fw.ID = fwd.ID
+where fwd.whseno = '{e.FormattedValue}'
+";
+                if (MyUtility.Check.Seek(sqlCmd, out DataRow drr))
+                {
+                    dr["ForwarderWhse_DetailUKey_ForShow"] = e.FormattedValue;
+                    dr["ForwarderWhse_DetailUKey"] = drr["Ukey"];
+                }
+                else
+                {
+                    dr["ForwarderWhse_DetailUKey_ForShow"] = string.Empty;
+                    dr["ForwarderWhse_DetailUKey"] = 0;
+                    MyUtility.Msg.WarningBox("Terminal/Whse# is not found!!");
+                }
 
-// DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
-//                    if (result)
-//                    {
-//                        if (dt.Rows.Count >= 1)
-//                        {
-//                            e.FormattedValue = dt.Rows[0]["WhseNo"].ToString();
-//                            dr["ForwarderWhse_DetailUKey"] = dt.Rows[0]["Ukey"].ToString();
-//                        }
-//                        else
-//                        {
-//                            e.FormattedValue = string.Empty;
-//                            dr["ForwarderWhse_DetailUKey"] = 0;
-//                            MyUtility.Msg.WarningBox("Terminal/Whse# is not found!!");
-//                            e.Cancel = true;
-//                        }
-//                    }
-//                }
-//            };
+                dr.EndEdit();
+            };
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
 
@@ -123,7 +117,6 @@ from  ForwarderWhse fw
               ;
 
             this.grid.Columns["Selected"].SortMode = DataGridViewColumnSortMode.NotSortable;
-
             this.QueryData();
         }
 
@@ -192,38 +185,27 @@ VALUES (
             }
             #endregion
 
-            TransactionScope transactionScope = new TransactionScope();
-
-            try
+            DualResult result;
+            using (TransactionScope scope = new TransactionScope())
             {
-                DualResult result = DBProxy.Current.Execute(null, sqlCmd.ToString());
-
-                if (result)
+                if (result = DBProxy.Current.Execute(null, sqlCmd.ToString()))
                 {
-                    transactionScope.Complete();
-                    MyUtility.Msg.InfoBox("Success!");
-                }
-                else
-                {
-                    transactionScope.Dispose();
-                    MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                    scope.Complete();
                 }
             }
-            catch (Exception ex)
+
+            if (!result)
             {
-                transactionScope.Dispose();
-                this.ShowErr("Commit transaction error.", ex);
+                this.ShowErr(result);
+                return;
             }
-            finally
-            {
-                transactionScope.Dispose();
-                this.QueryData();
-            }
+
+            MyUtility.Msg.InfoBox("Success!");
+            this.QueryData();
         }
 
         private void QueryData()
         {
-            DataTable dt;
             string sqlCmd = string.Empty;
             DualResult result;
 
@@ -267,7 +249,7 @@ WHERE 1=1 AND g.Status='New'
             sqlCmd += "ORDER BY g.ID" + Environment.NewLine;
 
             this.ShowWaitMessage("Data Loading....");
-            if (result = DBProxy.Current.Select(null, sqlCmd, out dt))
+            if (result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt))
             {
                 if (dt.Rows.Count == 0)
                 {

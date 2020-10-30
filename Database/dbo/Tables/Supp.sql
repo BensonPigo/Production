@@ -11,7 +11,7 @@
     [Fax]          VARCHAR (30)   CONSTRAINT [DF_Supp_Fax] DEFAULT ('') NULL,
     [AddressCH]    NVARCHAR (50)  CONSTRAINT [DF_Supp_AddressCH] DEFAULT ('') NULL,
     [AddressEN]    NVARCHAR (MAX) CONSTRAINT [DF_Supp_AddressEN] DEFAULT ('') NULL,
-    [ZipCode]      VARCHAR (6)    CONSTRAINT [DF_Supp_ZipCode] DEFAULT ('') NULL,
+    [ZipCode]      VARCHAR (10)    CONSTRAINT [DF_Supp_ZipCode] DEFAULT ('') NULL,
     [Delay]        DATE           NULL,
     [DelayMemo]    NVARCHAR (MAX) CONSTRAINT [DF_Supp_DelayMemo] DEFAULT ('') NULL,
     [LockDate]     DATE           NULL,
