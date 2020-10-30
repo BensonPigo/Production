@@ -803,13 +803,24 @@ end
             fir_Air_Proce.Add(new SqlParameter("@ID", this.docno));
             fir_Air_Proce.Add(new SqlParameter("@LoginID", Sci.Env.User.UserID));
             DualResult result;
-
+         if (this.gridAlias.ToUpper().EqualString("RECEIVING_DETAIL"))
+         {
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
             {
-                Exception ex = result.GetException();
-                MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
-                return;
+               Exception ex = result.GetException();
+               MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+               return;
             }
+         }
+         else if (this.gridAlias.ToUpper().EqualString("TRANSFERIN_DETAIL"))
+         {
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir_TnsfIn", fir_Air_Proce)))
+            {
+               Exception ex = result.GetException();
+               MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+               return;
+            }
+         }
             #endregion
 
             DataTable dt;
