@@ -1754,6 +1754,7 @@ select  a.id
         ,a.CombineBarcode
         ,a.Unoriginal 
         ,[ActualWeight] = isnull(a.ActualWeight, 0)
+        ,a.MDivisionID
 from dbo.TransferIn_Detail a WITH (NOLOCK) 
 left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1
@@ -1945,6 +1946,41 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
             next_dgbtn.Value = "+";
+        }
+
+        private void BtnModifyRollDyelot_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.InfoBox("Please modify data directly!!");
+                return;
+            }
+
+            // 此功能只需顯示FabricType=F 資料,不須顯示副料
+            DataTable dt;
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, @"select * from #tmp where fabrictype='F'", out dt)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString(), this.GridAlias);
+            frm.ShowDialog(this);
+            this.RenewData();
+        }
+
+        private void BtnUpdateWeight_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.InfoBox("Please modify data directly!!");
+                return;
+            }
+
+            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString(), this.GridAlias);
+            frm.ShowDialog(this);
+            this.RenewData();
         }
     }
 }
