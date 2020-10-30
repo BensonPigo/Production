@@ -97,37 +97,38 @@ namespace Sci.Production.Shipping
 
             if (this.reportType == "1")
             {
-                sqlCmd.Append(string.Format(@"select 
-g.ID
-,g.Shipper
-,g.BrandID
-,g.InvDate
-,g.FCRDate
-,g.CustCDID
-,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
-,g.ShipModeID
-,g.CYCFS
-,g.ShipTermID
-,[Handle] = dbo.getPass1(g.Handle)
-,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
-,g.Vessel
-,g.ETD
-,g.ETA
-,g.SONo
-,g.SOCFMDate
-,g.CutOffDate
-,g.ShipPlanID
-,sp.Status
-,g.TotalShipQty
-,g.TotalCTNQty
-,isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck
-,g.TotalGW
-,g.TotalCBM
-,g.AddDate
-,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
-,g.Remark
-,[PulloutComplete]=IIF(PulloutIdCount.Value = PulloutIdConfirmLockCount.Value AND PulloutIdCount.Value > 0 ,'True' ,'False')
-
+                sqlCmd.Append(string.Format(@"
+select 
+    g.ID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,g.FCRDate
+    ,g.CustCDID
+    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
+    ,g.ShipModeID
+    ,g.CYCFS
+    ,g.ShipTermID
+    ,[Handle] = dbo.getPass1(g.Handle)
+    ,g.DocumentRefNo
+    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
+    ,g.Vessel
+    ,g.ETD
+    ,g.ETA
+    ,g.SONo
+    ,g.SOCFMDate
+    ,g.CutOffDate
+    ,g.ShipPlanID
+    ,sp.Status
+    ,g.TotalShipQty
+    ,g.TotalCTNQty
+    ,isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck
+    ,g.TotalGW
+    ,g.TotalCBM
+    ,g.AddDate
+    ,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+    ,g.Remark
+    ,[PulloutComplete]=IIF(PulloutIdCount.Value = PulloutIdConfirmLockCount.Value AND PulloutIdCount.Value > 0 ,'True' ,'False')
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -284,64 +285,64 @@ OUTER APPLY(
 
                 sqlCmd.Append(string.Format(@"
 select DISTINCT
-
-g.ID
-,g.Shipper
-,g.BrandID
-,g.InvDate
-,pl.MDivisionID
-,isnull(pl.ID,'') as PackID
-,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
-                            from (
-                                select distinct o.CustPONo
-                                from PackingList_Detail pd WITH (NOLOCK) 
-								left join orders o WITH (NOLOCK) on o.id = pd.OrderID
-                                where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
-                            ) a 
-                            for xml path('')
-                          ), 1, 1, '') 
-,pl.PulloutDate
---
-,g.CutOffDate
-,[SoConfirmDate]=g.SOCFMDate
-,[Terminal/Whse#]= fd.WhseNo
-,g.ETD
-,g.ETA
-,PulloutReportConfirmDate.PulloutReportConfirmDate
-,[PulloutID]=pl.PulloutID
---
-,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
-,isnull(pl.GW,0) as GW
-,isnull(pl.CBM,0) as CBM
-,g.CustCDID
-,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
-,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
-,g.AddName+' '+isnull(p.Name,'') as AddName
-,g.AddDate
-,g.Remark
-,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
-,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
-, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
-,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
-,[OrderShipmodeSeq] = 
-STUFF ((
-select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
-    from (
-        select distinct pd.OrderShipmodeSeq 
-        from PackingList_Detail pd WITH (NOLOCK) 
-        left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
-        and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
-        where pd.ID = pl.id
-        group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
-    ) a 
-    for xml path('')
-), 1, 1, '') 
-, g.SONo
-, g.ShipModeID
-, g.CYCFS
-, g.Vessel
-, g.BLNo
-, g.BL2No
+    g.ID
+    ,g.Shipper
+    ,g.BrandID
+    ,g.InvDate
+    ,pl.MDivisionID
+    ,isnull(pl.ID,'') as PackID
+    ,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
+                                from (
+                                    select distinct o.CustPONo
+                                    from PackingList_Detail pd WITH (NOLOCK) 
+								    left join orders o WITH (NOLOCK) on o.id = pd.OrderID
+                                    where pd.ID = pl.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
+                                ) a 
+                                for xml path('')
+                              ), 1, 1, '') 
+    ,pl.PulloutDate
+    --
+    ,g.CutOffDate
+    ,[SoConfirmDate]=g.SOCFMDate
+    ,[Terminal/Whse#]= fd.WhseNo
+    ,g.ETD
+    ,g.ETA
+    ,PulloutReportConfirmDate.PulloutReportConfirmDate
+    ,[PulloutID]=pl.PulloutID
+    --
+    ,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
+    ,isnull(pl.GW,0) as GW
+    ,isnull(pl.CBM,0) as CBM
+    ,g.CustCDID
+    ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+    ,g.DocumentRefNo
+    ,[Forwarder] = (g.Forwarder+' - '+isnull(ls.Abb,''))
+    ,g.AddName+' '+isnull(p.Name,'') as AddName
+    ,g.AddDate
+    ,g.Remark
+    ,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
+    ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
+    , Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
+    ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+    ,[OrderShipmodeSeq] = 
+    STUFF ((
+    select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+        from (
+            select distinct pd.OrderShipmodeSeq 
+            from PackingList_Detail pd WITH (NOLOCK) 
+            left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+            and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+            where pd.ID = pl.id
+            group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+        ) a 
+        for xml path('')
+    ), 1, 1, '') 
+    , g.SONo
+    , g.ShipModeID
+    , g.CYCFS
+    , g.Vessel
+    , g.BLNo
+    , g.BL2No
 from GMTBooking g WITH (NOLOCK) 
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
@@ -526,7 +527,7 @@ and exists (select 1
             if (this.reportType == "1")
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 29];
+                object[,] objArray = new object[1, 30];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -540,32 +541,33 @@ and exists (select 1
                     objArray[0, 8] = dr["CYCFS"];
                     objArray[0, 9] = dr["ShipTermID"];
                     objArray[0, 10] = dr["Handle"];
-                    objArray[0, 11] = dr["Forwarder"];
-                    objArray[0, 12] = dr["Vessel"];
-                    objArray[0, 13] = dr["ETD"];
-                    objArray[0, 14] = dr["ETA"];
-                    objArray[0, 15] = dr["SONo"];
-                    objArray[0, 16] = dr["SOCFMDate"];
-                    objArray[0, 17] = dr["CutOffDate"];
-                    objArray[0, 18] = dr["ShipPlanID"];
-                    objArray[0, 19] = dr["Status"];
-                    objArray[0, 20] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
-                    objArray[0, 21] = dr["TotalShipQty"];
-                    objArray[0, 22] = dr["TotalCTNQty"];
-                    objArray[0, 23] = dr["TotalGW"];
-                    objArray[0, 24] = dr["TotalCBM"];
-                    objArray[0, 25] = dr["AddDate"];
-                    objArray[0, 26] = dr["ConfirmDate"];
-                    objArray[0, 27] = dr["Remark"];
-                    objArray[0, 28] = dr["PulloutComplete"].ToString();
-                    worksheet.Range[string.Format("A{0}:AC{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 11] = dr["DocumentRefNo"];
+                    objArray[0, 12] = dr["Forwarder"];
+                    objArray[0, 13] = dr["Vessel"];
+                    objArray[0, 14] = dr["ETD"];
+                    objArray[0, 15] = dr["ETA"];
+                    objArray[0, 16] = dr["SONo"];
+                    objArray[0, 17] = dr["SOCFMDate"];
+                    objArray[0, 18] = dr["CutOffDate"];
+                    objArray[0, 19] = dr["ShipPlanID"];
+                    objArray[0, 20] = dr["Status"];
+                    objArray[0, 21] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
+                    objArray[0, 22] = dr["TotalShipQty"];
+                    objArray[0, 23] = dr["TotalCTNQty"];
+                    objArray[0, 24] = dr["TotalGW"];
+                    objArray[0, 25] = dr["TotalCBM"];
+                    objArray[0, 26] = dr["AddDate"];
+                    objArray[0, 27] = dr["ConfirmDate"];
+                    objArray[0, 28] = dr["Remark"];
+                    objArray[0, 29] = dr["PulloutComplete"].ToString();
+                    worksheet.Range[string.Format("A{0}:AD{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 37];
+                object[,] objArray = new object[1, 38];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -594,22 +596,23 @@ and exists (select 1
                     objArray[0, 23] = dr["CBM"];
                     objArray[0, 24] = dr["CustCDID"];
                     objArray[0, 25] = dr["Dest"];
-                    objArray[0, 26] = dr["Forwarder"];
-                    objArray[0, 27] = dr["ConfirmDate"];
-                    objArray[0, 28] = dr["AddName"];
-                    objArray[0, 29] = dr["AddDate"];
-                    objArray[0, 30] = dr["ETD"];
-                    objArray[0, 31] = dr["ETA"];
-                    objArray[0, 32] = dr["BLNo"];
-                    objArray[0, 33] = dr["BL2No"];
-                    objArray[0, 34] = dr["Vessel"];
-                    objArray[0, 35] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:AI{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 26] = dr["DocumentRefNo"];
+                    objArray[0, 27] = dr["Forwarder"];
+                    objArray[0, 28] = dr["ConfirmDate"];
+                    objArray[0, 29] = dr["AddName"];
+                    objArray[0, 30] = dr["AddDate"];
+                    objArray[0, 31] = dr["ETD"];
+                    objArray[0, 32] = dr["ETA"];
+                    objArray[0, 33] = dr["BLNo"];
+                    objArray[0, 34] = dr["BL2No"];
+                    objArray[0, 35] = dr["Vessel"];
+                    objArray[0, 36] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:AJ{0}", intRowsStart)].Value2 = objArray;
                     if (this.hasDelivery &&
                         (MyUtility.Convert.GetDate(dr["BuyerDelivery"]) < this.dateDelivery.Value1 ||
                         MyUtility.Convert.GetDate(dr["BuyerDelivery"]) > this.dateDelivery.Value2))
                     {
-                        worksheet.Range[string.Format("A{0}:AJ{0}", intRowsStart)].Font.Color = ColorTranslator.ToOle(Color.Red);
+                        worksheet.Range[string.Format("A{0}:AK{0}", intRowsStart)].Font.Color = ColorTranslator.ToOle(Color.Red);
                     }
 
                     intRowsStart++;

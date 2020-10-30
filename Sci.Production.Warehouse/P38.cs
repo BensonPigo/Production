@@ -1,24 +1,26 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Sci.Win.Tools;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P38 : Win.Tems.QueryForm
     {
         private const byte UnLock = 0;
         private const byte Lock = 1;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <inheritdoc/>
         public P38(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -92,6 +94,8 @@ namespace Sci.Production.Warehouse
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: remark)
                   .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                  .Text("Scale", header: "Shade Band\r\nScale", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                  .Text("Tone", header: "Shade Band\r\nTone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -286,7 +290,6 @@ and fi2.MtlLocationID ='{this.txtMtlLocation.Text}'");
             }
 
             strSQLCmd.Append($@"
-
 --#tmp_FIR_Result1
 select f.POID,f.SEQ1,f.SEQ2,f.Dyelot,f.Roll
 	,max(fp.Result) as PhyResult, max(fw.Result) as WeightResult , max(FS.Result) AS ShadeboneResult, max(FC.Result) AS ContinuityResult, max(FO.Result) AS OdorResult
@@ -335,6 +338,14 @@ from (
 	) a
 	group by  a.POID,a.SEQ1,a.SEQ2,a.Dyelot
 )a
+
+--#tmp_FIR_3
+select f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,Scale = max(fs.Scale),Tone = max(fs.Tone)
+into #tmp_FIR_3
+from #tmp_FtyInventory fi
+inner join fir f on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
+inner join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fi.Dyelot =fs.Dyelot and fi.Roll=fs.Roll
+group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll 
 
 --#tmp_WashLab
 select distinct f.POID,f.SEQ1,f.SEQ2
@@ -419,9 +430,11 @@ select distinct fi.*
 							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
 								then 'Blank'
 							else 'Pass' end 
+        ,f3.Scale, f3.Tone
 from #tmp_FtyInventory fi
 left join #tmp_FIR_Result1 FIR_Result1 on FIR_Result1.POID=fi.POID	and FIR_Result1.SEQ1 = fi.Seq1 and FIR_Result1.SEQ2 = fi.Seq2 and FIR_Result1.Dyelot=fi.Dyelot AND FIR_Result1.Roll=fi.Roll
 left join #tmp_FIR_Result2 FIR_Result2 on FIR_Result2.POID=fi.POID	and FIR_Result2.SEQ1 = fi.Seq1 and FIR_Result2.SEQ2 = fi.Seq2 and FIR_Result2.Dyelot=fi.Dyelot 
+left join #tmp_FIR_3 f3 on f3.POID=fi.POID	and f3.SEQ1 = fi.Seq1 and f3.SEQ2 = fi.Seq2 and f3.Dyelot=fi.Dyelot AND f3.Roll=fi.Roll
 left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq1 and WashLab.SEQ2 = fi.Seq2 
 left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
 left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
@@ -431,9 +444,8 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
 ");
 
             DualResult result;
-            DataTable dtData;
             this.ShowWaitMessage("Data Loading...");
-            if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out dtData))
+            if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), cmds, out DataTable dtData))
             {
                 if (dtData.Rows.Count == 0)
                 {
@@ -445,7 +457,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             }
             else
             {
-                this.ShowErr(strSQLCmd.ToString(), result);
+                this.ShowErr(result);
             }
 
             this.HideWaitMessage();
@@ -507,15 +519,13 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
 
         private void LockUnlock(byte flag)
         {
-            bool x;
-            if (!(x = this.gridMaterialLock.ValidateControl()))
+            if (!this.gridMaterialLock.ValidateControl())
             {
                 MyUtility.Msg.WarningBox("grid1.ValidateControl failed");
             }
 
             this.gridMaterialLock.EndEdit();
             this.listControlBindingSource1.EndEdit();
-            DualResult result;
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             dt.AcceptChanges();
 
@@ -527,7 +537,7 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
             DataRow[] find;
             DialogResult dResult;
 
-            string keyword = string.Empty;
+            string keyword;
             if (flag == 1)
             {
                 keyword = "Lock";
@@ -557,15 +567,15 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
                 sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"], flag, Env.User.UserID, item["Remark"]));
             }
 
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd.ToString())))
+            if (!DBProxy.Current.Execute(null, sqlcmd.ToString()))
             {
-                MyUtility.Msg.WarningBox(string.Format("{0} failed, Pleaes re-try", keyword));
+                MyUtility.Msg.WarningBox($"{keyword} failed, Pleaes re-try");
                 return;
             }
             else
             {
                 this.SendExcel();
-                MyUtility.Msg.InfoBox(string.Format("{0} successful!!", keyword));
+                MyUtility.Msg.InfoBox($"{keyword} successful!!");
             }
 
             this.BtnQuery_Click(null, null);
@@ -600,10 +610,9 @@ drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp
 
             if (this.SaveExcel(dt, strExcelName))
             {
-                DataTable dtSendAccount;
                 string strSendAccount = "select * from MailTo where Description='Material locked/Unlocked'";
 
-                DualResult result = DBProxy.Current.Select(string.Empty, strSendAccount, out dtSendAccount);
+                DualResult result = DBProxy.Current.Select(string.Empty, strSendAccount, out DataTable dtSendAccount);
                 if (result)
                 {
                     if (dtSendAccount != null && dtSendAccount.Rows.Count > 0)
@@ -649,8 +658,7 @@ select t.POID
 from #tmp t
 inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
 
-            DataTable k;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(printData, string.Empty, sql, out k, "#Tmp");
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(printData, string.Empty, sql, out DataTable k, "#Tmp");
 
             if (result == false)
             {
