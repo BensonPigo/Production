@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P42 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -75,8 +77,7 @@ left join dbo.SciMES_BundleDefectReason bdr with(nolock) on bdr.ID = bi.ReasonID
 where b.Orderid = '{drSelected["OrderID"]}' 
 {where}
 ";
-                DataTable dt;
-                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out dt);
+                DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
                 if (!dualResult)
                 {
                     this.ShowErr(dualResult);
@@ -313,7 +314,8 @@ where 1=1
 select [Orderid]=o.ID,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 into #tmpBundleNo
 from #tmpOrders o
-LEFT join Bundle b with(nolock) on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+LEFT join Bundle b with(nolock) on b.MDivisionID = o.MDivisionID
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
 LEFT join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
@@ -470,7 +472,8 @@ outer apply(
 	    from #tmpBundleInspection bi
 		inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bd.id
-		where  o.id = b.Orderid and  o.MDivisionID = b.MDivisionID
+		where o.MDivisionID = b.MDivisionID
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
 	    group by bi.ReasonID
 	    for xml path('''')
     ),1,1,'''')
@@ -528,12 +531,11 @@ outer apply(
 where 1=1
 {where}
 
-select b.Orderid,b.Article,bd.Sizecode,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select distinct bdo.Orderid,b.Article,b.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 into #tmpBundleNo
-from Bundle b with(nolock)
-inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
-
+from Bundle_Detail_Order bdo
+inner join Bundle b WITH (NOLOCK) on b.id = bdo.Id
+inner join #tmpOrders o on bdo.Orderid = o.ID and b.MDivisionID = o.MDivisionID and b.Article = o.Article and b.Sizecode = o.SizeCode
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
@@ -673,9 +675,9 @@ bi.ReplacementQty
 into #tmpBundleInspection
 from dbo.SciMES_BundleInspection bi  with(nolock)
 where exists(select 1   from #tmpOrders o 
-						inner join Bundle b with(nolock) on o.id = b.Orderid and  b.MDivisionID = o.MDivisionID
-						inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id 
-						where bi.BundleNo = bd.BundleNo
+						inner join Bundle b with(nolock) on b.MDivisionID = o.MDivisionID
+						inner join Bundle_Detail_Order bdo WITH (NOLOCK) on b.id = bdo.id and o.id = bdo.Orderid
+						where bi.BundleNo = bdo.BundleNo
 						)  and isnull(bi.DefectQty,0) <> isnull(bi.ReplacementQty,0)
 
 declare @sql nvarchar(max)=N'
@@ -697,8 +699,9 @@ outer apply(
 	    from #tmpBundleInspection bi  with(nolock)
         inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
         inner join Bundle b with(nolock) on b.id = bd.id
-	    where b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
-		and b.Article = o.Article and bd.SizeCode = o.Sizecode
+	    where b.MDivisionID = o.MDivisionID
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
+		and b.Article = o.Article and b.SizeCode = o.Sizecode
 	    group by ReasonID
 	    for xml path('''')
     ),1,1,'''')
@@ -710,8 +713,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 ";
             }
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -786,7 +788,8 @@ select   b.Orderid
 		,s.IsSelection
 into #tmpBundleNo
 from Bundle b with(nolock)
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID
+inner join #tmpOrders o on b.MDivisionID = o.MDivisionID 
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
@@ -1012,7 +1015,8 @@ select   b.Orderid
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
-inner join #tmpOrders o on b.Orderid = o.ID and  b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
+inner join #tmpOrders o on b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s
@@ -1156,8 +1160,7 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
                 caption = $"SubProcess:{subProcess} - Article:{drSelected["Article"]} - Size:{drSelected["SizeCode"]}";
             }
 
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -1199,9 +1202,10 @@ drop table #tmpOrders,#tmpBundleNo,#tmpBundleNo_SubProcess,#tmpBundleNo_Complete
 
             #endregion
 
-            MsgGridForm msgGridForm = new MsgGridForm(this.grid2, caption: caption, eventname: new string[] { "CellFormatting" });
-
-            msgGridForm.FormBorderStyle = FormBorderStyle.Sizable;
+            MsgGridForm msgGridForm = new MsgGridForm(this.grid2, caption: caption, eventname: new string[] { "CellFormatting" })
+            {
+                FormBorderStyle = FormBorderStyle.Sizable,
+            };
             msgGridForm.grid1.RowHeadersVisible = true;
             msgGridForm.ControlBox = true;
             msgGridForm.ShowDialog();
