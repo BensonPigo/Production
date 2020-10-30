@@ -58,6 +58,8 @@
             this.gridIssueBreakDown = new Sci.Win.UI.Grid();
             this.gridIssueBreakDownBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.checkByCombo = new Sci.Win.UI.CheckBox();
+            this.lbCustCD = new Sci.Win.UI.Label();
+            this.displayCustCD = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -77,6 +79,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayCustCD);
+            this.masterpanel.Controls.Add(this.lbCustCD);
             this.masterpanel.Controls.Add(this.checkByCombo);
             this.masterpanel.Controls.Add(this.txtOrderID);
             this.masterpanel.Controls.Add(this.labelOrderID);
@@ -131,6 +135,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelOrderID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtOrderID, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbCustCD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCustCD, 0);
             // 
             // detailpanel
             // 
@@ -140,7 +146,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2110, 128);
+            this.gridicon.Location = new System.Drawing.Point(2305, 128);
             // 
             // refresh
             // 
@@ -170,11 +176,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(999, 530);
+            this.browse.Size = new System.Drawing.Size(1035, 530);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1007, 559);
+            this.tabs.Size = new System.Drawing.Size(1043, 559);
             // 
             // createby
             // 
@@ -481,10 +487,27 @@
             this.checkByCombo.UseVisualStyleBackColor = true;
             this.checkByCombo.CheckedChanged += new System.EventHandler(this.CheckByCombo_CheckedChanged);
             // 
+            // lbCustCD
+            // 
+            this.lbCustCD.Location = new System.Drawing.Point(441, 133);
+            this.lbCustCD.Name = "lbCustCD";
+            this.lbCustCD.Size = new System.Drawing.Size(75, 23);
+            this.lbCustCD.TabIndex = 53;
+            this.lbCustCD.Text = "CustCD";
+            // 
+            // displayCustCD
+            // 
+            this.displayCustCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustCD.Location = new System.Drawing.Point(519, 132);
+            this.displayCustCD.Name = "displayCustCD";
+            this.displayCustCD.Size = new System.Drawing.Size(100, 23);
+            this.displayCustCD.TabIndex = 54;
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1007, 592);
+            this.ClientSize = new System.Drawing.Size(1043, 592);
             this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "checkByCombo";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -557,5 +580,7 @@
         private Win.UI.Grid gridIssueBreakDown;
         private Win.UI.ListControlBindingSource gridIssueBreakDownBS;
         private Win.UI.CheckBox checkByCombo;
+        private Win.UI.DisplayBox displayCustCD;
+        private Win.UI.Label lbCustCD;
     }
 }
