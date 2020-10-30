@@ -640,12 +640,14 @@ where Junk = 0
                         return;
                     }
 
+                    /*
                     if (MyUtility.Convert.GetBool(dr["IsSewingOperation"]))
                     {
                         MyUtility.Msg.ErrorBox("This Artwrok is sewing operation, cannot modify.");
                         dr["IsHide"] = 1;
                         return;
                     }
+                    */
 
                     if (MyUtility.Convert.GetBool(e.FormattedValue))
                     {
