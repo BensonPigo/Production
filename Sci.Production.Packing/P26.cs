@@ -3,7 +3,6 @@ using Ict.Win;
 using org.apache.pdfbox.pdmodel;
 using org.apache.pdfbox.util;
 using Sci.Data;
-using Sci.Production.Automation;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using System;
@@ -17,12 +16,12 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P26 : Sci.Win.Tems.Base
     {
         private DataTable Grid_SelectedFile_Dt = new DataTable();
@@ -30,7 +29,6 @@ namespace Sci.Production.Packing
         private Dictionary<string, List<ZPL>> File_Name_Object = new Dictionary<string, List<ZPL>>();
         private File_Name_Object_List _File_Name_Object_List;
         private Dictionary<string, string> File_Name_PDF = new Dictionary<string, string>();
-        private Dictionary<string, bool> packingList_IxMixed = new Dictionary<string, bool>();
         private List<string> wattingForConvert = new List<string>();
         private List<string> wattingForConvert_contentsOfZPL = new List<string>();
         private List<Match> MatchList = new List<Match>();
@@ -41,18 +39,7 @@ namespace Sci.Production.Packing
         /// 目前處理的檔案格式
         /// </summary>
         private UploadType currentFileType;
-        private DataTable NotSetB03_Table;
-        private DataTable NotMapCustPo_Table;
-        private DataTable existsCustCTN_Table;
-        private DataTable FileCountError_Table;
         private List<string> mappingFailFileName = new List<string>();
-
-        public bool canConvert = false;
-        public string ErrorMessage = string.Empty;
-
-        private List<List<UpdateModel>> UpdateModel_List = new List<List<UpdateModel>>();
-        private List<NewFormModel> NewFormModels = new List<NewFormModel>();
-        private List<NewFormModel> tmp_NewFormModels = new List<NewFormModel>();
 
         /// <inheritdoc/>
         public P26(ToolStripMenuItem menuitem)
@@ -73,7 +60,6 @@ namespace Sci.Production.Packing
             this.Grid_Match_Dt.ColumnsBooleanAdd("CtnInClog");
             this.Grid_Match_Dt.ColumnsBooleanAdd("Overwrite");
             this.Grid_Match_Dt.ColumnsBooleanAdd("IsMixPack");
-
         }
 
         /// <inheritdoc/>
@@ -83,7 +69,7 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
             this.gridSelectedFile.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.gridSelectedFile)
-.Numeric("FileSeq", header: "File Seq", width: Widths.AnsiChars(5))
+.Numeric("FileSeq", header: "File Seq", width: Widths.AnsiChars(5), minimum: null)
 .Text("FileName", header: "File Name ", width: Widths.AnsiChars(35))
 .Text("Result", header: "Result", width: Widths.AnsiChars(10))
 ;
@@ -176,12 +162,12 @@ namespace Sci.Production.Packing
                 string newvalue = e.FormattedValue.ToString();
                 int fileSeq = MyUtility.Convert.GetInt(dr["FileSeq"]);
 
-                if (this.EditMode && newvalue.ToUpper() != "PLEASE SELECT")
+                if (this.EditMode && oldvalue.ToUpper() != newvalue.ToUpper() /* && newvalue.ToUpper() != "PLEASE SELECT"*/)
                 {
-                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileSeq == fileSeq && o.PackingList_Candidate.Contains(newvalue)).Any())
+                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileSeq == fileSeq && o.PackingList_Candidate.Contains(newvalue)).Any() && newvalue != string.Empty)
                     {
                         this.MatchList.Where(o => o.FileSeq == MyUtility.Convert.GetInt(dr["FileSeq"])).FirstOrDefault().SelectedPackingID = MyUtility.Convert.GetString(dr["PackingListCandidate"]);
-                        dr["PackingListCandidate"] = "Please Select";
+                        dr["PackingListCandidate"] = oldvalue;
                         dr.EndEdit();
                         this.MatchGridColor();
                         this.GetInfoByPackingList(dr);
@@ -197,14 +183,6 @@ namespace Sci.Production.Packing
                         this.GetInfoByPackingList(dr);
                     }
                 }
-                else
-                {
-                    this.MatchList.Where(o => o.FileSeq == MyUtility.Convert.GetInt(dr["FileSeq"])).FirstOrDefault().SelectedPackingID = MyUtility.Convert.GetString(dr["PackingListCandidate"]);
-                    dr["PackingListCandidate"] = "Please Select";
-                    dr.EndEdit();
-                    this.MatchGridColor();
-                    this.GetInfoByPackingList(dr);
-                }
             };
 
             col_Overwrite.CellEditable += (s, e) =>
@@ -218,6 +196,15 @@ namespace Sci.Production.Packing
                 {
                     e.IsEditable = false;
                 }
+            };
+
+            col_Overwrite.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridMatch.GetDataRow(e.RowIndex);
+                dr["OverWrite"] = e.FormattedValue;
+                dr.EndEdit();
+                this.MatchGridColor();
+                this.GetInfoByPackingList(dr);
             };
 
             this.gridMatch.IsEditingReadOnly = false;
@@ -235,24 +222,6 @@ namespace Sci.Production.Packing
 
         private void BtnSelectFile_Click(object sender, EventArgs e)
         {
-            #region 路徑檢查 (現階段轉出的圖片都直接存進DB，因此用不到暫時註解)
-            /*
-            string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
-
-            if (MyUtility.Check.Empty(shippingMarkPath))
-            {
-                MyUtility.Msg.InfoBox("Please set <Shipping Mark Path> first.");
-                return;
-            }
-
-            if (!Directory.Exists(shippingMarkPath))
-            {
-                MyUtility.Msg.InfoBox("Please Create Directory on Shipping Mark Path.");
-                return;
-            }
-            */
-            #endregion
-
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Filter = "ZPL files (*.zpl)|*.zpl|(*.pdf)|*.pdf";
             openFileDialog1.Multiselect = true;
@@ -450,7 +419,7 @@ namespace Sci.Production.Packing
                                              StyleID = tmppArray[style_index].Split('-')[0],
                                              Article = tmppArray[style_index].Split('-')[1],
                                              SizeCode = tmppArray[sizeCode_index], // MIXED
-                                         ShipQty = tmppArray[shipQty_index],
+                                             ShipQty = tmppArray[shipQty_index],
                                              Size_Qty_List = size_qty,
                                          });
                                 }
@@ -490,6 +459,7 @@ namespace Sci.Production.Packing
 
                             // 解析成功
                             DataRow newDr = this.Grid_SelectedFile_Dt.NewRow();
+                            newDr["FileSeq"] = DBNull.Value;
                             newDr["FileName"] = openFileDialog1.SafeFileNames[i];
                             newDr["Result"] = string.Empty;
                             this.Grid_SelectedFile_Dt.Rows.Add(newDr);
@@ -499,6 +469,7 @@ namespace Sci.Production.Packing
                         {
                             // 解析失敗：Result寫入訊息
                             DataRow newDr = this.Grid_SelectedFile_Dt.NewRow();
+                            newDr["FileSeq"] = DBNull.Value;
                             newDr["FileName"] = openFileDialog1.SafeFileNames[i];
                             newDr["Result"] = "Analysis failed.";
                             this.Grid_SelectedFile_Dt.Rows.Add(newDr);
@@ -658,19 +629,11 @@ namespace Sci.Production.Packing
             try
             {
                 #region 初始設定、宣告
-
-                this.UpdateModel_List.Clear();
-                this.NewFormModels.Clear();
                 this.mappingFailFileName.Clear();
-                this.NotSetB03_Table = new DataTable();
-                this.NotMapCustPo_Table = new DataTable();
-                this.existsCustCTN_Table = new DataTable();
-                this.FileCountError_Table = new DataTable();
                 List<string> removePOs = new List<string>();
                 List<string> removeFileNames = new List<string>();
                 List<Match> match_List = new List<Match>();
                 string msg = string.Empty;
-                this.ErrorMessage = string.Empty;
                 this.listControlBindingSource2.DataSource = null;
                 this.Grid_Match_Dt.Clear();
                 this.PackingListCandidate_Datasources.Clear();
@@ -745,9 +708,6 @@ namespace Sci.Production.Packing
 
                 if (this.currentFileType == UploadType.ZPL)
                 {
-                    this.NotSetB03_Table.ColumnsStringAdd("ShippingMarkCombination");
-                    this.NotSetB03_Table.ColumnsStringAdd("ShippingMarkType");
-
                     int fileSeq = 0;
                     foreach (var item in this._File_Name_Object_List.File_Name_Object2s)
                     {
@@ -837,837 +797,7 @@ namespace Sci.Production.Packing
             }
         }
 
-        public List<UpdateModel> ZPL_Mapping(List<ZPL> zPLs, string fileName, bool isMixed = false, string selected_PackingListID = "")
-        {
-            DataTable[] mappingInfo;
-            List<UpdateModel> upateModel_List = new List<UpdateModel>();
-            List<ZPL> mixedzPLs = new List<ZPL>();
-            int totalFileCount = zPLs.Count;
-            bool isBreak = false;
-
-            // 事前檢查
-            foreach (var zPL in zPLs)
-            {
-                string errorMsg = this.Check_Before_Mapping(zPL);
-                if (errorMsg != string.Empty)
-                {
-                    isBreak = true;
-                    if (!this.ErrorMessage.Contains(errorMsg))
-                    {
-                        this.ErrorMessage += errorMsg + Environment.NewLine;
-                    }
-
-                    if (!this.mappingFailFileName.Contains(fileName))
-                    {
-                        this.mappingFailFileName.Add(fileName);
-                    }
-                }
-            }
-
-            if (isBreak)
-            {
-                return upateModel_List;
-            }
-
-            // 若是混尺碼，則把ZPL物件拆開重新整理
-            if (isMixed && MyUtility.Check.Empty(selected_PackingListID))
-            {
-                int ctnStartNo = 1;
-                foreach (var zPL in zPLs)
-                {
-                    if (zPL.Size_Qty_List.Count > 0)
-                    {
-                        foreach (var size_Qty in zPL.Size_Qty_List)
-                        {
-                            string sizeCode = size_Qty.Size;
-                            string shipQty = size_Qty.Qty.ToString();
-
-                            ZPL m = new ZPL()
-                            {
-                                CustCTN = zPL.CustCTN,
-                                CustPONo = zPL.CustPONo,
-                                StyleID = zPL.StyleID,
-                                Article = zPL.Article,
-                                SizeCode = sizeCode,
-                                ShipQty = shipQty,
-                                CTNStartNo = ctnStartNo.ToString(), // 目前沒用到，不過先編號寫好
-                            };
-                            mixedzPLs.Add(m);
-                        }
-                    }
-                    else
-                    {
-                        ZPL m = new ZPL()
-                        {
-                            CustCTN = zPL.CustCTN,
-                            CustPONo = zPL.CustPONo,
-                            StyleID = zPL.StyleID,
-                            Article = zPL.Article,
-                            SizeCode = zPL.SizeCode,
-                            ShipQty = zPL.ShipQty,
-                            CTNStartNo = ctnStartNo.ToString(), // 目前沒用到，不過先編號寫好
-                        };
-                        mixedzPLs.Add(m);
-                    }
-
-                    ctnStartNo++;
-                }
-
-                zPLs = mixedzPLs;
-            }
-
-            var keys = zPLs.Select(o => new
-            {
-                CustPONO = o.CustPONo,
-                o.StyleID,
-                o.Article,
-                o.SizeCode,
-                o.ShipQty,
-            }).Distinct().ToList();
-
-            #region 新視窗Mapping
-            if (!MyUtility.Check.Empty(selected_PackingListID))
-            {
-                foreach (var key in keys)
-                {
-                    // SCICtnNo 與即將寫入的CustCTN必須對應到，因此加工處理
-                    string custPONo = key.CustPONO;
-                    string styleID = key.StyleID;
-                    string article = key.Article;
-                    string SizeCode = key.SizeCode;
-                    string ShipQty = key.ShipQty;
-
-                    // 相同Article SizeCode ShipQty可能不只有一箱，因此要把已經對應過的CustCTN記錄下來，不能重複
-                    List<string> packingList_Detail_CustCTNs = new List<string>();
-
-                    DataTable dt;
-
-                    DBProxy.Current.Select(null, $@"
-SELECT *
-FROM PackingList_Detail
-WHERE ID='{selected_PackingListID}'
-AND Article='{article}'
-AND SizeCode='{SizeCode}'
-AND ShipQty={ShipQty} ", out dt);
-
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        // 排除已經用過的 CustCTN
-                        List<ZPL> sameZPL = zPLs.Where(o => o.Article == dr["Article"].ToString() && o.SizeCode == dr["SizeCode"].ToString() && o.ShipQty == dr["ShipQty"].ToString() && !packingList_Detail_CustCTNs.Contains(o.CustCTN)).ToList();
-
-                        // 用過的紀錄下來
-                        packingList_Detail_CustCTNs.Add(sameZPL.FirstOrDefault().CustCTN);
-
-                        UpdateModel model = new UpdateModel()
-                        {
-                            PackingListID = dr["ID"].ToString(),
-                            CustPONO = custPONo,
-                            StyleID = styleID,
-                            Article = dr["Article"].ToString(),
-                            SizeCode = dr["SizeCode"].ToString(),
-                            ShipQty = dr["ShipQty"].ToString(),
-                            CustCTN = sameZPL.FirstOrDefault().CustCTN,
-                            SCICtnNo = dr["SCICtnNo"].ToString(),
-                            FileName = fileName,
-                        };
-                        upateModel_List.Add(model);
-                    }
-                }
-
-                return upateModel_List;
-            }
-            #endregion
-
-            bool packingB03DataError = false;
-
-            foreach (var key in keys)
-            {
-                string custPONo = key.CustPONO;
-                string styleID = key.StyleID;
-                string article = key.Article;
-                string SizeCode = key.SizeCode;
-                string ShipQty = key.ShipQty;
-
-                // 相同Article SizeCode ShipQty可能不只有一箱，因此要把已經對應過的CustCTN記錄下來，不能重複
-                List<string> packingList_Detail_Ukeys = new List<string>();
-                List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == SizeCode && o.ShipQty == ShipQty).ToList();
-
-                foreach (var zPL in sameZPL)
-                {
-                    string currentCustPONo = zPL.CustPONo;
-                    string currentStyleID = zPL.StyleID;
-                    string currentArticle = zPL.Article;
-                    string currentSizeCode = zPL.SizeCode;
-                    string currentShipQty = zPL.ShipQty;
-
-                    string sqlCmd = string.Empty;
-
-                    // 判斷該"箱"是否混尺碼
-                    bool isCartonMix = this.Chk_Carton_Mix(currentCustPONo, currentStyleID, currentArticle, currentSizeCode, currentShipQty);
-
-                    sqlCmd = this.Get_MappingSQL(zPL, isCartonMix);
-
-                    DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
-
-                    // Mapping到多少個PackingList_ID
-                    int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
-
-                    mappingInfo[0].AsEnumerable().Where(o => packingList_Detail_Ukeys.Contains(o["PackingList_Ukey"].ToString()));
-
-                    // DB箱數(不分PackingListID)
-                    int totalCount = mappingInfo[0].Rows.Count;
-
-                    // 已經對應過的PackingList_Detail刪掉，不能重複
-                    for (int i = 0; i <= totalCount - 1; i++)
-                    {
-                        if (packingList_Detail_Ukeys.Contains(mappingInfo[0].Rows[i]["PackingList_Ukey"].ToString()))
-                        {
-                            mappingInfo[0].Rows[i].Delete();
-                        }
-                    }
-
-                    mappingInfo[0].AcceptChanges();
-
-                    // ZPL張數
-                    int fileCount = sameZPL.Count;
-
-                    // B03缺少設定的數量
-                    int brand_refno_NotMapping_Count = mappingInfo[2].Rows.Count;
-
-                    // ShippingMarkPicture是否有建立好 相同 BrandID CTNRefno Side 不同Seq IsSCC的兩筆資料
-                    bool packingB03_Lack = mappingInfo[1] == null ? true : (mappingInfo[1].Rows.Count == 2 ? false : true);
-
-                    #region Packing B03未設定
-
-                    // 有Mapping到PacingList_Detail才需要提示P03的檢查
-                    if (mapped_PackingLisID_Count > 0 && brand_refno_NotMapping_Count > 0 && !this.ErrorMessage.Contains("The following carton has not yet set carton sticker location. Please go to [Packing_B03] settings."))
-                    {
-                        this.ErrorMessage += "The following carton has not yet set carton sticker location. Please go to [Packing_B03] settings." + Environment.NewLine;
-                    }
-
-                    // 準備新開的視窗
-                    if (mapped_PackingLisID_Count > 0 && brand_refno_NotMapping_Count > 0 && !this.NotSetB03_Table.AsEnumerable().Where(o =>
-                        o["BrandID"].ToString() == mappingInfo[2].Rows[0]["BrandID"].ToString()
-                        && o["ShippingMarkCombination"].ToString() == mappingInfo[2].Rows[0]["ShippingMarkCombination"].ToString()
-                        && o["ShippingMarkType"].ToString() == mappingInfo[2].Rows[0]["ShippingMarkType"].ToString()
-                        && o["RefNO"].ToString() == mappingInfo[2].Rows[0]["RefNO"].ToString()).Any())
-                    {
-                        upateModel_List.RemoveAll(o => o.StyleID == currentStyleID && o.CustPONO == currentCustPONo);
-                        foreach (DataRow dr in mappingInfo[2].Rows)
-                        {
-                            DataRow ndr = this.NotSetB03_Table.NewRow();
-                            ndr["BrandID"] = dr["BrandID"].ToString();
-                            ndr["ShippingMarkCombination"] = dr["ShippingMarkCombination"].ToString();
-                            ndr["ShippingMarkType"] = dr["ShippingMarkType"].ToString();
-                            ndr["RefNO"] = dr["RefNO"].ToString();
-                            this.NotSetB03_Table.Rows.Add(ndr);
-                        }
-
-                        packingB03DataError = true;
-                        break;
-                    }
-
-                    if (packingB03DataError)
-                    {
-                        if (!this.mappingFailFileName.Contains(fileName))
-                        {
-                            this.mappingFailFileName.Add(fileName);
-                        }
-
-                        break;
-                    }
-
-                    #endregion
-
-                    // 取得PackingList ID 是否包含混尺碼 IsMixPack
-                    // string packingID = mappingInfo[1].Rows[0]["PackingListID"].ToString();
-                    // bool isMixPack = MyUtility.Convert.GetBool(mappingInfo[1].Rows[0]["IsMixPack"]);
-
-                    // if (!this.packingList_IxMixed.Where(o => o.Key == packingID).Any())
-                    // {
-                    //    this.packingList_IxMixed.Add(packingID, isMixPack);
-                    // }
-
-                    if (mapped_PackingLisID_Count == 1)
-                    {
-                        if (totalCount == fileCount)
-                        {
-                            packingList_Detail_Ukeys.Add(mappingInfo[0].Rows[0]["PackingList_Ukey"].ToString());
-                            UpdateModel model = new UpdateModel()
-                            {
-                                PackingListID = mappingInfo[0].Rows[0]["PackingListID"].ToString(),
-                                CustPONO = zPL.CustPONo,
-                                StyleID = zPL.StyleID,
-                                Article = zPL.Article,
-                                SizeCode = zPL.SizeCode,
-                                ShipQty = zPL.ShipQty,
-                                CustCTN = zPL.CustCTN,
-                                FileName = fileName,
-                                SCICtnNo = mappingInfo[0].Rows[0]["SCICtnNo"].ToString(),
-                                RefNo = mappingInfo[0].Rows[0]["RefNo"].ToString(),
-                            };
-                            upateModel_List.Add(model);
-                        }
-                        else
-                        {
-                            // false
-                            if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                            {
-                                this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                            }
-
-                            if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                            {
-                                DataRow ndr = this.FileCountError_Table.NewRow();
-                                ndr["PO#"] = zPL.CustPONo;
-                                ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                                ndr["Qty"] = zPL.ShipQty;
-
-                                this.FileCountError_Table.Rows.Add(ndr);
-                            }
-
-                            if (!this.mappingFailFileName.Contains(fileName))
-                            {
-                                this.mappingFailFileName.Add(fileName);
-                            }
-                        }
-                    }
-                    else if (mapped_PackingLisID_Count > 1)
-                    {
-                        if (totalCount == fileCount)
-                        {
-                            // 02 false
-                            if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                            {
-                                this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                            }
-
-                            if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                            {
-                                DataRow ndr = this.FileCountError_Table.NewRow();
-                                ndr["PO#"] = zPL.CustPONo;
-                                ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                                ndr["Qty"] = zPL.ShipQty;
-
-                                this.FileCountError_Table.Rows.Add(ndr);
-                            }
-
-                            if (!this.mappingFailFileName.Contains(fileName))
-                            {
-                                this.mappingFailFileName.Add(fileName);
-                            }
-                        }
-                        else
-                        {
-                            // 判斷是03 04 05哪一種
-                            int sameCount = 0;
-                            string trueID = string.Empty;
-                            List<string> iDList = new List<string>();
-                            foreach (string packingListID in mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"].ToString()).Distinct().ToList())
-                            {
-                                int ctn = mappingInfo[0].AsEnumerable().Where(o => o["PackingListID"].ToString() == packingListID).Count();
-
-                                // 必須檢查總箱數都一致
-                                int totalCount_DB = Convert.ToInt32(MyUtility.GetValue.Lookup($@"
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders
-FROM Orders 
-WHERE CustPONo='{currentCustPONo}' AND StyleID='{currentStyleID}'
-
-SELECT COUNT(pd.Ukey)
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
-    AND pd.CustCTN = ''
-	AND p.ID='{packingListID}'
-"));
-                                if (totalFileCount == totalCount_DB)
-                                {
-                                    sameCount++;
-                                    trueID = packingListID;
-                                    iDList.Add(packingListID);
-                                }
-                            }
-
-                            if (sameCount > 1)
-                            {
-                                // 03
-                                NewFormModel model = new NewFormModel()
-                                {
-                                    PackingListIDs = iDList,
-                                    FileName = fileName,
-                                    ZPL_Content = mappingInfo[0], // 用於新視窗呈現詳細資料用
-                                    ZPL_List = zPLs, // 用於新視窗Call這邊
-                                };
-                                this.tmp_NewFormModels.Add(model);
-                            }
-                            else if (sameCount == 1)
-                            {
-                                DataRow okRow = mappingInfo[0].AsEnumerable().Where(o =>
-                                o["PackingListID"].ToString() == iDList.FirstOrDefault()
-                                && !packingList_Detail_Ukeys.Contains(o["PackingList_Ukey"].ToString())).FirstOrDefault();
-
-                                packingList_Detail_Ukeys.Add(okRow["PackingList_Ukey"].ToString());
-
-                                // 04
-                                UpdateModel model = new UpdateModel()
-                                {
-                                    PackingListID = trueID,
-                                    CustPONO = zPL.CustPONo,
-                                    StyleID = zPL.StyleID,
-                                    Article = zPL.Article,
-                                    SizeCode = zPL.SizeCode,
-                                    ShipQty = zPL.ShipQty,
-                                    CustCTN = zPL.CustCTN,
-                                    FileName = fileName,
-                                    SCICtnNo = okRow["SCICtnNo"].ToString(),
-                                    RefNo = okRow["RefNo"].ToString(),
-                                };
-                                upateModel_List.Add(model);
-                            }
-                            else
-                            {
-                                // 05 false
-                                if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                                {
-                                    this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                                }
-
-                                if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                                {
-                                    DataRow ndr = this.FileCountError_Table.NewRow();
-                                    ndr["PO#"] = zPL.CustPONo;
-                                    ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                                    ndr["Qty"] = zPL.ShipQty;
-
-                                    this.FileCountError_Table.Rows.Add(ndr);
-                                }
-
-                                if (!this.mappingFailFileName.Contains(fileName))
-                                {
-                                    this.mappingFailFileName.Add(fileName);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                        {
-                            this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                        }
-                    }
-                }
-            }
-
-            return upateModel_List;
-        }
-
-        public List<UpdateModel> PDF_Mapping(List<ZPL> zPLs, bool isMixed = false, string selected_PackingListID = "")
-        {
-            DataTable[] mappingInfo;
-            List<UpdateModel> upateModel_List = new List<UpdateModel>();
-            List<ZPL> mixedzPLs = new List<ZPL>();
-            List<string> packingList_Detail_Ukeys = new List<string>();
-
-            // 若是混尺碼，則把ZPL物件拆開重新整理
-            if (isMixed && MyUtility.Check.Empty(selected_PackingListID))
-            {
-                int ctnStartNo = 1;
-                foreach (var zPL in zPLs)
-                {
-                    foreach (var size_Qty in zPL.Size_Qty_List)
-                    {
-                        string sizeCode = size_Qty.Size;
-                        string shipQty = size_Qty.Qty.ToString();
-
-                        ZPL m = new ZPL()
-                        {
-                            CustCTN = zPL.CustCTN,
-                            CustPONo = zPL.CustPONo,
-                            StyleID = zPL.StyleID,
-                            Article = zPL.Article,
-                            SizeCode = sizeCode,
-                            ShipQty = shipQty,
-                            FileName = zPL.FileName, // PDF才會用到
-                            CTNStartNo = ctnStartNo.ToString(), // 目前沒用到，不過先編號寫好
-                        };
-                        mixedzPLs.Add(m);
-                    }
-
-                    ctnStartNo++;
-                }
-
-                zPLs = mixedzPLs;
-            }
-
-            int totalFileCount = zPLs.Count;
-
-            var keys = zPLs.Select(o => new
-            {
-                CustPONO = o.CustPONo,
-                o.StyleID,
-                o.Article,
-                o.SizeCode,
-                o.ShipQty,
-            }).Distinct().ToList();
-
-            #region 新視窗Mapping
-            if (!MyUtility.Check.Empty(selected_PackingListID))
-            {
-                foreach (var key in keys)
-                {
-                    string custPONo = key.CustPONO;
-                    string styleID = key.StyleID;
-                    string article = key.Article;
-                    string SizeCode = key.SizeCode;
-                    string ShipQty = key.ShipQty;
-                    List<string> packingList_Detail_CustCTNs = new List<string>();
-                    DataTable dt;
-
-                    List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == SizeCode && o.ShipQty == ShipQty).ToList();
-
-                    DBProxy.Current.Select(null, $@"
-SELECT *
-FROM PackingList_Detail
-WHERE ID='{selected_PackingListID}'
-AND Article='{article}'
-AND SizeCode='{SizeCode}'
-AND ShipQty={ShipQty} ", out dt);
-
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        List<ZPL> sameZPL2 = zPLs.Where(o => o.Article == dr["Article"].ToString() && o.SizeCode == dr["SizeCode"].ToString() && o.ShipQty == dr["ShipQty"].ToString() && !packingList_Detail_CustCTNs.Contains(o.CustCTN)).ToList();
-                        packingList_Detail_CustCTNs.Add(sameZPL2.FirstOrDefault().CustCTN);
-                        UpdateModel model = new UpdateModel()
-                        {
-                            PackingListID = dr["ID"].ToString(),
-                            CustPONO = custPONo,
-                            StyleID = styleID,
-                            Article = dr["Article"].ToString(),
-                            SizeCode = dr["SizeCode"].ToString(),
-                            ShipQty = dr["ShipQty"].ToString(),
-                            CustCTN = sameZPL2.FirstOrDefault().CustCTN,
-                            SCICtnNo = dr["SCICtnNo"].ToString(),
-                            FileName = sameZPL2.FirstOrDefault().FileName,
-                        };
-                        upateModel_List.Add(model);
-                    }
-                }
-
-                return upateModel_List;
-            }
-            #endregion
-
-            bool packingB03DataError = false;
-
-            foreach (var zPL in zPLs)
-            {
-                string currentCustPONo = zPL.CustPONo;
-                string currentStyleID = zPL.StyleID;
-                string currentArticle = zPL.Article;
-                string currentSizeCode = zPL.SizeCode;
-                string currentShipQty = zPL.ShipQty;
-                string fileName = zPL.FileName;
-
-                string ss = this.Check_Before_Mapping(zPL);
-
-                // 事前檢查
-                if (ss != string.Empty)
-                {
-                    if (!this.ErrorMessage.Contains(ss))
-                    {
-                        this.ErrorMessage += ss + Environment.NewLine;
-                    }
-
-                    if (!this.mappingFailFileName.Contains(fileName))
-                    {
-                        this.mappingFailFileName.Add(fileName);
-                    }
-
-                    continue;
-                }
-
-                string sqlCmd = string.Empty;
-
-                bool isCartonMix = this.Chk_Carton_Mix(currentCustPONo, currentStyleID, currentArticle, currentSizeCode, currentShipQty);
-
-                sqlCmd = this.Get_MappingSQL(zPL, isCartonMix);
-
-                DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
-
-                // Mapping到多少個PackingList_ID
-                int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
-
-                // DB箱數(不分PackingListID)
-                int totalCount = mappingInfo[0].Rows.Count;
-
-                for (int i = 0; i <= totalCount - 1; i++)
-                {
-                    if (packingList_Detail_Ukeys.Contains(mappingInfo[0].Rows[i]["PackingList_Ukey"].ToString()))
-                    {
-                        mappingInfo[0].Rows[i].Delete();
-                    }
-                }
-
-                mappingInfo[0].AcceptChanges();
-
-                // ZPL張數
-                int fileCount = zPLs.Where(o => o.SizeCode == currentSizeCode && o.ShipQty == currentShipQty).Count();
-
-                // B03缺少的設定
-                int brand_refno_NotMapping_Count = mappingInfo[2].AsEnumerable().Count();
-
-                // ShippingMarkPicture是否有建立好 相同 BrandID CTNRefno Side 不同Seq IsSCC的兩筆資料
-                bool packingB03_Lack = mappingInfo[1] == null ? true : (mappingInfo[1].Rows.Count == 1 ? false : true);
-
-                #region Packing B03未設定
-
-                // 有Mapping到PacingList_Detail才需要提示P03的檢查
-                if (mapped_PackingLisID_Count > 0 && brand_refno_NotMapping_Count > 0 && !this.ErrorMessage.Contains("The following carton has not yet set carton sticker location. Please go to [Packing_B03] settings."))
-                {
-                    this.ErrorMessage += "The following carton has not yet set carton sticker location. Please go to [Packing_B03] settings." + Environment.NewLine;
-                }
-
-                // 準備新開的視窗
-                if (mapped_PackingLisID_Count > 0 && brand_refno_NotMapping_Count > 0 && !this.NotSetB03_Table.AsEnumerable().Where(o =>
-                            o["BrandID"].ToString() == mappingInfo[2].Rows[0]["BrandID"].ToString()
-                            && o["ShippingMarkCombination"].ToString() == mappingInfo[2].Rows[0]["ShippingMarkCombination"].ToString()
-                            && o["ShippingMarkType"].ToString() == mappingInfo[2].Rows[0]["ShippingMarkType"].ToString()
-                            && o["RefNO"].ToString() == mappingInfo[2].Rows[0]["RefNO"].ToString()).Any())
-                {
-                    upateModel_List.RemoveAll(o => o.StyleID == currentStyleID && o.CustPONO == currentCustPONo);
-                    foreach (DataRow dr in mappingInfo[2].Rows)
-                    {
-                        DataRow ndr = this.NotSetB03_Table.NewRow();
-                        ndr["BrandID"] = dr["BrandID"].ToString();
-                        ndr["ShippingMarkCombination"] = dr["ShippingMarkCombination"].ToString();
-                        ndr["ShippingMarkType"] = dr["ShippingMarkType"].ToString();
-                        ndr["RefNO"] = dr["RefNO"].ToString();
-                        this.NotSetB03_Table.Rows.Add(ndr);
-                    }
-
-                    if (!this.mappingFailFileName.Contains(fileName))
-                    {
-                        this.mappingFailFileName.Add(fileName);
-                    }
-
-                    packingB03DataError = true;
-                    continue;
-                }
-
-                if (packingB03DataError)
-                {
-                    if (!this.mappingFailFileName.Contains(fileName))
-                    {
-                        this.mappingFailFileName.Add(fileName);
-                    }
-
-                    continue;
-                }
-
-                #endregion
-
-                if (mapped_PackingLisID_Count == 1)
-                {
-                    if (totalCount == fileCount)
-                    {
-                        // 1
-                        packingList_Detail_Ukeys.Add(mappingInfo[0].Rows[0]["PackingList_Ukey"].ToString());
-                        UpdateModel model = new UpdateModel()
-                        {
-                            PackingListID = mappingInfo[0].Rows[0]["PackingListID"].ToString(),
-                            CustPONO = zPL.CustPONo,
-                            StyleID = zPL.StyleID,
-                            Article = zPL.Article,
-                            SizeCode = zPL.SizeCode,
-                            ShipQty = zPL.ShipQty,
-                            CustCTN = zPL.CustCTN,
-                            FileName = fileName,
-                            SCICtnNo = mappingInfo[0].Rows[0]["SCICtnNo"].ToString(),
-                            RefNo = mappingInfo[0].Rows[0]["RefNo"].ToString(),
-                        };
-                        upateModel_List.Add(model);
-                    }
-                    else
-                    {
-                        // false
-                        if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                        {
-                            this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                        }
-
-                        if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                        {
-                            DataRow ndr = this.FileCountError_Table.NewRow();
-                            ndr["PO#"] = zPL.CustPONo;
-                            ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                            ndr["Qty"] = zPL.ShipQty;
-
-                            this.FileCountError_Table.Rows.Add(ndr);
-                        }
-
-                        foreach (var item in zPLs)
-                        {
-                            if (!this.mappingFailFileName.Contains(item.FileName))
-                            {
-                                this.mappingFailFileName.Add(item.FileName);
-                            }
-                        }
-                    }
-                }
-                else if (mapped_PackingLisID_Count > 1)
-                {
-                    if (totalCount == fileCount)
-                    {
-                        // 02 false
-                        if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                        {
-                            this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                        }
-
-                        if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                        {
-                            DataRow ndr = this.FileCountError_Table.NewRow();
-                            ndr["PO#"] = zPL.CustPONo;
-                            ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                            ndr["Qty"] = zPL.ShipQty;
-
-                            this.FileCountError_Table.Rows.Add(ndr);
-                        }
-
-                        if (!this.mappingFailFileName.Contains(fileName))
-                        {
-                            this.mappingFailFileName.Add(fileName);
-                        }
-                    }
-                    else
-                    {
-                        // 判斷是03 04 05哪一種
-                        int sameCount = 0;
-                        string trueID = string.Empty;
-                        List<string> iDList = new List<string>();
-                        foreach (string packingListID in mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"].ToString()).Distinct().ToList())
-                        {
-                            int ctn = mappingInfo[0].AsEnumerable().Where(o => o["PackingListID"].ToString() == packingListID).Count();
-
-                            // 必須檢查總箱數都一致
-                            int totalCount_DB = Convert.ToInt32(MyUtility.GetValue.Lookup($@"
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders
-FROM Orders 
-WHERE CustPONo='{currentCustPONo}' AND StyleID='{currentStyleID}'
-
-SELECT COUNT(pd.Ukey)
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
-    AND pd.CustCTN = ''
-	AND p.ID='{packingListID}'
-"));
-
-                            if (fileCount == ctn && totalFileCount == totalCount_DB)
-                            {
-                                sameCount++;
-                                trueID = packingListID;
-                                iDList.Add(packingListID);
-                            }
-                        }
-
-                        if (sameCount > 1)
-                        {
-                            // 03
-                            NewFormModel model = new NewFormModel()
-                            {
-                                PackingListIDs = iDList,
-                                FileName = fileName,
-                                ZPL_Content = mappingInfo[0], // 用於新視窗呈現詳細資料用
-                                ZPL_List = zPLs, // 用於新視窗Call這邊
-                            };
-                            this.tmp_NewFormModels.Add(model);
-                        }
-                        else if (sameCount == 1)
-                        {
-                            packingList_Detail_Ukeys.Add(mappingInfo[0].Rows[0]["PackingList_Ukey"].ToString());
-
-                            // 04
-                            UpdateModel model = new UpdateModel()
-                            {
-                                PackingListID = trueID,
-                                CustPONO = zPL.CustPONo,
-                                StyleID = zPL.StyleID,
-                                Article = zPL.Article,
-                                SizeCode = zPL.SizeCode,
-                                ShipQty = zPL.ShipQty,
-                                CustCTN = zPL.CustCTN,
-                                FileName = fileName,
-                                SCICtnNo = mappingInfo[0].Rows[0]["SCICtnNo"].ToString(),
-                                RefNo = mappingInfo[0].Rows[0]["RefNo"].ToString(),
-                            };
-                            upateModel_List.Add(model);
-                        }
-                        else
-                        {
-                            // 05 false
-                            if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                            {
-                                this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                            }
-
-                            if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                            {
-                                DataRow ndr = this.FileCountError_Table.NewRow();
-                                ndr["PO#"] = zPL.CustPONo;
-                                ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                                ndr["Qty"] = zPL.ShipQty;
-
-                                this.FileCountError_Table.Rows.Add(ndr);
-                            }
-
-                            if (!this.mappingFailFileName.Contains(fileName))
-                            {
-                                this.mappingFailFileName.Add(fileName);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (!this.ErrorMessage.Contains("Carton count not mapping."))
-                    {
-                        this.ErrorMessage += "Carton count not mapping." + Environment.NewLine;
-                    }
-
-                    if (!this.FileCountError_Table.AsEnumerable().Where(o => o["PO#"].ToString() == zPL.CustPONo && o["SKU"].ToString() == (zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode) && o["Qty"].ToString() == zPL.ShipQty).Any())
-                    {
-                        DataRow ndr = this.FileCountError_Table.NewRow();
-                        ndr["PO#"] = zPL.CustPONo;
-                        ndr["SKU"] = zPL.StyleID + "-" + zPL.Article + "-" + zPL.SizeCode;
-                        ndr["Qty"] = zPL.ShipQty;
-
-                        this.FileCountError_Table.Rows.Add(ndr);
-                    }
-
-                    foreach (var item in zPLs)
-                    {
-                        if (!this.mappingFailFileName.Contains(item.FileName))
-                        {
-                            this.mappingFailFileName.Add(item.FileName);
-                        }
-                    }
-
-                    break;
-                }
-            }
-
-            return upateModel_List;
-        }
-
-        public Match ZPL_Match(List<ZPL> zPLs, string fileName, Match matchData, bool isMixed = false)
+        private Match ZPL_Match(List<ZPL> zPLs, string fileName, Match matchData, bool isMixed = false)
         {
             DataTable[] mappingInfo;
             List<ZPL> mixedzPLs = new List<ZPL>();
@@ -1720,37 +850,310 @@ WHERE p.Type ='B'
                 }
 
                 zPLs = mixedzPLs;
-            }
 
-            var keys = zPLs.Select(o => new
-            {
-                CustPONO = o.CustPONo,
-                o.StyleID,
-                o.Article,
-                o.SizeCode,
-                o.ShipQty,
-            }).Distinct().ToList();
-
-            // 確認ZPL上的每一個資訊，都能找到對應的PackingList_Detail
-            foreach (var key in keys)
-            {
-                string custPONo = key.CustPONO;
-                string styleID = key.StyleID;
-                string article = key.Article;
-                string sizeCode = key.SizeCode;
-                string shipQty = key.ShipQty;
-
-                matchData.PO = custPONo;
-
-                // 相同Article SizeCode ShipQty可能不只有一箱，因此要把已經對應過的CustCTN記錄下來，不能重複
-                List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == sizeCode && o.ShipQty == shipQty).ToList();
-
-                foreach (var zPL in sameZPL)
+                var keys = zPLs.Select(o => new
                 {
+                    CustPONO = o.CustPONo,
+                    o.StyleID,
+                    o.Article,
+                    o.SizeCode,
+                    o.ShipQty,
+                    o.CTNStartNo,
+                }).Distinct().ToList();
+
+                foreach (var key in keys)
+                {
+                    string custPONo = key.CustPONO;
+                    string styleID = key.StyleID;
+                    string article = key.Article;
+                    string sizeCode = key.SizeCode;
+                    string shipQty = key.ShipQty;
+                    string cTNStartNo = key.CTNStartNo;
+
+                    matchData.PO = custPONo;
+
+                    List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == sizeCode && o.ShipQty == shipQty && o.CTNStartNo == cTNStartNo).ToList();
+
+                    foreach (var zPL in sameZPL)
+                    {
+                        string sqlCmd = string.Empty;
+
+                        // 判斷該"箱"是否混尺碼
+                        // bool isCartonMix = this.Chk_Carton_Mix(currentCustPONo, currentStyleID, currentArticle, currentSizeCode, currentShipQty);
+                        sqlCmd = this.Get_MatchSQL(zPL, true);
+
+                        DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
+
+                        // Mapping到多少個PackingList_ID
+                        int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
+
+                        // 準備Multipie Matches
+                        matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+
+                        // 準備P/L Candidate清單
+                        if (mapped_PackingLisID_Count > 1)
+                        {
+                            matchData.PackingList_Candidate.Add("Please select");
+                        }
+
+                        foreach (string packingListID in mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct())
+                        {
+                            // 避免重複加入
+                            if (!matchData.PackingList_Candidate.Where(o => o == packingListID).Any())
+                            {
+                                matchData.PackingList_Candidate.Add(packingListID);
+                            }
+
+                            // 相同PackingListID且Ukey還未加入matchData.UpdateModels的，才需要存下來，否則會重複
+                            var obj = mappingInfo[0].AsEnumerable().Where(o => MyUtility.Convert.GetString(o["PackingListID"]) == packingListID && !matchData.UpdateModels.Where(x => x.PackingListUkey == MyUtility.Convert.GetString(o["Ukey"])).Any()).FirstOrDefault();
+
+                            UpdateModel u = new UpdateModel()
+                            {
+                                PackingListID = packingListID,
+                                CustPONO = custPONo,
+                                StyleID = styleID,
+                                Article = article,
+                                SizeCode = sizeCode,
+                                ShipQty = shipQty,
+                                SCICtnNo = obj["SCICtnNo"].ToString(),
+                                RefNo = obj["RefNo"].ToString(),
+                                CustCTN = zPL.CustCTN,
+                                PackingListUkey = obj["Ukey"].ToString(),
+                            };
+                            matchData.UpdateModels.Add(u);
+                        }
+
+                        matchData.SelectedPackingID = matchData.PackingList_Candidate.FirstOrDefault();
+                        matchData.NoStickerBasicSetting = false;
+                        matchData.StickerAlreadyExisted = false;
+                        matchData.CtnInClog = false;
+                        matchData.Overwrite = false;
+                        matchData.IsMixPack = isMixed;
+                    }
+                }
+            }
+            else
+            {
+                var keys = zPLs.Select(o => new
+                {
+                    CustPONO = o.CustPONo,
+                    o.StyleID,
+                    o.Article,
+                    o.SizeCode,
+                    o.ShipQty,
+                }).Distinct().ToList();
+
+                // 確認ZPL上的每一個資訊，都能找到對應的PackingList_Detail
+                foreach (var key in keys)
+                {
+                    string custPONo = key.CustPONO;
+                    string styleID = key.StyleID;
+                    string article = key.Article;
+                    string sizeCode = key.SizeCode;
+                    string shipQty = key.ShipQty;
+
+                    matchData.PO = custPONo;
+
+                    // 相同Article SizeCode ShipQty可能不只有一箱，因此要把已經對應過的CustCTN記錄下來，不能重複
+                    List<ZPL> sameZPL = zPLs.Where(o => o.CustPONo == custPONo && o.StyleID == styleID && o.Article == article && o.SizeCode == sizeCode && o.ShipQty == shipQty).ToList();
+
+                    foreach (var zPL in sameZPL)
+                    {
+                        string sqlCmd = string.Empty;
+
+                        // 判斷該"箱"是否混尺碼
+                        // bool isCartonMix = this.Chk_Carton_Mix(currentCustPONo, currentStyleID, currentArticle, currentSizeCode, currentShipQty);
+                        sqlCmd = this.Get_MatchSQL(zPL);
+
+                        DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
+
+                        // Mapping到多少個PackingList_ID
+                        int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
+
+                        // 準備Multipie Matches
+                        matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+
+                        // 準備P/L Candidate清單
+                        if (mapped_PackingLisID_Count > 1)
+                        {
+                            matchData.PackingList_Candidate.Add("Please select");
+                        }
+
+                        foreach (string packingListID in mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct())
+                        {
+                            // 避免重複加入
+                            if (!matchData.PackingList_Candidate.Where(o => o == packingListID).Any())
+                            {
+                                matchData.PackingList_Candidate.Add(packingListID);
+                            }
+
+                            // 相同PackingListID且Ukey還未加入matchData.UpdateModels的，才需要存下來，否則會重複
+                            var obj = mappingInfo[0].AsEnumerable().Where(o => MyUtility.Convert.GetString(o["PackingListID"]) == packingListID && !matchData.UpdateModels.Where(x => x.PackingListUkey == MyUtility.Convert.GetString(o["Ukey"])).Any()).FirstOrDefault();
+
+                            if (obj != null)
+                            {
+                                UpdateModel u = new UpdateModel()
+                                {
+                                    PackingListID = packingListID,
+                                    CustPONO = custPONo,
+                                    StyleID = styleID,
+                                    Article = article,
+                                    SizeCode = sizeCode,
+                                    ShipQty = shipQty,
+                                    SCICtnNo = obj["SCICtnNo"].ToString(),
+                                    RefNo = obj["RefNo"].ToString(),
+                                    CustCTN = zPL.CustCTN,
+                                    PackingListUkey = obj["Ukey"].ToString(),
+                                };
+                                matchData.UpdateModels.Add(u);
+                            }
+                        }
+
+                        matchData.SelectedPackingID = matchData.PackingList_Candidate.FirstOrDefault();
+                        matchData.NoStickerBasicSetting = false;
+                        matchData.StickerAlreadyExisted = false;
+                        matchData.CtnInClog = false;
+                        matchData.Overwrite = false;
+                        matchData.IsMixPack = isMixed;
+                    }
+                }
+            }
+            return matchData;
+        }
+
+        private Match PDF_Match(List<ZPL> zPLs, Match matchData, bool isMixed = false)
+        {
+            DataTable[] mappingInfo;
+            List<ZPL> mixedzPLs = new List<ZPL>();
+
+            matchData.PackingList_Candidate = new List<string>();
+            matchData.UpdateModels = new List<UpdateModel>();
+
+            // 若是混尺碼，則把ZPL物件拆開重新整理
+            if (isMixed)
+            {
+                int ctnStartNo = 1;
+                foreach (var zPL in zPLs)
+                {
+                    foreach (var size_Qty in zPL.Size_Qty_List)
+                    {
+                        string sizeCode = size_Qty.Size;
+                        string shipQty = size_Qty.Qty.ToString();
+
+                        ZPL m = new ZPL()
+                        {
+                            CustCTN = zPL.CustCTN,
+                            CustPONo = zPL.CustPONo,
+                            StyleID = zPL.StyleID,
+                            Article = zPL.Article,
+                            SizeCode = sizeCode,
+                            ShipQty = shipQty,
+                            FileName = zPL.FileName, // PDF才會用到
+                            CTNStartNo = ctnStartNo.ToString(), // 目前沒用到，不過先編號寫好
+                        };
+                        mixedzPLs.Add(m);
+                    }
+
+                    ctnStartNo++;
+                }
+
+                zPLs = mixedzPLs;
+
+                var keys = zPLs.Select(o => new
+                {
+                    CustPONO = o.CustPONo,
+                    o.StyleID,
+                    o.Article,
+                    o.SizeCode,
+                    o.ShipQty,
+                    o.CTNStartNo,
+                }).Distinct().ToList();
+
+                foreach (var zPL in zPLs)
+                {
+                    string custPONo = zPL.CustPONo;
+                    string styleID = zPL.StyleID;
+                    string article = zPL.Article;
+                    string sizeCode = zPL.SizeCode;
+                    string shipQty = zPL.ShipQty;
+                    string fileName = zPL.FileName;
+
+                    matchData.PO = custPONo;
+
                     string sqlCmd = string.Empty;
 
-                    // 判斷該"箱"是否混尺碼
+                    // sqlCmd = this.Get_MappingSQL(zPL, isCartonMix);
+                    sqlCmd = this.Get_MatchSQL(zPL, true);
+
+                    DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
+
+                    // Mapping到多少個PackingList_ID
+                    int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
+
+                    // 準備Multipie Matches
+                    matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+
+                    // 準備P/L Candidate清單
+                    if (mapped_PackingLisID_Count > 1)
+                    {
+                        matchData.PackingList_Candidate.Add("Please select");
+                    }
+
+                    foreach (string packingListID in mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct())
+                    {
+                        // 避免重複加入
+                        if (!matchData.PackingList_Candidate.Where(o => o == packingListID).Any())
+                        {
+                            matchData.PackingList_Candidate.Add(packingListID);
+                        }
+
+                        // 相同PackingListID且Ukey還未加入matchData.UpdateModels的，才需要存下來，否則會重複
+                        var obj = mappingInfo[0].AsEnumerable().Where(o => MyUtility.Convert.GetString(o["PackingListID"]) == packingListID && !matchData.UpdateModels.Where(x => x.PackingListUkey == MyUtility.Convert.GetString(o["Ukey"])).Any()).FirstOrDefault();
+
+                        UpdateModel u = new UpdateModel()
+                        {
+                            PackingListID = packingListID,
+                            CustPONO = custPONo,
+                            StyleID = styleID,
+                            Article = article,
+                            SizeCode = sizeCode,
+                            ShipQty = shipQty,
+                            SCICtnNo = obj["SCICtnNo"].ToString(),
+                            RefNo = obj["RefNo"].ToString(),
+                            CustCTN = zPL.CustCTN,
+                            PackingListUkey = obj["Ukey"].ToString(),
+                        };
+                        matchData.UpdateModels.Add(u);
+                    }
+                }
+            }
+            else
+            {
+                var keys = zPLs.Select(o => new
+                {
+                    CustPONO = o.CustPONo,
+                    o.StyleID,
+                    o.Article,
+                    o.SizeCode,
+                    o.ShipQty,
+                }).Distinct().ToList();
+
+                foreach (var zPL in zPLs)
+                {
+                    string custPONo = zPL.CustPONo;
+                    string styleID = zPL.StyleID;
+                    string article = zPL.Article;
+                    string sizeCode = zPL.SizeCode;
+                    string shipQty = zPL.ShipQty;
+                    string fileName = zPL.FileName;
+
+                    matchData.PO = custPONo;
+
+                    string sqlCmd = string.Empty;
+
                     // bool isCartonMix = this.Chk_Carton_Mix(currentCustPONo, currentStyleID, currentArticle, currentSizeCode, currentShipQty);
+
+                    // sqlCmd = this.Get_MappingSQL(zPL, isCartonMix);
                     sqlCmd = this.Get_MatchSQL(zPL);
 
                     DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
@@ -1793,106 +1196,6 @@ WHERE p.Type ='B'
                         };
                         matchData.UpdateModels.Add(u);
                     }
-
-                    matchData.SelectedPackingID = matchData.PackingList_Candidate.FirstOrDefault();
-                    matchData.NoStickerBasicSetting = false;
-                    matchData.StickerAlreadyExisted = false;
-                    matchData.CtnInClog = false;
-                    matchData.Overwrite = false;
-                    matchData.IsMixPack = isMixed;
-                }
-            }
-
-            return matchData;
-        }
-
-        public Match PDF_Match(List<ZPL> zPLs, Match matchData, bool isMixed = false)
-        {
-            DataTable[] mappingInfo;
-            List<ZPL> mixedzPLs = new List<ZPL>();
-
-            matchData.PackingList_Candidate = new List<string>();
-
-            // 若是混尺碼，則把ZPL物件拆開重新整理
-            if (isMixed)
-            {
-                int ctnStartNo = 1;
-                foreach (var zPL in zPLs)
-                {
-                    foreach (var size_Qty in zPL.Size_Qty_List)
-                    {
-                        string sizeCode = size_Qty.Size;
-                        string shipQty = size_Qty.Qty.ToString();
-
-                        ZPL m = new ZPL()
-                        {
-                            CustCTN = zPL.CustCTN,
-                            CustPONo = zPL.CustPONo,
-                            StyleID = zPL.StyleID,
-                            Article = zPL.Article,
-                            SizeCode = sizeCode,
-                            ShipQty = shipQty,
-                            FileName = zPL.FileName, // PDF才會用到
-                            CTNStartNo = ctnStartNo.ToString(), // 目前沒用到，不過先編號寫好
-                        };
-                        mixedzPLs.Add(m);
-                    }
-
-                    ctnStartNo++;
-                }
-
-                zPLs = mixedzPLs;
-            }
-
-            int totalFileCount = zPLs.Count;
-
-            var keys = zPLs.Select(o => new
-            {
-                CustPONO = o.CustPONo,
-                o.StyleID,
-                o.Article,
-                o.SizeCode,
-                o.ShipQty,
-            }).Distinct().ToList();
-
-            foreach (var zPL in zPLs)
-            {
-                string currentCustPONo = zPL.CustPONo;
-                string currentStyleID = zPL.StyleID;
-                string currentArticle = zPL.Article;
-                string currentSizeCode = zPL.SizeCode;
-                string currentShipQty = zPL.ShipQty;
-                string fileName = zPL.FileName;
-
-                matchData.PO = currentCustPONo;
-
-                string sqlCmd = string.Empty;
-
-                // bool isCartonMix = this.Chk_Carton_Mix(currentCustPONo, currentStyleID, currentArticle, currentSizeCode, currentShipQty);
-
-                // sqlCmd = this.Get_MappingSQL(zPL, isCartonMix);
-                sqlCmd = this.Get_MatchSQL(zPL);
-
-                DBProxy.Current.Select(null, sqlCmd, out mappingInfo);
-
-                // Mapping到多少個PackingList_ID
-                int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
-
-                // 準備Multipie Matches
-                matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
-
-                // 準備P/L Candidate清單
-                if (mapped_PackingLisID_Count > 1)
-                {
-                    matchData.PackingList_Candidate.Add("Please select");
-                }
-
-                foreach (string packingListID in mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct())
-                {
-                    if (!matchData.PackingList_Candidate.Where(o => o == packingListID).Any())
-                    {
-                        matchData.PackingList_Candidate.Add(packingListID);
-                    }
                 }
             }
 
@@ -1906,562 +1209,7 @@ WHERE p.Type ='B'
             return matchData;
         }
 
-        public bool P03_Database_Update(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false)
-        {
-            DualResult result;
-            string updateCmd = string.Empty;
-            string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
-            List<string> fileNames = new List<string>();
-            int i = 0;
-
-            foreach (List<UpdateModel> upateModels in upateModel_List)
-            {
-                if (upateModels.Count == 0)
-                {
-                    continue;
-                }
-
-                string fileName = upateModels.FirstOrDefault().FileName;
-                fileNames.Add(fileName);
-
-                foreach (var model in upateModels)
-                {
-                    string cmd = string.Empty;
-
-                    if (uploadType == "ZPL")
-                    {
-                        #region SQL
-                        cmd += $@"
-----1. 整理Mapping的資料
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders{i}
-FROM Orders 
-WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
-
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{model.PackingListID}'
-    AND pd.CustCTN='' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders{i})
-    AND Article = '{model.Article}'
-    AND pd.ShipQty={model.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{model.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{model.SizeCode}'
-        )
-	AND SCICtnNo = (	
-		SELECT TOP 1 b.SCICtnNo 
-		FROM ShippingMarkPic a WITH(NOLOCK)
-		INNER JOIN ShippingMarkPic_Detail b WITH(NOLOCK) ON a.Ukey=b.ShippingMarkPicUkey
-		WHERE a.PackingListID='{model.PackingListID}' AND b. FileName = '{model.CustCTN}'
-	)
-ORDER BY CONVERT ( int ,pd.CTNStartNo)
-
-----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
-UPDATE pd
-SET pd.CustCTN='{model.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-
-UPDATE PackingList
-SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-WHERE ID ='{model.PackingListID}'
-
-DROP TABLE #tmpOrders{i},#tmp{i}
-";
-                        #endregion
-                    }
-
-                    if (uploadType == "PDF")
-                    {
-                        #region SQL
-                        cmd += $@"
-----1. 整理Mapping的資料
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders{i}
-FROM Orders 
-WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
-
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{model.PackingListID}'
-    AND pd.CustCTN='' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders{i})
-    AND Article = '{model.Article}'
-    AND pd.ShipQty={model.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{model.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{model.SizeCode}'
-        )
-	AND SCICtnNo = (	
-		SELECT TOP 1 b.SCICtnNo 
-		FROM ShippingMarkPic a WITH(NOLOCK)
-		INNER JOIN ShippingMarkPic_Detail b WITH(NOLOCK) ON a.Ukey=b.ShippingMarkPicUkey
-		WHERE a.PackingListID='{model.PackingListID}' AND b. FileName = '{model.CustCTN}'
-	)
-ORDER BY CONVERT ( int ,pd.CTNStartNo)
-
-----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
-UPDATE pd
-SET pd.CustCTN='{model.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-
-UPDATE PackingList
-SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-WHERE ID ='{model.PackingListID}'
-
-DROP TABLE #tmpOrders{i},#tmp{i}
-";
-                        #endregion
-                        fileNames.Add(model.FileName);
-                    }
-
-                    i++;
-
-                    updateCmd += cmd + Environment.NewLine + "---------";
-                }
-            }
-
-            if (MyUtility.Check.Empty(updateCmd))
-            {
-                this.canConvert = false;
-                return false;
-            }
-
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
-            {
-                try
-                {
-                    // Mapping資料寫入
-                    if (!(result = DBProxy.Current.Execute(null, updateCmd.ToString())))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return false;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-
-                    if (!isFromNewForm)
-                    {
-                        DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                        List<DataRow> dl = dt.AsEnumerable().Where(o => fileNames.Contains(o["FileName"].ToString())).ToList();
-                        foreach (DataRow dr in dl)
-                        {
-                            dr["Result"] = "Pass";
-                        }
-                    }
-
-                    if (isFromNewForm)
-                    {
-                        MyUtility.Msg.InfoBox("Assign Packing List successful!");
-                    }
-                    else
-                    {
-                        MyUtility.Msg.InfoBox("Data Mapping successful!");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        dr["Result"] = "Fail";
-                    }
-
-                    this.ShowErr(ex);
-                }
-            }
-
-            return true;
-        }
-
-        public bool P24_Database_Update(List<List<UpdateModel>> upateModel_List, string uploadType, bool isFromNewForm = false, List<string> wattingForConvert = null, Dictionary<string, string> file_Name_PDF = null, List<string> wattingForConvert_contentsOfZPL = null)
-        {
-            DualResult result;
-            string updateCmd = string.Empty;
-            string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
-            List<string> fileNames = new List<string>();
-            int i = 0;
-            List<string> p24_HeadList = new List<string>();
-            List<string> p24_BodyList = new List<string>();
-
-            List<DataTable> dtList = new List<DataTable>();
-
-            foreach (List<UpdateModel> upateModels in upateModel_List)
-            {
-                if (upateModels.Count == 0)
-                {
-                    continue;
-                }
-
-                #region 寫P24表頭
-
-                var idList = upateModels.Select(o => new { o.PackingListID, o.RefNo }).Distinct().ToList();
-
-                string p24_Head = string.Empty;
-                int ii = 0;
-                foreach (var item in idList)
-                {
-                    #region SQL
-                    p24_Head += $@"
---找出哪個箱子種類包含混尺碼
-SELECT [PackingListID]=pd.ID ,pd.Ukey
-INTO #MixCarton{ii}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-AND  p.ID = '{item.PackingListID}'
-AND pd.RefNo = '{item.RefNo}'
-AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
-		where qq.ID = p.ID 
-		AND qq.OrderID = pd.OrderID 
-		AND qq.CTNStartNo = pd.CTNStartNo
-		AND qq.Article = pd.Article 
-		AND qq.SizeCode <> pd.SizeCode 
-		and qq.Ukey != pd.Ukey) > 0
-
-----
-SELECT DISTINCT [StickerCombinationUkey]=s.ShippingMarkCombinationUkey,p.BrandID,pd.RefNo, [PackingListID]=p.ID
-INTO #tmp_Combination{ii}
-FROM ShippingMarkPicture s
-INNER JOIN PackingList p ON p.BrandID = s.BrandID
-INNER JOIN PackingList_Detail pd ON p.Id = pd.ID AND s.CTNRefno = pd.RefNo
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = s.ShippingMarkCombinationUkey
-WHERE p.ID = '{item.PackingListID}'
-AND pd.RefNo = '{item.RefNo}'
-AND comb.IsMixPack=0
-AND comb.Category='PIC'
-AND NOT EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
-UNION
-SELECT DISTINCT [StickerCombinationUkey]=s.ShippingMarkCombinationUkey,p.BrandID,pd.RefNo, [PackingListID]=p.ID
-FROM ShippingMarkPicture s
-INNER JOIN PackingList p ON p.BrandID = s.BrandID
-INNER JOIN PackingList_Detail pd ON p.Id = pd.ID AND s.CTNRefno = pd.RefNo
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = s.ShippingMarkCombinationUkey
-WHERE p.ID = '{item.PackingListID}'
-AND pd.RefNo = '{item.RefNo}'
-AND comb.IsMixPack=1
-AND comb.Category='PIC'
-AND EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
-
-----寫入ShippingMarkPic 表頭
-SELECT t.PackingListID
-    ,[AddName]='{Sci.Env.User.UserID}'
-    ,[AddDate]=GETDATE()
-INTO #tmp_Pic{ii}
-FROM #tmp_Combination{ii} t
-
-----刪除ShippingMarkPic表頭表身
-DELETE picd
-FROM ShippingMarkPic pic
-INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
-INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
-
-DELETE p
-FROM ShippingMarkPic p
-INNER JOIN  #tmp_Pic{ii} t ON p.PackingListID = t.PackingListID 
-;
-INSERT INTO ShippingMarkPic (PackingListID ,AddName ,AddDate,EditName)
-SELECT *,EditName='' FROM #tmp_Pic{ii}
-
-DROP TABLE #tmp_Combination{ii} ,#tmp_Pic{ii}
-";
-                    #endregion
-
-                    ii++;
-                }
-
-                p24_HeadList.Add(p24_Head);
-                #endregion
-
-                #region 寫P24表身
-                DataTable dt = new DataTable();
-                dt.ColumnsStringAdd("PackingListID");
-                dt.ColumnsStringAdd("SCICtnNo");
-                dt.ColumnsStringAdd("CustCTN");
-                dt.ColumnsStringAdd("RefNo");
-
-                // 混尺碼的話會重複，因此要DISTINCT
-                var keys = upateModels.Select(o => new { o.PackingListID, o.SCICtnNo, o.CustCTN, o.RefNo }).Distinct().ToList();
-
-                foreach (var model in keys)
-                {
-                    DataRow dr = dt.NewRow();
-
-                    dr["PackingListID"] = model.PackingListID;
-                    dr["SCICtnNo"] = model.SCICtnNo;
-                    dr["CustCTN"] = model.CustCTN;
-                    dr["RefNo"] = model.RefNo;
-
-                    dt.Rows.Add(dr);
-                }
-
-                dtList.Add(dt);
-                #endregion
-            }
-
-            // P24表身
-            foreach (DataTable dt in dtList)
-            {
-                string cmd = string.Empty;
-
-                cmd = $@"
-----開始寫入ShippingMarkPic_Detail
-
-----先整理出IsMix的箱子
-SELECT [PackingListID]=pd.ID ,pd.SCICtnNo
-INTO #MixCarton{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-AND EXISTS(
-	SELECT 1 FROM #tmp{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo 
-)
-AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
-		where qq.ID = p.ID 
-		AND qq.OrderID = pd.OrderID 
-		AND qq.CTNStartNo = pd.CTNStartNo
-		AND qq.Article = pd.Article 
-		AND qq.SizeCode <> pd.SizeCode 
-		and qq.Ukey != pd.Ukey) > 0
-
-----先找該PackingList的CustCD
-SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey_MixPack 
-,	(
-	SELECT Ukey 
-	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = (IIF( EXISTS (SELECT 1 FROM #MixCarton{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
-	)
-),[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCarton{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
-,p.BrandID,pd.RefNo,[PackingListID]=p.ID ,pd.SCICtnNo
-INTO #tmp_Combination_D{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN CustCD c ON p.BrandID = c.BrandID AND p.CustCDID = c.ID
-WHERE  p.ID='{dt.Rows[0]["PackingListID"]}' AND pd.CustCTN='' 
-
-
-----找到CustCD對應的ShippingMarkCombination
-SELECT DISTINCT t.PackingListID
-	,[ShippingMarkCombinationUkey]=comb.Ukey
-	,[ShippingMarkTypeUkey]=st.Ukey
-	,t.RefNo
-	,t.BrandID,t.IsMixPack ,t.SCICtnNo
-INTO #tmp_Pic_Detail{i}
-FROM #tmp_Combination_D{i} t
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = t.StickerCombinationUkey
-INNER JOIN ShippingMarkCombination_Detail combD ON comb.Ukey = combD.ShippingMarkCombinationUkey
-INNER JOIN ShippingMarkType st ON st.Ukey = combD.ShippingMarkTypeUkey
-INNER JOIN ShippingMarkPicture pict ON pict.BrandID=t.BrandID AND pict.ShippingMarkCombinationUkey = comb.Ukey AND pict.CTNRefno=t.RefNo AND pict.Category='PIC'
-INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
-
-----開始INSERT ShippingMarkPic_Detail
-
-INSERT ShippingMarkPic_Detail 
-		(ShippingMarkPicUkey,SCICtnNo,ShippingMarkCombinationUkey,ShippingMarkTypeUkey,FileName
-		,Side,Seq,Is2Side,IsHorizontal,IsSSCC,FromRight,FromBottom,Width,Length)
-SELECT 
-	 [ShippingMarkPicUkey]=pic.Ukey
-	,t.SCICtnNo
-	,t.ShippingMarkCombinationUkey
-	,t.ShippingMarkTypeUkey
-	,[FileName]=dt.CustCTN 
-	,b.Side
-	,b.Seq
-	,b.Is2Side
-	,b.IsHorizontal
-	,b.IsSSCC
-	,b.FromRight
-	,b.FromBottom
-	,s.Width
-	,s.Length
-FROM #tmp_Pic_Detail{i} t
-INNER JOIN ShippingMarkPicture a ON a.BrandID = t.BrandID AND a.CTNRefno = t.RefNo AND a.ShippingMarkCombinationUkey = t.ShippingMarkCombinationUkey AND a.Category ='PIC' 
-INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey AND b.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = a.ShippingMarkCombinationUkey
-INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
-INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
-INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
-
-";
-                p24_BodyList.Add(cmd);
-                i++;
-            }
-
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
-            {
-                try
-                {
-                    // 開始更新DB
-                    foreach (var p24_Head in p24_HeadList)
-                    {
-                        if (!(result = DBProxy.Current.Execute(null, p24_Head.ToString())))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return false;
-                        }
-                    }
-
-                    int idx = 0;
-                    foreach (DataTable dt in dtList)
-                    {
-                        DataTable dd;
-                        string cmd = p24_BodyList[idx];
-
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, null, cmd, out dd, temptablename: $"#tmp{idx}")))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return false;
-                        }
-
-                        idx++;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
-                    return false;
-                }
-            }
-
-            // 轉出圖片檔，以及寫入Packing P24 的Image
-            try
-            {
-                List<string> zplImg = new List<string>();
-                List<string> zplContent = new List<string>();
-                Dictionary<string, string> pdfImg = new Dictionary<string, string>();
-
-                #region 若有新開視窗的部分，則會先轉新開視窗的圖檔，因此先把那些檔案的圖檔挑出來轉檔，新視窗結束後，剩下的再轉
-
-                if (isFromNewForm)
-                {
-                    foreach (List<UpdateModel> upateModels in upateModel_List)
-                    {
-                        var keys = upateModels.Select(o => new { o.SCICtnNo, o.CustCTN }).Distinct().ToList();
-                        foreach (var item in keys)
-                        {
-                            string findZpl = wattingForConvert_contentsOfZPL.Where(o => o.Contains($"^FD>;>8{item.CustCTN}^FS")).FirstOrDefault();
-                            string indImg = wattingForConvert.Where(o => o.Contains(item.CustCTN)).FirstOrDefault();
-
-                            if (!MyUtility.Check.Empty(indImg))
-                            {
-                                zplImg.Add(indImg);
-                            }
-
-                            if (!MyUtility.Check.Empty(findZpl))
-                            {
-                                zplContent.Add(findZpl);
-                            }
-
-                            if (file_Name_PDF.Where(o => o.Value == item.CustCTN).Any())
-                            {
-                                pdfImg.Add(file_Name_PDF.Where(o => o.Value == item.CustCTN).FirstOrDefault().Key, item.CustCTN);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (List<UpdateModel> upateModels in upateModel_List)
-                    {
-                        var keys = upateModels.Select(o => new { o.SCICtnNo, o.CustCTN }).Distinct().ToList();
-                        foreach (var item in keys)
-                        {
-                            string findZpl = this.wattingForConvert_contentsOfZPL.Where(o => o.Contains($"^FD>;>8{item.CustCTN}^FS")).FirstOrDefault();
-                            string indImg = this.wattingForConvert.Where(o => o.Contains(item.CustCTN)).FirstOrDefault();
-
-                            if (!MyUtility.Check.Empty(indImg))
-                            {
-                                zplImg.Add(indImg);
-                            }
-
-                            if (!MyUtility.Check.Empty(findZpl))
-                            {
-                                zplContent.Add(findZpl);
-                            }
-
-                            if (this.File_Name_PDF.Where(o => o.Value == item.CustCTN).Any())
-                            {
-                                pdfImg.Add(this.File_Name_PDF.Where(o => o.Value == item.CustCTN).FirstOrDefault().Key, item.CustCTN);
-                            }
-                        }
-                    }
-                }
-
-                #endregion
-
-                if (uploadType == "ZPL")
-                {
-                    foreach (string singleFileName in zplImg)
-                    {
-                        string contentString = zplContent.Where(o => o.Contains(singleFileName)).FirstOrDefault();
-                        if (contentString != string.Empty)
-                        {
-                            this.CallAPI(singleFileName, contentString, shippingMarkPath, contentString.ToUpper().Contains("MIXED"));
-                        }
-                    }
-                }
-
-                if (uploadType == "PDF")
-                {
-                    foreach (var item in pdfImg)
-                    {
-                        string fileName = item.Key;
-                        string custCTN = item.Value;
-
-                        FileInfo file = new FileInfo(fileName);
-                        this.ConvertPDF2Image(fileName, shippingMarkPath, custCTN, 1, 5, ImageFormat.Jpeg, Definition.One);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    dr["Result"] = "Fail";
-                }
-
-                this.ShowErr(ex);
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool P24_Database(List<UpdateModel> updateModelList, string uploadType)
+        private bool P24_Database(List<UpdateModel> updateModelList, string uploadType)
         {
             DualResult result;
             string updateCmd = string.Empty;
@@ -2579,130 +1327,37 @@ DROP TABLE #tmp_Combination{ii} ,#tmp_Pic{ii}
             dtList.Add(bodyDt);
             #endregion
 
-            #region
-            /*
-            foreach (List<UpdateModel> upateModels in upateModel_List)
-            {
-                if (upateModels.Count == 0)
-                {
-                    continue;
-                }
-
-                #region 寫P24表頭
-
-                var idList = upateModels.Select(o => new { o.PackingListID, o.RefNo }).Distinct().ToList();
-
-                string p24_Head = string.Empty;
-                int ii = 0;
-                foreach (var item in idList)
-                {
-                    #region SQL
-                    p24_Head += $@"
---找出哪個箱子種類包含混尺碼
-SELECT [PackingListID]=pd.ID ,pd.Ukey
-INTO #MixCarton{ii}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-AND  p.ID = '{item.PackingListID}'
-AND pd.RefNo = '{item.RefNo}'
-AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
-		where qq.ID = p.ID 
-		AND qq.OrderID = pd.OrderID 
-		AND qq.CTNStartNo = pd.CTNStartNo
-		AND qq.Article = pd.Article 
-		AND qq.SizeCode <> pd.SizeCode 
-		and qq.Ukey != pd.Ukey) > 0
-
-----
-SELECT DISTINCT [StickerCombinationUkey]=s.ShippingMarkCombinationUkey,p.BrandID,pd.RefNo, [PackingListID]=p.ID
-INTO #tmp_Combination{ii}
-FROM ShippingMarkPicture s
-INNER JOIN PackingList p ON p.BrandID = s.BrandID
-INNER JOIN PackingList_Detail pd ON p.Id = pd.ID AND s.CTNRefno = pd.RefNo
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = s.ShippingMarkCombinationUkey
-WHERE p.ID = '{item.PackingListID}'
-AND pd.RefNo = '{item.RefNo}'
-AND comb.IsMixPack=0
-AND comb.Category='PIC'
-AND NOT EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
-UNION
-SELECT DISTINCT [StickerCombinationUkey]=s.ShippingMarkCombinationUkey,p.BrandID,pd.RefNo, [PackingListID]=p.ID
-FROM ShippingMarkPicture s
-INNER JOIN PackingList p ON p.BrandID = s.BrandID
-INNER JOIN PackingList_Detail pd ON p.Id = pd.ID AND s.CTNRefno = pd.RefNo
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = s.ShippingMarkCombinationUkey
-WHERE p.ID = '{item.PackingListID}'
-AND pd.RefNo = '{item.RefNo}'
-AND comb.IsMixPack=1
-AND comb.Category='PIC'
-AND EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
-
-----寫入ShippingMarkPic 表頭
-SELECT t.PackingListID
-    ,[AddName]='{Sci.Env.User.UserID}'
-    ,[AddDate]=GETDATE()
-INTO #tmp_Pic{ii}
-FROM #tmp_Combination{ii} t
-
-----刪除ShippingMarkPic表頭表身
-DELETE picd
-FROM ShippingMarkPic pic
-INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
-INNER JOIN #tmp_Pic{ii} t ON pic.PackingListID = t.PackingListID 
-
-DELETE p
-FROM ShippingMarkPic p
-INNER JOIN  #tmp_Pic{ii} t ON p.PackingListID = t.PackingListID 
-;
-INSERT INTO ShippingMarkPic (PackingListID ,AddName ,AddDate,EditName)
-SELECT *,EditName='' FROM #tmp_Pic{ii}
-
-DROP TABLE #tmp_Combination{ii} ,#tmp_Pic{ii}
-";
-                    #endregion
-
-                    ii++;
-                }
-
-                p24_HeadList.Add(p24_Head);
-                #endregion
-
-                #region 寫P24表身
-                DataTable dt = new DataTable();
-                dt.ColumnsStringAdd("PackingListID");
-                dt.ColumnsStringAdd("SCICtnNo");
-                dt.ColumnsStringAdd("CustCTN");
-                dt.ColumnsStringAdd("RefNo");
-
-                // 混尺碼的話會重複，因此要DISTINCT
-                var keys = upateModels.Select(o => new { o.PackingListID, o.SCICtnNo, o.CustCTN, o.RefNo }).Distinct().ToList();
-
-                foreach (var model in keys)
-                {
-                    DataRow dr = dt.NewRow();
-
-                    dr["PackingListID"] = model.PackingListID;
-                    dr["SCICtnNo"] = model.SCICtnNo;
-                    dr["CustCTN"] = model.CustCTN;
-                    dr["RefNo"] = model.RefNo;
-
-                    dt.Rows.Add(dr);
-                }
-
-                dtList.Add(dt);
-                #endregion
-            }
-            */
-            #endregion
-
             // P24表身
             foreach (DataTable dt in dtList)
             {
+                string tmpTable = string.Empty;
+
+                // 不想用ProcessWithDatatable，把物件手動弄成temp table
+                int count = 1;
+                foreach (DataRow dr in dt.Rows)
+                {
+                    string tmp = $"SELECT [PackingListID]='{dr["PackingListID"]}',[SCICtnNO]='{dr["SCICtnNO"]}',[CustCTN]='{dr["CustCTN"]}' ,[Refno]='{dr["Refno"]}'";
+
+                    tmpTable += tmp + Environment.NewLine;
+
+                    if (count == 1)
+                    {
+                        tmpTable += $"INTO #tmp{i}" + Environment.NewLine;
+                    }
+
+                    if (dt.Rows.Count > count)
+                    {
+                        tmpTable += "UNION" + Environment.NewLine;
+                    }
+
+                    count++;
+                }
+
                 string cmd = string.Empty;
 
                 cmd = $@"
+{tmpTable}
+
 ----開始寫入ShippingMarkPic_Detail
 
 ----先整理出IsMix的箱子
@@ -2763,7 +1418,8 @@ SELECT
 	,t.SCICtnNo
 	,t.ShippingMarkCombinationUkey
 	,t.ShippingMarkTypeUkey
-	,[FileName]=dt.CustCTN 
+	--,[FileName]=dt.CustCTN 
+	,[FileName]=(SELECT TOP 1 CustCTN FROM #tmp0 dt WHERE t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo)
 	,b.Side
 	,b.Seq
 	,b.Is2Side
@@ -2778,7 +1434,7 @@ INNER JOIN ShippingMarkPicture a ON a.BrandID = t.BrandID AND a.CTNRefno = t.Ref
 INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey AND b.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
 INNER JOIN ShippingMarkCombination comb ON comb.Ukey = a.ShippingMarkCombinationUkey
 INNER JOIN StickerSize s ON s.ID = b.StickerSizeID
-INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
+--INNER JOIN #tmp{i} dt ON t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo
 INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 
 ";
@@ -2804,10 +1460,9 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                     int idx = 0;
                     foreach (DataTable dt in dtList)
                     {
-                        DataTable dd;
                         string cmd = p24_BodyList[idx];
 
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, null, cmd, out dd, temptablename: $"#tmp{idx}")))
+                        if (!(result = DBProxy.Current.Execute(null, cmd)))
                         {
                             transactionscope.Dispose();
                             this.ShowErr(result);
@@ -2883,12 +1538,6 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
             }
             catch (Exception ex)
             {
-                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                foreach (DataRow dr in dt.Rows)
-                {
-                    dr["Result"] = "Fail";
-                }
-
                 this.ShowErr(ex);
                 return false;
             }
@@ -2896,7 +1545,7 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
             return true;
         }
 
-        public bool P03_Database(List<UpdateModel> updateModelList, string uploadType)
+        private bool P03_Database(List<UpdateModel> updateModelList, string uploadType)
         {
             DualResult result;
             string updateCmd = string.Empty;
@@ -3023,143 +1672,8 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                 updateCmd += cmd + Environment.NewLine + "---------";
             }
 
-            #region
-            /*
-            foreach (List<UpdateModel> upateModels in upateModel_List)
-            {
-                if (upateModels.Count == 0)
-                {
-                    continue;
-                }
-
-                string fileName = upateModels.FirstOrDefault().FileName;
-                fileNames.Add(fileName);
-
-                foreach (var model in upateModels)
-                {
-                    string cmd = string.Empty;
-
-                    if (uploadType == "ZPL")
-                    {
-                        #region SQL
-                        cmd += $@"
-----1. 整理Mapping的資料
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders{i}
-FROM Orders 
-WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
-
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{model.PackingListID}'
-    AND pd.CustCTN='' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders{i})
-    AND Article = '{model.Article}'
-    AND pd.ShipQty={model.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{model.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{model.SizeCode}'
-        )
-	AND SCICtnNo = (	
-		SELECT TOP 1 b.SCICtnNo 
-		FROM ShippingMarkPic a WITH(NOLOCK)
-		INNER JOIN ShippingMarkPic_Detail b WITH(NOLOCK) ON a.Ukey=b.ShippingMarkPicUkey
-		WHERE a.PackingListID='{model.PackingListID}' AND b. FileName = '{model.CustCTN}'
-	)
-ORDER BY CONVERT ( int ,pd.CTNStartNo)
-
-----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
-UPDATE pd
-SET pd.CustCTN='{model.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-
-UPDATE PackingList
-SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-WHERE ID ='{model.PackingListID}'
-
-DROP TABLE #tmpOrders{i},#tmp{i}
-";
-                        #endregion
-                    }
-
-                    if (uploadType == "PDF")
-                    {
-                        #region SQL
-                        cmd += $@"
-----1. 整理Mapping的資料
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders{i}
-FROM Orders 
-WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
-
-SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmp{i}
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-	AND p.ID='{model.PackingListID}'
-    AND pd.CustCTN='' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders{i})
-    AND Article = '{model.Article}'
-    AND pd.ShipQty={model.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders{i}) AND SizeSpec IN ('{model.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{model.SizeCode}'
-        )
-	AND SCICtnNo = (	
-		SELECT TOP 1 b.SCICtnNo 
-		FROM ShippingMarkPic a WITH(NOLOCK)
-		INNER JOIN ShippingMarkPic_Detail b WITH(NOLOCK) ON a.Ukey=b.ShippingMarkPicUkey
-		WHERE a.PackingListID='{model.PackingListID}' AND b. FileName = '{model.CustCTN}'
-	)
-ORDER BY CONVERT ( int ,pd.CTNStartNo)
-
-----2. 更新PackingList_Detail的CustCTN，PackingList.EditDate和EditName
-UPDATE pd
-SET pd.CustCTN='{model.CustCTN}'
-FROM PackingList_Detail pd
-INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
-
-UPDATE PackingList
-SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
-WHERE ID ='{model.PackingListID}'
-
-DROP TABLE #tmpOrders{i},#tmp{i}
-";
-                        #endregion
-                        fileNames.Add(model.FileName);
-                    }
-
-                    i++;
-
-                    updateCmd += cmd + Environment.NewLine + "---------";
-                }
-            }
-            */
-
-            #endregion
-
             if (MyUtility.Check.Empty(updateCmd))
             {
-                this.canConvert = false;
                 return false;
             }
 
@@ -3178,23 +1692,21 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                     transactionscope.Complete();
                     transactionscope.Dispose();
 
-                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                    List<DataRow> dl = dt.AsEnumerable().Where(o => fileNames.Contains(o["FileName"].ToString())).ToList();
-                    foreach (DataRow dr in dl)
-                    {
-                        dr["Result"] = "Pass";
-                    }
-
-                    MyUtility.Msg.InfoBox("Data Mapping successful!");
+                    //DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                    //List<DataRow> dl = dt.AsEnumerable().Where(o => fileNames.Contains(o["FileName"].ToString())).ToList();
+                    //foreach (DataRow dr in dl)
+                    //{
+                    //    dr["Result"] = "Pass";
+                    //}
                 }
                 catch (Exception ex)
                 {
                     transactionscope.Dispose();
-                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        dr["Result"] = "Fail";
-                    }
+                    //DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                    //foreach (DataRow dr in dt.Rows)
+                    //{
+                    //    dr["Result"] = "Fail";
+                    //}
 
                     this.ShowErr(ex);
                 }
@@ -3203,236 +1715,13 @@ DROP TABLE #tmpOrders{i},#tmp{i}
             return true;
         }
 
-        private string Check_Before_Mapping(ZPL zPL)
-        {
-            string errorMSG = string.Empty;
-
-            // CustCTN是否已經存在
-            bool existsCustCTN = MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{zPL.CustCTN}' ");
-
-            if (existsCustCTN)
-            {
-                errorMSG += "CustCTN has existsed.";
-
-                if (!this.existsCustCTN_Table.AsEnumerable().Where(o => o["CustCTN"].ToString() == zPL.CustCTN).Any())
-                {
-                    DataRow ndr = this.existsCustCTN_Table.NewRow();
-                    ndr["CustCTN"] = zPL.CustCTN;
-
-                    this.existsCustCTN_Table.Rows.Add(ndr);
-                }
-
-                return errorMSG;
-            }
-
-            // CustPONo是否存在
-            bool hasCustPONo = MyUtility.Check.Seek($@"SELECT ID ,StyleID ,POID FROM Orders WHERE CustPONo='{zPL.CustPONo}' AND StyleID='{zPL.StyleID}' ");
-
-            if (!hasCustPONo)
-            {
-                errorMSG += "The following PO# can't be found in PPIC_P01!!";
-
-                if (!this.NotMapCustPo_Table.AsEnumerable().Where(o => o["CustPo"].ToString() == zPL.CustPONo).Any())
-                {
-                    DataRow ndr = this.NotMapCustPo_Table.NewRow();
-                    ndr["CustPo"] = zPL.CustPONo;
-
-                    this.NotMapCustPo_Table.Rows.Add(ndr);
-                }
-
-                return errorMSG;
-            }
-
-            return errorMSG;
-        }
-
-        private string Get_MappingSQL(ZPL currentZPL, bool isCartonMixed)
+        private string Get_MatchSQL(ZPL currentZPL, bool isMixPack = false)
         {
             string sqlCmd = string.Empty;
 
-            if (isCartonMixed)
+            if (isMixPack)
             {
                 sqlCmd = $@"
-------開始 Mapping ZPL
-
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders
-FROM Orders 
-WHERE CustPONo='{currentZPL.CustPONo}' AND StyleID='{currentZPL.StyleID}'
-
-SELECT [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey ,o.CustPONo ,o.StyleID ,pd.Article   ,pd.SCICtnNo ,p.BrandID ,pd.RefNo ,p.CustCDID
-,[SizeCode]='{currentZPL.SizeCode}' ,pd.ShipQty ,[CustCTN] ='{currentZPL.CustCTN}'
-INTO #tmp_PackingListDetail
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
-    AND pd.CustCTN = ''
-    AND Article = '{currentZPL.Article}'
-    AND pd.ShipQty={currentZPL.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders) AND SizeSpec IN ('{currentZPL.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{currentZPL.SizeCode}'
-        )
-
-SELECT * FROM #tmp_PackingListDetail
-		
-
----整理出：混尺碼的標準組合
-
-SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey_MixPack 
-,	(
-	SELECT Ukey 
-	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND IsDefault = 1 AND IsMixPack = 1 AND Category='PIC'
-	)
-),[IsMixPack]=1 ,p.BrandID,p.RefNo
-INTO #tmp
-FROM #tmp_PackingListDetail p
-INNER JOIN CustCD c ON p.BrandID = c.BrandID AND p.CustCDID = c.ID
-
-SELECT DISTINCT st.*,t.StickerCombinationUkey ,t.RefNo,[ShippingMarkCombination]=comb.ID
-INTO #StdComb
-FROM #tmp t
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = t.StickerCombinationUkey
-INNER JOIN ShippingMarkCombination_Detail combD ON comb.Ukey = combD.ShippingMarkCombinationUkey
-INNER JOIN ShippingMarkType st ON st.Ukey = combD.ShippingMarkTypeUkey
---------------
-
-----與標準比對，找出現存、缺少的B03設定
-
-SELECT DISTINCT p.BrandId,[ShippingMarkCombination]=comb.ID,p.RefNo,[ShippingMarkType]=st.ID ,p.PackingListID ,st.Ukey,sp.ShippingMarkCombinationUkey ,comb.IsMixPack
-INTO #Current_ShippingMarkPicture
-FROM #tmp_PackingListDetail p 
-INNER JOIN ShippingMarkPicture sp ON sp.BrandID = p.BrandID AND sp.CTNRefno = p.RefNo AND sp.Category = 'PIC'
-INNER JOIN ShippingMarkPicture_Detail spd ON sp.Ukey = spd.ShippingMarkPictureUkey
-INNER JOIN ShippingMarkType st ON st.Ukey = spd.ShippingMarkTypeUkey
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = sp.ShippingMarkCombinationUkey
-
-SELECT * 
-FROM #Current_ShippingMarkPicture t
-WHERE --t.IsMixPack=1 AND
-EXISTS(
-	SELECT 1
-	FROM #StdComb s
-	WHERE s.Ukey=t.Ukey AND s.StickerCombinationUkey = t.ShippingMarkCombinationUkey
-)
-
-SELECT s.BrandID,s.ShippingMarkCombination,[ShippingMarkType]=s.ID,s.RefNo
-FROM  #StdComb s
-WHERE 
-NOT EXISTS(
-	SELECT *
-	FROM #Current_ShippingMarkPicture t
-	WHERE s.Ukey=t.Ukey AND s.StickerCombinationUkey = t.ShippingMarkCombinationUkey
-)
-DROP TABLE #tmpOrders,#tmp_PackingListDetail,#tmp,#StdComb ,#Current_ShippingMarkPicture
-
-";
-            }
-            else
-            {
-                sqlCmd = $@"
-------開始 Mapping ZPL
-
-SELECT ID ,StyleID ,POID
-INTO #tmpOrders
-FROM Orders 
-WHERE CustPONo='{currentZPL.CustPONo}' AND StyleID='{currentZPL.StyleID}'
-
-SELECT [PackingListID]=pd.ID ,[PackingList_Ukey]=pd.Ukey ,o.CustPONo ,o.StyleID ,pd.Article   ,pd.SCICtnNo ,p.BrandID ,pd.RefNo ,p.CustCDID
-,[SizeCode]='{currentZPL.SizeCode}' ,pd.ShipQty ,[CustCTN] ='{currentZPL.CustCTN}'
-INTO #tmp_PackingListDetail
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
-    AND pd.CustCTN = ''
-    AND Article = '{currentZPL.Article}'
-    AND pd.ShipQty={currentZPL.ShipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders) AND SizeSpec IN ('{currentZPL.SizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{currentZPL.SizeCode}'
-        )
-
-SELECT * FROM #tmp_PackingListDetail
-		
-
----整理出：非混尺碼的標準組合
-
-SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey
-,	(
-	SELECT Ukey 
-	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND IsDefault = 1 AND IsMixPack = 0 AND Category='PIC'
-	)
-),[IsMixPack]=0 ,p.BrandID,p.RefNo
-INTO #tmp
-FROM #tmp_PackingListDetail p
-INNER JOIN CustCD c ON p.BrandID = c.BrandID AND p.CustCDID = c.ID
-
-SELECT DISTINCT st.*,t.StickerCombinationUkey ,t.RefNo,[ShippingMarkCombination]=comb.ID
-INTO #StdComb
-FROM #tmp t
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = t.StickerCombinationUkey
-INNER JOIN ShippingMarkCombination_Detail combD ON comb.Ukey = combD.ShippingMarkCombinationUkey
-INNER JOIN ShippingMarkType st ON st.Ukey = combD.ShippingMarkTypeUkey
---------------
-
-----與標準比對，找出現存、缺少的B03設定
-
-SELECT DISTINCT p.BrandId,[ShippingMarkCombination]=comb.ID,p.RefNo,[ShippingMarkType]=st.ID ,p.PackingListID ,st.Ukey,sp.ShippingMarkCombinationUkey ,comb.IsMixPack
-INTO #Current_ShippingMarkPicture
-FROM #tmp_PackingListDetail p 
-INNER JOIN ShippingMarkPicture sp ON sp.BrandID = p.BrandID AND sp.CTNRefno = p.RefNo AND sp.Category = 'PIC'
-INNER JOIN ShippingMarkPicture_Detail spd ON sp.Ukey = spd.ShippingMarkPictureUkey
-INNER JOIN ShippingMarkType st ON st.Ukey = spd.ShippingMarkTypeUkey
-INNER JOIN ShippingMarkCombination comb ON comb.Ukey = sp.ShippingMarkCombinationUkey
-
-SELECT * 
-FROM #Current_ShippingMarkPicture t
-WHERE --t.IsMixPack=0 AND
-EXISTS(
-	SELECT 1
-	FROM #StdComb s
-	WHERE s.Ukey=t.Ukey AND s.StickerCombinationUkey = t.ShippingMarkCombinationUkey
-)
-
-SELECT s.BrandID,s.ShippingMarkCombination,[ShippingMarkType]=s.ID,s.RefNo
-FROM  #StdComb s
-WHERE 
-NOT EXISTS(
-	SELECT *
-	FROM #Current_ShippingMarkPicture t
-	WHERE s.Ukey=t.Ukey AND s.StickerCombinationUkey = t.ShippingMarkCombinationUkey
-)
-
-DROP TABLE #tmpOrders,#tmp_PackingListDetail,#tmp,#StdComb ,#Current_ShippingMarkPicture
-";
-            }
-
-            return sqlCmd;
-        }
-
-        private string Get_MatchSQL(ZPL currentZPL)
-        {
-            string sqlCmd = string.Empty;
-
-            sqlCmd = $@"
 ------開始 Match ZPL
 
 SELECT ID ,StyleID ,POID
@@ -3450,6 +1739,85 @@ SELECT DISTINCT [PackingListID]=pd.ID
     ,pd.RefNo
     ,[CustCTN] = '{currentZPL.CustCTN}'
     ,pd.Ukey
+	,pd.CTNStartNo
+INTO #tmp
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
+    AND Article = '{currentZPL.Article}'
+    AND pd.ShipQty={currentZPL.ShipQty}
+    AND (
+	        pd.SizeCode in
+	        (
+		        SELECT SizeCode 
+		        FROM Order_SizeSpec 
+		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders) AND SizeSpec IN ('{currentZPL.SizeCode}')
+	        ) 
+	        OR 
+	        pd.SizeCode='{currentZPL.SizeCode}'
+        )
+
+/*
+說明：由於混尺碼的時候，需要透過CTNStartNo才能得知總共有幾箱。
+ZPL檔案上的Box 代表第1、2、3....N箱，但PackingList_Detail.CTNStartNo不一定會是從1開始。
+舉例：若有10張ZPL，在ZPL的Box會寫1~10，但在PackingList_Detail.CTNStartNo是18~27。
+原因：一張Packing底下「可能」不只這10箱，因此我們要先找出這10箱最小的CTNStartNo，再一箱一箱加上去找出唯一一筆PackingList_Detail
+
+*/
+SELECT  [PackingListID]
+    ,[CustPONO]
+    ,[StyleID] 
+    ,Article
+    ,SizeCode
+    ,ShipQty
+    ,RefNo
+    ,[CustCTN]
+	,[CTNStartNo]=CAST(MIN(CTNStartNo) as int) + {currentZPL.CTNStartNo} - 1
+INTO #MinCTNStartNO
+FROM #tmp 
+GROUP BY  PackingListID
+    ,CustPONO
+    ,StyleID
+    ,Article
+    ,SizeCode
+    ,ShipQty
+    ,RefNo
+    ,CustCTN
+
+SELECT t.* 
+FROM #tmp t
+INNER JOIN #MinCTNStartNO c ON t.PackingListID = c.PackingListID AND t.CustPONO = c.CustPONO AND t.StyleID = c.StyleID AND t.Article = c.Article
+AND t.SizeCode = c.SizeCode AND t.ShipQty = c.ShipQty AND t.RefNo = c.RefNo AND t.CustCTN = c.CustCTN 
+AND t.CTNStartNo = c.CTNStartNo
+
+
+DROP TABLE #tmpOrders,#tmp,#MinCTNStartNO
+
+";
+            }
+            else
+            {
+                sqlCmd = $@"
+------開始 Match ZPL
+
+SELECT ID ,StyleID ,POID
+INTO #tmpOrders
+FROM Orders 
+WHERE CustPONo='{currentZPL.CustPONo}' AND StyleID='{currentZPL.StyleID}'
+
+SELECT DISTINCT [PackingListID]=pd.ID 
+    ,[CustPONO]='{currentZPL.CustPONo}'
+    ,[StyleID] = '{currentZPL.StyleID}'
+    ,pd.Article
+    ,pd.SizeCode
+    ,pd.ShipQty
+    ,pd.SCICtnNo
+    ,pd.RefNo
+    ,[CustCTN] = '{currentZPL.CustCTN}'
+    ,pd.Ukey
+	,pd.CTNStartNo
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
@@ -3469,65 +1837,39 @@ WHERE p.Type ='B'
         )
 
 DROP TABLE #tmpOrders
+
 ";
+            }
 
             return sqlCmd;
         }
 
-        /// <summary>
-        /// 檢查該箱是否為混尺碼
-        /// </summary>
-        /// <param name="custPONo"></param>
-        /// <param name="styleID"></param>
-        /// <param name="article"></param>
-        /// <param name="sizeCode"></param>
-        /// <param name="shipQty"></param>
-        /// <returns>bool</returns>
-        private bool Chk_Carton_Mix(string custPONo, string styleID, string article, string sizeCode, string shipQty)
+        private void ShowErrorMsg()
         {
-            bool res = false;
-            DataRow dr;
-            string cmd = $@"
+            if (!this.ErrorMsg.Any())
+            {
+                return;
+            }
 
-SELECT ID ,StyleID ,POID ,CustPONo
-INTO #tmpOrders
-FROM Orders 
-WHERE CustPONo='{custPONo}' AND StyleID='{styleID}'
+            DataTable dt = new DataTable();
+            dt.ColumnsIntAdd("FileSeq");
+            dt.ColumnsStringAdd("Result");
 
-SELECT pd.ID,pd.SCICtnNo
-FROM PackingList p 
-INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-WHERE p.Type ='B' 
-    AND pd.OrderID IN (SELECT ID FROM #tmpOrders)
-    AND pd.CustCTN = ''
-    AND Article = '{article}'
-    AND pd.ShipQty={shipQty}
-    AND (
-	        pd.SizeCode in
-	        (
-		        SELECT SizeCode 
-		        FROM Order_SizeSpec 
-		        WHERE SizeItem='S01' AND ID IN (SELECT POID FROM #tmpOrders) AND SizeSpec IN ('{sizeCode}')
-	        ) 
-	        OR 
-	        pd.SizeCode='{sizeCode}'
-        )
-		AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
-				where qq.ID = p.ID 
-				AND qq.OrderID = pd.OrderID 
-				AND qq.CTNStartNo = pd.CTNStartNo
-				AND (qq.Article = pd.Article 
-				OR qq.SizeCode = pd.SizeCode )
-				and qq.Ukey != pd.Ukey) > 0
-";
-            res = MyUtility.Check.Seek(cmd, out dr);
+            foreach (Result r in this.ErrorMsg)
+            {
+                DataRow dr = dt.NewRow();
+                dr["FileSeq"] = r.FileSeq;
+                dr["Result"] = r.ResultMsg;
+                dt.Rows.Add(dr);
+            }
 
-            return res;
-        }
-
-        private void ShowErrorMessage()
-        {
+            var m = MyUtility.Msg.ShowMsgGrid(dt, "Please check below message.", "Result");
+            m.Width = 850;
+            m.grid1.Columns[0].Width = 50;
+            m.grid1.Columns[1].Width = 600;
+            m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            m.TopMost = true;
+            /*
             if (this.existsCustCTN_Table.Rows.Count > 0)
             {
                 var m = MyUtility.Msg.ShowMsgGrid(this.existsCustCTN_Table, "Exists Cust CTN", "Exists Cust CTN");
@@ -3575,13 +1917,15 @@ WHERE p.Type ='B'
                 m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
                 m.TopMost = true;
             }
+            */
         }
 
         private DataRow GetInfoByPackingList(DataRow current)
         {
             string packingListID = MyUtility.Convert.GetString(current["PackingListCandidate"]);
-
-            var now = this.MatchList.Where(o => o.SelectedPackingID == packingListID).FirstOrDefault();
+            int fileSeq = MyUtility.Convert.GetInt(current["FileSeq"]);
+            var now = this.MatchList.Where(o => o.FileSeq == fileSeq).FirstOrDefault();
+            now.SelectedPackingID = packingListID;
 
             string isMixPack = MyUtility.Convert.GetBool(current["IsMixPack"]) ? "1" : "0";
             string cmd = string.Empty;
@@ -3635,8 +1979,8 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
             // 勾選 : 代表至少有一箱已送至成品倉
             current["CtnInClog"] = ctnInClog;
 
-            current["Overwrite"] = MyUtility.Convert.GetBool(current["StickerAlreadyExisted"]);
-            now.Overwrite = MyUtility.Convert.GetBool(current["StickerAlreadyExisted"]);
+            current["Overwrite"] = MyUtility.Convert.GetBool(current["Overwrite"]);
+            now.Overwrite = MyUtility.Convert.GetBool(current["Overwrite"]);
 
             return current;
         }
@@ -3701,75 +2045,112 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            // 同一次上傳中不可選擇相同的 P/L
-            if (this.MatchList.Select(o => o.SelectedPackingID).Distinct().Count() != this.MatchList.Select(o => o.SelectedPackingID).Count())
+            try
             {
-                MyUtility.Msg.WarningBox("Cannot choose duplicate P/L Candidate.");
-                return;
-            }
-
-            this.CollectErrorMsg();
-
-            if (!this.MatchList.Any())
-            {
-                string msg = "Error Message : " + Environment.NewLine;
-                foreach (Result r in this.ErrorMsg)
+                // 同一次上傳中不可選擇相同的 P/L
+                if (this.MatchList.Select(o => o.SelectedPackingID).Distinct().Count() != this.MatchList.Select(o => o.SelectedPackingID).Count())
                 {
-                    msg += $"File Seq <{r.FileSeq}>, {r.ResultMsg}" + Environment.NewLine;
+                    MyUtility.Msg.WarningBox("Cannot choose duplicate P/L Candidate.");
+                    return;
                 }
 
-                MyUtility.Msg.WarningBox(msg);
-                return;
-            }
-
-            // 挑出勾選Overwrite
-            var isOverwrite = this.MatchList.Where(o => o.Overwrite == true);
-
-            string cmd = string.Empty;
-            foreach (Match match in isOverwrite)
-            {
-                cmd += $"UPDATE PackingList_Detail SET CustCTN = '' WHERE ID = '{match.SelectedPackingID}' "+ Environment.NewLine;
-            }
-
-            // 將 CustCtn already existed 列出的 PL 所有的 CustCTN 全數清空
-            DBProxy.Current.Execute(null, cmd);
-
-            bool result = true;
-            foreach (Match match in this.MatchList)
-            {
-                bool r = true;
-                r = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
-                r = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
-                if (!r)
+                if (this.MatchList.Where(o => o.SelectedPackingID == string.Empty).Any())
                 {
-                    result = false;
-                }
-            }
-
-            if (result)
-            {
-                MyUtility.Msg.InfoBox("Finish!");
-            }
-
-            if (this.ErrorMsg.Any())
-            {
-                string msg = "Error Message : " + Environment.NewLine;
-                foreach (Result r in this.ErrorMsg)
-                {
-                    msg += $"File Seq <{r.FileSeq}>, {r.ResultMsg}" + Environment.NewLine;
+                    MyUtility.Msg.WarningBox("P/L Candidate can't be empty.");
+                    return;
                 }
 
-                MyUtility.Msg.WarningBox(msg);
+                #region 若以下狀況未排除直接按下 Confirm，系統只執行可完成上傳的項次，其餘無法完成的項次跳出視窗提示
+                this.ErrorMsg.Clear();
+                List<Match> errorList = this.CollectErrorMsg();
+
+                // 錯誤的Match筆數 = 所有Match筆數，表示沒有任何一筆需要轉檔
+                if (errorList.Select(o => o.FileSeq).Distinct().Count() == this.MatchList.Select(o => o.FileSeq).Distinct().Count())
+                {
+                    this.ShowErrorMsg();
+                    return;
+                }
+                #endregion
+
+                this.ShowWaitMessage("Processing...");
+
+                // 挑出勾選Overwrite
+                var isOverwrite = this.MatchList.Where(o => o.Overwrite == true);
+
+                string cmd = string.Empty;
+                foreach (Match match in isOverwrite)
+                {
+                    cmd += $"UPDATE PackingList_Detail SET CustCTN = '' WHERE ID = '{match.SelectedPackingID}' " + Environment.NewLine;
+                }
+
+                // 將 CustCtn already existed 列出的 PL 所有的 CustCTN 全數清空
+                DBProxy.Current.Execute(null, cmd);
+
+                bool isFinish = true;
+                List<int> failFileSeqs = new List<int>();
+                foreach (Match match in this.MatchList.Where(o => (o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted))
+                {
+                    if (errorList.Any(o => o.FileSeq == match.FileSeq))
+                    {
+                        continue;
+                    }
+
+                    bool p24 = true;
+                    bool p03 = true;
+
+                    match.UpdateModels.RemoveAll(o => o.PackingListID != match.SelectedPackingID);
+
+                    p24 = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
+                    p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
+                    if (!p24 || !p03)
+                    {
+                        isFinish = false;
+                        failFileSeqs.Add(match.FileSeq);
+                    }
+                }
+
+                if (isFinish)
+                {
+                    MyUtility.Msg.InfoBox("Finish!");
+                }
+
+                this.ShowErrorMsg();
+
+                // 將左邊Grid 的Result更新
+                foreach (DataRow dr in this.Grid_SelectedFile_Dt.Rows)
+                {
+                    if (failFileSeqs.Where(o => o == MyUtility.Convert.GetInt(dr["FileSeq"])).Any())
+                    {
+                        dr["Result"] = "Fail";
+                    }
+                    else
+                    {
+                        dr["Result"] = "Pass";
+                    }
+
+                    dr.EndEdit();
+                }
+
             }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
+
+            this.HideWaitMessage();
+            this.btnProcessing.PerformClick();
+
         }
 
         /// <summary>
         /// 收集錯誤訊息
         /// </summary>
-        private void CollectErrorMsg()
+        private List<Match> CollectErrorMsg()
         {
+            List<Match> errorList = new List<Match>();
+
             // Multiple Matches = True 並且沒有選擇 P/L
-            var a = this.MatchList.Where(o => o.MultipieMatches == true && o.SelectedPackingID == string.Empty);
+            var a = this.MatchList.Where(o => o.MultipieMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
             if (a.Any())
             {
                 foreach (var item in a)
@@ -3782,8 +2163,9 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     this.ErrorMsg.Add(r);
                 }
 
-                // 刪去無法執行上傳的項目
-                this.MatchList.RemoveAll(o => o.MultipieMatches == true && o.SelectedPackingID == string.Empty);
+                // 記錄下無法執行上傳的項目
+                // this.MatchList.RemoveAll(o => o.MultipieMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
+                errorList.AddRange(a);
             }
 
             // No Sticker Basic Setting = True
@@ -3800,8 +2182,9 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     this.ErrorMsg.Add(r);
                 }
 
-                // 刪去無法執行上傳的項目
-                this.MatchList.RemoveAll(o => o.NoStickerBasicSetting == true);
+                // 記錄下無法執行上傳的項目
+                // this.MatchList.RemoveAll(o => o.NoStickerBasicSetting == true);
+                errorList.AddRange(b);
             }
 
             // Ctn in Clog = True
@@ -3818,27 +2201,47 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     this.ErrorMsg.Add(r);
                 }
 
-                // 刪去無法執行上傳的項目
-                this.MatchList.RemoveAll(o => o.CtnInClog == true);
+                // 記錄下無法執行上傳的項目
+                // this.MatchList.RemoveAll(o => o.CtnInClog == true);
+                errorList.AddRange(c);
             }
 
             // 挑出勾選Overwrite
-            var d = this.MatchList.Where(o => o.Overwrite == true);
+            var d = this.MatchList;//.Where(o => o.Overwrite == true);
             foreach (Match match in d)
             {
                 bool isOtherPacking = false;
                 string selectedPackingID = match.SelectedPackingID;
 
-                foreach (var zPL in match.ZPLFile.ZPLs)
+                if (this.currentFileType == UploadType.ZPL)
                 {
-                    string custCTN = zPL.CustCTN;
-
-                    string cmd = $@"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{custCTN}' AND ID <> '{selectedPackingID}'  ";
-
-                    // 若要覆蓋CustCTN，只能覆蓋相同PackingList ID的
-                    if (MyUtility.Check.Seek(cmd))
+                    foreach (var zPL in match.ZPLFile.ZPLs)
                     {
-                        isOtherPacking = true;
+                        string custCTN = zPL.CustCTN;
+
+                        string cmd = $@"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{custCTN}' AND ID <> '{selectedPackingID}'  ";
+
+                        // 若要覆蓋CustCTN，只能覆蓋相同PackingList ID的
+                        if (MyUtility.Check.Seek(cmd))
+                        {
+                            isOtherPacking = true;
+                        }
+                    }
+                }
+
+                if (this.currentFileType == UploadType.PDF)
+                {
+                    foreach (var pDF in match.PDFFile.UpdateModels)
+                    {
+                        string custCTN = pDF.CustCTN;
+
+                        string cmd = $@"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{custCTN}' AND ID <> '{selectedPackingID}'  ";
+
+                        // 若要覆蓋CustCTN，只能覆蓋相同PackingList ID的
+                        if (MyUtility.Check.Seek(cmd))
+                        {
+                            isOtherPacking = true;
+                        }
                     }
                 }
 
@@ -3847,32 +2250,17 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     Result r = new Result()
                     {
                         FileSeq = match.FileSeq,
-                        ResultMsg = "Carton already in Clog.",
+                        ResultMsg = "Exists Cust CTN.",
                     };
                     this.ErrorMsg.Add(r);
 
-                    // 刪去無法執行上傳的項目
-                    this.MatchList.RemoveAll(o => o.FileSeq == match.FileSeq);
+                    // 記錄下無法執行上傳的項目
+                    // this.MatchList.RemoveAll(o => o.FileSeq == match.FileSeq);
+                    errorList.AddRange(this.MatchList.Where(o => o.FileSeq == match.FileSeq));
                 }
             }
-        }
 
-        private void CreateUpdateModel()
-        {
-            foreach (Match m in this.MatchList)
-            {
-                string packingListID = m.SelectedPackingID;
-
-                foreach (ZPL zPL in m.ZPLFile.ZPLs)
-                {
-                    string po = zPL.CustPONo;
-                    string StyleID = zPL.StyleID;
-                    string article = zPL.Article;
-                    string sizeCode = zPL.SizeCode;
-                    string shipQty = zPL.ShipQty;
-                    //string SCICtnNo = zPL.sc
-                }
-            }
+            return errorList;
         }
 
         #region 從ZPL取得資訊
@@ -4126,21 +2514,6 @@ where o.CustPONo='{pono}'
             public string PackingListUkey { get; set; }
         }
 
-        public class NewFormModel
-        {
-            /// <inheritdoc/>
-            public string FileName { get; set; }
-
-            /// <inheritdoc/>
-            public DataTable ZPL_Content { get; set; }
-
-            /// <inheritdoc/>
-            public List<string> PackingListIDs { get; set; }
-
-            /// <inheritdoc/>
-            public List<ZPL> ZPL_List { get; set; }
-        }
-
         /// <summary>
         /// 由於PDF上傳的檔案是散裝的，這個物件用於裝同一包的PDF
         /// </summary>
@@ -4172,7 +2545,7 @@ where o.CustPONo='{pono}'
         {
             public string PO { get; set; }
 
-            public int FileSeq{ get; set; }
+            public int FileSeq { get; set; }
 
             public bool MultipieMatches { get; set; }
 
