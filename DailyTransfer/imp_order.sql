@@ -161,12 +161,23 @@ else
 		where s1.ID is null
 
 ----------------取得 BuyerDelivery & SciDelivery 日期在 Trade 給的日期範圍中 Orders 的資料------------------------
+	SELECT s.ID
+	INTO #LastFiveData
+	FROM Trade_To_Pms.dbo.Orders s 
+	WHERE Cast(s.EditDate as Date) >= DATEADD( DAY ,-5,GETDATE() )
+
 	select * 
 	into #tmpOrders 
 	from Production.dbo.Orders a WITH (NOLOCK)
 	where	(
 				a.BuyerDelivery between @Odate_s and @Odate_e 
 				or a.SciDelivery between @Odate_s and @Odate_e
+
+				--納入 Trade_To_Pms.dbo.Orders.EditDate 在 5天內的訂單
+				OR EXISTS( 
+					SELECT 1 FROM #LastFiveData s 
+					WHERE s.ID = a.ID
+				)
 			)
 			and a.LocalOrder = 0
 				
@@ -2216,8 +2227,10 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 ------------------------刪除表頭多的資料order 最後刪除
 Delete a
 from Production.dbo.Orders as a 
-where a.id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
+where a.id in (
+	select id from #tmpOrders as t 
+	where not exists(select 1 from #TOrder as s where t.id=s.ID)
+)
 
 
 drop table #tmpOrders
