@@ -885,9 +885,9 @@ ex: 150.423");
 
             this.Helper.Controls.Grid.Generator(this.gridFGWT)
             .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
-            .Text("Type", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
+            .Text("SystemType", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
             .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: beforeWash1)
-            .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2, settings: sizeSpecCell)
+            // .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2, settings: sizeSpecCell)
             .Numeric("AfterWash", header: "After Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: afterWash1Cell4)
             .Numeric("Shrinkage", header: "Shrikage(%)", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
             .Text("Scale", header: "Scale", width: Widths.AnsiChars(10), settings: scaleCell)
@@ -1153,7 +1153,8 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 						ELSE ''
 					END
 		,Location
-        ,Type 
+        ,f.Type
+        ,f.SystemType
 		,f.ID
 		,f.No
         ,BeforeWash 
@@ -1189,7 +1190,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
-order by LocationText DESC";
+order by f.Seq ASC,  LocationText DESC";
 
             DBProxy.Current.Select(null, sqlFGWT, out this.dtFGWT);
             this.gridFGWT.DataSource = this.dtFGWT;
@@ -1249,7 +1250,8 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 						ELSE ''
 					END
 		,Location
-        ,Type 
+        ,f.Type
+        ,f.SystemType
 		,f.ID
 		,f.No
         ,BeforeWash 
@@ -1285,7 +1287,7 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 from SampleGarmentTest_Detail_FGWT f 
 LEFT JOIN SampleGarmentTest_Detail gd ON f.ID = gd.ID AND f.No = gd.NO
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
-order by LocationText DESC
+order by f.Seq ASC,  LocationText DESC
 
 ";
 
@@ -3653,14 +3655,16 @@ SELECT STUFF(
                         insertCmd.Append($@"
 
 INSERT INTO SampleGarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,TestDetail ,Criteria)
+           (ID, No, Location, Type ,TestDetail ,Criteria, SystemType, Seq)
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
            , @Location{idx}
            , @Type{idx}
            , @TestDetail{idx} 
-           , @Criteria{idx}  )
+           , @Criteria{idx} 
+           , @SystemType{idx}
+           , @Seq{idx})
 
 ");
                     }
@@ -3671,13 +3675,45 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
                             insertCmd.Append($@"
 
 INSERT INTO SampleGarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,TestDetail )
+           (ID, No, Location, Type ,TestDetail, SystemType, Seq )
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
            , @Location{idx}
            , @Type{idx}
-           , @TestDetail{idx}  )
+           , @TestDetail{idx}
+           , @SystemType{idx}
+           , @Seq{idx})
+
+");
+                        }
+                        else if (fGWT.Type.ToUpper() == "SPIRALITY: GARMENT - IN PERCENTAGE (AVERAGE)")
+                        {
+                            insertCmd.Append($@"
+
+INSERT INTO SampleGarmentTest_Detail_FGWT
+           (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2, SystemType, Seq, Shrinkage)
+     VALUES
+           ( {garmentTest_Detail_ID}
+           , {garmentTest_Detail_No}
+           , @Location{idx}
+           , @Type{idx}
+           , @TestDetail{idx}
+           , @Criteria{idx} 
+           , @Criteria2_{idx}
+           , @SystemType{idx}
+           , @Seq{idx}
+           ,iif(@Location{idx} in ('B','T','S') ,(select sum(Twisting)
+	                                                from (
+	                                                	select Twisting = case when @Location{idx} in ('B','T') then gt.Twisting
+	                                                				when @Location{idx} = 'S' and gt.Location = 'B' then gt.Twisting
+	                                                				else 0
+	                                                				end
+	                                                	from SampleGarmentTest_Detail_Twisting gt
+	                                                	where gt.ID = {garmentTest_Detail_ID} and gt.No = {garmentTest_Detail_No}
+	                                                )gt),0
+               )
+           )
 
 ");
                         }
@@ -3686,7 +3722,7 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
                             insertCmd.Append($@"
 
 INSERT INTO SampleGarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2 )
+           (ID, No, Location, Type ,TestDetail ,Criteria ,Criteria2, SystemType, Seq )
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
@@ -3694,7 +3730,9 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
            , @Type{idx}
            , @TestDetail{idx}
            , @Criteria{idx} 
-           , @Criteria2_{idx}  )
+           , @Criteria2_{idx} 
+           , @SystemType{idx}
+           , @Seq{idx})
 
 ");
                         }
@@ -3705,14 +3743,16 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
                     insertCmd.Append($@"
 
 INSERT INTO SampleGarmentTest_Detail_FGWT
-           (ID, No, Location, Type ,Scale,TestDetail)
+           (ID, No, Location, Type ,Scale,TestDetail, SystemType, Seq)
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
            , @Location{idx}
            , @Type{idx}
            , ''
-           , @TestDetail{idx})
+           , @TestDetail{idx}
+           , @SystemType{idx}
+           , @Seq{idx})
 
 ");
                 }
@@ -3722,6 +3762,8 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
                 parameters.Add(new SqlParameter($"@TestDetail{idx}", fGWT.TestDetail));
                 parameters.Add(new SqlParameter($"@Criteria{idx}", fGWT.Criteria));
                 parameters.Add(new SqlParameter($"@Criteria2_{idx}", fGWT.Criteria2));
+                parameters.Add(new SqlParameter($"@SystemType{idx}", fGWT.SystemType));
+                parameters.Add(new SqlParameter($"@Seq{idx}", fGWT.Seq));
                 idx++;
             }
 
