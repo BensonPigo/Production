@@ -853,7 +853,7 @@ Select  distinct 0 as sel
 	    , 1 as Qty
         , cutoutput = isnull(sum(b.Qty),0)
         , RealCutOutput = isnull(sum(b.Qty),0)
-	    , CreatedBundleQty = (select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref)
+	    , CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref), 0)
         , 0 as TotalParts
         , ord.poid
         , 0 as startno
@@ -891,7 +891,7 @@ Select  distinct 0 as sel
 	    , 1 as Qty
         , cutoutput = isnull(b.Qty,0)
         , RealCutOutput = isnull(b.Qty,0)
-	    , CreatedBundleQty = (select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref)
+	    , CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref), 0)
         , 0 as TotalParts
         , ord.poid
         , 0 as startno
