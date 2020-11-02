@@ -887,7 +887,7 @@ ex: 150.423");
             .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
             .Text("SystemType", header: "Type", width: Widths.AnsiChars(40), iseditingreadonly: true)
             .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: beforeWash1)
-            .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2, settings: sizeSpecCell)
+            // .Numeric("SizeSpec", header: "Size Spec Meas ", width: Widths.AnsiChars(6), decimal_places: 2, settings: sizeSpecCell)
             .Numeric("AfterWash", header: "After Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: afterWash1Cell4)
             .Numeric("Shrinkage", header: "Shrikage(%)", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
             .Text("Scale", header: "Scale", width: Widths.AnsiChars(10), settings: scaleCell)
