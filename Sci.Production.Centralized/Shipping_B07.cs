@@ -14,6 +14,7 @@ namespace Sci.Production.Centralized
     public partial class Shipping_B07 : Win.Tems.Input1
     {
         private List<PortByBrandShipmode> portByBrandShipmodeList;
+
         /// <inheritdoc/>
         public Shipping_B07(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -326,22 +327,32 @@ when not matched by target then
         }
     }
 
+    /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class PortByBrandShipmode
     {
+        /// <inheritdoc/>
         public string PortID { get; set; }
 
+        /// <inheritdoc/>
         public string BrandID { get; set; }
 
+        /// <inheritdoc/>
         public string Remark { get; set; }
 
+        /// <inheritdoc/>
         public bool Junk { get; set; }
 
+        /// <inheritdoc/>
         public string AddName { get; set; }
 
+        /// <inheritdoc/>
         public string EditName { get; set; }
 
+        /// <inheritdoc/>
         public DateTime? AddDate { get; set; }
 
+        /// <inheritdoc/>
         public DateTime? EditDate { get; set; }
     }
 }

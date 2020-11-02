@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P01_TrimCardPrint : Win.Tems.PrintForm
     {
         private DataTable dtPrint_Content;
@@ -27,6 +28,7 @@ namespace Sci.Production.Warehouse
         private string POID;
         private List<string> ListColor = new List<string>();
 
+        /// <inheritdoc/>
         public P01_TrimCardPrint(string orderID, string styleID, string seasonID, string factoryID, string brandID, string pOID)
         {
             this.InitializeComponent();
@@ -53,6 +55,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result = Ict.Result.True;
@@ -599,6 +602,7 @@ ORDER BY ThreadColorID ASC
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             if (this.dtPrint_Content.Rows.Count == 0)

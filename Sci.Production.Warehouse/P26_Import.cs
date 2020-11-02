@@ -11,14 +11,16 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P26_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtArtwork;
+        private DataTable dtArtwork;
         private Dictionary<string, string> selectedLocation = new Dictionary<string, string>();
 
+        /// <inheritdoc/>
         public P26_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -119,9 +121,7 @@ where    f.MDivisionID='{0}'
                 }
                 else if (!this.txtSeq.CheckEmpty(showErrMsg: false))
                 {
-                    strSQLCmd.Append(string.Format(
-                        @" 
-        and a.seq1 = '{0}' and a.seq2='{1}'", this.txtSeq.Seq1, this.txtSeq.Seq2));
+                    strSQLCmd.Append($@"and a.seq1 = '{this.txtSeq.Seq1}' and a.seq2='{this.txtSeq.Seq2}'");
                 }
 
                 if (!MyUtility.Check.Empty(refno))

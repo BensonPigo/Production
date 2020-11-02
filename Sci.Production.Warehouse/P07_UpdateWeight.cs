@@ -9,14 +9,18 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07_UpdateWeight : Win.Subs.Base
     {
         private DataRow dr;
         private DataTable selectDataTable1;
-
-      // List<DataRow> datas;
+        private string gridAlias;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P07_UpdateWeight"/> class.
+        /// </summary>
+        /// <param name="data">DataRow</param>
         public P07_UpdateWeight(DataRow data)
         {
             this.InitializeComponent();
@@ -39,12 +43,19 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        public P07_UpdateWeight(object data, string data2)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P07_UpdateWeight"/> class.
+        /// </summary>
+        /// <param name="data">Main DataTable</param>
+        /// <param name="data2">OID</param>
+        /// <param name="gridAlias">GridAlias</param>
+        public P07_UpdateWeight(object data, string data2, string gridAlias)
         {
             this.InitializeComponent();
             this.selectDataTable1 = (DataTable)data;
             this.Text += " - " + data2;
             this.EditMode = true;
+            this.gridAlias = gridAlias;
         }
 
         /// <inheritdoc/>
@@ -90,7 +101,7 @@ namespace Sci.Production.Warehouse
             bool rtn;
             this.gridUpdateAct.ValidateControl();
 
-            if (!(rtn = MyUtility.Tool.CursorUpdateTable(this.selectDataTable1, "dbo.receiving_detail", null)))
+            if (!(rtn = MyUtility.Tool.CursorUpdateTable(this.selectDataTable1, "dbo." + this.gridAlias, null)))
             {
                 MyUtility.Msg.WarningBox("Save failed!!");
                 return;

@@ -20,23 +20,27 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P18 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
+        private ReportViewer viewer;
         private bool IsAutomation;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Roll;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Dyelot;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ttlqty;
 
+        /// <inheritdoc/>
         public P18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
-            this.viewer = new ReportViewer();
-            this.viewer.Dock = DockStyle.Fill;
+            this.viewer = new ReportViewer
+            {
+                Dock = DockStyle.Fill,
+            };
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
 
@@ -55,6 +59,7 @@ namespace Sci.Production.Warehouse
             };
         }
 
+        /// <inheritdoc/>
         public P18(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -119,6 +124,7 @@ namespace Sci.Production.Warehouse
         // print
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickPrint()
         {
             // 329: WAREHOUSE_P18 Print，資料如果未confirm不能列印。
@@ -137,12 +143,13 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmdd = @"
 select  b.name 
 from dbo.Transferin  a WITH (NOLOCK) 
 inner join dbo.mdivision  b WITH (NOLOCK) on b.id = a.mdivisionid
 where   b.id = a.mdivisionid
-        and a.id = @ID", pars, out dt);
+        and a.id = @ID";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);
@@ -172,7 +179,7 @@ where   b.id = a.mdivisionid
             #endregion
             #region -- 撈表身資料 --
             DataTable dtDetail;
-            result = DBProxy.Current.Select(string.Empty, @"
+            string tmp = @"
 select  a.POID
         , a.Seq1 + '-' + a.seq2 as SEQ
         , a.Roll
@@ -196,7 +203,8 @@ inner join FtyInventory f WITH (NOLOCK) on  f.POID = a.poid
 		                                    And f.Roll =  a.roll
 		                                    And f.Dyelot = a.dyelot
 		                                    And f.StockType = a.stocktype
-where a.id = @ID", pars, out dtDetail);
+where a.id = @ID";
+            result = DBProxy.Current.Select(string.Empty, tmp, pars, out dtDetail);
             if (!result)
             {
                 this.ShowErr(result);
@@ -242,8 +250,10 @@ where a.id = @ID", pars, out dtDetail);
             report.ReportResource = reportresource;
 
             // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
             frm.Show();
 
             return true;
@@ -258,6 +268,7 @@ where a.id = @ID", pars, out dtDetail);
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -459,6 +470,7 @@ where a.id = @ID", pars, out dtDetail);
         // Detail Grid 設定
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailGridSetup()
         {
             #region -- Seq 右鍵開窗 --
@@ -511,8 +523,10 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                     Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         dt,
                         "Seq,refno,description",
-                        "6,8,20", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description");
-                    selepoitem.Width = 480;
+                        "6,8,20", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description")
+                    {
+                        Width = 480,
+                    };
 
                     DialogResult result = selepoitem.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -1000,6 +1014,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -1390,6 +1405,7 @@ when matched then
         // Unconfirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -1643,6 +1659,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
         /// <summary>
         ///  AutoWHFabric WebAPI for Gensong
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void SentToGensong_AutoWHFabric()
         {
             if (true)
@@ -1701,6 +1718,7 @@ and t.id = '{this.CurrentMaintain["id"]}'
         // 寫明細撈出的sql command
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
@@ -1736,6 +1754,7 @@ select  a.id
         ,a.CombineBarcode
         ,a.Unoriginal 
         ,[ActualWeight] = isnull(a.ActualWeight, 0)
+        ,a.MDivisionID
 from dbo.TransferIn_Detail a WITH (NOLOCK) 
 left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1
@@ -1778,8 +1797,10 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         // Accumulated Form
         private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new P18_AccumulatedQty(this.CurrentMaintain);
-            frm.P18 = this;
+            var frm = new P18_AccumulatedQty(this.CurrentMaintain)
+            {
+                P18 = this,
+            };
             frm.ShowDialog(this);
         }
 
@@ -1925,6 +1946,41 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
             next_dgbtn.Value = "+";
+        }
+
+        private void BtnModifyRollDyelot_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.InfoBox("Please modify data directly!!");
+                return;
+            }
+
+            // 此功能只需顯示FabricType=F 資料,不須顯示副料
+            DataTable dt;
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, @"select * from #tmp where fabrictype='F'", out dt)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString(), this.GridAlias);
+            frm.ShowDialog(this);
+            this.RenewData();
+        }
+
+        private void BtnUpdateWeight_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.InfoBox("Please modify data directly!!");
+                return;
+            }
+
+            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString(), this.GridAlias);
+            frm.ShowDialog(this);
+            this.RenewData();
         }
     }
 }

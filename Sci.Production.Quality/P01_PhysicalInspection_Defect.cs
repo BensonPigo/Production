@@ -6,14 +6,16 @@ using Sci.Data;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_PhysicalInspection_Defect : Win.Subs.Input6A
     {
         private readonly DataTable DefectTb;
+        private readonly bool editm = false;
         private DataTable DefectFilterTb;
         private DataTable gridTb;
-        public DataRow mainrow;
-        private readonly bool editm = false;
+        private DataRow mainrow;
 
+        /// <inheritdoc/>
         public P01_PhysicalInspection_Defect(DataTable defectTb, DataRow maindr, bool edit)
         {
             this.InitializeComponent();
@@ -116,6 +118,7 @@ namespace Sci.Production.Quality
             this.GridSetUp();
         }
 
+        /// <inheritdoc/>
         public void GridSetUp()
         {
             DataGridViewGeneratorTextColumnSettings defectsCell1 = new DataGridViewGeneratorTextColumnSettings();
@@ -184,8 +187,9 @@ namespace Sci.Production.Quality
             foreach (DataRow dr in this.gridTb.Rows)
             {
                 #region 回填回Fir_Physical_Defect
-                for (int i = 1; i <= 3; i++) // 有3個yds,def 所以直接用Forloop
+                for (int i = 1; i <= 3; i++)
                 {
+                    // 有3個yds,def 所以直接用Forloop
                     string str_col = i.ToString();
                     DataRow[] ary = this.DefectTb.Select(string.Format("NewKey = {0} and DefectLocation = '{1}'", this.CurrentData["NewKey"], dr["yds" + str_col]));
                     if (MyUtility.Check.Empty(dr["def" + str_col]))

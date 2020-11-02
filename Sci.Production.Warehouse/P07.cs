@@ -19,6 +19,7 @@ using static Sci.Production.Automation.Gensong_AutoWHFabric;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
@@ -33,6 +34,7 @@ namespace Sci.Production.Warehouse
         private string UserID = Env.User.UserID;
         private bool isSetZero = false;
 
+        /// <inheritdoc/>
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -57,6 +59,7 @@ namespace Sci.Production.Warehouse
             this.IsAutomation = UtilityAutomation.IsAutomationEnable;
         }
 
+        /// <inheritdoc/>
         public P07(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -123,6 +126,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             DataTable result = null;
@@ -513,13 +517,14 @@ where p.junk = 1
 
             if (!MyUtility.Check.Empty(this.DetailDatas) && this.DetailDatas.Count > 0)
             {
-                MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "poid,seq1", @"
+                string cmdd = @"
 select  #tmp.*
 from #tmp,dbo.po_supp WITH (NOLOCK) ,dbo.supp WITH (NOLOCK) 
 where   #tmp.poid = dbo.po_supp.id
         and #tmp.seq1 = dbo.po_supp.seq1
         and dbo.po_supp.suppid = dbo.supp.id
-        and dbo.supp.thirdcountry = 1 ", out result, "#tmp");
+        and dbo.supp.thirdcountry = 1 ";
+                MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "poid,seq1", cmdd, out result, "#tmp");
 
                 if (!MyUtility.Check.Empty(result) && result.Rows.Count > 0)
                 {
@@ -578,6 +583,7 @@ where   #tmp.poid = dbo.po_supp.id
         // refresh
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -620,6 +626,7 @@ where   #tmp.poid = dbo.po_supp.id
         private DataGridViewColumn Col_Location;
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailGridSetup()
         {
             Color backDefaultColor = this.detailgrid.DefaultCellStyle.BackColor;
@@ -773,8 +780,10 @@ Order By e.Seq1, e.Seq2, e.Refno", this.CurrentDetailData["poid"], this.CurrentM
                         Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                             poitems,
                             "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,BalanceQty,linvqty",
-                            "6,15,25,8,10,6,6,6,6,6,6", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty");
-                        item.Width = 1024;
+                            "6,15,25,8,10,6,6,6,6,6,6", this.CurrentDetailData["seq"].ToString(), "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty")
+                        {
+                            Width = 1024,
+                        };
                         DialogResult result = item.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
@@ -901,9 +910,9 @@ select  StockUnit = dbo.GetStockUnitBySPSeq ('{0}', '{1}', '{2}')",
                             // 布料，且都有值了才檢查
                             if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
                             {
-                                bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                                bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                                if (!ChkFtyInventory)
+                                if (!chkFtyInventory1)
                                 {
                                     MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
 
@@ -1094,8 +1103,8 @@ WHERE   StockType='{0}'
 
             #region Roll驗證
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Roll_setting = new DataGridViewGeneratorTextColumnSettings();
-            Roll_setting.CellValidating += (s, e) =>
+            Ict.Win.DataGridViewGeneratorTextColumnSettings roll_setting1 = new DataGridViewGeneratorTextColumnSettings();
+            roll_setting1.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -1128,9 +1137,9 @@ WHERE   StockType='{0}'
                 // 布料，且都有值了才檢查
                 if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
                 {
-                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                    bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                    if (!ChkFtyInventory)
+                    if (!chkFtyInventory1)
                     {
                         MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
 
@@ -1146,9 +1155,9 @@ WHERE   StockType='{0}'
 
             #region Dyelot驗證
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings Dyelot_setting = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings dyelot_setting1 = new DataGridViewGeneratorTextColumnSettings();
 
-            Dyelot_setting.CellValidating += (s, e) =>
+            dyelot_setting1.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -1181,9 +1190,9 @@ WHERE   StockType='{0}'
                 // 布料，且都有值了才檢查
                 if (fabricType.ToUpper() == "F" && !MyUtility.Check.Empty(poid) && !MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2) && !MyUtility.Check.Empty(roll) && !MyUtility.Check.Empty(dyelot))
                 {
-                    bool ChkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+                    bool chkFtyInventory1 = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
 
-                    if (!ChkFtyInventory)
+                    if (!chkFtyInventory1)
                     {
                         MyUtility.Msg.WarningBox($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
 
@@ -1512,6 +1521,7 @@ WHERE   StockType='{0}'
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void Ship_qty_valid(decimal ship_qty)
         {
             if (this.CurrentDetailData == null)
@@ -1542,6 +1552,7 @@ where   v.FROM_U ='{0}'
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -1928,6 +1939,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
         // Unconfirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -2300,6 +2312,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         }
 
         // invoice# valid
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void TxtInvoiceNo_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
@@ -2444,8 +2457,10 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         // Accumulated Qty
         private void BtAccumulated_Click(object sender, EventArgs e)
         {
-            var frm = new P07_AccumulatedQty(this.CurrentMaintain);
-            frm.P07 = this;
+            var frm = new P07_AccumulatedQty(this.CurrentMaintain)
+            {
+                P07 = this,
+            };
             frm.ShowDialog(this);
         }
 
@@ -2483,7 +2498,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 return;
             }
 
-            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString());
+            var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
         }
@@ -2568,8 +2583,10 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 .Distinct()
                 .ToList();
 
-            P07_Print p = new P07_Print(poidList);
-            p.CurrentDataRow = this.CurrentMaintain;
+            P07_Print p = new P07_Print(poidList)
+            {
+                CurrentDataRow = this.CurrentMaintain,
+            };
 
             // p.CurrentDataRow = this.CurrentDataRow;
             p.ShowDialog();
@@ -2759,7 +2776,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 return;
             }
 
-            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString());
+            var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
         }

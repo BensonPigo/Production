@@ -10,6 +10,7 @@ using System.Transactions;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P07 : Win.Tems.Input6
     {
         private DualResult result;
@@ -25,6 +26,7 @@ namespace Sci.Production.Quality
         private DataTable dtDetail = null;
         private int rowsCount = 0;
 
+        /// <inheritdoc/>
         public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -400,6 +402,7 @@ namespace Sci.Production.Quality
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             DataTable dt = (DataTable)e.Details;

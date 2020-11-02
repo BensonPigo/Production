@@ -75,8 +75,10 @@ namespace Sci.Production.Class
                             adapter.FillSchema(dt, SchemaType.Source);
                         }
 
-                        dr = new DualDisposableResult<DataTable>(new DualResult(true));
-                        dr.ExtendedData = dt;
+                        dr = new DualDisposableResult<DataTable>(new DualResult(true))
+                        {
+                            ExtendedData = dt,
+                        };
                     }
                     catch (Exception ex)
                     {

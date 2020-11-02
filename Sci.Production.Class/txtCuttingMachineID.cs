@@ -27,8 +27,10 @@ namespace Sci.Production.Class
             string sql;
 
             sql = "select distinct id from CuttingMachine WITH (NOLOCK) where junk = 0";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15", this.Text, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "15", this.Text, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

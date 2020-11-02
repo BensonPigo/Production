@@ -14,12 +14,14 @@ using System.Linq;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P03_Heat : Win.Subs.Input4
     {
         private readonly string loginID = Env.User.UserID;
-        private DataRow maindr;
         private readonly string ID;
+        private DataRow maindr;
 
+        /// <inheritdoc/>
         public P03_Heat(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -335,8 +337,9 @@ this.ID);
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -390,8 +393,9 @@ this.ID);
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     return;
@@ -910,6 +914,7 @@ this.ID);
             return upResult;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnEncode_Click(object sender, EventArgs e)
         {
             string updatesql = string.Empty;
@@ -973,8 +978,9 @@ this.ID);
                 #endregion
 
                 }
-            else// Amend
+            else
             {
+                // Amend
                 #region  寫入實體Table
                 updatesql = string.Format(
                 @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0,Heat = '',HeatInspector = '' where id ='{0}'", this.maindr["ID"]);
@@ -1068,6 +1074,7 @@ this.ID);
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;

@@ -33,7 +33,6 @@ namespace Sci.Production.Packing
                 .CheckBox("FromPMS", header: "FromPMS", width: Widths.AnsiChars(6), iseditable: false, trueValue: 1, falseValue: 0)
                 .Text("Desc", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true)
                 ;
-
         }
 
         private void BtnClose_Click(object sender, EventArgs e)

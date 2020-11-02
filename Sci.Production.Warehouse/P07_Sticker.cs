@@ -12,12 +12,12 @@ using System.Reflection;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07_Sticker : Win.Tems.QueryForm
     {
-        public DataRow CurrentDataRow { get; set; }
-
         private BindingList<P07_Sticker_Data> Data = new BindingList<P07_Sticker_Data>();
 
+        /// <inheritdoc/>
         public P07_Sticker(DataRow row)
         {
             this.InitializeComponent();
@@ -41,9 +41,7 @@ namespace Sci.Production.Warehouse
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            result = DBProxy.Current.Select(
-                string.Empty,
-                @"select  r.POID,r.Seq1+' '+r.seq2 as SEQ,r.Roll,r.Dyelot
+            string cmdd = @"select  r.POID,r.Seq1+' '+r.seq2 as SEQ,r.Roll,r.Dyelot
 		,r.stockqty,r.StockUnit,s.refno 
 	    ,RTRIM(dbo.Getmtldesc(r.poid, r.seq1, r.seq2,2,0)) [Description],s.colorId 
         ,dbo.getTPEPass1( p.posmr )[MRName] 
@@ -59,7 +57,8 @@ namespace Sci.Production.Warehouse
             on o.id = r.PoId
          left join dbo.Receiving rec WITH (NOLOCK) 
             on rec.id = @ID
-                where r.id= @ID", pars, out dtDetail);
+                where r.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dtDetail);
             if (!result)
             {
                 this.ShowErr(result);

@@ -334,8 +334,10 @@ order by tmpData2.OrderID";
             string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             temfile = strPath + @"\Planning_R12.Matrix.xltx";
 
-            SaveXltReportCls sxrc = new SaveXltReportCls(temfile);
-            sxrc.BoOpenFile = true;
+            SaveXltReportCls sxrc = new SaveXltReportCls(temfile)
+            {
+                BoOpenFile = true,
+            };
 
             this.tmpData4.Merge(this.All_tmpData4);
 

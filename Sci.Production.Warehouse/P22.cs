@@ -19,12 +19,13 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P22 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
-        protected ReportViewer viewer;
 
+        /// <inheritdoc/>
         public P22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -39,6 +40,7 @@ namespace Sci.Production.Warehouse
             this.di_stocktype.Add("I", "Inventory");
         }
 
+        /// <inheritdoc/>
         public P22(ToolStripMenuItem menuitem, string transID)
             : this(menuitem)
         {
@@ -94,6 +96,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -288,7 +291,7 @@ WHERE   StockType='{0}'
             base.ClickConfirm();
             var dr = this.CurrentMaintain;
 
-            if (null == dr)
+            if (dr == null)
             {
                 return;
             }
@@ -306,6 +309,7 @@ WHERE   StockType='{0}'
         // Unconfirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -643,6 +647,7 @@ Where a.id = '{0}'", masterID);
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickPrint()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -687,7 +692,7 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select(string.Empty, @"
+            string cmd = @"
 select a.FromPOID
         ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
         ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
@@ -705,7 +710,8 @@ from dbo.Subtransfer_detail a  WITH (NOLOCK)
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
-where a.id= @ID", pars, out dd);
+where a.id= @ID";
+            result = DBProxy.Current.Select(string.Empty, cmd, pars, out dd);
             if (!result)
             {
                 this.ShowErr(result);

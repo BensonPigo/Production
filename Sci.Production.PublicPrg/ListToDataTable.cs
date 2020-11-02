@@ -37,6 +37,7 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// Determine of specified type is nullable
         /// </summary>
+        /// <returns></returns>
         public static bool IsNullable(Type t)
         {
             return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
@@ -45,6 +46,7 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// Return underlying type if type is Nullable otherwise return the type
         /// </summary>
+        /// <returns></returns>
         public static Type GetCoreType(Type t)
         {
             if (t != null && IsNullable(t))

@@ -11,14 +11,16 @@ using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P18_Import : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable dtImportData;
+        private DataTable dtImportData;
 
+        /// <inheritdoc/>
         public P18_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();

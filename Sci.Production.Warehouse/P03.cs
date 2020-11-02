@@ -11,15 +11,17 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03 : Win.Tems.QueryForm
     {
-        private string userCountry = string.Empty;
-        private string SpNo = string.Empty;
-        private bool ButtonOpen = false;
         private static string _Refno;
         private static string _MaterialType;
         private static string _Color;
+        private string userCountry = string.Empty;
+        private string SpNo = string.Empty;
+        private bool ButtonOpen = false;
 
+        /// <inheritdoc/>
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -44,6 +46,7 @@ namespace Sci.Production.Warehouse
             this.ButtonOpen = false;
         }
 
+        /// <inheritdoc/>
         // Form to Form W/H.P01
         public P03(string p01SPNo, ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -72,6 +75,7 @@ namespace Sci.Production.Warehouse
             this.ButtonOpen = true;
         }
 
+        /// <inheritdoc/>
         // Form to Form W/H.P05
         public static void P05Filter(string p01SPNo, string refno, string materialType, string color, Form mdiParent)
         {
@@ -121,6 +125,7 @@ namespace Sci.Production.Warehouse
             call.ChangeDetailColor();
         }
 
+        /// <inheritdoc/>
         // PPIC_P01 Called
         public static void Call(string pPIC_SPNo, Form mdiParent)
         {
@@ -166,6 +171,7 @@ namespace Sci.Production.Warehouse
             call.ChangeDetailColor();
         }
 
+        /// <inheritdoc/>
         // 隨著 P01上下筆SP#切換資料
         public void P03Data(string p01SPNo)
         {
@@ -485,6 +491,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.displayJunk.BackColor = Color.FromArgb(190, 190, 190);
         }
 
+        /// <inheritdoc/>
         public void ChangeDetailColor()
         {
             for (int index = 0; index < this.gridMaterialStatus.Rows.Count; index++)
@@ -553,6 +560,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             this.Query();
         }
 
+        /// <inheritdoc/>
         public void Query()
         {
             DataTable dtData = new DataTable();
@@ -1284,6 +1292,7 @@ drop table #tmpOrder,#tmpLocalPO_Detail,#ArticleForThread_Detail,#ArticleForThre
             this.txtSPNo.Select();
         }
 
+        /// <inheritdoc/>
         public void SetTxtSPNo(string spNo)
         {
             this.txtSPNo.Text = spNo;

@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07_Print : Win.Tems.PrintForm
     {
         private DataTable dt;
@@ -23,6 +24,7 @@ namespace Sci.Production.Warehouse
         private string Wk;
         private string FTYID;
 
+        /// <inheritdoc/>
         public P07_Print(List<string> polist)
         {
             this.InitializeComponent();
@@ -48,6 +50,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             DataRow row = this.CurrentDataRow;
@@ -63,14 +66,15 @@ namespace Sci.Production.Warehouse
             pars.Add(new SqlParameter("@ID", this.id));
 
             DataTable dtTitle;
-            DualResult titleResult = DBProxy.Current.Select(
-                string.Empty,
+            string cmdd =
                 @"select m.nameEN
              from  dbo.Receiving r WITH (NOLOCK) 
              left join dbo.MDivision m WITH (NOLOCK) 
              on m.id = r.MDivisionID 
              where m.id = r.MDivisionID
-             and r.id = @ID", pars, out dtTitle);
+             and r.id = @ID";
+            DualResult titleResult = DBProxy.Current.Select(
+                string.Empty, cmdd, pars, out dtTitle);
             if (!titleResult)
             {
                 this.ShowErr(titleResult);
@@ -196,6 +200,7 @@ where R.id = @ID";
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
         public DataRow CurrentDataRow { get; set; }
 
         private void RadioGroup1_ValueChanged(object sender, EventArgs e)

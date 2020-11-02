@@ -22,8 +22,10 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from dbo.LocalUnit WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.Text, false, ",");
-            item.Width = 260;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from dbo.LocalUnit WITH (NOLOCK) where junk = 0 order by ID", "10,40", this.Text, false, ",")
+            {
+                Width = 260,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

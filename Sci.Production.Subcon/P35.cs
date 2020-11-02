@@ -17,8 +17,10 @@ using System.Reflection;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P35 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P35(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -246,6 +248,7 @@ where lapd.id = '{0}'",
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickSaveAfter()
         {
             string sqlupdate = string.Format(
@@ -428,6 +431,7 @@ where lapd.id = '{0}'",
         // Approve
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -553,7 +557,7 @@ update a
 	set a.ApQty = b.ApQty
 from Localpo_detail a 
 inner join #tmp b on a.ukey = b.ukey";
-                    if (!(result2 = MyUtility.Tool.ProcessWithDatatable(dtUpdateLocalPoData, null, strUpdate, out dtResult))) // DBProxy.Current.Execute(null, sqlupd2)))
+                    if (!(result2 = MyUtility.Tool.ProcessWithDatatable(dtUpdateLocalPoData, null, strUpdate, out dtResult)))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(sqlupd2, result2);
@@ -581,6 +585,7 @@ inner join #tmp b on a.ukey = b.ukey";
         // unApprove
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             // mantis 9749 confirm前先檢查此單狀態為Approved才可以UNconfirm
@@ -741,7 +746,7 @@ inner join #tmp b on a.ukey = b.ukey";
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"
+            string cmd = @"
 select b.nameEn 
 		,b.AddressEN
 		,b.Tel
@@ -780,8 +785,8 @@ OUTER APPLY(
 		AND lb.ApproveDate = (SElECT MAX(ApproveDate) FROM  LocalSupp_Bank WHERE Status='Confirmed' AND ID= a.LocalSuppID )
 		AND lbd.IsDefault=1
 )LocalSuppBank
-where a.id = @ID",
-                pars, out dt);
+where a.id = @ID";
+            DualResult result = DBProxy.Current.Select(string.Empty, cmd, pars, out dt);
             if (!result)
             {
                 this.ShowErr(result);

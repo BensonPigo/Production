@@ -9,10 +9,12 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P05_ReqQtyList : Win.Subs.Base
     {
-        protected DataRow dr;
+        private DataRow dr;
 
+        /// <inheritdoc/>
         public P05_ReqQtyList(DataRow data)
         {
             this.InitializeComponent();

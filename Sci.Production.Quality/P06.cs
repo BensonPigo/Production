@@ -9,8 +9,11 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P06 : Win.Tems.Input6
     {
+        private new readonly bool IsSupportEdit = true;
+
         // 宣告Context Menu Item
         private ToolStripMenuItem add;
 
@@ -19,8 +22,8 @@ namespace Sci.Production.Quality
 
         // 宣告Context Menu Item
         private ToolStripMenuItem delete;
-        private new readonly bool IsSupportEdit = true;
 
+        /// <inheritdoc/>
         public P06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -191,11 +194,13 @@ namespace Sci.Production.Quality
                 .Text("LastUpdate", header: "Last Update", width: Widths.AnsiChars(30), iseditingreadonly: true);
         }
 
+        /// <inheritdoc/>
         public void Grid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.Grid_CellMouseClick(e.Button, e.RowIndex);
         }
 
+        /// <inheritdoc/>
         public void Grid_CellMouseClick(MouseButtons eButton, int eRowIndex)
         {
             if (eButton == MouseButtons.Right)

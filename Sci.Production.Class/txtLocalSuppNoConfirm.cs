@@ -73,8 +73,10 @@ namespace Sci.Production.Class
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,Abb from LocalSupp WITH (NOLOCK) order by ID", "8,30,20", this.TextBox1.Text);
-            item.Width = 650;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,Name,Abb from LocalSupp WITH (NOLOCK) order by ID", "8,30,20", this.TextBox1.Text)
+            {
+                Width = 650,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

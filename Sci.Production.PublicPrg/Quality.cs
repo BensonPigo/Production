@@ -220,6 +220,11 @@ namespace Sci.Production.PublicPrg
         public class FGWT
         {
             /// <summary>
+            /// Seq
+            /// </summary>
+            public int Seq { get; set; }
+
+            /// <summary>
             /// Location
             /// </summary>
             public string Location { get; set; }
@@ -228,6 +233,11 @@ namespace Sci.Production.PublicPrg
             /// Type
             /// </summary>
             public string Type { get; set; }
+
+            /// <summary>
+            /// SystemType
+            /// </summary>
+            public string SystemType { get; set; }
 
             /// <summary>
             /// Scale
@@ -304,210 +314,120 @@ namespace Sci.Production.PublicPrg
         /// <returns>預設清單</returns>
         public static List<FGWT> GetDefaultFGWT(bool isTop, bool isBottom, bool isTop_Bottom, string mtlTypeID, string washType, string fibresType, bool isAll = true)
         {
-            List<FGWT> defaultFGWTList = new List<FGWT>();
+            string sqlWhere = string.Empty;
 
-            // 這種情況只需要寫入第88項
-            if (mtlTypeID != "WOVEN" && washType == "Hand")
+            if (!MyUtility.Check.Empty(mtlTypeID))
             {
-                defaultFGWTList.AddRange(new List<FGWT>()
-                {
-                    new FGWT() { Location = string.Empty, TestDetail = "pass/fail", Type = "appearance after laundering: Garment - physical changes", Scale = string.Empty },
-                });
-
-                return defaultFGWTList;
+                sqlWhere += $" and MtlTypeID = '{mtlTypeID}' ";
             }
 
-            // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
-            // 每種Type要寫入哪一種標準，請見ISP20201331的補充說明
-
-            // Criteria欄位視作百分比，knits <= 5% woven <= 2 %
-            double criteria_Min = 0;
-            double criteria_Max = 0;
-
-            double criteria_Min_Item85 = 0;
-            double criteria_Max_Item85 = 0;
-
-            // Criteria欄位視作公分
-            double cmMin = -999999;
-            double cmMax = 2;
-
-            switch (mtlTypeID)
+            if (mtlTypeID == "KNIT")
             {
-                case "KNIT":
+                if (!MyUtility.Check.Empty(washType))
+                {
+                    string washing = string.Empty;
+
                     switch (washType)
                     {
+                        case "Hand":
+                            washing = "HandWash";
+                            break;
                         case "Line":
-                            if (fibresType == "Natural")
-                            {
-                                criteria_Min = -5;
-                                criteria_Max = 2.5;
-                            }
-
-                            if (fibresType == "Synthetic")
-                            {
-                                criteria_Min = -3;
-                                criteria_Max = 2.5;
-                            }
-
+                            washing = "LineDry";
                             break;
                         case "Tumnle":
-                            if (fibresType == "Natural")
-                            {
-                                criteria_Min = -8;
-                                criteria_Max = 0;
-                            }
-
-                            if (fibresType == "Synthetic")
-                            {
-                                criteria_Min = -7;
-                                criteria_Max = 0;
-                            }
-
+                            washing = "TumbleDry";
+                            break;
+                        default:
                             break;
                     }
 
-                    if (isTop_Bottom)
+                    sqlWhere += $" and Washing = '{washing}' ";
+                }
+
+                if (!MyUtility.Check.Empty(fibresType))
+                {
+                    string fabricComposition = string.Empty;
+
+                    switch (fibresType)
                     {
-                        criteria_Min_Item85 = 0;
-                        criteria_Max_Item85 = 3.5;
-                    }
-                    else if (isBottom)
-                    {
-                        criteria_Min_Item85 = 0;
-                        criteria_Max_Item85 = 3.5;
-                    }
-                    else if (isTop)
-                    {
-                        criteria_Min_Item85 = 0;
-                        criteria_Max_Item85 = 5;
+                        case "Natural":
+                            fabricComposition = "Above50NaturaFibres";
+                            break;
+                        case "Synthetic":
+                            fabricComposition = "Above50SyntheticFibres";
+                            break;
+                        default:
+                            break;
                     }
 
-                    break;
-                case "WOVEN":
-                    criteria_Min = -3;
-                    criteria_Max = 2;
-                    criteria_Min_Item85 = 0;
-                    criteria_Max_Item85 = 3;
-                    break;
-                default:
-                    break;
+                    sqlWhere += $" and FabricComposition = '{fabricComposition}' ";
+                }
             }
 
-            /*除了以上兩種情況，都以Scale欄位作為標準，因此不寫入Criteria欄位視作百分比欄位*/
-
-            List<FGWT> top = new List<FGWT>()
+            if (isAll || isBottom || isTop || isTop_Bottom)
             {
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment a) length of necktape", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment b) length armhole to bottom hem", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment c) length of front", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment d) length of centre back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment e) length of underarm", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment f) width across back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment g) width below centre back neck (average)", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment h) width of sleeve", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: jacket-like garment i) width of sleeve botttom/cuff bottom", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment a) length of necktape", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment b) length armhole to bottom hem", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment c) length of front", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment d) length of centre back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment e) length of underarm", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment f) width across back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment g) width below centre back neck(average)", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment h) width of sleeve", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top", TestDetail = "Range%", Type = "dimensional change: lining of jacket-like garment i) width of sleeve botttom/ cuff bottom", Criteria = criteria_Min, Criteria2 = criteria_Max },
-            };
+                List<string> listLocation = new List<string>();
 
-            List<FGWT> bottom = new List<FGWT>()
-            {
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment a) length of front leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment b) length of back leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment c) length of inside leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment d) width at waist", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment e) width at bottom of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment f) width of leg halfway", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: trouser-like garment g) width of top of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment a) length of front leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment b) length of back leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment c) length of inside leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment d) width at waist", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment e) width at bottom of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment f) width of leg halfway", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of trouser-like garment g) width of top of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: skirt a) length from waist to bottom hem", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: skirt b) width at waistband", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: skirt c) width below top/bottom edge of waistband (average)", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of skirt a) length from waist to bottom hem", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of skirt b) width at waistband", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Bottom", TestDetail = "Range%", Type = "dimensional change: lining of skirt c) width below top/bottom edge of waistband (average)", Criteria = criteria_Min, Criteria2 = criteria_Max },
-            };
+                if (isAll)
+                {
+                    listLocation.Add("''");
+                }
 
-            List<FGWT> top_bottom = new List<FGWT>()
-            {
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear a) length of neckktape", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear b) length armhole to bottom hem", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear c) length of centre front", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear d) length of centre back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear e) length of underarm", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear f) width across back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear g) width below centre back neck (average)", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear h) width of sleeve", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear i) width of sleeve botttom/cuff bottom", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear j) length of front leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear k) length of back leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear l) length of inside leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear m) width at waist", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear n) width at bottom of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear o) width of leg halfway", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: full body wear p) width of top of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear a) length of neckktape", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear b) length armhole to bottom hem", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear c) length of centre front", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear d) length of centre back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear e) length of underarm", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear f) width across back", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear g) width below centre back neck (average)", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear h) width of sleeve", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear i) width of sleeve botttom/cuff bottom", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear j) length of front leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear k) length of back leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear l) length of inside leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear m) width at waist", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear n) width at bottom of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear o) width of leg halfway", Criteria = criteria_Min, Criteria2 = criteria_Max },
-                new FGWT() { Location = "Top+Bottom", TestDetail = "Range%", Type = "dimensional change: lining of full body wear p) width of top of leg", Criteria = criteria_Min, Criteria2 = criteria_Max },
-            };
+                if (isBottom)
+                {
+                    listLocation.Add("'B'");
+                }
 
-            // All項目最後會寫入空白
-            List<FGWT> all = new List<FGWT>()
-            {
-                new FGWT() { Location = string.Empty, TestDetail = "Range%", Type = "dimensional change: flat made-up textile articles a) overall length" }, // ISP20201331僅顯示，但系統不能輸入資料
-                new FGWT() { Location = string.Empty, TestDetail = "Range%", Type = "dimensional change: flat made-up textile articles b) overall width" }, // ISP20201331僅顯示，但系統不能輸入資料
-                new FGWT() { Location = string.Empty, TestDetail = "Range%", Type = "spirality: Garment - in percentage (average)", Criteria = criteria_Min_Item85, Criteria2 = criteria_Max_Item85 },
-                new FGWT() { Location = string.Empty, TestDetail = "cm", Type = "spirality: Garment - hem opening in cm", Criteria = cmMax },
-                new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - colour change", Scale = string.Empty },
-                new FGWT() { Location = string.Empty, TestDetail = "grade", Type = "appearance after laundering: Garment - staining", Scale = string.Empty },
-                new FGWT() { Location = string.Empty, TestDetail = "pass/fail", Type = "appearance after laundering: Garment - physical changes", Scale = string.Empty },
-            };
+                if (isTop)
+                {
+                    listLocation.Add("'T'");
+                }
 
-            if (isTop)
-            {
-                defaultFGWTList.AddRange(top);
+                if (isTop_Bottom)
+                {
+                    listLocation.Add("'S'");
+                }
+
+                sqlWhere += $" and Location in ({listLocation.JoinToString(",")}) ";
             }
 
-            if (isBottom)
+            string sqlGetDefaultFGWT = $@"
+select  Seq,
+        [Location] = case when Location = 'T' then 'Top'
+                          when Location = 'B' then 'Bottom'
+                          when Location = 'S' then 'Top+Bottom'
+                          else '' end,
+        ReportType,
+        SystemType,
+        Scale,
+        TestDetail,
+        Criteria,
+        Criteria2
+from    Adidas_FGWT with (nolock)
+where 1 = 1 {sqlWhere}
+";
+
+            DataTable dtResult;
+            DualResult result = DBProxy.Current.Select(null, sqlGetDefaultFGWT, out dtResult);
+
+            if (!result)
             {
-                defaultFGWTList.AddRange(bottom);
+                MyUtility.Msg.ErrorBox(result.GetException().ToString());
+                return new List<FGWT>();
             }
 
-            if (isTop_Bottom)
+            List<FGWT> defaultFGWTList = dtResult.AsEnumerable().Select(s => new FGWT
             {
-                defaultFGWTList.AddRange(top_bottom);
-            }
-
-            if (isAll)
-            {
-                defaultFGWTList.AddRange(all);
-            }
+                Seq = MyUtility.Convert.GetInt(s["Seq"]),
+                Location = s["Location"].ToString(),
+                Type = s["ReportType"].ToString(),
+                SystemType = s["SystemType"].ToString(),
+                Scale = s["Scale"] == DBNull.Value ? null : s["Scale"].ToString(),
+                TestDetail = s["TestDetail"].ToString(),
+                Criteria = MyUtility.Convert.GetDouble(s["Criteria"]),
+                Criteria2 = MyUtility.Convert.GetDouble(s["Criteria2"]),
+            }).ToList();
 
             return defaultFGWTList;
         }

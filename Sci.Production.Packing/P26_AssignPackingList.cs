@@ -9,12 +9,16 @@ using static Sci.Production.Packing.P26;
 
 namespace Sci.Production.Packing
 {
+    /// <inheritdoc/>
     public partial class P26_AssignPackingList : Win.Tems.Base
     {
         private List<NewFormModel> _NewFormModels;
         private DataTable _P25Dt;
         private DataTable GridDt = new DataTable();
         private bool isClickProcessing = false;
+
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public bool canConvert = false;
         private string _UploadType = string.Empty;
         private List<PDF_Model> PO_File_List = new List<PDF_Model>();

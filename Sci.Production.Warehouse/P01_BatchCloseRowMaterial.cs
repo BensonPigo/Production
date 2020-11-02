@@ -11,14 +11,16 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P01_BatchCloseRowMaterial : Win.Subs.Base
     {
         private DataRow dr_master;
         private DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        protected DataTable[] dtBatch;
+        private DataTable[] dtBatch;
 
+        /// <inheritdoc/>
         public P01_BatchCloseRowMaterial()
         {
             this.InitializeComponent();
@@ -28,6 +30,7 @@ namespace Sci.Production.Warehouse
             this.comboCategory.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         public P01_BatchCloseRowMaterial(DataRow master, DataTable detail)
             : this()
         {
@@ -41,6 +44,8 @@ namespace Sci.Production.Warehouse
             this.QueryData(false);
         }
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         public void QueryData(bool autoQuery)
         {
             DateTime? pulloutdate1, pulloutdate2, buyerDelivery1, buyerDelivery2;

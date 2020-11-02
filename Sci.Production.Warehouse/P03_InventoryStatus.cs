@@ -6,10 +6,12 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P03_InventoryStatus : Win.Subs.Base
     {
         private DataRow dr;
 
+        /// <inheritdoc/>
         public P03_InventoryStatus(DataRow data)
         {
             this.InitializeComponent();
@@ -18,6 +20,7 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();

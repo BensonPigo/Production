@@ -13,12 +13,14 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P07_ExcelImport : Win.Subs.Base
     {
         private DataTable grid2Data = new DataTable();
         private DataTable detailData;
         private DataRow master;
 
+        /// <inheritdoc/>
         public P07_ExcelImport(DataRow master, DataTable detailData)
         {
             this.InitializeComponent();
@@ -137,8 +139,9 @@ namespace Sci.Production.Warehouse
         private void BtnAddExcel_Click(object sender, EventArgs e)
         {
             this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
-            if (this.openFileDialog1.ShowDialog() == DialogResult.OK) // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                // 開窗且有選擇檔案
                 DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
                 dr["Filename"] = this.openFileDialog1.SafeFileName;
                 dr["Status"] = string.Empty;
@@ -158,6 +161,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Check & Import
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnCheckImport_Click(object sender, EventArgs e)
         {
             #region -- 判斷第一個Grid是否有資料 --

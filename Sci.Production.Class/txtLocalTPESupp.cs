@@ -140,8 +140,10 @@ select ID,[Name] = NameEN,[Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0
 
             DataTable tbSelect;
             DBProxy.Current.Select("Production", selectCommand, out tbSelect);
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name");
-            item.Size = new System.Drawing.Size(690, 555);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(tbSelect, "ID,Abb,Name", "9,13,40", this.Text, false, ",", "ID,Abb,Name")
+            {
+                Size = new System.Drawing.Size(690, 555),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

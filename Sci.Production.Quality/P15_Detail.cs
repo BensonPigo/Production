@@ -16,16 +16,17 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P15_Detail : Win.Subs.Input4
     {
         private const int CB_SETITEMHEIGHT = 0x153;
         private DataRow masterDr;
         private DataRow Detaildr;
         private string reportNo;
-        private readonly string id;
-        private readonly bool isSee = false;
+        private string id;
+        private bool isSee = false;
         private string status;
-        private readonly Dictionary<string, string> listTestingMethod = new Dictionary<string, string>()
+        private Dictionary<string, string> listTestingMethod = new Dictionary<string, string>()
         {
            { "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle", "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
            { "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle", "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle" },
@@ -35,6 +36,10 @@ namespace Sci.Production.Quality
            { "f. 5 continuous wash, 60 degrees in standard domestic washing machine and trumble dry after 5 cycle for football style", "f. 5 continuous wash, 60 degrees in standard domestic washing machine and trumble dry after 5 cycle for football style" },
         };
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+
+        /// <inheritdoc/>
         public P15_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, string status)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -100,9 +105,6 @@ namespace Sci.Production.Quality
 
             this.SetComboBoxHeight(this.comboTestingMethod.Handle, 50);
         }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         private void SetComboBoxHeight(IntPtr comboBoxHandle, int comboBoxDesiredHeight)
         {

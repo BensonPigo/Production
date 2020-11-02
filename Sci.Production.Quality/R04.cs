@@ -233,8 +233,10 @@ namespace Sci.Production.Quality
             xl.DicDatas.Add("##Factory", this.factory);
             xl.DicDatas.Add("##Outstanding", this.OUTSTAN);
 
-            SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(this.dt);
-            xlTable.ShowHeader = false;
+            SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(this.dt)
+            {
+                ShowHeader = false,
+            };
             xl.DicDatas.Add("##body", xlTable);
 
             xl.Save(Class.MicrosoftFile.GetName("Quality_R04"));

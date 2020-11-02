@@ -13,6 +13,7 @@ using Sci.Utility.Excel;
 
 namespace Sci.Production.Thread
 {
+    /// <inheritdoc/>
     public partial class R22 : Win.Tems.PrintForm
     {
         private DateTime? Date_s;
@@ -26,6 +27,7 @@ namespace Sci.Production.Thread
 
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

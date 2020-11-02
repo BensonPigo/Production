@@ -78,9 +78,10 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 
             if (dTcheckAS.Rows.Count > 0)
             {
-                var m = new Win.UI.MsgGridForm(dTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo);
-
-                m.Width = 500;
+                var m = new Win.UI.MsgGridForm(dTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo)
+                {
+                    Width = 500,
+                };
                 m.grid1.Columns[1].Width = 140;
                 m.text_Find.Width = 140;
                 m.btn_Find.Location = new Point(150, 6);
@@ -235,8 +236,10 @@ drop table #tmp1,#tmp2
                         exswitch = string.Format("exec dbo.usp_switchWorkorder_BySP '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
                     }
 
-                    DBProxy sp_excute = new DBProxy();
-                    sp_excute.DefaultTimeout = 1200; // 因為資料量多會執行較久所以設定timeout20分鐘
+                    DBProxy sp_excute = new DBProxy
+                    {
+                        DefaultTimeout = 1200, // 因為資料量多會執行較久所以設定timeout20分鐘
+                    };
 
                     // DualResult dResult = DBProxy.Current.Execute(null, exswitch);
                     dResult = sp_excute.Execute(null, exswitch);

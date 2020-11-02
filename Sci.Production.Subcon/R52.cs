@@ -22,14 +22,14 @@ namespace Sci.Production.Subcon
       private string SeasonID;
 
         /// <inheritdoc/>
-        protected override bool ValidateInput()
+      protected override bool ValidateInput()
       {
          this.SeasonID = this.txtseason.Text;
          return base.ValidateInput();
       }
 
         /// <inheritdoc/>
-        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
+      protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
       {
          #region SQL Command
          string sqlcmd = string.Format(@"
@@ -103,7 +103,7 @@ Where	vSA.ArtworkTypeID = 'Printing'
       }
 
         /// <inheritdoc/>
-        protected override bool OnToExcel(ReportDefinition report)
+      protected override bool OnToExcel(ReportDefinition report)
       {
          #region Check Data
          if (MyUtility.Check.Empty(this.printData) || this.printData.Rows.Count == 0)

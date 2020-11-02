@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class R44 : Win.Tems.PrintForm
     {
         private string Factory;
@@ -19,6 +20,7 @@ namespace Sci.Production.Subcon
         private string Category;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R44(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -27,13 +29,14 @@ namespace Sci.Production.Subcon
 
             // set ComboFactory
             DataTable dtFactory;
-            DBProxy.Current.Select(null, @"
+            string cmdd = @"
 select ID = ''
 
 union all
 Select ID 
 from Factory WITH (NOLOCK)
-where Junk != 1", out dtFactory);
+where Junk != 1";
+            DBProxy.Current.Select(null,  cmdd, out dtFactory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, dtFactory);
             this.comboFactory.Text = Env.User.Factory;
 

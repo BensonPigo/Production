@@ -16,8 +16,10 @@ using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P36 : Win.Tems.Input6
     {
+        /// <inheritdoc/>
         public P36(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,6 +34,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P36(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -92,6 +95,7 @@ namespace Sci.Production.Warehouse
         // save前檢查 & 取id
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickSaveBefore()
         {
             StringBuilder warningmsg = new StringBuilder();
@@ -274,6 +278,7 @@ WHERE   StockType='{0}'
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -521,6 +526,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         // Unconfirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -856,6 +862,7 @@ Where a.id = '{0}'", masterID);
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickPrint()
         {
             // DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());
@@ -899,8 +906,7 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select(
-                string.Empty,
+            string cmdd =
                 @"select a.FromPOID
                      ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
 	                 ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
@@ -916,7 +922,9 @@ Where a.id = '{0}'", masterID);
              from dbo.Subtransfer_detail a WITH (NOLOCK) 
              left join dbo.PO_Supp_Detail b WITH (NOLOCK) 
                 on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2 and b.id=a.id
-             where a.id= @ID", pars, out dd);
+             where a.id= @ID";
+            result = DBProxy.Current.Select(
+                string.Empty, cmdd, pars, out dd);
             if (!result)
             {
                 this.ShowErr(result);

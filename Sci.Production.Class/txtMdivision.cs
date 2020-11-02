@@ -24,8 +24,10 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from Production.dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",");
-            item.Size = new System.Drawing.Size(300, 250);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID from Production.dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",")
+            {
+                Size = new System.Drawing.Size(300, 250),
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

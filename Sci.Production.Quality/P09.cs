@@ -12,8 +12,10 @@ using Sci.DB;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P09 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -25,9 +27,9 @@ namespace Sci.Production.Quality
             this.displayBox1.BackColor = Color.Yellow;
         }
 
+        private readonly string Filepath = @"MMC\";
         private DataTable dt1;
         private DataTable dt2;
-        private readonly string Filepath = @"MMC\";
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_TestReportCheckClima;

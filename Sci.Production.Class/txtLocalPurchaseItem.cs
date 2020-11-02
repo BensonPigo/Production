@@ -26,8 +26,10 @@ namespace Sci.Production.Class
             string sqlCmd = string.Empty;
 
             sqlCmd = "select ID, Abbreviation from ArtworkType WITH (NOLOCK)" + sqlWhere + " order by Seq";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",");
-            item.Size = new System.Drawing.Size(435, 510);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,4", this.Text, false, ",")
+            {
+                Size = new System.Drawing.Size(435, 510),
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

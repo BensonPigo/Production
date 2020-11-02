@@ -9,6 +9,7 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P05_BatchApprove : Win.Subs.Base
     {
         private Action delegateAct;
@@ -16,6 +17,8 @@ namespace Sci.Production.Subcon
         private bool canConfrim;
         private bool canCheck;
         private Func<string, string> sqlGetBuyBackDeduction;
+
+        /// <inheritdoc/>
         public P05_BatchApprove(Action reload, Func<string, string> sqlGetBuyBackDeduction)
         {
             this.InitializeComponent();

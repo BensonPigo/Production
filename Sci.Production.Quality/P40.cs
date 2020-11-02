@@ -10,20 +10,22 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P40 : Win.Tems.Input6
     {
-        protected DataRow lastADIDASComplain;
-        protected DataTable lastADIDASComplain_Detail;
-        protected bool isShowHistory = false;
-        protected Color yellow = Color.FromArgb(255, 198, 10);
-        protected Color displayDefaultBack = Color.FromArgb(183, 227, 255);
-
         private readonly string[] compareColumns =
         {
             "SalesID", "SalesName", "Article", "ArticleName",
             "ProductionDate", "DefectMainID", "DefectSubID", "OrderID", "SuppID", "Refno",
         };
 
+        private DataRow lastADIDASComplain;
+        private DataTable lastADIDASComplain_Detail;
+        private bool isShowHistory = false;
+        private Color yellow = Color.FromArgb(255, 198, 10);
+        private Color displayDefaultBack = Color.FromArgb(183, 227, 255);
+
+        /// <inheritdoc/>
         public P40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,6 +33,7 @@ namespace Sci.Production.Quality
             this.btnHistory.Visible = true;
         }
 
+        /// <inheritdoc/>
         public P40()
         {
             this.InitializeComponent();
@@ -255,8 +258,10 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                 }
 
                 string sqlGetSupplier = this.GetSupplierSql(string.Empty, true);
-                SelectItem selectItem = new SelectItem(sqlGetSupplier, "10,50,5", string.Empty, string.Empty);
-                selectItem.Width = 900;
+                SelectItem selectItem = new SelectItem(sqlGetSupplier, "10,50,5", string.Empty, string.Empty)
+                {
+                    Width = 900,
+                };
                 DialogResult dialogResult = selectItem.ShowDialog();
                 if (dialogResult != DialogResult.OK)
                 {

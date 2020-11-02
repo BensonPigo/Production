@@ -36,8 +36,10 @@ namespace Sci.Production.Class
             }
 
             sql = "select distinct id from Production.dbo.CutCell WITH (NOLOCK) " + this.where;
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2", this.Text, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2", this.Text, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

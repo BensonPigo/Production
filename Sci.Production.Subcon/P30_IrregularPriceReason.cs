@@ -14,16 +14,20 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P30_IrregularPriceReason : Win.Subs.Base
     {
         private DataTable OriginDT_FromDB;
         private DataTable ModifyDT_FromP30;
         private DataTable _detailDatas;
 
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public int ReasonNullCount = 0;
         private string _LocalPO_ID = string.Empty;
         private string _FactoryID = string.Empty;
 
+        /// <inheritdoc/>
         public P30_IrregularPriceReason(string localPO_ID, string factoryID, DataTable detailDatas)
         {
             this.InitializeComponent();

@@ -7,6 +7,7 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P12_Import : Win.Subs.Base
     {
         private DataRow dr_master;
@@ -14,9 +15,10 @@ namespace Sci.Production.Warehouse
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         // bool flag;
-       // string poType;
-        protected DataTable dtArtwork;
+        // string poType;
+        private DataTable dtArtwork;
 
+        /// <inheritdoc/>
         public P12_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -25,6 +27,7 @@ namespace Sci.Production.Warehouse
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNo.Text;
@@ -142,6 +145,7 @@ Where a.id = '{0}'
             this.Close();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnImport_Click(object sender, EventArgs e)
         {
             // listControlBindingSource1.EndEdit();

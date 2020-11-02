@@ -8,11 +8,13 @@ using System.Transactions;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P01_ModifyPoQty : Win.Subs.Base
     {
-        protected DataRow dr;
-        protected int sum_order_qty = 0;
+        private DataRow dr;
+        private int sum_order_qty = 0;
 
+        /// <inheritdoc/>
         public P01_ModifyPoQty(DataRow data)
         {
             this.InitializeComponent();
@@ -68,6 +70,7 @@ namespace Sci.Production.Subcon
         {
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnSave_Click(object sender, EventArgs e)
         {
             if (!(this.dr["apqty"] == DBNull.Value) && (this.numPOQty.Value < int.Parse(this.dr["apqty"].ToString())))

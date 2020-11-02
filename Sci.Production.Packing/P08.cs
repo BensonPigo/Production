@@ -134,37 +134,53 @@ and o.Junk = 0");
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@orderid1", this.txtSPStart.Text);
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderid2", this.txtSPEnd.Text);
 
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-            sp4.ParameterName = "@scidelivery1";
-            sp4.Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? this.dateSCIDelivery.Value1 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@scidelivery1",
+                Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? this.dateSCIDelivery.Value1 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-            sp5.ParameterName = "@scidelivery2";
-            sp5.Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? this.dateSCIDelivery.Value2 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@scidelivery2",
+                Value = !MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? this.dateSCIDelivery.Value2 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-            sp6.ParameterName = "@sewinline1";
-            sp6.Value = !MyUtility.Check.Empty(this.dateSewingInlineDate.Value1) ? this.dateSewingInlineDate.Value1 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@sewinline1",
+                Value = !MyUtility.Check.Empty(this.dateSewingInlineDate.Value1) ? this.dateSewingInlineDate.Value1 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
-            sp7.ParameterName = "@sewinline2";
-            sp7.Value = !MyUtility.Check.Empty(this.dateSewingInlineDate.Value2) ? this.dateSewingInlineDate.Value2 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@sewinline2",
+                Value = !MyUtility.Check.Empty(this.dateSewingInlineDate.Value2) ? this.dateSewingInlineDate.Value2 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
-            sp8.ParameterName = "@estbooking1";
-            sp8.Value = !MyUtility.Check.Empty(this.dateCartonEstBooking.Value1) ? this.dateCartonEstBooking.Value1 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@estbooking1",
+                Value = !MyUtility.Check.Empty(this.dateCartonEstBooking.Value1) ? this.dateCartonEstBooking.Value1 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp9 = new System.Data.SqlClient.SqlParameter();
-            sp9.ParameterName = "@estbooking2";
-            sp9.Value = !MyUtility.Check.Empty(this.dateCartonEstBooking.Value2) ? this.dateCartonEstBooking.Value2 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp9 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@estbooking2",
+                Value = !MyUtility.Check.Empty(this.dateCartonEstBooking.Value2) ? this.dateCartonEstBooking.Value2 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp10 = new System.Data.SqlClient.SqlParameter();
-            sp10.ParameterName = "@estarrive1";
-            sp10.Value = !MyUtility.Check.Empty(this.dateCartonEstArrived.Value1) ? this.dateCartonEstArrived.Value1 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp10 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@estarrive1",
+                Value = !MyUtility.Check.Empty(this.dateCartonEstArrived.Value1) ? this.dateCartonEstArrived.Value1 : DateTime.Now,
+            };
 
-            System.Data.SqlClient.SqlParameter sp11 = new System.Data.SqlClient.SqlParameter();
-            sp11.ParameterName = "@estarrive2";
-            sp11.Value = !MyUtility.Check.Empty(this.dateCartonEstArrived.Value2) ? this.dateCartonEstArrived.Value2 : DateTime.Now;
+            System.Data.SqlClient.SqlParameter sp11 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@estarrive2",
+                Value = !MyUtility.Check.Empty(this.dateCartonEstArrived.Value2) ? this.dateCartonEstArrived.Value2 : DateTime.Now,
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);

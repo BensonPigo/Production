@@ -97,11 +97,15 @@ namespace Sci.Production.Planning
         {
             #region -- sql parameters declare --
 
-            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
-            sp_factory.ParameterName = "@factory";
+            System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@factory",
+            };
 
-            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
-            sp_mdivision.ParameterName = "@MDivision";
+            System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@MDivision",
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
 

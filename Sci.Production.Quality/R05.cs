@@ -9,6 +9,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R05 : Win.Tems.PrintForm
     {
         private DateTime? DateSCIStart; private DateTime? DateSCIEnd;
@@ -26,6 +27,7 @@ namespace Sci.Production.Quality
         private string cmdAccessorySummary;
         private string MaterialType = string.Empty;
 
+        /// <inheritdoc/>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -479,8 +481,9 @@ and ai.Status='Confirmed'
 
             if ("Fabric".EqualString(this.comboMaterialType.Text))
             {
-                if (this.radioDetail.Checked) // ("Detail".EqualString(this.radioDetail.Text))
+                if (this.radioDetail.Checked)
                 {
+                    // ("Detail".EqualString(this.radioDetail.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtFabricDetail.Rows.Count);
                     if (this.dtFabricDetail == null || this.dtFabricDetail.Rows.Count == 0)
@@ -491,17 +494,20 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricDetail);
-                    dt.ShowHeader = false;
-                    dt.BoAddFilter = true;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricDetail)
+                    {
+                        ShowHeader = false,
+                        BoAddFilter = true,
+                    };
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
                     sxr.BoOpenFile = true;
                     sxr.Save();
                 }
 
-                if (this.radioSummary.Checked) // ("Summary".EqualString(this.radioSummary.Text))
+                if (this.radioSummary.Checked)
                 {
+                    // ("Summary".EqualString(this.radioSummary.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtFabricSummary.Rows.Count);
                     if (this.dtFabricSummary == null || this.dtFabricSummary.Rows.Count == 0)
@@ -512,8 +518,10 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_FabricSummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricSummary);
-                    dt.ShowHeader = false;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtFabricSummary)
+                    {
+                        ShowHeader = false,
+                    };
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
@@ -523,8 +531,9 @@ and ai.Status='Confirmed'
             }
             else if ("Accessory".EqualString(this.comboMaterialType.Text))
             {
-                if (this.radioDetail.Checked) // ("Detail".EqualString(this.radioDetail.Text))
+                if (this.radioDetail.Checked)
                 {
+                    // ("Detail".EqualString(this.radioDetail.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtAccessoryDetail.Rows.Count);
                     if (this.dtAccessoryDetail == null || this.dtAccessoryDetail.Rows.Count == 0)
@@ -535,17 +544,20 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessoryDetail.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessoryDetail);
-                    dt.ShowHeader = false;
-                    dt.BoAddFilter = true;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessoryDetail)
+                    {
+                        ShowHeader = false,
+                        BoAddFilter = true,
+                    };
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);
 
                     sxr.BoOpenFile = true;
                     sxr.Save();
                 }
 
-                if (this.radioSummary.Checked) // ("Summary".EqualString(this.radioSummary.Text))
+                if (this.radioSummary.Checked)
                 {
+                    // ("Summary".EqualString(this.radioSummary.Text))
                     // 顯示筆數於PrintForm上Count欄位
                     this.SetCount(this.dtAccessorySummary.Rows.Count);
                     if (this.dtAccessorySummary == null || this.dtAccessorySummary.Rows.Count == 0)
@@ -556,8 +568,10 @@ and ai.Status='Confirmed'
 
                     string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Quality_R05_AccessorySummary.xltx");
                     sxrc sxr = new sxrc(xltPath);
-                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessorySummary);
-                    dt.ShowHeader = false;
+                    sxrc.XltRptTable dt = new sxrc.XltRptTable(this.dtAccessorySummary)
+                    {
+                        ShowHeader = false,
+                    };
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
                     wks.Columns.AutoFit();
                     sxr.DicDatas.Add(sxr.VPrefix + "BODY", dt);

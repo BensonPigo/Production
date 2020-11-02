@@ -70,8 +70,10 @@ namespace Sci.Production.Class
                 selectCommand = string.Format("select distinct ID from Production.dbo.Season WITH (NOLOCK) where BrandID = '{0}' order by id desc", this.BrandObjectName.Text);
             }
 
-            item = new Win.Tools.SelectItem(selectCommand, "11", this.Text);
-            item.Width = 300;
+            item = new Win.Tools.SelectItem(selectCommand, "11", this.Text)
+            {
+                Width = 300,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

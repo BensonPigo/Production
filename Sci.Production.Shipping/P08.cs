@@ -1112,8 +1112,10 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             }
 
             string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strsqlcmd, "8,20", this.txtReason.Text);
-            item.Size = new Size(410, 666);
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(strsqlcmd, "8,20", this.txtReason.Text)
+            {
+                Size = new Size(410, 666),
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

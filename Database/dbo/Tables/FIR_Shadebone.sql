@@ -17,8 +17,11 @@
     [PassQATime]             DATETIME       NULL,
     [ShadebandDocLocationID] VARCHAR (10)   NULL,
     [CutBy]                  VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_CutBy] DEFAULT ('') NOT NULL,
+    [Tone]                   VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Tone] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FIR_Shadebone] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 
@@ -98,5 +101,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���s�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'負責剪 Shadeband 的人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutBy';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�t�d�� Shadeband ���H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Shadebone', @level2type = N'COLUMN', @level2name = N'CutBy';
+
+
 

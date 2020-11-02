@@ -62,6 +62,7 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1513:ClosingBraceMustBeFollowedByBlankLine", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
@@ -375,6 +376,7 @@ declare @TTLZ nvarchar(max) =
 )from #atall for xml path(''))" : " ")}
 
 
+
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
 {(this.chk_Include_Artwork.Checked ?
@@ -389,6 +391,7 @@ from
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
 where orderid is not null
 --group by orderid" : " ")}
+
 
 '
 +N'

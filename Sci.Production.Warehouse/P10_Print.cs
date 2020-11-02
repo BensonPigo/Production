@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using Sci.Win;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P10_Print : Win.Tems.PrintForm
     {
         private DataRow drPrint;
@@ -21,6 +22,7 @@ namespace Sci.Production.Warehouse
         private DataTable dtExcel;
         private DataRow DataRow;
 
+        /// <inheritdoc/>
         public P10_Print(DataRow dr, string cutNo, DataRow dataRow)
         {
             this.InitializeComponent();
@@ -29,14 +31,7 @@ namespace Sci.Production.Warehouse
             this.strCutNo = cutNo;
             this.DataRow = dataRow;
 
-            #region 依狀態顯示Print按鈕功能
-
-            // if (string.Compare(drPrint["Status"].ToString(), "Confirmed", true) != 0 && this.radioTransferSlip.Checked)
-            // {
-            //    this.print.Enabled = false;
-            // }
             this.ButtonEnable();
-            #endregion
         }
 
         /// <inheritdoc/>
@@ -52,16 +47,16 @@ namespace Sci.Production.Warehouse
             {
                 string sqlcmd = $@"
 select 
- [Received Date] = null
-,[Time Started] = null
- ,Refno = isnull (psd.Refno, '')
-, isS.Colorid
- , SPNo = isd.POID
- , Roll = isd.Roll
- ,[Cutting Schedule]=''
- , Description =dbo.getmtldesc(isd.POID,isd.seq1,isd.seq2,2,0)
- , Arrived = StockList.Arrived
- ,[Actual]='',[Remarks]='',[Pack Date]='',[Pack Time]=null,[Signature]=''
+     [Received Date] = null
+    ,[Time Started] = null
+     ,Refno = isnull (psd.Refno, '')
+    , isS.Colorid
+     , SPNo = isd.POID
+     , Roll = isd.Roll
+     ,[Cutting Schedule]=''
+     , Description =dbo.getmtldesc(isd.POID,isd.seq1,isd.seq2,2,0)
+     , Arrived = StockList.Arrived
+     ,[Actual]='',[Remarks]='',[Pack Date]='',[Pack Time]=null,[Signature]=''
 from Issue_Detail isd
 left join Orders o on o.ID=isd.POID
 left join Po_Supp_Detail psd on isd.POID = psd.ID
@@ -180,13 +175,16 @@ order by psd.Refno,isd.POID,isd.Roll
                 string factoryID = this.drPrint["FactoryID"].ToString();
 
                 #region  抓表頭資料
-                List<SqlParameter> pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@MDivision", Env.User.Keyword),
+                };
                 DataTable dt;
-                result = DBProxy.Current.Select(string.Empty, @"
+                string cmdd = @"
 select NameEN
 from MDivision
-where id = @MDivision", pars, out dt);
+where id = @MDivision";
+                result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -201,18 +199,19 @@ where id = @MDivision", pars, out dt);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + factoryID));
-                pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@ID", id));
-                DataTable aa;
+                pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
                 string cCellNo;
-                result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"select  b.CutCellID 
-            from dbo.Issue as a WITH (NOLOCK) 
-	        inner join dbo.cutplan as b WITH (NOLOCK) 
-            on b.id = a.cutplanid
-            where b.id = a.cutplanid
-            and a.id = @ID", pars, out aa);
+                sqlcmd = @"
+select  b.CutCellID 
+from dbo.Issue as a WITH (NOLOCK) 
+inner join dbo.cutplan as b WITH (NOLOCK) 
+on b.id = a.cutplanid
+where b.id = a.cutplanid
+and a.id = @ID";
+                result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable aa);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -229,15 +228,16 @@ where id = @MDivision", pars, out dt);
 
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cCellNo));
 
-                pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@ID", id));
-                DataTable cc;
+                pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
                 string cLineNo;
-                result = DBProxy.Current.Select(
-                    string.Empty,
-                    @"select o.sewline 
-            from dbo.Orders o WITH (NOLOCK) 
-            where id in (select distinct poid from issue_detail WITH (NOLOCK) where id = @ID)", pars, out cc);
+                sqlcmd = @"
+select o.sewline 
+from dbo.Orders o WITH (NOLOCK) 
+where id in (select distinct poid from issue_detail WITH (NOLOCK) where id = @ID)";
+                result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable cc);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -256,9 +256,10 @@ where id = @MDivision", pars, out dt);
                 #endregion
 
                 #region  抓表身資料
-                pars = new List<SqlParameter>();
-                pars.Add(new SqlParameter("@ID", id));
-                DataTable bb;
+                pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
                 sqlcmd = @"
 select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
 			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
@@ -276,7 +277,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
 			              AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
 			              AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
 				        , ''
-                        , ( SELECT   Concat(stock7X.value
+                        ,( SELECT   Concat(stock7X.value
                                             , char(10)
                                             , rtrim( fbr.DescDetail)
                                             , char(10)
@@ -284,6 +285,7 @@ select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1
                                             , (Select concat(ID, '-', Name) from Color WITH (NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
                                         )
                             FROM fabric fbr WITH (NOLOCK) WHERE SCIRefno = p.SCIRefno))
+        , MDesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
         , t.Roll
         , t.Dyelot
         , t.Qty
@@ -306,7 +308,7 @@ outer apply (
                                                , '**PLS USE STOCK FROM SP#:' + iif (isnull (concat (p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '',concat (p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
 ) as stock7X
 where t.id= @ID";
-                result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out bb);
+                result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable bb);
                 if (!result)
                 {
                     this.ShowErr(sqlcmd, result);
@@ -327,6 +329,7 @@ where t.id= @ID";
                         Poid = row1["poid"].ToString().Trim(),
                         Seq = row1["SEQ"].ToString().Trim(),
                         Desc = row1["desc"].ToString().Trim(),
+                        MDesc = row1["MDesc"].ToString().Trim(),
                         Location = row1["Location"].ToString().Trim(),
                         Unit = row1["StockUnit"].ToString().Trim(),
                         Roll = row1["Roll"].ToString().Trim(),
@@ -346,8 +349,7 @@ where t.id= @ID";
                 Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
                 string reportResourceName = "P10_Print.rdlc";
 
-                IReportResource reportresource;
-                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
                 {
                     return false;
                 }
@@ -356,8 +358,10 @@ where t.id= @ID";
                 #endregion
 
                 // 開啟 report view
-                var frm = new Win.Subs.ReportView(report);
-                frm.MdiParent = this.MdiParent;
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                };
                 frm.Show();
             }
 

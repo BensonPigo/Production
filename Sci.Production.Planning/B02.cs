@@ -74,21 +74,29 @@ namespace Sci.Production.Planning
                                 and not((BeginStitch > @begin  and BeginStitch > @end) or (EndStitch <  @begin and EndStitch < @end))";
 
             #region 準備sql參數資料
-            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-            sp1.ParameterName = "@begin";
-            sp1.Value = this.CurrentMaintain["beginstitch"].ToString();
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@begin",
+                Value = this.CurrentMaintain["beginstitch"].ToString(),
+            };
 
-            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-            sp2.ParameterName = "@end";
-            sp2.Value = this.CurrentMaintain["Endstitch"].ToString();
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@end",
+                Value = this.CurrentMaintain["Endstitch"].ToString(),
+            };
 
-            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-            sp3.ParameterName = "@OldBegin";
-            sp3.Value = this.numBeginStitch.OldValue;
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@OldBegin",
+                Value = this.numBeginStitch.OldValue,
+            };
 
-            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-            sp4.ParameterName = "@OldEnd";
-            sp4.Value = this.numEndStitch.OldValue;
+            System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@OldEnd",
+                Value = this.numEndStitch.OldValue,
+            };
 
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);

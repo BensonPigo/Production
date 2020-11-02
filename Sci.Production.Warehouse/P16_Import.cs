@@ -12,20 +12,25 @@ namespace Sci.Production.Warehouse
 {
     public partial class P16_Import : Win.Subs.Base
     {
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Tems.Base P16;
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-       // bool flag;
-       // string poType;
+        /// <inheritdoc/>
+        // bool flag;
+        // string poType;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         protected DataTable dtlack;
 
-       // bool flag;
-       // string poType;
-        protected DataTable dtftyinventory;
+        // bool flag;
+        // string poType;
+        private DataTable dtftyinventory;
         private string Type;
 
+        /// <inheritdoc/>
         public P16_Import(DataRow master, DataTable detail, string type, string title)
         {
             this.Text = title.ToString();

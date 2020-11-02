@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R06 : Win.Tems.PrintForm
     {
         private DateTime? DateArrStart; private DateTime? DateArrEnd;
@@ -23,6 +24,7 @@ namespace Sci.Production.Quality
         private string season;
         private string reportType;
 
+        /// <inheritdoc/>
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -32,6 +34,7 @@ namespace Sci.Production.Quality
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1513:ClosingBraceMustBeFollowedByBlankLine", Justification = "Reviewed.")]
         protected override bool ValidateInput()
         {
             this.lis = new List<SqlParameter>();
@@ -219,6 +222,7 @@ FROM #tmpsd t
 WHERE NOT EXISTS(SELECT * FROM #All_Fir_shadebone b WHERE  b.Suppid=t.SuppID AND b.Dyelot = t.Dyelot AND b.Result <> 'Pass')
 GROUP BY t.SuppID
 " : string.Empty)}
+
 
 
 ------------Total Point----------
@@ -746,6 +750,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位

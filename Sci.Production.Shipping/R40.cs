@@ -2759,8 +2759,10 @@ from (
                 this.ShowLoadingText("Starting EXCEL...Summary");
                 filename = "Shipping_R40_Summary.xltx";
                 Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
-                comSummary.ColumnsAutoFit = true;
+                Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary)
+                {
+                    ColumnsAutoFit = true,
+                };
                 comSummary.WriteTable(this.Summary, 3);
 
                 Excel.Worksheet worksheetSummary = excelSummary.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -2812,8 +2814,10 @@ from (
                 this.ShowLoadingText("Starting EXCEL...Summary");
                 filename = "Shipping_R40_Summary(Only Liquidation).xltx";
                 Excel.Application excelSummary = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary);
-                comSummary.ColumnsAutoFit = true;
+                Utility.Report.ExcelCOM comSummary = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelSummary)
+                {
+                    ColumnsAutoFit = true,
+                };
                 comSummary.WriteTable(this.Summary, 3);
 
                 Excel.Worksheet worksheetSummary = excelSummary.ActiveWorkbook.Worksheets[1];   // 取得工作表
@@ -2926,8 +2930,10 @@ from (
                 }
 
                 Excel.Application excelDetail = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename);
-                Utility.Report.ExcelCOM comDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelDetail);
-                comDetail.ColumnsAutoFit = true;
+                Utility.Report.ExcelCOM comDetail = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + filename, excelDetail)
+                {
+                    ColumnsAutoFit = true,
+                };
                 dt.Columns.RemoveAt(0);
                 comDetail.WriteTable(dt, 3);
                 this.DataTableClearAll(dt);

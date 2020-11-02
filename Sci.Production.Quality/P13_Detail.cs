@@ -16,16 +16,21 @@ using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P13_Detail : Win.Subs.Input4
     {
         private const int CB_SETITEMHEIGHT = 0x153;
+        private readonly string id;
+        private readonly bool isSee = false;
         private DataRow masterDr;
         private DataRow Detaildr;
         private string reportNo;
-        private readonly string id;
-        private readonly bool isSee = false;
         private string status;
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+
+        /// <inheritdoc/>
         public P13_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, string status)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -34,15 +39,7 @@ namespace Sci.Production.Quality
             this.isSee = true;
             this.reportNo = keyvalue2;
             this.status = status;
-            MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
-                "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," +
-                "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
+            MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1, "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," + "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
 
             string selectCommand = "select '' ID, '' Name union all select ID, Name from DropdownList where type = 'PMS_MockupWash_Range'";
 
@@ -109,9 +106,6 @@ namespace Sci.Production.Quality
 
             // label1.Text = item["id"].ToString();
         }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         private void SetComboBoxHeight(IntPtr comboBoxHandle, int comboBoxDesiredHeight)
         {
@@ -809,35 +803,26 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             switch (this.comboBoxRange.SelectedIndex)
             {
                 case 1:
-                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
-                        "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle");
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1, "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle");
                     break;
                 case 2:
-                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
-                        "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle");
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1, "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle");
                     break;
                 case 3:
-                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
-                        "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," +
-                        "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1, "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," + "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
                     break;
                 default:
-                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1,
-                        "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                        "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                        "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                        "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                        "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                        "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," +
-                        "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," +
-                        "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
+                    MyUtility.Tool.SetupCombox(this.comboTestingMethod, 2, 1, "a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,a. 5 cycles continuous wash at 60 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,b. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle,c. 5 cycles continuous wash at 40 degree followed by 5 cycles continuous wash at 40 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle,d. 5 cycles continuous wash at 30 degree followed by 5 cycles continuous wash at 30 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,e. 10 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle,f. 5 continuous washes at 40 degree followed by 5 continuous washes at 60 degree in standard domestic washing machine and tumble dry after the 10th cycle," + "g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry),g. 10 continuous washes at 30 degree or 40 degree in standard domestic washing machine and followed by tumble dry low(or line dry)," + "h. 10 continuous washes at 30 degree on sensitive setting followed by line dry,h. 10 continuous washes at 30 degree on sensitive setting followed by line dry");
                     break;
             }
         }
     }
 
+    /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public partial class ComboxBoxEx : Win.UI.ComboBox
     {
+        /// <inheritdoc/>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
@@ -846,25 +831,47 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
+        /// <inheritdoc/>
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
-            public int Left;        // x position of upper-left corner
-            public int Top;         // y position of upper-left corner
-            public int Right;       // x position of lower-right corner
-            public int Bottom;      // y position of lower-right corner
+            /// <inheritdoc/>
+            // x position of upper-left corner
+            public int Left;
+
+            /// <inheritdoc/>
+            // y position of upper-left corner
+            public int Top;
+
+            /// <inheritdoc/>
+            // x position of lower-right corner
+            public int Right;
+
+            /// <inheritdoc/>
+            // y position of lower-right corner
+            public int Bottom;
         }
 
+        /// <inheritdoc/>
         public const int SWP_NOZORDER = 0x0004;
+
+        /// <inheritdoc/>
         public const int SWP_NOACTIVATE = 0x0010;
+
+        /// <inheritdoc/>
         public const int SWP_FRAMECHANGED = 0x0020;
+
+        /// <inheritdoc/>
         public const int SWP_NOOWNERZORDER = 0x0200;
 
+        /// <inheritdoc/>
         public const int WM_CTLCOLORLISTBOX = 0x0134;
 
         private int _hwndDropDown = 0;
 
-        internal List<int> ItemHeights = new List<int>();
+        /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
+        public List<int> ItemHeights = new List<int>();
 
         /// <inheritdoc/>
         protected override void WndProc(ref Message m)
@@ -887,15 +894,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
 
                     newHeight += 5; // to stop scrollbars showing
 
-                    SetWindowPos((IntPtr)this._hwndDropDown, IntPtr.Zero,
-                        r.Left,
-                        r.Top,
-                        this.DropDownWidth,
-                        newHeight,
-                        SWP_FRAMECHANGED |
-                                     SWP_NOACTIVATE |
-                                     SWP_NOZORDER |
-                                     SWP_NOOWNERZORDER);
+                    SetWindowPos((IntPtr)this._hwndDropDown, IntPtr.Zero, r.Left, r.Top, this.DropDownWidth, newHeight, SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOOWNERZORDER);
                 }
             }
 

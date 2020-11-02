@@ -1730,7 +1730,6 @@ namespace Sci.Production.Quality
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
 
             // objApp.Visible = true;
-
             #region 插入圖片與Technician名字
 
             if (to == "ToPDF")
@@ -1803,7 +1802,7 @@ namespace Sci.Production.Quality
                 rgPaste.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rgCopy.Copy(Type.Missing));
             }
 
-            worksheet.get_Range($"B12", $"B{ this.dtFGWT.Rows.Count + 11}").Merge(false);
+            worksheet.get_Range($"B12", $"B{this.dtFGWT.Rows.Count + 11}").Merge(false);
 
             int startRowIndex = 12;
 
@@ -1892,7 +1891,6 @@ namespace Sci.Production.Quality
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
 
             // objApp.Visible = true;
-
             #region 插入圖片與Technician名字
             if (to == "ToPDF")
             {
@@ -2093,10 +2091,9 @@ namespace Sci.Production.Quality
         /// <summary>
         /// 如果欄位是Shrinkage 就增加%單位符號
         /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="strFilter"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
+        /// <param name="dt">dt</param>
+        /// <param name="strFilter">strFilter</param>
+        /// <param name="count">count</param>
         private string AddShrinkageUnit(DataTable dt, string strFilter, int count)
         {
             string strValie = string.Empty;
@@ -2122,58 +2119,85 @@ namespace Sci.Production.Quality
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class P10Data
     {
+        /// <inheritdoc/>
         public DateTime? TxtReportDate { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumArriveQty { get; set; }
 
+        /// <inheritdoc/>
         public string TxtSize { get; set; }
 
+        /// <inheritdoc/>
         public bool RdbtnLine { get; set; }
 
+        /// <inheritdoc/>
         public bool RdbtnTumble { get; set; }
 
+        /// <inheritdoc/>
         public bool RdbtnHand { get; set; }
 
+        /// <inheritdoc/>
         public string ComboTemperature { get; set; }
 
+        /// <inheritdoc/>
         public string ComboMachineModel { get; set; }
 
+        /// <inheritdoc/>
         public string TxtFibreComposition { get; set; }
 
+        /// <inheritdoc/>
         public string ComboNeck { get; set; }
 
+        /// <inheritdoc/>
         public string NumTwisTingBottom { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumBottomS1 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumBottomL { get; set; }
 
+        /// <inheritdoc/>
         public string NumTwisTingOuter { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumOuterS1 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumOuterS2 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumOuterL { get; set; }
 
+        /// <inheritdoc/>
         public string NumTwisTingInner { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumInnerS1 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumInnerS2 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumInnerL { get; set; }
 
+        /// <inheritdoc/>
         public string NumTwisTingTop { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumTopS1 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumTopS2 { get; set; }
 
+        /// <inheritdoc/>
         public decimal? NumTopL { get; set; }
 
+        /// <inheritdoc/>
         public string TxtLotoFactory { get; set; }
     }
 }

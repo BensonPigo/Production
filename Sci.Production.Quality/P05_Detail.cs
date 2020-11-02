@@ -14,6 +14,7 @@ using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P05_Detail : Win.Subs.Input4
     {
         private readonly string loginID = Env.User.UserID;
@@ -24,9 +25,10 @@ namespace Sci.Production.Quality
         private DataTable dtOven;
         private bool newOven = false;
         private bool isModify = false;  // 註記[Test Date][Article][Inspector][Remark]是否修改
-        private readonly bool isSee = false;
-        private readonly bool canEdit = true;
+        private bool isSee = false;
+        private bool canEdit = true;
 
+        /// <inheritdoc/>
         public P05_Detail(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr, string poid)
             : base(canedit, id, keyvalue2, keyvalue3)
         {
@@ -220,6 +222,7 @@ and a.seq1=@seq1";
             }
         }
 
+        /// <inheritdoc/>
         // 限定字串長度
         public string SQlText(string sqlInput, int maxLength)
         {
@@ -236,11 +239,14 @@ and a.seq1=@seq1";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings groupCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings();
-            seqMskCell.TextMaskFormat = MaskFormat.ExcludePromptAndLiterals;
+            DataGridViewGeneratorMaskedTextColumnSettings seqMskCell = new DataGridViewGeneratorMaskedTextColumnSettings
+            {
+                TextMaskFormat = MaskFormat.ExcludePromptAndLiterals,
+            };
             DataGridViewGeneratorTextColumnSettings rollCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings chgCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings staCell = new DataGridViewGeneratorTextColumnSettings();
@@ -381,8 +387,9 @@ and a.seq1=@seq1";
                     return; // 沒東西 return
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空
                     dr["SEQ"] = string.Empty;
                     dr["seq1"] = string.Empty;
                     dr["seq2"] = string.Empty;
@@ -582,8 +589,9 @@ and a.seq1=@seq1";
                     return;
                 }
 
-                if (MyUtility.Check.Empty(e.FormattedValue)) // 沒填入資料,清空dyelot
+                if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    // 沒填入資料,清空dyelot
                     dr["Roll"] = string.Empty;
                     dr["Dyelot"] = string.Empty;
                     dr.EndEdit();
@@ -948,8 +956,9 @@ and a.seq1=@seq1";
                 // 新增
                 if (dr.RowState == DataRowState.Added)
                 {
-                    if (this.newOven) // insert 新資料進oven
+                    if (this.newOven)
                     {
+                        // insert 新資料進oven
                         DataTable dtID;
                         DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out dtID);
 

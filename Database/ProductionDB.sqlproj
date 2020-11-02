@@ -2559,6 +2559,8 @@
     <Build Include="dbo\Tables\SubProInsRecord_ResponseTeam.sql" />
     <Build Include="dbo\Tables\SubProCustomColumn_Detail.sql" />
     <Build Include="dbo\Tables\SubProCustomColumn.sql" />
+    <Build Include="dbo\Tables\SampleGarmentTest_Detail_FGPT.sql" />
+    <Build Include="dbo\Tables\Adidas_FGWT.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

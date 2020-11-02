@@ -281,8 +281,10 @@ please check again.");
                     dtDuplicate.Rows.Add(newDr);
                 }
 
-                MsgGridForm msgGridForm = new MsgGridForm(dtDuplicate);
-                msgGridForm.Text = "The following data has different HSCode or Unit data from NLcode.";
+                MsgGridForm msgGridForm = new MsgGridForm(dtDuplicate)
+                {
+                    Text = "The following data has different HSCode or Unit data from NLcode.",
+                };
                 msgGridForm.grid1.AutoResizeColumns();
                 msgGridForm.ShowDialog();
                 return false;

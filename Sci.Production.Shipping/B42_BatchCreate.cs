@@ -150,13 +150,15 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             string contractID = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
             #region 取得VNConsumption_Detail_Detail資料
-            Prgs.ParGetVNConsumption_Detail_Detail parData = new Prgs.ParGetVNConsumption_Detail_Detail();
-            parData.DateBuyerDeliveryFrom = this.dateBuyerDelivery.Value1;
-            parData.DateBuyerDeliveryTo = this.dateBuyerDelivery.Value2;
-            parData.Style = this.txtstyle.Text;
-            parData.Category = this.comboCategory.Text;
-            parData.BrandID = this.txtbrand.Text;
-            parData.ContractID = string.Empty;
+            Prgs.ParGetVNConsumption_Detail_Detail parData = new Prgs.ParGetVNConsumption_Detail_Detail
+            {
+                DateBuyerDeliveryFrom = this.dateBuyerDelivery.Value1,
+                DateBuyerDeliveryTo = this.dateBuyerDelivery.Value2,
+                Style = this.txtstyle.Text,
+                Category = this.comboCategory.Text,
+                BrandID = this.txtbrand.Text,
+                ContractID = string.Empty,
+            };
             DualResult result = Prgs.GetVNConsumption_Detail_Detail(parData, out this.AllDetailData);
             if (!result)
             {

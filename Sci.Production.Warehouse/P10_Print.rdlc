@@ -444,6 +444,18 @@
                               </TextRuns>
                               <Style />
                             </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(Fields!Desc.Value="","",Fields!MDesc.Value)</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Desc</rd:DefaultName>
                           <Left>5.38961cm</Left>
@@ -1477,7 +1489,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>0.36787cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.02176cm</Width>
@@ -1511,7 +1522,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>5.38963cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.4592cm</Width>
@@ -1546,7 +1556,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox41</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>10.84883cm</Left>
           <Height>0.58208cm</Height>
           <Width>4.06637cm</Width>
@@ -1581,7 +1590,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
-          <Top>0cm</Top>
           <Left>14.9152cm</Left>
           <Height>0.58208cm</Height>
           <Width>5.27256cm</Width>
@@ -1646,6 +1654,10 @@
       <Fields>
         <Field Name="Desc">
           <DataField>Desc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MDesc">
+          <DataField>MDesc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Dyelot">

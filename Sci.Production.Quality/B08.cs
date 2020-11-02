@@ -5,8 +5,12 @@ using Ict;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class B08 : Win.Tems.Input1
     {
+        private const string Refno = "Refno";
+
+        /// <inheritdoc/>
         public B08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -16,7 +20,7 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["Refno"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain[Refno]))
             {
                 this.txtReson.Text = "Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension";
             }
@@ -38,7 +42,7 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Refno"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain[Refno]))
             {
                 this.ShowErr("<RefNo> cannot be empty!");
                 return false;
@@ -62,9 +66,7 @@ namespace Sci.Production.Quality
 
         private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                @"SELECT DISTINCT RefNo
-FROM Fabric WHERE junk=0 AND TYPE='F' ORDER BY RefNo", "25", "Refno");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"SELECT DISTINCT RefNo FROM Fabric WHERE junk=0 AND TYPE='F' ORDER BY RefNo", "25", Refno);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

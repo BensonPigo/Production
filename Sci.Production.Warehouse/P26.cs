@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P26 : Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
@@ -28,6 +29,7 @@ namespace Sci.Production.Warehouse
             public List<string> DB_CLocations { get; set; }
         }
 
+        /// <inheritdoc/>
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,6 +42,7 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
+        /// <inheritdoc/>
         public P26(ToolStripMenuItem menuitem, string transID)
             : base(menuitem)
         {
@@ -310,6 +313,7 @@ WHERE   StockType='{0}'
         // Confirm
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
             base.ClickConfirm();

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class R07 : Win.Tems.PrintForm
     {
         private string Factory;
@@ -23,6 +24,7 @@ namespace Sci.Production.Sewing
         private string Status;
         private DataTable printData;
 
+        /// <inheritdoc/>
         public R07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

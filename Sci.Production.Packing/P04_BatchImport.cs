@@ -148,10 +148,12 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@custcd", this.txtcustcd.Text);
             System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@orderType", this.txtOrderType.Text);
             System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter("@season", this.txtseason.Text);
-            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-            sp5.ParameterName = "@buyMonth";
-            sp5.Value = !MyUtility.Check.Empty(this.txtdropdownlistBuyMonth.SelectedValue) ?
-                this.txtdropdownlistBuyMonth.SelectedValue : string.Empty;
+            System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter
+            {
+                ParameterName = "@buyMonth",
+                Value = !MyUtility.Check.Empty(this.txtdropdownlistBuyMonth.SelectedValue) ?
+                this.txtdropdownlistBuyMonth.SelectedValue : string.Empty,
+            };
             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
             sp6.ParameterName = "@buyerDelivery1";

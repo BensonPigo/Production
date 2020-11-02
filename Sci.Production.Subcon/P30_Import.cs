@@ -9,14 +9,17 @@ using Sci.Data;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P30_Import : Win.Subs.Base
     {
         private DataRow dr_localPO;
         private DataTable dt_localPODetail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-        protected DataTable dtlocal;
+        /// <inheritdoc/>
+        private DataTable dtlocal;
 
+        /// <inheritdoc/>
         public P30_Import(DataRow master, DataTable detail)
         {
             this.InitializeComponent();
@@ -27,6 +30,7 @@ namespace Sci.Production.Subcon
         }
 
         // Find Now Button
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
             string sp_b = this.txtSPNoStart.Text;
@@ -741,21 +745,24 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
                             tmp["threadcolorid"].ToString(),
                             tmp["RequestID"].ToString()));
 
-                        if (findrow.Length > 0) // 已存在更新 Price 與 Qty
+                        if (findrow.Length > 0)
                         {
+                            // 已存在更新 Price 與 Qty
                             findrow[0]["Price"] = tmp["Price"];
                             findrow[0]["qty"] = tmp["qty"];
                         }
-                        else// 不存在則新增
+                        else
                         {
+                            // 不存在則新增
                             tmp["id"] = this.dr_localPO["id"];
                             tmp.AcceptChanges();
                             tmp.SetAdded();
                             this.dt_localPODetail.ImportRow(tmp);
                         }
                     }
-                    else// 物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
+                    else
                     {
+                        // 物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
                         DataRow[] findrow = P30.dtPadBoardInfo.Select(string.Format(
                             @"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'",
                             tmp["orderid"].ToString(),
@@ -763,13 +770,15 @@ group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
                             tmp["threadcolorid"].ToString(),
                             tmp["RequestID"].ToString()));
 
-                        if (findrow.Length > 0) // 已存在更新 Price 與 Qty
+                        if (findrow.Length > 0)
                         {
+                            // 已存在更新 Price 與 Qty
                             findrow[0]["Price"] = tmp["Price"];
                             findrow[0]["qty"] = tmp["qty"];
                         }
-                        else// 不存在則新增
+                        else
                         {
+                            // 不存在則新增
                             tmp["id"] = this.dr_localPO["id"];
                             tmp.AcceptChanges();
                             tmp.SetAdded();

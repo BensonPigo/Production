@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R41 : Win.Tems.PrintForm
     {
+        /// <inheritdoc/>
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -93,6 +95,7 @@ order by M desc";
         }
 
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             List<SqlParameter> lis = new List<SqlParameter>();

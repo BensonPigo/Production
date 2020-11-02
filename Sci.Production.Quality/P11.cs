@@ -169,8 +169,10 @@ masterID);
             Win.Tools.SelectItem item;
             string selectCommand = $"select Article,ArticleName from Style_Article WITH (NOLOCK) where StyleUkey = {styleUkey}";
 
-            item = new Win.Tools.SelectItem(selectCommand, "11,33", this.Text);
-            item.Width = 520;
+            item = new Win.Tools.SelectItem(selectCommand, "11,33", this.Text)
+            {
+                Width = 520,
+            };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {

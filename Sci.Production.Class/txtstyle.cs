@@ -82,8 +82,10 @@ namespace Sci.Production.Class
                 selectCommand = string.Format("select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 and BrandID = '{0}' order by ID", this.BrandObjectName.Text);
             }
 
-            item = new Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text);
-            item.Size = new System.Drawing.Size(757, 530);
+            item = new Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.Text)
+            {
+                Size = new System.Drawing.Size(757, 530),
+            };
             DialogResult returnResult = item.ShowDialog();
 
             if (returnResult == DialogResult.Cancel)

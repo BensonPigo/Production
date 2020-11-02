@@ -240,9 +240,10 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             DataGridViewGeneratorNumericColumnSettings narrowrequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings ttlrequest = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings occurcost = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorTextColumnSettings desc = new DataGridViewGeneratorTextColumnSettings();
-
-            desc.CharacterCasing = CharacterCasing.Normal;
+            DataGridViewGeneratorTextColumnSettings desc = new DataGridViewGeneratorTextColumnSettings
+            {
+                CharacterCasing = CharacterCasing.Normal,
+            };
             estinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             estReplacementAMT.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             actinqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;

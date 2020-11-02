@@ -8,16 +8,19 @@ using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P33_Detail_Detail : Win.Subs.Base
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
         public Win.Subs.Base P33_Detail;
         private DataRow dr_master;
         private DataTable dt_detail;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public decimal _AccuIssued = 0;
-        public decimal _RequestQty = 0;
-        protected DataTable dtFtyinventory;
+        private decimal _AccuIssued = 0;
+        private decimal _RequestQty = 0;
+        private DataTable dtFtyinventory;
 
+        /// <inheritdoc/>
         public P33_Detail_Detail(DataRow master, DataTable detail, string accuIssued, string requestQty)
         {
             this.InitializeComponent();

@@ -9,17 +9,19 @@ using System.Transactions;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P02 : Win.Tems.Input6
     {
         // 宣告Context Menu Item
         private ToolStripMenuItem edit;
-        private readonly string loginID = Env.User.UserID;
-        private readonly string keyWord = Env.User.Keyword;
-        private readonly bool boolFromP02;
+        private string loginID = Env.User.UserID;
+        private string keyWord = Env.User.Keyword;
+        private bool boolFromP02;
         private string find = string.Empty;
         private int index;
         private DataRow[] find_dr;
 
+        /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -28,6 +30,7 @@ namespace Sci.Production.Quality
             this.boolFromP02 = false;
         }
 
+        /// <inheritdoc/>
         public P02(string pOID)
         {
             this.InitializeComponent();
