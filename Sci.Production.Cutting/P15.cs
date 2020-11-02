@@ -793,7 +793,7 @@ Select
 	, a.Ukey
 	, FabricKind.FabricKind
 	, TTLCutQty = (select SUM(qty) from WorkOrder_Distribute b with(nolock) where b.WorkOrderUkey = a.Ukey {distru_where})
-	, CreatedBundleQty = (select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref)
+	, CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref), 0)
 from  workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on ord.ID = a.id and ord.cuttingsp = a.id
 outer apply(
