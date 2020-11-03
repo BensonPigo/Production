@@ -624,14 +624,14 @@ where Junk = 0
             hide.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.EditMode || !this.IsDetailInserting)
+                if (!this.EditMode)
                 {
                     dr["IsHide"] = dr["IsHide"];
                     dr.EndEdit();
                     return;
                 }
 
-                if (this.EditMode && this.IsDetailInserting)
+                if (this.EditMode)
                 {
                     if (MyUtility.Convert.GetBool(dr["IsGroupHeader"]))
                     {
