@@ -218,6 +218,12 @@ namespace Sci.Production.Packing
 .CheckBox("CtnInClog", header: "Ctn In Clog", width: Widths.AnsiChars(5), iseditable: false)
 .CheckBox("Overwrite", header: "Overwrite", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: true, settings: col_Overwrite)
 ;
+
+            this.Helper.Controls.Grid.Generator(this.gridErrorMsg)
+.Numeric("FileSeq", header: "File Seq", width: Widths.AnsiChars(5), minimum: null)
+.Text("Result", header: "Result", width: Widths.AnsiChars(10))
+;
+            this.gridErrorMsg.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         private void BtnSelectFile_Click(object sender, EventArgs e)
@@ -311,7 +317,6 @@ namespace Sci.Production.Packing
                                     FileName = openFileDialog1.SafeFileNames[i],
                                     ZPLs = zPL_Objects,
                                 });
-
                             }
                             #endregion
 
@@ -473,8 +478,8 @@ namespace Sci.Production.Packing
                             newDr["FileName"] = openFileDialog1.SafeFileNames[i];
                             newDr["Result"] = "Analysis failed.";
                             this.Grid_SelectedFile_Dt.Rows.Add(newDr);
+                            i++;
                         }
-
                     }
 
                     this.listControlBindingSource1.DataSource = this.Grid_SelectedFile_Dt;
@@ -660,67 +665,65 @@ namespace Sci.Production.Packing
                     // 將所有檔案分組，CustPONO、StyleID相同為一組
                     var keys = zPLs.Select(o => new { o.CustPONo, o.StyleID }).Distinct().ToList();
                     List<FileSeq_Key_Model> pDF_Models = new List<FileSeq_Key_Model>();
-                    int fileSeq = 1;
+
                     foreach (var key in keys)
                     {
                         FileSeq_Key_Model m = new FileSeq_Key_Model();
-                        m.FileSeq = fileSeq;
                         m.UpdateModels = zPLs.Where(o => o.CustPONo == key.CustPONo && o.StyleID == key.StyleID).ToList();
 
                         pDF_Models.Add(m);
-                        fileSeq++;
                     }
 
+                    int fileSeq = 1;
                     foreach (var item in pDF_Models)
                     {
                         Match matchData = new Match()
                         {
-                            FileSeq = item.FileSeq,
                             PDFFile = item,
-                        };
-
-                        PackingListCandidate_Datasource pDatas = new PackingListCandidate_Datasource()
-                        {
-                            FileSeq = item.FileSeq,
                         };
 
                         List<ZPL> ZPLs = item.UpdateModels;
                         bool isMixed = ZPLs.Where(o => o.SizeCode == string.Empty || o.SizeCode.ToUpper() == "MIXED").Any();
                         matchData = this.PDF_Match(ZPLs, matchData, isMixed);
 
-                        pDatas.PackingList_Candidate = matchData.PackingList_Candidate.Distinct().ToList();
-                        this.PackingListCandidate_Datasources.Add(pDatas);
-                        match_List.Add(matchData);
-
-                        foreach (var file in item.UpdateModels)
+                        // 至少對應到一個箱子才需要顯示在右邊
+                        if (matchData.PackingList_Candidate.Count > 0)
                         {
-                            // 左邊Grid寫入FileSeq
-                            this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == file.FileName).FirstOrDefault()["FileSeq"] = matchData.FileSeq;
-
-                            // 左邊Result寫入資訊：沒有對應的Packing List
-                            if (matchData.PackingList_Candidate.Count == 0)
+                            item.FileSeq = fileSeq;
+                            matchData.FileSeq = fileSeq;
+                            PackingListCandidate_Datasource pDatas = new PackingListCandidate_Datasource()
                             {
-                                this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == file.FileName).FirstOrDefault()["Result"] = "Cannot mapping current P/L.";
+                                FileSeq = item.FileSeq,
+                            };
+                            pDatas.PackingList_Candidate = matchData.PackingList_Candidate.Distinct().ToList();
+                            this.PackingListCandidate_Datasources.Add(pDatas);
+                            match_List.Add(matchData);
+
+                            foreach (var file in item.UpdateModels)
+                            {
+                                // 左邊Grid寫入FileSeq
+                                this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == file.FileName).FirstOrDefault()["FileSeq"] = matchData.FileSeq;
+
+                                // 左邊Result寫入資訊：沒有對應的Packing List
+                                if (matchData.PackingList_Candidate.Count == 0)
+                                {
+                                    this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == file.FileName).FirstOrDefault()["Result"] = "Cannot mapping current P/L.";
+                                }
                             }
+
+                            fileSeq++;
                         }
                     }
                 }
 
                 if (this.currentFileType == UploadType.ZPL)
                 {
-                    int fileSeq = 0;
+                    int fileSeq = 1;
                     foreach (var item in this._File_Name_Object_List.File_Name_Object2s)
                     {
-                        fileSeq += 1;
                         Match matchData = new Match()
                         {
-                            FileSeq = fileSeq,
                             ZPLFile = item,
-                        };
-
-                        PackingListCandidate_Datasource pDatas = new PackingListCandidate_Datasource()
-                        {
-                            FileSeq = fileSeq,
                         };
 
                         // 根據上傳的ZPL展開
@@ -732,23 +735,37 @@ namespace Sci.Production.Packing
 
                         matchData = this.ZPL_Match(zPLs, fileName, matchData, isMixed);
 
-                        pDatas.PackingList_Candidate = matchData.PackingList_Candidate.Distinct().ToList();
-
-                        this.PackingListCandidate_Datasources.Add(pDatas);
-                        match_List.Add(matchData);
-
-                        // 左邊Grid寫入FileSeq
-                        this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == fileName).FirstOrDefault()["FileSeq"] = fileSeq;
-
-                        // 左邊Result寫入資訊：沒有對應的Packing List
-                        if (matchData.PackingList_Candidate.Count == 0)
+                        // 至少對應到一個箱子才需要顯示在右邊
+                        if (matchData.PackingList_Candidate.Count() > 0)
                         {
-                            this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == fileName).FirstOrDefault()["Result"] = "Cannot mapping current P/L.";
+                            matchData.FileSeq = fileSeq;
+                            PackingListCandidate_Datasource pDatas = new PackingListCandidate_Datasource()
+                            {
+                                FileSeq = fileSeq,
+                            };
+
+                            pDatas.PackingList_Candidate = matchData.PackingList_Candidate.Distinct().ToList();
+
+                            this.PackingListCandidate_Datasources.Add(pDatas);
+                            match_List.Add(matchData);
+
+                            // 左邊Grid寫入FileSeq
+                            this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == fileName).FirstOrDefault()["FileSeq"] = fileSeq;
+
+                            // 左邊Result寫入資訊：沒有對應的Packing List
+                            if (matchData.PackingList_Candidate.Count == 0)
+                            {
+                                this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == fileName).FirstOrDefault()["Result"] = "Cannot mapping current P/L.";
+                            }
+
+                            fileSeq++;
                         }
                     }
                 }
                 #endregion
+                this.Grid_SelectedFile_Dt = this.Grid_SelectedFile_Dt.AsEnumerable().OrderBy(o => MyUtility.Convert.GetInt(o["FileSeq"])).CopyToDataTable();
 
+                this.listControlBindingSource1.DataSource = this.Grid_SelectedFile_Dt;
                 this.MatchList.AddRange(match_List);
                 DataTable tmp = this.Grid_Match_Dt.Clone();
                 foreach (Match matchData in match_List)
@@ -1018,6 +1035,21 @@ namespace Sci.Production.Packing
                     }
                 }
             }
+
+            // 若上傳檔案數與DB的筆數不相符則刪除
+            foreach (string packindListID in matchData.PackingList_Candidate.ToList())
+            {
+                int fileCount = matchData.UpdateModels.Where(o => o.PackingListID == packindListID).Count();
+
+                int dBCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"selecT COUNT(1) from PackingList_Detail where id='{packindListID}'"));
+
+                if (dBCount != fileCount)
+                {
+                    matchData.PackingList_Candidate.RemoveAll(o => o == packindListID);
+                    matchData.UpdateModels.RemoveAll(o => o.PackingListID == packindListID);
+                }
+            }
+
             return matchData;
         }
 
@@ -1196,6 +1228,20 @@ namespace Sci.Production.Packing
                         };
                         matchData.UpdateModels.Add(u);
                     }
+                }
+            }
+
+            // 若上傳檔案數與DB的筆數不相符則刪除
+            foreach (string packindListID in matchData.PackingList_Candidate.ToList())
+            {
+                int fileCount = matchData.UpdateModels.Where(o => o.PackingListID == packindListID).Count();
+
+                int dBCount = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"selecT COUNT(1) from PackingList_Detail where id='{packindListID}'"));
+
+                if (dBCount != fileCount)
+                {
+                    matchData.PackingList_Candidate.RemoveAll(o => o == packindListID);
+                    matchData.UpdateModels.RemoveAll(o => o.PackingListID == packindListID);
                 }
             }
 
@@ -1391,7 +1437,7 @@ INTO #tmp_Combination_D{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN CustCD c ON p.BrandID = c.BrandID AND p.CustCDID = c.ID
-WHERE  p.ID='{dt.Rows[0]["PackingListID"]}' AND pd.CustCTN='' 
+WHERE  p.ID='{dt.Rows[0]["PackingListID"]}'
 
 
 ----找到CustCD對應的ShippingMarkCombination
@@ -1863,61 +1909,15 @@ DROP TABLE #tmpOrders
                 dt.Rows.Add(dr);
             }
 
-            var m = MyUtility.Msg.ShowMsgGrid(dt, "Please check below message.", "Result");
+            dt = dt.AsEnumerable().OrderBy(o => MyUtility.Convert.GetInt(o["FileSeq"])).CopyToDataTable();
+            this.listControlBindingSource3.DataSource = dt;
+
+            // var m = MyUtility.Msg.ShowMsgGrid(dt, "Please check below message.", "Result");
+            var m = MyUtility.Msg.ShowMsgGrid(this.gridErrorMsg, "Please check below message.", "Result");
             m.Width = 850;
-            m.grid1.Columns[0].Width = 50;
             m.grid1.Columns[1].Width = 600;
             m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
             m.TopMost = true;
-            /*
-            if (this.existsCustCTN_Table.Rows.Count > 0)
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(this.existsCustCTN_Table, "Exists Cust CTN", "Exists Cust CTN");
-                m.Width = 850;
-                m.grid1.Columns[0].Width = 200;
-                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                m.TopMost = true;
-            }
-
-            if (this.NotMapCustPo_Table.Rows.Count > 0)
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(this.NotMapCustPo_Table, "No found Cust PO#", "No found Cust PO#");
-                m.Width = 850;
-                m.grid1.Columns[0].Width = 200;
-                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                m.TopMost = true;
-            }
-
-            if (this.NotSetB03_Table.Rows.Count > 0)
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(this.NotSetB03_Table, "No Set Packing_B03", "No Set Packing_B03");
-                m.Width = 850;
-                m.grid1.Columns[0].Width = 200;
-                m.grid1.Columns[0].Width = 50;
-                m.grid1.Columns[0].Width = 100;
-                m.text_Find.Width = 150;
-                m.btn_Find.Location = new Point(170, 6);
-
-                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                m.TopMost = true;
-            }
-
-            if (this.FileCountError_Table.Rows.Count > 0)
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(this.FileCountError_Table, "Carton Count Not Mapping", "Carton Count Not Mapping");
-
-                m.Width = 1000;
-
-                m.grid1.Columns[0].Width = 400;
-                m.grid1.Columns[1].Width = 400;
-                m.grid1.Columns[2].Width = 100;
-                m.text_Find.Width = 150;
-                m.btn_Find.Location = new Point(170, 6);
-
-                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                m.TopMost = true;
-            }
-            */
         }
 
         private DataRow GetInfoByPackingList(DataRow current)
@@ -2060,7 +2060,12 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     return;
                 }
 
+                this.ShowWaitMessage("Processing...");
+
                 #region 若以下狀況未排除直接按下 Confirm，系統只執行可完成上傳的項次，其餘無法完成的項次跳出視窗提示
+
+                this.MatchList.RemoveAll(o => o.StickerAlreadyExisted && !o.Overwrite);
+
                 this.ErrorMsg.Clear();
                 List<Match> errorList = this.CollectErrorMsg();
 
@@ -2071,8 +2076,6 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     return;
                 }
                 #endregion
-
-                this.ShowWaitMessage("Processing...");
 
                 // 挑出勾選Overwrite
                 var isOverwrite = this.MatchList.Where(o => o.Overwrite == true);
@@ -2088,7 +2091,14 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                 bool isFinish = true;
                 List<int> failFileSeqs = new List<int>();
-                foreach (Match match in this.MatchList.Where(o => (o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted))
+
+                // 若StickerAlreadyExisted = true，則Overwrite必須為true才需要抓出來轉檔
+                var needUpdateList = this.MatchList.Where(o => (o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted).ToList();
+
+                // 紀錄哪些File Seq需要顯示Result
+                List<int> resultList = needUpdateList.Select(o => o.FileSeq).ToList();
+
+                foreach (Match match in needUpdateList)
                 {
                     if (errorList.Any(o => o.FileSeq == match.FileSeq))
                     {
@@ -2119,13 +2129,28 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 // 將左邊Grid 的Result更新
                 foreach (DataRow dr in this.Grid_SelectedFile_Dt.Rows)
                 {
+                    if (!resultList.Contains(MyUtility.Convert.GetInt(dr["FileSeq"])))
+                    {
+                        continue;
+                    }
+
                     if (failFileSeqs.Where(o => o == MyUtility.Convert.GetInt(dr["FileSeq"])).Any())
                     {
                         dr["Result"] = "Fail";
                     }
                     else
                     {
-                        dr["Result"] = "Pass";
+                        int fileSeq = MyUtility.Convert.GetInt(dr["FileSeq"]);
+                        bool stickerAlreadyExisted = this.MatchList.Where(o => o.FileSeq == fileSeq).FirstOrDefault().StickerAlreadyExisted;
+
+                        if (stickerAlreadyExisted)
+                        {
+                            dr["Result"] = "Overwrite success";
+                        }
+                        else
+                        {
+                            dr["Result"] = "Upload success";
+                        }
                     }
 
                     dr.EndEdit();
@@ -2136,9 +2161,11 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
             {
                 this.ShowErr(ex);
             }
-
-            this.HideWaitMessage();
-            this.btnProcessing.PerformClick();
+            finally
+            {
+                this.HideWaitMessage();
+                this.btnProcessing.PerformClick();
+            }
 
         }
 
@@ -2164,8 +2191,8 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 }
 
                 // 記錄下無法執行上傳的項目
-                // this.MatchList.RemoveAll(o => o.MultipieMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
                 errorList.AddRange(a);
+                this.MatchList.RemoveAll(o => o.MultipieMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
             }
 
             // No Sticker Basic Setting = True
@@ -2183,12 +2210,12 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 }
 
                 // 記錄下無法執行上傳的項目
-                // this.MatchList.RemoveAll(o => o.NoStickerBasicSetting == true);
                 errorList.AddRange(b);
+                this.MatchList.RemoveAll(o => o.NoStickerBasicSetting == true);
             }
 
             // Ctn in Clog = True
-            var c = this.MatchList.Where(o => o.CtnInClog == true);
+            var c = this.MatchList.Where(o => o.CtnInClog == true && ((o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted));
             if (c.Any())
             {
                 foreach (var item in c)
@@ -2202,12 +2229,12 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 }
 
                 // 記錄下無法執行上傳的項目
-                // this.MatchList.RemoveAll(o => o.CtnInClog == true);
                 errorList.AddRange(c);
+                this.MatchList.RemoveAll(o => o.CtnInClog == true);
             }
 
-            // 挑出勾選Overwrite
-            var d = this.MatchList;//.Where(o => o.Overwrite == true);
+            // 檢查Overwrite：挑出已經有P24資料，且勾選Overwrite
+            var d = this.MatchList.Where(o => (o.StickerAlreadyExisted && o.Overwrite));
             foreach (Match match in d)
             {
                 bool isOtherPacking = false;
@@ -2255,8 +2282,8 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     this.ErrorMsg.Add(r);
 
                     // 記錄下無法執行上傳的項目
-                    // this.MatchList.RemoveAll(o => o.FileSeq == match.FileSeq);
                     errorList.AddRange(this.MatchList.Where(o => o.FileSeq == match.FileSeq));
+                    this.MatchList.RemoveAll(o => o.FileSeq == match.FileSeq);
                 }
             }
 
@@ -2720,10 +2747,10 @@ where o.CustPONo='{pono}'
             // bmp.Save(imageOutputPath + imageName + "_tmpOri.bmp");
             byte[] data = null;
 
-            if (!System.IO.Directory.Exists(imageOutputPath))
-            {
-                Directory.CreateDirectory(imageOutputPath);
-            }
+            //if (!System.IO.Directory.Exists(imageOutputPath))
+            //{
+            //    Directory.CreateDirectory(imageOutputPath);
+            //}
 
             // int picWidth = 1300;
             // int picHeight = 1838;
@@ -2820,7 +2847,7 @@ AND sd.Seq = (
 
             List<SqlParameter> para = new List<SqlParameter>();
             para.Add(new SqlParameter("@FileName", fileName));
-            para.Add(new SqlParameter("@Image", (object)dataArry));
+            para.Add(new SqlParameter("@Image", dataArry));
 
             DualResult result = DBProxy.Current.Execute(null, cmd, para);
 
