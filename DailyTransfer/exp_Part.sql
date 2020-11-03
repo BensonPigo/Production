@@ -364,7 +364,8 @@ inner join (
 )MP on MP.ID = SciMachine_MachinePending_Detail.ID
 left join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = SciMachine_MachinePending_Detail.MachineID
 outer apply(select UsageTime=DATEDIFF(DAY,SciMachine_Machine.ArriveDate, MP.cDate)+1)ym
-
+WHERE SciMachine_MachinePending_Detail.TPEReject = 1 
+AND SciMachine_MachinePending_Detail.TPEApvDate BETWEEN @DateStart AND @DateEnd 
 
 END
 
