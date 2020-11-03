@@ -2525,6 +2525,10 @@ order by FabricCombo,cutno
             }
 
             string updatecutref = @"
+Create table #tmpWorkorder
+	(
+		Ukey bigint
+	)
 DECLARE @chk tinyint
 SET @chk = 0
 Begin Transaction [Trans_Name] -- Trans_Name 
@@ -2560,7 +2564,10 @@ Begin Transaction [Trans_Name] -- Trans_Name
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 	end
-    Update Workorder set cutref = '{newcutref}' where ukey = '{dr["ukey"]}';");
+    Update Workorder set cutref = '{newcutref}' 
+    output	INSERTED.Ukey
+	into #tmpWorkorder
+    where ukey = '{dr["ukey"]}';");
             }
 
             updatecutref += @"
@@ -2569,31 +2576,37 @@ IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
     Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
 END
 ELSE BEGIN
+    select w.* 
+    from #tmpWorkorder tw
+    inner join WorkOrder w with (nolock) on tw.Ukey = w.Ukey
+
     Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
 END";
 
             DualResult upResult;
+            DataTable dtWorkorder = new DataTable();
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
             {
-                if (!MyUtility.Check.Empty(updatecutref))
+                if (!(upResult = DBProxy.Current.Select(null, updatecutref, out dtWorkorder)))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
+                    if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                     {
-                        if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
-                        {
-                            transactionscope.Dispose();
-                            MyUtility.Msg.WarningBox("Duplicate Cutref. Please redo Auto Ref#");
-                        }
-                        else
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(upResult);
-                        }
+                        transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Duplicate Cutref. Please redo Auto Ref#");
                     }
                     else
                     {
-                        transactionscope.Complete();
+                        transactionscope.Dispose();
+                        this.ShowErr(upResult);
+                    }
+                }
+                else
+                {
+                    transactionscope.Complete();
+                    if (dtWorkorder.Rows.Count > 0)
+                    {
+                        Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
                     }
                 }
             }
