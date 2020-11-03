@@ -1528,6 +1528,44 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 return;
             }
 
+            #region 檢查
+            string cmd = $@"
+SELECT [SP No.]=pd.OrderID
+    , [Style No.]=o.StyleID
+    , [ColorWay]=pd.Article
+    , [Color]=pd.Color
+    , [Size]=pd.SizeCode
+    , [Seq]=pd.OrderShipmodeSeq
+    , [CTN#]=pd.CTNStartNo
+FROM PackingList p
+INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
+INNER JOIN ShipMode s ON p.ShipModeID = s.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.ID='{this.CurrentMaintain["ID"]}'
+AND s.NeedCreateAPP = 1 
+AND pd.NW = 0
+AND pd.CTNQty = 1
+";
+            DataTable dt;
+            DBProxy.Current.Select(null, cmd, out dt);
+
+            if (dt.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(dt, "When shipmode need to create Air Pre-Paid, [N.W./Ctn] can't be 0, Please help to modify [N.W./Ctn] of the following data.");
+
+                m.Width = 850;
+                m.grid1.Columns[0].Width = 100;
+                m.grid1.Columns[1].Width = 100;
+                m.grid1.Columns[2].Width = 100;
+                m.grid1.Columns[3].Width = 100;
+                m.grid1.Columns[4].Width = 100;
+                m.grid1.Columns[5].Width = 100;
+                m.grid1.Columns[6].Width = 100;
+                m.TopMost = true;
+                return;
+            }
+            #endregion
+
             string sqlcmd = $@"exec dbo.usp_Packing_P03_Confirm '{this.CurrentMaintain["ID"]}','{Env.User.Factory}','{Env.User.UserID}','1'";
             DataTable dtSP = new DataTable();
             if (this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtSP))
