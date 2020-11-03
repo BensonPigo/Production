@@ -3418,7 +3418,7 @@ left join WorkOrder_distribute wd on t.WorkOrderUkey = wd.WorkOrderUkey and t.Or
 where wd.WorkOrderUkey is null
 
 INSERT INTO [dbo].[WorkOrder_Distribute]([WorkOrderUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
-select t.WorkOrderUkey, '{this.CurrentMaintain["ID"]}', t.OrderID, t.Article, t.SizeCode,t.Qty
+select t.WorkOrderUkey, '{this.CurrentMaintain["ID"]}', t.OrderID, isnull(t.Article, ''), isnull(t.SizeCode, ''),isnull(t.Qty, 0)
 from #tmp t 
 left join WorkOrder_distribute wd on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
 where wd.WorkOrderUkey is null
