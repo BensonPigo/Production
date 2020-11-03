@@ -3398,47 +3398,44 @@ select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrd
             }
             #endregion
             #endregion
-            #region Distribute 修改
-            #region 刪除
-            foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted))
-            {
-                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
-                {
-                    WorkOrderUkey = (long)dr["WorkOrderUkey", DataRowVersion.Original],
-                    SizeCode = (string)dr["SizeCode", DataRowVersion.Original],
-                    Article = (string)dr["Article", DataRowVersion.Original],
-                    OrderID = (string)dr["OrderID", DataRowVersion.Original],
-                });
-                delsql += string.Format("Delete From WorkOrder_distribute Where WorkOrderUkey={0} and SizeCode ='{1}' and Article = '{2}' and OrderID = '{3}' and id='{4}';", dr["WorkOrderUkey", DataRowVersion.Original], dr["SizeCode", DataRowVersion.Original], dr["Article", DataRowVersion.Original], dr["Orderid", DataRowVersion.Original], cId);
-            }
-            #endregion
-            #region 修改
-            foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Modified))
-            {
-                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
-                {
-                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
-                });
-                updatesql += $@"
-Update WorkOrder_distribute
-set Qty = {dr["Qty"]},SizeCode = '{dr["SizeCode"]}',Article = '{dr["Article"]}',OrderID = '{dr["OrderID"]}'
-where WorkOrderUkey ={dr["WorkOrderUkey"]} 
-and SizeCode = '{dr["SizeCode", DataRowVersion.Original]}'
-and Article = '{dr["Article", DataRowVersion.Original]}'
-and OrderID = '{dr["OrderID", DataRowVersion.Original]}'
-and ID ='{dr["ID", DataRowVersion.Original]}'; ";
-            }
-            #endregion
-            #region 新增
-            foreach (DataRow dr in this.distqtyTb.AsEnumerable().Where(x => x.RowState == DataRowState.Added))
-            {
-                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
-                {
-                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
-                });
-                insertsql += string.Format("Insert into WorkOrder_distribute(WorkOrderUkey,SizeCode,Qty,Article,OrderID,ID) values({0},'{1}',{2},'{3}','{4}','{5}'); ", dr["WorkOrderUkey"], dr["SizeCode"], dr["Qty"], dr["Article"], dr["OrderID"], cId);
-            }
-            #endregion
+            #region Distribute 修改 注意:因 WorkOrder_Distribute 的 Pkey 即畫面上欄位可修改, 用 DataRowState 判斷不準, EX:001,002改成002,003
+
+            // API需要, 新刪修資料故要先撈出再變更
+            string deleteDistribute = $@"
+select wd.*
+from WorkOrder_distribute wd
+left join #tmp t on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
+where wd.id ='{this.CurrentMaintain["ID"]}' and t.WorkOrderUkey is null
+
+delete wd
+from WorkOrder_distribute wd
+left join #tmp t on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
+where wd.id ='{this.CurrentMaintain["ID"]}' and t.WorkOrderUkey is null
+";
+            string updateDistribute = $@"
+select wd.*
+from WorkOrder_distribute wd
+inner join #tmp t on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
+where wd.id ='{this.CurrentMaintain["ID"]}' 
+
+UPDATE wd set 
+	wd.Qty = t.Qty
+from WorkOrder_distribute wd
+inner join #tmp t on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
+where wd.id ='{this.CurrentMaintain["ID"]}'
+";
+            string insertDistribute = $@"
+select t.*
+from #tmp t 
+left join WorkOrder_distribute wd on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
+where wd.WorkOrderUkey is null
+
+INSERT INTO [dbo].[WorkOrder_Distribute]([WorkOrderUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
+select t.WorkOrderUkey, '{this.CurrentMaintain["ID"]}', t.OrderID, isnull(t.Article, ''), isnull(t.SizeCode, ''),isnull(t.Qty, 0)
+from #tmp t 
+left join WorkOrder_distribute wd on t.WorkOrderUkey = wd.WorkOrderUkey and t.OrderID = wd.OrderID and t.Article = wd.Article and t.SizeCode  = wd.SizeCode
+where wd.WorkOrderUkey is null
+";
             #endregion
             #region PatternPanel 刪除/新增/(無修改)
             #region 刪除
@@ -3497,6 +3494,50 @@ and ID ='{dr["ID", DataRowVersion.Original]}'; ";
                     return upResult;
                 }
             }
+
+            #region Execute Distribute
+            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(this.distqtyTb, string.Empty, deleteDistribute, out DataTable deleteDis)))
+            {
+                return upResult;
+            }
+
+            foreach (DataRow dr in deleteDis.Rows)
+            {
+                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey", DataRowVersion.Original],
+                    SizeCode = (string)dr["SizeCode", DataRowVersion.Original],
+                    Article = (string)dr["Article", DataRowVersion.Original],
+                    OrderID = (string)dr["OrderID", DataRowVersion.Original],
+                });
+            }
+
+            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(this.distqtyTb, string.Empty, updateDistribute, out DataTable updateDis)))
+            {
+                return upResult;
+            }
+
+            foreach (DataRow dr in updateDis.Rows)
+            {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                });
+            }
+
+            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(this.distqtyTb, string.Empty, insertDistribute, out DataTable insertDis)))
+            {
+                return upResult;
+            }
+
+            foreach (DataRow dr in insertDis.Rows)
+            {
+                editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderUkey"],
+                });
+            }
+            #endregion
 
             #region sent data to GZ WebAPI
             string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
