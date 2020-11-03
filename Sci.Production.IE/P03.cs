@@ -102,7 +102,7 @@ namespace Sci.Production.IE
 select  ld.OriNO
 	, ld.No
 	, ld.IsPPA
-	, [IsHide] = cast(iif(ld.IsHide = 1, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)))) as bit)
+	, [IsHide] = cast(iif(ld.IsHide = 1, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)
 	, ld.MachineTypeID
 	, ld.MasterPlusGroup	
     , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
@@ -1386,7 +1386,7 @@ select ID = null
        , ld.Threadcolor
        , ld.ActCycle
        , ld.MasterPlusGroup
-		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)))
+		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))
 		,[IsGroupHeader] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0)
 		,[IsSewingOperation] = cast(iif(show.IsDesignatedArea = 1, 1, 0) as bit)
         ,[IsShow] = isnull(show.IsShowinIEP03, 1)
@@ -1508,7 +1508,7 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)) as bit)
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
 	,[IsGroupHeader] = 0
 	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
     ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
@@ -1547,7 +1547,7 @@ select ID = null
 	   , Efficiency = 100
        , IsPPA  = iif(td.SMV > 0,0,1)
        ,o.MasterPlusGroup
-	   ,[IsHide] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0))) as bit)
+	   ,[IsHide] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) as bit)
 	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
 	   ,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
        ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
@@ -1588,7 +1588,7 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)) as bit)
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
 	,[IsGroupHeader] = 0
 	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
     ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
@@ -1628,7 +1628,7 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)) as bit)
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
 	,[IsGroupHeader] = 0
 	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
     ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
@@ -1668,7 +1668,7 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 1, 1, 0)) as bit)
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
 	,[IsGroupHeader] = 0
 	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
     ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
