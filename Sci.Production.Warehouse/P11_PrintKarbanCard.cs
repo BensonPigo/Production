@@ -126,17 +126,21 @@ outer apply (
 	select SizeCode = stuff((
 		select concat('/', ib.SizeCode)
 		from Issue_Breakdown ib 
-		where ib.Id = i.Id
-		order by ib.OrderID, ib.Article, ib.SizeCode
+		left join order_sizecode os on ib.OrderID = os.Id and ib.SizeCode = os.SizeCode
+		where ib.Id = i.id
+		group by ib.SizeCode, os.Seq
+		order by os.Seq
 		for xml path('')
 	),1,1,'')
 )ib_size
 outer apply (
 	select Qty = stuff((
-		select concat('/', ib.Qty)
+		select concat('/', sum(ib.Qty))
 		from Issue_Breakdown ib 
-		where ib.Id = i.Id
-		order by ib.OrderID, ib.Article, ib.SizeCode
+		left join order_sizecode os on ib.OrderID = os.Id and ib.SizeCode = os.SizeCode
+		where ib.Id = i.id
+		group by ib.SizeCode, os.Seq
+		order by os.Seq
 		for xml path('')
 	),1,1,'')
 )ib_Qty
