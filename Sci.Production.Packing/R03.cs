@@ -153,13 +153,13 @@ select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPON
 	Dest=(select Alias from Country ct where ct.id=pl.Dest),
 	o.StyleID,o.BrandID,pl.CustCDID,o.SewLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
 	pl.Status,o.Qty,
-	TtlCTNS=sum(pld.CTNQty),
-	TtlQty=sum(pld.ShipQty),
-	TtlNw=sum(pld.NW),
-	TtlGW=sum(pld.GW),
-	TtlCBM=sum(cbm.CBM)*sum(pld.CTNQty),
+	TtlCTNS= PackingListDetail_Sum.TtlCTNS,
+	TtlQty=PackingListDetail_Sum.TtlQty,
+	TtlNw=PackingListDetail_Sum.TtlNw,
+	TtlGW=PackingListDetail_Sum.TtlGW,
+	TtlCBM=sum(cbm.CBM)*PackingListDetail_Sum.TtlCTNS,
 	PurchaseCTN= iif(LocalPo.RequestID is null ,'N','Y'),
-	ClogCFMStatus=iif(count(pld.ID) = count(pld.ReceiveDate), 'Y','N'),
+	ClogCFMStatus=iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N'),
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
 	pl.Remark
@@ -171,6 +171,17 @@ outer apply(
 	inner join LocalPO l with(nolock) on l.id = ld.Id
 	where RequestID=pl.ID and l.status = 'Approved'
 )LocalPo
+outer apply(
+	select [TtlCTNS]=sum(pd.CTNQty) 
+	,[TtlQty]=SUM(pd.ShipQty) 
+	,[TtlNw]=sum(pd.NW)
+	,[TtlGW]=sum(pd.GW)
+	,[CtnID]=count(pd.ID)
+	,[CtnRecDate]=count(pd.ReceiveDate)
+	from PackingList p with(nolock) 
+	INNER JOIN PackingList_Detail pd with(nolock) ON p.ID = pd.ID
+	where pd.OrderID= pld.OrderID  and pd.DisposeFromClog = 0 AND p.MDivisionID = pl.MDivisionID  and p.FactoryID = pl.FactoryID
+)PackingListDetail_Sum
 outer apply(select CBM from LocalItem where Refno = pld.Refno) cbm
 where 1=1 and pld.DisposeFromClog= 0
 {where}
@@ -181,7 +192,13 @@ group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustP
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
 	pl.Remark,
-	LocalPo.RequestID
+	LocalPo.RequestID,
+	PackingListDetail_Sum.TtlCTNs,
+	PackingListDetail_Sum.TtlQty,
+	PackingListDetail_Sum.TtlNw,
+	PackingListDetail_Sum.TtlGW,
+	PackingListDetail_Sum.CtnID,
+	PackingListDetail_Sum.CtnRecDate
 order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
