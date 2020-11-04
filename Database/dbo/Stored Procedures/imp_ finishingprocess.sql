@@ -180,6 +180,13 @@ End
 
 -- Do Something
 Begin
+	--用來判斷transaction是否有被update到PMS，在update SCIUpdate判斷使用
+	Create table #tmpSCIUpdateCanUpdate
+	(
+		SCICtnNo varchar(15) null,
+		Type varchar(15) null
+	)
+
 	--01. PackingList_Detail / TransferLocation
 	--只撈取 Clog P02、P08 資料
 	Begin
@@ -188,7 +195,7 @@ Begin
 		from TransferLocation s
 		outer apply(
 			select SCICtnNo, ID
-				, ROW_NUMBER() over(PARTITION BY SCICtnNo order by ID desc) r_ID
+				, ROW_NUMBER() over(PARTITION BY SCICtnNo,Type order by ID desc) r_ID
 			from TransferLocation t
 			where SCICtnNo = s.SCICtnNo
 			and SCIUpdate = s.SCIUpdate
@@ -221,6 +228,9 @@ Begin
 			-- Insert TransferToClog 
 		Begin
 			insert into Production.dbo.TransferToClog(TransferDate, MDivisionID, PackingListID, OrderID, CTNStartNo, AddDate, OldID, TransferSlipNo, AddName, SCICtnNo)
+			output	INSERTED.SCICtnNo,
+					'FtyToClog' as [Type]
+				into #tmpSCIUpdateCanUpdate
 			select [TransferDate] = CONVERT(date, t.Time)
 				,MDvisionID = (select top 1 ID from Production.dbo.MDivision)
 				,[PackingListID] = pd.ID
@@ -272,6 +282,9 @@ Begin
 			-- Update ClogReceiveCFA
 		Begin
 			insert into Production.dbo.ClogReceiveCFA(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate, SCICtnNo)
+			output	INSERTED.SCICtnNo,
+					'CFAToClog' as [Type]
+				into #tmpSCIUpdateCanUpdate
 			select [ReceiveDate] = CONVERT(date, t.Time)
 				,[MDvisionID] = (select top 1 ID from Production.dbo.MDivision)
 				,[OrderID] = pd.OrderID
@@ -339,11 +352,17 @@ Begin
 		set t.SCIUpdate=1
 		from TransferLocation t
 		where exists(
-			select * 
+			select 1 
 			from #tmp_LastLocation tmp
 			inner join Production.dbo.PackingList_Detail pd 
 				on tmp.SCICtnNo = pd.SCICtnNo
-			where tmp.SCICtnNo= t.SCICtnNo and row=1
+			where tmp.SCICtnNo= t.SCICtnNo and t.Type = 'UpdLocation' and row=1
+		)
+		or
+		exists(
+			select 1
+			from #tmpSCIUpdateCanUpdate scup
+			where scup.SCICtnNo = t.SCICtnNo and scup.Type = t.Type
 		)
 
 		-- MiniToPallet
@@ -358,6 +377,8 @@ Begin
 			where tmp.SCICtnNo= t.SCICtnNo and row=1
 		)
 	End
+
+	drop table #tmpSCIUpdateCanUpdate
 
 	--05 ClogReturn / CompleteClogReturn
 	Begin
