@@ -95,6 +95,7 @@
             this.displayKIT = new Sci.Win.UI.DisplayBox();
             this.boxPackingRemark = new Sci.Win.UI.EditBox();
             this.txtDest = new Sci.Production.Class.Txtcountry();
+            this.chkVasShas = new Sci.Win.UI.CheckBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -843,9 +844,23 @@
             this.txtDest.TabIndex = 106;
             this.txtDest.TextBox1Binding = "";
             // 
+            // chkVasShas
+            // 
+            this.chkVasShas.AutoSize = true;
+            this.chkVasShas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkVasShas.IsSupportEditMode = false;
+            this.chkVasShas.Location = new System.Drawing.Point(354, 127);
+            this.chkVasShas.Name = "chkVasShas";
+            this.chkVasShas.ReadOnly = true;
+            this.chkVasShas.Size = new System.Drawing.Size(95, 21);
+            this.chkVasShas.TabIndex = 118;
+            this.chkVasShas.Text = "VAS/SHAS";
+            this.chkVasShas.UseVisualStyleBackColor = true;
+            // 
             // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 662);
+            this.Controls.Add(this.chkVasShas);
             this.Controls.Add(this.boxPackingRemark);
             this.Controls.Add(this.displayKIT);
             this.Controls.Add(this.label4);
@@ -950,6 +965,7 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.displayKIT, 0);
             this.Controls.SetChildIndex(this.boxPackingRemark, 0);
+            this.Controls.SetChildIndex(this.chkVasShas, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -1030,5 +1046,6 @@
         private Win.UI.Label label4;
         private Win.UI.DisplayBox displayKIT;
         private Win.UI.EditBox boxPackingRemark;
+        private Win.UI.CheckBox chkVasShas;
     }
 }
