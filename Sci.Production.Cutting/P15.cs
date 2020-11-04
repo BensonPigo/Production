@@ -914,6 +914,7 @@ select f.patternCode,f.PatternDesc,f.Parts, art = isnull(art, ''), m.cutref, m.p
 	NoBundleCardAfterSubprocess_String = ISNULL(ns, ''),
 	PostSewingSubProcess_String=ISNULL(ps, ''),
     m.MDivisionId,m.StyleUkey,m.Article
+into #bundleinfo
 from #msa m
 inner join FtyStyleInnovation f with(NOLOCK) on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey  and f.Article = m.Article
 outer apply(
@@ -939,6 +940,17 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )p
+
+select b.patternCode,b.PatternDesc,b.Parts,b.art,b.cutref,b.poid,b.ukey,b.ispair,b.Location,b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,b.MDivisionId,b.StyleUkey,b.Article
+from #bundleinfo b
+union all
+select distinct
+	patternCode='ALLPARTS',
+	PatternDesc='All Parts',
+	Parts=0,art='',b.cutref,b.poid,b.ukey,b.ispair,
+	Location='',b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,b.MDivisionId,b.StyleUkey,b.article
+from #bundleinfo b
+where not exists(select 1 from #bundleinfo c where c.MDivisionId = b.MDivisionId and c.StyleUkey = b.StyleUkey and c.article = b.article and c.CutRef = b.CutRef and c.Patterncode = 'ALLPARTS')
 
 select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,m.MDivisionId,m.StyleUkey,m.Article
 from #msa m
