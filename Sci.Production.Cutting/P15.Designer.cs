@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.labelBalance = new Sci.Win.UI.Label();
             this.labelBalanceValue = new Sci.Win.UI.Label();
@@ -84,6 +84,8 @@
             this.labelGroup = new Sci.Win.UI.Label();
             this.BtnClose = new Sci.Win.UI.Button();
             this.BtnBatchCreate = new Sci.Win.UI.Button();
+            this.btnDefault = new Sci.Win.UI.Button();
+            this.lbinfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -321,8 +323,12 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.lbinfo);
+            this.splitContainer2.Panel2.Controls.Add(this.btnDefault);
             this.splitContainer2.Panel2.Controls.Add(this.radioGroup1);
             this.splitContainer2.Panel2.Controls.Add(this.labelGroup);
+            this.splitContainer2.Panel2.Controls.Add(this.BtnColorComb);
+            this.splitContainer2.Panel2.Controls.Add(this.BtnGarmentList);
             this.splitContainer2.Panel2.Controls.Add(this.BtnClose);
             this.splitContainer2.Panel2.Controls.Add(this.BtnBatchCreate);
             this.splitContainer2.Panel2MinSize = 45;
@@ -345,7 +351,7 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer7);
             this.splitContainer3.Size = new System.Drawing.Size(1155, 557);
-            this.splitContainer3.SplitterDistance = 242;
+            this.splitContainer3.SplitterDistance = 241;
             this.splitContainer3.TabIndex = 2;
             // 
             // splitContainer4
@@ -361,7 +367,7 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(1155, 242);
+            this.splitContainer4.Size = new System.Drawing.Size(1155, 241);
             this.splitContainer4.SplitterDistance = 560;
             this.splitContainer4.TabIndex = 3;
             // 
@@ -380,20 +386,20 @@
             this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutRef.Location = new System.Drawing.Point(0, 0);
             this.gridCutRef.Name = "gridCutRef";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;
             this.gridCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutRef.ShowCellToolTips = false;
-            this.gridCutRef.Size = new System.Drawing.Size(560, 242);
+            this.gridCutRef.Size = new System.Drawing.Size(560, 241);
             this.gridCutRef.TabIndex = 6;
             this.gridCutRef.TabStop = false;
             this.gridCutRef.SelectionChanged += new System.EventHandler(this.GridCutRef_SelectionChanged);
@@ -412,7 +418,7 @@
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.gridArticleSize);
-            this.splitContainer5.Size = new System.Drawing.Size(591, 242);
+            this.splitContainer5.Size = new System.Drawing.Size(591, 241);
             this.splitContainer5.SplitterDistance = 131;
             this.splitContainer5.TabIndex = 4;
             // 
@@ -433,7 +439,7 @@
             // splitContainer6.Panel2
             // 
             this.splitContainer6.Panel2.Controls.Add(this.gridQty);
-            this.splitContainer6.Size = new System.Drawing.Size(131, 242);
+            this.splitContainer6.Size = new System.Drawing.Size(131, 241);
             this.splitContainer6.SplitterDistance = 25;
             this.splitContainer6.TabIndex = 0;
             // 
@@ -482,20 +488,20 @@
             this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQty.Location = new System.Drawing.Point(0, 0);
             this.gridQty.Name = "gridQty";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQty.RowTemplate.Height = 24;
             this.gridQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQty.ShowCellToolTips = false;
-            this.gridQty.Size = new System.Drawing.Size(131, 213);
+            this.gridQty.Size = new System.Drawing.Size(131, 212);
             this.gridQty.TabIndex = 8;
             this.gridQty.TabStop = false;
             this.gridQty.SelectionChanged += new System.EventHandler(this.GridQty_SelectionChanged);
@@ -516,20 +522,20 @@
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridArticleSize.Location = new System.Drawing.Point(0, 0);
             this.gridArticleSize.Name = "gridArticleSize";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
             this.gridArticleSize.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridArticleSize.ShowCellToolTips = false;
-            this.gridArticleSize.Size = new System.Drawing.Size(456, 242);
+            this.gridArticleSize.Size = new System.Drawing.Size(456, 241);
             this.gridArticleSize.TabIndex = 9;
             this.gridArticleSize.TabStop = false;
             // 
@@ -567,14 +573,12 @@
             // 
             this.splitContainer7.Panel1.Controls.Add(this.label1);
             this.splitContainer7.Panel1.Controls.Add(this.label5);
-            this.splitContainer7.Panel1.Controls.Add(this.BtnGarmentList);
-            this.splitContainer7.Panel1.Controls.Add(this.BtnColorComb);
             this.splitContainer7.Panel1MinSize = 28;
             // 
             // splitContainer7.Panel2
             // 
             this.splitContainer7.Panel2.Controls.Add(this.splitContainer8);
-            this.splitContainer7.Size = new System.Drawing.Size(1155, 311);
+            this.splitContainer7.Size = new System.Drawing.Size(1155, 312);
             this.splitContainer7.SplitterDistance = 28;
             this.splitContainer7.TabIndex = 0;
             // 
@@ -584,9 +588,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.label1.Location = new System.Drawing.Point(9, 3);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(139, 23);
+            this.label1.Size = new System.Drawing.Size(187, 23);
             this.label1.TabIndex = 111;
-            this.label1.Text = "Bundle Card Data";
+            this.label1.Text = "Bundle Card Information";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // label5
@@ -603,9 +607,9 @@
             // 
             // BtnGarmentList
             // 
-            this.BtnGarmentList.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.BtnGarmentList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnGarmentList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnGarmentList.Location = new System.Drawing.Point(500, 0);
+            this.BtnGarmentList.Location = new System.Drawing.Point(598, 11);
             this.BtnGarmentList.Name = "BtnGarmentList";
             this.BtnGarmentList.Size = new System.Drawing.Size(97, 28);
             this.BtnGarmentList.TabIndex = 102;
@@ -615,9 +619,9 @@
             // 
             // BtnColorComb
             // 
-            this.BtnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnColorComb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnColorComb.Location = new System.Drawing.Point(1052, 0);
+            this.BtnColorComb.Location = new System.Drawing.Point(699, 11);
             this.BtnColorComb.Name = "BtnColorComb";
             this.BtnColorComb.Size = new System.Drawing.Size(97, 28);
             this.BtnColorComb.TabIndex = 103;
@@ -638,7 +642,7 @@
             // splitContainer8.Panel2
             // 
             this.splitContainer8.Panel2.Controls.Add(this.splitContainer9);
-            this.splitContainer8.Size = new System.Drawing.Size(1155, 279);
+            this.splitContainer8.Size = new System.Drawing.Size(1155, 280);
             this.splitContainer8.SplitterDistance = 560;
             this.splitContainer8.TabIndex = 0;
             // 
@@ -658,20 +662,20 @@
             this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutpart.Location = new System.Drawing.Point(0, 0);
             this.gridCutpart.Name = "gridCutpart";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutpart.RowTemplate.Height = 24;
             this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCutpart.ShowCellToolTips = false;
-            this.gridCutpart.Size = new System.Drawing.Size(560, 279);
+            this.gridCutpart.Size = new System.Drawing.Size(560, 280);
             this.gridCutpart.TabIndex = 80;
             this.gridCutpart.TabStop = false;
             // 
@@ -712,7 +716,7 @@
             // splitContainer9.Panel2
             // 
             this.splitContainer9.Panel2.Controls.Add(this.gridAllPart);
-            this.splitContainer9.Size = new System.Drawing.Size(591, 279);
+            this.splitContainer9.Size = new System.Drawing.Size(591, 280);
             this.splitContainer9.SplitterDistance = 41;
             this.splitContainer9.TabIndex = 1;
             // 
@@ -754,20 +758,20 @@
             this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridAllPart.Location = new System.Drawing.Point(0, 0);
             this.gridAllPart.Name = "gridAllPart";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAllPart.RowTemplate.Height = 24;
             this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAllPart.ShowCellToolTips = false;
-            this.gridAllPart.Size = new System.Drawing.Size(546, 279);
+            this.gridAllPart.Size = new System.Drawing.Size(546, 280);
             this.gridAllPart.TabIndex = 77;
             this.gridAllPart.TabStop = false;
             // 
@@ -867,6 +871,32 @@
             this.BtnBatchCreate.UseVisualStyleBackColor = true;
             this.BtnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
+            // btnDefault
+            // 
+            this.btnDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDefault.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnDefault.Location = new System.Drawing.Point(12, 11);
+            this.btnDefault.Name = "btnDefault";
+            this.btnDefault.Size = new System.Drawing.Size(80, 28);
+            this.btnDefault.TabIndex = 104;
+            this.btnDefault.Text = "Default";
+            this.btnDefault.UseVisualStyleBackColor = true;
+            this.btnDefault.Click += new System.EventHandler(this.BtnDefault_Click);
+            // 
+            // lbinfo
+            // 
+            this.lbinfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbinfo.AutoSize = true;
+            this.lbinfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbinfo.ForeColor = System.Drawing.Color.Red;
+            this.lbinfo.Location = new System.Drawing.Point(98, 14);
+            this.lbinfo.Name = "lbinfo";
+            this.lbinfo.Size = new System.Drawing.Size(455, 15);
+            this.lbinfo.TabIndex = 105;
+            this.lbinfo.Text = "The bundle card information/All Parts Detail is different from  default(pattern r" +
+    "oom)\"";
+            this.lbinfo.Visible = false;
+            // 
             // P15
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -887,6 +917,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
@@ -985,5 +1016,7 @@
         private Win.UI.ContextMenuStrip ArticleSizeMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem InsertAS_MenuItem;
         private System.Windows.Forms.ToolStripMenuItem DeleteAS_MenuItem;
+        private System.Windows.Forms.Label lbinfo;
+        private Win.UI.Button btnDefault;
     }
 }
