@@ -226,6 +226,7 @@
     <Compile Include="P08_Import.Designer.cs">
       <DependentUpon>P08_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="P11_PrintKarbanCard_PrintData.cs" />
     <Compile Include="P08_PrintFabircSticker_PrintData.cs" />
     <Compile Include="P17_ExcelImport.cs">
       <SubType>Form</SubType>
@@ -539,6 +540,12 @@
     </Compile>
     <Compile Include="P62_Print.Designer.cs">
       <DependentUpon>P62_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P11_PrintKarbanCard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P11_PrintKarbanCard.Designer.cs">
+      <DependentUpon>P11_PrintKarbanCard.cs</DependentUpon>
     </Compile>
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
@@ -1539,6 +1546,9 @@
     <EmbeddedResource Include="P62_Print.resx">
       <DependentUpon>P62_Print.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P11_PrintKarbanCard.resx">
+      <DependentUpon>P11_PrintKarbanCard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -2019,11 +2029,15 @@
     <EmbeddedResource Include="P08_PrintFabircSticker.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P11_PrintKarbanCard.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P08_PrintFabircSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_RelaxationSticker_Data.datasource" />
     <None Include="Properties\DataSources\P11_PrintData.datasource" />
+    <None Include="Properties\DataSources\P11_PrintKarbanCard_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P14_PrintData.datasource" />

@@ -58,6 +58,17 @@ namespace Sci.Production.Warehouse
             this.SubDetailKeyField2 = "id,Issue_DetailUkey"; // third FK
 
             this.DoSubForm = this.subform;
+
+            #region 新增 Print Kanban Card 按鈕
+            Win.UI.Button btnPrintKanbanCard = new Win.UI.Button
+            {
+                Text = "Print Kanban Card",
+                Size = new Size(137, 30),
+            };
+
+            btnPrintKanbanCard.Click += new EventHandler(this.BtnPrintKanbanCard_Click);
+            this.browsetop.Controls.Add(btnPrintKanbanCard);
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -784,7 +795,6 @@ where Cutplan.id='{0}' and Cutplan.Mdivisionid = '{1}' AND o.Category != 'A'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.Getpoid();
             if (!(this.CurrentMaintain == null))
             {
                 this.displayCutCell.Text = MyUtility.GetValue.Lookup(string.Format("select CutCellID from dbo.cutplan WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["cutplanid"]));
@@ -810,6 +820,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
                 #region -- POID
                 this.Getpoid();
                 this.displayPOID.Text = this.poid;
+                this.displayCustCD.Text = MyUtility.GetValue.Lookup(string.Format("select CustCDID from dbo.Orders WITH (NOLOCK) where id='{0}'", this.poid));
                 #endregion
 
                 #region -- matrix breakdown
@@ -1842,11 +1853,13 @@ and Factory.mdivisionid = '{Env.User.Keyword}'
                     this.CurrentMaintain["cutplanid"] = string.Empty;
                     this.txtRequest.Text = string.Empty;
                     this.txtOrderID.Text = string.Empty;
+                    this.displayCustCD.Text = string.Empty;
                     MyUtility.Msg.WarningBox("Can't found data");
                     return;
                 }
 
                 this.displayPOID.Text = this.poid;
+                this.displayCustCD.Text = MyUtility.GetValue.Lookup(string.Format("select CustCDID from dbo.Orders WITH (NOLOCK) where id='{0}'", this.poid));
 
                 // CurrentMaintain["orderid"] = this.poid;
             }
@@ -2093,6 +2106,13 @@ where  o.id ='{this.CurrentMaintain["orderid"]}'
                     }
                 }
             }
+        }
+
+        private void BtnPrintKanbanCard_Click(object sender, EventArgs e)
+        {
+            var frm = new P11_PrintKarbanCard();
+            frm.ShowDialog(this);
+            this.RenewData();
         }
     }
 }
