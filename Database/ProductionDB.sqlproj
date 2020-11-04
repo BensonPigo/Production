@@ -2560,8 +2560,8 @@
     <Build Include="dbo\Tables\SubProCustomColumn_Detail.sql" />
     <Build Include="dbo\Tables\SubProCustomColumn.sql" />
     <Build Include="dbo\Tables\FtyStyleInnovation_Artwork.sql" />
-    <Build Include="dbo\Tables\FtyStyleInnovation_AllPart.sql" />
     <Build Include="dbo\Tables\FtyStyleInnovation.sql" />
+    <Build Include="dbo\Tables\FtyStyleInnovationAllPart.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
