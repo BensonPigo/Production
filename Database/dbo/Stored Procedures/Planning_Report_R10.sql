@@ -111,6 +111,8 @@ BEGIN
 	AND @HasOrders = 1
 	And localorder = 0
 	and Factory.IsProduceFty = 1
+	and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
 	
 	Select Orders.ID
 	, rtrim(iif(Factory.FactorySort = '999', Factory.KpiCode, Factory.ID)) as FactoryID
@@ -188,6 +190,8 @@ BEGIN
 	AND Orders.LocalOrder = 1 -- PMS此處才加, 當地訂單在trade是記錄在Table:FactoryOrder
 	AND Orders.IsForecast = 0
 	and Factory.IsProduceFty = 1
+	and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
 
 	Select FactoryOrder.ID, rtrim(FactoryOrder.FactoryID) as FactoryID
 	, iif(Factory.Type = 'S', 'Sample', Factory.MDivisionID) as MDivisionID
@@ -271,7 +275,8 @@ BEGIN
 	And localorder = 0
 	AND Orders.IsForecast = 1 -- PMS此處才加, 預估單 在trade是記錄在Table:FactoryOrder
 	and Factory.IsProduceFty = 1
-	and (Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or Orders.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+	and ((@isSCIDelivery = 1 and Orders.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))
+		or (@isSCIDelivery = 0 and Orders.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0)))
 
 	---------------------------------------------------------------------------------------------------------------------------------
 	
