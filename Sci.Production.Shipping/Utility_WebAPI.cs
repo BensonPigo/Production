@@ -60,16 +60,30 @@ namespace Sci.Production.Shipping
         /// <param name="requestUri">Request Url</param>
         /// <param name="jsonBody">Json Body</param>
         /// <param name="automationErrMsg">Automation Err Msg</param>
-        public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, CustomsWebAPIErrMsg automationErrMsg)
+        public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, CustomsWebAPIErrMsg customsWebAPIErrMsg)
         {
             WebApiBaseResult webApiBaseResult;
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 130);
 
             if (!webApiBaseResult.isSuccess)
             {
-                automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
-                SaveCustomsErrMsg(automationErrMsg);
+                customsWebAPIErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
+                SaveCustomsErrMsg(customsWebAPIErrMsg);
             }
+        }
+
+        public static void CustomsExceptionHandler(Task task)
+        {
+            var exception = task.Exception;
+            MyUtility.Msg.ErrorBox(exception.ToString());
+        }
+
+        public static dynamic AppendBaseInfo(dynamic bodyObject, string apiTag)
+        {
+            dynamic newBodyObject = bodyObject;
+            newBodyObject.APItags = apiTag;
+            newBodyObject.CmdTime = DateTime.Now;
+            return newBodyObject;
         }
 
         public class CustomsWebAPIErrMsg
@@ -112,12 +126,6 @@ namespace Sci.Production.Shipping
                 this.errorCode = errorCode;
                 this.errorMsg = errorMsg;
                 this.json = json;
-            }
-
-            public static void CustomsExceptionHandler(Task task)
-            {
-                var exception = task.Exception;
-                MyUtility.Msg.ErrorBox(exception.ToString());
             }
 
             public delegate ErrorRespone ParsingErrResponse(string webApiBaseResult);
@@ -199,25 +207,12 @@ namespace Sci.Production.Shipping
                new SqlParameter("@AddName", Env.User.UserID),
             };
 
-            DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
+            Ict.DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
 
             if (!result)
             {
                 throw result.GetException();
             }
         }
-
-        public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
-        {
-            WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 130);
-
-            if (!webApiBaseResult.isSuccess)
-            {
-                automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
-                SaveCustomsErrMsg(automationErrMsg);
-            }
-        }
-
     }
 }

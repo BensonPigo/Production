@@ -29,7 +29,7 @@ namespace Sci.Production.Shipping
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject.CustomsMasterKey = funListCustomsKey;
-            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "WorkOrder_Distribute"));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateStructure("SentCustoms_load", bodyObject));
 
             Utility_WebAPI.SendWebAPI(UtilityAutomation.GetSciUrl(), systemAPIThread, jsonBody, this.customsErrMsg);
         }
