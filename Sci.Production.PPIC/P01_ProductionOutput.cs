@@ -445,7 +445,7 @@ with SewQty as (
 			, ComboType = sl.Location
 			, QAQty = isnull(sum(sdd.QAQty),0)
 	from Orders o WITH (NOLOCK) 
-    inner join {locationTable}
+    left join {locationTable}
 	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
 															  and sdd.Article = oq.Article 
@@ -482,7 +482,7 @@ select LastSewingDate = max(LastSewingDate.value)
 ,SewQty = isnull(sum(t.SewQty),0)
 from #tmp t
 outer apply(
-	select value =(s.OutputDate)
+	select  value = max(s.OutputDate)
 	from SewingOutput_Detail sd WITH (NOLOCK) 
 	inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
 	and sd.OrderId = t.OrderID
