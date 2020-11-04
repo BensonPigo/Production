@@ -47,6 +47,13 @@
             this.txtmultifactory1 = new Sci.Production.Class.Txtmultifactory();
             this.lbShipper = new Sci.Win.UI.Label();
             this.txtShipper = new Sci.Win.UI.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCopyCustomsSP = new Sci.Win.UI.Button();
+            this.txtSubconFromContract = new Sci.Win.UI.TextBox();
+            this.txtSubconFromFty = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.labSubconFromFty = new Sci.Win.UI.Label();
+            this.chkSubconIn = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,10 +66,13 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkSubconIn);
+            this.masterpanel.Controls.Add(this.groupBox1);
             this.masterpanel.Controls.Add(this.txtShipper);
             this.masterpanel.Controls.Add(this.lbShipper);
             this.masterpanel.Controls.Add(this.txtmultifactory1);
@@ -82,7 +92,7 @@
             this.masterpanel.Controls.Add(this.labelStartDate);
             this.masterpanel.Controls.Add(this.dateEndDate);
             this.masterpanel.Controls.Add(this.dateStartDate);
-            this.masterpanel.Size = new System.Drawing.Size(912, 191);
+            this.masterpanel.Size = new System.Drawing.Size(963, 191);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateStartDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEndDate, 0);
@@ -103,11 +113,13 @@
             this.masterpanel.Controls.SetChildIndex(this.txtmultifactory1, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtShipper, 0);
+            this.masterpanel.Controls.SetChildIndex(this.groupBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkSubconIn, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 191);
-            this.detailpanel.Size = new System.Drawing.Size(912, 227);
+            this.detailpanel.Size = new System.Drawing.Size(963, 227);
             // 
             // gridicon
             // 
@@ -119,7 +131,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 227);
+            this.detailgridcont.Size = new System.Drawing.Size(963, 227);
             // 
             // detail2
             // 
@@ -135,24 +147,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(912, 456);
+            this.detail.Size = new System.Drawing.Size(963, 456);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(912, 418);
+            this.detailcont.Size = new System.Drawing.Size(963, 418);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 418);
-            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            this.detailbtm.Size = new System.Drawing.Size(963, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(912, 417);
+            this.browse.Size = new System.Drawing.Size(963, 456);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(920, 485);
+            this.tabs.Size = new System.Drawing.Size(971, 485);
             // 
             // createby
             // 
@@ -284,15 +296,15 @@
             this.editSubcon.Location = new System.Drawing.Point(390, 39);
             this.editSubcon.Multiline = true;
             this.editSubcon.Name = "editSubcon";
-            this.editSubcon.Size = new System.Drawing.Size(358, 50);
+            this.editSubcon.Size = new System.Drawing.Size(379, 50);
             this.editSubcon.TabIndex = 3;
             // 
             // btnImportData
             // 
             this.btnImportData.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportData.Location = new System.Drawing.Point(498, 96);
+            this.btnImportData.Location = new System.Drawing.Point(835, 12);
             this.btnImportData.Name = "btnImportData";
-            this.btnImportData.Size = new System.Drawing.Size(100, 30);
+            this.btnImportData.Size = new System.Drawing.Size(115, 30);
             this.btnImportData.TabIndex = 90;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
@@ -301,9 +313,9 @@
             // btnAddNewNLCode
             // 
             this.btnAddNewNLCode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAddNewNLCode.Location = new System.Drawing.Point(603, 96);
+            this.btnAddNewNLCode.Location = new System.Drawing.Point(784, 48);
             this.btnAddNewNLCode.Name = "btnAddNewNLCode";
-            this.btnAddNewNLCode.Size = new System.Drawing.Size(151, 30);
+            this.btnAddNewNLCode.Size = new System.Drawing.Size(166, 30);
             this.btnAddNewNLCode.TabIndex = 91;
             this.btnAddNewNLCode.Text = "Add New Customs Code";
             this.btnAddNewNLCode.UseVisualStyleBackColor = true;
@@ -330,6 +342,7 @@
             // txtmultifactory1
             // 
             this.txtmultifactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtmultifactory1.CheckProduceFty = false;
             this.txtmultifactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtmultifactory1.IsSupportEditMode = false;
             this.txtmultifactory1.Location = new System.Drawing.Point(118, 159);
@@ -357,10 +370,88 @@
             this.txtShipper.Size = new System.Drawing.Size(130, 23);
             this.txtShipper.TabIndex = 6;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnCopyCustomsSP);
+            this.groupBox1.Controls.Add(this.txtSubconFromContract);
+            this.groupBox1.Controls.Add(this.txtSubconFromFty);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.labSubconFromFty);
+            this.groupBox1.Location = new System.Drawing.Point(586, 99);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(369, 83);
+            this.groupBox1.TabIndex = 92;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Subcon From";
+            // 
+            // btnCopyCustomsSP
+            // 
+            this.btnCopyCustomsSP.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCopyCustomsSP.Location = new System.Drawing.Point(226, 16);
+            this.btnCopyCustomsSP.Name = "btnCopyCustomsSP";
+            this.btnCopyCustomsSP.Size = new System.Drawing.Size(132, 30);
+            this.btnCopyCustomsSP.TabIndex = 95;
+            this.btnCopyCustomsSP.Text = "Copy Customs SP";
+            this.btnCopyCustomsSP.UseVisualStyleBackColor = true;
+            this.btnCopyCustomsSP.Click += new System.EventHandler(this.BtnCopyCustomsSP_Click);
+            // 
+            // txtSubconFromContract
+            // 
+            this.txtSubconFromContract.BackColor = System.Drawing.Color.White;
+            this.txtSubconFromContract.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubconFromContractID", true));
+            this.txtSubconFromContract.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubconFromContract.Location = new System.Drawing.Point(104, 52);
+            this.txtSubconFromContract.Name = "txtSubconFromContract";
+            this.txtSubconFromContract.Size = new System.Drawing.Size(173, 23);
+            this.txtSubconFromContract.TabIndex = 13;
+            this.txtSubconFromContract.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSubconFromContract_PopUp);
+            this.txtSubconFromContract.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconFromContract_Validating);
+            // 
+            // txtSubconFromFty
+            // 
+            this.txtSubconFromFty.BackColor = System.Drawing.Color.White;
+            this.txtSubconFromFty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubconFromSystem", true));
+            this.txtSubconFromFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubconFromFty.Location = new System.Drawing.Point(104, 21);
+            this.txtSubconFromFty.Name = "txtSubconFromFty";
+            this.txtSubconFromFty.Size = new System.Drawing.Size(108, 23);
+            this.txtSubconFromFty.TabIndex = 12;
+            this.txtSubconFromFty.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSubconFromFty_PopUp);
+            this.txtSubconFromFty.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconFromFty_Validating);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(13, 52);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(88, 23);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Contract No.";
+            // 
+            // labSubconFromFty
+            // 
+            this.labSubconFromFty.Location = new System.Drawing.Point(13, 21);
+            this.labSubconFromFty.Name = "labSubconFromFty";
+            this.labSubconFromFty.Size = new System.Drawing.Size(88, 23);
+            this.labSubconFromFty.TabIndex = 10;
+            this.labSubconFromFty.Text = "Factory";
+            // 
+            // chkSubconIn
+            // 
+            this.chkSubconIn.AutoSize = true;
+            this.chkSubconIn.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSubconIn", true));
+            this.chkSubconIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSubconIn.Location = new System.Drawing.Point(490, 101);
+            this.chkSubconIn.Name = "chkSubconIn";
+            this.chkSubconIn.Size = new System.Drawing.Size(90, 21);
+            this.chkSubconIn.TabIndex = 94;
+            this.chkSubconIn.Text = "Subcon In";
+            this.chkSubconIn.UseVisualStyleBackColor = true;
+            this.chkSubconIn.CheckedChanged += new System.EventHandler(this.ChkSubconIn_CheckedChanged);
+            // 
             // B43
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(920, 518);
+            this.ClientSize = new System.Drawing.Size(971, 518);
             this.DefaultControl = "dateStartDate";
             this.DefaultControlForEdit = "dateStartDate";
             this.DefaultDetailOrder = "NLCode";
@@ -395,6 +486,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -421,5 +514,12 @@
         private Class.Txtmultifactory txtmultifactory1;
         private Win.UI.TextBox txtShipper;
         private Win.UI.Label lbShipper;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private Win.UI.CheckBox chkSubconIn;
+        private Win.UI.TextBox txtSubconFromContract;
+        private Win.UI.TextBox txtSubconFromFty;
+        private Win.UI.Label label2;
+        private Win.UI.Label labSubconFromFty;
+        private Win.UI.Button btnCopyCustomsSP;
     }
 }

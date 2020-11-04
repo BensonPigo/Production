@@ -121,6 +121,19 @@ from VNConsumption where 1=0";
                 string usageUnit = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C"));
                 string remark = string.Empty;
 
+                // 匯入的檔案ContractID 是SubconIn 就提示訊息不能匯入
+                DataRow drCheck;
+                string checkIsSubconIn = $@"select IsSubconIn from VNContract where id ='{contractID}'";
+                if (MyUtility.Check.Seek(checkIsSubconIn, out drCheck))
+                {
+                    if (!MyUtility.Check.Empty(drCheck["IsSubconIn"]))
+                    {
+                        MyUtility.Msg.WarningBox("Cannot import [Contract ID] which is [Subcon In]");
+                        this.HideWaitMessage();
+                        return;
+                    }
+                }
+
                 string b42checkSQL = string.Format(@"select * from VNConsumption  with(nolock) where VNContractID = '{0}' and CustomSP = '{1}'", contractID, customSP);
                 DataRow drc;
                 bool isExistsB42 = MyUtility.Check.Seek(b42checkSQL, out drc);

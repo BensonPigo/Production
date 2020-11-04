@@ -98,11 +98,24 @@ where vdd.ID = '{0}'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.numBalanceQty.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Qty"]) - MyUtility.Convert.GetDecimal(this.CurrentMaintain["PulloutQty"]);
             string colorWay = MyUtility.GetValue.Lookup(string.Format("select CONCAT(Article, ',') from VNConsumption_Article WITH (NOLOCK) where ID = '{0}' order by Article for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.editColorway.Text = MyUtility.Check.Empty(colorWay) ? string.Empty : colorWay.Substring(0, colorWay.Length - 1);
             string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? string.Empty : sizeGroup.Substring(0, sizeGroup.Length - 1);
+
+            // Contract No.  IsSubConIn = true,則不能編輯
+            if (!this.IsDetailInserting)
+            {
+                string sqlcmd = $@"select * from VNContract where IsSubconIn = 1 and ID='{this.CurrentMaintain["VNContractID"]}'";
+                if (MyUtility.Check.Seek(sqlcmd))
+                {
+                    this.IsSupportEdit = false;
+                }
+                else
+                {
+                    this.IsSupportEdit = true;
+                }
+            }
         }
 
         private void ClearDetailDt(DataRow curDr)
@@ -523,13 +536,6 @@ from System WITH (NOLOCK) ");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Qty"]))
-            {
-                this.numQty.Focus();
-                MyUtility.Msg.WarningBox("Q'ty can't empty!!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.editColorway.Text))
             {
                 this.editColorway.Focus();
@@ -734,7 +740,9 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode)
             {
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed'", "15,10,10", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
+                string sqlcmd = "select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed' and IsSubconIn = 0";
+
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "15,10,10", this.txtContractNo.Text, headercaptions: "Contract No.,Start Date, End Date");
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
                 {
@@ -750,14 +758,14 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
         {
             if (this.EditMode && this.txtContractNo.OldValue != this.txtContractNo.Text && !MyUtility.Check.Empty(this.txtContractNo.Text))
             {
-                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", this.txtContractNo.Text)))
+                if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and IsSubconIn = 0", this.txtContractNo.Text)))
                 {
                     this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Contract no. not found!!");
                     return;
                 }
-                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and GETDATE() between StartDate and EndDate", this.txtContractNo.Text)))
+                else if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and IsSubconIn = 0 and GETDATE() between StartDate and EndDate", this.txtContractNo.Text)))
                 {
                     this.txtContractNo.Text = string.Empty;
                     e.Cancel = true;

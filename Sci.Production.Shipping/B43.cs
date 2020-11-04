@@ -14,6 +14,7 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class B43 : Win.Tems.Input6
     {
+        private string RegionCode;
         /// <summary>
         /// B43
         /// </summary>
@@ -22,6 +23,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.RegionCode = MyUtility.GetValue.Lookup("select RgCode from Production..System");
         }
 
         /// <inheritdoc/>
@@ -85,12 +87,16 @@ namespace Sci.Production.Shipping
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
+            this.chkSubconIn.ReadOnly = false;
+            this.txtSubconFromContract.ReadOnly = true;
+            this.txtSubconFromFty.ReadOnly = true;
         }
 
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
+            this.ControlEnable(true);
 
             this.dateStartDate.ReadOnly = true;
             this.dateEndDate.ReadOnly = true;
@@ -153,6 +159,15 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Grand Total Q'ty can't empty!!");
                 return false;
             }
+
+            if (this.chkSubconIn.Checked)
+            {
+                if (MyUtility.Check.Empty(this.txtSubconFromFty.Text) || MyUtility.Check.Empty(this.txtSubconFromContract.Text))
+                {
+                    MyUtility.Msg.WarningBox(@"Customs contract is subcon order, please maintain subcon from [Factory] & [Contract No.].");
+                    return false;
+                }
+            }
             #endregion
 
             #region 檢查日期正確性
@@ -192,7 +207,14 @@ namespace Sci.Production.Shipping
             }
             #endregion
 
+            this.ControlEnable(true);
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickUndo()
+        {
+            this.ControlEnable(true);
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>
@@ -361,6 +383,121 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
             if (result == DialogResult.OK)
             {
                 this.RenewData();
+            }
+        }
+
+        private void ControlEnable(bool isReadOnly)
+        {
+            this.txtSubconFromContract.ReadOnly = isReadOnly;
+            this.txtSubconFromFty.ReadOnly = isReadOnly;
+            this.chkSubconIn.ReadOnly = isReadOnly;
+        }
+
+        private void TxtSubconFromFty_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = $@"select * from SystemWebAPIURL where CountryID='VN' and SystemName != '{this.RegionCode}' ";
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8,6,25,20,4", this.txtSubconFromFty.Text, "System Name,Country ID,URL,Environment,Junk");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSubconFromFty.Text = item.GetSelecteds()[0]["SystemName"].ToString();
+
+            if (!MyUtility.Check.Empty(this.txtSubconFromFty.Text))
+            {
+                this.txtSubconFromContract.ReadOnly = false;
+            }
+        }
+
+        private void TxtSubconFromFty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (string.Compare(this.txtSubconFromFty.OldValue, this.txtSubconFromFty.Text, true) != 0 || 
+                MyUtility.Check.Empty(this.txtSubconFromFty.Text))
+            {
+                this.CurrentMaintain["SubconFromSystem"] = this.txtSubconFromFty.Text;
+                this.CurrentMaintain["SubconFromContractID"] = string.Empty;
+            }
+
+            string sqlcmd = $@"select * from SystemWebAPIURL where CountryID='VN' and SystemName != '{this.RegionCode}'  and SystemName ='{this.txtSubconFromFty.Text}'";
+
+            if (!MyUtility.Check.Seek(sqlcmd) && !MyUtility.Check.Empty(this.txtSubconFromFty.Text))
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                e.Cancel = true;
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtSubconFromFty.Text))
+            {
+                this.txtSubconFromContract.ReadOnly = true;
+            }
+            else
+            {
+                this.txtSubconFromContract.ReadOnly = false;
+            }
+        }
+
+        private void TxtSubconFromContract_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            // 待確認URL
+            string sqlcmd = $@"select ContractNo = id from VNContract where IsSubconIn = 0 order by ID";
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "18", this.txtSubconFromFty.Text, "ContractNo");
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSubconFromContract.Text = item.GetSelecteds()[0]["ContractNo"].ToString();
+        }
+
+        private void TxtSubconFromContract_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtSubconFromContract.Text))
+            {
+                return;
+            }
+
+            string sqlcmd = $@"select ContractNo = id from VNContract where IsSubconIn = 0 and id = '{this.txtSubconFromContract.Text}' ";
+
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                e.Cancel = true;
+                return;
+            }
+        }
+
+        private void BtnCopyCustomsSP_Click(object sender, EventArgs e)
+        {
+            if (!this.EditMode && this.chkSubconIn.Checked)
+            {
+                B43_Copy_CustomsSP callNextForm = new B43_Copy_CustomsSP(this.CurrentMaintain);
+                DialogResult result = callNextForm.ShowDialog(this);
+            }
+        }
+
+        private void ChkSubconIn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (EditMode)
+            {
+                if (((CheckBox)sender).Checked)
+                {
+                    this.txtSubconFromFty.ReadOnly = false;
+                    this.CurrentMaintain["IsSubconIn"] = 1;
+                }
+                else
+                {
+                    this.txtSubconFromContract.ReadOnly = true;
+                    this.txtSubconFromFty.ReadOnly = true;
+                    this.CurrentMaintain["IsSubconIn"] = 0;
+                    this.CurrentMaintain["SubconFromSystem"] = string.Empty;
+                    this.CurrentMaintain["SubconFromContractID"] = string.Empty;
+                }
             }
         }
     }
