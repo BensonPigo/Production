@@ -21,6 +21,8 @@
     [Editname]         VARCHAR (10)   NULL,
     [RepairedDatetime] DATETIME       NULL,
     [RepairedName]     VARCHAR (10)   NULL,
+	[Shift] VARCHAR(5) CONSTRAINT [DF_CutInsRecord_Shift] DEFAULT ('') NOT NULL,
+	[FactoryID] VARCHAR(8) CONSTRAINT [DF_CutInsRecord_FactoryID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_CutInsRecord] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
