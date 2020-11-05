@@ -322,13 +322,13 @@ Begin
 		 into #tmp_LastLocation
 		 from 
 		(
-			select ClogLocationId,Pallet,Time,SCICtnNo
-			from TransferLocation
-			where SCIUpdate=0 
+			select tfl.ClogLocationId, tfl.Pallet, tfl.Time, tfl.SCICtnNo
+			from TransferLocation tfl with (nolock)
+			where tfl.SCIUpdate=0 or exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = tfl.SCICtnNo)
 				union all
-			select ClogLocationId,Pallet,Time,SCICtnNo
-			from MiniToPallet
-			where SCIUpdate=0 
+			select mtp.ClogLocationId, mtp.Pallet, mtp.Time, mtp.SCICtnNo
+			from MiniToPallet mtp with (nolock)
+			where mtp.SCIUpdate=0 or exists(select 1 from #tmpTransferLocation ttfl where ttfl.SCICtnNo = mtp.SCICtnNo)
 		) a 
 
 		update pd
