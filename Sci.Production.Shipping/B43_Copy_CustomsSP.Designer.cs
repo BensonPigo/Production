@@ -331,9 +331,9 @@
             this.groupBox2.Controls.Add(this.txtSubconInFty);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(13, 3);
+            this.groupBox2.Location = new System.Drawing.Point(6, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(475, 56);
+            this.groupBox2.Size = new System.Drawing.Size(485, 56);
             this.groupBox2.TabIndex = 94;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Subcon In";

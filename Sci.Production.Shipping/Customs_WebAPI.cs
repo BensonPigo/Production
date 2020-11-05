@@ -4,59 +4,63 @@ using System.Dynamic;
 using Newtonsoft.Json;
 using static Sci.Production.Shipping.Utility_WebAPI;
 using System.Data;
+using System;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public class Customs_WebAPI
     {
-        private static readonly string FactoryID;
-        private static readonly string Country;
-        private CustomsWebAPIErrMsg customsErrMsg = new CustomsWebAPIErrMsg();
-
-        public static bool IsCustoms_WebAPIEnable => Utility_WebAPI.IsSystemWebAPIEnable(FactoryID, Country);
-
-        public void SentCustoms_load(DataTable funListCustomsKey)
+        /// <inheritdoc/>
+        public class ListContract
         {
-            if (funListCustomsKey.Rows.Count == 0)
-            {
-                return;
-            }
-
-            string apiThread = "SentDeleteWorkOrderFromAGV";
-            string systemAPIThread = "api/GuoziAGV/SentDeleteDataByApiTag";
-            this.customsErrMsg.apiThread = apiThread;
-            this.customsErrMsg.SystemAPIThread = systemAPIThread;
-
-            dynamic bodyObject = new ExpandoObject();
-            bodyObject.CustomsMasterKey = funListCustomsKey;
-            string jsonBody = JsonConvert.SerializeObject(this.CreateStructure("SentCustoms_load", bodyObject));
-
-            Utility_WebAPI.SendWebAPI(UtilityAutomation.GetSciUrl(), systemAPIThread, jsonBody, this.customsErrMsg);
+            /// <inheritdoc/>
+            public List<Contract> ContractDt { get; set; }
         }
 
-        private object CreateStructure(string tableName, object structureID)
+        /// <inheritdoc/>
+        public class Contract
         {
-            Dictionary<string, object> resultObj = new Dictionary<string, object>
-            {
-                { "TableArray", new string[] { tableName } },
-            };
-
-            Dictionary<string, object> dataStructure = new Dictionary<string, object>
-            {
-                { tableName, structureID },
-            };
-            resultObj.Add("DataTable", dataStructure);
-
-            return resultObj;
+            public string No { get; set; }
         }
 
-        public class CustomsMasterKey
+        /// <inheritdoc/>
+        public class ListCustomsCopyLoad
         {
-            public string StyleID { get; set; }
+            /// <inheritdoc/>
+            public List<CustomsCopyLoad> CustomsCopyLoadDt { get; set; }
+        }
 
-            public string BrandID { get; set; }
+        /// <inheritdoc/>
+        public class CustomsCopyLoad
+        {
+            /// <inheritdoc/>
+            public string CustomSP { get; set; }
 
-            public string ContractNo { get; set; }
+            /// <inheritdoc/>
+            public string Version { get; set; }
+
+            /// <inheritdoc/>
+            public DateTime CDate { get; set; }
+
+            /// <inheritdoc/>
+            public string Category { get; set; }
+
+            /// <inheritdoc/>
+            public string SizeCode { get; set; }
+
+            /// <inheritdoc/>
+            public string Article { get; set; }
+
+            /// <inheritdoc/>
+            public string SizeGroup { get; set; }
+        }
+
+        /// <inheritdoc/>
+        public class ListCustomsAllData
+        {
+            /// <inheritdoc/>
+            public DataSet GetCustomsAllDs { get; set; }
         }
     }
 }

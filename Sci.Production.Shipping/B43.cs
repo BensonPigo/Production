@@ -6,6 +6,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Sci.Production.Shipping
 {
@@ -15,6 +16,7 @@ namespace Sci.Production.Shipping
     public partial class B43 : Win.Tems.Input6
     {
         private string RegionCode;
+        private Customs_WebAPI.ListContract dataContract = new Customs_WebAPI.ListContract();
         /// <summary>
         /// B43
         /// </summary>
@@ -442,17 +444,32 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
         private void TxtSubconFromContract_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            // 待確認URL
-            string sqlcmd = $@"select ContractNo = id from VNContract where IsSubconIn = 0 order by ID";
-
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "18", this.txtSubconFromFty.Text, "ContractNo");
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel)
+            if (Production.Shipping.Utility_WebAPI.IsSystemWebAPIEnable(this.txtSubconFromFty.Text, "VN"))
             {
                 return;
             }
 
-            this.txtSubconFromContract.Text = item.GetSelecteds()[0]["ContractNo"].ToString();
+            Production.Shipping.Utility_WebAPI.GetContractNo(out this.dataContract);
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ContractNo", typeof(string));
+            DataRow dr;
+            if (this.dataContract != null && this.dataContract.ContractDt.Count > 0)
+            {
+                this.dataContract.ContractDt.ForEach((x) => {
+                    dr = dt.NewRow();
+                    dr["ContractNo"] = x.No;
+                    dt.Rows.Add(dr);
+                });
+
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "ContractNo", "18", this.txtSubconFromContract.Text);
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtSubconFromContract.Text = item.GetSelecteds()[0]["ContractNo"].ToString();
+            }
         }
 
         private void TxtSubconFromContract_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -462,14 +479,39 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            string sqlcmd = $@"select ContractNo = id from VNContract where IsSubconIn = 0 and id = '{this.txtSubconFromContract.Text}' ";
-
-            if (!MyUtility.Check.Seek(sqlcmd))
+            if (Utility_WebAPI.IsSystemWebAPIEnable(this.txtSubconFromFty.Text, "VN"))
             {
-                MyUtility.Msg.WarningBox("Data not found!");
-                e.Cancel = true;
                 return;
             }
+
+            Production.Shipping.Utility_WebAPI.GetContractNo(out this.dataContract);
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ContractNo", typeof(string));
+            DataRow dr;
+            if (this.dataContract != null && this.dataContract.ContractDt.Count > 0)
+            {
+                this.dataContract.ContractDt.ForEach((x) =>
+                {
+                    dr = dt.NewRow();
+                    dr["ContractNo"] = x.No;
+                    dt.Rows.Add(dr);
+                });
+
+                DataRow[] checkRow = dt.Select($"ContractNo = '{this.txtSubconFromContract.Text}'");
+                if (checkRow.Length <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                this.txtSubconFromContract.Text = string.Empty;
+                return;
+            }
+
         }
 
         private void BtnCopyCustomsSP_Click(object sender, EventArgs e)
