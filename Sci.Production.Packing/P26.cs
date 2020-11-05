@@ -33,7 +33,7 @@ namespace Sci.Production.Packing
         private List<string> wattingForConvert_contentsOfZPL = new List<string>();
         private List<Match> MatchList = new List<Match>();
         private List<PackingListCandidate_Datasource> PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
-        private List<Result> ErrorMsg = new List<Result>();
+        private List<Result> ConfirmMsg = new List<Result>();
 
         /// <summary>
         /// 目前處理的檔案格式
@@ -643,7 +643,7 @@ namespace Sci.Production.Packing
                 this.Grid_Match_Dt.Clear();
                 this.PackingListCandidate_Datasources.Clear();
                 this.MatchList.Clear();
-                this.ErrorMsg.Clear();
+                this.ConfirmMsg.Clear();
                 #endregion
 
                 this.ShowWaitMessage("Data Match....");
@@ -713,6 +713,14 @@ namespace Sci.Production.Packing
 
                             fileSeq++;
                         }
+                        else
+                        {
+                            foreach (var obj in item.UpdateModels)
+                            {
+                                string filename = obj.FileName;
+                                this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == filename).FirstOrDefault()["Result"] = "Count of files is different with Paacking List.";
+                            }
+                        }
                     }
                 }
 
@@ -739,6 +747,7 @@ namespace Sci.Production.Packing
                         if (matchData.PackingList_Candidate.Count() > 0)
                         {
                             matchData.FileSeq = fileSeq;
+
                             PackingListCandidate_Datasource pDatas = new PackingListCandidate_Datasource()
                             {
                                 FileSeq = fileSeq,
@@ -760,9 +769,41 @@ namespace Sci.Production.Packing
 
                             fileSeq++;
                         }
+                        else
+                        {
+                            string filename = item.FileName;
+                            this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == filename).FirstOrDefault()["Result"] = "Count of files is different with Paacking List.";
+                        }
                     }
                 }
                 #endregion
+
+                #region 同時上傳相同PO + SSCC的處理方式
+                var ee = match_List.ToList();
+                List<int> dplicateFileSeq = new List<int>();
+
+                foreach (Match match in ee)
+                {
+                    var pO_CustCTNs = match.UpdateModels.Select(o => new { o.CustPONO, o.CustCTN }).Distinct().ToList();
+
+                    // 取得其他FileSeq，有相同PO + CustCTN的資料
+                    var isDuplicateCustCTN = match_List/*.Where(o => o.FileSeq != match.FileSeq)*/.Where(o => o.UpdateModels.Any(x => pO_CustCTNs.Any(t => t.CustPONO == x.CustPONO && t.CustCTN == x.CustCTN)));
+
+                    // 包含自己，所以要 > 1
+                    if (isDuplicateCustCTN.Count() > 1)
+                    {
+                        // 取得FileSeq
+                        string sameFileSeq = isDuplicateCustCTN.OrderBy(o => o.FileSeq).Select(o => o.FileSeq.ToString()).JoinToString(",");
+
+                        this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetInt(o["FileSeq"]) == match.FileSeq).FirstOrDefault()["Result"] = $"File Seq [{sameFileSeq}] have duplicate PO# + SSCC";
+                        dplicateFileSeq.Add(match.FileSeq);
+                    }
+                }
+
+                // 這些 File Seq 不進入 Match
+                match_List.RemoveAll(o => dplicateFileSeq.Contains(o.FileSeq));
+                #endregion
+
                 this.Grid_SelectedFile_Dt = this.Grid_SelectedFile_Dt.AsEnumerable().OrderBy(o => MyUtility.Convert.GetInt(o["FileSeq"])).CopyToDataTable();
 
                 this.listControlBindingSource1.DataSource = this.Grid_SelectedFile_Dt;
@@ -1737,23 +1778,10 @@ DROP TABLE #tmpOrders{i},#tmp{i}
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-
-                    //DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                    //List<DataRow> dl = dt.AsEnumerable().Where(o => fileNames.Contains(o["FileName"].ToString())).ToList();
-                    //foreach (DataRow dr in dl)
-                    //{
-                    //    dr["Result"] = "Pass";
-                    //}
                 }
                 catch (Exception ex)
                 {
                     transactionscope.Dispose();
-                    //DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-                    //foreach (DataRow dr in dt.Rows)
-                    //{
-                    //    dr["Result"] = "Fail";
-                    //}
-
                     this.ShowErr(ex);
                 }
             }
@@ -1890,9 +1918,9 @@ DROP TABLE #tmpOrders
             return sqlCmd;
         }
 
-        private void ShowErrorMsg()
+        private void ShowConfirmMsg()
         {
-            if (!this.ErrorMsg.Any())
+            if (!this.ConfirmMsg.Any())
             {
                 return;
             }
@@ -1901,7 +1929,7 @@ DROP TABLE #tmpOrders
             dt.ColumnsIntAdd("FileSeq");
             dt.ColumnsStringAdd("Result");
 
-            foreach (Result r in this.ErrorMsg)
+            foreach (Result r in this.ConfirmMsg)
             {
                 DataRow dr = dt.NewRow();
                 dr["FileSeq"] = r.FileSeq;
@@ -2066,13 +2094,13 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                 this.MatchList.RemoveAll(o => o.StickerAlreadyExisted && !o.Overwrite);
 
-                this.ErrorMsg.Clear();
+                this.ConfirmMsg.Clear();
                 List<Match> errorList = this.CollectErrorMsg();
 
                 // 錯誤的Match筆數 = 所有Match筆數，表示沒有任何一筆需要轉檔
                 if (errorList.Select(o => o.FileSeq).Distinct().Count() == this.MatchList.Select(o => o.FileSeq).Distinct().Count())
                 {
-                    this.ShowErrorMsg();
+                    this.ShowConfirmMsg();
                     return;
                 }
                 #endregion
@@ -2089,7 +2117,6 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 // 將 CustCtn already existed 列出的 PL 所有的 CustCTN 全數清空
                 DBProxy.Current.Execute(null, cmd);
 
-                bool isFinish = true;
                 List<int> failFileSeqs = new List<int>();
 
                 // 若StickerAlreadyExisted = true，則Overwrite必須為true才需要抓出來轉檔
@@ -2114,17 +2141,34 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
                     if (!p24 || !p03)
                     {
-                        isFinish = false;
                         failFileSeqs.Add(match.FileSeq);
+                    }
+                    else
+                    {
+                        bool stickerAlreadyExisted = this.MatchList.Where(o => o.FileSeq == match.FileSeq).FirstOrDefault().StickerAlreadyExisted;
+
+                        if (stickerAlreadyExisted)
+                        {
+                            Result r = new Result()
+                            {
+                                FileSeq = match.FileSeq,
+                                ResultMsg = "Overwrite success",
+                            };
+                            this.ConfirmMsg.Add(r);
+                        }
+                        else
+                        {
+                            Result r = new Result()
+                            {
+                                FileSeq = match.FileSeq,
+                                ResultMsg = "Upload success",
+                            };
+                            this.ConfirmMsg.Add(r);
+                        }
                     }
                 }
 
-                if (isFinish)
-                {
-                    MyUtility.Msg.InfoBox("Finish!");
-                }
-
-                this.ShowErrorMsg();
+                this.ShowConfirmMsg();
 
                 // 將左邊Grid 的Result更新
                 foreach (DataRow dr in this.Grid_SelectedFile_Dt.Rows)
@@ -2187,7 +2231,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                         FileSeq = item.FileSeq,
                         ResultMsg = "Multiple Matches and not choose the P/L.",
                     };
-                    this.ErrorMsg.Add(r);
+                    this.ConfirmMsg.Add(r);
                 }
 
                 // 記錄下無法執行上傳的項目
@@ -2206,7 +2250,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                         FileSeq = item.FileSeq,
                         ResultMsg = "Sticker basic setting not yet complete.",
                     };
-                    this.ErrorMsg.Add(r);
+                    this.ConfirmMsg.Add(r);
                 }
 
                 // 記錄下無法執行上傳的項目
@@ -2225,7 +2269,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                         FileSeq = item.FileSeq,
                         ResultMsg = "Carton already in Clog.",
                     };
-                    this.ErrorMsg.Add(r);
+                    this.ConfirmMsg.Add(r);
                 }
 
                 // 記錄下無法執行上傳的項目
@@ -2279,13 +2323,36 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                         FileSeq = match.FileSeq,
                         ResultMsg = "Exists Cust CTN.",
                     };
-                    this.ErrorMsg.Add(r);
+                    this.ConfirmMsg.Add(r);
 
                     // 記錄下無法執行上傳的項目
                     errorList.AddRange(this.MatchList.Where(o => o.FileSeq == match.FileSeq));
-                    this.MatchList.RemoveAll(o => o.FileSeq == match.FileSeq);
                 }
             }
+
+            // 確認這次上傳的檔案中是否有重複的CustCTN
+            var e = this.MatchList.ToList();
+            foreach (Match match in e)
+            {
+                List<string> custCTNs = match.UpdateModels.Select(o => o.CustCTN).Distinct().ToList();
+
+                bool isDuplicateCustCTN = this.MatchList.Where(o => o.FileSeq != match.FileSeq).Where(o => o.UpdateModels.Any(x => custCTNs.Contains(x.CustCTN))).Any();
+
+                if (isDuplicateCustCTN)
+                {
+                    Result r = new Result()
+                    {
+                        FileSeq = match.FileSeq,
+                        ResultMsg = "Duplicate CustCTN.",
+                    };
+                    this.ConfirmMsg.Add(r);
+
+                    // 記錄下無法執行上傳的項目
+                    errorList.AddRange(this.MatchList.Where(o => o.FileSeq == match.FileSeq));
+                }
+            }
+
+            this.MatchList.RemoveAll(o => errorList.Where(x => x.FileSeq == o.FileSeq).Any());
 
             return errorList;
         }
