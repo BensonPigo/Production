@@ -7,6 +7,7 @@ using Ict;
 using Sci.Data;
 using System.Linq;
 using System.Collections.Generic;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Shipping
 {
@@ -17,6 +18,8 @@ namespace Sci.Production.Shipping
     {
         private string RegionCode;
         private Customs_WebAPI.ListContract dataContract = new Customs_WebAPI.ListContract();
+        private string ModuleType;
+
         /// <summary>
         /// B43
         /// </summary>
@@ -26,6 +29,15 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             this.RegionCode = MyUtility.GetValue.Lookup("select RgCode from Production..System");
+
+            if (PmsWebAPI.IsDummy)
+            {
+                this.ModuleType = "Dummy";
+            }
+            else
+            {
+                this.ModuleType = "Formal";
+            }
         }
 
         /// <inheritdoc/>
@@ -213,6 +225,7 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickUndo()
         {
             this.ControlEnable(true);
@@ -397,7 +410,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
         private void TxtSubconFromFty_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlcmd = $@"select * from SystemWebAPIURL where CountryID='VN' and SystemName != '{this.RegionCode}' ";
+            string sqlcmd = $@"select * from SystemWebAPIURL where CountryID='VN' and SystemName != '{this.RegionCode}' and Environment = '{this.ModuleType}'";
 
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8,6,25,20,4", this.txtSubconFromFty.Text, "System Name,Country ID,URL,Environment,Junk");
             DialogResult returnResult = item.ShowDialog();
@@ -416,7 +429,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
         private void TxtSubconFromFty_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (string.Compare(this.txtSubconFromFty.OldValue, this.txtSubconFromFty.Text, true) != 0 || 
+            if (string.Compare(this.txtSubconFromFty.OldValue, this.txtSubconFromFty.Text, true) != 0 ||
                 MyUtility.Check.Empty(this.txtSubconFromFty.Text))
             {
                 this.CurrentMaintain["SubconFromSystem"] = this.txtSubconFromFty.Text;
@@ -455,7 +468,8 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
             DataRow dr;
             if (this.dataContract != null && this.dataContract.ContractDt.Count > 0)
             {
-                this.dataContract.ContractDt.ForEach((x) => {
+                this.dataContract.ContractDt.ForEach((x) =>
+                {
                     dr = dt.NewRow();
                     dr["ContractNo"] = x.No;
                     dt.Rows.Add(dr);
@@ -511,7 +525,6 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
                 this.txtSubconFromContract.Text = string.Empty;
                 return;
             }
-
         }
 
         private void BtnCopyCustomsSP_Click(object sender, EventArgs e)
@@ -525,7 +538,7 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
         private void ChkSubconIn_CheckedChanged(object sender, EventArgs e)
         {
-            if (EditMode)
+            if (this.EditMode)
             {
                 if (((CheckBox)sender).Checked)
                 {

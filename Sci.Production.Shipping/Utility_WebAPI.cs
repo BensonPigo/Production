@@ -41,10 +41,10 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        public static string SystemName;
+        private static string SystemName;
 
         /// <summary>
-        /// check SystemWebAPIURL is enable or exists 
+        /// check SystemWebAPIURL is enable or exists
         /// </summary>
         /// <param name="factoryID"> Factory ID</param>
         /// <param name="country"> Region Code</param>
@@ -127,7 +127,6 @@ where SystemName = '{SystemName}' and CountryID = '{Country}' and Environment = 
                     string convtJson = Regex.Replace(json, @"(\d+\/\d+)""", "$1\\\"");
 
                     dataMode = JsonConvert.DeserializeObject<ListCustomsAllData>(convtJson);
-                    //dataMode = JsonConvert.DeserializeObject<Customs_WebAPI.ListCustomsAllData>(json);
                 }
             }
             catch (Exception ex)
@@ -139,6 +138,5 @@ where SystemName = '{SystemName}' and CountryID = '{Country}' and Environment = 
 
             return true;
         }
-
     }
 }

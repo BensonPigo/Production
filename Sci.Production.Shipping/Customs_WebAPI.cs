@@ -1,10 +1,10 @@
-﻿using Sci.Production.Automation;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Dynamic;
 using Newtonsoft.Json;
+using Sci.Production.Automation;
 using static Sci.Production.Shipping.Utility_WebAPI;
-using System.Data;
-using System;
 
 namespace Sci.Production.Shipping
 {
@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         public class Contract
         {
+            /// <inheritdoc/>
             public string No { get; set; }
         }
 
