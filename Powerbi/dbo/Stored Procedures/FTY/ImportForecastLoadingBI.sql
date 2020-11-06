@@ -9,6 +9,7 @@
 -- 2020/06/18 [ISP20201059] Add Requirement Factory.IsProduceFty = 1
 -- 2020/06/23 [ISP20201087] 增加欄位[Sew_Qty by Rate]
 -- 2020/09/07 [ISP20201472] 大改版
+-- 2020/11/06 [ISP20201779] 調整ForecastLoadingBI轉出的資料, KPI Month+5資料都不轉出
 CREATE PROCEDURE [dbo].[ImportForecastLoadingBI] 
 
 @StartDate date,
@@ -18,9 +19,9 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	DECLARE @Date_S DATE = @StartDate--'2019-01-08';  --當月8號
-	DECLARE @Date_E DATE = @EndDate--DATEADD(m, DATEDIFF(m,0,DATEADD(yy,1,GETDATE())),6);--隔年7號
+	DECLARE @Date_E DATE = @EndDate--DATEADD(m, DATEDIFF(m,0,DATEADD(MM,5,GETDATE())),6)--當月+5個月的7號
 	DECLARE @YearMonth_S date = '2019-01-01';--當月
-	DECLARE @YearMonth_E date = dateadd(m, 5, getdate())--往後推算12個月
+	DECLARE @YearMonth_E date = DATEADD(m, DATEDIFF(m,0,DATEADD(MM,5,GETDATE())),-1) -- 當月+5個月(當月+4個月的最後一天) 
 	DECLARE @YearEnd date = '2021-12-31'
 
 	--重新建立Power BI的Report Table
@@ -156,7 +157,9 @@ From(
 		Left join Production.dbo.Order_TmsCost tmsCost on tmsCost.Id = orders.ID
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate -- 加入
-		WHERE Orders.Category IN ('B', 'S') and (Orders.SciDelivery between @Date_S and @Date_E or Orders.BuyerDelivery between @YearMonth_S and @YearEnd) and Orders.LocalOrder <> '1'
+		WHERE Orders.Category IN ('B', 'S') 
+		and (Orders.SciDelivery between @Date_S and @Date_E or Orders.BuyerDelivery between @YearMonth_S and @YearMonth_E) 
+		and Orders.LocalOrder <> '1'
 	) as a
 	PIVOT
 	(
@@ -182,7 +185,9 @@ From(
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.ForecastCategory, Forecast.BrandID, 'S')) getCPURate
-		WHERE Forecast.ForecastCategory IN ('B', 'S') and Forecast.BuyerDelivery between @Date_S and @Date_E and (Style.Ukey is null OR Style.Junk = 0)
+		WHERE Forecast.ForecastCategory IN ('B', 'S') 
+		and Forecast.BuyerDelivery between @Date_S and @YearMonth_E 
+		and (Style.Ukey is null OR Style.Junk = 0)
 	) as a
 	PIVOT
 	(
@@ -208,7 +213,8 @@ From(
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select 1 as CpuRate ) getCPURate
-		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2', '3') and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearEnd )
+		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2', '3') 
+		and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearMonth_E )
 	) as a
 	PIVOT
 	(
@@ -235,7 +241,8 @@ From(
 		inner join #UseArtworkType at on at.id = tmsCost.ArtworkTypeID
 		inner join Production.dbo.Factory f on FactoryOrder.ProgramID=f.ID and f.IsProduceFty=1
 		Outer Apply (select 1 as CpuRate ) getCPURate
-		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType = '2' and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearEnd)
+		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType = '2' 
+		and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearMonth_E)
 	) as a
 	PIVOT
 	(
@@ -360,7 +367,7 @@ OUTER APPLY(
 outer apply Production.dbo.GetSCI(Orders.POID, Orders.Category) as GetSci
 inner JOIN #atSource atSource on atSource.ID = Orders.ID
 WHERE orders.Category IN ('B', 'S')
-and (Orders.SciDelivery between @Date_S and @Date_E or Orders.BuyerDelivery between @YearMonth_S and @YearEnd)
+and (Orders.SciDelivery between @Date_S and @Date_E or Orders.BuyerDelivery between @YearMonth_S and @YearMonth_E)
 and Orders.LocalOrder <> '1'
 and Factory.IsProduceFty = 1
 
@@ -468,8 +475,8 @@ outer apply (select CpuRate from Production.dbo.GetCPURate(Forecast.OrderTypeID,
 outer apply (select cast(0 as numeric(16,4)) Price) as Price
 --outer apply (select Rate from Production.dbo.GetCurrencyRate('FX', Forecast.CurrencyID, 'USD', Forecast.AddDate)) as Rate
 WHERE Forecast.ForecastCategory IN ('B', 'S')
---and Forecast.BuyerDelivery between @Date_S and @Date_E
-and Forecast.BuyerDelivery between @YearMonth_S and @Date_E and (Style.Ukey is null OR Style.Junk = 0) and Factory.IsProduceFty = 1
+and Forecast.BuyerDelivery between @YearMonth_S and @YearMonth_E 
+and (Style.Ukey is null OR Style.Junk = 0) and Factory.IsProduceFty = 1
 
 UNION ALL
 
@@ -576,7 +583,7 @@ OUTER APPLY(
 )SewingQtybyRate
 WHERE FactoryOrder.Junk = 0 
 and FactoryOrder.Qty > 0
-and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearEnd)
+and (FactoryOrder.SCIDelivery between @Date_S and @Date_E or FactoryOrder.BuyerDelivery between @YearMonth_S and @YearMonth_E)
 ) a
  
 
@@ -613,7 +620,8 @@ From #tmpOrderList
 		LEFT JOIN Production.dbo.Factory ON Orders.FactoryID =Factory.ID 
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate
 
-		WHERE Orders.Category IN ('B', 'S') and Orders.SciDelivery between @Date_S and @Date_E
+		WHERE Orders.Category IN ('B', 'S') 
+		and Orders.SciDelivery between @Date_S and @Date_E
 		And Orders.LocalOrder <> '1'
 		And Factory.IsProduceFty = 1
 		And (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1))
@@ -641,7 +649,8 @@ From #tmpOrderList
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join Production.dbo.ArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select CpuRate From Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.ForecastCategory, Forecast.BrandID, 'S')) getCPURate
-		WHERE Forecast.ForecastCategory IN ('B', 'S') and Forecast.BuyerDelivery between @Date_S and @Date_E and (Style.Ukey is null OR Style.Junk = 0)
+		WHERE Forecast.ForecastCategory IN ('B', 'S') and Forecast.BuyerDelivery between @Date_S and @YearMonth_E 
+		and (Style.Ukey is null OR Style.Junk = 0)
 	UNION
 		--FactoryOrder
 		Select FactoryOrder.ID
@@ -666,7 +675,8 @@ From #tmpOrderList
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join Production.dbo.ArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select 1.0 as CpuRate ) getCPURate
-		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2', '3') and FactoryOrder.SCIDelivery between @Date_S and @Date_E
+		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2', '3') 
+		and FactoryOrder.SCIDelivery between @Date_S and @Date_E
 	UNION
 		--負的FactoryOrder
 		Select FactoryOrder.ID
@@ -691,7 +701,8 @@ From #tmpOrderList
 		Left join Production.dbo.Style_TmsCost tmsCost on tmsCost.StyleUKey = Style.Ukey
 		Left join Production.dbo.ArtworkType at on at.id = tmsCost.ArtworkTypeID
 		Outer Apply (select 1.0 as CpuRate ) getCPURate
-		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2') and FactoryOrder.SCIDelivery between @Date_S and @Date_E
+		WHERE FactoryOrder.Junk = 0 and FactoryOrder.Qty > 0 and FactoryOrder.SubconInType in ('2') 
+		and FactoryOrder.SCIDelivery between @Date_S and @Date_E
 	) source
 
 	select 
@@ -737,7 +748,7 @@ From #tmpOrderList
 		OUTER APPLY (SELECT CpuRate FROM Production.dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'O')) getCPURate
 
 		WHERE orders.Category IN ('B', 'S')
-		And Orders.BuyerDelivery between @YearMonth_S and @YearEnd
+		And Orders.BuyerDelivery between @YearMonth_S and @YearMonth_E
 		And Orders.LocalOrder <> '1'
 		And Factory.IsProduceFty = 1
 		And (Orders.Junk = 0 OR (Orders.Junk = 1 AND Orders.NeedProduction = 1))
@@ -768,7 +779,7 @@ From #tmpOrderList
 		LEFT JOIN Production.dbo.ArtworkType at ON at.id = tmsCost.ArtworkTypeID
 		OUTER APPLY (SELECT CpuRate FROM Production.dbo.GetCPURate(Forecast.OrderTypeID, Forecast.ProgramID, Forecast.Category, Forecast.BrandID, 'S')) getCPURate
 		WHERE Forecast.Category IN ('B', 'S') 
-		AND Forecast.BuyerDelivery between @YearMonth_S and @YearEnd 
+		AND Forecast.BuyerDelivery between @YearMonth_S and @YearMonth_E 
 		AND (Style.Ukey IS NULL OR Style.Junk = 0)
 	UNION
 		--FactoryOrder
@@ -799,7 +810,7 @@ From #tmpOrderList
 		WHERE FactoryOrder.Junk = 0
 		AND FactoryOrder.Qty > 0
 		AND FactoryOrder.SubconInType IN ('2', '3')
-		AND FactoryOrder.BuyerDelivery between @YearMonth_S and @YearEnd
+		AND FactoryOrder.BuyerDelivery between @YearMonth_S and @YearMonth_E
 	UNION
 		--負的FactoryOrder
 		SELECT FactoryOrder.ID
@@ -829,7 +840,7 @@ From #tmpOrderList
 		WHERE FactoryOrder.Junk = 0
 		AND FactoryOrder.Qty > 0
 		AND FactoryOrder.SubconInType IN ('2')
-		AND FactoryOrder.BuyerDelivery between @YearMonth_S and @YearEnd	
+		AND FactoryOrder.BuyerDelivery between @YearMonth_S and @YearMonth_E	
 	) source
 
 	SELECT
