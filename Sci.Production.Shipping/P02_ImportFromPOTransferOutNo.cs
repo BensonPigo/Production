@@ -90,7 +90,7 @@ namespace Sci.Production.Shipping
 
             string sqlCmd = $@"
 select Selected = 0 
-    , a.*
+    , a.ID,a.SEQ1,SEQ2,Price,UnitID,BrandID,Leader,LeaderID,SuppID,Supplier,Receiver,CTNNo,NW,FOC
     , POQty = isnull(a.POQty,0) + isnull(a.FOC,0)
     , AccuExpressQty = a.ExpressQty
     , Qty = iif(isnull(a.POQty,0)+isnull(a.FOC,0)-isnull(a.ExpressQty,0)>0,isnull(a.POQty,0)+isnull(a.FOC,0)-isnull(a.ExpressQty,0),0)
