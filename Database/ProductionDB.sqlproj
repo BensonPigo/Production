@@ -2561,6 +2561,7 @@
     <Build Include="dbo\Tables\SubProCustomColumn.sql" />
     <Build Include="dbo\Tables\SampleGarmentTest_Detail_FGPT.sql" />
     <Build Include="dbo\Tables\Adidas_FGWT.sql" />
+    <Build Include="dbo\Tables\SystemWebAPIURL.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
