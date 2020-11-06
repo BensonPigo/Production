@@ -807,9 +807,13 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["IssueLackId"]))
+            string sqlCheckIssueLack = $@"
+SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID = '{this.CurrentMaintain["ID"]}' FOR XML PATH('')),1,1,'') 
+";
+            string relatedIssueLackID = MyUtility.GetValue.Lookup(sqlCheckIssueLack);
+            if (!MyUtility.Check.Empty(relatedIssueLackID))
             {
-                MyUtility.Msg.WarningBox("This order was issued, can't unconfirm!");
+                MyUtility.Msg.WarningBox($"This order has related issue# {relatedIssueLackID} , please delete it in Warehouse/P16 before unconfirm .");
                 return;
             }
 
