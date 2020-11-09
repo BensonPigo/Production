@@ -679,7 +679,7 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 this.printData.ColumnsStringAdd("DefectDescription");
                 this.printData.ColumnsStringAdd("AreaCodeDesc");
 
-                this.printData.ColumnsStringAdd("NoOfDefect");
+                this.printData.ColumnsIntAdd("NoOfDefect");
                 this.printData.ColumnsStringAdd("Remark");
                 this.printData.ColumnsStringAdd("Action");
 
@@ -726,7 +726,7 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["DefectDescription"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["DefectDescription"]);
                     nRow["AreaCodeDesc"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["AreaCodeDesc"]);
 
-                    nRow["NoOfDefect"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["NoOfDefect"]);
+                    nRow["NoOfDefect"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["NoOfDefect"]);
                     nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
                     nRow["Action"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Action"]);
 

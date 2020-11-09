@@ -42,9 +42,6 @@
             this.comboFactory1 = new Sci.Production.Class.ComboFactory(this.components);
             this.comboMDivision1 = new Sci.Production.Class.ComboMDivision(this.components);
             this.txtstyle1 = new Sci.Production.Class.Txtstyle();
-            this.txtShiftTime1 = new Sci.Win.UI.TextBox();
-            this.txtShiftTime2 = new Sci.Win.UI.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.comboSubprocess = new Sci.Win.UI.ComboBox();
             this.radioDetail_DefectType = new Sci.Win.UI.RadioButton();
             this.radioSummary = new Sci.Win.UI.RadioButton();
@@ -186,7 +183,6 @@
             this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(80, 24);
             this.comboShift.TabIndex = 6;
-            this.comboShift.SelectedIndexChanged += new System.EventHandler(this.ComboShift_SelectedIndexChanged);
             // 
             // comboFactory1
             // 
@@ -225,40 +221,6 @@
             this.txtstyle1.TabIndex = 3;
             this.txtstyle1.TarBrand = null;
             this.txtstyle1.TarSeason = null;
-            // 
-            // txtShiftTime1
-            // 
-            this.txtShiftTime1.BackColor = System.Drawing.Color.White;
-            this.txtShiftTime1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShiftTime1.Location = new System.Drawing.Point(212, 189);
-            this.txtShiftTime1.Mask = "90:00";
-            this.txtShiftTime1.Name = "txtShiftTime1";
-            this.txtShiftTime1.Size = new System.Drawing.Size(68, 23);
-            this.txtShiftTime1.TabIndex = 7;
-            this.txtShiftTime1.ValidatingType = typeof(System.DateTime);
-            this.txtShiftTime1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShiftTime_Validating);
-            // 
-            // txtShiftTime2
-            // 
-            this.txtShiftTime2.BackColor = System.Drawing.Color.White;
-            this.txtShiftTime2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShiftTime2.Location = new System.Drawing.Point(307, 189);
-            this.txtShiftTime2.Mask = "90:00";
-            this.txtShiftTime2.Name = "txtShiftTime2";
-            this.txtShiftTime2.Size = new System.Drawing.Size(68, 23);
-            this.txtShiftTime2.TabIndex = 8;
-            this.txtShiftTime2.ValidatingType = typeof(System.DateTime);
-            this.txtShiftTime2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtShiftTime_Validating);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(282, 193);
-            this.label7.Margin = new System.Windows.Forms.Padding(0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(22, 17);
-            this.label7.TabIndex = 131;
-            this.label7.Text = "～";
             // 
             // comboSubprocess
             // 
@@ -332,9 +294,6 @@
             this.Controls.Add(this.radioSummary);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.comboSubprocess);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.txtShiftTime2);
-            this.Controls.Add(this.txtShiftTime1);
             this.Controls.Add(this.comboShift);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -364,9 +323,6 @@
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.comboShift, 0);
-            this.Controls.SetChildIndex(this.txtShiftTime1, 0);
-            this.Controls.SetChildIndex(this.txtShiftTime2, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
@@ -398,9 +354,6 @@
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.ComboBox comboShift;
-        private Win.UI.TextBox txtShiftTime1;
-        private Win.UI.TextBox txtShiftTime2;
-        private System.Windows.Forms.Label label7;
         private Win.UI.ComboBox comboSubprocess;
         private Win.UI.RadioButton radioDetail_DefectType;
         private Win.UI.RadioButton radioSummary;

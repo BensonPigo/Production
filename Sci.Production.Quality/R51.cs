@@ -134,23 +134,23 @@ outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveD
 
             if (!this.comboFactory1.Text.Empty())
             {
-                sqlwhere1.Append("\r\nand O.FtyGroup = @F");
-                sqlwhere2.Append("\r\nand O.FtyGroup = @F");
+                sqlwhere1.Append("\r\nand SR.FactoryID = @F");
+                sqlwhere2.Append("\r\nand SR.FactoryID = @F");
                 this.Parameters.Add(new SqlParameter("@F", this.comboFactory1.Text));
             }
 
             if (!this.comboShift.Text.Empty())
             {
-                sqlwhere1.Append("\r\nand CAST(SR.AddDate as time) between @ShiftTime1 and @ShiftTime2");
-                sqlwhere2.Append("\r\nand CAST(SR.AddDate as time) between @ShiftTime1 and @ShiftTime2");
-                this.Parameters.Add(new SqlParameter("@ShiftTime1", this.txtShiftTime1.Text));
-                this.Parameters.Add(new SqlParameter("@ShiftTime2", this.txtShiftTime2.Text));
+                sqlwhere1.Append("\r\nand SR.Shift = @Shift");
+                sqlwhere2.Append("\r\nand SR.Shift = @Shift");
+                this.Parameters.Add(new SqlParameter("@Shift", this.comboShift.Text));
             }
             #endregion
 
             this.Sqlcmd.Append($@"
 select
 	Convert(date,SR.AddDate) as AddDate,
+    SR.Shift,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
@@ -198,6 +198,7 @@ UNION
 
 select
 	Convert(date,SR.AddDate) as AddDate,
+    SR.Shift,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
@@ -307,25 +308,6 @@ drop table #tmp,#tmp2
             Marshal.ReleaseComObject(excelApp);
             #endregion
             return true;
-        }
-
-        private void ComboShift_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.txtShiftTime1.Enabled = this.txtShiftTime2.Enabled = !this.comboShift.Text.Empty();
-            switch (this.comboShift.Text)
-            {
-                case "Day":
-                    this.txtShiftTime1.Text = "07:00";
-                    this.txtShiftTime2.Text = "16:00";
-                    break;
-                case "Night":
-                    this.txtShiftTime1.Text = "17:00";
-                    this.txtShiftTime2.Text = "23:59";
-                    break;
-                default:
-                    this.txtShiftTime1.Text = this.txtShiftTime2.Text = string.Empty;
-                    break;
-            }
         }
 
         private void TxtShiftTime_Validating(object sender, System.ComponentModel.CancelEventArgs e)

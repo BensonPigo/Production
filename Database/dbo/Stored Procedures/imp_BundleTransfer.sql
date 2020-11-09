@@ -53,6 +53,7 @@ BEGIN
 	declare @CmdARK varchar(max)
 	declare @CmdARK2 varchar(max)
 	declare @Cmd2 varchar(max)
+	declare @Cmd3 varchar(max)
 	declare @RaisError varchar(max)
 	set xact_abort on;
 	Set @Cmd1 = N'
@@ -306,6 +307,27 @@ BEGIN
 				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID)
 			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB;  
 			
+			-- RFIDReader.Type=4
+			Merge Production.dbo.BundleInOut as t
+			Using (
+				select *
+				from #disTmp
+			) as s
+			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.RFIDProcessLocationID = s.RFIDProcessLocationID collate Chinese_Taiwan_Stroke_CI_AS
+				and s.type=4
+			when matched then 
+				update set
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID,
+				t.PanelNo = s.PanelNo,t.CutCellID = s.CutCellID
+			when not matched by target and s.type=4 then
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID)
+			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB; 
+			'
+	
+	set @Cmd3 = '
 			--更新ArtworkPO_Detail FarmIn準備資料
 			SELECT FarmIn = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
 			into #FarmIn_tmp
@@ -399,8 +421,8 @@ BEGIN
 					 @ErrorSeverity, -- Severity.    
 					 @ErrorState -- State.    
 				   ); 
-	End Catch	'
+	End Catch'
 
-	EXEC(@Cmd1 + @CmdARK + @CmdARK2 + @Cmd2)
+	EXEC(@Cmd1 + @CmdARK + @CmdARK2 + @Cmd2 + @Cmd3)
 
 END

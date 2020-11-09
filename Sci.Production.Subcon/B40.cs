@@ -1,19 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
 using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class B40 : Win.Tems.Input1
     {
         private IList<DataRow> Subprocesslist;
         private DataTable DT_RFIDReader_Panel;
 
+        /// <inheritdoc/>
         public B40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -24,17 +26,13 @@ namespace Sci.Production.Subcon
 
         private void Comboload()
         {
-            // DualResult Result;
-            // if (Result = DBProxy.Current.Select(null, "select ID from Subprocess WITH (NOLOCK) where Junk = '0'", out dtSubprocessID))
-            // {
-            //    this.comboSubprocess.DataSource = dtSubprocessID;
-            //    this.comboSubprocess.DisplayMember = "ID";
-            // }
-            // else { ShowErr(Result); }
-            Dictionary<string, string> comboType_RowSource = new Dictionary<string, string>();
-            comboType_RowSource.Add("1", "In");
-            comboType_RowSource.Add("2", "Out");
-            comboType_RowSource.Add("3", "In/Out");
+            Dictionary<string, string> comboType_RowSource = new Dictionary<string, string>
+            {
+                { "1", "In" },
+                { "2", "Out" },
+                { "3", "In/Out" },
+                { "4", "Out/In" },
+            };
             this.comboStockType.DataSource = new BindingSource(comboType_RowSource, null);
             this.comboStockType.ValueMember = "Key";
             this.comboStockType.DisplayMember = "Value";
@@ -107,8 +105,10 @@ where rp.RFIDReaderID ='{this.CurrentMaintain["ID"]}'
             if (this.Subprocesslist != null)
             {
                 DataTable sourceDt = this.Subprocesslist.CopyToDataTable();
-                DataColumn newColumn = new DataColumn("RFIDReaderID", typeof(string));
-                newColumn.DefaultValue = this.CurrentMaintain["ID"];
+                DataColumn newColumn = new DataColumn("RFIDReaderID", typeof(string))
+                {
+                    DefaultValue = this.CurrentMaintain["ID"],
+                };
                 sourceDt.Columns.Add(newColumn);
                 string in_update = $@"
 select RFIDReaderID,ID into #tmp2 from #tmp
@@ -116,8 +116,7 @@ delete RFIDReader_SubProcess where RFIDReaderID = '{this.CurrentMaintain["ID"]}'
 insert RFIDReader_SubProcess select * from #tmp2
 ;
 ";
-                DataTable dt;
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(sourceDt, string.Empty, in_update, out dt);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(sourceDt, string.Empty, in_update, out DataTable dt);
                 if (!result)
                 {
                     return result;
@@ -148,8 +147,7 @@ when not matched by source and t.[RFIDReaderID] = '{this.CurrentMaintain["id"]}'
 	delete
 ;
 ";
-                DataTable dt;
-                DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DT_RFIDReader_Panel, string.Empty, mergeRFIDReader_Panel, out dt);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DT_RFIDReader_Panel, string.Empty, mergeRFIDReader_Panel, out DataTable dt);
                 if (!result)
                 {
                     return result;
@@ -191,13 +189,17 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
 
         private string SelectSewingLine(string line)
         {
-            List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-            listSQLParameter.Add(new SqlParameter("@FactoryID", Env.User.Factory));
+            List<SqlParameter> listSQLParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@FactoryID", Env.User.Factory),
+            };
 
             string sql = "Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID = @FactoryID ";
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, listSQLParameter, "3", line, false, ",");
-            item.Width = 300;
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, listSQLParameter, "3", line, false, ",")
+            {
+                Width = 300,
+            };
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -213,14 +215,14 @@ delete RFIDReader_SubProcess where RFIDReaderID =  '{this.CurrentMaintain["ID"]}
         {
             if (!MyUtility.Check.Empty(this.txtSewingLine.Text))
             {
-                DataRow dr;
-
-                List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                listSQLParameter.Add(new SqlParameter("@FactoryID", Env.User.Factory));
-                listSQLParameter.Add(new SqlParameter("@ID", this.txtSewingLine.Text));
+                List<SqlParameter> listSQLParameter = new List<SqlParameter>
+                {
+                    new SqlParameter("@FactoryID", Env.User.Factory),
+                    new SqlParameter("@ID", this.txtSewingLine.Text),
+                };
 
                 string sqlcmd = "Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID =@FactoryID AND ID=@ID ";
-                if (MyUtility.Check.Seek(sqlcmd, listSQLParameter, out dr) == false)
+                if (!MyUtility.Check.Seek(sqlcmd, listSQLParameter))
                 {
                     MyUtility.Msg.WarningBox(string.Format("< Sewing Line ID : {0} > not found!!!", this.txtSewingLine.Text));
                     this.txtSewingLine.Text = string.Empty;

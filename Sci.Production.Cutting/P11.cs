@@ -227,16 +227,6 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 dr["cutOutput"] = newCutOutput;
                 dr.EndEdit();
 
-                int newBalance = Convert.ToInt32(this.ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter));
-
-                if (newBalance > 0)
-                {
-                    MyUtility.Msg.InfoBox("Balance can not more than zero.");
-                    dr["cutOutput"] = oldCutOutput;
-                    dr.EndEdit();
-                    return;
-                }
-
                 if (oldCutOutput.EqualString(newCutOutput) == false)
                 {
                     this.ChangeLabelBalanceValue();
@@ -863,6 +853,7 @@ Select  distinct 0 as sel
 	    , 1 as Qty
         , cutoutput = isnull(sum(b.Qty),0)
         , RealCutOutput = isnull(sum(b.Qty),0)
+	    , CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref), 0)
         , 0 as TotalParts
         , ord.poid
         , 0 as startno
@@ -900,6 +891,7 @@ Select  distinct 0 as sel
 	    , 1 as Qty
         , cutoutput = isnull(b.Qty,0)
         , RealCutOutput = isnull(b.Qty,0)
+	    , CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref), 0)
         , 0 as TotalParts
         , ord.poid
         , 0 as startno
@@ -2722,11 +2714,12 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
         private void ChangeLabelTotalCutOutputValue()
         {
             this.labelToalCutOutputValue.Text = this.ArticleSizeTb.Compute("sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+            this.labelAccumulateQty.Text = this.ArticleSizeTb.Compute("max(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
         }
 
         private void ChangeLabelBalanceValue()
         {
-            this.labelBalanceValue.Text = this.ArticleSizeTb.Compute("sum(CutOutput)-sum(RealCutOutput)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
+            this.labelBalanceValue.Text = this.ArticleSizeTb.Compute("sum(RealCutOutput)-sum(CutOutput)-max(CreatedBundleQty)", this.ArticleSizeTb.DefaultView.RowFilter).ToString();
         }
 
         private void CopyGridCutRef(bool isSame, string copyCutref = "")
