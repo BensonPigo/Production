@@ -1805,7 +1805,7 @@ order by ArticleGroup";
 
             // ukey, Article, SizeCode & 左下Bundle資訊 一樣, 則建立成同一張單. Tone (有輸入)也一樣時, 則 Allpart 那筆合一
             var ukeyList = this.CutRefTb.Select("sel=1").ToList().Select(s => MyUtility.Convert.GetLong(s["ukey"])).ToList(); // 有勾選的Ukey
-            var qtydataList = this.qtyTb.AsEnumerable().Select(s => new NoofBundle
+            var qtydataList = this.qtyTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new NoofBundle
             {
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
                 No = MyUtility.Convert.GetInt(s["No"]),
