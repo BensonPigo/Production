@@ -2125,8 +2125,8 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 this.ConfirmMsg.Clear();
                 List<Match> errorList = this.CollectErrorMsg();
 
-                // 錯誤的Match筆數 = 所有Match筆數，表示沒有任何一筆需要轉檔
-                if (errorList.Select(o => o.FileSeq).Distinct().Count() == this.MatchList.Select(o => o.FileSeq).Distinct().Count())
+                // 錯誤的Match筆數 > 0 && 可以Match筆數 = 0，表示沒有任何一筆需要轉檔
+                if (errorList.Select(o => o.FileSeq).Distinct().Count() > 0 && this.MatchList.Select(o => o.FileSeq).Distinct().Count() == 0)
                 {
                     this.ShowConfirmMsg();
                     return;
@@ -2302,7 +2302,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                 // 記錄下無法執行上傳的項目
                 errorList.AddRange(c);
-                this.MatchList.RemoveAll(o => o.CtnInClog == true);
+                this.MatchList.RemoveAll(o => o.CtnInClog == true && ((o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted));
             }
 
             // 檢查Overwrite：挑出已經有P24資料，且勾選Overwrite
