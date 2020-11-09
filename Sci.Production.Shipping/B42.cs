@@ -106,20 +106,6 @@ where vdd.ID = '{0}'
             this.editColorway.Text = MyUtility.Check.Empty(colorWay) ? string.Empty : colorWay.Substring(0, colorWay.Length - 1);
             string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? string.Empty : sizeGroup.Substring(0, sizeGroup.Length - 1);
-
-            // Contract No.  IsSubConIn = true,則不能編輯
-            if (!this.IsDetailInserting)
-            {
-                string sqlcmd = $@"select * from VNContract where IsSubconIn = 1 and ID='{this.CurrentMaintain["VNContractID"]}'";
-                if (MyUtility.Check.Seek(sqlcmd))
-                {
-                    this.IsSupportEdit = false;
-                }
-                else
-                {
-                    this.IsSupportEdit = true;
-                }
-            }
         }
 
         private void ClearDetailDt(DataRow curDr)
@@ -439,7 +425,9 @@ from VNContract WITH (NOLOCK)
 where StartDate = (select   MAX(StartDate) 
                    from VNContract WITH (NOLOCK) 
                    where    GETDATE() between StartDate and EndDate 
-                            and Status = 'Confirmed')");
+                            and Status = 'Confirmed')
+and IsSubConIn = 0
+");
             this.CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(
                 @"
 select  CustomSP = isnull (MAX (CustomSP), 'SP000000') 
@@ -457,6 +445,15 @@ from System WITH (NOLOCK) ");
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() == "CONFIRMED")
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, can't edit!!");
+                return false;
+            }
+
+            // Contract No.  IsSubConIn = true,則不能編輯
+
+            string sqlcmd = $@"select * from VNContract where IsSubconIn = 1 and ID='{this.CurrentMaintain["VNContractID"]}'";
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox("This record is SubconIn, cannot edit!!");
                 return false;
             }
 

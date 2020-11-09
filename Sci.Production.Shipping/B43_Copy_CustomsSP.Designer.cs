@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnCopyCustomsSP = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
@@ -39,10 +39,10 @@
             this.gridSubconIn = new Sci.Win.UI.Grid();
             this.panel3 = new Sci.Win.UI.Panel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.txtStyleID = new Sci.Win.UI.TextBox();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.labBrand = new Sci.Win.UI.Label();
-            this.txtStyle = new Sci.Production.Class.Txtstyle();
             this.labStyle = new Sci.Win.UI.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtSubconFromContract = new Sci.Win.UI.TextBox();
@@ -139,14 +139,14 @@
             this.gridSubconFrom.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSubconFrom.Location = new System.Drawing.Point(0, 0);
             this.gridSubconFrom.Name = "gridSubconFrom";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSubconFrom.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSubconFrom.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridSubconFrom.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSubconFrom.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSubconFrom.RowTemplate.Height = 24;
@@ -171,14 +171,14 @@
             this.gridSubconIn.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSubconIn.Location = new System.Drawing.Point(0, 0);
             this.gridSubconIn.Name = "gridSubconIn";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSubconIn.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSubconIn.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridSubconIn.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSubconIn.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSubconIn.RowTemplate.Height = 24;
@@ -205,10 +205,10 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.txtStyleID);
             this.splitContainer2.Panel1.Controls.Add(this.btnFind);
             this.splitContainer2.Panel1.Controls.Add(this.txtbrand);
             this.splitContainer2.Panel1.Controls.Add(this.labBrand);
-            this.splitContainer2.Panel1.Controls.Add(this.txtStyle);
             this.splitContainer2.Panel1.Controls.Add(this.labStyle);
             this.splitContainer2.Panel1.Controls.Add(this.groupBox1);
             // 
@@ -218,6 +218,20 @@
             this.splitContainer2.Size = new System.Drawing.Size(991, 101);
             this.splitContainer2.SplitterDistance = 485;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // txtStyleID
+            // 
+            this.txtStyleID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyleID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyleID.IsSupportEditMode = false;
+            this.txtStyleID.Location = new System.Drawing.Point(86, 65);
+            this.txtStyleID.Name = "txtStyleID";
+            this.txtStyleID.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtStyleID.ReadOnly = true;
+            this.txtStyleID.Size = new System.Drawing.Size(150, 23);
+            this.txtStyleID.TabIndex = 99;
+            this.txtStyleID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyleId_PopUp);
+            this.txtStyleID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyleId_Validating);
             // 
             // btnFind
             // 
@@ -250,21 +264,6 @@
             this.labBrand.Size = new System.Drawing.Size(65, 23);
             this.labBrand.TabIndex = 96;
             this.labBrand.Text = "Brand";
-            // 
-            // txtStyle
-            // 
-            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtStyle.BrandObjectName = null;
-            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtStyle.IsSupportEditMode = false;
-            this.txtStyle.Location = new System.Drawing.Point(86, 65);
-            this.txtStyle.Name = "txtStyle";
-            this.txtStyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtStyle.ReadOnly = true;
-            this.txtStyle.Size = new System.Drawing.Size(150, 23);
-            this.txtStyle.TabIndex = 95;
-            this.txtStyle.TarBrand = null;
-            this.txtStyle.TarSeason = null;
             // 
             // labStyle
             // 
@@ -424,7 +423,6 @@
         private Win.UI.TextBox txtSubconFromFty;
         private Win.UI.Label label2;
         private Win.UI.Label labSubconFromFty;
-        private Class.Txtstyle txtStyle;
         private Win.UI.Button btnFind;
         private Class.Txtbrand txtbrand;
         private Win.UI.Label labBrand;
@@ -435,5 +433,6 @@
         private Win.UI.Label label3;
         private Win.UI.ListControlBindingSource SubConFromDataBinding;
         private Win.UI.ListControlBindingSource SubConToDataBinding;
+        private Win.UI.TextBox txtStyleID;
     }
 }

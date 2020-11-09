@@ -100,7 +100,7 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 )SizeGroup
-where StyleID = '{this.txtStyle.Text}' 
+where StyleID = '{this.txtStyleID.Text}' 
 and BrandID='{this.txtbrand.Text}'
 and VNContractID = '{this.txtSubconInContractNo.Text}'";
 
@@ -133,7 +133,7 @@ and VNContractID = '{this.txtSubconInContractNo.Text}'";
                 return;
             }
 
-            Production.Shipping.Utility_WebAPI.GetCustomsCopyLoad(this.txtStyle.Text, this.txtbrand.Text, this.txtSubconFromContract.Text, out this.dataAPI);
+            Production.Shipping.Utility_WebAPI.GetCustomsCopyLoad(this.txtStyleID.Text, this.txtbrand.Text, this.txtSubconFromContract.Text, out this.dataAPI);
 
             if (this.dataAPI != null && this.dataAPI.CustomsCopyLoadDt.Count > 0)
             {
@@ -197,7 +197,7 @@ and VNContractID = '{this.txtSubconInContractNo.Text}'";
             DataTable dtVNConsumption_Article = new DataTable();
             DataTable dtVNConsumption_SizeCode = new DataTable();
 
-            Production.Shipping.Utility_WebAPI.GetCustomsAllData(this.txtStyle.Text, this.txtbrand.Text, this.txtSubconFromContract.Text, out dataSetAPI);
+            Production.Shipping.Utility_WebAPI.GetCustomsAllData(this.txtStyleID.Text, this.txtbrand.Text, this.txtSubconFromContract.Text, out dataSetAPI);
             if (this.dataSetAPI != null)
             {
                 if (this.dataSetAPI.GetCustomsAllDs.Tables["VNConsumption"].Rows.Count > 0)
@@ -231,7 +231,28 @@ and VNContractID = '{this.txtSubconInContractNo.Text}'";
                     DataTable resulttb;
                     sqlUpdate = $@"
 delete t from VNConsumption t where exists(	select 1 from #tmp s where s.id = t.id)
-insert into VNConsumption select * from #tmp";
+insert into VNConsumption 
+select [ID]
+      ,[CustomSP]
+      ,[VNContractID] = '{this.txtSubconInContractNo.Text}'
+      ,[CDate]
+      ,[StyleID]
+      ,[StyleUKey]
+      ,[SeasonID]
+      ,[BrandID]
+      ,[Category]
+      ,[SizeCode]
+      ,[Qty]
+      ,[PulloutQty]
+      ,[Version]
+      ,[CPU]
+      ,[VNMultiple]
+      ,[Status]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+from #tmp";
 
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption, string.Empty, sqlUpdate, out resulttb)))
                     {
@@ -300,6 +321,51 @@ insert into VNConsumption select * from #tmp";
                 finally
                 {
                     transactionscope.Dispose();
+                }
+            }
+        }
+
+        private void TxtStyleId_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Win.Tools.SelectItem item;
+            string selectCommand;
+            selectCommand = "select ID,SeasonID,Description,BrandID from Production.dbo.Style WITH (NOLOCK) where Junk = 0 order by ID";
+
+            item = new Win.Tools.SelectItem(selectCommand, "12,5,38,10", this.txtStyleID.Text)
+            {
+                Size = new System.Drawing.Size(757, 530),
+            };
+            DialogResult returnResult = item.ShowDialog();
+
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtStyleID.Text = item.GetSelectedString();
+            this.ValidateControl();
+            this.txtbrand.Text = item.GetSelecteds()[0]["BrandID"].ToString();
+            this.txtbrand.ValidateControl();
+        }
+
+        private void TxtStyleId_Validating(object sender, CancelEventArgs e)
+        {
+            string textValue = this.txtStyleID.Text;
+            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtStyleID.OldValue)
+            {
+                string selectCommand = $@"select ID,BrandID from Style WITH (NOLOCK) where ID = '{this.Text.ToString()}'";
+                DataRow dr;
+                if (!MyUtility.Check.Seek(selectCommand, out dr))
+                {
+                    this.Text = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Style : {0} > not found!!!", textValue));
+                    return;
+                }
+                else
+                {
+                    this.txtbrand.Text = dr["BrandID"].ToString();
+                    this.txtbrand.ValidateControl();
                 }
             }
         }
