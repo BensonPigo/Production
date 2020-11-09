@@ -644,7 +644,7 @@ where id = '{this.CurrentMaintain["id"]}'";
                                    seq2 = b.Field<string>("toseq2"),
                                    stocktype = b.Field<string>("tostocktype"),
                                    qty = b.Field<decimal>("qty"),
-                                   location = b.Field<string>("location"),
+                                   location = b.Field<string>("Tolocation"),
                                    roll = b.Field<string>("toroll"),
                                    dyelot = b.Field<string>("todyelot"),
                                }).ToList();
@@ -657,9 +657,7 @@ where id = '{this.CurrentMaintain["id"]}'";
             sqlcmd = $@"
 Select d.ToPOID ,d.ToSeq1 ,d.ToSeq2 ,d.ToRoll ,d.ToDyelot ,d.ToStockType ,[ToLocation]=d.ToLocation
 from dbo.BorrowBack_detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on d.ToPOID = f.POID and d.ToSeq1 = f.Seq1 and d.ToSeq2 = f.seq2 and d.ToStockType = f.StockType and d.ToRoll = f.Roll and d.ToDyelot = f.Dyelot
-where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
+where d.Id = '{this.CurrentMaintain["id"]}'";
             DBProxy.Current.Select(null, sqlcmd, out DataTable locationTable);
 
             var data_Fty_26F = (from b in locationTable.AsEnumerable()
