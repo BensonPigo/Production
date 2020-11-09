@@ -644,6 +644,7 @@ namespace Sci.Production.Packing
                 this.PackingListCandidate_Datasources.Clear();
                 this.MatchList.Clear();
                 this.ConfirmMsg.Clear();
+                this.GridBool = false;
                 #endregion
 
                 this.ShowWaitMessage("Data Match....");
@@ -1970,6 +1971,11 @@ DROP TABLE #tmpOrders
             m.TopMost = true;
         }
 
+        /// <summary>
+        /// 取得Match Grid的資訊
+        /// </summary>
+        /// <param name="current">當下異動的DataRow</param>
+        /// <returns>DataRow</returns>
         private DataRow GetInfoByPackingList(DataRow current)
         {
             string packingListID = MyUtility.Convert.GetString(current["PackingListCandidate"]);
@@ -2045,7 +2051,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
             this._File_Name_Object_List.File_Name_Object2s = new List<FileName_Key_Model>();
             this.File_Name_PDF.Clear();
             this.wattingForConvert.Clear();
-
+            this.GridBool = false;
             if (this.wattingForConvert_contentsOfZPL != null)
             {
                 this.wattingForConvert_contentsOfZPL = new List<string>();
@@ -2967,5 +2973,38 @@ AND sd.Seq = (
             Ten = 10,
         }
         #endregion
+
+        private bool GridBool = false;
+
+        private void GridMatch_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.ColumnIndex == 7 && e.RowIndex == -1)
+            {
+                this.gridMatch.ValidateControl();
+                DataTable dt = (DataTable)this.listControlBindingSource2.DataSource;
+                if (dt != null || dt.Rows.Count > 0)
+                {
+                    this.GridBool = !this.GridBool;
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        if (MyUtility.Convert.GetBool(item["StickerAlreadyExisted"]))
+                        {
+                            item["OverWrite"] = this.GridBool;
+                        }
+                        else
+                        {
+                            item["OverWrite"] = false;
+                        }
+
+                        item.EndEdit();
+
+                        this.MatchGridColor();
+                        this.GetInfoByPackingList(item);
+                    }
+
+                    this.listControlBindingSource2.DataSource = dt;
+                }
+            }
+        }
     }
 }
