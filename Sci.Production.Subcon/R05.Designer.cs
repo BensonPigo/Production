@@ -36,13 +36,13 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
-            this.txtArtworkType = new Sci.Win.UI.TextBox();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.txtSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.comboStatus = new Sci.Win.UI.ComboBox();
             this.chkOnlyIrregular = new Sci.Win.UI.CheckBox();
+            this.txtArtworkType = new Sci.Production.Class.Txtartworktype_fty();
             this.SuspendLayout();
             // 
             // print
@@ -75,7 +75,7 @@
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelSCIDelivery.RectStyle.BorderWidth = 1F;
-            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.Pink;
+            this.labelSCIDelivery.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelSCIDelivery.RectStyle.ExtBorderWidth = 1F;
             this.labelSCIDelivery.Size = new System.Drawing.Size(99, 23);
             this.labelSCIDelivery.TabIndex = 114;
@@ -158,15 +158,6 @@
             this.label6.TabIndex = 120;
             this.label6.Text = "Status";
             // 
-            // txtArtworkType
-            // 
-            this.txtArtworkType.BackColor = System.Drawing.Color.White;
-            this.txtArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArtworkType.Location = new System.Drawing.Point(111, 48);
-            this.txtArtworkType.Name = "txtArtworkType";
-            this.txtArtworkType.Size = new System.Drawing.Size(107, 23);
-            this.txtArtworkType.TabIndex = 121;
-            // 
             // txtSP
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
@@ -244,18 +235,29 @@
             this.chkOnlyIrregular.Text = "Show Irregular Only ";
             this.chkOnlyIrregular.UseVisualStyleBackColor = true;
             // 
+            // txtArtworkType
+            // 
+            this.txtArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtArtworkType.CClassify = "";
+            this.txtArtworkType.CSubprocess = "Y";
+            this.txtArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtArtworkType.Location = new System.Drawing.Point(111, 48);
+            this.txtArtworkType.Name = "txtArtworkType";
+            this.txtArtworkType.Size = new System.Drawing.Size(140, 23);
+            this.txtArtworkType.TabIndex = 128;
+            // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(509, 320);
+            this.Controls.Add(this.txtArtworkType);
             this.Controls.Add(this.chkOnlyIrregular);
             this.Controls.Add(this.comboStatus);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.txtSupplier);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtSP);
-            this.Controls.Add(this.txtArtworkType);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
@@ -282,13 +284,13 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.txtArtworkType, 0);
             this.Controls.SetChildIndex(this.txtSP, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.txtSupplier, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.comboStatus, 0);
             this.Controls.SetChildIndex(this.chkOnlyIrregular, 0);
+            this.Controls.SetChildIndex(this.txtArtworkType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -304,12 +306,12 @@
         private Win.UI.Label label2;
         private Win.UI.Label label4;
         private Win.UI.Label label6;
-        private Win.UI.TextBox txtArtworkType;
         private Win.UI.TextBox txtSP;
         private Class.Txtfactory txtfactory;
         private Class.TxtsubconNoConfirm txtSupplier;
         private Class.Txtstyle txtstyle;
         private Win.UI.ComboBox comboStatus;
         private Win.UI.CheckBox chkOnlyIrregular;
+        private Class.Txtartworktype_fty txtArtworkType;
     }
 }
