@@ -20,6 +20,7 @@
     [IsPPA ] BIT NULL, 
     [ActCycle] NUMERIC(7, 2) NULL,  
     [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
+    [IsHide] BIT NOT NULL CONSTRAINT [DF_LineMapping_Detail_IsHide] DEFAULT ((0)), 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -110,3 +111,13 @@ CREATE NONCLUSTERED INDEX [IX_LineMapping_Detail_OrgPK] ON [dbo].[LineMapping_De
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否排除No',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsHide'
