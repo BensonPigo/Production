@@ -118,7 +118,8 @@ Select
     [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
     [Type] = case when bt.Type = '1' then 'IN'
 			        when bt.Type = '2' then 'Out'
-			        when bt.Type = '3' then 'In/Out' end,
+			        when bt.Type = '3' then 'In/Out'
+			        when bt.Type = '4' then 'Out/In' end,
     [TagId] = bt.TagId,
     [TransferDate] = CAST(TransferDate AS DATE),
     [TransferTime] = TransferDate,
@@ -255,7 +256,8 @@ Select
     [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
     [Type] = case when bt.Type = '1' then 'IN'
 			        when bt.Type = '2' then 'Out'
-			        when bt.Type = '3' then 'In/Out' end,
+			        when bt.Type = '3' then 'In/Out'
+			        when bt.Type = '4' then 'Out/In' end,
     [TagId] = bt.TagId,
     [TransferDate] = CAST(bt.TransferDate AS DATE),
     [TransferTime] = bt.TransferDate,
