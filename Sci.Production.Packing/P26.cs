@@ -718,7 +718,7 @@ namespace Sci.Production.Packing
                             foreach (var obj in item.UpdateModels)
                             {
                                 string filename = obj.FileName;
-                                this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == filename).FirstOrDefault()["Result"] = "Count of files is different with Paacking List.";
+                                this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == filename).FirstOrDefault()["Result"] = "Cannot mapping current P/L.";
                             }
                         }
                     }
@@ -772,7 +772,7 @@ namespace Sci.Production.Packing
                         else
                         {
                             string filename = item.FileName;
-                            this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == filename).FirstOrDefault()["Result"] = "Count of files is different with Paacking List.";
+                            this.Grid_SelectedFile_Dt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == filename).FirstOrDefault()["Result"] = "Cannot mapping current P/L.";
                         }
                     }
                 }
@@ -1254,20 +1254,42 @@ namespace Sci.Production.Packing
                         // 相同PackingListID且Ukey還未加入matchData.UpdateModels的，才需要存下來，否則會重複
                         var obj = mappingInfo[0].AsEnumerable().Where(o => MyUtility.Convert.GetString(o["PackingListID"]) == packingListID && !matchData.UpdateModels.Where(x => x.PackingListUkey == MyUtility.Convert.GetString(o["Ukey"])).Any()).FirstOrDefault();
 
-                        UpdateModel u = new UpdateModel()
+                        // 無論matchData.UpdateModels有沒有重複，一律存進去，若PackingList檔案數量與上傳的檔案數不一致，後面會清除
+                        if (obj != null)
                         {
-                            PackingListID = packingListID,
-                            CustPONO = custPONo,
-                            StyleID = styleID,
-                            Article = article,
-                            SizeCode = sizeCode,
-                            ShipQty = shipQty,
-                            SCICtnNo = obj["SCICtnNo"].ToString(),
-                            RefNo = obj["RefNo"].ToString(),
-                            CustCTN = zPL.CustCTN,
-                            PackingListUkey = obj["Ukey"].ToString(),
-                        };
-                        matchData.UpdateModels.Add(u);
+                            UpdateModel u = new UpdateModel()
+                            {
+                                PackingListID = packingListID,
+                                CustPONO = custPONo,
+                                StyleID = styleID,
+                                Article = article,
+                                SizeCode = sizeCode,
+                                ShipQty = shipQty,
+                                SCICtnNo = obj["SCICtnNo"].ToString(),
+                                RefNo = obj["RefNo"].ToString(),
+                                CustCTN = zPL.CustCTN,
+                                PackingListUkey = obj["Ukey"].ToString(),
+                            };
+                            matchData.UpdateModels.Add(u);
+                        }
+                        else
+                        {
+                            // 會進到這邊，代表有重複的
+                            UpdateModel u = new UpdateModel()
+                            {
+                                PackingListID = packingListID,
+                                CustPONO = custPONo,
+                                StyleID = styleID,
+                                Article = article,
+                                SizeCode = sizeCode,
+                                ShipQty = shipQty,
+                                SCICtnNo = mappingInfo[0].Rows[0]["SCICtnNo"].ToString(),
+                                RefNo = mappingInfo[0].Rows[0]["RefNo"].ToString(),
+                                CustCTN = zPL.CustCTN,
+                                PackingListUkey = mappingInfo[0].Rows[0]["Ukey"].ToString(),
+                            };
+                            matchData.UpdateModels.Add(u);
+                        }
                     }
                 }
             }
