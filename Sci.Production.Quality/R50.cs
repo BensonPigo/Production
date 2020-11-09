@@ -85,21 +85,21 @@ namespace Sci.Production.Quality
 
             if (!this.comboFactory1.Text.Empty())
             {
-                sqlwhere.Append("\r\nand O.FtyGroup= @F");
+                sqlwhere.Append("\r\nand CR.FactoryID= @F");
                 this.Parameters.Add(new SqlParameter("@F", this.comboFactory1.Text));
             }
 
             if (!this.comboShift.Text.Empty())
             {
-                sqlwhere.Append("\r\nand CAST(CR.AddDate as time) between @ShiftTime1 and @ShiftTime2");
-                this.Parameters.Add(new SqlParameter("@ShiftTime1", this.txtShiftTime1.Text));
-                this.Parameters.Add(new SqlParameter("@ShiftTime2", this.txtShiftTime2.Text));
+                sqlwhere.Append("\r\nand CR.Shift = @Shift");
+                this.Parameters.Add(new SqlParameter("@Shift", this.comboShift.Text));
             }
             #endregion
 
             this.Sqlcmd.Append($@"
 select
 	Convert(date,CR.AddDate),
+    CR.Shift,
 	[RFT] = iif(isnull(CR.InspectQty, 0) = 0, 0, round((isnull(CR.InspectQty, 0)- isnull(CR.RejectQty, 0)) / Cast(CR.InspectQty as float),2)),
 	CR.CutRef,
 	W.ID,
@@ -243,25 +243,6 @@ where 1=1
             Marshal.ReleaseComObject(excelApp);
             #endregion
             return true;
-        }
-
-        private void ComboShift_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.txtShiftTime1.Enabled = this.txtShiftTime2.Enabled = !this.comboShift.Text.Empty();
-            switch (this.comboShift.Text)
-            {
-                case "Day":
-                    this.txtShiftTime1.Text = "07:00";
-                    this.txtShiftTime2.Text = "16:00";
-                    break;
-                case "Night":
-                    this.txtShiftTime1.Text = "17:00";
-                    this.txtShiftTime2.Text = "23:59";
-                    break;
-                default:
-                    this.txtShiftTime1.Text = this.txtShiftTime2.Text = string.Empty;
-                    break;
-            }
         }
 
         private void TxtShiftTime_Validating(object sender, System.ComponentModel.CancelEventArgs e)
