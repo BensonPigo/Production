@@ -410,9 +410,9 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
 
         private void TxtSubconFromFty_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlcmd = $@"select * from SystemWebAPIURL where CountryID='VN' and SystemName != '{this.RegionCode}' and Environment = '{this.ModuleType}'";
+            string sqlcmd = $@" select SystemName,CountryID from SystemWebAPIURL where CountryID='VN' and SystemName != '{this.RegionCode}' and Environment = '{this.ModuleType}'";
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8,6,25,20,4", this.txtSubconFromFty.Text, "System Name,Country ID,URL,Environment,Junk");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "8,6", this.txtSubconFromFty.Text, "Factory,Country");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
