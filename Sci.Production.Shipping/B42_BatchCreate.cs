@@ -71,7 +71,7 @@ namespace Sci.Production.Shipping
                     if (e.RowIndex != -1)
                     {
                         DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
-                        Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
+                        Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and IsSubconIn = 0 order by StartDate", "15,10,10", MyUtility.Convert.GetString(dr["VNContractID"]), headercaptions: "Contract No.,Start Date, End Date");
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel)
                         {
@@ -88,7 +88,7 @@ namespace Sci.Production.Shipping
                 DataRow dr = this.gridBatchCreate.GetDataRow<DataRow>(e.RowIndex);
                 if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["VNContractID"].ToString())
                 {
-                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}'", e.FormattedValue.ToString())))
+                    if (!MyUtility.Check.Seek(string.Format("select ID from VNContract WITH (NOLOCK) where ID = '{0}' and IsSubconIn = 0", e.FormattedValue.ToString())))
                     {
                         dr["VNContractID"] = string.Empty;
                         e.Cancel = true;
@@ -148,7 +148,13 @@ namespace Sci.Production.Shipping
             DataTable groupData, gridData;
             DataTable[] gandM;
             StringBuilder sqlCmd = new StringBuilder();
-            string contractID = MyUtility.GetValue.Lookup(@"select ID from VNContract WITH (NOLOCK) where StartDate = (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed')");
+            string contractID = MyUtility.GetValue.Lookup(@"
+select ID 
+from VNContract WITH (NOLOCK) 
+where StartDate = 
+    (select MAX(StartDate) from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate and Status = 'Confirmed') 
+and IsSubconIn = 0
+");
             #region 取得VNConsumption_Detail_Detail資料
             Prgs.ParGetVNConsumption_Detail_Detail parData = new Prgs.ParGetVNConsumption_Detail_Detail
             {
@@ -260,6 +266,7 @@ where StartDate = (select MAX(StartDate)
                    from VNContract WITH (NOLOCK) 
                    where GETDATE() between StartDate and EndDate 
                          and Status = 'Confirmed')
+and IsSubconIn = 0
 order by AddDate desc 
 
 OPEN cursor_tmpBasic
@@ -502,7 +509,12 @@ from a where rnd=1
 
             // 撈出每個Consumption一定都要有的NLCode
             DataTable necessaryItem;
-            result = DBProxy.Current.Select(null, string.Format("select NLCode from VNContract_Detail WITH (NOLOCK) where NecessaryItem = 1 and ID = '{0}'", contractID), out necessaryItem);
+            result = DBProxy.Current.Select(null,$@"
+select NLCode 
+from VNContract_Detail vd WITH (NOLOCK)
+inner join VNContract v WITH (NOLOCK) on vd.ID=v.ID
+where vd.NecessaryItem = 1 and vd.ID = '{contractID}'
+and v.IsSubconIn = 0", out necessaryItem);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(string.Format("Query NecessaryItem data fail.\r\n{0}", result.ToString()));
@@ -611,7 +623,12 @@ from a where rnd=1
         // update Contract
         private void TxtVNContractID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem("select ID,StartDate,EndDate from VNContract WITH (NOLOCK) where GETDATE() between StartDate and EndDate order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"
+select ID,StartDate,EndDate 
+from VNContract WITH (NOLOCK) 
+where GETDATE() between StartDate and EndDate 
+and issubconin = 0
+order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Contract No.,Start Date, End Date");
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
             {
