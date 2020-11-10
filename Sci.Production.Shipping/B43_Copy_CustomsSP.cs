@@ -115,6 +115,10 @@ and VNContractID = '{this.txtSubconInContractNo.Text}'";
             {
                 this.gridSubconIn.DataSource = dt;
             }
+            else
+            {
+                this.gridSubconIn.DataSource = null;
+            }
 
             #region Get WebAPI Data
             DataColumn dc = new DataColumn();
@@ -156,6 +160,10 @@ and VNContractID = '{this.txtSubconInContractNo.Text}'";
                 }
 
                 #endregion
+            }
+            else
+            {
+                this.gridSubconFrom.DataSource = null;
             }
         }
 
@@ -229,40 +237,14 @@ and VNContractID = '{this.txtSubconInContractNo.Text}'";
                     string sqlUpdate = string.Empty;
                     DualResult result;
                     DataTable resulttb;
-                    sqlUpdate = $@"
-delete t from VNConsumption t where exists(	select 1 from #tmp s where s.id = t.id)
-insert into VNConsumption 
-select [ID]
-      ,[CustomSP]
-      ,[VNContractID] = '{this.txtSubconInContractNo.Text}'
-      ,[CDate]
-      ,[StyleID]
-      ,[StyleUKey]
-      ,[SeasonID]
-      ,[BrandID]
-      ,[Category]
-      ,[SizeCode]
-      ,[Qty]
-      ,[PulloutQty]
-      ,[Version]
-      ,[CPU]
-      ,[VNMultiple]
-      ,[Status]
-      ,[AddName]
-      ,[AddDate]
-      ,[EditName]
-      ,[EditDate]
-from #tmp";
 
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption, string.Empty, sqlUpdate, out resulttb)))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
-                    }
-
+                    // VNConsumption_Detail
                     sqlUpdate = $@"
-                    delete t from VNConsumption_Detail t where exists(	select 1 from #tmp s where s.id = t.id)
+                    delete t from VNConsumption_Detail t 
+                    inner join VNConsumption s on t.ID=s.ID
+                    where s.VNContractID = '{this.txtSubconInContractNo.Text}'
+                    and s.StyleID = '{this.txtStyleID.Text}' and s.BrandID = '{this.txtbrand.Text}'
+
                     insert into VNConsumption_Detail select * from #tmp";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption_Detail, string.Empty, sqlUpdate, out resulttb)))
                     {
@@ -271,8 +253,14 @@ from #tmp";
                         return;
                     }
 
+                    // VNConsumption_Article
                     sqlUpdate = $@"
-                    delete t from VNConsumption_Article t where exists(	select 1 from #tmp s where s.id = t.id)
+                    delete t 
+                    from VNConsumption_Article t 
+                    inner join VNConsumption s on t.ID = s.ID
+                    where s.VNContractID = '{this.txtSubconInContractNo.Text}'
+                    and s.StyleID = '{this.txtStyleID.Text}' and s.BrandID = '{this.txtbrand.Text}'
+
                     insert into VNConsumption_Article select * from #tmp";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption_Article, string.Empty, sqlUpdate, out resulttb)))
                     {
@@ -281,8 +269,14 @@ from #tmp";
                         return;
                     }
 
+                    // VNConsumption_SizeCode
                     sqlUpdate = $@"
-                    delete t from VNConsumption_SizeCode t where exists(	select 1 from #tmp s where s.id = t.id)
+                    delete t 
+                    from VNConsumption_SizeCode t 
+                    inner join VNConsumption s on t.ID = s.ID
+                    where s.VNContractID = '{this.txtSubconInContractNo.Text}'
+                    and s.StyleID = '{this.txtStyleID.Text}' and s.BrandID = '{this.txtbrand.Text}'
+
                     insert into VNConsumption_SizeCode select * from #tmp";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption_SizeCode, string.Empty, sqlUpdate, out resulttb)))
                     {
@@ -291,8 +285,13 @@ from #tmp";
                         return;
                     }
 
+                    // VNConsumption_Detail_Detail
                     sqlUpdate = $@"
-                    delete t from VNConsumption_Detail_Detail t where exists(	select 1 from #tmp s where s.id = t.id)
+                    delete t 
+                    from VNConsumption_Detail_Detail t 
+                    inner join VNConsumption s on t.ID = s.ID
+                    where s.VNContractID = '{this.txtSubconInContractNo.Text}'
+                    and s.StyleID = '{this.txtStyleID.Text}' and s.BrandID = '{this.txtbrand.Text}'
 
                     insert into VNConsumption_Detail_Detail(
                         [ID] ,[NLCode] ,[SCIRefno],[RefNo],[Qty],[LocalItem]
@@ -302,6 +301,42 @@ from #tmp";
                         ,[OldFabricUkey],[OldFabricVer],[SystemQty],[UserCreate],[StockQty],[StockUnit]
                         ,[HSCode],[UnitID],[UsageQty],[UsageUnit] from #tmp";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption_Detail_Detail, string.Empty, sqlUpdate, out resulttb)))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    // VNConsumption
+                    sqlUpdate = $@"
+                    delete t from VNConsumption t
+                    where t.VNContractID = '{this.txtSubconInContractNo.Text}'
+                    and t.StyleID = '{this.txtStyleID.Text}' and t.BrandID = '{this.txtbrand.Text}'
+
+                    insert into VNConsumption 
+                    select [ID]
+                          ,[CustomSP]
+                          ,[VNContractID] = '{this.txtSubconInContractNo.Text}'
+                          ,[CDate]
+                          ,[StyleID]
+                          ,[StyleUKey]
+                          ,[SeasonID]
+                          ,[BrandID]
+                          ,[Category]
+                          ,[SizeCode]
+                          ,[Qty]
+                          ,[PulloutQty]
+                          ,[Version]
+                          ,[CPU]
+                          ,[VNMultiple]
+                          ,[Status]
+                          ,[AddName]
+                          ,[AddDate]
+                          ,[EditName]
+                          ,[EditDate]
+                    from #tmp";
+
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtVNConsumption, string.Empty, sqlUpdate, out resulttb)))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
