@@ -664,8 +664,13 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 allAS = allAS.Select(filter).TryCopyToDataTable(allAS);
             }
 
-            // 取得已選過資料在不同 No 下 Qty 加總
+            // 取得已選過資料在不同 No 下 Qty 加總 (包含當前點選)
             var sel = this.ArticleSizeTb.Select(filter).AsEnumerable().GroupBy(g => new { Pkey = MyUtility.Convert.GetLong(g["Pkey"]) })
+                .Select(s => new { s.Key.Pkey, Qty = s.Sum(sum => MyUtility.Convert.GetInt(sum["cutoutput"])) }).ToList();
+
+            // 取得已選過資料在不同 No 下 Qty 加總 (排除當前點選)
+            var otherSel = this.ArticleSizeTb.Select(filter + $" and iden <> {dr["iden"]}").AsEnumerable()
+                .GroupBy(g => new { Pkey = MyUtility.Convert.GetLong(g["Pkey"]) })
                 .Select(s => new { s.Key.Pkey, Qty = s.Sum(sum => MyUtility.Convert.GetInt(sum["cutoutput"])) }).ToList();
             foreach (DataRow row in allAS.Rows)
             {
@@ -683,6 +688,11 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 if (MyUtility.Check.Empty(row["cutoutput"]))
                 {
                     row.Delete();
+                }
+                else
+                {
+                    row["otherSelQty"] = otherSel.Where(w => w.Pkey == (long)row["Pkey"]).Select(s => s.Qty).FirstOrDefault();
+                    row["RealbalanceQty"] = MyUtility.Convert.GetInt(row["RealCutOutput"]) - MyUtility.Convert.GetInt(row["CreatedBundleQty"]) - MyUtility.Convert.GetInt(row["OtherSelQty"]) - MyUtility.Convert.GetInt(row["cutOutput"]);
                 }
             }
 
@@ -908,7 +918,38 @@ and ord.mDivisionid = '{this.keyWord}'
 {distru_where}
 order by article.article,b.sizecode,b.orderid,a.FabricPanelCode
 
-select * from #tmp
+select bdo.qty,b.id,bdo.BundleNo,bd.Patterncode,bd.BundleGroup,b.CutRef,b.Article,b.Sizecode,bdo.OrderID
+into #tmpx
+from Bundle b with(nolock)
+inner join Bundle_Detail bd with(nolock) on bd.Id = b.ID
+inner join Bundle_Detail_Order bdo on bdo.BundleNo = bd.BundleNo
+where exists(select 1 from #tmp t where b.cutref = t.CutRef and b.Article = t.article and b.Sizecode = t.sizecode and bdo.OrderID = t.orderid)
+
+select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
+into #bundleSPCreatedQty
+from (
+	select CutRef,Article,Sizecode,OrderID,qty from #tmpx where Patterncode = 'ALLPARTS'
+
+	union all
+	select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
+	from (
+		select id,BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = min(x.Qty)
+		from(
+			select t.ID,t.Patterncode,t.BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = sum(t.Qty)
+			from #tmpx t
+			where not exists(select 1 from #tmpx where Patterncode = 'ALLPARTS' and id = t.id)
+			group by t.ID,t.Patterncode,t.BundleGroup,CutRef,Article,Sizecode,OrderID
+		)x
+		group by id,BundleGroup,CutRef,Article,Sizecode,OrderID
+	)x
+	group by CutRef,Article,Sizecode,OrderID
+)x
+group by CutRef,Article,Sizecode,OrderID
+
+select t.*,CreatedBundleQty = b.qty, RealbalanceQty = t.RealCutOutput - t.CutOutput - b.qty, OtherSelQty = 0
+from #tmp t
+left join #bundleSPCreatedQty b on t.CutRef = b.CutRef and t.article = b.Article and t.sizecode = b.Sizecode and t.orderid = b.OrderID
+
 select distinct MDivisionId, StyleUkey, Article, cutref, POID, ukey into #msa from #tmp
 
 select f.patternCode,f.PatternDesc,f.Parts, art = isnull(art, ''), m.cutref, m.poid, m.ukey, f.ispair, f.Location,

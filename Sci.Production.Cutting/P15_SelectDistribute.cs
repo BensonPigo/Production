@@ -61,6 +61,7 @@ namespace Sci.Production.Cutting
                 }
 
                 dr["cutOutput"] = e.FormattedValue;
+                dr["RealbalanceQty"] = MyUtility.Convert.GetInt(dr["RealCutOutput"]) - MyUtility.Convert.GetInt(dr["CreatedBundleQty"]) - MyUtility.Convert.GetInt(dr["OtherSelQty"]) - MyUtility.Convert.GetInt(dr["cutOutput"]);
                 dr.EndEdit();
             };
             this.grid1.IsEditingReadOnly = false;
@@ -69,6 +70,7 @@ namespace Sci.Production.Cutting
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("RealbalanceQty", header: "Balance Qty", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("cutoutput", header: "Qty", width: Widths.AnsiChars(3), settings: cutoutput)
                 .Text("isEXCESS", header: "EXCESS", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 ;
