@@ -151,7 +151,16 @@ ORDER BY CAST(pd.CTNStartNo as int)
         /// <inheritdoc/>
         protected override DualResult ClickDelete()
         {
-            #region ISP20201607 資料交換 - Gensong
+
+            #region 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["PackingListID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
+            #region 資料交換 - Sunrise
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 // 不透過Call API的方式，自己組合，傳送API
@@ -159,6 +168,7 @@ ORDER BY CAST(pd.CTNStartNo as int)
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion
+
             return base.ClickDelete();
         }
 

@@ -4,9 +4,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -226,6 +228,21 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
                     return;
+                }
+                else
+                {
+                    // 拆成單筆 PackingListNo 轉出
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        #region ISP20201607 資料交換 - Gensong
+                        if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+                        {
+                            // 不透過Call API的方式，自己組合，傳送API
+                            Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["PackingListID"]), string.Empty))
+                                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                        }
+                        #endregion
+                    }
                 }
             }
 

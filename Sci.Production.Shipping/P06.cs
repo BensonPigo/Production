@@ -731,6 +731,15 @@ where	exists (
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{listOrderID}','Orders,Order_QtyShip'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -821,6 +830,14 @@ where ID = '{orderid}'
             }
             #endregion
 
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{listOrderID}','Orders,Order_QtyShip'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         // History

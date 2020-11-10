@@ -3373,14 +3373,14 @@
             // 
             this.chkNonRevenue.AutoSize = true;
             this.chkNonRevenue.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonRevenue", true));
-            this.chkNonRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNonRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkNonRevenue.IsSupportEditMode = false;
             this.chkNonRevenue.Location = new System.Drawing.Point(460, 4);
             this.chkNonRevenue.Name = "chkNonRevenue";
+            this.chkNonRevenue.ReadOnly = true;
             this.chkNonRevenue.Size = new System.Drawing.Size(101, 19);
             this.chkNonRevenue.TabIndex = 240;
             this.chkNonRevenue.Text = "Non Revenue";
-            this.chkNonRevenue.ReadOnly = true;
-            this.chkNonRevenue.IsSupportEditMode = false;
             this.chkNonRevenue.UseVisualStyleBackColor = true;
             // 
             // txtdropdownlistCategory
