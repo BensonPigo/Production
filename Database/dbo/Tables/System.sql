@@ -60,6 +60,7 @@
     [MiscPOApproveDay] TINYINT CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL, 
     [QMSAutoAdjustMtl] BIT CONSTRAINT [DF_System_QMSAutoAdjustMtl] NOT NULL DEFAULT ((0)), 
     [ShippingMarkTemplatePath] VARCHAR(80)  NOT NULL CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT(''), 
+    [WIP_FollowCutOutput] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
