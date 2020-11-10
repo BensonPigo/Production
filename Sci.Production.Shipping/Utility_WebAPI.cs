@@ -9,11 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ict;
 using Newtonsoft.Json;
-using PmsWebApiUtility20;
 using Sci.Data;
 using Sci.Production.Prg;
-using static PmsWebApiUtility20.WebApiTool;
-using static PmsWebApiUtility45.WebApiTool;
 using static Sci.Production.Shipping.Customs_WebAPI;
 
 namespace Sci.Production.Shipping

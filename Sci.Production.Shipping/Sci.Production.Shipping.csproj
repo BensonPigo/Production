@@ -112,12 +112,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\PMSToolApplication\_DLL\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PmsWebApiUtility20">
-      <HintPath>..\..\MES_Formal\_Dll\PmsWebApiUtility20.dll</HintPath>
-    </Reference>
-    <Reference Include="PmsWebApiUtility45">
-      <HintPath>..\..\MES_Formal\_Dll\PmsWebApiUtility45.dll</HintPath>
-    </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
