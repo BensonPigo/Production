@@ -14,7 +14,8 @@
 	[FromBottom] [numeric](8, 2) NOT NULL,
 	[Width] [int] NOT NULL,
 	[Length] [int] NOT NULL,
- CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
+	[DPI] INT NOT NULL DEFAULT 0, 
+    CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
 (
 	[ShippingMarkPicUkey] ASC,
 	[SCICtnNo] ASC,
@@ -76,6 +77,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貼碼面, 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'序號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic_Detail', @level2type = N'COLUMN', @level2name = N'Seq';
+
+
+GO
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉 HTML 的 DPI', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic_Detail', @level2type = N'COLUMN', @level2name = N'DPI';
 
 
 GO

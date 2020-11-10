@@ -591,14 +591,60 @@ where InvA.OrderID = '{0}'
             Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             #endregion
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
+            #region 一併移除 PackingListID 相對應貼標 / 噴碼的資料
+            string sqlCmd = $@"
+
+ DELETE picd
+ FROM ShippingMarkPic pic
+ INNER JOIN ShippingMarkPic_Detail picd ON pic.Ukey = picd.ShippingMarkPicUkey
+ WHERE pic.PackingListID='{this.CurrentMaintain["ID"]}'
+
+ DELETE ShippingMarkPic
+ WHERE PackingListID='{this.CurrentMaintain["ID"]}'
+
+
+ DELETE stampd
+ FROM ShippingMarkStamp stamp
+ INNER JOIN ShippingMarkStamp_Detail stampd ON stamp.PackingListID = stampD.PackingListID
+ WHERE stamp.PackingListID='{this.CurrentMaintain["ID"]}'
+
+ DELETE ShippingMarkStamp
+ WHERE PackingListID='{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Delete <Shipping Mark Picture> 、<Shipping Mark Stamp> fail! \r\n" + result.ToString());
+                return failResult;
+            }
+            #endregion
+
             #region ISP20200757 資料交換 - Sunrise
             Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "delete"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            #endregion
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 不透過Call API的方式，自己組合，傳送API
+                Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
             #endregion
             return base.ClickDeletePost();
         }

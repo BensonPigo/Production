@@ -753,6 +753,15 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
             #endregion
+
+            #region ISP20201607 資料交換 - Gensong
+            if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+            {
+                // 透過Call API的方式，傳送API
+                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip'"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            #endregion
         }
 
         // Style
