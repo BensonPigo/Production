@@ -72,6 +72,7 @@
             // 
             // splitContainer1
             // 
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
@@ -92,7 +93,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.panel7);
             this.splitContainer1.Panel2.Controls.Add(this.panel6);
             this.splitContainer1.Size = new System.Drawing.Size(1032, 629);
-            this.splitContainer1.SplitterDistance = 426;
+            this.splitContainer1.SplitterDistance = 316;
             this.splitContainer1.TabIndex = 10;
             // 
             // panel5
@@ -101,7 +102,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 35);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(406, 584);
+            this.panel5.Size = new System.Drawing.Size(292, 580);
             this.panel5.TabIndex = 14;
             // 
             // gridSelectedFile
@@ -133,23 +134,23 @@
             this.gridSelectedFile.RowTemplate.Height = 24;
             this.gridSelectedFile.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSelectedFile.ShowCellToolTips = false;
-            this.gridSelectedFile.Size = new System.Drawing.Size(406, 584);
+            this.gridSelectedFile.Size = new System.Drawing.Size(292, 580);
             this.gridSelectedFile.TabIndex = 0;
             // 
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 619);
+            this.panel4.Location = new System.Drawing.Point(10, 615);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(406, 10);
+            this.panel4.Size = new System.Drawing.Size(292, 10);
             this.panel4.TabIndex = 13;
             // 
             // panel3
             // 
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(416, 35);
+            this.panel3.Location = new System.Drawing.Point(302, 35);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(10, 594);
+            this.panel3.Size = new System.Drawing.Size(10, 590);
             this.panel3.TabIndex = 12;
             // 
             // panel2
@@ -157,7 +158,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel2.Location = new System.Drawing.Point(0, 35);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 594);
+            this.panel2.Size = new System.Drawing.Size(10, 590);
             this.panel2.TabIndex = 11;
             // 
             // panel1
@@ -167,13 +168,13 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(426, 35);
+            this.panel1.Size = new System.Drawing.Size(312, 35);
             this.panel1.TabIndex = 10;
             // 
             // btnProcessing
             // 
             this.btnProcessing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnProcessing.Location = new System.Drawing.Point(315, 2);
+            this.btnProcessing.Location = new System.Drawing.Point(201, 2);
             this.btnProcessing.Name = "btnProcessing";
             this.btnProcessing.Size = new System.Drawing.Size(101, 30);
             this.btnProcessing.TabIndex = 2;
@@ -197,7 +198,7 @@
             this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel10.Location = new System.Drawing.Point(10, 35);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(582, 552);
+            this.panel10.Size = new System.Drawing.Size(688, 548);
             this.panel10.TabIndex = 18;
             // 
             // gridMatch
@@ -229,7 +230,7 @@
             this.gridMatch.RowTemplate.Height = 24;
             this.gridMatch.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMatch.ShowCellToolTips = false;
-            this.gridMatch.Size = new System.Drawing.Size(582, 552);
+            this.gridMatch.Size = new System.Drawing.Size(688, 548);
             this.gridMatch.TabIndex = 0;
             this.gridMatch.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridMatch_CellMouseUp);
             // 
@@ -240,7 +241,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel9.Location = new System.Drawing.Point(10, 0);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(582, 35);
+            this.panel9.Size = new System.Drawing.Size(688, 35);
             this.panel9.TabIndex = 17;
             // 
             // gridErrorMsg
@@ -288,9 +289,9 @@
             // panel8
             // 
             this.panel8.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel8.Location = new System.Drawing.Point(592, 0);
+            this.panel8.Location = new System.Drawing.Point(698, 0);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(10, 587);
+            this.panel8.Size = new System.Drawing.Size(10, 583);
             this.panel8.TabIndex = 16;
             // 
             // panel7
@@ -298,22 +299,22 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel7.Location = new System.Drawing.Point(0, 0);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(10, 587);
+            this.panel7.Size = new System.Drawing.Size(10, 583);
             this.panel7.TabIndex = 15;
             // 
             // panel6
             // 
             this.panel6.Controls.Add(this.btnConfirm);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel6.Location = new System.Drawing.Point(0, 587);
+            this.panel6.Location = new System.Drawing.Point(0, 583);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(602, 42);
+            this.panel6.Size = new System.Drawing.Size(708, 42);
             this.panel6.TabIndex = 14;
             // 
             // btnConfirm
             // 
             this.btnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConfirm.Location = new System.Drawing.Point(502, 6);
+            this.btnConfirm.Location = new System.Drawing.Point(608, 6);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(87, 30);
             this.btnConfirm.TabIndex = 0;

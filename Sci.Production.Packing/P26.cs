@@ -53,7 +53,7 @@ namespace Sci.Production.Packing
 
             this.Grid_Match_Dt.ColumnsStringAdd("PO");
             this.Grid_Match_Dt.ColumnsIntAdd("FileSeq");
-            this.Grid_Match_Dt.ColumnsBooleanAdd("MultipieMatches");
+            this.Grid_Match_Dt.ColumnsBooleanAdd("MultipleMatches");
             this.Grid_Match_Dt.ColumnsStringAdd("PackingListCandidate");
             this.Grid_Match_Dt.ColumnsBooleanAdd("NoStickerBasicSetting");
             this.Grid_Match_Dt.ColumnsBooleanAdd("StickerAlreadyexisted");
@@ -69,9 +69,9 @@ namespace Sci.Production.Packing
             base.OnFormLoaded();
             this.gridSelectedFile.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.gridSelectedFile)
-.Numeric("FileSeq", header: "File Seq", width: Widths.AnsiChars(5), minimum: null)
-.Text("FileName", header: "File Name ", width: Widths.AnsiChars(35))
-.Text("Result", header: "Result", width: Widths.AnsiChars(10))
+.Numeric("FileSeq", header: $"File{Environment.NewLine}Seq", width: Widths.AnsiChars(3), minimum: null)
+.Text("FileName", header: $"File{Environment.NewLine}Name ", width: Widths.AnsiChars(10))
+.Text("Result", header: "Result", width: Widths.AnsiChars(20))
 ;
 
             DataGridViewGeneratorTextColumnSettings col_PackingListCandidate = new DataGridViewGeneratorTextColumnSettings();
@@ -210,12 +210,12 @@ namespace Sci.Production.Packing
             this.gridMatch.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridMatch)
 .Text("PO", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-.Numeric("FileSeq", header: "File Seq ", width: Widths.AnsiChars(5), iseditingreadonly: true)
-.CheckBox("MultipieMatches", header: "Multipie Matches", width: Widths.AnsiChars(10), iseditable: false)
-.Text("PackingListCandidate", header: "P/L Candidate", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_PackingListCandidate)
-.CheckBox("NoStickerBasicSetting", header: "No Sticker Basic Setting", width: Widths.AnsiChars(5), iseditable: false)
-.CheckBox("StickerAlreadyexisted", header: "Sticker already existed", width: Widths.AnsiChars(5), iseditable: false)
-.CheckBox("CtnInClog", header: "Ctn In Clog", width: Widths.AnsiChars(5), iseditable: false)
+.Numeric("FileSeq", header: "File" + Environment.NewLine + "Seq ", width: Widths.AnsiChars(5), iseditingreadonly: true)
+.CheckBox("MultipleMatches", header: "Multiple" + Environment.NewLine + "Matches", width: Widths.AnsiChars(4), iseditable: false)
+.Text("PackingListCandidate", header: "P/L" + Environment.NewLine + "Candidate", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_PackingListCandidate)
+.CheckBox("NoStickerBasicSetting", header: "No Sticker" + Environment.NewLine + "Basic Setting", width: Widths.AnsiChars(4), iseditable: false)
+.CheckBox("StickerAlreadyexisted", header: "Sticker" + Environment.NewLine + "already existed", width: Widths.AnsiChars(4), iseditable: false)
+.CheckBox("CtnInClog", header: "Ctn" + Environment.NewLine + "In Clog", width: Widths.AnsiChars(4), iseditable: false)
 .CheckBox("Overwrite", header: "Overwrite", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: true, settings: col_Overwrite)
 ;
 
@@ -815,7 +815,7 @@ namespace Sci.Production.Packing
                     DataRow nRow = tmp.NewRow();
                     nRow["PO"] = matchData.PO;
                     nRow["FileSeq"] = matchData.FileSeq;
-                    nRow["MultipieMatches"] = matchData.MultipieMatches;
+                    nRow["MultipleMatches"] = matchData.MultipleMatches;
                     nRow["PackingListCandidate"] = matchData.PackingList_Candidate.FirstOrDefault();
                     nRow["NoStickerBasicSetting"] = matchData.NoStickerBasicSetting;
                     nRow["StickerAlreadyExisted"] = matchData.StickerAlreadyExisted;
@@ -947,7 +947,7 @@ namespace Sci.Production.Packing
                         int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
 
                         // 準備Multipie Matches
-                        matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+                        matchData.MultipleMatches = mapped_PackingLisID_Count > 1 ? true : false;
 
                         // 準備P/L Candidate清單
                         if (mapped_PackingLisID_Count > 1)
@@ -1030,7 +1030,7 @@ namespace Sci.Production.Packing
                         int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
 
                         // 準備Multipie Matches
-                        matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+                        matchData.MultipleMatches = mapped_PackingLisID_Count > 1 ? true : false;
 
                         // 準備P/L Candidate清單
                         if (mapped_PackingLisID_Count > 1)
@@ -1165,7 +1165,7 @@ namespace Sci.Production.Packing
                     int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
 
                     // 準備Multipie Matches
-                    matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+                    matchData.MultipleMatches = mapped_PackingLisID_Count > 1 ? true : false;
 
                     // 準備P/L Candidate清單
                     if (mapped_PackingLisID_Count > 1)
@@ -1236,7 +1236,7 @@ namespace Sci.Production.Packing
                     int mapped_PackingLisID_Count = mappingInfo[0].AsEnumerable().Select(o => o["PackingListID"]).Distinct().Count();
 
                     // 準備Multipie Matches
-                    matchData.MultipieMatches = mapped_PackingLisID_Count > 1 ? true : false;
+                    matchData.MultipleMatches = mapped_PackingLisID_Count > 1 ? true : false;
 
                     // 準備P/L Candidate清單
                     if (mapped_PackingLisID_Count > 1)
@@ -2072,11 +2072,11 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
             {
                 if (MyUtility.Convert.GetString(item.Cells["PackingListCandidate"].Value).ToLower() == "please select")
                 {
-                    item.Cells["MultipieMatches"].Style.BackColor = Color.Pink;
+                    item.Cells["MultipleMatches"].Style.BackColor = Color.Pink;
                 }
                 else
                 {
-                    item.Cells["MultipieMatches"].Style.BackColor = Color.White;
+                    item.Cells["MultipleMatches"].Style.BackColor = Color.White;
                 }
 
                 if (MyUtility.Convert.GetBool(item.Cells["NoStickerBasicSetting"].Value))
@@ -2249,7 +2249,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
             List<Match> errorList = new List<Match>();
 
             // Multiple Matches = True 並且沒有選擇 P/L
-            var a = this.MatchList.Where(o => o.MultipieMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
+            var a = this.MatchList.Where(o => o.MultipleMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
             if (a.Any())
             {
                 foreach (var item in a)
@@ -2264,7 +2264,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                 // 記錄下無法執行上傳的項目
                 errorList.AddRange(a);
-                this.MatchList.RemoveAll(o => o.MultipieMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
+                this.MatchList.RemoveAll(o => o.MultipleMatches == true && (o.SelectedPackingID == string.Empty || o.SelectedPackingID.ToUpper() == "PLEASE SELECT"));
             }
 
             // No Sticker Basic Setting = True
@@ -2305,8 +2305,8 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 this.MatchList.RemoveAll(o => o.CtnInClog == true && ((o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted));
             }
 
-            // 檢查Overwrite：挑出已經有P24資料，且勾選Overwrite
-            var d = this.MatchList.Where(o => (o.StickerAlreadyExisted && o.Overwrite));
+            // 檢查現存Cust CTN：CustCTN + CustPONO不能重複
+            var d = this.MatchList;
             foreach (Match match in d)
             {
                 bool isOtherPacking = false;
@@ -2317,10 +2317,17 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     foreach (var zPL in match.ZPLFile.ZPLs)
                     {
                         string custCTN = zPL.CustCTN;
+                        string custPOno = zPL.CustPONo;
 
-                        string cmd = $@"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{custCTN}' AND ID <> '{selectedPackingID}'  ";
+                        string cmd = $@"
+SELECT 1 
+FROM PackingList_Detail pd
+INNER JOIN Orders o ON pd.OrderID = o.ID
+WHERE pd.CustCTN='{custCTN}' AND pd.ID <> '{selectedPackingID}'  
+AND o.CustPONo='{custPOno}'
+";
 
-                        // 若要覆蓋CustCTN，只能覆蓋相同PackingList ID的
+                        // 檢查現有DB資料，CustCTN + CustPONO不能重複
                         if (MyUtility.Check.Seek(cmd))
                         {
                             isOtherPacking = true;
@@ -2333,10 +2340,17 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     foreach (var pDF in match.PDFFile.UpdateModels)
                     {
                         string custCTN = pDF.CustCTN;
+                        string custPOno = pDF.CustPONo;
 
-                        string cmd = $@"SELECT 1 FROM PackingList_Detail WHERE CustCTN='{custCTN}' AND ID <> '{selectedPackingID}'  ";
+                        string cmd = $@"
+SELECT 1 
+FROM PackingList_Detail pd
+INNER JOIN Orders o ON pd.OrderID = o.ID
+WHERE pd.CustCTN='{custCTN}' AND pd.ID <> '{selectedPackingID}'  
+AND o.CustPONo='{custPOno}'
+";
 
-                        // 若要覆蓋CustCTN，只能覆蓋相同PackingList ID的
+                        // 檢查現有DB資料，CustCTN + CustPONO不能重複
                         if (MyUtility.Check.Seek(cmd))
                         {
                             isOtherPacking = true;
@@ -2669,7 +2683,7 @@ where o.CustPONo='{pono}'
 
             public int FileSeq { get; set; }
 
-            public bool MultipieMatches { get; set; }
+            public bool MultipleMatches { get; set; }
 
             // 重複的PackingListID
             public List<string> PackingList_Candidate { get; set; }
