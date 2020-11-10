@@ -66,6 +66,8 @@
     [Pressing2] INT NULL DEFAULT (0), 
     [Folding1] INT NULL DEFAULT (0), 
     [Folding2] INT NULL DEFAULT (0), 
+	ExpectionFormStatus Varchar(1) NOT NULL CONSTRAINT [DF_Style_ExpectionFormStatus] DEFAULT(''),
+	ExpectionFormDate Date NULL,
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
@@ -359,4 +361,14 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Style',
     @level2type = N'COLUMN',
     @level2name = N'Folding2'
+GO
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Approce/Reject', @level0type = N'SCHEMA', @level0name = N'dbo'
+, @level1type = N'TABLE', @level1name = N'Style'
+, @level2type = N'COLUMN', @level2name = N'ExpectionFormStatus'
+GO
+	
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紀錄日期', @level0type = N'SCHEMA', @level0name = N'dbo'
+, @level1type = N'TABLE', @level1name = N'Style'
+, @level2type = N'COLUMN', @level2name = N'ExpectionFormDate'
 GO
