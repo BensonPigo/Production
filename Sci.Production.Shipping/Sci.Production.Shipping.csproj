@@ -108,6 +108,16 @@
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\PMSToolApplication\_DLL\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PmsWebApiUtility20">
+      <HintPath>..\..\MES_Formal\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
+    <Reference Include="PmsWebApiUtility45">
+      <HintPath>..\..\MES_Formal\_Dll\PmsWebApiUtility45.dll</HintPath>
+    </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
@@ -122,6 +132,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -160,6 +171,12 @@
     </Compile>
     <Compile Include="B07.Designer.cs">
       <DependentUpon>B07.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B43_Copy_CustomsSP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B43_Copy_CustomsSP.Designer.cs">
+      <DependentUpon>B43_Copy_CustomsSP.cs</DependentUpon>
     </Compile>
     <Compile Include="B49.cs">
       <SubType>Form</SubType>
@@ -905,6 +922,8 @@
     <Compile Include="R12.Designer.cs">
       <DependentUpon>R12.cs</DependentUpon>
     </Compile>
+    <Compile Include="Customs_WebAPI.cs" />
+    <Compile Include="Utility_WebAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B03_BatchApprove.resx">
@@ -921,6 +940,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B07.resx">
       <DependentUpon>B07.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B43_Copy_CustomsSP.resx">
+      <DependentUpon>B43_Copy_CustomsSP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B49.resx">
       <DependentUpon>B49.cs</DependentUpon>
