@@ -111,6 +111,7 @@ namespace Sci.Production.Packing
 
                     var selectedData = item.GetSelecteds();
                     dr["PackingListCandidate"] = selectedData[0]["PackingList ID"].ToString();
+                    dr["OverWrite"] = false;
                     this.GetInfoByPackingList(dr);
                     this.MatchList.Where(o => o.FileSeq == MyUtility.Convert.GetInt(dr["FileSeq"])).FirstOrDefault().SelectedPackingID = MyUtility.Convert.GetString(dr["PackingListCandidate"]);
                 }
@@ -150,6 +151,7 @@ namespace Sci.Production.Packing
 
                     var selectedData = item.GetSelecteds();
                     dr["PackingListCandidate"] = selectedData[0]["PackingList ID"].ToString();
+                    dr["OverWrite"] = false;
                     this.GetInfoByPackingList(dr);
                     this.MatchList.Where(o => o.FileSeq == MyUtility.Convert.GetInt(dr["FileSeq"])).FirstOrDefault().SelectedPackingID = MyUtility.Convert.GetString(dr["PackingListCandidate"]);
                 }
@@ -177,6 +179,7 @@ namespace Sci.Production.Packing
                     else
                     {
                         dr["PackingListCandidate"] = newvalue;
+                        dr["OverWrite"] = false;
                         this.MatchList.Where(o => o.FileSeq == MyUtility.Convert.GetInt(dr["FileSeq"])).FirstOrDefault().SelectedPackingID = MyUtility.Convert.GetString(dr["PackingListCandidate"]);
                         dr.EndEdit();
                         this.MatchGridColor();
