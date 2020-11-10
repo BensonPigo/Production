@@ -108,6 +108,7 @@ select  ld.OriNO
     , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
 	, ld.Annotation
 	, ld.Template
+	, ld.Attachment
 	, ld.ThreadColor
 	, ld.Notice
 	, ld.EmployeeID
@@ -129,6 +130,7 @@ select  ld.OriNO
 	, ld.GSD
 	, ld.Cycle
     , ld.OperationID
+    , ld.New
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -143,7 +145,11 @@ outer apply (
 	where o.ID = o2.ID
 )show
 where ld.ID = '{0}' 
-order by ld.No, ld.GroupKey",
+order by case when ld.No = '' then 1
+			when left(ld.No, 1) = 'P' then 2
+			else 3
+			end, 
+        ld.GroupKey",
                 masterID,
                 Env.User.Factory);
             return base.OnDetailSelectCommandPrepare(e);
@@ -621,24 +627,26 @@ where Junk = 0
                 }
             };
             #endregion
+
             hide.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (!this.EditMode)
                 {
                     dr["IsHide"] = dr["IsHide"];
-                    dr.EndEdit();
                     return;
                 }
 
                 if (this.EditMode)
                 {
-                    if (MyUtility.Convert.GetBool(dr["IsGroupHeader"]))
+                    /*
+                     * if (MyUtility.Convert.GetBool(dr["IsGroupHeader"]))
                     {
                         MyUtility.Msg.ErrorBox("This operation is [Group Header], cannot modify.");
                         dr["IsHide"] = 1;
                         return;
                     }
+                    */
 
                     /*
                     if (MyUtility.Convert.GetBool(dr["IsSewingOperation"]))
@@ -653,6 +661,7 @@ where Junk = 0
                     {
                         string noo = dr["No"].ToString(); // 紀錄要被刪除的No
                         dr["No"] = string.Empty;
+                        dr["IsPPA"] = 0;
                         dr["IsHide"] = 1;
                         this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
                         this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
@@ -673,6 +682,23 @@ where Junk = 0
                 }
             };
 
+            ppa.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (MyUtility.Convert.GetBool(e.FormattedValue))
+                    {
+                        dr["IsPPA"] = 1;
+                        dr["IsHide"] = 0;
+                        dr.EndEdit();
+                    }
+
+                    this.ComputeTaktTime();
+                    this.Distable();
+                }
+            };
+
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
             notice.MaxLength = 600;
@@ -680,7 +706,7 @@ where Junk = 0
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
-            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
+            .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
             .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
             .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
             .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
@@ -729,6 +755,10 @@ where Junk = 0
                     }
                 }
                 #endregion
+            };
+            this.detailgrid.Sorted += (s, e) =>
+            {
+                this.Distable();
             };
 
             Ict.Win.UI.DataGridViewNumericBoxColumn act;
@@ -906,6 +936,26 @@ where Junk = 0
             if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can not empty!");
+                return false;
+            }
+
+            var queryIsGroupHeader = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == false && x.Field<bool?>("IsGroupHeader") == true);
+            if (queryIsGroupHeader.Any())
+            {
+                string msg = "It must be selected if the operation is [Group Header]." + Environment.NewLine;
+                foreach (DataRow row in queryIsGroupHeader)
+                {
+                    msg += "[OriNo]: " + row["OriNo"].ToString() + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            var queryHideAndPPA = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == true && x.Field<bool?>("IsPPA") == true);
+            if (queryHideAndPPA.Any())
+            {
+                MyUtility.Msg.WarningBox("<PPA> and <Hide> cannot be selected at the same time.");
                 return false;
             }
 
@@ -1404,7 +1454,11 @@ outer apply (
 	where o.ID = o2.ID
 )show
 where ld.ID = {0} 
-order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
+order by case when ld.No = '' then 1
+			when left(ld.No, 1) = 'P' then 2
+			else 3
+			end, 
+        ld.GroupKey", callNextForm.P03CopyLineMapping["ID"].ToString());
                 DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out copyLineMapDetail);
                 if (!selectResult)
                 {

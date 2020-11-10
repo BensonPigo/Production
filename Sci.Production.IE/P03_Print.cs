@@ -100,7 +100,10 @@ namespace Sci.Production.IE
                     @"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no<={1}
+where ld.ID = {0} 
+and (ld.IsPPa = 0 or ld.IsPPa is null) 
+and (ld.IsHide = 0 or ld.IsHide is null)
+and no<={1}
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
@@ -108,7 +111,10 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no<={1}
                     @"
 select no = count(distinct no)
 from LineMapping_Detail ld WITH (NOLOCK)
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
+where ld.ID = {0} 
+and (ld.IsPPa = 0 or ld.IsPPa is null) 
+and (ld.IsHide = 0 or ld.IsHide is null)
+and no>{1}
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
@@ -200,9 +206,14 @@ outer apply
 		where a.ID = ld.ID
 		and left(ld.OperationID , 2) = '--'
 		and ld.OriNO < a.OriNO
+		and not exists (select 1 from DropDownList d where d.Type = 'IEP03HideGroupHeader' and d.ID = ld.OperationID)
 	)
 )ld
-where a.ID = {0}",
+where a.ID = {0}
+order by case when left(a.No, 1) = 'P' then 1
+			 when a.No <> '' then 2
+			 else 3 end, 
+		a.GroupKey",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
                 this.strLanguage);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
@@ -226,7 +237,7 @@ from LineMapping_Detail ld WITH (NOLOCK)
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
 left join OperationDesc od on o.ID = od.ID
-where ld.ID = {0} and IsHide = 1
+where ld.ID = {0} and (ld.IsHide = 1 or ld.IsPPa  = 1)
 and left(ld.OperationID, 2) != '--'
 order by ld.No,ld.GroupKey",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
@@ -271,7 +282,9 @@ OUTER APPLY(
 		)a
 	)b
 )ActCycle
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
+where ld.ID = {0} 
+and (ld.IsPPa = 0 or ld.IsPPa is null) 
+and (ld.IsHide = 0 or ld.IsHide is null)
 GROUP BY NO ,ActCycle.Value
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
@@ -328,7 +341,9 @@ OUTER APPLY(
 		)a
 	)b
 )ActCycle
-where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
+where  (ld.IsPPa = 0 or ld.IsPPa is null) 
+and (ld.IsHide = 0 or ld.IsHide is null) 
+and no between t.minno and t.maxno
 GROUP BY NO ,ActCycle.Value
 order by no
 
@@ -382,7 +397,9 @@ OUTER APPLY(
 		)a
 	)b
 )ActCycle
-where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
+where  (ld.IsPPa = 0 or ld.IsPPa is null) 
+and (ld.IsHide = 0 or ld.IsHide is null) 
+and no between t.minno and t.maxno
 GROUP BY NO ,ActCycle.Value
 order by no
 
@@ -884,7 +901,9 @@ order by NO
             #region Machine Type
             if (showMachineType)
             {
-                string[] noPPA = this.operationCode.AsEnumerable().Where(s => s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")).Select(s => s["rn"].ToString()).ToArray();
+                string[] noPPA = this.operationCode.AsEnumerable()
+                            .Where(s => (s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")) || s["IsPPa"].Equals(true))
+                            .Select(s => s["rn"].ToString()).ToArray();
                 if (noPPA.Length > 10)
                 {
                     rngToCopy = worksheet.get_Range("A94:A94").EntireRow; // 選取要被複製的資料
@@ -927,6 +946,9 @@ order by NO
             // 計錄各站點公式放入GCtime sheet資料來源
             List<GCTimeChartData> list_GCTimeChartData = new List<GCTimeChartData>();
             List<CycleTimeChart> list_CycleTimeChart = new List<CycleTimeChart>();
+
+            // Sheet3 => IsPPa = 1
+            bool isSheet3 = showMachineType;
 
             #region U_Left字型列印
             if (this.display == "U_Left")
@@ -1021,7 +1043,7 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1048,7 +1070,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1159,7 +1181,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1186,7 +1208,7 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1287,7 +1309,7 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1311,7 +1333,7 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;

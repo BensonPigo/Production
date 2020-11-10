@@ -748,6 +748,11 @@ where Junk = 0";
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
+
+            this.detailgrid.Sorted += (s, e) =>
+            {
+                this.HideRows();
+            };
         }
 
         private void ChangeToEmptyData(DataRow dr)
@@ -1477,18 +1482,57 @@ where ID = {0}",
             #endregion
 
             DataTable ietmsData;
-            string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
-                            iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
-                            id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
-                            id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,id.MtlFactorID,
-                            round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, o.SeamLength,s.IETMSID,s.IETMSVersion,
-                            (isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,o.MasterPlusGroup
-                            from Style s WITH (NOLOCK) 
-                            inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-                            inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
-                            left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
-                            --left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
-                            where s.ID = @id and s.SeasonID = @seasonid and s.BrandID = @brandid ";
+            string sqlCmd = string.Format(
+                @"
+select id.SEQ,
+	id.OperationID,
+	o.DescEN as OperationDescEN,
+	id.Annotation,
+	iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
+	id.Frequency as Sewer,
+	o.MachineTypeID,
+	id.Frequency,
+	id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,
+	[Mold] = STUFF((
+		        select concat(',' ,s.Data)
+		        from SplitString(id.Mold, ';') s
+		        inner join Mold m on s.Data = m.ID
+		        where m.IsAttachment = 1
+                and m.Junk = 0
+		        for xml path ('')) 
+	        ,1,1,''),
+	[Template] = STUFF((
+		            select concat(',' ,s.Data)
+		            from SplitString(id.Mold, ';') s
+		            inner join Mold m on s.Data = m.ID
+		            where m.IsTemplate = 1
+                    and m.Junk = 0
+		            for xml path ('')) 
+	            ,1,1,''),
+	id.MtlFactorID,
+	round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) as SMV, 
+	o.SeamLength,
+	s.IETMSID,
+	s.IETMSVersion,
+	(isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,
+	o.MasterPlusGroup,
+	[IsShow] = isnull(show.val, 1)
+from Style s WITH (NOLOCK) 
+inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+outer apply (
+	select [val] = atf.IsShowinIEP01
+	from Operation o2 WITH (NOLOCK)
+	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{0}'
+	where o.ID = o2.ID
+)show
+--left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
+where s.ID = @id 
+and s.SeasonID = @seasonid 
+and s.BrandID = @brandid ", Env.User.Factory);
 
             // if (isComboType) sqlCmd += " and id.Location = @location ";
             if (isComboType)
@@ -1524,6 +1568,7 @@ where ID = {0}",
                 this.CurrentMaintain["IETMSID"] = ietmsData.Rows[0]["IETMSID"].ToString();
                 this.CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
                 this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                this.HideRows();
             }
         }
 
