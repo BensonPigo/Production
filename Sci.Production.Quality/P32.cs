@@ -1008,6 +1008,14 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             }
         }
 
+        /// <inheritdoc/>
+        protected override void ClickCopyAfter()
+        {
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["ID"] = string.Empty;
+            base.ClickCopyAfter();
+        }
+
         private void ComboStage_SelectedIndexChanged(object sender, EventArgs e)
         {
             this._oldStage = this.CurrentMaintain["Stage"].ToString();
