@@ -109,7 +109,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(this.FactoryID))
                 {
-                    sqlCmd.Append($"AND o.FactoryID =@FactoryID " + Environment.NewLine);
+                    sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
                 }
 
@@ -377,7 +377,7 @@ WHERE 1=1
 
                 if (!MyUtility.Check.Empty(this.FactoryID))
                 {
-                    sqlCmd.Append($"AND o.FactoryID =@FactoryID " + Environment.NewLine);
+                    sqlCmd.Append($"AND o.FtyGroup =@FactoryID " + Environment.NewLine);
                     paramList.Add(new SqlParameter("@FactoryID", this.FactoryID));
                 }
 
