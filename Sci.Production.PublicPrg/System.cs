@@ -357,6 +357,7 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
         {
             foreach (var row in rows)
             {
+                row.AcceptChanges();
                 row.Delete();
             }
         }
