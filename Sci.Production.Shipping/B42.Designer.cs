@@ -32,9 +32,6 @@
             this.btnSketch = new Sci.Win.UI.Button();
             this.editSizeGroup = new Sci.Win.UI.EditBox();
             this.editColorway = new Sci.Win.UI.EditBox();
-            this.numBalanceQty = new Sci.Win.UI.NumericBox();
-            this.numPulloutQty = new Sci.Win.UI.NumericBox();
-            this.numQty = new Sci.Win.UI.NumericBox();
             this.txtSize = new Sci.Win.UI.TextBox();
             this.txtContractNo = new Sci.Win.UI.TextBox();
             this.comboCategory = new Sci.Win.UI.ComboBox();
@@ -42,14 +39,11 @@
             this.displaySeason = new Sci.Win.UI.DisplayBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.txtCustomSPNo = new Sci.Win.UI.TextBox();
-            this.labelBalanceQty = new Sci.Win.UI.Label();
-            this.labelPulloutQty = new Sci.Win.UI.Label();
             this.labelSize = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelContractNo = new Sci.Win.UI.Label();
             this.labelColorway = new Sci.Win.UI.Label();
-            this.labelQty = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -84,12 +78,8 @@
             this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Controls.Add(this.editColorway);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Controls.Add(this.numBalanceQty);
             this.masterpanel.Controls.Add(this.labelSeason);
-            this.masterpanel.Controls.Add(this.numPulloutQty);
             this.masterpanel.Controls.Add(this.labelCategory);
-            this.masterpanel.Controls.Add(this.numQty);
-            this.masterpanel.Controls.Add(this.labelQty);
             this.masterpanel.Controls.Add(this.txtSize);
             this.masterpanel.Controls.Add(this.labelColorway);
             this.masterpanel.Controls.Add(this.txtContractNo);
@@ -101,13 +91,9 @@
             this.masterpanel.Controls.Add(this.displaySeason);
             this.masterpanel.Controls.Add(this.labelSize);
             this.masterpanel.Controls.Add(this.txtStyle);
-            this.masterpanel.Controls.Add(this.labelPulloutQty);
             this.masterpanel.Controls.Add(this.txtCustomSPNo);
-            this.masterpanel.Controls.Add(this.labelBalanceQty);
-            this.masterpanel.Size = new System.Drawing.Size(927, 212);
-            this.masterpanel.Controls.SetChildIndex(this.labelBalanceQty, 0);
+            this.masterpanel.Size = new System.Drawing.Size(927, 195);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomSPNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelPulloutQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSize, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
@@ -119,32 +105,28 @@
             this.masterpanel.Controls.SetChildIndex(this.txtContractNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelColorway, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSize, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelQty, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCategory, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numPulloutQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
-            this.masterpanel.Controls.SetChildIndex(this.numBalanceQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.editColorway, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.editSizeGroup, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCustomSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSketch, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCalculate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSizeGroup, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelVer, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayVer, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(927, 218);
+            this.detailpanel.Location = new System.Drawing.Point(0, 195);
+            this.detailpanel.Size = new System.Drawing.Size(927, 235);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(700, 177);
+            this.gridicon.Location = new System.Drawing.Point(700, 160);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -153,7 +135,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(927, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(927, 235);
             // 
             // detail2
             // 
@@ -233,12 +215,12 @@
             this.editSizeGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editSizeGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editSizeGroup.IsSupportEditMode = false;
-            this.editSizeGroup.Location = new System.Drawing.Point(482, 169);
+            this.editSizeGroup.Location = new System.Drawing.Point(481, 116);
             this.editSizeGroup.Multiline = true;
             this.editSizeGroup.Name = "editSizeGroup";
             this.editSizeGroup.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editSizeGroup.ReadOnly = true;
-            this.editSizeGroup.Size = new System.Drawing.Size(150, 39);
+            this.editSizeGroup.Size = new System.Drawing.Size(150, 66);
             this.editSizeGroup.TabIndex = 53;
             this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditSizeGroup_PopUp);
             // 
@@ -247,7 +229,7 @@
             this.editColorway.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editColorway.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editColorway.IsSupportEditMode = false;
-            this.editColorway.Location = new System.Drawing.Point(92, 142);
+            this.editColorway.Location = new System.Drawing.Point(92, 116);
             this.editColorway.Multiline = true;
             this.editColorway.Name = "editColorway";
             this.editColorway.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
@@ -255,69 +237,6 @@
             this.editColorway.Size = new System.Drawing.Size(204, 66);
             this.editColorway.TabIndex = 52;
             this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditColorway_PopUp);
-            // 
-            // numBalanceQty
-            // 
-            this.numBalanceQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numBalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numBalanceQty.IsSupportEditMode = false;
-            this.numBalanceQty.Location = new System.Drawing.Point(482, 142);
-            this.numBalanceQty.Name = "numBalanceQty";
-            this.numBalanceQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBalanceQty.ReadOnly = true;
-            this.numBalanceQty.Size = new System.Drawing.Size(80, 23);
-            this.numBalanceQty.TabIndex = 51;
-            this.numBalanceQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numPulloutQty
-            // 
-            this.numPulloutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numPulloutQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutQty", true));
-            this.numPulloutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numPulloutQty.IsSupportEditMode = false;
-            this.numPulloutQty.Location = new System.Drawing.Point(482, 115);
-            this.numPulloutQty.Name = "numPulloutQty";
-            this.numPulloutQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numPulloutQty.ReadOnly = true;
-            this.numPulloutQty.Size = new System.Drawing.Size(80, 23);
-            this.numPulloutQty.TabIndex = 50;
-            this.numPulloutQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numQty
-            // 
-            this.numQty.BackColor = System.Drawing.Color.White;
-            this.numQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
-            this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQty.Location = new System.Drawing.Point(92, 115);
-            this.numQty.Name = "numQty";
-            this.numQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numQty.Size = new System.Drawing.Size(80, 23);
-            this.numQty.TabIndex = 5;
-            this.numQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
             // 
             // txtSize
             // 
@@ -402,22 +321,6 @@
             this.txtCustomSPNo.Size = new System.Drawing.Size(80, 23);
             this.txtCustomSPNo.TabIndex = 0;
             // 
-            // labelBalanceQty
-            // 
-            this.labelBalanceQty.Location = new System.Drawing.Point(395, 142);
-            this.labelBalanceQty.Name = "labelBalanceQty";
-            this.labelBalanceQty.Size = new System.Drawing.Size(83, 23);
-            this.labelBalanceQty.TabIndex = 40;
-            this.labelBalanceQty.Text = "Balance Q\'ty";
-            // 
-            // labelPulloutQty
-            // 
-            this.labelPulloutQty.Location = new System.Drawing.Point(395, 115);
-            this.labelPulloutQty.Name = "labelPulloutQty";
-            this.labelPulloutQty.Size = new System.Drawing.Size(83, 23);
-            this.labelPulloutQty.TabIndex = 39;
-            this.labelPulloutQty.Text = "Pullout Q\'ty";
-            // 
             // labelSize
             // 
             this.labelSize.Location = new System.Drawing.Point(395, 88);
@@ -452,19 +355,11 @@
             // 
             // labelColorway
             // 
-            this.labelColorway.Location = new System.Drawing.Point(6, 142);
+            this.labelColorway.Location = new System.Drawing.Point(6, 116);
             this.labelColorway.Name = "labelColorway";
             this.labelColorway.Size = new System.Drawing.Size(82, 23);
             this.labelColorway.TabIndex = 34;
             this.labelColorway.Text = "Color way";
-            // 
-            // labelQty
-            // 
-            this.labelQty.Location = new System.Drawing.Point(6, 115);
-            this.labelQty.Name = "labelQty";
-            this.labelQty.Size = new System.Drawing.Size(82, 23);
-            this.labelQty.TabIndex = 33;
-            this.labelQty.Text = "Q\'ty";
             // 
             // labelCategory
             // 
@@ -508,7 +403,7 @@
             // 
             // labelSizeGroup
             // 
-            this.labelSizeGroup.Location = new System.Drawing.Point(395, 169);
+            this.labelSizeGroup.Location = new System.Drawing.Point(394, 116);
             this.labelSizeGroup.Name = "labelSizeGroup";
             this.labelSizeGroup.Size = new System.Drawing.Size(83, 23);
             this.labelSizeGroup.TabIndex = 56;
@@ -581,12 +476,8 @@
         private Win.UI.DateBox dateDate;
         private Win.UI.EditBox editColorway;
         private Win.UI.Label labelStyle;
-        private Win.UI.NumericBox numBalanceQty;
         private Win.UI.Label labelSeason;
-        private Win.UI.NumericBox numPulloutQty;
         private Win.UI.Label labelCategory;
-        private Win.UI.NumericBox numQty;
-        private Win.UI.Label labelQty;
         private Win.UI.TextBox txtSize;
         private Win.UI.Label labelColorway;
         private Win.UI.TextBox txtContractNo;
@@ -598,9 +489,7 @@
         private Win.UI.DisplayBox displaySeason;
         private Win.UI.Label labelSize;
         private Win.UI.TextBox txtStyle;
-        private Win.UI.Label labelPulloutQty;
         private Win.UI.TextBox txtCustomSPNo;
-        private Win.UI.Label labelBalanceQty;
         private Win.UI.Label labelSizeGroup;
         private Win.UI.DisplayBox displayVer;
         private Win.UI.Label labelVer;
