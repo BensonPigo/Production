@@ -708,7 +708,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region Excel Grid Value
             string sql = string.Format(
                 @"
-select Roll,Dyelot,TicketYds,Scale,Result
+select Roll,Dyelot,TicketYds,Scale,Result,Tone
 ,[Inspdate]=convert(varchar,Inspdate, 111) 
 ,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", this.ID);
             DualResult xresult = DBProxy.Current.Select("Production", sql, out DataTable dt);
@@ -761,20 +761,20 @@ select Roll,Dyelot,TicketYds,Scale,Result
 
             objSheets.Cells[3, 4] = continuityEncode;
             objSheets.Cells[3, 6] = this.displayResult.Text.ToString();
-            objSheets.Cells[3, 8] = this.dateLastInspectionDate.Value.HasValue ? this.dateLastInspectionDate.Value.Value.ToString("yyyy/MM/dd") : string.Empty;
-            objSheets.Cells[3, 10] = this.displayBrand.Text.ToString();
+            objSheets.Cells[3, 9] = this.dateLastInspectionDate.Value.HasValue ? this.dateLastInspectionDate.Value.Value.ToString("yyyy/MM/dd") : string.Empty;
+            objSheets.Cells[3, 11] = this.displayBrand.Text.ToString();
             objSheets.Cells[4, 2] = this.displayRefno.Text.ToString();
             objSheets.Cells[4, 4] = this.displayArriveQty.Text.ToString();
             objSheets.Cells[4, 6] = this.dateArriveWHDate.Value.HasValue ? this.dateArriveWHDate.Value.Value.ToString("yyyy/MM/dd") : string.Empty;
-            objSheets.Cells[4, 8] = this.txtsupplier.DisplayBox1.Text.ToString();
-            objSheets.Cells[4, 10] = this.displayWKNo.Text.ToString();
+            objSheets.Cells[4, 9] = this.txtsupplier.DisplayBox1.Text.ToString();
+            objSheets.Cells[4, 11] = this.displayWKNo.Text.ToString();
 
-            objSheets.Range[string.Format("A6:J{0}", dt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
+            objSheets.Range[string.Format("A6:K{0}", dt.Rows.Count + 5)].Borders.Weight = 2; // 設定全框線
 
             // 合併儲存格
             for (int i = 1; i <= dt.Rows.Count; i++)
             {
-                objSheets.Range[string.Format("H{0}:J{0}", (i + 5).ToString())].Merge(Type.Missing);
+                objSheets.Range[string.Format("I{0}:K{0}", (i + 5).ToString())].Merge(Type.Missing);
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
