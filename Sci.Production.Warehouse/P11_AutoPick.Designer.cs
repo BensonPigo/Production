@@ -34,10 +34,10 @@
             this.btnPick = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.btnMNnotice = new Sci.Win.UI.Button();
-            this.btnHangtag = new Sci.Win.UI.Button();
             this.btnPackingMethod = new Sci.Win.UI.Button();
+            this.btnHangtag = new Sci.Win.UI.Button();
+            this.btnMNnotice = new Sci.Win.UI.Button();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoPick)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -119,17 +119,17 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
-            // btnMNnotice
+            // btnPackingMethod
             // 
-            this.btnMNnotice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMNnotice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnMNnotice.Location = new System.Drawing.Point(28, 19);
-            this.btnMNnotice.Name = "btnMNnotice";
-            this.btnMNnotice.Size = new System.Drawing.Size(146, 30);
-            this.btnMNnotice.TabIndex = 17;
-            this.btnMNnotice.Text = "M/Notice Sheet";
-            this.btnMNnotice.UseVisualStyleBackColor = true;
-            this.btnMNnotice.Click += new System.EventHandler(this.BtnMNnotice_Click);
+            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPackingMethod.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPackingMethod.Location = new System.Drawing.Point(359, 19);
+            this.btnPackingMethod.Name = "btnPackingMethod";
+            this.btnPackingMethod.Size = new System.Drawing.Size(146, 30);
+            this.btnPackingMethod.TabIndex = 19;
+            this.btnPackingMethod.Text = "Packing Method";
+            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
             // btnHangtag
             // 
@@ -141,17 +141,19 @@
             this.btnHangtag.TabIndex = 18;
             this.btnHangtag.Text = "Label && Hangtag ";
             this.btnHangtag.UseVisualStyleBackColor = true;
+            this.btnHangtag.Click += new System.EventHandler(this.BtnHangtag_Click);
             // 
-            // btnPackingMethod
+            // btnMNnotice
             // 
-            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPackingMethod.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPackingMethod.Location = new System.Drawing.Point(359, 19);
-            this.btnPackingMethod.Name = "btnPackingMethod";
-            this.btnPackingMethod.Size = new System.Drawing.Size(146, 30);
-            this.btnPackingMethod.TabIndex = 19;
-            this.btnPackingMethod.Text = "Packing Method";
-            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnMNnotice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMNnotice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnMNnotice.Location = new System.Drawing.Point(28, 19);
+            this.btnMNnotice.Name = "btnMNnotice";
+            this.btnMNnotice.Size = new System.Drawing.Size(146, 30);
+            this.btnMNnotice.TabIndex = 17;
+            this.btnMNnotice.Text = "M/Notice Sheet";
+            this.btnMNnotice.UseVisualStyleBackColor = true;
+            this.btnMNnotice.Click += new System.EventHandler(this.BtnMNnotice_Click);
             // 
             // P11_AutoPick
             // 
