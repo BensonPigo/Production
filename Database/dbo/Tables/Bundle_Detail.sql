@@ -12,9 +12,12 @@
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
+    [Tone]        VARCHAR (1)    CONSTRAINT [DF_Bundle_Detail_Tone] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
     CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
+
+
 
 
 
@@ -80,3 +83,7 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 go
 CREATE NONCLUSTERED INDEX [IDX_Bundle_Detail_QtyBySetPerSubprocess]
     ON [dbo].[Bundle_Detail]([Patterncode],[SizeCode] ASC);
+GO
+CREATE NONCLUSTERED INDEX [IDX_Bundle_Detail_PlanningR15]
+    ON [dbo].[Bundle_Detail]([PatternDesc] ASC, [SizeCode] ASC);
+

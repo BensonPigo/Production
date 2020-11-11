@@ -120,6 +120,7 @@ where MDivisionID = '{Env.User.Keyword}'";
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
+            .Text("Tone", header: "Tone", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: bundleno)
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)

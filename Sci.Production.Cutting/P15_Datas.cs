@@ -25,6 +25,9 @@ namespace Sci.Production.Cutting
             public int Tone { get; set; }
 
             /// <inheritdoc/>
+            public String ToneChar { get; set; }
+
+            /// <inheritdoc/>
             public string POID { get; set; }
 
             /// <inheritdoc/>

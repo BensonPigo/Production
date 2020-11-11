@@ -152,7 +152,15 @@ namespace Sci.Production.Cutting
                 this.SelectWorkOrderDistribute(1);
             };
 
-            DataGridViewGeneratorNumericColumnSettings tone = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings tone = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 1 };
+            tone.EditingKeyPress += (s, e) =>
+            {
+                var regex = new Regex(@"[^A-Z\b\s]");
+                if (regex.IsMatch(e.KeyChar.ToString()))
+                {
+                    e.Handled = true;
+                }
+            };
             tone.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -161,7 +169,8 @@ namespace Sci.Production.Cutting
                 }
 
                 DataRow dr = this.gridQty.GetDataRow(e.RowIndex);
-                dr["Tone"] = e.FormattedValue.Empty() ? DBNull.Value : e.FormattedValue;
+                dr["Tone"] = MyUtility.Check.Empty(e.FormattedValue) ? 0 : Convert.ToInt32(e.FormattedValue.ToString()[0]);
+                dr["ToneChar"] = e.FormattedValue;
                 dr.EndEdit();
             };
             #endregion
@@ -170,12 +179,12 @@ namespace Sci.Production.Cutting
             this.Helper.Controls.Grid.Generator(this.gridQty)
                 .Numeric("No", header: "No", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: qtySizecell)
-                .Numeric("Tone", header: "Tone", width: Widths.AnsiChars(1), settings: tone)
+                .Text("ToneChar", header: "Tone", width: Widths.AnsiChars(1), settings: tone)
                 ;
             this.gridQty.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridQty.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridQty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridQty.Columns["Tone"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridQty.Columns["ToneChar"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region 右上 gridArticleSize 事件
@@ -1082,7 +1091,16 @@ and ord.mDivisionid = '{this.keyWord}'
             // by Article, Size 整理出中上 No of Bundle 的資料表, 並從 1 開始依序給 No 值 (index). 唯一值:Ukey, No
             var result = this.ArticleSizeTb.AsEnumerable()
                 .GroupBy(s => new { Ukey = (long)s["Ukey"], No = (long)s["No"], POID = s["POID"].ToString(), Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString(), StyleUkey = (long)s["StyleUkey"] })
-                .Select((g, i) => new { g.Key.Ukey, iden = ++i, g.Key.No, Tone = this.tone, g.Key.POID, g.Key.Article, g.Key.SizeCode, g.Key.StyleUkey, Qty = g.Sum(s => (decimal?)s["cutoutput"]) })
+                .Select((g, i) => new
+                {
+                    g.Key.Ukey, iden = ++i, g.Key.No, Tone = this.tone,
+                    ToneChar = this.tone == "1" ? "A" : string.Empty,
+                    g.Key.POID,
+                    g.Key.Article,
+                    g.Key.SizeCode,
+                    g.Key.StyleUkey,
+                    Qty = g.Sum(s => (decimal?)s["cutoutput"]),
+                })
                 .OrderBy(o => o.Article)
                 .ThenBy(o => o.SizeCode)
                 .ToList();
@@ -1855,6 +1873,7 @@ order by ArticleGroup";
                 No = MyUtility.Convert.GetInt(s["No"]),
                 Iden = MyUtility.Convert.GetInt(s["iden"]),
                 Tone = MyUtility.Convert.GetInt(s["tone"]),
+                ToneChar = MyUtility.Convert.GetString(s["ToneChar"]),
                 POID = MyUtility.Convert.GetString(s["POID"]),
                 Article = MyUtility.Convert.GetString(s["Article"]),
                 SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
@@ -2121,7 +2140,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                         var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
                         int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
                         insertSql.Append($@"
-Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location)
+Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone)
 Values
     ('{bundleID}'
     ,'{bundleNo}'
@@ -2133,7 +2152,8 @@ Values
     ,{pattern.Parts}
     ,0,0 -- Farmin, Farmout
     ,'{pattern.Ispair}'
-    ,'{pattern.Location}');
+    ,'{pattern.Location}'
+    ,'{selitem.ToneChar}');
 ");
 
                         // Bundle_Detail_Art 將 Art 以+號拆開寫入, 且ALLPARTS 不寫入
