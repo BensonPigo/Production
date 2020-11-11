@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.Class.Commons;
+using Sci.Production.PPIC;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -745,6 +747,33 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             }
 
             return;
+        }
+
+        private void BtnMNnotice_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["SMnorderApv"]) && MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"]))
+            {
+                MyUtility.Msg.WarningBox("M/Notice did not approve yet, you cannot print M/Notice.");
+                return;
+            }
+
+            if (this.CurrentMaintain["SMnorderApv"].ToString() == null || this.CurrentMaintain["SMnorderApv"].ToString() == string.Empty)
+            {
+                var dr = this.CurrentMaintain;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P01_MNoticePrint(null, dr["ID"].ToString());
+                frm.ShowDialog(this);
+                this.RenewData();
+                return;
+            }
+            else
+            {
+                SMNoticePrg.PrintSMNotice(this.poid, SMNoticePrg.EnuPrintSMType.Order);
+            }
         }
     }
 }
