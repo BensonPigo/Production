@@ -182,10 +182,10 @@ namespace Sci.Production.Packing
                         dr["OverWrite"] = false;
                         this.MatchList.Where(o => o.FileSeq == MyUtility.Convert.GetInt(dr["FileSeq"])).FirstOrDefault().SelectedPackingID = MyUtility.Convert.GetString(dr["PackingListCandidate"]);
                         dr.EndEdit();
-                        this.MatchGridColor();
                         this.GetInfoByPackingList(dr);
                     }
                 }
+                this.MatchGridColor();
             };
 
             col_Overwrite.CellEditable += (s, e) =>
@@ -307,12 +307,12 @@ namespace Sci.Production.Packing
                                     fileName_with_Data.Add(singleFileName, contentString);
                                 }
 
-                                // 3.透過API將ZPL檔轉成PDF，並存到指定路徑
+                                // 3.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
+                                List<ZPL> zPL_Objects = this.Analysis_ZPL(fileName_with_Data, zPL_FileName_List);
+
+                                // 4.成功解析的ZPL存起來，用於後續轉圖片
                                 this.wattingForConvert.AddRange(zPL_FileName_List);
                                 this.wattingForConvert_contentsOfZPL.AddRange(contentsOfZPL.Where(o => o != string.Empty).ToList());
-
-                                // 4.從單張ZPL內容中，拆解出需要的欄位資訊，用於Mapping方便
-                                List<ZPL> zPL_Objects = this.Analysis_ZPL(fileName_with_Data, zPL_FileName_List);
 
                                 this.File_Name_Object.Add(openFileDialog1.SafeFileNames[i], zPL_Objects);
                                 this._File_Name_Object_List.File_Name_Object2s.Add(new FileName_Key_Model()
@@ -568,60 +568,6 @@ namespace Sci.Production.Packing
                     zz.Size_Qty_List = sizeObjects;
                     list.Add(zz);
                 }
-
-                /*
-                // 根據ZPL的標題文字、座標，找到這張ZPL，屬於哪一種Type
-                foreach (var type in this.ZplTypes)
-                {
-                    ZplTitlePosition titlePosition = type.Value;
-
-                    bool po = content.ToUpper().Contains(titlePosition.PO);
-                    bool sku = content.ToUpper().Contains(titlePosition.SKU);
-                    bool qty = content.ToUpper().Contains(titlePosition.Qty);
-                    bool box = content.ToUpper().Contains(titlePosition.BOX);
-
-                    if (po && sku && qty && box)
-                    {
-                        zplType = type.Key;
-                        break;
-                    }
-                }
-
-                ZPL z = new ZPL();
-
-                // 不同Type對應不同拆解方式
-                switch (zplType)
-                {
-                    case "A":
-                        z = this.SplitZLContent(content, custCTNno, isMixed,
-                                custPONo_Spliter1: "^FDPO#:^FS^FT225,850^A0B,40,50^FD",
-                                custPONo_Spliter2: "^FS^FT280,950^A0B,40,50^FDSKU:^FS",
-                                detail_Spliter1: "^FS^FT280,950^A0B,40,50^FDSKU:^FS^FT280,850^A0B,40,50^FD",
-                                detail_Spliter_Mixed: "^FS^FT",
-                                detail_Spliter_NotMix: "^FS^FT400,950^A0B,40,50^FDQTY:",
-                                detail_Spliter2: "^FS^FT400,950^A0B,40,50^FDQTY:^FS^FT400,850^A0B,75,100^FD",
-                                detail_Spliter3: "^FS^FO425,700^BY3^B3B,N,75,N,N^FD",
-                                detail_Spliter4: "^FDBOX:^FS^FT700,590^A0B,48,65^FD",
-                                detail_Spliter5: "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD");
-                        list.Add(z);
-                        break;
-                    case "B":
-                        z = this.SplitZLContent(content, custCTNno, isMixed,
-                                custPONo_Spliter1: "^FDPO#:^FS^FT325,790^A0B,75,80^FD",
-                                custPONo_Spliter2: "^FS^FT460,950^A0B,75,80^FDSKU:^FS",
-                                detail_Spliter1: "^FS^FT460,950^A0B,75,80^FDSKU:^FS^FT457,785^A0B,60,55^FD",
-                                detail_Spliter_Mixed: "^FS^FT",
-                                detail_Spliter_NotMix: "^FS^FT380,950^FT750,950^A0B,75,80^FDQTY:",
-                                detail_Spliter2: "^FS^FT380,950^FT750,950^A0B,75,80^FDQTY:^FS^FT750,750^A0B,75,100^FD",
-                                detail_Spliter3: "^FS^FT600,950^A0B,75,80^FD",
-                                detail_Spliter4: "^FDBOX:^FS^FT600,750^A0B,75,100^FD",
-                                detail_Spliter5: "^FS^FO0,960^GB775,0,4^FS^FT115,995^A0N,34,47,^FD");
-                        list.Add(z);
-                        break;
-                    default:
-                        break;
-                }
-                */
             }
 
             return list;
@@ -2073,7 +2019,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
             foreach (DataGridViewRow item in this.gridMatch.Rows)
             {
-                if (MyUtility.Convert.GetString(item.Cells["PackingListCandidate"].Value).ToLower() == "please select")
+                if (MyUtility.Convert.GetString(item.Cells["PackingListCandidate"].Value).ToLower() == "please select" || MyUtility.Check.Empty(item.Cells["PackingListCandidate"].Value))
                 {
                     item.Cells["MultipleMatches"].Style.BackColor = Color.Pink;
                 }
