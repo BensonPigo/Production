@@ -820,7 +820,7 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
                 #region -- POID
                 this.Getpoid();
                 this.displayPOID.Text = this.poid;
-                this.displayCustCD.Text = MyUtility.GetValue.Lookup(string.Format("select CustCDID from dbo.Orders WITH (NOLOCK) where id='{0}'", this.poid));
+                this.displayCustCD.Text = MyUtility.GetValue.Lookup(string.Format("select CustCDID from dbo.Orders WITH (NOLOCK) where id='{0}'", this.txtOrderID.Text));
                 #endregion
 
                 #region -- matrix breakdown
@@ -1859,7 +1859,7 @@ and Factory.mdivisionid = '{Env.User.Keyword}'
                 }
 
                 this.displayPOID.Text = this.poid;
-                this.displayCustCD.Text = MyUtility.GetValue.Lookup(string.Format("select CustCDID from dbo.Orders WITH (NOLOCK) where id='{0}'", this.poid));
+                this.displayCustCD.Text = MyUtility.GetValue.Lookup(string.Format("select CustCDID from dbo.Orders WITH (NOLOCK) where id='{0}'", this.txtOrderID.Text));
 
                 // CurrentMaintain["orderid"] = this.poid;
             }
