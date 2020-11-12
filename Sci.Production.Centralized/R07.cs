@@ -25,7 +25,7 @@ namespace Sci.Production.Centralized
         private string shift;
         private DateTime? outputDate1;
         private DateTime? outputDate2;
-        private DataTable[] printData = new DataTable[2];
+        private DataTable[] printData = new DataTable[3];
         private int bolSintexEffReportCompare = 0;
         private StringBuilder condition = new StringBuilder();
         private DateTime currentTime = DateTime.Now;
@@ -144,7 +144,7 @@ namespace Sci.Production.Centralized
                         return failResult;
                     }
 
-                    if (this.printData[0] == null)
+                    if (this.printData[0] == null || this.printData[0].Rows.Count == 0)
                     {
                         this.printData[0] = dt;
                     }
@@ -248,8 +248,9 @@ outer apply (
             }
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Planning_R07.xltx"); // 預先開啟excel app
-            Excel.Worksheet objSheets1 = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
+            Excel.Worksheet objSheets1 = objApp.ActiveWorkbook.Worksheets[1];   // Detail
+            Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   // Sintex Eff Report Compare
+            Excel.Worksheet objSheets3 = objApp.ActiveWorkbook.Worksheets[3];   // Adidas data
 
             objApp.Visible = false;
             if (this.radioDetail.Checked)
@@ -262,6 +263,7 @@ outer apply (
                 // this.SetExcelSheet1(objApp, objSheets1, tmpDt);
                 this.SetExcelSheet2(objSheets2, this.printData);
                 objSheets1.Visible = Excel.XlSheetVisibility.xlSheetHidden;
+                objSheets3.Visible = Excel.XlSheetVisibility.xlSheetHidden;
                 objSheets2.Columns.AutoFit();
             }
 
@@ -274,6 +276,7 @@ outer apply (
             Marshal.ReleaseComObject(objApp);
             Marshal.ReleaseComObject(objSheets1);
             Marshal.ReleaseComObject(objSheets2);
+            Marshal.ReleaseComObject(objSheets3);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
@@ -284,7 +287,7 @@ outer apply (
 
         private DataTable[] OrganizeData(DataTable[] dt)
         {
-            DataTable[] rtnDataTable = new DataTable[2];
+            DataTable[] rtnDataTable = new DataTable[3];
             if (this.bolSintexEffReportCompare == 0)
             {
                 var queryDt = dt[0].AsEnumerable()
@@ -367,6 +370,18 @@ outer apply (
                     .ToList();
 
                 rtnDataTable[1] = PublicPrg.ListToDataTable.ToDataTable(querySintexReportSeason);
+
+                var querySintexReportMonthByYTD = dt[0].AsEnumerable()
+                        .GroupBy(x => new { Country = x.Field<string>("Country") })
+                        .Select(x => new
+                        {
+                            x.Key.Country,
+                            SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
+                                         x.Sum(y => y.Field<decimal>("Earnedhours")),
+                        })
+                        .ToList();
+
+                rtnDataTable[2] = PublicPrg.ListToDataTable.ToDataTable(querySintexReportMonthByYTD);
             }
 
             return rtnDataTable;
@@ -509,6 +524,7 @@ outer apply (
                 if (initI >= dt[0].Rows.Count || !initCountry.EqualString(dt[0].Rows[initI]["Country"]))
                 {
                     int rcount = dt[0].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).Count();
+                    DataRow drYTD = dt[2].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).FirstOrDefault();
 
                     objArray[0, 0] = dr["Country"].ToString();
                     objArray[0, 1] = "YTD";
@@ -519,7 +535,7 @@ outer apply (
                     objArray[0, 6] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 6), initR - rcount, initR - 1);
                     objArray[0, 7] = string.Format("=IFERROR(ROUND({0}{2}/{1}{2}, 2), \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 5), MyUtility.Excel.ConvertNumericToExcelColumn(initC + 6), initR);
                     objArray[0, 8] = string.Format("=IFERROR({0}{2}-{1}{2}, \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 7), MyUtility.Excel.ConvertNumericToExcelColumn(initC + 4), initR);
-                    objArray[0, 9] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 9), initR - rcount, initR - 1);
+                    objArray[0, 9] = drYTD["SamplesSIO"].ToString();
                     objSheets.Range[string.Format("B{0}:K{0}", initR)].Value2 = objArray;
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(dr["Country"].ToString());
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Font.Bold = true;
