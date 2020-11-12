@@ -28,6 +28,7 @@ namespace Sci.Production.Shipping
         private ToolStripMenuItem samplepl;
         private ToolStripMenuItem focpl;
         private ToolStripMenuItem purchase;
+        private ToolStripMenuItem transferOutNo;
         private ToolStripMenuItem poitem;
         private ToolStripMenuItem newitem;
         private ToolStripMenuItem edit;
@@ -89,6 +90,7 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from FOC PL# (Garment FOC)", onclick: (s, e) => this.ImportFromFOCPL()).Get(out this.focpl);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add by PO# item (Garment Chargeable)", onclick: (s, e) => this.AddByPOItem()).Get(out this.poitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Purchase (Material)", onclick: (s, e) => this.ImportFromPurchase()).Get(out this.purchase);
+            this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Import from Transfer Out No.", onclick: (s, e) => this.ImportFromPOTransferOutNo()).Get(out this.transferOutNo);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Add new Item", onclick: (s, e) => this.AddNewItem()).Get(out this.newitem);
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Separator();
             this.Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record - ", onclick: (s, e) => this.MenuDelete()).Get(out this.delete);
@@ -106,6 +108,7 @@ namespace Sci.Production.Shipping
             this.samplepl.Enabled = status;
             this.focpl.Enabled = status;
             this.purchase.Enabled = status;
+            this.transferOutNo.Enabled = status;
             this.poitem.Enabled = status;
             this.newitem.Enabled = status;
             this.delete.Enabled = status;
@@ -185,6 +188,17 @@ namespace Sci.Production.Shipping
             P02_ImportFromPO callPurchaseForm = new P02_ImportFromPO(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
+            this.RenewData();
+            this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
+            this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
+        }
+
+        // P02_ImportFromPOTransferOutNo
+        private void ImportFromPOTransferOutNo()
+        {
+            P02_ImportFromPOTransferOutNo callForm = new P02_ImportFromPOTransferOutNo(this.CurrentMaintain);
+            DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
+            callForm.ShowDialog(this);
             this.RenewData();
             this.numericBoxttlGW.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["NW"]) + MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNNW"]);
             this.CompareDetailPrint((DataTable)this.detailgridbs.DataSource, before_dt);
@@ -724,6 +738,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                     this.samplepl.Enabled = false;
                     this.focpl.Enabled = false;
                     this.purchase.Enabled = false;
+                    this.transferOutNo.Enabled = false;
                     this.poitem.Enabled = false;
                     this.newitem.Enabled = false;
                     this.delete.Enabled = false;
