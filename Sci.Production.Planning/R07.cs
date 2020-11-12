@@ -22,7 +22,7 @@ namespace Sci.Production.Planning
         private string shift;
         private DateTime? outputDate1;
         private DateTime? outputDate2;
-        private DataTable[] printData = new DataTable[3];
+        private DataTable[] printData;
         private int bolSintexEffReportCompare = 0;
         private StringBuilder condition = new StringBuilder();
         private DateTime currentTime = DateTime.Now;
@@ -89,6 +89,7 @@ namespace Sci.Production.Planning
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            this.printData = new DataTable[3];
             string sqlCmd = string.Format(
                 "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', {6}",
                 this.outputDate1.Value.ToString("yyyy/MM/dd"),
