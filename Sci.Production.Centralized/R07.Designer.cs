@@ -48,18 +48,22 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(446, 12);
+            this.print.Location = new System.Drawing.Point(430, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(446, 48);
+            this.toexcel.Location = new System.Drawing.Point(430, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(446, 84);
+            this.close.Location = new System.Drawing.Point(430, 84);
             this.close.TabIndex = 6;
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(410, 1);
             // 
             // lbOutputDate
             // 

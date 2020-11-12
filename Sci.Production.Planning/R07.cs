@@ -22,7 +22,7 @@ namespace Sci.Production.Planning
         private string shift;
         private DateTime? outputDate1;
         private DateTime? outputDate2;
-        private DataTable printData;
+        private DataTable[] printData = new DataTable[2];
         private int bolSintexEffReportCompare = 0;
         private StringBuilder condition = new StringBuilder();
         private DateTime currentTime = DateTime.Now;
@@ -56,7 +56,7 @@ namespace Sci.Production.Planning
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateOutputDate.Value1) && this.radioDetail.Checked)
+            if ((MyUtility.Check.Empty(this.dateOutputDate.Value1) || MyUtility.Check.Empty(this.dateOutputDate.Value2)) && this.radioDetail.Checked)
             {
                 MyUtility.Msg.WarningBox(" < Output Date > can't be empty!!");
                 return false;
@@ -119,22 +119,25 @@ namespace Sci.Production.Planning
         /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (this.printData.Rows.Count <= 0)
+            // Linq 整理資料
+            this.printData = this.OrganizeData(this.printData);
+
+            if (this.printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData.Rows.Count);
+            this.SetCount(this.printData[0].Rows.Count);
 
-            if (this.printData.Columns.Count > 16384)
+            if (this.printData[0].Columns.Count > 16384)
             {
                 MyUtility.Msg.WarningBox("Columns of Data is over 16,384 in excel file, please narrow down range of condition.");
                 return false;
             }
 
-            if (this.printData.Rows.Count + 6 > 1048576)
+            if (this.printData[0].Rows.Count + 6 > 1048576)
             {
                 MyUtility.Msg.WarningBox("Lines of Data is over 1,048,576 in excel file, please narrow down range of condition.");
                 return false;
@@ -144,19 +147,19 @@ namespace Sci.Production.Planning
             Excel.Worksheet objSheets1 = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
 
-            this.SetExcelSheet1(objApp, objSheets1);
+            objApp.Visible = false;
             if (this.radioDetail.Checked)
             {
+                this.SetExcelSheet1(objApp, objSheets1, this.printData[0]);
                 objSheets2.Visible = Excel.XlSheetVisibility.xlSheetHidden;
             }
             else
             {
-                this.SetExcelSheet2(objSheets2);
-                objSheets1.get_Range("X:Z").EntireColumn.Hidden = true;
+                // this.SetExcelSheet1(objApp, objSheets1, tmpDt);
+                this.SetExcelSheet2(objSheets2, this.printData);
                 objSheets1.Visible = Excel.XlSheetVisibility.xlSheetHidden;
+                objSheets2.Columns.AutoFit();
             }
-
-            objSheets2.Columns.AutoFit();
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Planning_R07");
@@ -174,15 +177,107 @@ namespace Sci.Production.Planning
             return true;
         }
 
-        private void SetExcelSheet1(Excel.Application objApp, Excel.Worksheet objSheets)
+        private DataTable[] OrganizeData(DataTable[] dt)
+        {
+            DataTable[] rtnDataTable = new DataTable[2];
+            if (this.bolSintexEffReportCompare == 0)
+            {
+                var queryDt = dt[0].AsEnumerable()
+                    .OrderBy(x => x.Field<DateTime?>("OutputDate"))
+                    .ThenBy(x => x.Field<string>("FactoryID") + x.Field<string>("SewingLineID") + x.Field<string>("SeasonID") + x.Field<string>("BrandID") + x.Field<string>("StyleID"))
+                    .Select((x, index) => new
+                    {
+                        OutputDate = x.Field<DateTime?>("OutputDate"),
+                        FactoryID = x.Field<string>("FactoryID"),
+                        SewingLineID = x.Field<string>("SewingLineID"),
+                        Shift = x.Field<string>("Shift"),
+                        Category = x.Field<string>("Category"),
+                        StyleID = x.Field<string>("StyleID"),
+                        Manpower = x.Field<decimal>("Manpower"),
+                        ManHour = x.Field<decimal>("ManHour"),
+                        TotalOutput = x.Field<int>("TotalOutput"),
+                        CD = x.Field<string>("CD"),
+                        SeasonID = x.Field<string>("SeasonID"),
+                        BrandID = x.Field<string>("BrandID"),
+                        Fabrication = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 4, FALSE), \"\")", index + 2),
+                        ProductGroup = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 7, FALSE), \"\")", index + 2),
+                        ProductFabrication = string.Format("=N{0}&M{0}", index + 2),
+                        GSD = x.Field<decimal>("GSD"),
+                        Earnedhours = string.Format("=IF(I{0}=\"\", \"\", IFERROR((I{0}*P{0})/60, \"\"))", index + 2),
+                        TotalWorkingHours = string.Format("=H{0}*G{0}", index + 2),
+                        CumulateDaysofDaysinProduction = x.Field<int>("CumulateDaysofDaysinProduction"),
+                        EfficiencyLine = string.Format("=Q{0}/R{0}", index + 2),
+                        GSDProsmv = x.Field<decimal>("GSDProsmv"),
+                        Earnedhours2 = string.Format("=IF(I{0}=\"\", \"\", IFERROR(I{0}*U{0}/60, \"\"))", index + 2),
+                        EfficiencyLine2 = string.Format("=V{0}/R{0}", index + 2),
+                        NoofInlineDefects = x.Field<int>("NoofInlineDefects"),
+                        NoofEndlineDefectiveGarments = x.Field<int>("NoofEndlineDefectiveGarments"),
+                        WFT = string.Format("=IFERROR((X{0}+Y{0})/I{0}, \"\")", index + 2),
+                        Country = x.Field<string>("Country"),
+                        Month = x.Field<string>("Month"),
+                        IsGSDPro = x.Field<string>("IsGSDPro"),
+                        Orderseq = x.Field<int>("Orderseq"),
+                    })
+                    .ToList();
+
+                rtnDataTable[0] = PublicPrg.ListToDataTable.ToDataTable(queryDt);
+            }
+            else
+            {
+                var querySintexReportMonth = dt[0].AsEnumerable()
+                    .OrderBy(x => x.Field<int>("Orderseq"))
+                    .ThenBy(x => x.Field<DateTime?>("OutputDate"))
+                    .GroupBy(x => new { Country = x.Field<string>("Country"), Month = x.Field<string>("Month"), Orderseq = x.Field<int>("Orderseq") })
+                    .Select((x, index) => new
+                    {
+                        x.Key.Country,
+                        x.Key.Month,
+                        x.Key.Orderseq,
+                        PROEarnedHrs = x.Sum(y => y.Field<decimal>("Earnedhours2")),
+                        PROManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
+                        PROEfficiency = string.Format("=D{0}/E{0}", index + 13),
+                        SIOEarnedHrs = x.Sum(y => y.Field<decimal>("Earnedhours")),
+                        SIOManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
+                        SIOEfficiency = string.Format("=G{0}/H{0}", index + 13),
+                        PROSIOGap = string.Format("=I{0}-F{0}", index + 13),
+                        SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput")) *
+                                     x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<decimal>("GSD")) /
+                                     60 /
+                                     x.Sum(y => y.Field<decimal>("Earnedhours")),
+                    })
+                    .ToList();
+
+                rtnDataTable[0] = PublicPrg.ListToDataTable.ToDataTable(querySintexReportMonth);
+
+                var querySintexReportSeason = dt[0].AsEnumerable()
+                    .GroupBy(x => new { Country = x.Field<string>("Country"), SeasonID = x.Field<string>("SeasonID"), Orderseq = x.Field<int>("Orderseq") })
+                    .Select((x, index) => new
+                    {
+                        x.Key.Country,
+                        x.Key.SeasonID,
+                        x.Key.Orderseq,
+                        ProEff = x.Sum(y => y.Field<decimal>("Earnedhours2")) / x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
+                        SIOEff = x.Sum(y => y.Field<decimal>("Earnedhours")) / x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
+                    })
+                    .OrderBy(x => x.Country)
+                    .ThenBy(x => x.SeasonID)
+                    .ToList();
+
+                rtnDataTable[1] = PublicPrg.ListToDataTable.ToDataTable(querySintexReportSeason);
+            }
+
+            return rtnDataTable;
+        }
+
+        private void SetExcelSheet1(Excel.Application objApp, Excel.Worksheet objSheets, DataTable dt)
         {
             int cMax = 100000;
-            for (int i = 0; i <= this.printData.Rows.Count / cMax; i++)
+            for (int i = 0; i <= dt.Rows.Count / cMax; i++)
             {
                 int cSkip = cMax * i;
                 int cTake = i == 0 ? i : cSkip;
                 MyUtility.Excel.CopyToXls(
-                    this.printData.AsEnumerable().Skip(cSkip).Take(cMax).CopyToDataTable(),
+                    dt.AsEnumerable().Skip(cSkip).Take(cMax).CopyToDataTable(),
                     null,
                     "Planning_R07.xltx",
                     headerRow: cTake + 1,
@@ -192,28 +287,21 @@ namespace Sci.Production.Planning
                     wSheet: objSheets);
             }
 
-            objApp.Visible = false;
             objSheets.get_Range("AA:AD").EntireColumn.Hidden = true;
         }
 
-        private void SetExcelSheet2(Excel.Worksheet objSheets)
+        private void SetExcelSheet2(Excel.Worksheet objSheets, DataTable[] dt)
         {
-            List<string> countrys = this.printData.AsEnumerable()
+            List<string> countrys = dt[1].AsEnumerable()
                             .GroupBy(x => new { Country = x.Field<string>("Country"), OrderBySeq = x.Field<int>("Orderseq") })
                             .OrderBy(x => x.Key.OrderBySeq)
                             .Select(x => x.Key.Country)
                             .ToList();
 
-            List<string> sessions = this.printData.AsEnumerable()
+            List<string> sessions = dt[1].AsEnumerable()
                             .GroupBy(x => new { SeasonID = x.Field<string>("SeasonID") })
                             .OrderBy(x => x.Key.SeasonID)
                             .Select(x => x.Key.SeasonID)
-                            .ToList();
-
-            var countryAndMonth = this.printData.AsEnumerable()
-                            .OrderBy(x => x.Field<int>("Orderseq")).ThenBy(x => x.Field<DateTime?>("OutputDate"))
-                            .GroupBy(x => new { Country = x.Field<string>("Country"), Month = x.Field<string>("Month") })
-                            .Select(x => new { x.Key.Country, x.Key.Month })
                             .ToList();
 
             #region 上半部
@@ -266,10 +354,20 @@ namespace Sci.Production.Planning
 
                 for (int j = 0; j <= sessions.Count - 1; j++)
                 {
+                    var querySessionRow = dt[1].AsEnumerable()
+                        .Where(x => x.Field<string>("Country").EqualString(countrys[i]) &&
+                                    x.Field<string>("SeasonID").EqualString(sessions[j]))
+                        .Select(x => new
+                        {
+                            ProEff = x.Field<decimal?>("ProEff"),
+                            SIOEff = x.Field<decimal?>("SIOEff"),
+                        })
+                        .FirstOrDefault();
+
                     objArrayTop = new object[1, 3];
-                    objArrayTop[0, 0] = string.Format("=IFERROR(SUMIFS(Detail!V:V, Detail!AA:AA, ${0}$1, Detail!K:K, B{1}) / SUMIFS(Detail!R:R, Detail!AA:AA,${0}$1, Detail!K:K, B{1}), \"\")", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), j + 3);
-                    objArrayTop[0, 1] = string.Format("=IFERROR(SUMIFS(Detail!Q:Q, Detail!AA:AA, ${0}$1, Detail!K:K, B{1}) / SUMIFS(Detail!R:R,Detail!AA:AA, ${0}$1, Detail!K:K, B{1}), \"\")", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), j + 3);
-                    objArrayTop[0, 2] = string.Format("=IFERROR(INDIRECT(ADDRESS(ROW(), {0}))-INDIRECT(ADDRESS(ROW(), {1})), \"\")", ((i + 1) * 3) + 1, (i + 1) * 3);
+                    objArrayTop[0, 0] = querySessionRow != null && querySessionRow.ProEff.HasValue ? querySessionRow.ProEff : 0;
+                    objArrayTop[0, 1] = querySessionRow != null && querySessionRow.SIOEff.HasValue ? querySessionRow.SIOEff : 0;
+                    objArrayTop[0, 2] = string.Format("=IFERROR({0}{2}-{1}{2}, \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 1), MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), j + 3);
                     objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].Value2 = objArrayTop;
                 }
             }
@@ -282,48 +380,48 @@ namespace Sci.Production.Planning
             int initI = 0;
             string initCountry = string.Empty;
             object[,] objArray = new object[1, 10];
-            foreach (var item in countryAndMonth)
+            foreach (DataRow dr in dt[0].Rows)
             {
                 if (initCountry.Empty())
                 {
-                    initCountry = item.Country;
+                    initCountry = dr["Country"].ToString();
                 }
 
-                objArray[0, 0] = item.Country;
-                objArray[0, 1] = item.Month;
-                objArray[0, 2] = string.Format("=SUMIFS(Detail!V:V, Detail!AA:AA, B{0}, Detail!AB:AB, C{0})", initR);
-                objArray[0, 3] = string.Format("=SUMIFS(Detail!R:R, Detail!AA:AA, B{0}, Detail!AB:AB, C{0})", initR);
-                objArray[0, 4] = "=IFERROR(ROUND(INDIRECT(ADDRESS(ROW(), 4))/INDIRECT(ADDRESS(ROW(), 5)),2), \"\")";
-                objArray[0, 5] = string.Format("=SUMIFS(Detail!Q:Q, Detail!AA:AA, B{0}, Detail!AB:AB, C{0})", initR);
-                objArray[0, 6] = string.Format("=SUMIFS(Detail!R:R, Detail!AA:AA, B{0}, Detail!AB:AB, C{0})", initR);
-                objArray[0, 7] = "=IFERROR(ROUND(INDIRECT(ADDRESS(ROW(), 7))/INDIRECT(ADDRESS(ROW(), 8)),2), \"\")";
-                objArray[0, 8] = "=IFERROR(INDIRECT(ADDRESS(ROW(), 9))-INDIRECT(ADDRESS(ROW(), 6)), \"\")";
-                objArray[0, 9] = string.Format("=(SUMIFS(Detail!I:I, Detail!AA:AA, B{0}, Detail!AB:AB, C{0}, Detail!AC:AC, \"V\") * SUMIFS(Detail!P:P, Detail!AA:AA, B{0}, Detail!AB:AB, C{0}, Detail!AC:AC, \"V\")) / SUMIFS(Detail!Q:Q, Detail!AA:AA, B{0}, Detail!AB:AB, C{0}, Detail!AC:AC, \"V\")", initR);
+                objArray[0, 0] = dr["Country"].ToString();
+                objArray[0, 1] = dr["Month"].ToString();
+                objArray[0, 2] = dr["PROEarnedHrs"].ToString();
+                objArray[0, 3] = dr["PROManhours"].ToString();
+                objArray[0, 4] = dr["PROEfficiency"].ToString();
+                objArray[0, 5] = dr["SIOEarnedHrs"].ToString();
+                objArray[0, 6] = dr["SIOManhours"].ToString();
+                objArray[0, 7] = dr["SIOEfficiency"].ToString();
+                objArray[0, 8] = dr["PROSIOGap"].ToString();
+                objArray[0, 9] = dr["SamplesSIO"].ToString();
                 objSheets.Range[string.Format("B{0}:K{0}", initR)].Value2 = objArray;
-                objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(item.Country);
+                objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(dr["Country"].ToString());
                 objSheets.get_Range(string.Format("B{0}:K{0}", initR)).Borders.LineStyle = 1;
                 initR++;
                 initI++;
 
-                if (initI >= countryAndMonth.Count || !initCountry.EqualString(countryAndMonth[initI].Country))
+                if (initI >= dt[0].Rows.Count || !initCountry.EqualString(dt[0].Rows[initI]["Country"]))
                 {
-                    int rcount = countryAndMonth.Where(x => x.Country.EqualString(item.Country)).Count();
+                    int rcount = dt[0].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).Count();
 
-                    objArray[0, 0] = item.Country;
+                    objArray[0, 0] = dr["Country"].ToString();
                     objArray[0, 1] = "YTD";
                     objArray[0, 2] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 2), initR - rcount, initR - 1);
                     objArray[0, 3] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 3), initR - rcount, initR - 1);
-                    objArray[0, 4] = "=IFERROR(ROUND(INDIRECT(ADDRESS(ROW(), 4))/INDIRECT(ADDRESS(ROW(), 5)),2), \"\")";
+                    objArray[0, 4] = string.Format("=IFERROR(ROUND({0}{2}/{1}{2}, 2), \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 2), MyUtility.Excel.ConvertNumericToExcelColumn(initC + 3), initR);
                     objArray[0, 5] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 5), initR - rcount, initR - 1);
                     objArray[0, 6] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 6), initR - rcount, initR - 1);
-                    objArray[0, 7] = "=IFERROR(ROUND(INDIRECT(ADDRESS(ROW(), 7))/INDIRECT(ADDRESS(ROW(), 8)),2), \"\")";
-                    objArray[0, 8] = "=IFERROR(INDIRECT(ADDRESS(ROW(), 9))-INDIRECT(ADDRESS(ROW(), 6)), \"\")";
+                    objArray[0, 7] = string.Format("=IFERROR(ROUND({0}{2}/{1}{2}, 2), \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 5), MyUtility.Excel.ConvertNumericToExcelColumn(initC + 6), initR);
+                    objArray[0, 8] = string.Format("=IFERROR({0}{2}-{1}{2}, \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 7), MyUtility.Excel.ConvertNumericToExcelColumn(initC + 4), initR);
                     objArray[0, 9] = string.Format("=Sum({0}{1}:{0}{2})", MyUtility.Excel.ConvertNumericToExcelColumn(initC + 9), initR - rcount, initR - 1);
                     objSheets.Range[string.Format("B{0}:K{0}", initR)].Value2 = objArray;
-                    objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(item.Country);
+                    objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(dr["Country"].ToString());
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Font.Bold = true;
                     objSheets.get_Range(string.Format("B{0}:K{0}", initR)).Borders.LineStyle = 1;
-                    initCountry = initI >= countryAndMonth.Count ? item.Country : countryAndMonth[initI].Country;
+                    initCountry = initI >= dt[0].Rows.Count ? dr["Country"].ToString() : dt[0].Rows[initI]["Country"].ToString();
                     initR++;
                 }
             }
