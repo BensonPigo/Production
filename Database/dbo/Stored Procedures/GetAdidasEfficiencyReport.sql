@@ -151,7 +151,7 @@ select s.OutputDate
 	, [ProductGroup] = ''''
 	, [ProductFabrication] = ''''
 	, [GSD] = s.[GSDProsmv] * 1.1
-	, [Earnedhours] = s.[TotalOutput] * s.[GSDProsmv] / 60
+	, [Earnedhours] = s.[TotalOutput] * (s.[GSDProsmv] * 1.1) / 60
 	, s.[TotalWorkingHours] 
 	, [CumulateDaysofDaysinProduction] = ''''
 	, [EfficiencyLine] = iif(s.[TotalWorkingHours] = 0, 0, (s.[TotalOutput] * s.[GSDProsmv] / 60) / s.[TotalWorkingHours])

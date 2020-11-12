@@ -345,9 +345,7 @@ outer apply (
                         SIOManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
                         SIOEfficiency = string.Format("=G{0}/H{0}", index + 13),
                         PROSIOGap = string.Format("=I{0}-F{0}", index + 13),
-                        SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput")) *
-                                     x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<decimal>("GSD")) /
-                                     60 /
+                        SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
                                      x.Sum(y => y.Field<decimal>("Earnedhours")),
                     })
                     .ToList();
