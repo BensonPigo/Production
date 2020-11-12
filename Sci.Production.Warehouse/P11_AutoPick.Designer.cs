@@ -34,6 +34,9 @@
             this.btnPick = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.btnPackingMethod = new Sci.Win.UI.Button();
+            this.btnHangtag = new Sci.Win.UI.Button();
+            this.btnMNnotice = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoPick)).BeginInit();
@@ -73,6 +76,7 @@
             this.gridAutoPick.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAutoPick.RowTemplate.Height = 24;
             this.gridAutoPick.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAutoPick.ShowCellToolTips = false;
             this.gridAutoPick.Size = new System.Drawing.Size(1005, 536);
             this.gridAutoPick.TabIndex = 1;
             this.gridAutoPick.TabStop = false;
@@ -103,6 +107,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnPackingMethod);
+            this.groupBox1.Controls.Add(this.btnHangtag);
+            this.groupBox1.Controls.Add(this.btnMNnotice);
             this.groupBox1.Controls.Add(this.btnPick);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -112,12 +119,49 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // btnPackingMethod
+            // 
+            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPackingMethod.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPackingMethod.Location = new System.Drawing.Point(359, 19);
+            this.btnPackingMethod.Name = "btnPackingMethod";
+            this.btnPackingMethod.Size = new System.Drawing.Size(146, 30);
+            this.btnPackingMethod.TabIndex = 19;
+            this.btnPackingMethod.Text = "Packing Method";
+            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
+            // 
+            // btnHangtag
+            // 
+            this.btnHangtag.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHangtag.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnHangtag.Location = new System.Drawing.Point(195, 19);
+            this.btnHangtag.Name = "btnHangtag";
+            this.btnHangtag.Size = new System.Drawing.Size(146, 30);
+            this.btnHangtag.TabIndex = 18;
+            this.btnHangtag.Text = "Label && Hangtag ";
+            this.btnHangtag.UseVisualStyleBackColor = true;
+            this.btnHangtag.Click += new System.EventHandler(this.BtnHangtag_Click);
+            // 
+            // btnMNnotice
+            // 
+            this.btnMNnotice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMNnotice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnMNnotice.Location = new System.Drawing.Point(28, 19);
+            this.btnMNnotice.Name = "btnMNnotice";
+            this.btnMNnotice.Size = new System.Drawing.Size(146, 30);
+            this.btnMNnotice.TabIndex = 17;
+            this.btnMNnotice.Text = "M/Notice Sheet";
+            this.btnMNnotice.UseVisualStyleBackColor = true;
+            this.btnMNnotice.Click += new System.EventHandler(this.BtnMNnotice_Click);
+            // 
             // P11_AutoPick
             // 
             this.ClientSize = new System.Drawing.Size(1008, 597);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.panel1);
             this.Name = "P11_AutoPick";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P11. Auto Pick";
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoPick)).EndInit();
@@ -134,5 +178,8 @@
         private Win.UI.Grid gridAutoPick;
         private Win.UI.Button btnPick;
         private Win.UI.GroupBox groupBox1;
+        private Win.UI.Button btnPackingMethod;
+        private Win.UI.Button btnHangtag;
+        private Win.UI.Button btnMNnotice;
     }
 }
