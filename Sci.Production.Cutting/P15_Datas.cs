@@ -25,7 +25,7 @@ namespace Sci.Production.Cutting
             public int Tone { get; set; }
 
             /// <inheritdoc/>
-            public String ToneChar { get; set; }
+            public string ToneChar { get; set; }
 
             /// <inheritdoc/>
             public string POID { get; set; }
@@ -46,6 +46,9 @@ namespace Sci.Production.Cutting
 
             /// <inheritdoc/>
             public int Startno { get; set; }
+
+            /// <inheritdoc/>
+            public int BuundleGroup { get; set; }
 
             /// <summary>
             /// P15 Create 準備寫入資料過程, 紀錄當前這筆已處理過
@@ -167,9 +170,6 @@ namespace Sci.Production.Cutting
 
             /// <inheritdoc/>
             public string PostSewingSubProcess_String { get; set; }
-
-            /// <inheritdoc/>
-            public int BuundleGroup { get; set; }
         }
     }
 }

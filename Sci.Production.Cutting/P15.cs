@@ -1921,7 +1921,6 @@ order by ArticleGroup";
                 Art = MyUtility.Convert.GetString(s["art"]),
                 NoBundleCardAfterSubprocess_String = MyUtility.Convert.GetString(s["NoBundleCardAfterSubprocess_String"]),
                 PostSewingSubProcess_String = MyUtility.Convert.GetString(s["PostSewingSubProcess_String"]),
-                BuundleGroup = 0,
             }).ToList();
             var allPartList = this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new Pattern
             {
@@ -1967,7 +1966,7 @@ order by ArticleGroup";
                 string poid = selList.Where(w => w.Dup == dup).Select(s => s.POID).First();
 
                 // 找出此此單 POID 下,編碼最大 BundleGroup,若還沒有編碼, 則去 DB 撈最大
-                int maxBuundleGroup = selpatternList.Where(w => w.Poid == poid).Select(s => s.BuundleGroup).DefaultIfEmpty(0).Max();
+                int maxBuundleGroup = selList.Where(w => w.POID == poid).Select(s => s.BuundleGroup).DefaultIfEmpty(0).Max();
                 if (maxBuundleGroup.Empty())
                 {
                     string sqlcmd = $@"
@@ -1985,21 +1984,29 @@ where b.POID = '{poid}'
                 selList.Where(w2 => w2.Dup == dup).ToList().ForEach(r => r.Startno = maxBuundleGroup);
 
                 // 紀錄 BuundleGroup, 同 Tone(合併Allpart) 要相同 BuundleGroup. 排序 Tone 和下方準備 Bundle_Detail 排序一樣, 目的是讓 BundleNo 和 BuundleGroup 順序一起由小到大, 不影響資料正確性
+                int beforeTone = 0;
+                bool thisDup1st = true;
                 selList.Where(w2 => w2.Dup == dup).OrderBy(o => o.Tone).ToList().ForEach(f =>
                 {
-                    // 先找相同 Tone 的編碼
-                    int toneBG = selpatternList
-                    .Where(w2 => selList.Where(w => w.Dup == f.Dup && w.Tone == f.Tone && w.Tone > 0).Select(s => s.Ukey).Contains(w2.Ukey))
-                    .Select(s => s.BuundleGroup).DefaultIfEmpty(0).Max();
-                    if (toneBG.Empty())
+                    if (thisDup1st)
                     {
-                        selpatternList.Where(w => w.Ukey == f.Ukey).ToList().ForEach(r => r.BuundleGroup = maxBuundleGroup);
-                        maxBuundleGroup++;
+                        thisDup1st = false;
+                        f.BuundleGroup = maxBuundleGroup;
                     }
                     else
                     {
-                        selpatternList.Where(w => w.Ukey == f.Ukey).ToList().ForEach(r => r.BuundleGroup = toneBG);
+                        if (f.Tone == beforeTone && f.Tone > 0)
+                        {
+                            f.BuundleGroup = maxBuundleGroup;
+                        }
+                        else
+                        {
+                            maxBuundleGroup++;
+                            f.BuundleGroup = maxBuundleGroup;
+                        }
                     }
+
+                    beforeTone = f.Tone;
                 });
             });
 
@@ -2144,7 +2151,7 @@ Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, 
 Values
     ('{bundleID}'
     ,'{bundleNo}'
-    ,{pattern.BuundleGroup}
+    ,{selitem.BuundleGroup}
     ,'{pattern.PatternCode}'
     ,'{pattern.PatternDesc.Replace("'", "''")}'
     ,'{selitem.SizeCode}'

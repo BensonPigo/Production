@@ -72,7 +72,7 @@ from (
 	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,b.Article
@@ -116,7 +116,7 @@ from (
 	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,b.Article
@@ -183,7 +183,7 @@ from (
 	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
             ,b.Article
@@ -222,7 +222,7 @@ from (
 	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
             ,b.Article
@@ -521,151 +521,6 @@ order by x.[Bundle]");
                 excelApp.Quit();
                 Marshal.ReleaseComObject(excelApp);
                 File.Delete(excelName);
-
-                #region Bundle Card RDLC 先不要刪 / 不要刪 / 不要刪
-
-                // if (this.dt == null || this.dt.Rows.Count == 0)
-                // {
-                //    MyUtility.Msg.ErrorBox("Data not found");
-                //    return false;
-                // }
-
-                //// 顯示筆數於PrintForm上Count欄位
-                // this.SetCount(this.dt.Rows.Count);
-
-                // DataTable dt1, dt2, dt3;
-
-                //// int count =dt.Rows.Count;
-                // int count = 1;
-                // dt1 = this.dt.Clone();
-                // dt2 = this.dt.Clone();
-                // dt3 = this.dt.Clone();
-                // foreach (DataRow dr in this.dt.Rows)
-                // {
-                //    // 第一列資料
-                //    if (count % 3 == 1)
-                //    {
-                //        dt1.ImportRow(dr);
-                //    }
-
-                // // 第二列資料
-                //    if (count % 3 == 2)
-                //    {
-                //        dt2.ImportRow(dr);
-                //    }
-
-                // // 第三列資料
-                //    if (count % 3 == 0)
-                //    {
-                //        dt3.ImportRow(dr);
-                //    }
-
-                // count++;
-                // }
-
-                //// 傳 list 資料
-                // List<P10_PrintData> data = dt1.AsEnumerable()
-                //    .Select(row1 => new P10_PrintData()
-                //    {
-                //        Group_right = row1["Group_right"].ToString(),
-                //        Group_left = row1["Group_left"].ToString(),
-                //        Line = row1["Line"].ToString(),
-                //        Cell = row1["Cell"].ToString(),
-                //        SP = row1["SP"].ToString(),
-                //        Style = row1["Style"].ToString(),
-                //        MarkerNo = row1["MarkerNo"].ToString(),
-                //        Body_Cut = row1["Body_Cut"].ToString(),
-                //        Parts = row1["Parts"].ToString(),
-                //        Color = row1["Color"].ToString(),
-                //        Size = row1["Size"].ToString(),
-                //        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
-                //        Desc = row1["Desc"].ToString(),
-                //        Artwork = row1["Artwork"].ToString(),
-                //        Quantity = row1["Quantity"].ToString(),
-                //        Barcode = row1["Barcode"].ToString(),
-                //        Season = row1["Seasonid"].ToString(),
-                //        brand = row1["brand"].ToString(),
-                //        item = row1["item"].ToString(),
-                //        EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                //        NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                //        Replacement1 = string.Empty,
-                //    }).ToList();
-                // data.AddRange(
-                // dt2.AsEnumerable().Select(row1 => new P10_PrintData()
-                // {
-                //     Group_right2 = row1["Group_right"].ToString(),
-                //     Group_left2 = row1["Group_left"].ToString(),
-                //     Line2 = row1["Line"].ToString(),
-                //     Cell2 = row1["Cell"].ToString(),
-                //     SP2 = row1["SP"].ToString(),
-                //     Style2 = row1["Style"].ToString(),
-                //     MarkerNo2 = row1["MarkerNo"].ToString(),
-                //     Body_Cut2 = row1["Body_Cut"].ToString(),
-                //     Parts2 = row1["Parts"].ToString(),
-                //     Color2 = row1["Color"].ToString(),
-                //     Size2 = row1["Size"].ToString(),
-                //     SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
-                //     Desc2 = row1["Desc"].ToString(),
-                //     Artwork2 = row1["Artwork"].ToString(),
-                //     Quantity2 = row1["Quantity"].ToString(),
-                //     Barcode2 = row1["Barcode"].ToString(),
-                //     Season2 = row1["Seasonid"].ToString(),
-                //     brand2 = row1["brand"].ToString(),
-                //     item2 = row1["item"].ToString(),
-                //     EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                //     NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                //     Replacement2 = string.Empty,
-                // }).ToList());
-
-                // data.AddRange(
-                // dt3.AsEnumerable().Select(row1 => new P10_PrintData()
-                // {
-                //    Group_right3 = row1["Group_right"].ToString(),
-                //    Group_left3 = row1["Group_left"].ToString(),
-                //    Line3 = row1["Line"].ToString(),
-                //    Cell3 = row1["Cell"].ToString(),
-                //    SP3 = row1["SP"].ToString(),
-                //    Style3 = row1["Style"].ToString(),
-                //    MarkerNo3 = row1["MarkerNo"].ToString(),
-                //    Body_Cut3 = row1["Body_Cut"].ToString(),
-                //    Parts3 = row1["Parts"].ToString(),
-                //    Color3 = row1["Color"].ToString(),
-                //    Size3 = row1["Size"].ToString(),
-                //    SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
-                //    Desc3 = row1["Desc"].ToString(),
-                //    Artwork3 = row1["Artwork"].ToString(),
-                //    Quantity3 = row1["Quantity"].ToString(),
-                //    Barcode3 = row1["Barcode"].ToString(),
-                //    Season3 = row1["Seasonid"].ToString(),
-                //    brand3 = row1["brand"].ToString(),
-                //    item3 = row1["item"].ToString(),
-                //    EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                //    NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                //    Replacement3 = string.Empty,
-                // }).ToList());
-
-                // report.ReportDataSource = data;
-
-                // Type reportResourceNamespace = typeof(P10_PrintData);
-                // Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-                // string reportResourceName = "P10_Print.rdlc";
-
-                // if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
-                // {
-                //    this.ShowException(this.result);
-                //    return this.result;
-                // }
-
-                // report.ReportResource = reportresource;
-
-                //// 開啟 report view
-                // var frm = new Win.Subs.ReportView(report)
-                // {
-                //    MdiParent = this.MdiParent,
-                //    DirectPrint = true,
-                // };
-                // frm.ShowDialog();
-                #endregion
             }
             else
             {
