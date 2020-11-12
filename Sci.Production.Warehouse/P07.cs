@@ -120,6 +120,7 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            this.radioPanel1.ReadOnly = true;
             return base.ClickEditBefore();
         }
 
@@ -131,6 +132,9 @@ namespace Sci.Production.Warehouse
         {
             DataTable result = null;
             StringBuilder warningmsg = new StringBuilder();
+
+            // 將Type Filter 切換成All
+            this.comboTypeFilter.SelectedIndex = 0;
 
             #region check Columns length
             List<string> listColumnLengthErrMsg = new List<string>();
@@ -570,6 +574,7 @@ where   #tmp.poid = dbo.po_supp.id
             this.detailgridbs.Filter = string.Empty;
             base.ClickSaveAfter();
             this.Change_record();
+            this.radioPanel1.ReadOnly = false;
         }
 
         // grid 加工填值
@@ -1465,6 +1470,12 @@ WHERE   StockType='{0}'
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (!this.EditMode)
+            {
+                this.radiobySP.Checked = false;
+                this.radioEncodeSeq.Checked = false;
+            }
+
             this.Change_record();
         }
 
@@ -2273,6 +2284,7 @@ select  a.id
         ,Barcode = ''
 		,a.CombineBarcode
         ,a.Unoriginal 
+        ,a.EncodeSeq
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2607,6 +2619,10 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 index.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
+            this.radioEncodeSeq.Checked = true;
+            this.radiobySP.Checked = false;
+            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, POID, Seq1, Seq2, Roll, Dyelot ";
+
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
             base.ClickEditAfter();
             this.Change_record();
@@ -2690,6 +2706,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
 
             this.comboTypeFilter.SelectedIndex = 0;
             this.detailgridbs.Filter = string.Empty;
+            this.radioPanel1.ReadOnly = this.EditMode ? true : false;
         }
 
         /// <inheritdoc/>
@@ -2823,6 +2840,38 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
             next_dgbtn.Value = "+";
+        }
+
+        private void RadiobySP_CheckedChanged(object sender, EventArgs e)
+        {
+            //if (this.detailgrid.DataSource != null && this.DetailDatas.Count > 0)
+            //{
+            //    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "POID, Seq1, Seq2, Roll, Dyelot ";
+            //}
+        }
+
+        private void RadioEncodeSeq_CheckedChanged(object sender, EventArgs e)
+        {
+            //if (this.detailgrid.DataSource != null && this.DetailDatas.Count > 0)
+            //{
+            //    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, POID, Seq1, Seq2, Roll, Dyelot ";
+            //}
+        }
+
+        private void RadioPanel1_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.detailgridbs.DataSource != null)
+            {
+                if (this.radioPanel1.Value == "1")
+                {
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "POID, Seq1, Seq2, Roll, Dyelot ";
+                }
+                else
+                {
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, POID, Seq1, Seq2, Roll, Dyelot ";
+                }
+                this.Change_record();
+            }
         }
     }
 }

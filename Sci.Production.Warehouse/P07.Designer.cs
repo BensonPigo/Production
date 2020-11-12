@@ -598,11 +598,12 @@
             // 
             this.radioPanel1.Controls.Add(this.radioEncodeSeq);
             this.radioPanel1.Controls.Add(this.radiobySP);
-            this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "unit", true));
+            this.radioPanel1.IsSupportEditMode = false;
             this.radioPanel1.Location = new System.Drawing.Point(129, 120);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(417, 31);
+            this.radioPanel1.Size = new System.Drawing.Size(339, 31);
             this.radioPanel1.TabIndex = 64;
+            this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
             // radioEncodeSeq
             // 
@@ -612,14 +613,15 @@
             this.radioEncodeSeq.Name = "radioEncodeSeq";
             this.radioEncodeSeq.Size = new System.Drawing.Size(103, 21);
             this.radioEncodeSeq.TabIndex = 1;
-            this.radioEncodeSeq.TabStop = true;
             this.radioEncodeSeq.Text = "Encode Seq";
             this.radioEncodeSeq.UseVisualStyleBackColor = true;
             this.radioEncodeSeq.Value = "2";
+            this.radioEncodeSeq.CheckedChanged += new System.EventHandler(this.RadioEncodeSeq_CheckedChanged);
             // 
             // radiobySP
             // 
             this.radiobySP.AutoSize = true;
+            this.radiobySP.Checked = true;
             this.radiobySP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radiobySP.Location = new System.Drawing.Point(9, 5);
             this.radiobySP.Name = "radiobySP";
@@ -629,6 +631,7 @@
             this.radiobySP.Text = "SP#, Seq, Roll, Dyelot";
             this.radiobySP.UseVisualStyleBackColor = true;
             this.radiobySP.Value = "1";
+            this.radiobySP.CheckedChanged += new System.EventHandler(this.RadiobySP_CheckedChanged);
             // 
             // P07
             // 
