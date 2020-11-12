@@ -176,9 +176,6 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToPOID;
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToSeq;
-
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(this.comboStockType, 2, 1, "B,Bulk,I,Inventory");
             this.comboStockType.SelectedIndex = 0;
@@ -237,16 +234,11 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
                 .Numeric("balance", header: "Balance", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 8
                 .Text("location", header: "Location", iseditingreadonly: true) // 9
                 .ComboBox("stocktype", header: "Stock Type", iseditable: false).Get(out cbb_stocktype)
-                .Text("ToPOID", header: "To POID", iseditingreadonly: false).Get(out cbb_ToPOID)
-                .Text("ToSeq", header: "To Seq", iseditingreadonly: false).Get(out cbb_ToSeq)
+                .Text("ToPOID", header: "To POID", iseditingreadonly: true)
+                .Text("ToSeq", header: "To Seq", iseditingreadonly: true)
                ;
 
             nb_qty.DefaultCellStyle.BackColor = Color.Pink;
-            cbb_ToPOID.DefaultCellStyle.BackColor = Color.Pink;
-            cbb_ToSeq.DefaultCellStyle.BackColor = Color.Pink;
-
-            cbb_ToPOID.MaxLength = 13;
-            cbb_ToSeq.MaxLength = 5;
 
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
