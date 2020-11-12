@@ -427,12 +427,19 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )pkExpressStatus
-where ((isnull(ot.IsGMTMaster,0) != 1
-	and o.PulloutComplete=0 and o.Qty > 0
-	and not exists (select 1 from Order_Finish Where ID = o.ID))
-or ( 
-	exists (select 1 from Order_Finish Where ID = o.ID)
-	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
+where 
+(
+    (
+        isnull(ot.IsGMTMaster,0) != 1
+	    and o.PulloutComplete=0 and o.Qty > 0
+	    and not exists (select 1 from Order_Finish Where ID = o.ID)
+    )
+    or 
+    ( 
+	    exists (select 1 from Order_Finish Where ID = o.ID)
+	    and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
+    )
+)
 "));
 
             return sqlCmd;
