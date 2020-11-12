@@ -59,7 +59,7 @@ namespace Sci.Production.Warehouse
             this.btnPackingMethod.ForeColor = !MyUtility.Check.Empty(this.strPacking) ? Color.Blue : Color.Black;
             if (this.drMnOrder != null)
             {
-                this.btnMNnotice.ForeColor = (!MyUtility.Check.Empty(this.drMnOrder["MnorderApv"]) || MyUtility.Check.Empty(this.drMnOrder["SMnorderApv"])) ? Color.Blue : Color.Black;
+                this.btnMNnotice.ForeColor = (!MyUtility.Check.Empty(this.drMnOrder["MnorderApv"]) || !MyUtility.Check.Empty(this.drMnOrder["SMnorderApv"])) ? Color.Blue : Color.Black;
             }
             #endregion
 
