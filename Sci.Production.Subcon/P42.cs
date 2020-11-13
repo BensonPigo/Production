@@ -311,12 +311,11 @@ outer apply(
 where 1=1
 {where}
 
-select [Orderid]=o.ID,bd.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select distinct [Orderid]=o.ID,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 into #tmpBundleNo
-from #tmpOrders o
-LEFT join Bundle b with(nolock) on b.MDivisionID = o.MDivisionID
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
-LEFT join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+from Bundle_Detail_Order bdo
+inner join Bundle b WITH (NOLOCK) on b.id = bdo.Id
+inner join #tmpOrders o on bdo.Orderid = o.ID and b.MDivisionID = o.MDivisionID
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
 	from SubProcess s
@@ -470,10 +469,9 @@ outer apply(
     select RQ=stuff((
 	     select concat('','',bi.ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
 	    from #tmpBundleInspection bi
-		inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
-        inner join Bundle b with(nolock) on b.id = bd.id
+		inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID and bdo.BundleNo = bi.BundleNo
+        inner join Bundle b with(nolock) on b.id = bdo.id
 		where o.MDivisionID = b.MDivisionID
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
 	    group by bi.ReasonID
 	    for xml path('''')
     ),1,1,'''')
@@ -697,10 +695,9 @@ outer apply(
     select RQ=stuff((
 	    select concat('','',ReasonID,''('',sum(isnull(bi.DefectQty,0)-isnull(bi.ReplacementQty,0)),'')'')
 	    from #tmpBundleInspection bi  with(nolock)
-        inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bi.BundleNo
-        inner join Bundle b with(nolock) on b.id = bd.id
-	    where b.MDivisionID = o.MDivisionID
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
+		inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID and bdo.BundleNo = bi.BundleNo
+        inner join Bundle b with(nolock) on b.id = bdo.id
+		where o.MDivisionID = b.MDivisionID
 		and b.Article = o.Article and b.SizeCode = o.Sizecode
 	    group by ReasonID
 	    for xml path('''')
@@ -789,8 +786,8 @@ select   b.Orderid
 into #tmpBundleNo
 from Bundle b with(nolock)
 inner join #tmpOrders o on b.MDivisionID = o.MDivisionID 
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.BundleNo = bd.BundleNo)
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s
@@ -1016,7 +1013,7 @@ into #tmpBundleNo
 from Bundle b with(nolock)
 inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
 inner join #tmpOrders o on b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.id = b.id)
+        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.BundleNo = bd.BundleNo)
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s
