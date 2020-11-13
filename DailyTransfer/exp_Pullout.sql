@@ -259,7 +259,7 @@ UPDATE  Production.dbo.Pullout
 SET SendToTPE = CONVERT(date, GETDATE())
 FROM Production.dbo.Pullout a
 INNER JOIN #CUR_PULLOUT1 b ON a.ID=b.ID
-WHERE a.SendToTPE IS NULL 
+WHERE a.SendToTPE IS NULL OR A.SendToTPE < A.EditDate
 
 
 DROP TABLE #CUR_PULLOUT1
