@@ -64,7 +64,10 @@
             this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.comboxMaterialTypeAndID = new Sci.Production.Class.ComboxMaterialTypeAndID();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.chkNoLocation = new Sci.Win.UI.CheckBox();
+            this.radioGroupReportType = new Sci.Win.UI.RadioGroup();
             this.panel1.SuspendLayout();
+            this.radioGroupReportType.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
@@ -95,25 +98,27 @@
             // 
             this.rdbtnSummary.AutoSize = true;
             this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnSummary.Location = new System.Drawing.Point(194, 359);
+            this.rdbtnSummary.Location = new System.Drawing.Point(74, 12);
             this.rdbtnSummary.Name = "rdbtnSummary";
             this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
             this.rdbtnSummary.TabIndex = 14;
             this.rdbtnSummary.Text = "Summary";
             this.rdbtnSummary.UseVisualStyleBackColor = true;
+            this.rdbtnSummary.Value = "S";
             // 
             // rdbtnDetail
             // 
             this.rdbtnDetail.AutoSize = true;
             this.rdbtnDetail.Checked = true;
             this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetail.Location = new System.Drawing.Point(126, 359);
+            this.rdbtnDetail.Location = new System.Drawing.Point(6, 12);
             this.rdbtnDetail.Name = "rdbtnDetail";
             this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
             this.rdbtnDetail.TabIndex = 13;
             this.rdbtnDetail.TabStop = true;
             this.rdbtnDetail.Text = "Detail";
             this.rdbtnDetail.UseVisualStyleBackColor = true;
+            this.rdbtnDetail.Value = "D";
             // 
             // cmbStockType
             // 
@@ -496,9 +501,33 @@
             this.panel1.Size = new System.Drawing.Size(496, 38);
             this.panel1.TabIndex = 151;
             // 
+            // chkNoLocation
+            // 
+            this.chkNoLocation.AutoSize = true;
+            this.chkNoLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNoLocation.Location = new System.Drawing.Point(231, 389);
+            this.chkNoLocation.Name = "chkNoLocation";
+            this.chkNoLocation.Size = new System.Drawing.Size(103, 21);
+            this.chkNoLocation.TabIndex = 152;
+            this.chkNoLocation.Text = "No Location";
+            this.chkNoLocation.UseVisualStyleBackColor = true;
+            // 
+            // radioGroupReportType
+            // 
+            this.radioGroupReportType.Controls.Add(this.rdbtnDetail);
+            this.radioGroupReportType.Controls.Add(this.rdbtnSummary);
+            this.radioGroupReportType.Location = new System.Drawing.Point(126, 345);
+            this.radioGroupReportType.Name = "radioGroupReportType";
+            this.radioGroupReportType.Size = new System.Drawing.Size(163, 38);
+            this.radioGroupReportType.TabIndex = 153;
+            this.radioGroupReportType.TabStop = false;
+            this.radioGroupReportType.Value = "D";
+            this.radioGroupReportType.ValueChanged += new System.EventHandler(this.RadioGroupReportType_ValueChanged);
+            // 
             // R21
             // 
             this.ClientSize = new System.Drawing.Size(637, 438);
+            this.Controls.Add(this.chkNoLocation);
             this.Controls.Add(this.textColor);
             this.Controls.Add(this.labelColor);
             this.Controls.Add(this.panel1);
@@ -516,8 +545,6 @@
             this.Controls.Add(this.dateETA);
             this.Controls.Add(this.labBuyDelivery);
             this.Controls.Add(this.dateBuyerDelivery);
-            this.Controls.Add(this.rdbtnSummary);
-            this.Controls.Add(this.rdbtnDetail);
             this.Controls.Add(this.cmbStockType);
             this.Controls.Add(this.labelReportType);
             this.Controls.Add(this.labelStockType);
@@ -534,9 +561,11 @@
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelSPNo);
+            this.Controls.Add(this.radioGroupReportType);
             this.Name = "R21";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R21 Stock List Report (Inventory)";
+            this.Controls.SetChildIndex(this.radioGroupReportType, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
@@ -553,8 +582,6 @@
             this.Controls.SetChildIndex(this.labelStockType, 0);
             this.Controls.SetChildIndex(this.labelReportType, 0);
             this.Controls.SetChildIndex(this.cmbStockType, 0);
-            this.Controls.SetChildIndex(this.rdbtnDetail, 0);
-            this.Controls.SetChildIndex(this.rdbtnSummary, 0);
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labBuyDelivery, 0);
             this.Controls.SetChildIndex(this.dateETA, 0);
@@ -578,7 +605,10 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.chkNoLocation, 0);
             this.panel1.ResumeLayout(false);
+            this.radioGroupReportType.ResumeLayout(false);
+            this.radioGroupReportType.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -622,5 +652,7 @@
         private Win.UI.CheckBox chkComplete;
         private Class.ComboxMaterialTypeAndID comboxMaterialTypeAndID;
         private Win.UI.Panel panel1;
+        private Win.UI.CheckBox chkNoLocation;
+        private Win.UI.RadioGroup radioGroupReportType;
     }
 }

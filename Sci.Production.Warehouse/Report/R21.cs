@@ -790,5 +790,18 @@ or
             this.HideWaitMessage();
             return true;
         }
+
+        private void RadioGroupReportType_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.radioGroupReportType.Value == "D")
+            {
+                this.chkNoLocation.Enabled = true;
+            }
+            else
+            {
+                this.chkNoLocation.Enabled = false;
+                this.chkNoLocation.Checked = false;
+            }
+        }
     }
 }
