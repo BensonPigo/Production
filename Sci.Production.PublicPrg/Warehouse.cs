@@ -1932,7 +1932,7 @@ from dbo.SubTransfer_detail a WITH (NOLOCK)
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId 
                                              and p1.seq1 = a.FromSeq1 
                                              and p1.SEQ2 = a.FromSeq2
-left join FtyInventory FI on a.FromPoid = fi.poid 
+left join FtyInventory FI WITH (NOLOCK) on a.FromPoid = fi.poid 
                              and a.fromSeq1 = fi.seq1 
                              and a.fromSeq2 = fi.seq2
                              and a.fromRoll = fi.roll 
@@ -2053,13 +2053,12 @@ select  distinct ToPoid
 into #tmpD 
 from #Tmp
 
-merge dbo.PO_Supp_Detail as target
-using #tmpD as src on   target.ID = src.ToPoid 
+update target
+	set target.StockUnit = src.StockUnit
+from dbo.PO_Supp_Detail as target
+inner join #tmpD as src on   target.ID = src.ToPoid 
                         and target.seq1 = src.ToSeq1 
-                        and target.seq2 =src.ToSeq2 
-when matched then
-    update
-    set target.StockUnit = src.StockUnit;
+                        and target.seq2 = src.ToSeq2 ;
 ";
             #endregion
             TransactionScope transactionscope = new TransactionScope();
