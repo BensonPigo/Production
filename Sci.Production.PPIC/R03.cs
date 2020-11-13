@@ -888,7 +888,7 @@ select  t.*
         , ModularParent = isnull (s.ModularParent, '')
         , CPUAdjusted = isnull (s.CPUAdjusted * 100, 0)
         , DestAlias = isnull (c.Alias, '')
-        , FactoryDisclaimer = isnull (s.ExpectionFormStatus, '')
+        , FactoryDisclaimer = isnull (dd.Name, '')
         , FactoryDisclaimerRemark = isnull (s.ExpectionFormRemark, '')
         , ApprovedRejectedDate  = s.ExpectionFormDate
         , WorkType = isnull (ct.WorkType, '')
@@ -970,6 +970,7 @@ select  t.*
 from #tmpFilterSeperate t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
+left join DropDownList dd on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
 left join PO p WITH (NOLOCK) on p.ID = t.POID
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
 left join #tmp_sewDetial som on som.OrderID = t.ID
@@ -1055,7 +1056,7 @@ select distinct t.*
         , ModularParent = isnull (s.ModularParent, '')  
         , CPUAdjusted = isnull(s.CPUAdjusted * 100, 0)  
         , DestAlias = isnull (c.Alias, '') 
-        , FactoryDisclaimer = isnull (s.ExpectionFormStatus, '')
+        , FactoryDisclaimer = isnull (dd.Name, '')
         , FactoryDisclaimerRemark = isnull (s.ExpectionFormRemark, '')
         , ApprovedRejectedDate  = s.ExpectionFormDate
         , WorkType = isnull(ct.WorkType,'')
@@ -1178,6 +1179,7 @@ select distinct t.*
 from #tmpListPoCombo t
 left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
+left join DropDownList dd on dd.Type = 'FactoryDisclaimer' and dd.id = s.ExpectionFormStatus
 left join PO p WITH (NOLOCK) on p.ID = t.POID
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
 left join #tmp_PFRemark pf on pf.ID = t.ID
