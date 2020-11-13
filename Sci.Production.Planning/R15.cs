@@ -727,6 +727,8 @@ select t.MDivisionID
                          for xml path('')) 
        , t.Qty
        ,StandardOutput.StandardOutput
+	   ,oriArtwork = ann.Artwork
+	   ,AddedArtwork = EXa.Artwork
        ,Artwork.Artwork
        ,spdX.SubProcessDest
        ,EstCutDate.EstimatedCutDate
@@ -879,6 +881,52 @@ outer apply(
 		  for xml path('')
 	  ),1,1,'')
 )StandardOutput
+outer apply(select PatternUkey from dbo.GetPatternUkey(t.POID,'','',t.StyleUkey,''))gp
+outer apply(
+	select Artwork = STUFF((
+		select CONCAT('+', ArtworkTypeId)
+		from(
+			select distinct [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			from(
+				SELECT bda1.SubprocessId
+				FROM Bundle_Detail_Order bd1 WITH (NOLOCK)
+				INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+				WHERE bd1.Orderid=t.OrderID
+	
+				EXCEPT
+				select s.Data
+				from(
+					Select distinct Annotation = dbo.[RemoveNumericCharacters](a.Annotation)
+					from Pattern_GL a WITH (NOLOCK) 
+					Where a.PatternUkey = gp.PatternUkey
+					and a.Annotation <> ''
+				)x
+				outer apply(select * from SplitString(x.Annotation ,'+'))s
+			)x
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID = x.SubprocessId
+		)x
+		order by ArtworkTypeID
+		for xml path('')
+	),1,1,'')
+)EXa
+outer apply(
+	select Artwork = stuff((
+		select CONCAT('+',ArtworkTypeID)
+		from(
+			select distinct [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			from(
+				Select distinct Annotation = dbo.[RemoveNumericCharacters](a.Annotation)
+				from Pattern_GL a WITH (NOLOCK) 
+				Where a.PatternUkey = gp.PatternUkey
+				and a.Annotation <> ''
+			)x
+			outer apply(select * from SplitString(x.Annotation ,'+'))s
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID = s.Data
+		)x
+		order by ArtworkTypeID
+		for xml path('')
+	),1,1,'')
+)ann
 outer apply(
 	select Artwork =stuff((	
 		select concat('+',ArtworkTypeID)
@@ -1343,6 +1391,8 @@ select t.MDivisionID
 -----------------------------------------------------------------------------------------------------------------------------------------
        , t.Qty
        ,StandardOutput.StandardOutput
+	   ,oriArtwork = ann.Artwork
+	   ,AddedArtwork = EXa.Artwork
        ,Artwork.Artwork
        ,spdX.SubProcessDest
        ,EstCutDate.EstimatedCutDate
@@ -1512,6 +1562,53 @@ outer apply(
 		  for xml path('')
 	  ),1,1,'')
 )StandardOutput
+outer apply(select PatternUkey from dbo.GetPatternUkey(t.POID,'','',t.StyleUkey,t.SizeCode))gp
+outer apply(
+	select Artwork = STUFF((
+		select CONCAT('+', ArtworkTypeId)
+		from(
+			select distinct [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			from(
+				SELECT bda1.SubprocessId
+				FROM Bundle b1
+				INNER JOIN Bundle_Detail_Order bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+				INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+				WHERE bd1.Orderid=t.OrderID AND b1.Article=t.Article AND b1.SizeCode=t.SizeCode
+	
+				EXCEPT
+				select s.Data
+				from(
+					Select distinct Annotation = dbo.[RemoveNumericCharacters](a.Annotation)
+					from Pattern_GL a WITH (NOLOCK) 
+					Where a.PatternUkey = gp.PatternUkey
+					and a.Annotation <> ''
+				)x
+				outer apply(select * from SplitString(x.Annotation ,'+'))s
+			)x
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID = x.SubprocessId
+		)x
+		order by ArtworkTypeID
+		for xml path('')
+	),1,1,'')
+)EXa
+outer apply(
+	select Artwork = stuff((
+		select CONCAT('+',ArtworkTypeID)
+		from(
+			select distinct [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
+			from(
+				Select distinct Annotation = dbo.[RemoveNumericCharacters](a.Annotation)
+				from Pattern_GL a WITH (NOLOCK) 
+				Where a.PatternUkey = gp.PatternUkey
+				and a.Annotation <> ''
+			)x
+			outer apply(select * from SplitString(x.Annotation ,'+'))s
+			INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID = s.Data
+		)x
+		order by ArtworkTypeID
+		for xml path('')
+	),1,1,'')
+)ann
 outer apply(
 	select Artwork =stuff((	
 		select concat('+',ArtworkTypeID)
