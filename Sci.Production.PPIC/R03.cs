@@ -1941,6 +1941,10 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                                     if (objArray[j, i] == null)
                                     {
                                         objArray[j, i] = 0;
+                                        if (i == poSubConCol - 1 || i == subConCol - 1)
+                                        {
+                                            objArray[j, i] = string.Empty;
+                                        }
                                     }
                                 }
                             }
@@ -1981,6 +1985,10 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                         if (objArray[j, i] == null)
                         {
                             objArray[j, i] = 0;
+                            if (i == poSubConCol - 1 || i == subConCol - 1)
+                            {
+                                objArray[j, i] = string.Empty;
+                            }
                         }
                     }
                 }
