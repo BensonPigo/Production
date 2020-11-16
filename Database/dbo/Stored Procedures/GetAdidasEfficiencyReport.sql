@@ -41,12 +41,12 @@ Begin
 		, [Fabrication] = ''''
 		, [ProductGroup] = ''''
 		, [ProductFabrication] = ''''
-		, [GSD] = iif(SUM(isnull(sd.QAQty, 0)) = 0, 0, SUM(o.CPU * o.CPUFactor * isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType), 100) / 100 * sd.QAQty * 1400) / SUM(sd.QAQty) / 60) * 1.1
+		, [GSD] = iif(SUM(isnull(sd.QAQty, 0)) = 0, 0, SUM(o.CPU * isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType), 100) / 100 * sd.QAQty * 1400) / SUM(sd.QAQty) / 60) * 1.1
 		, [Earnedhours] = cast(0 as decimal(10, 2))
 		, [TotalWorkingHours] = ''''
 		, [CumulateDaysofDaysinProduction] = (select cumulate from dbo.getSewingOutputCumulateOfDays(o.StyleID, s.SewingLineID, s.OutputDate, s.FactoryID))	
 		, [EfficiencyLine] = ''''
-		, [GSDProsmv] = iif(SUM(isnull(sd.QAQty, 0)) = 0, 0, SUM(o.CPU * o.CPUFactor * isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType), 100) / 100 * sd.QAQty * 1400) / SUM(sd.QAQty) / 60)
+		, [GSDProsmv] = iif(SUM(isnull(sd.QAQty, 0)) = 0, 0, SUM(o.CPU * isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType), 100) / 100 * sd.QAQty * 1400) / SUM(sd.QAQty) / 60)
 		, [Earnedhours2] = cast(0 as decimal(10, 2))
 		, [EfficiencyLine2] = ''''
 		, [NoofInlineDefects] = sum(isnull(InlineInspection.RejectWIP, 0))
@@ -180,7 +180,7 @@ from
 		, o.SeasonID
 		, o.BrandID 
 		, [TotalWorkingHours] = sum(sd.WorkHour) * s.Manpower
-		, [GSDProsmv] = iif(SUM(isnull(sd.QAQty, 0)) = 0, 0, SUM(o.CPU * o.CPUFactor * isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType), 100) / 100 * sd.QAQty * 1400) / SUM(sd.QAQty) / 60)
+		, [GSDProsmv] = iif(SUM(isnull(sd.QAQty, 0)) = 0, 0, SUM(o.CPU * isnull([dbo].[GetOrderLocation_Rate](o.id, sd.ComboType), 100) / 100 * sd.QAQty * 1400) / SUM(sd.QAQty) / 60)
 		, [Country] = case f.CountryID when ''PH'' then ''Philippines''
 					   when ''VN'' then ''Vietnam''
 					   when ''KH'' then ''Cambodia''

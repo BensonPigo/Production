@@ -42,6 +42,7 @@
             this.chkPH2 = new Sci.Win.UI.CheckBox();
             this.chkPH1 = new Sci.Win.UI.CheckBox();
             this.btnSubmit = new Sci.Win.UI.Button();
+            this.chkSintexEfficiencyReport = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -226,11 +227,23 @@
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
             // 
+            // chkSintexEfficiencyReport
+            // 
+            this.chkSintexEfficiencyReport.AutoSize = true;
+            this.chkSintexEfficiencyReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSintexEfficiencyReport.Location = new System.Drawing.Point(12, 217);
+            this.chkSintexEfficiencyReport.Name = "chkSintexEfficiencyReport";
+            this.chkSintexEfficiencyReport.Size = new System.Drawing.Size(176, 21);
+            this.chkSintexEfficiencyReport.TabIndex = 5;
+            this.chkSintexEfficiencyReport.Text = "Sintex Efficiency Report";
+            this.chkSintexEfficiencyReport.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(299, 269);
+            this.Controls.Add(this.chkSintexEfficiencyReport);
             this.Controls.Add(this.btnSubmit);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lbFactory);
@@ -246,10 +259,12 @@
             this.Controls.SetChildIndex(this.lbFactory, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.btnSubmit, 0);
+            this.Controls.SetChildIndex(this.chkSintexEfficiencyReport, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -268,6 +283,7 @@
         private Sci.Win.UI.CheckBox chkPH1;
         private Sci.Win.UI.CheckBox chkTSR;
         private Sci.Win.UI.Button btnSubmit;
+        private Sci.Win.UI.CheckBox chkSintexEfficiencyReport;
     }
 }
 

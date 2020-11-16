@@ -197,8 +197,8 @@ namespace Sci.Production.Planning
                         Shift = x.Field<string>("Shift"),
                         Category = x.Field<string>("Category"),
                         StyleID = x.Field<string>("StyleID"),
-                        Manpower = x.Field<decimal>("Manpower"),
-                        ManHour = x.Field<decimal>("ManHour"),
+                        Manpower = x.Field<decimal?>("Manpower"),
+                        ManHour = x.Field<decimal?>("ManHour"),
                         TotalOutput = x.Field<int>("TotalOutput"),
                         CD = x.Field<string>("CD"),
                         SeasonID = x.Field<string>("SeasonID"),
@@ -206,12 +206,12 @@ namespace Sci.Production.Planning
                         Fabrication = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 4, FALSE), \"\")", index + 2),
                         ProductGroup = string.Format("=IFERROR(VLOOKUP(LEFT(J{0}, 2),'Adidas data '!$A$2:$G$116, 7, FALSE), \"\")", index + 2),
                         ProductFabrication = string.Format("=N{0}&M{0}", index + 2),
-                        GSD = x.Field<decimal>("GSD"),
+                        GSD = x.Field<decimal?>("GSD"),
                         Earnedhours = string.Format("=IF(I{0}=\"\", \"\", IFERROR((I{0}*P{0})/60, \"\"))", index + 2),
                         TotalWorkingHours = string.Format("=H{0}*G{0}", index + 2),
                         CumulateDaysofDaysinProduction = x.Field<int>("CumulateDaysofDaysinProduction"),
                         EfficiencyLine = string.Format("=Q{0}/R{0}", index + 2),
-                        GSDProsmv = x.Field<decimal>("GSDProsmv"),
+                        GSDProsmv = x.Field<decimal?>("GSDProsmv"),
                         Earnedhours2 = string.Format("=IF(I{0}=\"\", \"\", IFERROR(I{0}*U{0}/60, \"\"))", index + 2),
                         EfficiencyLine2 = string.Format("=V{0}/R{0}", index + 2),
                         NoofInlineDefects = x.Field<int>("NoofInlineDefects"),
@@ -239,11 +239,8 @@ namespace Sci.Production.Planning
                         x.Key.Orderseq,
                         PROEarnedHrs = x.Sum(y => y.Field<decimal>("Earnedhours2")),
                         PROManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
-                        PROEfficiency = string.Format("=D{0}/E{0}", index + 13),
                         SIOEarnedHrs = x.Sum(y => y.Field<decimal>("Earnedhours")),
                         SIOManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
-                        SIOEfficiency = string.Format("=G{0}/H{0}", index + 13),
-                        PROSIOGap = string.Format("=I{0}-F{0}", index + 13),
                         SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
                                      x.Sum(y => y.Field<decimal>("Earnedhours")),
                     })
@@ -268,14 +265,14 @@ namespace Sci.Production.Planning
                 rtnDataTable[1] = PublicPrg.ListToDataTable.ToDataTable(querySintexReportSeason);
 
                 var querySintexReportMonthByYTD = dt[0].AsEnumerable()
-                    .GroupBy(x => new { Country = x.Field<string>("Country") })
-                    .Select(x => new
-                    {
-                        x.Key.Country,
-                        SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
-                                     x.Sum(y => y.Field<decimal>("Earnedhours")),
-                    })
-                    .ToList();
+                        .GroupBy(x => new { Country = x.Field<string>("Country") })
+                        .Select(x => new
+                        {
+                            x.Key.Country,
+                            SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
+                                         x.Sum(y => y.Field<decimal>("Earnedhours")),
+                        })
+                        .ToList();
 
                 rtnDataTable[2] = PublicPrg.ListToDataTable.ToDataTable(querySintexReportMonthByYTD);
             }
@@ -405,11 +402,11 @@ namespace Sci.Production.Planning
                 objArray[0, 1] = dr["Month"].ToString();
                 objArray[0, 2] = dr["PROEarnedHrs"].ToString();
                 objArray[0, 3] = dr["PROManhours"].ToString();
-                objArray[0, 4] = dr["PROEfficiency"].ToString();
+                objArray[0, 4] = string.Format("=D{0}/E{0}", initR);
                 objArray[0, 5] = dr["SIOEarnedHrs"].ToString();
                 objArray[0, 6] = dr["SIOManhours"].ToString();
-                objArray[0, 7] = dr["SIOEfficiency"].ToString();
-                objArray[0, 8] = dr["PROSIOGap"].ToString();
+                objArray[0, 7] = string.Format("=G{0}/H{0}", initR);
+                objArray[0, 8] = string.Format("=I{0}-F{0}", initR);
                 objArray[0, 9] = dr["SamplesSIO"].ToString();
                 objSheets.Range[string.Format("B{0}:K{0}", initR)].Value2 = objArray;
                 objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(dr["Country"].ToString());
