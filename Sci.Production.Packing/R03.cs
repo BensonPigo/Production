@@ -94,32 +94,32 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this._sp1))
             {
-                where += $" and  o.id>= '{this._sp1}' ";
+                where += $" and  PackingListDetail_Sum.id>= '{this._sp1}' ";
             }
 
             if (!MyUtility.Check.Empty(this._sp2))
             {
-                where += $" and  o.id <= '{this._sp2}' ";
+                where += $" and  PackingListDetail_Sum.id <= '{this._sp2}' ";
             }
 
             if (!MyUtility.Check.Empty(this._po1))
             {
-                where += $" and o.CustPONo >= '{this._po1}' ";
+                where += $" and PackingListDetail_Sum.CustPONo >= '{this._po1}' ";
             }
 
             if (!MyUtility.Check.Empty(this._po2))
             {
-                where += $" and  o.CustPONo <= '{this._po2}' ";
+                where += $" and  PackingListDetail_Sum.CustPONo <= '{this._po2}' ";
             }
 
             if (!MyUtility.Check.Empty(this._bdate1))
             {
-                where += $" and  o.BuyerDelivery >= '{this._bdate1}' ";
+                where += $" and  PackingListDetail_Sum.BuyerDelivery >= '{this._bdate1}' ";
             }
 
             if (!MyUtility.Check.Empty(this._bdate2))
             {
-                where += $" and  o.BuyerDelivery <= '{this._bdate2}' ";
+                where += $" and  PackingListDetail_Sum.BuyerDelivery <= '{this._bdate2}' ";
             }
 
             if (!MyUtility.Check.Empty(this._brand))
@@ -139,33 +139,31 @@ namespace Sci.Production.Packing
 
             if (this.chkFOC.Checked)
             {
-                where += $@" and o.FOC = 0";
+                where += $@" and PackingListDetail_Sum.FOC = 0";
             }
 
             if (this.ChkLocalOrder.Checked)
             {
-                where += $@" and o.LocalOrder = 0";
+                where += $@" and PackingListDetail_Sum.LocalOrder = 0";
             }
             #endregion
             string sqlcmd = $@"
-select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
-	Junk=iif(o.Junk=1,'Y','N'),
+select  pl.MDivisionID,pl.FactoryID,pl.ID,PackingListDetail_Sum.SciDelivery,PackingListDetail_Sum.BuyerDelivery,PackingListDetail_Sum.CustPONo,PackingListDetail_Sum.ID,
+	Junk=iif(PackingListDetail_Sum.Junk=1,'Y','N'),
 	Dest=(select Alias from Country ct where ct.id=pl.Dest),
-	o.StyleID,o.BrandID,pl.CustCDID,o.SewLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
-	pl.Status,o.Qty,
+	PackingListDetail_Sum.StyleID,PackingListDetail_Sum.BrandID,pl.CustCDID,PackingListDetail_Sum.SewLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,PackingListDetail_Sum.SewInLine,PackingListDetail_Sum.SewOffLine,
+	pl.Status,PackingListDetail_Sum.Qty,
 	TtlCTNS= PackingListDetail_Sum.TtlCTNS,
 	TtlQty=PackingListDetail_Sum.TtlQty,
 	TtlNw=PackingListDetail_Sum.TtlNw,
 	TtlGW=PackingListDetail_Sum.TtlGW,
-	TtlCBM=sum(cbm.CBM)*PackingListDetail_Sum.TtlCTNS,
+	TtlCBM=(cbm.CBM*PackingListDetail_Sum.TtlCTNS),
 	PurchaseCTN= iif(LocalPo.RequestID is null ,'N','Y'),
 	ClogCFMStatus=iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N'),
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
 	pl.Remark
-from PackingList_Detail pld
-inner join PackingList pl on pl.ID = pld.ID
-inner join  Orders o on o.id = pld.OrderID
+from PackingList pl 
 outer apply(
 	select RequestID from LocalPO_Detail ld with(nolock) 
 	inner join LocalPO l with(nolock) on l.id = ld.Id
@@ -178,28 +176,29 @@ outer apply(
 	,[TtlGW]=sum(pd.GW)
 	,[CtnID]=count(pd.ID)
 	,[CtnRecDate]=count(pd.ReceiveDate)
-	from PackingList p with(nolock) 
-	INNER JOIN PackingList_Detail pd with(nolock) ON p.ID = pd.ID
-	where pd.OrderID= pld.OrderID  and pd.DisposeFromClog = 0 AND p.MDivisionID = pl.MDivisionID  and p.FactoryID = pl.FactoryID
+	,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
+	,o.Junk,o.StyleID,o.BrandID,o.SewLine,o.SewInLine,o.SewOffLine
+	,o.Qty
+	,pd.RefNo
+	,pd.DisposeFromClog
+    ,o.FOC,o.LocalOrder
+	from PackingList_Detail pd with(nolock) 
+	inner join Orders o on o.ID = pd.OrderID
+	where pd.ID=pl.ID
+	and pd.DisposeFromClog = 0 
+	group by o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
+	,o.Junk,o.StyleID,o.BrandID,o.SewLine,o.SewInLine,o.SewOffLine
+	,o.Qty
+	,pd.RefNo
+	,pd.DisposeFromClog
+	,o.FOC,o.LocalOrder
 )PackingListDetail_Sum
-outer apply(select CBM from LocalItem where Refno = pld.Refno) cbm
-where 1=1 and pld.DisposeFromClog= 0
+outer apply(select CBM from LocalItem where Refno = PackingListDetail_Sum.Refno) cbm
+where 1=1 
+and PackingListDetail_Sum.DisposeFromClog= 0
 {where}
-group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
-	iif(o.Junk=1,'Y','N'),pl.Dest,
-	o.StyleID,o.BrandID,pl.CustCDID,o.SewLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
-	pl.Status,o.Qty,iif(isnull(pl.LocalPOID,'')='','N','Y'),
-	pl.EstCTNBooking,
-	pl.EstCTNArrive,
-	pl.Remark,
-	LocalPo.RequestID,
-	PackingListDetail_Sum.TtlCTNs,
-	PackingListDetail_Sum.TtlQty,
-	PackingListDetail_Sum.TtlNw,
-	PackingListDetail_Sum.TtlGW,
-	PackingListDetail_Sum.CtnID,
-	PackingListDetail_Sum.CtnRecDate
-order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
+
+order by pl.MDivisionID,pl.FactoryID,pl.ID,PackingListDetail_Sum.ID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
             if (!result)
