@@ -487,6 +487,17 @@ where 1=1
                 this.sqlcmd.Append(" and psd.Complete = '1'");
             }
 
+            if (!this.chkNoLocation.Checked)
+            {
+                this.sqlcmd.Append(@"
+and exists(
+    select 1
+    from FtyInventory_Detail fid with (nolock) 
+    where fid.Ukey = fi.Ukey and isnull(fid.MtlLocationID, '') <> ''
+)
+");
+            }
+
             if (!MyUtility.Check.Empty(this.arriveWH1) && !MyUtility.Check.Empty(this.arriveWH2))
             {
                 this.sqlcmd.Append($@" 
