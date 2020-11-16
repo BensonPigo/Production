@@ -39,22 +39,31 @@
             this.comboShift = new Sci.Win.UI.ComboBox();
             this.comboM = new Sci.Production.Class.ComboCentralizedM(this.components);
             this.comboFactory = new Sci.Production.Class.ComboCentralizedFactory(this.components);
+            this.radioSintexEffReportCompare = new Sci.Win.UI.RadioButton();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.lbFormat = new Sci.Win.UI.Label();
+            this.numYear = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(442, 12);
+            this.print.Location = new System.Drawing.Point(430, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(442, 48);
+            this.toexcel.Location = new System.Drawing.Point(430, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(442, 84);
+            this.close.Location = new System.Drawing.Point(430, 84);
             this.close.TabIndex = 6;
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(410, 1);
             // 
             // lbOutputDate
             // 
@@ -169,9 +178,70 @@
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 141;
             // 
+            // radioSintexEffReportCompare
+            // 
+            this.radioSintexEffReportCompare.AutoSize = true;
+            this.radioSintexEffReportCompare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSintexEffReportCompare.Location = new System.Drawing.Point(115, 224);
+            this.radioSintexEffReportCompare.Name = "radioSintexEffReportCompare";
+            this.radioSintexEffReportCompare.Size = new System.Drawing.Size(193, 21);
+            this.radioSintexEffReportCompare.TabIndex = 145;
+            this.radioSintexEffReportCompare.Text = "Sintex Eff Report Compare";
+            this.radioSintexEffReportCompare.UseVisualStyleBackColor = true;
+            this.radioSintexEffReportCompare.CheckedChanged += new System.EventHandler(this.RadioSintexEffReportCompare_CheckedChanged);
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.Checked = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(115, 196);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(82, 21);
+            this.radioDetail.TabIndex = 144;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "By Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            this.radioDetail.CheckedChanged += new System.EventHandler(this.RadioDetail_CheckedChanged);
+            // 
+            // lbFormat
+            // 
+            this.lbFormat.Location = new System.Drawing.Point(13, 196);
+            this.lbFormat.Name = "lbFormat";
+            this.lbFormat.Size = new System.Drawing.Size(98, 23);
+            this.lbFormat.TabIndex = 143;
+            this.lbFormat.Text = "Format";
+            // 
+            // numYear
+            // 
+            this.numYear.Location = new System.Drawing.Point(115, 12);
+            this.numYear.Maximum = new decimal(new int[] {
+            2100,
+            0,
+            0,
+            0});
+            this.numYear.Minimum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.numYear.Name = "numYear";
+            this.numYear.Size = new System.Drawing.Size(72, 23);
+            this.numYear.TabIndex = 146;
+            this.numYear.Value = new decimal(new int[] {
+            2015,
+            0,
+            0,
+            0});
+            this.numYear.Visible = false;
+            // 
             // R07
             // 
-            this.ClientSize = new System.Drawing.Size(522, 242);
+            this.ClientSize = new System.Drawing.Size(522, 295);
+            this.Controls.Add(this.numYear);
+            this.Controls.Add(this.radioSintexEffReportCompare);
+            this.Controls.Add(this.radioDetail);
+            this.Controls.Add(this.lbFormat);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboShift);
@@ -204,6 +274,11 @@
             this.Controls.SetChildIndex(this.comboShift, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.lbFormat, 0);
+            this.Controls.SetChildIndex(this.radioDetail, 0);
+            this.Controls.SetChildIndex(this.radioSintexEffReportCompare, 0);
+            this.Controls.SetChildIndex(this.numYear, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,5 +296,9 @@
         private Win.UI.ComboBox comboShift;
         private Class.ComboCentralizedM comboM;
         private Class.ComboCentralizedFactory comboFactory;
+        private Win.UI.RadioButton radioSintexEffReportCompare;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.Label lbFormat;
+        private System.Windows.Forms.NumericUpDown numYear;
     }
 }
