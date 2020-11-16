@@ -187,8 +187,8 @@ drop table #tmp
 
             DataRelation relation = new DataRelation(
                 "rel1",
-                new DataColumn[] { this.masterdt.Columns["InventoryPOID"], this.masterdt.Columns["Inventoryseq1"], this.masterdt.Columns["InventorySEQ2"] },
-                new DataColumn[] { this.detaildt.Columns["POID"], this.detaildt.Columns["seq1"], this.detaildt.Columns["seq2"] });
+                new DataColumn[] { this.masterdt.Columns["POID"], this.masterdt.Columns["Seq1"], this.masterdt.Columns["Seq2"], this.masterdt.Columns["InventoryPOID"], this.masterdt.Columns["Inventoryseq1"], this.masterdt.Columns["InventorySEQ2"] },
+                new DataColumn[] { this.detaildt.Columns["ToPOID"], this.detaildt.Columns["Toseq1"], this.detaildt.Columns["Toseq2"], this.detaildt.Columns["POID"], this.detaildt.Columns["seq1"], this.detaildt.Columns["seq2"] });
             dataSet.Relations.Add(relation);
             this.listControlBindingSource1.DataSource = dataSet;
             this.listControlBindingSource1.DataMember = "masterdt";
