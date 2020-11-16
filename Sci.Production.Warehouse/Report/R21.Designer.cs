@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.rdbtnSummary = new Sci.Win.UI.RadioButton();
             this.rdbtnDetail = new Sci.Win.UI.RadioButton();
+            this.rdbtnSummary = new Sci.Win.UI.RadioButton();
             this.cmbStockType = new Sci.Win.UI.ComboBox();
             this.labelReportType = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
@@ -65,8 +65,10 @@
             this.comboxMaterialTypeAndID = new Sci.Production.Class.ComboxMaterialTypeAndID();
             this.panel1 = new Sci.Win.UI.Panel();
             this.chkNoLocation = new Sci.Win.UI.CheckBox();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.radioGroupReportType = new Sci.Win.UI.RadioGroup();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.radioGroupReportType.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,32 +95,6 @@
             // checkUseCustomized
             // 
             this.checkUseCustomized.Location = new System.Drawing.Point(394, 122);
-            // 
-            // rdbtnSummary
-            // 
-            this.rdbtnSummary.AutoSize = true;
-            this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnSummary.Location = new System.Drawing.Point(74, 12);
-            this.rdbtnSummary.Name = "rdbtnSummary";
-            this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
-            this.rdbtnSummary.TabIndex = 14;
-            this.rdbtnSummary.Text = "Summary";
-            this.rdbtnSummary.UseVisualStyleBackColor = true;
-            this.rdbtnSummary.Value = "S";
-            // 
-            // rdbtnDetail
-            // 
-            this.rdbtnDetail.AutoSize = true;
-            this.rdbtnDetail.Checked = true;
-            this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetail.Location = new System.Drawing.Point(6, 12);
-            this.rdbtnDetail.Name = "rdbtnDetail";
-            this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
-            this.rdbtnDetail.TabIndex = 13;
-            this.rdbtnDetail.TabStop = true;
-            this.rdbtnDetail.Text = "Detail";
-            this.rdbtnDetail.UseVisualStyleBackColor = true;
-            this.rdbtnDetail.Value = "D";
             // 
             // cmbStockType
             // 
@@ -512,14 +488,48 @@
             this.chkNoLocation.Text = "No Location";
             this.chkNoLocation.UseVisualStyleBackColor = true;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.radioGroupReportType);
+            this.panel2.Location = new System.Drawing.Point(125, 359);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(156, 26);
+            this.panel2.TabIndex = 154;
+            // 
+            // rdbtnDetail
+            // 
+            this.rdbtnDetail.AutoSize = true;
+            this.rdbtnDetail.Checked = true;
+            this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnDetail.Location = new System.Drawing.Point(6, 12);
+            this.rdbtnDetail.Name = "rdbtnDetail";
+            this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
+            this.rdbtnDetail.TabIndex = 13;
+            this.rdbtnDetail.TabStop = true;
+            this.rdbtnDetail.Text = "Detail";
+            this.rdbtnDetail.UseVisualStyleBackColor = true;
+            this.rdbtnDetail.Value = "D";
+            // 
+            // rdbtnSummary
+            // 
+            this.rdbtnSummary.AutoSize = true;
+            this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnSummary.Location = new System.Drawing.Point(74, 12);
+            this.rdbtnSummary.Name = "rdbtnSummary";
+            this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
+            this.rdbtnSummary.TabIndex = 14;
+            this.rdbtnSummary.Text = "Summary";
+            this.rdbtnSummary.UseVisualStyleBackColor = true;
+            this.rdbtnSummary.Value = "S";
+            // 
             // radioGroupReportType
             // 
             this.radioGroupReportType.Controls.Add(this.rdbtnDetail);
             this.radioGroupReportType.Controls.Add(this.rdbtnSummary);
-            this.radioGroupReportType.Location = new System.Drawing.Point(126, 345);
+            this.radioGroupReportType.Location = new System.Drawing.Point(-4, -11);
             this.radioGroupReportType.Name = "radioGroupReportType";
-            this.radioGroupReportType.Size = new System.Drawing.Size(163, 38);
-            this.radioGroupReportType.TabIndex = 153;
+            this.radioGroupReportType.Size = new System.Drawing.Size(163, 45);
+            this.radioGroupReportType.TabIndex = 154;
             this.radioGroupReportType.TabStop = false;
             this.radioGroupReportType.Value = "D";
             this.radioGroupReportType.ValueChanged += new System.EventHandler(this.RadioGroupReportType_ValueChanged);
@@ -527,6 +537,7 @@
             // R21
             // 
             this.ClientSize = new System.Drawing.Size(637, 438);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.chkNoLocation);
             this.Controls.Add(this.textColor);
             this.Controls.Add(this.labelColor);
@@ -561,11 +572,9 @@
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.labelSPNo);
-            this.Controls.Add(this.radioGroupReportType);
             this.Name = "R21";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R21 Stock List Report (Inventory)";
-            this.Controls.SetChildIndex(this.radioGroupReportType, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
@@ -606,7 +615,9 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.chkNoLocation, 0);
+            this.Controls.SetChildIndex(this.panel2, 0);
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.radioGroupReportType.ResumeLayout(false);
             this.radioGroupReportType.PerformLayout();
             this.ResumeLayout(false);
@@ -615,9 +626,6 @@
         }
 
         #endregion
-
-        private Win.UI.RadioButton rdbtnSummary;
-        private Win.UI.RadioButton rdbtnDetail;
         private Win.UI.ComboBox cmbStockType;
         private Win.UI.Label labelReportType;
         private Win.UI.Label labelStockType;
@@ -653,6 +661,9 @@
         private Class.ComboxMaterialTypeAndID comboxMaterialTypeAndID;
         private Win.UI.Panel panel1;
         private Win.UI.CheckBox chkNoLocation;
+        private System.Windows.Forms.Panel panel2;
         private Win.UI.RadioGroup radioGroupReportType;
+        private Win.UI.RadioButton rdbtnDetail;
+        private Win.UI.RadioButton rdbtnSummary;
     }
 }
