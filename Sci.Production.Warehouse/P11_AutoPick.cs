@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.Class.Commons;
+using Sci.Production.PPIC;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,6 +22,9 @@ namespace Sci.Production.Warehouse
         private DataTable BOA_PO_Size;
         private DataTable dtIssueBreakDown;
         private bool combo;
+        private string strLabel;
+        private string strPacking;
+        private DataRow drMnOrder;
 
         /// <inheritdoc/>
         public DataTable BOA_PO { get; set; }
@@ -38,12 +43,25 @@ namespace Sci.Production.Warehouse
             this.sbSizecode = sbSizecode;
             this.combo = combo;
             this.Text += string.Format(" ({0})", this.poid);
+
+            this.strLabel = MyUtility.GetValue.Lookup($"select Label from Orders where id='{this.orderid}'");
+            this.strPacking = MyUtility.GetValue.Lookup($"select Packing from Orders where id='{this.orderid}'");
+            MyUtility.Check.Seek($@"select SMnorderApv,MnorderApv,* from Orders where id='{this.orderid}'", out this.drMnOrder);
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            #region 按鈕變色
+            this.btnHangtag.ForeColor = !MyUtility.Check.Empty(this.strLabel) ? Color.Blue : Color.Black;
+            this.btnPackingMethod.ForeColor = !MyUtility.Check.Empty(this.strPacking) ? Color.Blue : Color.Black;
+            if (this.drMnOrder != null)
+            {
+                this.btnMNnotice.ForeColor = (!MyUtility.Check.Empty(this.drMnOrder["MnorderApv"]) || !MyUtility.Check.Empty(this.drMnOrder["SMnorderApv"])) ? Color.Blue : Color.Black;
+            }
+            #endregion
 
             if (this.dtIssueBreakDown == null)
             {
@@ -745,6 +763,47 @@ order by z.seq1,z.seq2,z.Seq", this.sbSizecode.ToString().Substring(0, this.sbSi
             }
 
             return;
+        }
+
+        private void BtnMNnotice_Click(object sender, EventArgs e)
+        {
+            if (this.drMnOrder != null)
+            {
+                if (MyUtility.Check.Empty(this.drMnOrder["SMnorderApv"]) && MyUtility.Check.Empty(this.drMnOrder["MnorderApv"]))
+                {
+                    MyUtility.Msg.WarningBox("M/Notice did not approve yet, you cannot print M/Notice.");
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(this.drMnOrder["SMnorderApv"]))
+                {
+                    var frm = new P01_MNoticePrint(null, this.orderid);
+                    frm.ShowDialog(this);
+                    return;
+                }
+                else
+                {
+                    SMNoticePrg.PrintSMNotice(this.poid, SMNoticePrg.EnuPrintSMType.Order);
+                }
+            }
+        }
+
+        private void BtnHangtag_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.strLabel))
+            {
+                Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(this.strLabel, "Label & Hangtag", false, null);
+                callNextForm.ShowDialog(this);
+            }
+        }
+
+        private void BtnPackingMethod_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.strPacking))
+            {
+                Win.Tools.EditMemo callNextForm = new Win.Tools.EditMemo(this.strPacking, "Packing Method", false, null);
+                callNextForm.ShowDialog(this);
+            }
         }
     }
 }

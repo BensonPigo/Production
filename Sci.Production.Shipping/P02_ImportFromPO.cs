@@ -60,6 +60,8 @@ namespace Sci.Production.Shipping
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("CTNNo", header: "CTN No.", width: Widths.AnsiChars(5), settings: ctnno)
                 .Numeric("Price", header: "Price", decimal_places: 4, iseditingreadonly: true)
+                .Numeric("POQty", header: "PO Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
+                .Numeric("AccuExpressQty", header: "Accu. Express Qty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
                 .Numeric("Qty", header: "Q'ty", integer_places: 6, decimal_places: 2, maximum: 999999.99m, minimum: 0m)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("NW", header: "N.W. (kg)", integer_places: 5, decimal_places: 2, maximum: 99999.99m, minimum: 0m);
@@ -99,14 +101,17 @@ namespace Sci.Production.Shipping
             string sqlCmd = string.Format(
                 @"
 select Selected = 0 
-, a.*
-, Qty = iif(a.POQty-a.ExpressQty>0,a.POQty-a.ExpressQty,0)
-, expressID = '{3}'
+    , a.ID,a.SEQ1,SEQ2,Price,UnitID,BrandID,Leader,LeaderID,SuppID,Supplier,Receiver,CTNNo,NW,FOC
+    , POQty = isnull(a.Qty,0) + isnull(a.FOC,0)
+    , AccuExpressQty = a.ExpressQty
+    , Qty = iif(isnull(a.Qty,0)+isnull(a.FOC,0)-isnull(a.ExpressQty,0)>0,isnull(a.Qty,0)+isnull(a.FOC,0)-isnull(a.ExpressQty,0),0)
+    , expressID = '{3}'
 from (
     select psd.ID,psd.SEQ1,psd.SEQ2,psd.Price,psd.POUnit as UnitID,isnull(o.BrandID,'') as BrandID,
-    isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty as POQty,
-    (select isnull(sum(ed.Qty),0) from Express_Detail ed WITH (NOLOCK) where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
-    '' as Receiver,'' as CTNNo, 0.0 as NW
+		isnull(t.Name,'') as Leader, o.SMR  as LeaderID,ps.SuppID,ps.SuppID+'-'+s.AbbEN as Supplier,psd.Qty,
+		(select isnull(sum(ed.Qty),0) from Express_Detail ed WITH (NOLOCK) where ed.OrderID = psd.ID and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2) as ExpressQty,
+		'' as Receiver,'' as CTNNo, 0.0 as NW,
+		psd.FOC
     from PO_Supp_Detail psd WITH (NOLOCK) 
     left join PO_Supp ps WITH (NOLOCK) on psd.ID = ps.ID and psd.SEQ1 = ps.SEQ1
     left join Supp s WITH (NOLOCK) on ps.SuppID = s.ID
@@ -123,7 +128,7 @@ from (
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query error." + result.ToString());
+                this.ShowErr(result);
                 return;
             }
 
@@ -308,13 +313,13 @@ from(
             sqlcmd = @"
 select a.ID,a.Seq1,a.Seq2
 from (
-    select e.ID,e.Seq1,e.Seq2,e.POQty,
-    e.Qty +
+    select e.ID,e.Seq1,e.Seq2,e.POQty,e.FOC,
+    TtlQty = e.Qty +
         isnull((
             select sum(ed.Qty)
             from Express_Detail ed WITH (NOLOCK)
             where ed.OrderID = e.ID and ed.Seq1 = e.Seq1 and ed.Seq2 = e.Seq2
-        ), 0) as TtlQty
+        ), 0)
     from #tmp e
 ) a
 where a.TtlQty > a.POQty

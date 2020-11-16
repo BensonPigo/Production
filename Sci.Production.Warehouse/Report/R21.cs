@@ -487,6 +487,17 @@ where 1=1
                 this.sqlcmd.Append(" and psd.Complete = '1'");
             }
 
+            if (this.chkNoLocation.Checked)
+            {
+                this.sqlcmd.Append(@"
+and not exists(
+    select 1
+    from FtyInventory_Detail fid with (nolock) 
+    where fid.Ukey = fi.Ukey and isnull(fid.MtlLocationID, '') <> ''
+)
+");
+            }
+
             if (!MyUtility.Check.Empty(this.arriveWH1) && !MyUtility.Check.Empty(this.arriveWH2))
             {
                 this.sqlcmd.Append($@" 
@@ -789,6 +800,19 @@ or
             #endregion
             this.HideWaitMessage();
             return true;
+        }
+
+        private void RadioGroupReportType_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.radioGroupReportType.Value == "D")
+            {
+                this.chkNoLocation.Enabled = true;
+            }
+            else
+            {
+                this.chkNoLocation.Enabled = false;
+                this.chkNoLocation.Checked = false;
+            }
         }
     }
 }

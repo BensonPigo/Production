@@ -196,6 +196,12 @@
     <Compile Include="P02_ImportFromBulkPackingList.designer.cs">
       <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_ImportFromPOTransferOutNo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ImportFromPOTransferOutNo.Designer.cs">
+      <DependentUpon>P02_ImportFromPOTransferOutNo.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_ImportFromSamplePackingList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -949,6 +955,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromBulkPackingList.resx">
       <DependentUpon>P02_ImportFromBulkPackingList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ImportFromPOTransferOutNo.resx">
+      <DependentUpon>P02_ImportFromPOTransferOutNo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromSamplePackingList.resx">
       <DependentUpon>P02_ImportFromSamplePackingList.cs</DependentUpon>
