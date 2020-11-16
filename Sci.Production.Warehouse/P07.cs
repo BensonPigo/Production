@@ -418,6 +418,7 @@ where p.junk = 1
                 }
             }
 
+            int intEncodeSeq = 0;
             foreach (DataRow row in this.DetailDatas)
             {
                 if ((MyUtility.Check.Empty(row["seq1"]) || MyUtility.Check.Empty(row["seq2"])) ||
@@ -461,6 +462,10 @@ where p.junk = 1
                     row["roll"] = string.Empty;
                     row["dyelot"] = string.Empty;
                 }
+
+                // 依照當前排序按順序塞EncodeSeq
+                row["EncodeSeq"] = intEncodeSeq;
+                intEncodeSeq++;
             }
 
             if (!MyUtility.Check.Empty(warningmsg.ToString()))
@@ -1416,7 +1421,7 @@ WHERE   StockType='{0}'
             DataRow pre_row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
 
             // 要主料才能使用+-按鈕功能
-            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" && this.IsAutomation)
+            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" && this.IsAutomation && pre_row["FabricType"].ToString() == "F")
             {
                 DataGridViewButtonCell pre_dgbtn = (DataGridViewButtonCell)this.detailgrid.Rows[e.RowIndex].Cells["btnAdd2"];
                 DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
@@ -1457,6 +1462,7 @@ WHERE   StockType='{0}'
                     newrow["Unoriginal"] = 1;
                     newrow["Stocktype"] = 'B';
                     newrow["CombineBarcode"] = pre_ComBarcode;
+                    newrow["EncodeSeq"] = pre_row["EncodeSeq"];
                     DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
                     next_dgbtn.Value = "-";
                 }
@@ -1470,6 +1476,7 @@ WHERE   StockType='{0}'
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            this.detailgrid.ValidateControl();
             if (!this.EditMode)
             {
                 this.radiobySP.Checked = false;
@@ -2285,6 +2292,11 @@ select  a.id
 		,a.CombineBarcode
         ,a.Unoriginal 
         ,a.EncodeSeq
+        ,[SortCmbPOID] = ISNULL(combine.PoId,a.PoId)
+		,[SortCmbSeq1] = ISNULL(combine.Seq1,a.Seq1)
+		,[SortCmbSeq2] = ISNULL(combine.Seq2,a.Seq2)
+		,[SortCmbRoll] = ISNULL(combine.Roll,a.Roll)
+		,[SortCmbDyelot] = ISNULL(combine.Dyelot,a.Dyelot)
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join orders o WITH (NOLOCK) on o.id = a.PoId
@@ -2316,8 +2328,21 @@ outer apply(
 	and t.CombineBarcode=a.CombineBarcode
 	and t.CombineBarcode is not null
 )ttlQty
+outer apply(
+	-- 處理Combine資料 排序用
+	select PoId = IIF(a.CombineBarcode is null,a.PoId,cmb.poid)
+	,Seq1 = IIF(a.CombineBarcode is null,a.Seq1,cmb.Seq1)
+	,Seq2 = IIF(a.CombineBarcode is null,a.Seq2,cmb.Seq2)
+	,Roll = IIF(a.CombineBarcode is null,a.Roll,cmb.Roll)
+	,Dyelot = IIF(a.CombineBarcode is null,a.Dyelot,cmb.Dyelot)
+	from Receiving_Detail cmb
+	where a.Id = cmb.Id
+	and a.CombineBarcode = cmb.CombineBarcode
+	and cmb.CombineBarcode is not null
+	and ISNULL(cmb.Unoriginal,0) = 0
+)combine
 Where a.id = '{0}'
-order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
+order by EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot
 ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
@@ -2491,6 +2516,8 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                     this.detailgridbs.Filter = "fabrictype ='A'";
                     break;
             }
+
+            this.Change_record();
         }
 
         private void BtModifyRollDyelot_Click(object sender, EventArgs e)
@@ -2621,7 +2648,6 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
 
             this.radioEncodeSeq.Checked = true;
             this.radiobySP.Checked = false;
-            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, POID, Seq1, Seq2, Roll, Dyelot ";
 
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
             base.ClickEditAfter();
@@ -2691,6 +2717,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 }
             }
 
+            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
             return result;
         }
 
@@ -2840,22 +2867,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             // GridView button顯示+
             DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
             next_dgbtn.Value = "+";
-        }
-
-        private void RadiobySP_CheckedChanged(object sender, EventArgs e)
-        {
-            //if (this.detailgrid.DataSource != null && this.DetailDatas.Count > 0)
-            //{
-            //    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "POID, Seq1, Seq2, Roll, Dyelot ";
-            //}
-        }
-
-        private void RadioEncodeSeq_CheckedChanged(object sender, EventArgs e)
-        {
-            //if (this.detailgrid.DataSource != null && this.DetailDatas.Count > 0)
-            //{
-            //    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, POID, Seq1, Seq2, Roll, Dyelot ";
-            //}
+            this.Change_record();
         }
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
@@ -2864,12 +2876,15 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             {
                 if (this.radioPanel1.Value == "1")
                 {
-                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "POID, Seq1, Seq2, Roll, Dyelot ";
+                    // SP#, Seq, Roll, Dyelot
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
                 }
                 else
                 {
-                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, POID, Seq1, Seq2, Roll, Dyelot ";
+                    // Encode Seq
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
                 }
+
                 this.Change_record();
             }
         }
