@@ -222,9 +222,15 @@ drop table #tmp
             {
                 DataRow[] findrow = this.detail.AsEnumerable()
                     .Where(w => w.RowState != DataRowState.Deleted
-                        && w["poid"].EqualString(dr["poid"].ToString()) && w["seq1"].EqualString(dr["seq1"])
-                        && w["seq2"].EqualString(dr["seq2"].ToString()) && w["roll"].EqualString(dr["roll"])
-                        && w["dyelot"].EqualString(dr["dyelot"]) && w["stockType"].EqualString(dr["stockType"])).ToArray();
+                        && w["poid"].EqualString(dr["poid"].ToString())
+                        && w["seq1"].EqualString(dr["seq1"])
+                        && w["seq2"].EqualString(dr["seq2"].ToString())
+                        && w["ToPOID"].EqualString(dr["ToPOID"].ToString())
+                        && w["Toseq1"].EqualString(dr["Toseq1"])
+                        && w["Toseq2"].EqualString(dr["Toseq2"].ToString())
+                        && w["roll"].EqualString(dr["roll"])
+                        && w["dyelot"].EqualString(dr["dyelot"])
+                        && w["stockType"].EqualString(dr["stockType"])).ToArray();
 
                 if (findrow.Length > 0)
                 {

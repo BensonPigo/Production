@@ -310,17 +310,17 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
-from dbo.TransferOut_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
-and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+            sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+    ,Qty = sum(d.Qty)
+    ,balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+from dbo.TransferOut_Detail d WITH (NOLOCK)
+left join FtyInventory f WITH (NOLOCK)
+    on d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where d.Id = '{this.CurrentMaintain["id"]}'
+group by d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot,d.StockType 
+having isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0) - sum(d.Qty) < 0
+";
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -332,9 +332,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Out qty: {5}" + Environment.NewLine,
-                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than Out qty: {tmp["qty"]}" + Environment.NewLine;
                     }
 
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -570,12 +568,17 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
-from dbo.TransferOut_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+            sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+    ,Qty = sum(d.Qty)
+    ,balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+from dbo.TransferOut_Detail d WITH (NOLOCK)
+left join FtyInventory f WITH (NOLOCK)
+    on d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where d.Id = '{this.CurrentMaintain["id"]}'
+group by d.poid, d.seq1, d.seq2, d.Roll, d.Dyelot, d.StockType
+having isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0) + sum(d.Qty) < 0
+";
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -587,9 +590,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Out qty: {5}" + Environment.NewLine,
-                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than Out qty: {tmp["qty"]}" + Environment.NewLine;
                     }
 
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
