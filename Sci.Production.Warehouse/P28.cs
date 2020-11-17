@@ -46,7 +46,7 @@ namespace Sci.Production.Warehouse
 
             this.Helper.Controls.Grid.Generator(this.gridComplete)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out this.col_chk)
-                .Text("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditingreadonly: true, alignment: DataGridViewContentAlignment.MiddleCenter)
+                .Text("complete", header: "Complete" + Environment.NewLine + "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditingreadonly: true, alignment: DataGridViewContentAlignment.MiddleCenter)
                  .Text("FinalETA", header: "Act. ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(2), iseditingreadonly: true)
