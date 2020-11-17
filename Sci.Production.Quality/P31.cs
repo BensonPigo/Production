@@ -212,6 +212,8 @@ AND (SELECT  COUNT(ID) FROM GarmentTest WHERE OrderID = '{this.CurrentMaintain["
 ");
             #endregion
 
+            this.btnCreateInsRecord.Visible = this.type == "1";
+
             if (this.EditMode)
             {
                 this.btnCreateInsRecord.Enabled = false;
