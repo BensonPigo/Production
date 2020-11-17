@@ -174,8 +174,6 @@ select
 ad.*,
 [MainDefect] = asdMain.ID + '-' + asdMain.Name,
 [SubDefect] = asdSub.SubID + '-' + asdSub.SubName,
-asdSub.MtlTypeID,
-asdSub.FabricType,
 o.StyleID
 from ADIDASComplain_Detail ad with (nolock)
 left join ADIDASComplainDefect asdMain with (nolock) on ad.DefectMainID = asdMain.ID
@@ -388,7 +386,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
 
                 if (e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = @"select distinct responsibility from ADIDASComplainDefect_Detail";
+                    string sqlcmd = @"select distinct responsibility from ADIDASComplainDefect_FabricType";
                     SelectItem item1 = new SelectItem(sqlcmd, string.Empty, this.CurrentDetailData["responsibility"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -412,7 +410,7 @@ order by ad.SalesID,ad.Article,asdMain.ID + '-' + asdMain.Name,asdSub.SubID + '-
                     return;
                 }
 
-                string sqlcmd = $@"select 1 from ADIDASComplainDefect_Detail where responsibility = '{e.FormattedValue}'";
+                string sqlcmd = $@"select 1 from ADIDASComplainDefect_FabricType where responsibility = '{e.FormattedValue}'";
                 if (!MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
@@ -506,6 +504,7 @@ WHERE a.Status IN ('Closed','Approved') {whereSuppID_subcon}
             new P40_History(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
 
+        /// <inheritdoc/>
         protected void ChangeColorByHistory()
         {
             if (this.lastADIDASComplain["AGCCode"].ToString() != this.CurrentMaintain["AGCCode"].ToString())

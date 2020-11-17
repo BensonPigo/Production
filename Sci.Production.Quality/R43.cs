@@ -106,7 +106,7 @@ order by M desc";
             DualResult result;
 
             string sqlcmd = string.Format(@"
-select DISTINCT
+select
 		 [Year] = YEAR(a.StartDate)
 		,[Month] = MONTH(a.StartDate)
 		,a.EndDate
