@@ -13,6 +13,7 @@ using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P04 : Win.Tems.Input6
     {
         private readonly string loginID = Env.User.UserID;
@@ -21,6 +22,7 @@ namespace Sci.Production.Quality
         // 宣告Context Menu Item
         private ToolStripMenuItem edit;
 
+        /// <inheritdoc/>
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
