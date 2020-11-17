@@ -278,10 +278,17 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             dr2 = dtGridBS1.Select("qty <> 0 and Selected = 1");
             foreach (DataRow tmp in dr2)
             {
-                DataRow[] findrow = this.dt_detail.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
-                                                                          && row["poid"].EqualString(tmp["poid"].ToString()) && row["seq1"].EqualString(tmp["seq1"])
-                                                                          && row["seq2"].EqualString(tmp["seq2"].ToString()) && row["roll"].EqualString(tmp["roll"])
-                                                                          && row["dyelot"].EqualString(tmp["dyelot"]) && row["stockType"].EqualString(tmp["stockType"])).ToArray();
+                DataRow[] findrow = this.dt_detail.AsEnumerable()
+                    .Where(w => w.RowState != DataRowState.Deleted
+                        && w["poid"].EqualString(tmp["poid"].ToString())
+                        && w["seq1"].EqualString(tmp["seq1"])
+                        && w["seq2"].EqualString(tmp["seq2"].ToString())
+                        && w["ToPOID"].EqualString(tmp["ToPOID"].ToString())
+                        && w["Toseq1"].EqualString(tmp["Toseq1"])
+                        && w["Toseq2"].EqualString(tmp["Toseq2"].ToString())
+                        && w["roll"].EqualString(tmp["roll"])
+                        && w["dyelot"].EqualString(tmp["dyelot"])
+                        && w["stockType"].EqualString(tmp["stockType"])).ToArray();
 
                 if (findrow.Length > 0)
                 {
