@@ -629,6 +629,8 @@ where   #tmp.poid = dbo.po_supp.id
             #endregion Status Label
 
             this.IsAutomation = UtilityAutomation.IsAutomationEnable;
+            this.radioEncodeSeq.Checked = false;
+            this.radiobySP.Checked = true;
             this.Change_record();
         }
 
@@ -1463,8 +1465,17 @@ WHERE   StockType='{0}'
                     newrow["Stocktype"] = 'B';
                     newrow["CombineBarcode"] = pre_ComBarcode;
                     newrow["EncodeSeq"] = pre_row["EncodeSeq"];
+
+                    // 新增子項要預設父項的Combine SKU, 這是為避免當排序變更後會亂掉
+                    newrow["SortCmbPOID"] = pre_row["SortCmbPOID"];
+                    newrow["SortCmbSeq1"] = pre_row["SortCmbSeq1"];
+                    newrow["SortCmbSeq2"] = pre_row["SortCmbSeq2"];
+                    newrow["SortCmbRoll"] = pre_row["SortCmbRoll"];
+                    newrow["SortCmbDyelot"] = pre_row["SortCmbDyelot"];
                     DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
                     next_dgbtn.Value = "-";
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
+                    this.Change_record();
                 }
                 else if (pre_dgbtn.Value.ToString() == "-")
                 {
