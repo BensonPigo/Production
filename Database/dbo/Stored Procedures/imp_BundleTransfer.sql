@@ -319,10 +319,10 @@ BEGIN
 				and s.type=4
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID,
+				t.InComing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID,
 				t.PanelNo = s.PanelNo,t.CutCellID = s.CutCellID
 			when not matched by target and s.type=4 then
-				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
+				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID,PanelNo,CutCellID)
 				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID, s.PanelNo, s.CutCellID)
 			OUTPUT $action,Inserted.BundleNo INTO @BundleNoTB; 
 			'
