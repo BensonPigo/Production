@@ -516,6 +516,26 @@ inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
 where gt.id = @ID and sl.Location !='B'
 group by sl.Location
 order by sl.Location desc
+
+select sl.Location,s.BrandID
+into #Location_S
+from GarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location !='B'
+group by sl.Location,s.BrandID
+order by sl.Location desc
+
+select * 
+into #type_S
+from GarmentTestShrinkage t
+where exists(
+	select 1 from #Location1 s
+	where  t.LocationGoup = s.Location
+	and t.BrandID=s.BrandID
+)
+
+
 CREATE TABLE #type1([type] [varchar](20),seq numeric(6,0))
 insert into #type1 values('Chest Width',1)
 insert into #type1 values('Sleeve Width',2)
@@ -539,11 +559,17 @@ insert into #type2 values('Thigh Width',3)
 insert into #type2 values('Side Seam',4)
 insert into #type2 values('Leg Opening',5)
 
-
+/*
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 select @ID,@NO,* from #Location1,#type1
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 select @ID,@NO,* from #Location2,#type2
+*/
+
+INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO, t1.Location,t2.Type,t2.Seq from #Location_S t1,#type_S t2
+
+
 
 INSERT INTO [dbo].[SampleGarmentTest_Detail_Twisting]([ID],[No],[Location])
 select @ID,@NO,
