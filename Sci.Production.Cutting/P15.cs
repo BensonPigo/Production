@@ -959,15 +959,16 @@ select t.*,CreatedBundleQty = b.qty, RealbalanceQty = t.RealCutOutput - t.CutOut
 from #tmp t
 left join #bundleSPCreatedQty b on t.CutRef = b.CutRef and t.article = b.Article and t.sizecode = b.Sizecode and t.orderid = b.OrderID
 
-select distinct MDivisionId, StyleUkey, Article, cutref, POID, ukey into #msa from #tmp
+select distinct MDivisionId, StyleUkey, Fabriccombo, Article, cutref, POID, ukey into #msfa from #tmp
 
 select f.patternCode,f.PatternDesc,f.Parts, art = isnull(art, ''), m.cutref, m.poid, m.ukey, f.ispair, f.Location,
 	NoBundleCardAfterSubprocess_String = ISNULL(ns, ''),
 	PostSewingSubProcess_String=ISNULL(ps, ''),
-    m.MDivisionId,m.StyleUkey,m.Article
+    m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article
 into #bundleinfo
-from #msa m
-inner join FtyStyleInnovation f with(NOLOCK) on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey  and f.Article = m.Article
+from #msfa m
+inner join FtyStyleInnovation f with(NOLOCK)
+    on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey and f.Fabriccombo = m.Fabriccombo and f.Article = m.Article
 outer apply(
 	select art = STUFF((
 		select CONCAT('+', fa.SubprocessId)
@@ -992,22 +993,29 @@ outer apply(
 	),1,1,'')
 )p
 
-select b.patternCode,b.PatternDesc,b.Parts,b.art,b.cutref,b.poid,b.ukey,b.ispair,b.Location,b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,b.MDivisionId,b.StyleUkey,b.Article
+select
+    b.patternCode,b.PatternDesc,b.Parts,b.art,b.cutref,b.poid,b.ukey,b.ispair,b.Location,b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,
+    b.MDivisionId,b.StyleUkey,b.Fabriccombo,b.Article
 from #bundleinfo b
 union all
 select distinct
 	patternCode='ALLPARTS',
 	PatternDesc='All Parts',
 	Parts=0,art='',b.cutref,b.poid,b.ukey,b.ispair,
-	Location='',b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,b.MDivisionId,b.StyleUkey,b.article
+	Location='',b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,
+    b.MDivisionId,b.StyleUkey,b.Fabriccombo,b.article
 from #bundleinfo b
-where not exists(select 1 from #bundleinfo c where c.MDivisionId = b.MDivisionId and c.StyleUkey = b.StyleUkey and c.article = b.article and c.CutRef = b.CutRef and c.Patterncode = 'ALLPARTS')
+where not exists(select 1 from #bundleinfo c
+    where c.MDivisionId = b.MDivisionId and c.StyleUkey = b.StyleUkey and c.Fabriccombo = b.Fabriccombo and c.article = b.article
+    and c.CutRef = b.CutRef and c.Patterncode = 'ALLPARTS')
 
-select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,m.MDivisionId,m.StyleUkey,m.Article
-from #msa m
-inner join FtyStyleInnovationAllPart f with(NOLOCK) on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey  and f.Article = m.Article
+select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,
+    m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article
+from #msfa m
+inner join FtyStyleInnovationAllPart f with(NOLOCK)
+    on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey and f.Fabriccombo = m.Fabriccombo and f.Article = m.Article
 
-drop table #tmp, #msa
+drop table #tmp, #msfa
 ";
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out DataTable[] rightUpDt);
             if (!query_dResult)
@@ -2214,18 +2222,23 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values(
 delete FtyStyleInnovation_Artwork
 where FtyStyleInnovationUkey in(
     select ukey from FtyStyleInnovation
-    where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and Article = '{first.Article}')
-delete FtyStyleInnovation where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and Article = '{first.Article}'
-delete FtyStyleInnovationAllPart where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and Article = '{first.Article}'");
+    where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}')
+
+delete FtyStyleInnovation
+where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
+
+delete FtyStyleInnovationAllPart
+where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'");
 
                 // 寫入 [FtyStyleInnovation]
                 foreach (var pattern in selpatternList.Where(w => w.Ukey == first.Ukey))
                 {
                     insertSql.Append($@"
 delete @inertkey
-INSERT INTO [dbo].[FtyStyleInnovation]([MDivisionID],[StyleUkey],[Article],[Patterncode],[PatternDesc],[Location],[Parts],[IsPair])
+INSERT INTO [dbo].[FtyStyleInnovation]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[Patterncode],[PatternDesc],[Location],[Parts],[IsPair])
 output inserted.Ukey into @inertkey
-VALUES ('{Sci.Env.User.Keyword}','{first.StyleUkey}','{first.Article}','{pattern.PatternCode}','{pattern.PatternDesc}','{pattern.Location}','{pattern.Parts}','{pattern.Ispair}')");
+VALUES ('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
+,'{pattern.PatternCode}','{pattern.PatternDesc}','{pattern.Location}','{pattern.Parts}','{pattern.Ispair}')");
 
                     if (!pattern.PatternCode.Equals("ALLPARTS"))
                     {
@@ -2245,8 +2258,9 @@ Values((select ukey from @inertkey),'{ann[i]}','{ps}','{nb}');
                 foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey))
                 {
                     insertSql.Append($@"
-INSERT INTO [dbo].[FtyStyleInnovationAllPart]([MDivisionID],[StyleUkey],[Article],[Patterncode],[PatternDesc],[Location],[Parts],[IsPair])
-VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{first.Article}','{allPart.PatternCode}','{allPart.PatternDesc}','{allPart.Location}','{allPart.Parts}','{allPart.Ispair}')");
+INSERT INTO [dbo].[FtyStyleInnovationAllPart]([MDivisionID],[StyleUkey],[Fabriccombo],[Article],[Patterncode],[PatternDesc],[Location],[Parts],[IsPair])
+VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
+,'{allPart.PatternCode}','{allPart.PatternDesc}','{allPart.Location}','{allPart.Parts}','{allPart.Ispair}')");
                 }
 
                 beforeUkey = first.Ukey;

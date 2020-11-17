@@ -1,14 +1,18 @@
-﻿CREATE TABLE [dbo].[FtyStyleInnovation] (
-    [Ukey]        BIGINT       IDENTITY (1, 1) NOT NULL,
-    [MDivisionID] VARCHAR (8)  CONSTRAINT [DF_FtyStyleInnovation_MDivisionID] DEFAULT ('') NULL,
-    [StyleUkey]   BIGINT       CONSTRAINT [DF_FtyStyleInnovation_StyleUkey] DEFAULT ((0)) NULL,
-    [Article]     VARCHAR (8)  CONSTRAINT [DF_FtyStyleInnovation_Article] DEFAULT ('') NULL,
-    [Patterncode] VARCHAR (20) CONSTRAINT [DF_FtyStyleInnovation_Patterncode] DEFAULT ('') NULL,
-    [Location]    VARCHAR (1)  CONSTRAINT [DF_FtyStyleInnovation_Location] DEFAULT ('') NULL,
-    [Parts]       NUMERIC (5)  CONSTRAINT [DF_FtyStyleInnovation_Parts] DEFAULT ((0)) NULL,
-    [IsPair]      BIT          CONSTRAINT [DF_FtyStyleInnovation_IsPair] DEFAULT ((0)) NULL,
+CREATE TABLE [dbo].[FtyStyleInnovation] (
+    [Ukey]        BIGINT         IDENTITY (1, 1) NOT NULL,
+    [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_FtyStyleInnovation_MDivisionID] DEFAULT ('') NULL,
+    [StyleUkey]   BIGINT         CONSTRAINT [DF_FtyStyleInnovation_StyleUkey] DEFAULT ((0)) NULL,
+    [Article]     VARCHAR (8)    CONSTRAINT [DF_FtyStyleInnovation_Article] DEFAULT ('') NULL,
+    [FabricCombo] VARCHAR (2)    CONSTRAINT [DF_FtyStyleInnovation_FabricCombo] DEFAULT ('') NULL,
+    [Patterncode] VARCHAR (20)   CONSTRAINT [DF_FtyStyleInnovation_Patterncode] DEFAULT ('') NULL,
+    [PatternDesc] NVARCHAR (100) CONSTRAINT [DF_FtyStyleInnovation_PatternDesc] DEFAULT ('') NULL,
+    [Location]    VARCHAR (1)    CONSTRAINT [DF_FtyStyleInnovation_Location] DEFAULT ('') NULL,
+    [Parts]       NUMERIC (5)    CONSTRAINT [DF_FtyStyleInnovation_Parts] DEFAULT ((0)) NULL,
+    [IsPair]      BIT            CONSTRAINT [DF_FtyStyleInnovation_IsPair] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FtyStyleInnovation] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -46,6 +50,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ukey', @lev
 
 
 GO
-CREATE NONCLUSTERED INDEX [MSA]
-    ON [dbo].[FtyStyleInnovation]([MDivisionID] ASC, [StyleUkey] ASC, [Article] ASC);
+CREATE NONCLUSTERED INDEX [MSFA]
+    ON [dbo].[FtyStyleInnovation]([MDivisionID] ASC, [StyleUkey] ASC, [FabricCombo] ASC, [Article] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'版片敘述', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyStyleInnovation', @level2type = N'COLUMN', @level2name = N'PatternDesc';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布種組合', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyStyleInnovation', @level2type = N'COLUMN', @level2name = N'FabricCombo';
 
