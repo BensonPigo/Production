@@ -119,7 +119,6 @@ namespace Sci.Production.Quality
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P04_GarmentWash.xltx");
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
-            objApp.Visible = true;
             if (this.data.DateSubmit.HasValue)
             {
                 worksheet.Cells[4, 4] = MyUtility.Convert.GetDate(this.data.DateSubmit.Value).Value.Year + "/" + MyUtility.Convert.GetDate(this.data.DateSubmit.Value).Value.Month + "/" + MyUtility.Convert.GetDate(this.data.DateSubmit.Value).Value.Day;
