@@ -154,7 +154,7 @@ namespace Sci.Production.Shipping
         {
             #region 先取得合約(VNContract)的所有工廠Factory
             // FactoryList
-            string sqlcmdF = $@"select FactoryID from VNContract_Factory With(nolock) where VNContractID = '{this.contract}'";
+            string sqlcmdF = $@"select FactoryID from VNContract_Factory With (nolock) where VNContractID = '{this.contract}'";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmdF, out dt);
             string whereftys = string.Empty;
@@ -214,7 +214,7 @@ from (
 	inner join VNExportDeclaration_Detail ved WITH (NOLOCK) on ved.ID = ve.ID
 	inner join VNConsumption vc WITH (NOLOCK) on vc.VNContractID = ve.VNContractID and ved.CustomSP = vc.CustomSP
 	inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID = vc.ID
-    inner join VNContract_Detail vctd on vctd.id=vc.VNContractID and vcd.NLCode=vctd.NLCode
+    inner join VNContract_Detail vctd WITH (NOLOCK) on vctd.id=vc.VNContractID and vcd.NLCode=vctd.NLCode
 	where ve.VNContractID = @contract and ve.Status = 'Confirmed'
     and (ve.CDate <= @GenerateDate or @GenerateDate is null)
 
@@ -428,7 +428,7 @@ where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
                   and sd.AutoCreate = 1
         )
         and exists(
-			select 1 from SewingOutput s
+			select 1 from SewingOutput s WITH (NOLOCK)
 			where sdd.ID= s.ID
 			and s.OutputDate <= @GenerateDate
         )
@@ -514,12 +514,12 @@ from (
 		                ,isnull(f.PcsLength,0)
 		                ,isnull(f.PcsKg,0)
 		                ,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),
-			                (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit 
+			                (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M'),
+			                (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit 
 			                and TO_U = isnull (f.CustomsUnit,''))),1)
 		                ,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M'),
-			                (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit 
+			                (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M'),
+			                (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit 
 			                and TO_U = isnull(f.CustomsUnit,''))),'')
 	                    ,default))
 	        , [CustomsUnit] = f.CustomsUnit
@@ -658,11 +658,11 @@ from (
 			        ,isnull(f.PcsLength,0)
 			        ,isnull(f.PcsKg,0)
 			        ,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
-				        (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
+				        (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 			        ,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
-				        (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+				        (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                         ,default)
 			        , 0)
 	        , [W/House Unit] = f.CustomsUnit
@@ -718,11 +718,11 @@ from (
 		                    ,li.PcsLength
 		                    ,li.PcsKg
 		                    ,isnull(IIF(li.CustomsUnit = 'M2',
-			                    (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                    ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
+			                    (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			                    ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
 		                    ,isnull(IIF(li.CustomsUnit = 'M2',
-			                    (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                    ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+			                    (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			                    ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
                                 ,li.Refno)
 		                    ,0)
 	            , [W/House Unit] = li.CustomsUnit
@@ -755,8 +755,8 @@ from (
     		[Roll] = b.FromRoll,
     		[Dyelot] = b.FromDyelot,
     		[Qty] = isnull(sum(b.Qty),0) 
-    from SubTransfer a
-    inner join SubTransfer_Detail b on a.Id=b.Id
+    from SubTransfer a WITH (NOLOCK)
+    inner join SubTransfer_Detail b WITH (NOLOCK) on a.Id=b.Id
     where a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
     and a.Status='Confirmed'
     and a.Type in ('E','D','A','B')
@@ -774,8 +774,8 @@ from (
     		[Roll] = b.ToRoll,
     		[Dyelot] = b.ToDyelot,
     		[Qty] = - isnull(sum(b.Qty),0) 
-    from SubTransfer a
-    inner join SubTransfer_Detail b on a.Id=b.Id
+    from SubTransfer a WITH (NOLOCK)
+    inner join SubTransfer_Detail b WITH (NOLOCK) on a.Id=b.Id
     where  a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
     and a.Status='Confirmed'
     and a.Type in ('C','A','B')
@@ -823,11 +823,11 @@ from (
 			        ,isnull(f.PcsLength,0)
 			        ,isnull(f.PcsKg,0)
 			        ,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
-				        (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
+				        (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 			        ,isnull(IIF(isnull(f.CustomsUnit, '') = 'M2',
-				        (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+				        (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                         ,default)
 			        , 0)
 	        , [W/House Unit] = f.CustomsUnit
@@ -843,8 +843,8 @@ from (
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	outer apply(
 		select Qty = - isnull(sum(b.StockQty),0) 
-		from Receiving a
-		inner join Receiving_Detail b on a.Id=b.Id
+		from Receiving a WITH (NOLOCK)
+		inner join Receiving_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.WhseArrival > @GenerateDate and a.WhseArrival <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
@@ -853,8 +853,8 @@ from (
 	)WH07_08
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
-		from ReturnReceipt a
-		inner join ReturnReceipt_Detail b on a.id=b.id
+		from ReturnReceipt a WITH (NOLOCK)
+		inner join ReturnReceipt_Detail b WITH (NOLOCK) on a.id=b.id
 		where b.POID = fi.POID and b.Seq1=fi.Seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
@@ -862,8 +862,8 @@ from (
 	)WH37
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
-		from Issue a
-		inner join Issue_Detail b on a.Id=b.Id
+		from Issue a WITH (NOLOCK)
+		inner join Issue_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
@@ -872,8 +872,8 @@ from (
 	)WH_Issue
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
-		from Issuelack a
-		inner join Issuelack_Detail b on a.Id=b.Id
+		from Issuelack a WITH (NOLOCK)
+		inner join Issuelack_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -882,8 +882,8 @@ from (
 	)WH15_16
 	outer apply(
 		select Qty = - isnull(sum(b.Qty),0) 
-		from IssueReturn a
-		inner join IssueReturn_Detail b on a.Id=b.Id
+		from IssueReturn a WITH (NOLOCK)
+		inner join IssueReturn_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -891,8 +891,8 @@ from (
 	)WH17
 	outer apply(
 		select Qty = - isnull(sum(b.QtyAfter) - sum(b.QtyBefore),0) 
-		from Adjust a
-		inner join Adjust_Detail b on a.Id=b.Id
+		from Adjust a WITH (NOLOCK)
+		inner join Adjust_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -901,8 +901,8 @@ from (
 	)WH34_35
 	outer apply(
 		select Qty = - isnull(sum(b.Qty),0) 
-		from TransferIn a
-		inner join TransferIn_Detail b on a.Id=b.Id
+		from TransferIn a WITH (NOLOCK)
+		inner join TransferIn_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -910,8 +910,8 @@ from (
 	)WH18
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
-		from TransferOut a
-		inner join TransferOut_Detail b on a.Id=b.Id
+		from TransferOut a WITH (NOLOCK)
+		inner join TransferOut_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 		and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -919,8 +919,8 @@ from (
 	)WH19
 	outer apply(
 		select Qty = isnull(sum(b.Qty),0) 
-		from BorrowBack a
-		inner join BorrowBack_Detail b on a.Id=b.Id
+		from BorrowBack a WITH (NOLOCK)
+		inner join BorrowBack_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.FromPoId = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
 		and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -929,8 +929,8 @@ from (
 	)WHBorrowBack_Plus
 	outer apply(
 		select Qty = - isnull(sum(b.Qty),0) 
-		from BorrowBack a
-		inner join BorrowBack_Detail b on a.Id=b.Id
+		from BorrowBack a WITH (NOLOCK)
+		inner join BorrowBack_Detail b WITH (NOLOCK) on a.Id=b.Id
 		where b.ToPoId = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
 		and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -944,75 +944,75 @@ from (
             where   b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2 and
 		            b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
             union all
-			select 1 from Receiving a
-			inner join Receiving_Detail b on a.Id=b.Id
+			select 1 from Receiving a WITH (NOLOCK)
+			inner join Receiving_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.WhseArrival > @GenerateDate and a.WhseArrival <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			union all
-			select 1 from ReturnReceipt a
-			inner join ReturnReceipt_Detail b on a.id=b.id
+			select 1 from ReturnReceipt a WITH (NOLOCK)
+			inner join ReturnReceipt_Detail b WITH (NOLOCK) on a.id=b.id
 			where b.POID = fi.POID and b.Seq1=fi.Seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 			and a.Status = 'Confirmed'
 			union all
-			select 1 from Issue a
-			inner join Issue_Detail b on a.Id=b.Id
+			select 1 from Issue a WITH (NOLOCK)
+			inner join Issue_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期到 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			and a.Type in ('A','B','C','D','E','I')
 			union all
-			select 1 from Issuelack a
-			inner join Issuelack_Detail b on a.Id=b.Id
+			select 1 from Issuelack a WITH (NOLOCK)
+			inner join Issuelack_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Type='R' and a.FabricType in ('F','A')
 			and a.Status !='New'
 			union all
-			select 1 from IssueReturn a
-			inner join IssueReturn_Detail b on a.Id=b.Id
+			select 1 from IssueReturn a WITH (NOLOCK)
+			inner join IssueReturn_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			union all
-			select 1 from Adjust a
-			inner join Adjust_Detail b on a.Id=b.Id
+			select 1 from Adjust a WITH (NOLOCK)
+			inner join Adjust_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			and a.Type in ('A','B')
 			union all
-			select 1 from TransferIn a
-			inner join TransferIn_Detail b on a.Id=b.Id
+			select 1 from TransferIn a WITH (NOLOCK)
+			inner join TransferIn_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			union all
-			select 1 from TransferOut a
-			inner join TransferOut_Detail b on a.Id=b.Id
+			select 1 from TransferOut a WITH (NOLOCK)
+			inner join TransferOut_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.PoId = fi.POID and b.Seq1=fi.seq1 and b.Seq2=fi.Seq2
 			and b.StockType = fi.StockType and b.Roll = fi.Roll and b.Dyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			union all
-			select 1 from BorrowBack a
-			inner join BorrowBack_Detail b on a.Id=b.Id
+			select 1 from BorrowBack a WITH (NOLOCK)
+			inner join BorrowBack_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.FromPoId = fi.POID and b.FromSeq1=fi.seq1 and b.FromSeq2=fi.Seq2
 			and b.FromStockType = fi.StockType and b.FromRoll = fi.Roll and b.FromDyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 			and a.Status='Confirmed'
 			and a.Type in ('A','B')
 			union all
-			select 1 from BorrowBack a
-			inner join BorrowBack_Detail b on a.Id=b.Id
+			select 1 from BorrowBack a WITH (NOLOCK)
+			inner join BorrowBack_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.ToPoId = fi.POID and b.ToSeq1=fi.seq1 and b.ToSeq2=fi.Seq2
 			and b.ToStockType = fi.StockType and b.ToRoll = fi.Roll and b.ToDyelot = fi.Dyelot
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -1062,11 +1062,11 @@ from (
 		                    ,li.PcsLength
 		                    ,li.PcsKg
 		                    ,isnull(IIF(li.CustomsUnit = 'M2',
-			                    (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                    ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
+			                    (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			                    ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
 		                    ,isnull(IIF(li.CustomsUnit = 'M2',
-			                    (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                    ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+			                    (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			                    ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
                                 ,li.Refno)
 		                    ,0)
 	            , [W/House Unit] = li.CustomsUnit
@@ -1077,8 +1077,8 @@ from (
         inner join Orders o WITH (NOLOCK) on o.id= l.OrderID
 		outer apply(
 			select Qty = - ISNULL(sum(b.Qty),0)
-			from LocalReceiving a
-			inner join LocalReceiving_Detail b on a.Id=b.Id
+			from LocalReceiving a WITH (NOLOCK)
+			inner join LocalReceiving_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.OrderId = o.ID
 			and b.Refno = l.Refno and b.ThreadColorID = l.ThreadColorID
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -1086,8 +1086,8 @@ from (
 		)WH60
 		outer apply(
 			select Qty = ISNULL(sum(b.Qty),0)
-			from LocalIssue a
-			inner join LocalIssue_Detail b on a.Id=b.Id
+			from LocalIssue a WITH (NOLOCK)
+			inner join LocalIssue_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.OrderID = o.ID
 			and b.Refno = l.Refno and b.ThreadColorID = l.ThreadColorID
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -1095,8 +1095,8 @@ from (
 		)WH61
 		outer apply(
 			select Qty = - ISNULL(sum(b.QtyAfter) - sum(b.QtyBefore),0)
-			from AdjustLocal a
-			inner join AdjustLocal_Detail b on a.Id=b.Id
+			from AdjustLocal a WITH (NOLOCK)
+			inner join AdjustLocal_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.POID = l.OrderID
 			and b.Refno = l.Refno and b.Color = l.ThreadColorID
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -1105,8 +1105,8 @@ from (
 		)WH39
 		outer apply(
 			select Qty = ISNULL(sum(b.Qty),0)
-			from SubTransferLocal a
-			inner join SubTransferLocal_Detail b on a.Id=b.Id
+			from SubTransferLocal a WITH (NOLOCK)
+			inner join SubTransferLocal_Detail b WITH (NOLOCK) on a.Id=b.Id
 			where b.POID = l.OrderID
 			and b.Refno = l.Refno and b.Color = l.ThreadColorID
 			and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -1115,30 +1115,30 @@ from (
 		)WH47
         where WH39.Qty+WH47.Qty+WH60.Qty+WH61.Qty != 0
 			  and exists(
-				select 1 from LocalReceiving a
-				inner join LocalReceiving_Detail b on a.Id=b.Id
+				select 1 from LocalReceiving a WITH (NOLOCK)
+				inner join LocalReceiving_Detail b WITH (NOLOCK) on a.Id=b.Id
 				where b.OrderId = o.ID
 				and b.Refno = l.Refno and b.ThreadColorID = l.ThreadColorID
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 				and a.Status = 'Confirmed'
 				union all
-				select 1 from LocalIssue a
-				inner join LocalIssue_Detail b on a.Id=b.Id
+				select 1 from LocalIssue a WITH (NOLOCK)
+				inner join LocalIssue_Detail b WITH (NOLOCK) on a.Id=b.Id
 				where b.OrderID = o.ID
 				and b.Refno = l.Refno and b.ThreadColorID = l.ThreadColorID
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 				and a.Status = 'Confirmed'
 				union all
-				select 1 from AdjustLocal a
-				inner join AdjustLocal_Detail b on a.Id=b.Id
+				select 1 from AdjustLocal a WITH (NOLOCK)
+				inner join AdjustLocal_Detail b WITH (NOLOCK) on a.Id=b.Id
 				where b.POID = l.OrderID
 				and b.Refno = l.Refno and b.Color = l.ThreadColorID
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
 				and a.Status = 'Confirmed'
 				and a.Type='A'
 				union all
-				select 1 from SubTransferLocal a
-				inner join SubTransferLocal_Detail b on a.Id=b.Id
+				select 1 from SubTransferLocal a WITH (NOLOCK)
+				inner join SubTransferLocal_Detail b WITH (NOLOCK) on a.Id=b.Id
 				where b.POID = l.OrderID
 				and b.Refno = l.Refno and b.Color = l.ThreadColorID
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() --特定日期 A, B 倉有收發紀錄的訂單
@@ -1321,11 +1321,11 @@ from (
 		                ,isnull(li.PcsLength,0)
 		                ,isnull(li.PcsKg,0)
 		                ,isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),1)
+			                (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			                ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),1)
 		                ,isnull(IIF(isnull(li.CustomsUnit,'') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-			                ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),'')
+			                (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+			                ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),'')
                             ,li.Refno)
             , li.Refno
             , [MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
@@ -1459,11 +1459,11 @@ select
 	, StockQty=
 		case when t.StockUnit <> t2.StockUnit and t.StockUnit like '%cone%' then
 				StockQty * 
-				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
-				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit),1)
+				isnull((select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = t.StockUnit and TO_U = 'M')*
+				(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = 'M' and TO_U = t2.StockUnit),1)
 			when t.StockUnit <> t2.StockUnit then
 				StockQty * 
-				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit),1)
+				isnull((select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = t.StockUnit and TO_U = t2.StockUnit),1)
 			else
 				StockQty
 		end
@@ -1516,11 +1516,11 @@ select 	POID	, HSCode	, NLCode	, Qty     , Refno    , MaterialType    , t2.Descr
 	, StockQty=
 		case when t.StockUnit <> t2.StockUnit and t.StockUnit like '%cone%' then
 				StockQty * 
-				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = 'M')*
-				(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = t2.StockUnit),1)
+				isnull((select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = t.StockUnit and TO_U = 'M')*
+				(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = 'M' and TO_U = t2.StockUnit),1)
 			when t.StockUnit <> t2.StockUnit then
 				StockQty * 
-				isnull((select RateValue from dbo.View_Unitrate where FROM_U = t.StockUnit and TO_U = t2.StockUnit),1)
+				isnull((select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = t.StockUnit and TO_U = t2.StockUnit),1)
 			else
 				StockQty
 		end
@@ -1612,10 +1612,10 @@ select	HSCode,
 		CustomsUnit,
         Description,
 		[StockQty] = case	when NewStockUnit = StockUnit then StockQty
-							when StockUnit like '%cone%' then isnull((select RateValue from dbo.View_Unitrate where FROM_U = StockUnit and TO_U = 'M')*
-																	(select RateValue from dbo.View_Unitrate where FROM_U = 'M' and TO_U = NewStockUnit),1) *
+							when StockUnit like '%cone%' then isnull((select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = StockUnit and TO_U = 'M')*
+																	(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = 'M' and TO_U = NewStockUnit),1) *
 															  StockQty
-							else isnull((select RateValue from dbo.View_Unitrate where FROM_U = StockUnit and TO_U = NewStockUnit),1) * 
+							else isnull((select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = StockUnit and TO_U = NewStockUnit),1) * 
 								 StockQty
 							end,
 		[StockUnit] = NewStockUnit
@@ -1669,7 +1669,7 @@ select tp.id
         , tp.FactoryID
 into #tmpPreProdQty
 from #tmpOrderList tp
-left join #tmpSewingOutput_InFty sdd on sdd.OrderID = tp.ID
+left join #tmpSewingOutput_InFty sdd WITH (NOLOCK) on sdd.OrderID = tp.ID
 outer apply(
 	select isnull(Sum(pdd.ShipQty),0) as ShipQty
 	from Pullout_Detail_Detail pdd WITH (NOLOCK)
@@ -1762,11 +1762,11 @@ select *
 into #tmpPull
 from (
     select a.ID 
-    from VNExportDeclaration a
+    from VNExportDeclaration a WITH (NOLOCK)
     where not exists (
                 select 1 
-                from pullout_detail pd
-				inner join Pullout p on p.ID=pd.ID
+                from pullout_detail pd WITH (NOLOCK)
+				inner join Pullout p WITH (NOLOCK) on p.ID=pd.ID
 	            where invno=a.invno
 				and p.PulloutDate <= @GenerateDate -- 『特定日期（含當天）』前成衣尚未出貨
 				and p.Status !='New'
@@ -1775,11 +1775,11 @@ from (
     union 
 
     select a.ID 
-    from VNExportDeclaration a
+    from VNExportDeclaration a WITH (NOLOCK)
     where exists (
         select 1 
-        from pullout_detail pd
-		inner join Pullout p on p.ID=pd.ID
+        from pullout_detail pd WITH (NOLOCK)
+		inner join Pullout p WITH (NOLOCK) on p.ID=pd.ID
 	    where invno = a.invno 
         and shipqty = 0
 		and p.PulloutDate <= @GenerateDate -- 『特定日期（含當天）』前成衣尚未出貨
@@ -1822,7 +1822,7 @@ select [SP#] = vdd.OrderId
 INTO #OnRoadProductQty
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
-inner join VNConsumption vc on vc.StyleID = vdd.StyleID 
+inner join VNConsumption vc WITH (NOLOCK) on vc.StyleID = vdd.StyleID 
                                 and vc.BrandID=vdd.BrandID
                                 and vc.category=vdd.category 
 							    and vc.sizecode=vdd.sizecode 
@@ -1882,11 +1882,11 @@ from (
 			        ,isnull(f.PcsLength,0)
 			        ,isnull(f.PcsKg,0)
 			        ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-				        (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
+				        (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 			        ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2'
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                         ,default),0)
 	        , [CustomsUnit] = isnull(f.CustomsUnit,'')
 	        , [ScrapQty] = ft.InQty-ft.OutQty+ft.AdjustQty
@@ -1925,11 +1925,11 @@ from (
 			        ,li.PcsLength
 			        ,li.PcsKg
 			        ,isnull(IIF(li.CustomsUnit = 'M2',
-				        (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-				        ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
+				        (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+				        ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
 			        ,isnull(IIF(li.CustomsUnit = 'M2',
-				        (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+				        (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
                         ,li.Refno),0)
 	        , [CustomsUnit] = isnull(li.CustomsUnit,'')
 	        , [ScrapQty] = l.LobQty
@@ -1967,11 +1967,11 @@ from (
 			        ,isnull(f.PcsLength,0)
 			        ,isnull(f.PcsKg,0)
 			        ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-				        (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
+				        (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 			        ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2'
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = 'M')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                         ,default),0)
 	        , [CustomsUnit] = isnull(f.CustomsUnit,'')
 	        , [ScrapQty] = WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty
@@ -1985,8 +1985,8 @@ from (
     inner join orders o WITH (NOLOCK) on o.id=ft.POID
 	outer apply(
 		select [Qty]= - isnull(sum(b.QtyAfter-b.QtyBefore),0) 
-		from Adjust a
-		inner join Adjust_Detail b on a.ID=b.ID
+		from Adjust a WITH (NOLOCK)
+		inner join Adjust_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.FtyInventoryUkey = ft.Ukey
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 		and a.Type in ('O')
@@ -1994,16 +1994,16 @@ from (
 	)WH43
 	outer apply(
 		select [Qty]= - isnull(sum(b.QtyAfter-b.QtyBefore) ,0)
-		from Adjust a
-		inner join Adjust_Detail b on a.ID=b.ID
+		from Adjust a WITH (NOLOCK)
+		inner join Adjust_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.FtyInventoryUkey = ft.Ukey
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 		and a.Type in ('R')
 		and a.Status = 'Confirmed'		
 	)WH45
 	outer apply(
-		select [Qty] = - isnull(sum(b.Qty),0) from SubTransfer a
-		inner join SubTransfer_Detail b on a.ID=b.ID
+		select [Qty] = - isnull(sum(b.Qty),0) from SubTransfer a WITH (NOLOCK)
+		inner join SubTransfer_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.ToPOID = ft.POID and b.ToSeq1=ft.seq1 and b.ToSeq2=ft.Seq2
 		and b.ToStockType = ft.StockType and b.ToRoll = ft.Roll and b.ToDyelot = ft.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
@@ -2011,8 +2011,8 @@ from (
 		and a.Type in ('D','E')
 	)WH24_25
 	outer apply(
-		select [Qty] = isnull(sum(b.Qty),0) from SubTransfer a
-		inner join SubTransfer_Detail b on a.ID=b.ID
+		select [Qty] = isnull(sum(b.Qty),0) from SubTransfer a WITH (NOLOCK)
+		inner join SubTransfer_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.FromPOID = ft.POID and b.FromSeq1=ft.seq1 and b.FromSeq2=ft.Seq2
 		and b.FromStockType = ft.StockType and b.FromRoll = ft.Roll and b.FromDyelot = ft.Dyelot
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
@@ -2023,15 +2023,15 @@ from (
             and ft.StockType='O'
             and (WH43.Qty + WH24_25.Qty + WH36.Qty + WH45.Qty) != 0
 			and exists(
-				select 1 from Adjust a
-				inner join Adjust_Detail b on a.ID=b.ID
+				select 1 from Adjust a WITH (NOLOCK)
+				inner join Adjust_Detail b WITH (NOLOCK) on a.ID=b.ID
 				where b.FtyInventoryUkey = ft.Ukey
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 				and a.Type in ('O','R')
 				and a.Status = 'Confirmed'
 				union all
-				select 1 from SubTransfer a
-				inner join SubTransfer_Detail b on a.ID=b.ID
+				select 1 from SubTransfer a WITH (NOLOCK)
+				inner join SubTransfer_Detail b WITH (NOLOCK) on a.ID=b.ID
                 where b.ToPOID = ft.POID and b.ToSeq1=ft.seq1 and b.ToSeq2=ft.Seq2
 		        and b.ToStockType = ft.StockType and b.ToRoll = ft.Roll and b.ToDyelot = ft.Dyelot
 		        and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
@@ -2062,11 +2062,11 @@ from (
 			        ,li.PcsLength
 			        ,li.PcsKg
 			        ,isnull(IIF(li.CustomsUnit = 'M2',
-				        (select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-				        ,(select RateValue from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
+				        (select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+				        ,(select RateValue from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),1)
 			        ,isnull(IIF(li.CustomsUnit = 'M2',
-				        (select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
-				        ,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
+				        (select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
+				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')
                         ,li.Refno),0)
 	        , [CustomsUnit] = isnull(li.CustomsUnit,'')
 	        , [ScrapQty] = WH36.Qty + wh44.Qty + WH46.Qty
@@ -2076,8 +2076,8 @@ from (
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo	
 	outer apply(
 		select  [Qty] = isnull(sum(b.Qty ),0) 
-		from SubTransferLocal a
-		inner join SubTransferLocal_Detail b on a.ID=b.ID
+		from SubTransferLocal a WITH (NOLOCK)
+		inner join SubTransferLocal_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 		and a.Status = 'Confirmed'
@@ -2085,8 +2085,8 @@ from (
 	)WH36
 	outer apply(
 		select [Qty] = - isnull(sum(b.QtyAfter) - sum(b.QtyBefore),0)
-		from AdjustLocal a
-		inner join AdjustLocal_Detail b on a.ID=b.ID
+		from AdjustLocal a WITH (NOLOCK)
+		inner join AdjustLocal_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 		and a.Status = 'Confirmed'
@@ -2094,8 +2094,8 @@ from (
 	)WH44
 	outer apply(
 		select [Qty] = - isnull(sum(b.QtyAfter) - sum(b.QtyBefore),0)
-		from AdjustLocal a
-		inner join AdjustLocal_Detail b on a.ID=b.ID
+		from AdjustLocal a WITH (NOLOCK)
+		inner join AdjustLocal_Detail b WITH (NOLOCK) on a.ID=b.ID
 		where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
 		and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 		and a.Status = 'Confirmed'
@@ -2104,15 +2104,15 @@ from (
 	where 1=1
 	      and (WH36.Qty + wh44.Qty + WH46.Qty) != 0	
 		  and exists(
-				select 1 from SubTransferLocal a
-				inner join SubTransferLocal_Detail b on a.ID=b.ID
+				select 1 from SubTransferLocal a WITH (NOLOCK)
+				inner join SubTransferLocal_Detail b WITH (NOLOCK) on a.ID=b.ID
 				where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 				and a.Status = 'Confirmed'
 				and a.Type='D'
 				union all 
-				select 1 from AdjustLocal a
-				inner join AdjustLocal_Detail b on a.ID=b.ID
+				select 1 from AdjustLocal a WITH (NOLOCK)
+				inner join AdjustLocal_Detail b WITH (NOLOCK) on a.ID=b.ID
 				where b.PoId = l.OrderID and b.Refno = l.Refno and b.Color = l.ThreadColorID 
 				and a.IssueDate > @GenerateDate and a.IssueDate <= GETDATE() -- 特定日期到今天 C 倉有收發紀錄的訂單
 				and a.Status = 'Confirmed'
@@ -2969,7 +2969,7 @@ from (
 
         private void TxtContractNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract]", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(@"select id,startdate,EndDate from [Production].[dbo].[VNContract] WITH (NOLOCK)", "20,10,10", this.Text, false, ",", headercaptions: "Contract No, Start Date, End Date");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
