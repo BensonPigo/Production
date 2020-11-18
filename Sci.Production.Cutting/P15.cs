@@ -1053,7 +1053,7 @@ and ord.mDivisionid = '{this.keyWord}'
             this.qtyTb = this.GetNoofBundle(); // 依據右上撈出資料彙整出中上
 
             // 將下方兩表加入, 下方兩表改為直接對應左上(ISP20201755)
-            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart((long)r["ukey"], r["MDivisionID"].ToString(), (long)r["styleukey"], this.ArticleSizeTb.Select($"ukey = {r["ukey"]}")[0]["article"].ToString(), r["Fabriccombo"].ToString()));
+            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart((long)r["ukey"], r["MDivisionID"].ToString(), (long)r["styleukey"], this.ArticleSizeTb.Select($"ukey = {r["ukey"]}").AsEnumerable().Select(s => s["article"].ToString()).OrderBy(o => o).FirstOrDefault(), r["Fabriccombo"].ToString()));
             foreach (DataRow dr in this.ArticleSizeTb.Rows)
             {
                 dr["iden"] = this.qtyTb.Select($"ukey={dr["ukey"]} and no={dr["no"]}")[0]["iden"];
@@ -2211,12 +2211,6 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values(
                             }
                         }
                     }
-                }
-
-                // 一個裁次只記錄一 次
-                if (beforeUkey == first.Ukey)
-                {
-                    continue;
                 }
 
                 insertSql.Append($@"
