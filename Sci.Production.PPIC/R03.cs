@@ -216,7 +216,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
             {
                 wherenoRestrictOrdersDelivery = @"
-    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))))";
+    and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))";
             }
 
             // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
@@ -1398,7 +1398,7 @@ from (
                         if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
                         {
                             wherenoRestrictOrdersDelivery = @"
-    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))))";
+    and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))";
                         }
 
                         StringBuilder sqlcmd_sub = new StringBuilder();

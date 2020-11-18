@@ -47,7 +47,7 @@ namespace Sci.Production.PPIC
             this.DefaultFilter += type == "1" ? " AND Finished = 0" : " AND Finished = 1";
             if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
             {
-                this.DefaultFilter += " and (IsForecast = 0 or (IsForecast = 1 and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))))";
+                this.DefaultFilter += " and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))";
             }
 
             this.dataType = type;
