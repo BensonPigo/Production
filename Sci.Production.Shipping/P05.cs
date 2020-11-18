@@ -1,19 +1,19 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Transactions;
-using System.Runtime.InteropServices;
 using System.Linq;
-using Sci.Production.PublicPrg;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
 using static Sci.Production.PublicPrg.Prgs;
-using Sci.Win.Tools;
 
 namespace Sci.Production.Shipping
 {
@@ -27,7 +27,6 @@ namespace Sci.Production.Shipping
         private DataGridViewGeneratorNumericColumnSettings shipqty = new DataGridViewGeneratorNumericColumnSettings();
         private string masterID;
         private DataTable selectData;
-        private DataRow dr;
         private string dateTimeMask = string.Empty;
         private string emptyDTMask = string.Empty;
         private string empmask;
@@ -52,8 +51,8 @@ namespace Sci.Production.Shipping
             {
                 this.dtmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == " " ? " " : "0";
                 this.empmask = Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "/" || Env.Cfg.DateTimeStringFormat.Substring(i, 1) == ":" ? Env.Cfg.DateTimeStringFormat.Substring(i, 1) : Env.Cfg.DateTimeStringFormat.Substring(i, 1) == "s" ? string.Empty : " ";
-                this.dateTimeMask = this.dateTimeMask + this.dtmask;
-                this.emptyDTMask = this.emptyDTMask + this.empmask;
+                this.dateTimeMask += this.dtmask;
+                this.emptyDTMask += this.empmask;
             }
 
             this.txtCutoffDate.DataBindings.Add(new Binding("Text", this.mtbs, "CutOffDate", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
@@ -302,7 +301,6 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                     {
                         if (e.RowIndex != -1)
                         {
-                            this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                             P05_QtyBreakDown callNextForm = new P05_QtyBreakDown(this.CurrentMaintain);
                             callNextForm.Set(false, this.DetailDatas, this.CurrentDetailData);
                             callNextForm.ShowDialog(this);
@@ -791,8 +789,8 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
             foreach (DataRow dr in this.DetailDatas)
             {
                 allPackID.Append(string.Format("'{0}',", MyUtility.Convert.GetString(dr["ID"])));
-                ttlshipqty = ttlshipqty + MyUtility.Convert.GetInt(dr["ShipQty"]);
-                ttlctnqty = ttlctnqty + MyUtility.Convert.GetInt(dr["CTNQty"]);
+                ttlshipqty += MyUtility.Convert.GetInt(dr["ShipQty"]);
+                ttlctnqty += MyUtility.Convert.GetInt(dr["CTNQty"]);
                 ttlnw = MyUtility.Math.Round(ttlnw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
                 ttlgw = MyUtility.Math.Round(ttlgw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
                 ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
@@ -870,8 +868,7 @@ outer apply (
 left join Orders o on tmpSP.value = o.ID
 where   o.BrandID is null
         or o.BrandID != '{0}'", this.txtbrand.Text);
-            DataTable checkBrandDt;
-            result = MyUtility.Tool.ProcessWithDatatable((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource, string.Empty, checkBrandSQL, out checkBrandDt, "#tmp");
+            result = MyUtility.Tool.ProcessWithDatatable((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource, string.Empty, checkBrandSQL, out DataTable checkBrandDt, "#tmp");
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.Description);
@@ -1154,10 +1151,8 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
                     cmds.Add(sp1);
                     cmds.Add(sp2);
 
-                    DataTable custCDData;
                     string sqlCmd = "select ID, CountryID, City from CustCD WITH (NOLOCK) where BrandID = @brandid and ID = @custcdid order by ID";
-                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out custCDData);
-
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable custCDData);
                     if (!result || custCDData.Rows.Count <= 0)
                     {
                         if (!result)
@@ -1199,7 +1194,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
             else
             {
-                string paytermAR = string.Empty;
+                string paytermAR;
                 if (MyUtility.Check.Empty(this.txtCustCD.Text))
                 {
                     paytermAR = MyUtility.GetValue.Lookup("PayTermARIDBulk", this.txtbrand.Text, "Brand", "ID");
@@ -1364,14 +1359,12 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             }
 
             DualResult result;
-            DataTable dtCheckResult;
             string strSql;
-            DataRow drPackingShipModeCheckResult;
             foreach (DataRow dr in dtShipMode)
             {
                 #region 檢查Packing List 的ship mode
                 strSql = $"select ShipModeID from PackingList with (nolock) where ID = '{dr["ID"]}' and ShipModeID <> '{this.CurrentMaintain["ShipModeID"].ToString()}'";
-                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out drPackingShipModeCheckResult);
+                bool isPackListShipModeInconsistent = MyUtility.Check.Seek(strSql, out DataRow drPackingShipModeCheckResult);
                 if (isPackListShipModeInconsistent)
                 {
                     msg.Append(string.Format("Packing#:{0},   Shipping Mode:{1}\r\n", MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(drPackingShipModeCheckResult["ShipModeID"])));
@@ -1388,7 +1381,7 @@ inner join Order_QtyShip oq with (nolock) on oq.id = pd.OrderID and oq.Seq = pd.
 inner join Orders o with (nolock) on oq.ID = o.ID
 where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
 ";
-                result = DBProxy.Current.Select(null, strSql, out dtCheckResult);
+                result = DBProxy.Current.Select(null, strSql, out DataTable dtCheckResult);
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -1508,8 +1501,7 @@ From #tmp t
 inner join PackingList_Detail pd with(nolock) on pd.id = t.id
 inner join AirPP with(nolock) on AirPP.OrderID = pd.OrderID and AirPP.OrderShipmodeSeq = pd.OrderShipmodeSeq
 ";
-                DataTable dt;
-                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmdchk, out dt);
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(tmp, string.Empty, sqlcmdchk, out DataTable dt);
                 if (!dualResult)
                 {
                     this.ShowErr(dualResult);
@@ -1770,7 +1762,6 @@ MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Terminal/Whse#
         private void TxtTerminalWhse_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            DataTable dt;
             string sqlCmd = string.Format(
                 @"select fwd.WhseNo,fwd.address,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
@@ -1782,7 +1773,12 @@ order by fwd.WhseNo",
                 MyUtility.Convert.GetString(this.CurrentMaintain["Forwarder"]),
                 MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]));
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(dt, "WhseNo,address", "20,20", MyUtility.Convert.GetString(this.txtTerminalWhse.Text));
 
@@ -1816,13 +1812,12 @@ order by fwd.WhseNo",
                 return;
             }
 
-            DataTable dt;
             string sqlCmd = string.Format(
                 @"select fwd.WhseNo,fwd.UKey from ForwarderWhse fw WITH (NOLOCK) , ForwarderWhse_Detail fwd WITH (NOLOCK) 
 where fw.ID = fwd.ID
 and fwd.whseno = '{0}'
 order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
             if (result)
             {
                 if (dt.Rows.Count >= 1)
@@ -1950,10 +1945,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
 
         private bool CheckShipper()
         {
-            DataTable dtShipper;
-            DualResult result;
             string sP = string.Empty;
-
             if (this.DetailDatas.Count > 0)
             {
                 foreach (DataRow dr in this.DetailDatas)
@@ -1970,7 +1962,6 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and o.SeasonID = f.SeasonID 
           and  f.BrandID = '{this.txtbrand.Text}' 
-          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f1
 outer apply(
     select ShipperID 
@@ -1978,20 +1969,25 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and f.SeasonID = '' 
           and f.BrandID = '{this.txtbrand.Text}' 
-          and cast(GETDATE()as date) between f.BeginDate and f.EndDate
 )f2
 where o.ID in ({sP.Substring(0, sP.Length - 1)})
+order by o.BuyerDelivery
 ";
-                result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper);
+                DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtShipper);
                 if (!result)
                 {
-                    this.ShowErr(sqlcmd, result);
+                    this.ShowErr(result);
                     return false;
                 }
 
                 if (dtShipper.Rows.Count > 1)
                 {
-                    MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
+                    if (MyUtility.Msg.QuestionBox($"Shipper has more than two data, and {dtShipper.Rows[0]["ShipperID"]} will be used as Shipper.") == DialogResult.Yes)
+                    {
+                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
+                        return true;
+                    }
+
                     return false;
                 }
                 else if (dtShipper.Rows.Count == 1)
@@ -2010,15 +2006,14 @@ where o.ID in ({sP.Substring(0, sP.Length - 1)})
 
         private bool ControlColor()
         {
-            DataTable gridData;
-            string sqlCmd = string.Empty;
-            sqlCmd = string.Format(
-                        @"select 1
+            string sqlCmd = $@"
+select 1
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN SciFMS_AccountNo a on se.AccountID = a.ID
-where se.InvNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+where se.InvNo = '{this.CurrentMaintain["ID"]}'
+and se.junk=0";
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable gridData);
             if (!result)
             {
                 this.ShowErr(result);
@@ -2067,10 +2062,7 @@ select  distinct OrderID,OrderShipmodeSeq
 from PackingList_Detail pd with (nolock)
 where exists(select 1 from #tmp t where t.ID = pd.ID)
 ";
-            DataTable dtOrderSeq;
-
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "ID", sqlGetOrderSeq, out dtOrderSeq);
-
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), "ID", sqlGetOrderSeq, out DataTable dtOrderSeq);
             if (!result)
             {
                 this.ShowErr(result);
