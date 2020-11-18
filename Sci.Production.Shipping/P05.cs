@@ -1962,6 +1962,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and o.SeasonID = f.SeasonID 
           and  f.BrandID = '{this.txtbrand.Text}' 
+          and o.BuyerDelivery between f.BeginDate and f.EndDate
 )f1
 outer apply(
     select ShipperID 
@@ -1969,6 +1970,7 @@ outer apply(
     where o.FactoryID = f.FactoryID 
           and f.SeasonID = '' 
           and f.BrandID = '{this.txtbrand.Text}' 
+          and o.BuyerDelivery between f.BeginDate and f.EndDate
 )f2
 where o.ID in ({sP.Substring(0, sP.Length - 1)})
 group by isnull(f1.ShipperID, f2.ShipperID)
