@@ -273,7 +273,10 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
                 DataRow row = this.detailgrid.GetDataRow(i);
                 if (!MyUtility.Convert.GetBool(row["IsShow"]))
                 {
+                    CurrencyManager currencyManager1 = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
+                    currencyManager1.SuspendBinding();
                     this.detailgrid.Rows[i].Visible = false;
+                    currencyManager1.ResumeBinding();
                 }
             }
         }

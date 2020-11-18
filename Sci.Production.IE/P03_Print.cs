@@ -875,9 +875,38 @@ order by NO
             chartData.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
             #endregion
 
+            Microsoft.Office.Interop.Excel.Range rngToCopy;
+            #region Machine Type
+            if (showMachineType)
+            {
+                string[] noPPA = this.operationCode.AsEnumerable()
+                            .Where(s => (s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")) || s["IsPPa"].Equals(true))
+                            .Select(s => s["rn"].ToString()).ToArray();
+                if (noPPA.Length > 10)
+                {
+                    rngToCopy = worksheet.get_Range("A92:A92").EntireRow; // 選取要被複製的資料
+                    for (int i = 10; i < noPPA.Length; i++)
+                    {
+                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A93", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
+                    }
+                }
+
+                int idxppa = 0;
+                foreach (string item in noPPA)
+                {
+                    worksheet.Cells[93 + idxppa, 1] = $"=IF(ISNA(VLOOKUP(D{93 + idxppa},Operation,11,0)),\"\",VLOOKUP(D{93 + idxppa},Operation,11,0))";
+                    worksheet.Cells[93 + idxppa, 5] = $"=IF(ISNA(VLOOKUP(D{93 + idxppa},Operation,3,0)),\"\",VLOOKUP(D{93 + idxppa},Operation,3,0))";
+                    worksheet.Cells[93 + idxppa, 10] = $"=IF(ISNA(VLOOKUP(D{93 + idxppa},Operation,4,0)),\"\",VLOOKUP(D{93 + idxppa},Operation,4,0))";
+                    worksheet.Cells[93 + idxppa, 4] = item;
+                    idxppa++;
+                }
+            }
+            #endregion
+
             #region MACHINE
             decimal allct = Math.Ceiling((decimal)allMachine.Length / 3);
-            Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A31:A31").EntireRow; // 選取要被複製的資料
+            rngToCopy = worksheet.get_Range("A31:A31").EntireRow; // 選取要被複製的資料
             for (int i = 0; i < allct - 5; i++)
             {
                 Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A31", Type.Missing).EntireRow; // 選擇要被貼上的位置
@@ -894,34 +923,6 @@ order by NO
                 {
                     surow = 0;
                     sucol += 2;
-                }
-            }
-            #endregion
-
-            #region Machine Type
-            if (showMachineType)
-            {
-                string[] noPPA = this.operationCode.AsEnumerable()
-                            .Where(s => (s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")) || s["IsPPa"].Equals(true))
-                            .Select(s => s["rn"].ToString()).ToArray();
-                if (noPPA.Length > 10)
-                {
-                    rngToCopy = worksheet.get_Range("A94:A94").EntireRow; // 選取要被複製的資料
-                    for (int i = 10; i < noPPA.Length; i++)
-                    {
-                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A94", Type.Missing).EntireRow; // 選擇要被貼上的位置
-                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
-                    }
-                }
-
-                int idxppa = 0;
-                foreach (string item in noPPA)
-                {
-                    worksheet.Cells[94 + idxppa, 1] = $"=IF(ISNA(VLOOKUP(D{94 + idxppa},Operation,11,0)),\"\",VLOOKUP(D{94 + idxppa},Operation,11,0))";
-                    worksheet.Cells[94 + idxppa, 5] = $"=IF(ISNA(VLOOKUP(D{94 + idxppa},Operation,3,0)),\"\",VLOOKUP(D{94 + idxppa},Operation,3,0))";
-                    worksheet.Cells[94 + idxppa, 10] = $"=IF(ISNA(VLOOKUP(D{94 + idxppa},Operation,4,0)),\"\",VLOOKUP(D{94 + idxppa},Operation,4,0))";
-                    worksheet.Cells[94 + idxppa, 4] = item;
-                    idxppa++;
                 }
             }
             #endregion

@@ -248,7 +248,7 @@ order by case when ld.No = '' then 1
                         this.ComputeTaktTime();
                     }
 
-                    this.Distable();
+                    // this.Distable();
                 }
             };
 
@@ -691,6 +691,11 @@ where Junk = 0
                     {
                         dr["IsPPA"] = 1;
                         dr["IsHide"] = 0;
+                        dr.EndEdit();
+                    }
+                    else
+                    {
+                        dr["IsPPA"] = 0;
                         dr.EndEdit();
                     }
 
@@ -1539,7 +1544,7 @@ where t.StyleID = s.ID
             string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{timeStudy["ID"]}' ");
             sqlCmd = string.Format(
                 @"
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '0'
@@ -1599,7 +1604,7 @@ select ID = null
 	   , EmployeeName = ''
 	   , EmployeeSkill = ''
 	   , Efficiency = 100
-       , IsPPA  = iif(td.SMV > 0,0,1)
+       , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
        ,o.MasterPlusGroup
 	   ,[IsHide] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) as bit)
 	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
@@ -1619,7 +1624,7 @@ outer apply (
 )show
 where td.ID = '{1}'
 union all
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '9970'
@@ -1659,7 +1664,7 @@ outer apply (
 )show
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection'
 union all
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '9980'
@@ -1699,7 +1704,7 @@ outer apply (
 )show
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing'
 union all
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '9990'
