@@ -61,8 +61,8 @@ namespace Sci.Production.Warehouse
 
             Dictionary<string, string> cmbSummaryby_RowSource = new Dictionary<string, string>
             {
-                { "0", "[SP#, Seq, Stock Type]" },
-                { "1", "[SP#, Seq, Stock Type, To POID, To Seq]" },
+                { "0", "SP#, Seq, Stock Type" },
+                { "1", "SP#, Seq, Stock Type, To POID, To Seq" },
             };
             this.cmbSummaryby.DataSource = new BindingSource(cmbSummaryby_RowSource, null);
             this.cmbSummaryby.ValueMember = "Key";
