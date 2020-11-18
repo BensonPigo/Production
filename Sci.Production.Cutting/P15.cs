@@ -1053,7 +1053,7 @@ and ord.mDivisionid = '{this.keyWord}'
             this.qtyTb = this.GetNoofBundle(); // 依據右上撈出資料彙整出中上
 
             // 將下方兩表加入, 下方兩表改為直接對應左上(ISP20201755)
-            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart((long)r["ukey"], r["MDivisionID"].ToString(), (long)r["styleukey"], this.ArticleSizeTb.Select($"ukey = {r["ukey"]}")[0]["article"].ToString()));
+            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart((long)r["ukey"], r["MDivisionID"].ToString(), (long)r["styleukey"], this.ArticleSizeTb.Select($"ukey = {r["ukey"]}")[0]["article"].ToString(), r["Fabriccombo"].ToString()));
             foreach (DataRow dr in this.ArticleSizeTb.Rows)
             {
                 dr["iden"] = this.qtyTb.Select($"ukey={dr["ukey"]} and no={dr["no"]}")[0]["iden"];
@@ -1071,10 +1071,10 @@ and ord.mDivisionid = '{this.keyWord}'
             this.ShowExcessDatas(where);
         }
 
-        private void AddPatternAllpart(long ukey, string m, long styleukey, string article)
+        private void AddPatternAllpart(long ukey, string m, long styleukey, string article, string fabriccombo)
         {
-            DataTable dtp = this.fsDt.Select($"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and Article = '{article}'").TryCopyToDataTable(this.fsDt);
-            DataTable dta = this.faDt.Select($"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and Article = '{article}'").TryCopyToDataTable(this.faDt);
+            DataTable dtp = this.fsDt.Select($"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and fabriccombo = '{fabriccombo}' and Article = '{article}'").TryCopyToDataTable(this.fsDt);
+            DataTable dta = this.faDt.Select($"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and fabriccombo = '{fabriccombo}' and Article = '{article}'").TryCopyToDataTable(this.faDt);
             if (dtp.Rows.Count == 0)
             {
                 dtp = this.patternTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.patternTbOri);
@@ -1088,6 +1088,7 @@ and ord.mDivisionid = '{this.keyWord}'
                 dta.Columns.Remove("MDivisionID");
                 dta.Columns.Remove("StyleUkey");
                 dta.Columns.Remove("Article");
+                dta.Columns.Remove("Fabriccombo");
             }
 
             this.patternTb.Merge(dtp);
