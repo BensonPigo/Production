@@ -292,6 +292,7 @@
             // txtToPOID2
             // 
             this.txtToPOID2.BackColor = System.Drawing.Color.White;
+            this.txtToPOID2.Enabled = false;
             this.txtToPOID2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtToPOID2.Location = new System.Drawing.Point(225, 0);
             this.txtToPOID2.Name = "txtToPOID2";
@@ -309,6 +310,7 @@
             // txtToPOID1
             // 
             this.txtToPOID1.BackColor = System.Drawing.Color.White;
+            this.txtToPOID1.Enabled = false;
             this.txtToPOID1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtToPOID1.Location = new System.Drawing.Point(96, 0);
             this.txtToPOID1.Name = "txtToPOID1";
@@ -353,7 +355,6 @@
             this.panelToPOID.Name = "panelToPOID";
             this.panelToPOID.Size = new System.Drawing.Size(347, 26);
             this.panelToPOID.TabIndex = 120;
-            this.panelToPOID.Visible = false;
             // 
             // panelSummaryBy
             // 

@@ -67,6 +67,7 @@ namespace Sci.Production.Warehouse
             this.cmbSummaryby.DataSource = new BindingSource(cmbSummaryby_RowSource, null);
             this.cmbSummaryby.ValueMember = "Key";
             this.cmbSummaryby.DisplayMember = "Value";
+            this.cmbSummaryby.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>
@@ -429,7 +430,7 @@ where 1=1
 
         private void RadioPanelTransferType_ValueChanged(object sender, EventArgs e)
         {
-            this.panelToPOID.Visible = this.radioPanelTransferType.Value == "out";
+            this.ControlTransferType();
             this.ControlpanelSummaryBy();
         }
 
@@ -438,10 +439,18 @@ where 1=1
             this.ControlpanelSummaryBy();
         }
 
+        private void ControlTransferType()
+        {
+            this.txtToPOID1.Enabled = this.radioPanelTransferType.Value == "out";
+            this.txtToPOID2.Enabled = this.radioPanelTransferType.Value == "out";
+            this.txtToPOID1.Text = string.Empty;
+            this.txtToPOID2.Text = string.Empty;
+        }
+
         private void ControlpanelSummaryBy()
         {
-            this.panelSummaryBy.Visible = this.radioPanelTransferType.Value == "out" && this.radioPanelReportType.Value == "summary";
-            this.cmbSummaryby.SelectedIndex = this.panelSummaryBy.Visible ? 0 : -1;
+            this.cmbSummaryby.Enabled = this.radioPanelTransferType.Value == "out" && this.radioPanelReportType.Value == "summary";
+            this.cmbSummaryby.SelectedIndex = this.cmbSummaryby.Enabled ? 0 : -1;
         }
     }
 }

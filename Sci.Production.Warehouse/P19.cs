@@ -313,13 +313,16 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlcmd = $@"
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
     ,Qty = sum(d.Qty)
-    ,balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+    ,balanceQty = f.balanceQty
 from dbo.TransferOut_Detail d WITH (NOLOCK)
-left join FtyInventory f WITH (NOLOCK)
-    on d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+outer apply(
+	select balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+	from FtyInventory f WITH (NOLOCK)
+    where d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+)f
 where d.Id = '{this.CurrentMaintain["id"]}'
-group by d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot,d.StockType 
-having isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0) - sum(d.Qty) < 0
+group by d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot,d.StockType ,f.balanceQty
+having f.balanceQty - sum(d.Qty) < 0
 ";
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -571,13 +574,16 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlcmd = $@"
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
     ,Qty = sum(d.Qty)
-    ,balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+    ,balanceQty = f.balanceQty
 from dbo.TransferOut_Detail d WITH (NOLOCK)
-left join FtyInventory f WITH (NOLOCK)
-    on d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+outer apply(
+	select balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+	from FtyInventory f WITH (NOLOCK)
+    where d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+)f
 where d.Id = '{this.CurrentMaintain["id"]}'
-group by d.poid, d.seq1, d.seq2, d.Roll, d.Dyelot, d.StockType
-having isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0) + sum(d.Qty) < 0
+group by d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot,d.StockType ,f.balanceQty
+having f.balanceQty + sum(d.Qty) < 0
 ";
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
