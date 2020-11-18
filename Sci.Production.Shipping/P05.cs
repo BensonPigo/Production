@@ -1520,7 +1520,7 @@ Packing List : {pid}";
                 }
             }
 
-            if (!this.CheckShipper())
+            if (!this.CheckShipper(false))
             {
                 return;
             }
@@ -1943,7 +1943,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             dialog.ShowDialog(this);
         }
 
-        private bool CheckShipper()
+        private bool CheckShipper(bool showmsg = true)
         {
             string sP = string.Empty;
             if (this.DetailDatas.Count > 0)
@@ -1985,9 +1985,14 @@ order by min(o.BuyerDelivery)
 
                 if (dtShipper.Rows.Count > 1)
                 {
+                    this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
+                    if (!showmsg)
+                    {
+                        return true;
+                    }
+
                     if (MyUtility.Msg.QuestionBox($"Shipper has more than two data, and {dtShipper.Rows[0]["ShipperID"]} will be used as Shipper.") == DialogResult.Yes)
                     {
-                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
                         return true;
                     }
 
