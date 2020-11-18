@@ -26,6 +26,9 @@ namespace Sci.Production.Cutting
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
             MyUtility.Tool.SetupCombox(this.comboLayout, 2, 1, "0,Layout1,1,Layout2");
+            this.chkRFPrint.Visible = false;
+            this.chkRFRraser.Visible = false;
+            this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
         }
 
         /// <inheritdoc/>
@@ -274,7 +277,7 @@ order by x.[Barcode]");
                 }
                 #endregion
             }
-            else
+            else if (this.radioBundleChecklist.Checked)
             {
                 #region excel
                 string id = this.CurrentDataRow["ID"].ToString();
@@ -446,6 +449,21 @@ order by x.[Bundle]");
                     return this.result;
                 }
                 #endregion
+            }
+            else if (this.radioBundleCardRF.Checked)
+            {
+                DataRow row = this.CurrentDataRow;
+                string id = row["ID"].ToString();
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
+                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
+                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
+                if (!this.result)
+                {
+                    return this.result;
+                }
             }
 
             return this.result;
@@ -667,9 +685,55 @@ order by x.[Bundle]");
                 // frm.ShowDialog();
                 #endregion
             }
-            else
+            else if (this.radioBundleChecklist.Checked)
             {
                 this.ExcelProcess(true);
+            }
+            else if (this.radioBundleCardRF.Checked)
+            {
+                // 是否有資料
+                if (this.dt == null || this.dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.ErrorBox("Data not found");
+                    return false;
+                }
+
+                if (!this.chkRFPrint.Checked && !this.chkRFRraser.Checked)
+                {
+                    MyUtility.Msg.ErrorBox("Print, Eraser must choose one.");
+                    return false;
+                }
+                else if (!this.chkRFPrint.Checked && this.chkRFRraser.Checked)
+                {
+                    // 放在Stacker的所有卡片擦除
+                    DualResult result = Prg.BundleRFCard.BundleRFErase();
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox(result.ToString());
+                        return false;
+                    }
+
+                    MyUtility.Msg.InfoBox("Erase success, Please check result in Bin Box.");
+                }
+                else
+                {
+                    try
+                    {
+                        DualResult result = Prg.BundleRFCard.BundleRFCardPrint(this.dt, this.chkRFRraser.Checked);
+                        if (!result)
+                        {
+                            MyUtility.Msg.ErrorBox(result.ToString());
+                            return false;
+                        }
+
+                        MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MyUtility.Msg.ErrorBox(ex.ToString());
+                        return false;
+                    }
+                }
             }
 
             return true;
@@ -918,25 +982,77 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             return dt;
         }
 
+        private void P10_Print_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// RF 測試用
+        /// 現行流程 Open -> C31 -> P21 -> P42 -> P35 -> P41 -> (F30 -> WDB) -> C34 -> Close
+        /// </summary>
+        private void BtnSetting_Click(object sender, EventArgs e)
+        {
+            if (this.dt == null || this.dt.Rows.Count == 0)
+            {
+                DataRow row = this.CurrentDataRow;
+                string id = row["ID"].ToString();
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", id),
+                };
+                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
+                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
+                if (!this.result)
+                {
+                    MyUtility.Msg.ErrorBox(this.result.Description.ToString());
+                }
+            }
+
+            this.result = Prg.BundleRFCard.BundelTest(this.dt, (Prg.BundleRFCard.BundleType)Enum.Parse(typeof(Prg.BundleRFCard.BundleType), this.comboBoxSetting.SelectedValue.ToString()));
+            if (!this.result)
+            {
+                MyUtility.Msg.ErrorBox(this.result.Description.ToString());
+            }
+        }
+
         private void RadioBundleCard_CheckedChanged(object sender, EventArgs e)
         {
+            this.RadioButtionChangeStatus();
+        }
+
+        private void RadioBundleCardRF_CheckedChanged(object sender, EventArgs e)
+        {
+            this.RadioButtionChangeStatus();
+        }
+
+        private void RadioBundleChecklist_CheckedChanged(object sender, EventArgs e)
+        {
+            this.RadioButtionChangeStatus();
+        }
+
+        private void RadioButtionChangeStatus()
+        {
+            this.comboLayout.Visible = true;
+            this.toexcel.Enabled = true;
+            this.print.Enabled = true;
+            this.chkRFPrint.Visible = false;
+            this.chkRFRraser.Visible = false;
             if (this.radioBundleCard.Checked)
             {
-                this.comboLayout.Enabled = true;
-                this.print.Enabled = true;
                 this.toexcel.Enabled = false;
             }
             else if (this.radioBundleChecklist.Checked)
             {
-                this.comboLayout.Enabled = false;
-                this.toexcel.Enabled = true;
-                this.print.Enabled = true;
+                this.comboLayout.Visible = false;
             }
-        }
-
-        private void P10_Print_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            this.Dispose();
+            else if (this.radioBundleCardRF.Checked)
+            {
+                this.chkRFPrint.Visible = true;
+                this.chkRFRraser.Visible = true;
+                this.toexcel.Enabled = false;
+                this.comboLayout.Visible = false;
+            }
         }
     }
 }

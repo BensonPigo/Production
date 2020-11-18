@@ -168,5 +168,43 @@ namespace Sci.Production.Prg
             row.SetAdded();
             dt.ImportRow(row);
         }
+
+        /// <summary>
+        /// 取得字串右邊字數
+        /// </summary>
+        /// <param name="s">原字串</param>
+        /// <param name="length">字數</param>
+        /// <returns>string</returns>
+        public static string Right(this string s, int length)
+        {
+            length = Math.Max(length, 0);
+            if (s.Length > length)
+            {
+                return s.Substring(s.Length - length, length);
+            }
+            else
+            {
+                return s;
+            }
+        }
+
+        /// <summary>
+        /// 取得字串左邊字數
+        /// </summary>
+        /// <param name="s">原字串</param>
+        /// <param name="length">字數</param>
+        /// <returns>string</returns>
+        public static string Left(this string s, int length)
+        {
+            length = Math.Max(length, 0);
+            if (s.Length > length)
+            {
+                return s.Substring(0, length);
+            }
+            else
+            {
+                return s;
+            }
+        }
     }
 }
