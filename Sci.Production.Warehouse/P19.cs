@@ -22,7 +22,6 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P19 : Win.Tems.Input6
     {
-        private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private ReportViewer viewer;
 
@@ -33,8 +32,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
             this.InsertDetailGridOnDoubleClick = false;
-            this.viewer = new ReportViewer();
-            this.viewer.Dock = DockStyle.Fill;
+            this.viewer = new ReportViewer() { Dock = DockStyle.Fill };
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
 
@@ -232,8 +230,6 @@ namespace Sci.Production.Warehouse
         protected override void OnDetailGridSetup()
         {
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToPOID;
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_ToSeq;
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -246,20 +242,15 @@ namespace Sci.Production.Warehouse
             .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10) // 6
             .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false).Get(out cbb_stocktype) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 8
-            .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: false).Get(out cbb_ToPOID)
-            .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: false).Get(out cbb_ToSeq)
+            .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
             ;
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(this.di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
 
-            cbb_ToPOID.MaxLength = 13;
-            cbb_ToSeq.MaxLength = 5;
-
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["ToPOID"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["ToSeq"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Confirm
@@ -282,7 +273,6 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
-            DataTable datacheck;
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(
@@ -296,7 +286,7 @@ and d.StockType = f.StockType
 and d.Roll = f.Roll
 and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
                 return;
@@ -320,17 +310,20 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
-from dbo.TransferOut_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.PoId = f.PoId
-and d.Seq1 = f.Seq1
-and d.Seq2 = f.seq2
-and d.StockType = f.StockType
-and d.Roll = f.Roll
-and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+            sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+    ,Qty = sum(d.Qty)
+    ,balanceQty = f.balanceQty
+from dbo.TransferOut_Detail d WITH (NOLOCK)
+outer apply(
+	select balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+	from FtyInventory f WITH (NOLOCK)
+    where d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+)f
+where d.Id = '{this.CurrentMaintain["id"]}'
+group by d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot,d.StockType ,f.balanceQty
+having f.balanceQty - sum(d.Qty) < 0
+";
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -342,9 +335,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Out qty: {5}" + Environment.NewLine,
-                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than Out qty: {tmp["qty"]}" + Environment.NewLine;
                     }
 
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -527,7 +518,6 @@ and t.id = '{this.CurrentMaintain["ID"]}'
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            DataTable datacheck;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
             string sqlupd2_B = string.Empty;
@@ -557,7 +547,7 @@ and t.id = '{this.CurrentMaintain["ID"]}'
 from dbo.TransferOut_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
                 return;
@@ -581,12 +571,20 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-            sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
-from dbo.TransferOut_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+            sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+    ,Qty = sum(d.Qty)
+    ,balanceQty = f.balanceQty
+from dbo.TransferOut_Detail d WITH (NOLOCK)
+outer apply(
+	select balanceQty = isnull(sum(f.InQty),0)-isnull(sum(f.OutQty),0)+isnull(sum(f.AdjustQty),0)
+	from FtyInventory f WITH (NOLOCK)
+    where d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+)f
+where d.Id = '{this.CurrentMaintain["id"]}'
+group by d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot,d.StockType ,f.balanceQty
+having f.balanceQty + sum(d.Qty) < 0
+";
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -598,9 +596,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format(
-                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Out qty: {5}" + Environment.NewLine,
-                            tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                        ids += $"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}'s balance: {tmp["balanceqty"]} is less than Out qty: {tmp["qty"]}" + Environment.NewLine;
                     }
 
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
@@ -778,8 +774,7 @@ Where a.id = '{0}'", masterID);
         // Accumulated
         private void BtnAccumulatedQty_Click(object sender, EventArgs e)
         {
-            var frm = new P19_AccumulatedQty(this.CurrentMaintain);
-            frm.P19 = this;
+            var frm = new P19_AccumulatedQty(this.CurrentMaintain) { P19 = this };
             frm.ShowDialog(this);
         }
 
@@ -862,6 +857,13 @@ Where a.id = '{0}'", masterID);
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P19_FabricSticker(this.CurrentMaintain["ID"], MyUtility.Convert.GetString(this.CurrentMaintain["remark"])).ShowDialog();
+        }
+
+        private void BtnImportonTPE_Click(object sender, EventArgs e)
+        {
+            var frm = new P19_ImportbaseonTPEstock(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            this.RenewData();
         }
     }
 }

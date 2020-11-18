@@ -1511,10 +1511,16 @@
     <None Include="XLT\Warehouse_R05.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Warehouse_R05_Detail.xltx">
+    <None Include="XLT\Warehouse_R05_Detail_TransferOut.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Warehouse_R05_Summary.xltx">
+    <None Include="XLT\Warehouse_R05_Detail_TransferIn.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_R05_Summary_TransferOut.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_R05_Summary_TransferIn.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_R06.xltx">

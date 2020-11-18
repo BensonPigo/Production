@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -15,8 +16,11 @@ namespace Sci.Production.Warehouse
         private DateTime? Issuedate2;
         private string SP1;
         private string SP2;
+        private string ToPOID1;
+        private string ToPOID2;
         private string mdivisionid;
         private string factory;
+        private int summarytype;
         private string materialType;
         private int type;
         private DataTable printData;
@@ -54,6 +58,16 @@ namespace Sci.Production.Warehouse
                 this.comboMaterialType.DisplayMember = "fabrictypeName";
                 this.comboMaterialType.SelectedIndex = 0;
             }
+
+            Dictionary<string, string> cmbSummaryby_RowSource = new Dictionary<string, string>
+            {
+                { "0", "SP#, Seq, Stock Type" },
+                { "1", "SP#, Seq, Stock Type, To POID, To Seq" },
+            };
+            this.cmbSummaryby.DataSource = new BindingSource(cmbSummaryby_RowSource, null);
+            this.cmbSummaryby.ValueMember = "Key";
+            this.cmbSummaryby.DisplayMember = "Value";
+            this.cmbSummaryby.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>
@@ -63,9 +77,12 @@ namespace Sci.Production.Warehouse
             this.Issuedate2 = this.dateIssue.Value2;
             this.SP1 = this.txtSP1.Text;
             this.SP2 = this.txtSP2.Text;
+            this.ToPOID1 = this.txtToPOID1.Text;
+            this.ToPOID2 = this.txtToPOID2.Text;
             this.mdivisionid = this.txtMdivision1.Text;
             this.factory = this.txtfactory1.Text;
             this.type = this.radioTransferIn.Checked ? 0 : 1;
+            this.summarytype = this.cmbSummaryby.SelectedIndex;
             this.materialType = this.comboMaterialType.SelectedValue.ToString();
             return base.ValidateInput();
         }
@@ -161,6 +178,7 @@ select
 	,[Unit] = dbo.GetStockUnitBySPSeq (td.poid, td.seq1, td.seq2)
 	,t.Remark
 	,Description = dbo.getMtlDesc(td.POID, td.seq1, td.seq2, 2, 0)
+	,td.ToPOID,td.ToSeq1,td.ToSeq2
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
@@ -180,6 +198,16 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.SP2))
                 {
                     sqlCmd.Append(string.Format(@" and td.POID <= '{0}'", this.SP2));
+                }
+
+                if (!MyUtility.Check.Empty(this.ToPOID1))
+                {
+                    sqlCmd.Append(string.Format(@" and td.ToPOID >= '{0}'", this.ToPOID1));
+                }
+
+                if (!MyUtility.Check.Empty(this.ToPOID2))
+                {
+                    sqlCmd.Append(string.Format(@" and td.ToPOID <= '{0}'", this.ToPOID2));
                 }
 
                 if (!MyUtility.Check.Empty(this.mdivisionid))
@@ -267,7 +295,46 @@ where 1=1
             }
             else
             {
-                sqlCmd.Append(@"
+                string toColumn = string.Empty;
+                if (this.summarytype == 1)
+                {
+                    toColumn = $",td.ToPOID,td.ToSeq1,td.ToSeq2";
+                }
+
+                string summaryby;
+                if (this.summarytype == 1)
+                {
+                    summaryby = $@"
+outer apply (
+	select [Qty] = sum(Qty)
+	from TransferOut_Detail ttd with(nolock)
+	where ttd.id = td.id
+	and ttd.StockType = td.StockType
+	and ttd.POID = td.POID
+	and ttd.seq1 = td.seq1 
+	and ttd.seq2 = td.Seq2
+	and ttd.ToPOID = td.ToPOID
+	and ttd.Toseq1 = td.Toseq1 
+	and ttd.Toseq2 = td.ToSeq2
+	group by ttd.id, ttd.StockType, ttd.poid, ttd.seq1, ttd.seq2, ttd.Topoid, ttd.Toseq1, ttd.ToSeq2
+)tds";
+                }
+                else
+                {
+                    summaryby = $@"
+outer apply (
+	select [Qty] = sum(Qty)
+	from TransferOut_Detail ttd with(nolock)
+	where ttd.id = td.id
+	and ttd.StockType = td.StockType
+	and ttd.POID = td.POID
+	and ttd.seq1 = td.seq1 
+	and ttd.seq2 = td.Seq2
+	group by ttd.id, ttd.StockType, ttd.poid, ttd.seq1, ttd.seq2
+)tds";
+                }
+
+                sqlCmd.Append($@"
 select distinct
 	t.id,t.MDivisionID,t.FactoryID,t.ToMDivisionid,t.IssueDate,t.Status
 	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
@@ -279,20 +346,12 @@ select distinct
 	,[Unit] = dbo.GetStockUnitBySPSeq (td.poid, td.seq1, td.seq2)
 	,t.Remark
 	,Description = dbo.getMtlDesc(td.POID,td.seq1,td.seq2,2,0)
+	{toColumn}
 from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
 left join Orders o with(nolock) on o.id = td.poid 
-outer apply (
-	select [Qty] = sum(Qty)
-	from TransferOut_Detail ttd with(nolock)
-	where ttd.id = td.id
-	and ttd.StockType = td.StockType
-	and ttd.POID = td.POID
-	and ttd.seq1 = td.seq1 
-	and ttd.seq2 = td.Seq2
-	group by ttd.id, ttd.StockType, ttd.poid, ttd.seq1, ttd.seq2
-)tds
+{summaryby}
 where 1=1
 ");
                 if (!MyUtility.Check.Empty(this.Issuedate1))
@@ -308,6 +367,16 @@ where 1=1
                 if (!MyUtility.Check.Empty(this.SP2))
                 {
                     sqlCmd.Append(string.Format(@" and td.POID <= '{0}'", this.SP2));
+                }
+
+                if (!MyUtility.Check.Empty(this.ToPOID1))
+                {
+                    sqlCmd.Append(string.Format(@" and td.ToPOID >= '{0}'", this.ToPOID1));
+                }
+
+                if (!MyUtility.Check.Empty(this.ToPOID2))
+                {
+                    sqlCmd.Append(string.Format(@" and td.ToPOID <= '{0}'", this.ToPOID2));
                 }
 
                 if (!MyUtility.Check.Empty(this.mdivisionid))
@@ -341,13 +410,47 @@ where 1=1
                 return false;
             }
 
-            string fileName = this.radioDetail.Checked ? "Warehouse_R05_Detail.xltx" : "Warehouse_R05_Summary.xltx";
+            string inorout = this.radioTransferIn.Checked ? "_TransferIn" : "_TransferOut";
+            string fileName = this.radioDetail.Checked ? $"Warehouse_R05_Detail{inorout}.xltx" : $"Warehouse_R05_Summary{inorout}.xltx";
+
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + fileName); // 預先開啟excel app
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+            if (this.radioTransferOut.Checked && this.radioSummary.Checked && this.cmbSummaryby.SelectedIndex == 0)
+            {
+                objSheets.Columns["S:U"].Delete();
+            }
+
             objSheets.Cells[1, 5] = this.type == 0 ? "Arrive W/H Date" : "Issue Date";
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, fileName, 1, true, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, fileName, 1, true, null, objApp);
+
             Marshal.ReleaseComObject(objSheets);
+            Marshal.ReleaseComObject(objApp);
             return true;
+        }
+
+        private void RadioPanelTransferType_ValueChanged(object sender, EventArgs e)
+        {
+            this.ControlTransferType();
+            this.ControlpanelSummaryBy();
+        }
+
+        private void RadioPanelReportType_ValueChanged(object sender, EventArgs e)
+        {
+            this.ControlpanelSummaryBy();
+        }
+
+        private void ControlTransferType()
+        {
+            this.txtToPOID1.Enabled = this.radioPanelTransferType.Value == "out";
+            this.txtToPOID2.Enabled = this.radioPanelTransferType.Value == "out";
+            this.txtToPOID1.Text = string.Empty;
+            this.txtToPOID2.Text = string.Empty;
+        }
+
+        private void ControlpanelSummaryBy()
+        {
+            this.cmbSummaryby.Enabled = this.radioPanelTransferType.Value == "out" && this.radioPanelReportType.Value == "summary";
+            this.cmbSummaryby.SelectedIndex = this.cmbSummaryby.Enabled ? 0 : -1;
         }
     }
 }
