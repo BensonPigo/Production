@@ -1954,7 +1954,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 }
 
                 string sqlcmd = $@"
-select distinct ShipperID=isnull(f1.ShipperID, f2.ShipperID)
+select ShipperID=isnull(f1.ShipperID, f2.ShipperID)
 from Orders o
 outer apply(
     select ShipperID 
@@ -1971,7 +1971,8 @@ outer apply(
           and f.BrandID = '{this.txtbrand.Text}' 
 )f2
 where o.ID in ({sP.Substring(0, sP.Length - 1)})
-order by o.BuyerDelivery
+group by isnull(f1.ShipperID, f2.ShipperID)
+order by min(o.BuyerDelivery)
 ";
                 DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtShipper);
                 if (!result)
