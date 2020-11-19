@@ -68,6 +68,7 @@
     [Folding2] INT NULL DEFAULT (0), 
 	ExpectionFormStatus Varchar(1) NOT NULL CONSTRAINT [DF_Style_ExpectionFormStatus] DEFAULT(''),
 	ExpectionFormDate Date NULL,
+    [ThickFabricBulk] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
@@ -372,3 +373,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紀錄日�
 , @level1type = N'TABLE', @level1name = N'Style'
 , @level2type = N'COLUMN', @level2name = N'ExpectionFormDate'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'大貨與報價拆分判斷邏輯',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'ThickFabricBulk'
