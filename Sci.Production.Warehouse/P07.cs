@@ -92,6 +92,11 @@ namespace Sci.Production.Warehouse
             {
                 index.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
+            this.radioEncodeSeq.Checked = true;
+            this.radiobySP.Checked = false;
+            this.radioPanel1.ReadOnly = true;
+            this.Change_record();
         }
 
         // delete前檢查
@@ -578,6 +583,10 @@ where   #tmp.poid = dbo.po_supp.id
             this.comboTypeFilter.SelectedIndex = 0;
             this.detailgridbs.Filter = string.Empty;
             base.ClickSaveAfter();
+
+            // 存檔結束後sort by 要回到SP#排序
+            this.radiobySP.Checked = true;
+            this.GridSortBy(false);
             this.Change_record();
             this.radioPanel1.ReadOnly = false;
         }
@@ -631,6 +640,9 @@ where   #tmp.poid = dbo.po_supp.id
             this.IsAutomation = UtilityAutomation.IsAutomationEnable;
             this.radioEncodeSeq.Checked = false;
             this.radiobySP.Checked = true;
+
+            // 排序要回歸SP#
+            this.GridSortBy(false);
             this.Change_record();
         }
 
@@ -1474,7 +1486,9 @@ WHERE   StockType='{0}'
                     newrow["SortCmbDyelot"] = pre_row["SortCmbDyelot"];
                     DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
                     next_dgbtn.Value = "-";
-                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
+
+                    // 排序要回到EncodeSeq
+                    this.GridSortBy(true);
                     this.Change_record();
                 }
                 else if (pre_dgbtn.Value.ToString() == "-")
@@ -2728,7 +2742,6 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 }
             }
 
-            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
             return result;
         }
 
@@ -2892,11 +2905,23 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 }
                 else
                 {
-                    // Encode Seq
-                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
+                    // 使用OnDetailSelectCommandPrepare預設的排序(Encode Seq)
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = string.Empty;
                 }
 
                 this.Change_record();
+            }
+        }
+
+        private void GridSortBy(bool isEncodeSeq)
+        {
+            if (isEncodeSeq)
+            {
+                ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = string.Empty;
+            }
+            else
+            {
+                ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
             }
         }
     }
