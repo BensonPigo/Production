@@ -2020,11 +2020,6 @@ Delete b
 from Production.dbo.Order_BOA_KeyWord b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------Order_BOA_Shell
-Delete b
-from Production.dbo.Order_BOA_Shell b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_BOA
 Delete b
 from Production.dbo.Order_BOA b
@@ -2033,11 +2028,6 @@ where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_BOF_Expend
 Delete b
 from Production.dbo.Order_BOF_Expend b
-where id in (select id from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------Order_BOF_Shell
-Delete b
-from Production.dbo.Order_BOF_Shell b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
 -------------------------------------Order_BOF
