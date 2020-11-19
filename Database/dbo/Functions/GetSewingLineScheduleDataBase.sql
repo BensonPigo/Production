@@ -30,7 +30,12 @@ RETURNS @table TABLE
 )
 AS
 BEGIN
-	
+
+/*****************************************************
+	要修改，需連同MES.Production 一併修改。
+	ISP20201812
+*****************************************************/
+
 declare  @APSListWorkDay TABLE(
 	[APSNo] [int] NULL,
 	[MDivisionID] [varchar](8) NULL,
