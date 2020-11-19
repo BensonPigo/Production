@@ -368,7 +368,7 @@ select
 	,s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList_Line s
 left join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
-where exists (select 1 from Trade_To_Pms.dbo.Export_Detail s where s.Ukey = t.Export_Detail_Ukey)
+where exists (select 1 from Trade_To_Pms.dbo.Export_Detail e where e.Ukey = s.Export_Detail_Ukey)
 and t.POShippingList_Ukey is null
 
 -----------------------POShippingList-----------------------------
