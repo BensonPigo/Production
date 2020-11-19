@@ -2414,31 +2414,6 @@ namespace Sci.Production.Quality
         /// 如果欄位是Shrinkage 就增加%單位符號
         /// </summary>
         /// <param name="dt">dt</param>
-        /// <param name="strFilter">strFilter</param>
-        /// <param name="count">count</param>
-        /// <returns>string</returns>
-        private string AddShrinkageUnit(DataTable dt, string strFilter, int count)
-        {
-            string strValie = string.Empty;
-            if (dt.Select(strFilter).Length > 0)
-            {
-                strValie = dt.Select(strFilter)[0][count].ToString();
-                if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
-                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage2", true) == 0) ||
-                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage3", true) == 0)) &&
-                    !MyUtility.Check.Empty(strValie))
-                {
-                    strValie = strValie + "%";
-                }
-            }
-
-            return strValie;
-        }
-
-        /// <summary>
-        /// 如果欄位是Shrinkage 就增加%單位符號
-        /// </summary>
-        /// <param name="dt">dt</param>
         /// <param name="row">row</param>
         /// <param name="columns">columns</param>
         /// <returns>string</returns>
