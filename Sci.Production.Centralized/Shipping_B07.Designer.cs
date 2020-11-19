@@ -200,7 +200,7 @@
             // 
             // txtPort
             // 
-            this.txtPort.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PulloutPortID", true));
+            this.txtPort.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PortID", true));
             this.txtPort.Location = new System.Drawing.Point(145, 80);
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(462, 22);

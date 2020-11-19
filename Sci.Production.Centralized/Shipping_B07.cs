@@ -28,7 +28,7 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
-            this.txtcountry.TextBox1.Text = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM Port WHERE ID='{this.CurrentMaintain["PulloutPortID"]}'");
+            this.txtcountry.TextBox1.Text = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM Port WHERE ID='{this.CurrentMaintain["PortID"]}'");
 
             bool canEdit = Prgs.GetAuthority(Env.User.UserID, "Shipping B07. Port of Discharge", "CanEdit");
 
@@ -47,7 +47,7 @@ namespace Sci.Production.Centralized
 
         private void TxtPort_Leave(object sender, EventArgs e)
         {
-            this.CurrentMaintain["CountryID"] = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM Port WHERE ID='{this.CurrentMaintain["PulloutPortID"]}'");
+            this.CurrentMaintain["CountryID"] = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM Port WHERE ID='{this.CurrentMaintain["PortID"]}'");
             this.txtcountry.TextBox1.Text = MyUtility.Convert.GetString(this.CurrentMaintain["CountryID"]);
 
             this.CurrentMaintain["ContinentID"] = MyUtility.GetValue.Lookup($@"select c.Continent from Country c INNER JOIN DropDownList d ON d.Type = 'Continent' and d.ID = c.Continent where c.id='{this.txtcountry.TextBox1.Text}' ");
@@ -56,9 +56,9 @@ namespace Sci.Production.Centralized
             this.CurrentMaintain["ContinentName"] = MyUtility.GetValue.Lookup($@"select d.Name from Country c INNER JOIN DropDownList d ON d.Type = 'Continent' and d.ID = c.Continent where c.id='{this.txtcountry.TextBox1.Text}' ");
             this.displayContinent.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ContinentName"]);
 
-            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from Port where id='{this.CurrentMaintain["PulloutPortID"]}'"));
+            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from Port where id='{this.CurrentMaintain["PortID"]}'"));
 
-            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from Port where id='{this.CurrentMaintain["PoPulloutPortIDrtID"]}'"));
+            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from Port where id='{this.CurrentMaintain["PortID"]}'"));
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -189,7 +189,7 @@ namespace Sci.Production.Centralized
 
                 this.portByBrandShipmodeList.Add(new PortByBrandShipmode()
                 {
-                    PulloutPortID = pPort_Code,
+                    PortID = pPort_Code,
                     BrandID = pBrand,
                     Junk = pJunk,
                 });
@@ -279,7 +279,7 @@ namespace Sci.Production.Centralized
             int count = 1;
             foreach (PortByBrandShipmode portByBrandShipmode in portByBrandShipmodeList)
             {
-                string tmp = $"SELECT [PulloutPortID]='{portByBrandShipmode.PulloutPortID.ToUpper()}',[BrandID]='{portByBrandShipmode.BrandID.ToUpper()}',Junk={(portByBrandShipmode.Junk ? "1" : "0")}";
+                string tmp = $"SELECT [PortID]='{portByBrandShipmode.PortID}',[BrandID]='{portByBrandShipmode.BrandID}',Junk={(portByBrandShipmode.Junk ? "1" : "0")}";
 
                 tmpTable += tmp + Environment.NewLine;
 
@@ -301,14 +301,14 @@ namespace Sci.Production.Centralized
 
 MERGE ProductionTPE.dbo.PortByBrandShipmode t 
 USING #source s
-on t.PulloutPortID = s.PulloutPortID AND t.BrandID = s.BrandID 
+on t.PortID = s.PortID AND t.BrandID = s.BrandID 
 WHEN MATCHED THEN UPDATE SET
 	 t.Junk		   =s.Junk
 	,t.EditName	   = '{Sci.Env.User.UserID}'
 	,t.EditDate	   = GETDATE()
 when not matched by target then
-	INSERT(PulloutPortID,BrandID,Junk,AddName,AddDate)
-	VALUES(s.PulloutPortID,s.BrandID,s.Junk,'{Sci.Env.User.UserID}',GETDATE())
+	INSERT(PortID,BrandID,Junk,AddName,AddDate)
+	VALUES(s.PortID,s.BrandID,s.Junk,'{Sci.Env.User.UserID}',GETDATE())
 ;
 
 ";
@@ -332,7 +332,7 @@ when not matched by target then
     public class PortByBrandShipmode
     {
         /// <inheritdoc/>
-        public string PulloutPortID { get; set; }
+        public string PortID { get; set; }
 
         /// <inheritdoc/>
         public string BrandID { get; set; }
