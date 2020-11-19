@@ -123,6 +123,7 @@ a.Ukey	= b.Ukey
 ,a.DyeingID   = b.DyeingID
 ,a.ExpectionFormStatus   = b.ExpectionFormStatus
 ,a.ExpectionFormDate   = b.ExpectionFormDate
+,a.ThickFabricBulk = b.ThickFabricBulk
 from Production.dbo.Style as a inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
 
@@ -199,6 +200,7 @@ ID
 ,Picture2
 ,ExpectionFormStatus
 ,ExpectionFormDate
+,ThickFabricBulk
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -264,6 +266,7 @@ select
 ,b.Picture2
 ,b.ExpectionFormStatus
 ,b.ExpectionFormDate
+,b.ThickFabricBulk
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
