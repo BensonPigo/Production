@@ -3333,19 +3333,23 @@ on t.ID=s.ID and t.SEQ = s.SEQ
 when matched then 
 	update set	t.ThreadLocation	   = s.ThreadLocation	 ,
 				t.UseRatio			   = s.UseRatio			 ,
-				t.Allowance			   = s.Allowance
+				t.Allowance			   = s.Allowance		 ,
+				t.AllowanceTubular     = s.AllowanceTubular
 when not matched by target then
 	insert (ID				 ,
 			SEQ				 ,
 			ThreadLocation	 ,
-			UseRatio			 ,
-			Allowance
+			UseRatio	     ,
+			Allowance        ,
+			AllowanceTubular
 			) 
 		values (s.ID				 ,
 				s.SEQ				 ,
 				s.ThreadLocation	 ,
 				s.UseRatio			 ,
-				s.Allowance	)
+				s.Allowance			 ,
+				s.AllowanceTubular
+				)
 when not matched by source then 
 	delete;
 

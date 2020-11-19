@@ -349,7 +349,7 @@ select  o.StyleUkey
         , o.SeasonID
         , o.BrandID as OrderBrandID
 		, s.FabricType
-		, s.ThickFabric
+		, s.ThickFabricBulk
         , sum(oqd.Qty) as GMTQty
         , isnull(s.CPU,0) as StyleCPU
         , isnull(s.CTNQty,0) as CTNQty
@@ -410,7 +410,7 @@ where   1=1");
 
             sqlCmd.Append($@"
 group by o.StyleUkey, oqd.SizeCode, oqd.Article, o.Category, o.StyleID
-         , o.SeasonID, o.BrandID, isnull(s.CPU,0), isnull(s.CTNQty,0), s.FabricType, s.ThickFabric, s.ProgramID
+         , o.SeasonID, o.BrandID, isnull(s.CPU,0), isnull(s.CTNQty,0), s.FabricType, s.ThickFabricBulk, s.ProgramID
 		 
 ---BOF--------------------------------------------------------------------------------------------------------------------------------------------
 select  ts.*
@@ -955,7 +955,7 @@ from #tmpFtyMaterial4
 
 
 ----Get Thread Data---------------------------------------------------------------------------------------------------------------------------------
-select distinct StyleUkey,FabricType,ThickFabric,ProgramID,OrderBrandID as BrandID,SeasonID,StyleID 
+select distinct StyleUkey,FabricType,ThickFabricBulk,ProgramID,OrderBrandID as BrandID,SeasonID,StyleID 
 into #tmpthreadStyle
 from #tmpAllStyle
 
@@ -990,7 +990,7 @@ outer apply(
 ) std
 inner join Fabric f with (nolock) on std.SCIRefNo = f.SCIRefno
 outer apply (
-	select UseRatioRule = iif(s.ThickFabric = 0,isnull(bt.UseRatioRule, b.UseRatioRule)
+	select UseRatioRule = iif(s.ThickFabricBulk = 0,isnull(bt.UseRatioRule, b.UseRatioRule)
 												, isnull(bt.UseRatioRule_Thick, b.UseRatioRule_Thick))
 	from Brand b
 	left join Brand_ThreadCalculateRules bt on b.ID = bt.ID and bt.FabricType = s.FabricType and bt.ProgramID = s.ProgramID
