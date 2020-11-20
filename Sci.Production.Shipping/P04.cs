@@ -7,6 +7,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Linq;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Shipping
 {
@@ -208,9 +209,9 @@ where ed.ID = '{0}'", masterID);
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtConsignee.Text))
+            if (MyUtility.Check.Empty(this.txtLocalSupp1.TextBox1.Text))
             {
-                this.txtConsignee.Focus();
+                this.txtLocalSupp1.Focus();
                 MyUtility.Msg.WarningBox("Consignee cannot be empty!!");
                 return false;
             }
@@ -342,6 +343,17 @@ where ed.ID = '{0}'", masterID);
         }
 
         /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            if (this.radioTransferOut.Checked)
+            {
+                this.SendMail();
+            }
+
+            base.ClickSaveAfter();
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
             // 已經有做出口費用分攤就不可以被刪除
@@ -390,27 +402,6 @@ where ed.ID = '{0}'", masterID);
             this.CurrentMaintain["ImportCountry"] = portData[0]["CountryID"];
         }
 
-        // Radio
-        private void RadioPanel1_ValueChanged(object sender, EventArgs e)
-        {
-            if (this.radioPanel1.Value == "3")
-            {
-                this.labelArrivePortDate.Text = "Ship Date";
-            }
-            else
-            {
-                this.labelArrivePortDate.Text = "Arrive Port Date";
-            }
-
-            if (this.EditMode)
-            {
-                foreach (DataRow dr in this.DetailDatas)
-                {
-                    dr.Delete();
-                }
-            }
-        }
-
         // Expense Data
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
@@ -441,6 +432,33 @@ where ed.ID = '{0}'", masterID);
                     break;
                 default:
                     break;
+            }
+        }
+
+        // Radio
+        private void RadioPanel1_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.radioPanel1.Value == "3")
+            {
+                this.labelArrivePortDate.Text = "ETA";
+                this.labelDoxRcvDate.Text = "Dox Send Date";
+                this.dateShipDate.IsSupportEditMode = true;
+                this.dateShipDate.ReadOnly = true;
+            }
+            else
+            {
+                this.labelArrivePortDate.Text = "Arrive Port Date";
+                this.labelDoxRcvDate.Text = "Dox Rcv Date";
+                this.dateShipDate.IsSupportEditMode = false;
+                this.dateShipDate.ReadOnly = false;
+            }
+
+            if (this.EditMode)
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    dr.Delete();
+                }
             }
         }
 
@@ -509,6 +527,35 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 this.btnExpenseData.ForeColor = Color.Black;
             }
+        }
+
+        private void SendMail()
+        {
+            string strSendAccount = "select * from MailTo where ID = '023'";
+            DualResult result = DBProxy.Current.Select(string.Empty, strSendAccount, out DataTable dtSendAccount);
+            if (result)
+            {
+                if (dtSendAccount != null && dtSendAccount.Rows.Count > 0)
+                {
+                    string mailto = dtSendAccount.Rows[0]["ToAddress"].ToString();
+                    string mailCC = dtSendAccount.Rows[0]["CCAddress"].ToString();
+                    string subject = string.Format(
+                            "[Pre-Alert] {0} / {1} / {2} / {3}",
+                            this.CurrentMaintain["Shipper"].ToString(),
+                            this.CurrentMaintain["Blno"].ToString(),
+                            this.CurrentMaintain["ETA"].ToString(),
+                            this.CurrentMaintain["ID"].ToString());
+                    string content = dtSendAccount.Rows[0]["Content"].ToString();
+
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, null, content, false, true);
+                    email.ShowDialog(this);
+                }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+            }
+
         }
     }
 }

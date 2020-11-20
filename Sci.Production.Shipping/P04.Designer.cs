@@ -36,7 +36,6 @@
             this.labelPortofDischarge = new Sci.Win.UI.Label();
             this.displayFtyWKNo = new Sci.Win.UI.DisplayBox();
             this.txtInvoiceNo = new Sci.Win.UI.TextBox();
-            this.txtConsignee = new Sci.Win.UI.TextBox();
             this.txtPortofLoading = new Sci.Win.UI.TextBox();
             this.txtPortofDischarge = new Sci.Win.UI.TextBox();
             this.displayPortofLoading = new Sci.Win.UI.DisplayBox();
@@ -85,6 +84,9 @@
             this.lbDeclareation = new Sci.Win.UI.Label();
             this.displayDeclarationID = new Sci.Win.UI.DisplayBox();
             this.chkNonDeclare = new Sci.Win.UI.CheckBox();
+            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
+            this.lbShipDate = new Sci.Win.UI.Label();
+            this.dateShipDate = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -102,6 +104,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbShipDate);
+            this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.chkNonDeclare);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.displayCustomsDeclareNo);
@@ -136,6 +140,7 @@
             this.masterpanel.Controls.Add(this.labelPackages);
             this.masterpanel.Controls.Add(this.labelContainerType);
             this.masterpanel.Controls.Add(this.labelShippingMode);
+            this.masterpanel.Controls.Add(this.dateShipDate);
             this.masterpanel.Controls.Add(this.dateOnBoardDate);
             this.masterpanel.Controls.Add(this.dateDoxRcvDate);
             this.masterpanel.Controls.Add(this.dateArriveWHDate);
@@ -145,7 +150,6 @@
             this.masterpanel.Controls.Add(this.displayPortofLoading);
             this.masterpanel.Controls.Add(this.txtPortofDischarge);
             this.masterpanel.Controls.Add(this.txtPortofLoading);
-            this.masterpanel.Controls.Add(this.txtConsignee);
             this.masterpanel.Controls.Add(this.txtInvoiceNo);
             this.masterpanel.Controls.Add(this.txtSubconForwarder);
             this.masterpanel.Controls.Add(this.displayFtyWKNo);
@@ -155,7 +159,7 @@
             this.masterpanel.Controls.Add(this.labelInvoiceNo);
             this.masterpanel.Controls.Add(this.labelForwarder);
             this.masterpanel.Controls.Add(this.labelFtyWKNo);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 254);
+            this.masterpanel.Size = new System.Drawing.Size(1024, 254);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFtyWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelForwarder, 0);
@@ -166,7 +170,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayFtyWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSubconForwarder, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvoiceNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtConsignee, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPortofLoading, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPortofDischarge, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPortofLoading, 0);
@@ -176,6 +179,7 @@
             this.masterpanel.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDoxRcvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateOnBoardDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateShipDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelShippingMode, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelContainerType, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPackages, 0);
@@ -210,11 +214,13 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCustomsDeclareNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkNonDeclare, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbShipDate, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 254);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 202);
+            this.detailpanel.Size = new System.Drawing.Size(1024, 202);
             // 
             // gridicon
             // 
@@ -227,7 +233,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 202);
+            this.detailgridcont.Size = new System.Drawing.Size(1024, 202);
             // 
             // detail2
             // 
@@ -243,24 +249,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 494);
+            this.detail.Size = new System.Drawing.Size(1024, 494);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 456);
+            this.detailcont.Size = new System.Drawing.Size(1024, 456);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 456);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1024, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 494);
+            this.browse.Size = new System.Drawing.Size(1024, 494);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 523);
+            this.tabs.Size = new System.Drawing.Size(1032, 523);
             // 
             // createby
             // 
@@ -348,16 +354,6 @@
             this.txtInvoiceNo.Name = "txtInvoiceNo";
             this.txtInvoiceNo.Size = new System.Drawing.Size(230, 23);
             this.txtInvoiceNo.TabIndex = 1;
-            // 
-            // txtConsignee
-            // 
-            this.txtConsignee.BackColor = System.Drawing.Color.White;
-            this.txtConsignee.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Consignee", true));
-            this.txtConsignee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtConsignee.Location = new System.Drawing.Point(109, 146);
-            this.txtConsignee.Name = "txtConsignee";
-            this.txtConsignee.Size = new System.Drawing.Size(75, 23);
-            this.txtConsignee.TabIndex = 2;
             // 
             // txtPortofLoading
             // 
@@ -650,7 +646,7 @@
             // labelArrivePortDate
             // 
             this.labelArrivePortDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArrivePortDate.Location = new System.Drawing.Point(606, 118);
+            this.labelArrivePortDate.Location = new System.Drawing.Point(606, 145);
             this.labelArrivePortDate.Name = "labelArrivePortDate";
             this.labelArrivePortDate.Size = new System.Drawing.Size(93, 23);
             this.labelArrivePortDate.TabIndex = 34;
@@ -659,7 +655,7 @@
             // labelArriveWHDate
             // 
             this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveWHDate.Location = new System.Drawing.Point(606, 146);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(606, 173);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(93, 23);
             this.labelArriveWHDate.TabIndex = 35;
@@ -668,7 +664,7 @@
             // labelDoxRcvDate
             // 
             this.labelDoxRcvDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelDoxRcvDate.Location = new System.Drawing.Point(606, 174);
+            this.labelDoxRcvDate.Location = new System.Drawing.Point(606, 201);
             this.labelDoxRcvDate.Name = "labelDoxRcvDate";
             this.labelDoxRcvDate.Size = new System.Drawing.Size(93, 23);
             this.labelDoxRcvDate.TabIndex = 36;
@@ -697,7 +693,7 @@
             // dateArrivePortDate
             // 
             this.dateArrivePortDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PortArrival", true));
-            this.dateArrivePortDate.Location = new System.Drawing.Point(702, 118);
+            this.dateArrivePortDate.Location = new System.Drawing.Point(702, 145);
             this.dateArrivePortDate.Name = "dateArrivePortDate";
             this.dateArrivePortDate.Size = new System.Drawing.Size(130, 23);
             this.dateArrivePortDate.TabIndex = 10;
@@ -706,7 +702,7 @@
             // 
             this.dateArriveWHDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WhseArrival", true));
             this.dateArriveWHDate.IsSupportEditMode = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(702, 146);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(702, 173);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
@@ -715,7 +711,7 @@
             // dateDoxRcvDate
             // 
             this.dateDoxRcvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DocArrival", true));
-            this.dateDoxRcvDate.Location = new System.Drawing.Point(702, 174);
+            this.dateDoxRcvDate.Location = new System.Drawing.Point(702, 201);
             this.dateDoxRcvDate.Name = "dateDoxRcvDate";
             this.dateDoxRcvDate.Size = new System.Drawing.Size(130, 23);
             this.dateDoxRcvDate.TabIndex = 11;
@@ -816,6 +812,7 @@
             // 
             this.txtLocalSupp.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Shipper", true));
             this.txtLocalSupp.DisplayBox1Binding = "";
+            this.txtLocalSupp.IsFactory = false;
             this.txtLocalSupp.Location = new System.Drawing.Point(109, 117);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(230, 23);
@@ -825,7 +822,7 @@
             // labOnBoard
             // 
             this.labOnBoard.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labOnBoard.Location = new System.Drawing.Point(606, 90);
+            this.labOnBoard.Location = new System.Drawing.Point(606, 117);
             this.labOnBoard.Name = "labOnBoard";
             this.labOnBoard.Size = new System.Drawing.Size(93, 23);
             this.labOnBoard.TabIndex = 49;
@@ -834,7 +831,7 @@
             // dateOnBoardDate
             // 
             this.dateOnBoardDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoard", true));
-            this.dateOnBoardDate.Location = new System.Drawing.Point(702, 90);
+            this.dateOnBoardDate.Location = new System.Drawing.Point(702, 117);
             this.dateOnBoardDate.Name = "dateOnBoardDate";
             this.dateOnBoardDate.Size = new System.Drawing.Size(130, 23);
             this.dateOnBoardDate.TabIndex = 48;
@@ -857,7 +854,7 @@
             this.chkNoCharge.AutoSize = true;
             this.chkNoCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoCharges", true));
             this.chkNoCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNoCharge.Location = new System.Drawing.Point(606, 224);
+            this.chkNoCharge.Location = new System.Drawing.Point(838, 186);
             this.chkNoCharge.Name = "chkNoCharge";
             this.chkNoCharge.Size = new System.Drawing.Size(182, 21);
             this.chkNoCharge.TabIndex = 51;
@@ -905,16 +902,44 @@
             this.chkNonDeclare.AutoSize = true;
             this.chkNonDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NonDeclare", true));
             this.chkNonDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNonDeclare.Location = new System.Drawing.Point(606, 201);
+            this.chkNonDeclare.Location = new System.Drawing.Point(838, 163);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(106, 21);
             this.chkNonDeclare.TabIndex = 69;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
             // 
+            // txtLocalSupp1
+            // 
+            this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Consignee", true));
+            this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.IsFactory = true;
+            this.txtLocalSupp1.Location = new System.Drawing.Point(109, 146);
+            this.txtLocalSupp1.Name = "txtLocalSupp1";
+            this.txtLocalSupp1.Size = new System.Drawing.Size(228, 23);
+            this.txtLocalSupp1.TabIndex = 70;
+            this.txtLocalSupp1.TextBox1Binding = "";
+            // 
+            // lbShipDate
+            // 
+            this.lbShipDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbShipDate.Location = new System.Drawing.Point(606, 89);
+            this.lbShipDate.Name = "lbShipDate";
+            this.lbShipDate.Size = new System.Drawing.Size(93, 23);
+            this.lbShipDate.TabIndex = 71;
+            this.lbShipDate.Text = "Ship Date";
+            // 
+            // dateShipDate
+            // 
+            this.dateShipDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipDate", true));
+            this.dateShipDate.Location = new System.Drawing.Point(702, 89);
+            this.dateShipDate.Name = "dateShipDate";
+            this.dateShipDate.Size = new System.Drawing.Size(130, 23);
+            this.dateShipDate.TabIndex = 49;
+            // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 556);
+            this.ClientSize = new System.Drawing.Size(1032, 556);
             this.DefaultControl = "txtSubconForwarder";
             this.DefaultControlForEdit = "txtSubconForwarder";
             this.DefaultDetailOrder = "POID,Seq1,Seq2";
@@ -971,7 +996,6 @@
         private Win.UI.DisplayBox displayPortofLoading;
         private Win.UI.TextBox txtPortofDischarge;
         private Win.UI.TextBox txtPortofLoading;
-        private Win.UI.TextBox txtConsignee;
         private Win.UI.TextBox txtInvoiceNo;
         private Class.TxtsubconNoConfirm txtSubconForwarder;
         private Win.UI.DisplayBox displayFtyWKNo;
@@ -1011,5 +1035,8 @@
         private Win.UI.Label lbDeclareation;
         private Win.UI.DisplayBox displayDeclarationID;
         private Win.UI.CheckBox chkNonDeclare;
+        private Class.TxtLocalSupp txtLocalSupp1;
+        private Win.UI.DateBox dateShipDate;
+        private Win.UI.Label lbShipDate;
     }
 }
