@@ -506,6 +506,7 @@ Delete SampleGarmentTest_Detail_FGPT where id = '{this.CurrentMaintain["ID", Dat
                     {
                         List<SqlParameter> spam = new List<SqlParameter>();
                         spam.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
+                        spam.Add(new SqlParameter("@BrandID", this.CurrentMaintain["BrandID"]));
                         spam.Add(new SqlParameter("@NO", dr["NO"]));
                         string insertShrinkage = $@"
 select sl.Location
@@ -562,7 +563,7 @@ declare @location_combo varchar(15) =
 	for xml path ('')
 ) , 1, 1, ''))
 
-if @location_combo = 'B,T'
+if @location_combo = 'B,T' and @BrandID = 'ADIDAS'
 begin
 	INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 	select  @ID,@NO, t2.Location, t1.Type, t1.Seq 
@@ -576,14 +577,14 @@ begin
 			(s.BrandID !='ADIDAS' and t1.BrandID = '')
 		)
 	)
-	and t1.LocationGoup = 'TB'
+	and t1.LocationGroup = 'TB'
 end
 else
 begin
 	INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 	select  @ID,@NO, t2.Location, t1.Type, t1.Seq 
 	from GarmentTestShrinkage t1 
-	inner join  #Location_S t2 on t1.LocationGoup = t2.Location
+	inner join  #Location_S t2 on t1.LocationGroup = t2.Location
 	where exists(
 	select 1 from #Location_S s	
 	where (

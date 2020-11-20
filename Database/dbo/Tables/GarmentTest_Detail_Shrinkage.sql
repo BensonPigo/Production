@@ -13,13 +13,13 @@
     [Shrinkage3]   NUMERIC (11, 2) NULL,
     [Seq]          NUMERIC (6)     NULL,
     [BrandID]      VARCHAR (8)     CONSTRAINT [DF__GarmentTe__Brand__06B6917A] DEFAULT ('') NULL,
-    [LocationGoup] VARCHAR (4)     CONSTRAINT [DF__GarmentTe__Locat__07AAB5B3] DEFAULT ('') NULL,
+    [LocationGroup] VARCHAR (4)     CONSTRAINT [DF__GarmentTe__Locat__07AAB5B3] DEFAULT ('') NULL,
     CONSTRAINT [PK_GarmentTest_Detail_Shrinkage] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC, [Location] ASC, [Type] ASC)
 );
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'判斷款式是否為套裝(T+B)/其他種類的套裝/PCS', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTest_Detail_Shrinkage', @level2type = N'COLUMN', @level2name = N'LocationGoup';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'判斷款式是否為套裝(T+B)/其他種類的套裝/PCS', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTest_Detail_Shrinkage', @level2type = N'COLUMN', @level2name = N'LocationGroup';
 
 
 GO

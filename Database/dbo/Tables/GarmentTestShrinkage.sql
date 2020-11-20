@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[GarmentTestShrinkage] (
     [BrandID]      VARCHAR (8)   CONSTRAINT [DF_GarmentTestShrinkage_BrandID] DEFAULT ('') NULL,
-    [LocationGoup] VARCHAR (4)   CONSTRAINT [DF_GarmentTestShrinkage_LocationGoup] DEFAULT ('') NULL,
+    [LocationGroup] VARCHAR (4)   CONSTRAINT [DF_GarmentTestShrinkage_LocationGoup] DEFAULT ('') NULL,
     [Location]     VARCHAR (1)   CONSTRAINT [DF_GarmentTestShrinkage_Location] DEFAULT ('') NULL,
     [Seq]          INT           CONSTRAINT [DF_GarmentTestShrinkage_Seq] DEFAULT ((0)) NULL,
     [Type]         VARCHAR (150) CONSTRAINT [DF_GarmentTestShrinkage_Type] DEFAULT ('') NULL,
@@ -22,7 +22,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'各測量�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'判斷款式是否為套裝 (T+B) / 其他種類的套裝 / PCS', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTestShrinkage', @level2type = N'COLUMN', @level2name = N'LocationGoup';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'判斷款式是否為套裝 (T+B) / 其他種類的套裝 / PCS', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GarmentTestShrinkage', @level2type = N'COLUMN', @level2name = N'LocationGroup';
 
 
 GO
