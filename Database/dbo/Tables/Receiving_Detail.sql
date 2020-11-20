@@ -21,6 +21,7 @@
     [CompleteTime] DATETIME NULL, 
     [CombineBarcode] VARCHAR NULL, 
     [Unoriginal] BIT NULL, 
+    [EncodeSeq] INT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -140,3 +141,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Receiving_Detail',
     @level2type = N'COLUMN',
     @level2name = N'Unoriginal'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'使用者匯入 / 新增資料的順序',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Receiving_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EncodeSeq'
