@@ -1502,10 +1502,19 @@ WHERE   StockType='{0}'
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             this.detailgrid.ValidateControl();
+            string strSort = ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort.ToString();
             if (!this.EditMode)
             {
                 this.radiobySP.Checked = false;
                 this.radioEncodeSeq.Checked = false;
+            }
+
+            if (this.DetailDatas != null)
+            {
+                if (MyUtility.Check.Empty(((DataTable)this.detailgridbs.DataSource).DefaultView.Sort))
+                {
+                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = $"{strSort}";
+                }
             }
 
             this.Change_record();
@@ -2888,9 +2897,69 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         {
             base.OnDetailGridInsert(index);
 
-            // GridView button顯示+
-            DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
-            next_dgbtn.Value = "+";
+            if (this.EditMode == false || this.DetailDatas == null || this.DetailDatas.Count <= 0)
+            {
+                return;
+            }
+
+            int currentIndex = this.detailgridbs.Position;
+
+            // 新增後確認前一筆有資料才做下個動作
+            DataRow pre_row = this.detailgrid.GetDataRow(this.detailgridbs.Position + 1);
+            if (pre_row != null)
+            {
+                DataGridViewButtonCell pre_dgbtn = (DataGridViewButtonCell)this.detailgrid.Rows[this.detailgridbs.Position + 1].Cells["btnAdd2"];
+                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+                if (dtDetail == null || dtDetail.Rows.Count <= 0)
+                {
+                    return;
+                }
+
+                string maxCombBarcode = dtDetail.Compute("Max(CombineBarcode)", string.Empty).ToString();
+
+                if (pre_dgbtn.Value.ToString() == "-")
+                {
+                    // 取得CombineBarcode
+                    string pre_ComBarcode = pre_row["CombineBarcode"].ToString();
+                    if (MyUtility.Check.Empty(maxCombBarcode))
+                    {
+                        pre_ComBarcode = "1";
+                    }
+                    else
+                    {
+                        if (MyUtility.Check.Empty(pre_ComBarcode))
+                        {
+                            // New Max Value
+                            pre_ComBarcode = Prgs.GetNextValue(maxCombBarcode, 1);
+                        }
+                    }
+
+                    pre_row["CombineBarcode"] = pre_ComBarcode;
+                    pre_row.EndEdit();
+
+                    // 新增下一筆資料
+                    DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.CurrentRow.Cells["btnAdd2"].RowIndex);
+                    newrow["Dyelot"] = pre_row["Dyelot"];
+                    newrow["Roll"] = pre_row["Roll"];
+                    newrow["Unoriginal"] = 1;
+                    newrow["Stocktype"] = 'B';
+                    newrow["CombineBarcode"] = pre_ComBarcode;
+                    newrow["EncodeSeq"] = pre_row["EncodeSeq"];
+
+                    // 新增子項要預設父項的Combine SKU, 這是為避免當排序變更後會亂掉
+                    newrow["SortCmbPOID"] = pre_row["SortCmbPOID"];
+                    newrow["SortCmbSeq1"] = pre_row["SortCmbSeq1"];
+                    newrow["SortCmbSeq2"] = pre_row["SortCmbSeq2"];
+                    newrow["SortCmbRoll"] = pre_row["SortCmbRoll"];
+                    newrow["SortCmbDyelot"] = pre_row["SortCmbDyelot"];
+                    DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
+                    next_dgbtn.Value = "-";
+
+                    // 排序要回到EncodeSeq
+                    this.GridSortBy(true);
+                }
+            }
+
             this.Change_record();
         }
 
