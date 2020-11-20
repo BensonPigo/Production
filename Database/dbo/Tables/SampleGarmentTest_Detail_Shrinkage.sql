@@ -2,7 +2,7 @@
     [ID]         BIGINT          NOT NULL,
     [No]         INT             NOT NULL,
     [Location]   VARCHAR (2)     NOT NULL,
-    [Type]       VARCHAR (20)    NOT NULL,
+    [Type]       VARCHAR (150)   NOT NULL,
     [BeforeWash] NUMERIC (11, 2) NULL,
     [SizeSpec]   NUMERIC (11, 2) NULL,
     [AfterWash1] NUMERIC (11, 2) NULL,
@@ -14,4 +14,6 @@
     [Seq]        INT             NULL,
     PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC, [Location] ASC, [Type] ASC)
 );
+
+
 

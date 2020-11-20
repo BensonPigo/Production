@@ -119,7 +119,6 @@ namespace Sci.Production.Quality
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P04_GarmentWash.xltx");
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
-
             if (this.data.DateSubmit.HasValue)
             {
                 worksheet.Cells[4, 4] = MyUtility.Convert.GetDate(this.data.DateSubmit.Value).Value.Year + "/" + MyUtility.Convert.GetDate(this.data.DateSubmit.Value).Value.Month + "/" + MyUtility.Convert.GetDate(this.data.DateSubmit.Value).Value.Day;
@@ -973,29 +972,25 @@ namespace Sci.Production.Quality
                 #region Shrinkage
                 if (this.dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'BOTTOM'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[44, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Waistband (relax)'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A48:A48", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[45, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Hip Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[46, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Thigh Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[47, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Side Seam'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[48, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Leg Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[44 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1008,29 +1003,25 @@ namespace Sci.Production.Quality
 
                 if (this.dtShrinkage.Select("Location = 'OUTER'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'OUTER'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[34, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Chest Width'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A38:A38", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[35, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Sleeve Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[36, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Sleeve Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[37, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Back Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[38, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Hem Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[34 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1043,29 +1034,25 @@ namespace Sci.Production.Quality
 
                 if (this.dtShrinkage.Select("Location = 'INNER'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'INNER'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[26, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Chest Width'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A30:A30", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[27, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Sleeve Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[28, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Sleeve Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[29, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Back Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[30, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Hem Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[26 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1078,29 +1065,25 @@ namespace Sci.Production.Quality
 
                 if (this.dtShrinkage.Select("Location = 'TOP'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'TOP'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[18, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A22:A22", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[19, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[20, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[21, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[22, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[18 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1887,29 +1870,25 @@ namespace Sci.Production.Quality
                 #region Shrinkage
                 if (this.dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'BOTTOM'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[44, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Waistband (relax)'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A48:A48", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[45, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Hip Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[46, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Thigh Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[47, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Side Seam'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[48, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'BOTTOM' and type ='Leg Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[44 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1922,29 +1901,25 @@ namespace Sci.Production.Quality
 
                 if (this.dtShrinkage.Select("Location = 'OUTER'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'OUTER'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[34, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Chest Width'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A38:A38", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[35, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Sleeve Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[36, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Sleeve Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[37, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Back Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[38, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'OUTER' and type ='Hem Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[34 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1957,29 +1932,25 @@ namespace Sci.Production.Quality
 
                 if (this.dtShrinkage.Select("Location = 'INNER'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'INNER'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[26, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Chest Width'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A30:A30", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[27, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Sleeve Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[28, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Sleeve Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[29, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Back Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[30, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'INNER' and type ='Hem Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[26 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -1992,29 +1963,25 @@ namespace Sci.Production.Quality
 
                 if (this.dtShrinkage.Select("Location = 'TOP'").Length > 0)
                 {
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    DataTable dt = this.dtShrinkage.Select("Location = 'TOP'").CopyToDataTable();
+
+                    // 超過5個測量點則新增行數
+                    if (dt.Rows.Count > 5)
                     {
-                        worksheet.Cells[18, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Chest Width'", i);
+                        for (int i = 0; i < dt.Rows.Count - 5; i++)
+                        {
+                            Microsoft.Office.Interop.Excel.Range rng = worksheet.get_Range("A22:A22", Type.Missing).EntireRow;
+                            rng.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        }
                     }
 
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
+                    // 依不同品牌/套裝塞入資料
+                    for (int r = 0; r < dt.Rows.Count; r++)
                     {
-                        worksheet.Cells[19, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Width'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[20, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Sleeve Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[21, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Back Length'", i);
-                    }
-
-                    for (int i = 4; i < this.dtShrinkage.Columns.Count; i++)
-                    {
-                        worksheet.Cells[22, i] = this.AddShrinkageUnit(this.dtShrinkage, @"Location = 'TOP'and type ='Hem Opening'", i);
+                        for (int c = 3; c < dt.Columns.Count; c++)
+                        {
+                            worksheet.Cells[18 + r, c] = this.AddShrinkageUnit_18(dt, r, c);
+                        }
                     }
                 }
                 else
@@ -2447,18 +2414,18 @@ namespace Sci.Production.Quality
         /// 如果欄位是Shrinkage 就增加%單位符號
         /// </summary>
         /// <param name="dt">dt</param>
-        /// <param name="strFilter">strFilter</param>
-        /// <param name="count">count</param>
+        /// <param name="row">row</param>
+        /// <param name="columns">columns</param>
         /// <returns>string</returns>
-        private string AddShrinkageUnit(DataTable dt, string strFilter, int count)
+        private string AddShrinkageUnit_18(DataTable dt, int row, int columns)
         {
             string strValie = string.Empty;
-            if (dt.Select(strFilter).Length > 0)
+            if (dt.Rows.Count > 0)
             {
-                strValie = dt.Select(strFilter)[0][count].ToString();
-                if (((string.Compare(dt.Columns[count].ColumnName, "Shrinkage1", true) == 0) ||
-                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage2", true) == 0) ||
-                    (string.Compare(dt.Columns[count].ColumnName, "Shrinkage3", true) == 0)) &&
+                strValie = dt.Rows[row][columns].ToString();
+                if (((string.Compare(dt.Columns[columns].ColumnName, "Shrinkage1", true) == 0) ||
+                    (string.Compare(dt.Columns[columns].ColumnName, "Shrinkage2", true) == 0) ||
+                    (string.Compare(dt.Columns[columns].ColumnName, "Shrinkage3", true) == 0)) &&
                     !MyUtility.Check.Empty(strValie))
                 {
                     strValie = strValie + "%";
