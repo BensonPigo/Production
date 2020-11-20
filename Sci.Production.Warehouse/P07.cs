@@ -1620,6 +1620,7 @@ Select  d.poid
         , d.Roll
         , d.StockQty
         , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , d.Dyelot
 from dbo.Receiving_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
