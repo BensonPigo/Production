@@ -139,6 +139,13 @@ select SalesID, SalesName, Article, ArticleName, ProductionDate, DefectMainID, D
                 return;
             }
 
+            bool detailResponsibilityEmpty = this.DetailDatas.Where(s => MyUtility.Check.Empty(s["Responsibility"])).Any();
+            if (detailResponsibilityEmpty)
+            {
+                MyUtility.Msg.WarningBox("Responsibility cannot be empty.");
+                return;
+            }
+
             string sqlConfirm = $"update ADIDASComplain set FtyApvName = '{Env.User.UserID}',FtyApvDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'";
             DualResult result = DBProxy.Current.Execute(null, sqlConfirm);
             if (!result)
@@ -561,6 +568,7 @@ WHERE a.Status IN ('Closed','Approved') {whereSuppID_subcon}
                 bool isCanConfirm = MyUtility.Check.Empty(this.CurrentMaintain["FtyApvDate"]);
                 this.toolbar.cmdConfirm.Enabled = isCanConfirm;
                 this.toolbar.cmdUnconfirm.Enabled = !isCanConfirm;
+                this.toolbar.cmdEdit.Enabled = MyUtility.Check.Empty(this.CurrentMaintain["FtyApvDate"]);
             }
         }
     }
