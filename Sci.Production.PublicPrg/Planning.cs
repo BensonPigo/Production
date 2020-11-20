@@ -125,6 +125,10 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             bool isNeedCombinBundleGroup = false,
             string isMorethenOrderQty = "0")
         {
+            // 若 wIP_FollowCutOutput
+            // 忽略指定 Shell 規則 (不加 Order_BOF.kind = 1)
+            // 忽略加工段 Subprocessid 需存在 Bundle_Detail_Art規則
+            // 不存在 Garment List. Annotation的 加工段不去計算它
             bool wIP_FollowCutOutput = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select WIP_FollowCutOutput from system", connectionName: "Production"));
             string sqlcmd = $@"
 -- 成套標準：
@@ -281,10 +285,18 @@ bunD.ID, bunD.BundleGroup, bunD.BundleNo, bunD.Sizecode, bunD.Patterncode, bunD.
 bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
 ";
 
+            string whereaan = $@"
+where exists(
+	select 1
+	from Pattern_GL a WITH (NOLOCK)
+	where a.PatternUKEY = (select s.PatternUkey from dbo.GetPatternUkey(st0.OrderID,'','',(select StyleUkey from Orders where ID = st0.OrderID),st0.SizeCode)s)
+	and a.Annotation = sub.id
+)";
             foreach (string subprocessID in subprocessIDs)
             {
                 string subprocessIDtmp = subprocessID.Replace("-", string.Empty); // 把PAD-PRT為PADPRT, 命名#table名稱用
-                bool subssl = wIP_FollowCutOutput && (subprocessID.ToUpper().EqualString("SORTING") || subprocessID.ToUpper().EqualString("LOADING") || subprocessID.ToUpper().EqualString("SEWINGLING"));
+                bool subssl = wIP_FollowCutOutput; // && (subprocessID.ToUpper().EqualString("SORTING") || subprocessID.ToUpper().EqualString("LOADING") || subprocessID.ToUpper().EqualString("SEWINGLING"));
+                bool subss2 = wIP_FollowCutOutput && !subprocessID.ToUpper().EqualString("SORTING") && !subprocessID.ToUpper().EqualString("LOADING") && !subprocessID.ToUpper().EqualString("SewingLine");
 
                 // --Step 2. --
                 //-- * 2.找出所有 Fabric Combo +Fabric Panel Code +Article + SizeCode->Cartpart(包含同部位數量)
@@ -423,6 +435,7 @@ OUTER APPLY(
 	WHERE Orderid = st0.Orderid AND Article = st0.Article AND SizeCode = st0.SizeCode
 		AND PatternPanel = st0.PatternPanel  AND FabricPanelCode = st0.FabricPanelCode
 )Std
+ {(subss2 ? whereaan : string.Empty)}
 
 select    st0.Orderid
         , bund.BundleNo
@@ -472,7 +485,7 @@ OUTER APPLY(  --取得這個bundle no的指定加工段
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
 where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
- {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty)}
+ {(subss2 ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty)}
 
 select
 	st3.*
@@ -512,7 +525,7 @@ outer apply(
 
 select	Orderid
 		, SubprocessId
-		{(subssl ? string.Empty : ", BundleGroup")}
+		, BundleGroup
 		, Size
 		, Article
 		, PatternPanel
@@ -561,7 +574,7 @@ outer  apply(
 outer apply(select v = iif(InComing is not null and (x.InStartDate is null or x.InStartDate <= InComing) and (x.InEndDate is null or InComing <= x.InEndDate),1,0))I_Judge
 outer apply(select v = iif(OutGoing is not null and (x.OutStartDate is null or x.OutStartDate <= OutGoing) and (x.OutEndDate is null or OutGoing <= x.OutEndDate),1,0))O_Judge
 outer apply(select M = iif(IsPair=1,2,1) )IsPair--此處判斷後才放入group by 欄位中 
-group by OrderID, SubprocessId, InOutRule{(subssl ? string.Empty : ", BundleGroup")}, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
+group by OrderID, SubprocessId, InOutRule, BundleGroup, Size, PatternPanel, FabricPanelCode, Article, PatternCode,IsPair.m
     , InStartDate,InEndDate,OutStartDate,OutEndDate
 
 --#BundleInOutQty... 在 WebApi 有使用到, 變更時注意
@@ -572,7 +585,7 @@ where FabricPanelCode is not null
 or (FabricPanelCode is null and not exists(select 1 from #beforeBundleInOutDetail{subprocessIDtmp} b where b.Orderid = t.Orderid and b.Size = t.Size and b.Article= t.Article and b.PatternPanel = t. PatternPanel and b.FabricPanelCode is not null))
 ";
 
-                if (isNeedCombinBundleGroup && !subssl)
+                if (isNeedCombinBundleGroup)
                 {
                     sqlcmd += $@"
 --篩選 BundleGroup Step.1 --
