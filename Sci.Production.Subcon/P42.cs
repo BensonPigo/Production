@@ -311,7 +311,7 @@ outer apply(
 where 1=1
 {where}
 
-select distinct [Orderid]=o.ID,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select distinct [Orderid]=o.ID,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
 into #tmpBundleNo
 from Bundle_Detail_Order bdo
 inner join Bundle b WITH (NOLOCK) on b.id = bdo.Id
@@ -322,7 +322,7 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 
-select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
+select Orderid,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,IsEXCESS,
 	NoBundleCardAfterSubprocess=  isnull(x.NoBundleCardAfterSubprocess,0),
 	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
@@ -335,7 +335,7 @@ outer apply(
 
 union
 
-select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
+select Orderid,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -368,12 +368,13 @@ select
 	b.Orderid,
 	b.BundleNo,
 	b.subProcessid,
-	b.InOutRule 
-	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+	b.InOutRule,
+	b.IsEXCESS,
+	[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
 						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
 						else IIF( bio.InComing IS NOT NULL ,'true','false')
-						end
-	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						end,
+	[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
 						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
 						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
 						end
@@ -411,6 +412,7 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
+	AND IsEXCESS = 0
 	AND (
 			(HasInComing!='true' AND HasOutGoing!='true') OR
 			(InOutRule = '1' AND HasInComing='false') OR
@@ -529,7 +531,7 @@ outer apply(
 where 1=1
 {where}
 
-select distinct bdo.Orderid,b.Article,b.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault
+select distinct bdo.Orderid,b.Article,b.Sizecode,bdo.BundleNo,s.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS
 into #tmpBundleNo
 from Bundle_Detail_Order bdo
 inner join Bundle b WITH (NOLOCK) on b.id = bdo.Id
@@ -540,7 +542,7 @@ cross join(
 	where s.IsRFIDProcess=1 and s.IsRFIDDefault=1 AND s.IsSelection=0
 )s
 
-select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,
+select Orderid,Article,Sizecode,BundleNo,SubProcessID,ShowSeq,InOutRule,IsRFIDDefault,b.IsEXCESS,
 	NoBundleCardAfterSubprocess= isnull(x.NoBundleCardAfterSubprocess,0),
 	PostSewingSubProcess=0
 into #tmpBundleNo_SubProcess
@@ -553,7 +555,8 @@ outer apply(
 
 union
 
-select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
+select Orderid,Article,Sizecode,bda.BundleNo,bda.SubProcessID,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,b.IsEXCESS,
+    bda.NoBundleCardAfterSubprocess,bda.PostSewingSubProcess
 from #tmpBundleNo b
 inner join Bundle_Detail_art bda WITH (NOLOCK) on bda.bundleno = b.bundleno
 inner join SubProcess s WITH (NOLOCK) on s.ID = bda.SubprocessId and s.IsRFIDProcess =1
@@ -588,12 +591,13 @@ select
 	b.Sizecode,
 	b.BundleNo,
 	b.subProcessid,
-	b.InOutRule 
-	,[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+	b.InOutRule,
+	b.IsEXCESS,
+	[HasInComing]=case when p.PostSewingSubProcess_SL=1 then 'true'
 						when NoBundleCardAfterSubprocess=1 and(InOutRule = 1 or InOutRule = 4) Then 'true'
 						else IIF( bio.InComing IS NOT NULL ,'true','false')
-						end
-	,[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
+						end,
+	[HasOutGoing]=case when p.PostSewingSubProcess_SL=1 then 'true'
 						when NoBundleCardAfterSubprocess=1 and InOutRule = 3  Then 'true'
 						else IIF( bio.OutGoing IS NOT NULL ,'true','false')
 						end
@@ -634,6 +638,7 @@ OUTER APPLY(
 	AND SubProcessID=t.SubProcessID
 	AND InOutRule=t.InOutRule
 	AND SubProcessID=t.SubProcessID
+	AND IsEXCESS = 0
 	AND (
 			(HasInComing!='true' AND HasOutGoing!='true') OR
 			(InOutRule = '1' AND HasInComing='false') OR
