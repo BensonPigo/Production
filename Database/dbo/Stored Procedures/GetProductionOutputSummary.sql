@@ -1,4 +1,5 @@
-﻿Create PROCEDURE [dbo].[GetProductionOutputSummary]
+﻿
+CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 
 	@Year varchar(10) = '',
 	@Brand varchar(10) = '',
@@ -22,6 +23,7 @@ BEGIN
 
  -- Planning_R05 only!  Today + 5 Month + 6 Day
 declare @SpecialDay date = (select date = DATEADD(DAY,6, DATEADD(m,5, dateadd(m, datediff(m,0,getdate()),0))))
+declare @SpecialDay2 date = (select date = DATEADD(DAY,0, DATEADD(m,5, dateadd(m, datediff(m,0,getdate()),0))))
 declare @SewLock date = (select top 1 sewLock from dbo.System)
 
 declare @tmpBaseOrderID TABLE(
@@ -68,6 +70,11 @@ from
 				(@ExcludeSampleFactory = 0)
 			 )
 			 and (
+				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
+				or 
+				(@IsFtySide = 0)
+			 )
+			 and (
 				@IncludeCancelOrder = 0 and o.Junk = 0
 				or
 				@IncludeCancelOrder = 1 and 1 = 1
@@ -108,7 +115,7 @@ from
 				(@ExcludeSampleFactory = 0)
 			 )
 			 and (
-				(@IsFtySide = 1 and (O.SciDelivery < @SpecialDay or o.BuyerDelivery < @SpecialDay))
+				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
 				or 
 				(@IsFtySide = 0)
 			)
@@ -164,6 +171,11 @@ from (
 				or
 				@IncludeCancelOrder = 1 and 1 = 1
 		)
+		 and (
+				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
+				or 
+				(@IsFtySide = 0)
+			)
 		and o.ProgramID in (select distinct FactoryID from @tmpBaseOrderID)
 
 	union all
@@ -197,7 +209,7 @@ from (
 				@IncludeCancelOrder = 1 and 1 = 1
 		 )
 		 and (
-				(@IsFtySide = 1 and (O.SciDelivery < @SpecialDay or o.BuyerDelivery < @SpecialDay))
+				(@IsFtySide = 1 and ((@DateType = 1 and O.SciDelivery <= @SpecialDay) or (@DateType = 2 and o.BuyerDelivery < @SpecialDay2)))
 				or 
 				(@IsFtySide = 0)
 			)
@@ -319,6 +331,9 @@ outer apply (select [CpuRate] = case when o.IsForecast = 1 then (select CpuRate 
 outer apply (select Qty=sum(shipQty) from Pullout_Detail where orderid = o.id) GetPulloutData
 outer apply (select [SCI] = dateadd(day,-7,o.SciDelivery),
                     [Buyer] = o.BuyerDelivery) KeyDate
+
+
+
 
 
 
