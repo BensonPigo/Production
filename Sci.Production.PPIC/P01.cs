@@ -42,9 +42,13 @@ namespace Sci.Production.PPIC
             this.IsSupportEdit = type == "1" ? true : false;
 
             this.Text = type == "1" ? "P01. PPIC Master List" : "P011. PPIC Master List (History)";
+            MyUtility.Check.Seek($"select NoRestrictOrdersDelivery from system", out DataRow dr);
             this.DefaultFilter = $@"MDivisionID = '{Env.User.Keyword}'";
             this.DefaultFilter += type == "1" ? " AND Finished = 0" : " AND Finished = 1";
-            this.DefaultFilter += " and (IsForecast = 0 or (IsForecast = 1 and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))";
+            if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
+            {
+                this.DefaultFilter += " and (SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))";
+            }
 
             this.dataType = type;
             this.btnShipmentFinished.Visible = this.dataType == "1"; // Shipment Finished
@@ -1156,25 +1160,9 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
         private int intSizeSpecColumnCnt = 18;
 
-        private void ForSizeSpec(Worksheet oSheet, int rowNo, int columnNo)
-        {
-            for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
-            {
-                // oSheet.Cells[4, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            }
-
-            for (int colIdx = 3; colIdx <= this.intSizeSpecColumnCnt; colIdx++)
-            {
-                // oSheet.Cells[4 + intSizeSpecRowCnt, colIdx].Interior.Color = System.Drawing.ColorTranslator.ToOle(Color.Red);
-                oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            }
-        }
-
         private void GetCustCDKit()
         {
-            string cmd = string.Empty;
-            cmd = @"
+            string cmd = @"
             SELECT DISTINCT c.Kit
             FROm CustCD c
             LEFT JOIN Orders o
@@ -1207,7 +1195,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
 
         private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
-            string cmd = string.Empty;
+            string cmd;
             if (byCustCD)
             {
                 cmd = @"
@@ -1293,7 +1281,6 @@ where POID = @poid group by POID,b.spno";
             rowPosition += thisSheetUsedRange.Rows.Count + blankRowsAfterThisBlock.GetValueOrDefault(0); // 與下個Block空一行
 
             Marshal.ReleaseComObject(thisSheetUsedRange);
-            thisSheetUsedRange = null;
         }
 
         // Q'ty b'down by schedule
@@ -1347,7 +1334,6 @@ where POID = @poid group by POID,b.spno";
                 if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))))
                 {
                     // Category = T的單子不用檢查是否已經Pullout Complete
-
                     sqlCmd = $@"select A.ID
                         from PO_Supp_Detail A WITH (NOLOCK) 
                         inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{this.CurrentMaintain["MDivisionID"]}'

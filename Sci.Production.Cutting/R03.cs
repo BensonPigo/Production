@@ -9,9 +9,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
-    /// <summary>
-    /// Cutting R03
-    /// </summary>
+    /// <inheritdoc/>
     public partial class R03 : Win.Tems.PrintForm
     {
         private DataTable[] printData;
@@ -38,10 +36,7 @@ namespace Sci.Production.Cutting
         private DateTime? SewingInline2;
         private StringBuilder condition = new StringBuilder();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="R03"/> class.
-        /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
+        /// <inheritdoc/>
         public R03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -107,6 +102,8 @@ namespace Sci.Production.Cutting
 select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
+    [Fabrication] = f.WeaveTypeID,
+    psd.RevisedETA,
     [PPIC Close] = iif(c.Finished=1,'V',''),
     wo.WKETA,
 	[Est.Cutting Date]= wo.EstCutDate,
@@ -174,6 +171,7 @@ from WorkOrder wo WITH (NOLOCK)
 inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
+left join PO_Supp_Detail psd with(nolock) on psd.id = wo.id and psd.seq1 = wo.seq1 and psd.seq2 = wo.seq2
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
 	select MincoDate=(
@@ -385,7 +383,7 @@ where 1=1
             #endregion
             sqlCmd.Append(@"
 select 
-[M],[Factory],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+[M],[Factory],[Fabrication],[RevisedETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
@@ -511,53 +509,56 @@ drop table #tmp,#tmpL");
                 return false;
             }
 
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp); // 將datatable copy to excel
-            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            Excel.Application excelapp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx");
+            MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, excelapp);
 
             // Perimeter(Decimal)
             int perimeterCol = this.printData[0].Columns.Count - 3;
-            objApp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AJ3,SEARCH(\"yd\",AJ3,1)-1)+0+(IFERROR(RIGHT(LEFT(AJ3,SEARCH(\"\"\"\",AJ3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AJ3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
+            excelapp.Cells[3, perimeterCol] = $"=IFERROR(LEFT(AM3,SEARCH(\"yd\",AM3,1)-1)+0+(IFERROR(RIGHT(LEFT(AM3,SEARCH(\"\"\"\",AM3,1)-1),2)+0,0)+IFERROR(VLOOKUP(RIGHT(AM3,2)+0,data!$A$1:$B$8,2,TRUE),0))/36,\"\")";
             int rowct = this.printData[0].Rows.Count + 2;
-            objApp.Range[objApp.Cells[3, perimeterCol], objApp.Cells[3, perimeterCol]].Copy();
-            objApp.Range[objApp.Cells[4, perimeterCol], objApp.Cells[rowct, perimeterCol]].PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
-            objApp.Range[objApp.Cells[2, 1], objApp.Cells[2, 1]].Select();
-            objSheets.get_Range("Q2").ColumnWidth = 15.38;
-            objSheets.get_Range("U2").ColumnWidth = 15.38;
 
-            objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
-            objSheets.Name = "summary";
+            // 複製公式 貼到全部列
+            excelapp.Range[excelapp.Cells[3, perimeterCol], excelapp.Cells[3, perimeterCol]].Copy();
+            excelapp.Range[excelapp.Cells[4, perimeterCol], excelapp.Cells[rowct, perimeterCol]].PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+            excelapp.Range[excelapp.Cells[2, 1], excelapp.Cells[2, 1]].Select();
+
+            // sheet 2
+            Excel.Worksheet worksheet = excelapp.ActiveWorkbook.Worksheets[2];
+            worksheet.Name = "summary";
             for (int i = 1; i < this.printData.Length; i++)
             {
                 int row = 2 + ((i - 1) * 10);
-                objSheets.Cells[row, 3] = this.printData[i].Rows[0][0];
-                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 3], (Excel.Range)objSheets.Cells[row, this.printData[i].Columns.Count]).Merge(false);
+                worksheet.Cells[row, 3] = this.printData[i].Rows[0][0];
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row, 3], (Excel.Range)worksheet.Cells[row, this.printData[i].Columns.Count]).Merge(false);
                 for (int col = 1; col < this.printData[i].Columns.Count; col++)
                 {
-                    objSheets.Cells[row + 1, col + 1] = this.printData[i].Columns[col].ColumnName;
+                    worksheet.Cells[row + 1, col + 1] = this.printData[i].Columns[col].ColumnName;
 
                     for (int k = 0; k < this.printData[i].Rows.Count; k++)
                     {
-                        objSheets.Cells[row + 2 + k, col + 1] = this.printData[i].Rows[k][col];
+                        worksheet.Cells[row + 2 + k, col + 1] = this.printData[i].Rows[k][col];
                     }
                 }
 
-                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 2], (Excel.Range)objSheets.Cells[row + 7, this.printData[i].Columns.Count]).Borders.Weight = 3; // 設定全框線
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row, 2], (Excel.Range)worksheet.Cells[row + 7, this.printData[i].Columns.Count]).Borders.Weight = 3; // 設定全框線
             }
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");
-            Excel.Workbook workbook = objApp.ActiveWorkbook;
+            Excel.Workbook workbook = excelapp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
-            workbook.Close();
-            objApp.Quit();
-            Marshal.ReleaseComObject(objSheets);    // 釋放sheet
-            Marshal.ReleaseComObject(objApp);          // 釋放objApp
-            Marshal.ReleaseComObject(workbook);
+            excelapp.Visible = true;
 
-            strExcelName.OpenFile();
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(excelapp);
+            Marshal.ReleaseComObject(workbook);
             #endregion
             return true;
+        }
+
+        private void R03_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }

@@ -46,6 +46,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.txtFromFactory = new Sci.Win.UI.TextBox();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
+            this.btnImportonTPE = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,6 +63,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImportonTPE);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.txtFromFactory);
             this.masterpanel.Controls.Add(this.label1);
@@ -79,7 +81,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(972, 201);
+            this.masterpanel.Size = new System.Drawing.Size(892, 201);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -98,11 +100,12 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFromFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportonTPE, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 201);
-            this.detailpanel.Size = new System.Drawing.Size(972, 276);
+            this.detailpanel.Size = new System.Drawing.Size(892, 148);
             // 
             // gridicon
             // 
@@ -117,7 +120,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(972, 276);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 148);
             // 
             // detail2
             // 
@@ -130,19 +133,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(972, 515);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(972, 477);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(972, 38);
             // 
             // browse
             // 
@@ -185,7 +175,7 @@
             // 
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(830, 13);
+            this.label25.Location = new System.Drawing.Point(743, 13);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 43;
@@ -217,7 +207,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(972, 201);
+            this.shapeContainer1.Size = new System.Drawing.Size(892, 201);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -293,7 +283,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(800, 90);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(819, 87);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
@@ -305,7 +295,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(856, 55);
+            this.btnImport.Location = new System.Drawing.Point(875, 13);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
@@ -338,13 +328,25 @@
             // 
             this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPrintFabricSticker.Location = new System.Drawing.Point(780, 126);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(799, 123);
             this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
             this.btnPrintFabricSticker.Size = new System.Drawing.Size(165, 31);
             this.btnPrintFabricSticker.TabIndex = 64;
             this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
             this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
             this.btnPrintFabricSticker.Click += new System.EventHandler(this.BtnPrintFabricSticker_Click);
+            // 
+            // btnImportonTPE
+            // 
+            this.btnImportonTPE.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportonTPE.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportonTPE.Location = new System.Drawing.Point(761, 50);
+            this.btnImportonTPE.Name = "btnImportonTPE";
+            this.btnImportonTPE.Size = new System.Drawing.Size(203, 31);
+            this.btnImportonTPE.TabIndex = 65;
+            this.btnImportonTPE.Text = "Import base on TPE stock";
+            this.btnImportonTPE.UseVisualStyleBackColor = true;
+            this.btnImportonTPE.Click += new System.EventHandler(this.BtnImportonTPE_Click);
             // 
             // P19
             // 
@@ -356,12 +358,13 @@
             this.Grid2New = 0;
             this.GridAlias = "TransferOut_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot,ToPOID,ToSeq1,ToSeq2";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P19";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P19. Transfer Out";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -406,5 +409,6 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtFromFactory;
         private Win.UI.Button btnPrintFabricSticker;
+        private Win.UI.Button btnImportonTPE;
     }
 }

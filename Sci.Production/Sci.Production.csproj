@@ -1511,10 +1511,16 @@
     <None Include="XLT\Warehouse_R05.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Warehouse_R05_Detail.xltx">
+    <None Include="XLT\Warehouse_R05_Detail_TransferOut.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Warehouse_R05_Summary.xltx">
+    <None Include="XLT\Warehouse_R05_Detail_TransferIn.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_R05_Summary_TransferOut.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_R05_Summary_TransferIn.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_R06.xltx">
@@ -1674,6 +1680,10 @@
     <ProjectReference Include="..\Sci.Production.Packing\Sci.Production.Packing.csproj">
       <Project>{0ac9e701-ee86-459b-bdb9-213a79e59017}</Project>
       <Name>Sci.Production.Packing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PlacementVendor\Sci.Production.PlacementVendor.csproj">
+      <Project>{fa8d6e09-aada-4932-a461-7373e93b597a}</Project>
+      <Name>Sci.Production.PlacementVendor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Planning\Sci.Production.Planning.csproj">
       <Project>{0eade09e-b243-4fa9-a351-02828eb3535b}</Project>

@@ -211,6 +211,13 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
 ";
 
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
+            string wherenoRestrictOrdersDelivery = string.Empty;
+            MyUtility.Check.Seek($"select NoRestrictOrdersDelivery from system", out DataRow dr);
+            if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
+            {
+                wherenoRestrictOrdersDelivery = @"
+    and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))";
+            }
 
             // 注意!! 新增欄位也要一併新增在poCombo (搜尋KeyWork: union)
             sqlCmd.Append($@"
@@ -333,7 +340,7 @@ with tmpOrders as (
 {order_QtyShip_OuterApply}    
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id) a
     where  1=1 {whereIncludeCancelOrder}
-    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
+    {wherenoRestrictOrdersDelivery}
 ");
             if (this.seperate)
             {
@@ -670,7 +677,7 @@ tmpFilterZone as (
     )I
 {order_QtyShip_OuterApply}  
     where o.POID IN (select distinct POID from tmpFilterSubProcess) 
-    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
+{wherenoRestrictOrdersDelivery}
 )");
             }
             else
@@ -1386,8 +1393,16 @@ from (
                     #region 撈Order Subprocess資料
                     try
                     {
+                        string wherenoRestrictOrdersDelivery = string.Empty;
+                        MyUtility.Check.Seek($"select NoRestrictOrdersDelivery from system", out DataRow dr);
+                        if (!MyUtility.Convert.GetBool(dr["NoRestrictOrdersDelivery"]))
+                        {
+                            wherenoRestrictOrdersDelivery = @"
+    and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery < dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),0))";
+                        }
+
                         StringBuilder sqlcmd_sub = new StringBuilder();
-                        sqlcmd_sub.Append(@"
+                        sqlcmd_sub.Append($@"
 with ArtworkData as (
     select * 
     from #tmp
@@ -1395,7 +1410,7 @@ with ArtworkData as (
 OrderID as(
     select ID from orders O  WITH (NOLOCK)
     where  1=1
-    and (o.IsForecast = 0 or (o.IsForecast = 1 and (o.SciDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6) or o.BuyerDelivery <= dateadd(m, datediff(m,0,dateadd(m, 5, GETDATE())),6))))
+{wherenoRestrictOrdersDelivery}
 ");
 
                         if (!MyUtility.Check.Empty(this.buyerDlv1))

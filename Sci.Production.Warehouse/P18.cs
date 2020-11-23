@@ -313,7 +313,7 @@ where a.id = @ID";
                 }
 
                 // check 相同CombineBarcode, Refno, Color 是否一致
-                if (!MyUtility.Check.Empty(row["CombineBarcode"]) && this.IsAutomation && row["FabricType"].ToString() == "F")
+                if (!MyUtility.Check.Empty(row["CombineBarcode"]) && row["FabricType"].ToString() == "F")
                 {
                     // 取出原始資料
                     DataTable dtOriginal = this.DetailDatas.CopyToDataTable().AsEnumerable().Where(r =>
@@ -323,8 +323,8 @@ where a.id = @ID";
                     .CopyToDataTable();
                     if (dtOriginal.Rows.Count > 0)
                     {
-                        if ((string.Compare(row["Refno"].ToString(), dtOriginal.Rows[0]["Refno"].ToString()) != 0 ||
-                        string.Compare(row["ColorID"].ToString(), dtOriginal.Rows[0]["ColorID"].ToString()) != 0) &&
+                        if ((string.Compare(row["Refno"].ToString().Trim(), dtOriginal.Rows[0]["Refno"].ToString().Trim()) != 0 ||
+                        string.Compare(row["ColorID"].ToString().Trim(), dtOriginal.Rows[0]["ColorID"].ToString().Trim()) != 0) &&
                         row["FabricType"].ToString() == "F")
                         {
                             MyUtility.Msg.WarningBox("[Refno] & [Color] must be the same in same source data。");
@@ -727,7 +727,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             Ict.Win.DataGridViewGeneratorTextColumnSettings roll_setting = new DataGridViewGeneratorTextColumnSettings();
             roll_setting.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || !this.IsAutomation)
+                if (!this.EditMode)
                 {
                     return;
                 }
@@ -762,7 +762,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
 
             dyelot_setting.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || !this.IsAutomation)
+                if (!this.EditMode)
                 {
                     return;
                 }
@@ -795,7 +795,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
 
             qty_setting.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || !this.IsAutomation)
+                if (!this.EditMode)
                 {
                     return;
                 }
@@ -863,10 +863,6 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             col_btnAdd2.CellTemplate = cell;
             col_btnAdd2.Name = "btnAdd2";
             col_btnAdd2.HeaderText = string.Empty;
-
-            // System.Automation=1 才能看到此功能
-            this.col_ttlqty.Visible = this.IsAutomation;
-            col_btnAdd2.Visible = this.IsAutomation;
             col_btnAdd2.DataPropertyName = "btnAdd2";
             col_btnAdd2.Width = 30;
             this.Change_record();
@@ -900,7 +896,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             DataRow pre_row = this.detailgrid.GetDataRow(this.detailgridbs.Position);
 
             // 要主料才能使用+-按鈕功能
-            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2" && this.IsAutomation)
+            if (this.detailgrid.Columns[e.ColumnIndex].Name == "btnAdd2")
             {
                 DataGridViewButtonCell pre_dgbtn = (DataGridViewButtonCell)this.detailgrid.Rows[e.RowIndex].Cells["btnAdd2"];
                 DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
@@ -944,6 +940,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                     newrow["CombineBarcode"] = pre_ComBarcode;
                     DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
                     next_dgbtn.Value = "-";
+                    this.Change_record();
                 }
                 else if (pre_dgbtn.Value.ToString() == "-")
                 {
@@ -1210,45 +1207,43 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新BarCode  Ftyinventory
-            if (this.IsAutomation)
+
+            List<string> barcodeList = new List<string>();
+            DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
+
+            // distinct CombineBarcode,並排除CombineBarcode = null
+            DataRow[] distCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
+            DataRow[] count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
+            if (distCnt1.Length + count2.Length > 0)
             {
-                List<string> barcodeList = new List<string>();
-                DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
+                barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", distCnt1.Length + count2.Length);
+                int cnt = 0;
 
-                // distinct CombineBarcode,並排除CombineBarcode = null
-                DataRow[] distCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
-                DataRow[] count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
-                if (distCnt1.Length + count2.Length > 0)
+                // 排序CombineBarcode, 將所有未展開主料置頂
+                ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
+                foreach (DataRow drDis in this.DetailDatas)
                 {
-                    barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", distCnt1.Length + count2.Length);
-                    int cnt = 0;
-
-                    // 排序CombineBarcode, 將所有未展開主料置頂
-                    ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
-                    foreach (DataRow drDis in this.DetailDatas)
+                    if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
                     {
-                        if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
+                        // 代表尚未展開的主料,直接給barcodeNo
+                        if (MyUtility.Check.Empty(drDis["CombineBarcode"]))
                         {
-                            // 代表尚未展開的主料,直接給barcodeNo
-                            if (MyUtility.Check.Empty(drDis["CombineBarcode"]))
+                            drDis["Barcode"] = barcodeList[cnt];
+                            cnt++;
+                        }
+                        else
+                        {
+                            if (MyUtility.Check.Empty(drDis["Barcode"]))
                             {
-                                drDis["Barcode"] = barcodeList[cnt];
-                                cnt++;
-                            }
-                            else
-                            {
-                                if (MyUtility.Check.Empty(drDis["Barcode"]))
+                                foreach (var item in this.DetailDatas)
                                 {
-                                    foreach (var item in this.DetailDatas)
+                                    if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
                                     {
-                                        if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
-                                        {
-                                            item["Barcode"] = barcodeList[cnt];
-                                        }
+                                        item["Barcode"] = barcodeList[cnt];
                                     }
-
-                                    cnt++;
                                 }
+
+                                cnt++;
                             }
                         }
                     }
@@ -1333,7 +1328,7 @@ when matched then
                     }
 
                     // 更新FtyInventory Barcode
-                    if (this.IsAutomation && data_Fty_Barcode.Count >= 1)
+                    if (data_Fty_Barcode.Count >= 1)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
@@ -1940,12 +1935,60 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
+
+            if (this.EditMode == false || this.DetailDatas == null || this.DetailDatas.Count <= 0)
+            {
+                return;
+            }
+
             this.CurrentDetailData["MDivisionID"] = Env.User.Keyword;
             this.CurrentDetailData["Stocktype"] = 'B';
 
-            // GridView button顯示+
-            DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
-            next_dgbtn.Value = "+";
+            // 新增後確認前一筆有資料才做下個動作
+            DataRow pre_row = this.detailgrid.GetDataRow(this.detailgridbs.Position + 1);
+            if (pre_row != null)
+            {
+                DataGridViewButtonCell pre_dgbtn = (DataGridViewButtonCell)this.detailgrid.Rows[this.detailgridbs.Position + 1].Cells["btnAdd2"];
+                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+                if (dtDetail == null || dtDetail.Rows.Count <= 0)
+                {
+                    return;
+                }
+
+                string maxCombBarcode = dtDetail.Compute("Max(CombineBarcode)", string.Empty).ToString();
+
+                if (pre_dgbtn.Value.ToString() == "-")
+                {
+                    // 取得CombineBarcode
+                    string pre_ComBarcode = pre_row["CombineBarcode"].ToString();
+                    if (MyUtility.Check.Empty(maxCombBarcode))
+                    {
+                        pre_ComBarcode = "1";
+                    }
+                    else
+                    {
+                        if (MyUtility.Check.Empty(pre_ComBarcode))
+                        {
+                            // New Max Value
+                            pre_ComBarcode = Prgs.GetNextValue(maxCombBarcode, 1);
+                        }
+                    }
+
+                    pre_row["CombineBarcode"] = pre_ComBarcode;
+                    pre_row.EndEdit();
+                    DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.CurrentRow.Cells["btnAdd2"].RowIndex);
+                    newrow["Dyelot"] = pre_row["Dyelot"];
+                    newrow["Roll"] = pre_row["Roll"];
+                    newrow["Unoriginal"] = 1;
+                    newrow["MDivisionID"] = Env.User.Keyword;
+                    newrow["Stocktype"] = 'B';
+                    newrow["CombineBarcode"] = pre_ComBarcode;
+                    DataGridViewButtonCell next_dgbtn = (DataGridViewButtonCell)this.detailgrid.CurrentRow.Cells["btnAdd2"];
+                    next_dgbtn.Value = "-";
+                }
+            }
+
+            this.Change_record();
         }
 
         private void BtnModifyRollDyelot_Click(object sender, EventArgs e)
@@ -1968,6 +2011,7 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             var frm = new P07_ModifyRollDyelot(dt, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
+            this.Change_record();
         }
 
         private void BtnUpdateWeight_Click(object sender, EventArgs e)

@@ -27,7 +27,7 @@ namespace SNPAutoTransferToSewingOutput.Daily
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
-        bool isTestJobLog = false;
+        bool isTestJobLog = true;
         string tpeMisMail = string.Empty;
 
         public Main()
@@ -51,7 +51,7 @@ namespace SNPAutoTransferToSewingOutput.Daily
 
             OnRequery();
 
-            transferPMS.fromSystem = "Production";
+            transferPMS.FromSystem = "Production";
 
             if (isAuto)
             {
@@ -68,7 +68,18 @@ namespace SNPAutoTransferToSewingOutput.Daily
 
             DualResult result = DBProxy.Current.Select("Production", sqlCmd, out _mailTo);
 
-            if (!result) { ShowErr(result); return; }
+            if (!result)
+            {
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
+            }
 
             mailTo = _mailTo.Rows[0];
 
@@ -90,35 +101,42 @@ namespace SNPAutoTransferToSewingOutput.Daily
         #region Send Mail [SNPAutoTransferToSewingOutput] 的mail在Stored procedure內
         private void SendMail(String subject = "", String desc = "", bool isFail = true)
         {
-            String mailServer = this.CurrentData["MailServer"].ToString();
-            String eMailID = this.CurrentData["EMailID"].ToString();
-            String eMailPwd = this.CurrentData["EMailPwd"].ToString();
-            transferPMS.SetSMTP(mailServer, 25, eMailID, eMailPwd);
+            //String mailServer = this.CurrentData["MailServer"].ToString();
+            //String eMailID = this.CurrentData["EMailID"].ToString();
+            //String eMailPwd = this.CurrentData["EMailPwd"].ToString();
+            //transferPMS.SetSMTP(mailServer, 25, eMailID, eMailPwd);
 
-            String sendFrom = this.CurrentData["SendFrom"].ToString();
-            String toAddress = "pmshelp@sportscity.com.tw";
-            String ccAddress = "roger.lo@sportscity.com.vn";
+            //String sendFrom = this.CurrentData["SendFrom"].ToString();
+            //String toAddress = "pmshelp@sportscity.com.tw";
+            //String ccAddress = "roger.lo@sportscity.com.vn";
 
-            if (isFail)
-            {
-                toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
-            }
+            //if (isFail)
+            //{
+            //    toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
+            //}
 
-            if (String.IsNullOrEmpty(subject))
-            {
-                subject = mailTo["Subject"].ToString();
-            }
-            if (String.IsNullOrEmpty(desc))
-            {
-                desc = mailTo["Content"].ToString();
-            }
+            //if (String.IsNullOrEmpty(subject))
+            //{
+            //    subject = mailTo["Subject"].ToString();
+            //}
+            //if (String.IsNullOrEmpty(desc))
+            //{
+            //    desc = mailTo["Content"].ToString();
+            //}
 
-            if (!MyUtility.Check.Empty(toAddress))
-            {
-                Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
-
-                mail.ShowDialog();
-            }
+            //Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
+            //DualResult mailResult = mail.Send();
+            //if (!mailResult)
+            //{
+            //    if (this.isAuto)
+            //    {
+            //        throw mailResult.GetException();
+            //    }
+            //    else
+            //    {
+            //        this.ShowErr(mailResult);
+            //    }
+            //}
         }
         #endregion
 
@@ -128,19 +146,35 @@ namespace SNPAutoTransferToSewingOutput.Daily
             SqlConnection conn;
 
             if (!Sci.SQL.GetConnection(out conn)) { return; }
-
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
-            DualResult result = AsyncHelper.Current.DataProcess(this, () =>
+            DualResult result;
+
+            if (isAuto)
             {
-                return AsyncUpdateExport(conn);
-            });
+                result = AsyncUpdateExport(conn);
+            }
+            else
+            {
+                result = AsyncHelper.Current.DataProcess(this, () =>
+                {
+                    return AsyncUpdateExport(conn);
+                });
+            }
 
             mymailTo(result.ToSimpleString());
 
             if (!result)
             {
-                ShowErr(result);
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
             }
 
             conn.Close();
@@ -170,6 +204,7 @@ Please do not reply this mail.
             #endregion
 
             subject = "Daily Hanger system data to PMS - Sewing Output & RFT";
+            if (!isAuto) subject = "<<手動執行>> " + subject;
             if (issucess)
             {
                 subject += " Success";

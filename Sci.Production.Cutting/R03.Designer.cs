@@ -29,6 +29,16 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.lbEarliestSewingInline = new Sci.Win.UI.Label();
+            this.lbEarliestSCIDelivery = new Sci.Win.UI.Label();
+            this.lbEarliestBuyerDelivery = new Sci.Win.UI.Label();
+            this.lbStyle = new Sci.Win.UI.Label();
+            this.lbSewingInline = new Sci.Win.UI.Label();
+            this.lbSCIDelivery = new Sci.Win.UI.Label();
+            this.lbBuyerDelivery = new Sci.Win.UI.Label();
+            this.lbCuttingSP = new Sci.Win.UI.Label();
+            this.lbActCuttingDate = new Sci.Win.UI.Label();
+            this.lbEstCutDate = new Sci.Win.UI.Label();
             this.dateActCuttingDate = new Sci.Win.UI.DateRange();
             this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
@@ -46,16 +56,6 @@
             this.dateEarliestSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
             this.label7 = new Sci.Win.UI.Label();
-            this.lbEstCutDate = new Sci.Win.UI.Label();
-            this.lbActCuttingDate = new Sci.Win.UI.Label();
-            this.lbCuttingSP = new Sci.Win.UI.Label();
-            this.lbBuyerDelivery = new Sci.Win.UI.Label();
-            this.lbSCIDelivery = new Sci.Win.UI.Label();
-            this.lbSewingInline = new Sci.Win.UI.Label();
-            this.lbStyle = new Sci.Win.UI.Label();
-            this.lbEarliestBuyerDelivery = new Sci.Win.UI.Label();
-            this.lbEarliestSCIDelivery = new Sci.Win.UI.Label();
-            this.lbEarliestSewingInline = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -106,6 +106,106 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(472, 381);
             this.panel1.TabIndex = 0;
+            // 
+            // lbEarliestSewingInline
+            // 
+            this.lbEarliestSewingInline.Location = new System.Drawing.Point(16, 337);
+            this.lbEarliestSewingInline.Name = "lbEarliestSewingInline";
+            this.lbEarliestSewingInline.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEarliestSewingInline.Size = new System.Drawing.Size(147, 23);
+            this.lbEarliestSewingInline.TabIndex = 138;
+            this.lbEarliestSewingInline.Text = "Earliest Sewing Inline";
+            this.lbEarliestSewingInline.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbEarliestSCIDelivery
+            // 
+            this.lbEarliestSCIDelivery.Location = new System.Drawing.Point(16, 308);
+            this.lbEarliestSCIDelivery.Name = "lbEarliestSCIDelivery";
+            this.lbEarliestSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEarliestSCIDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbEarliestSCIDelivery.TabIndex = 137;
+            this.lbEarliestSCIDelivery.Text = "Earliest SCI Delivery";
+            this.lbEarliestSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbEarliestBuyerDelivery
+            // 
+            this.lbEarliestBuyerDelivery.Location = new System.Drawing.Point(16, 279);
+            this.lbEarliestBuyerDelivery.Name = "lbEarliestBuyerDelivery";
+            this.lbEarliestBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEarliestBuyerDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbEarliestBuyerDelivery.TabIndex = 136;
+            this.lbEarliestBuyerDelivery.Text = "Earliest Buyer Delivery ";
+            this.lbEarliestBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbStyle
+            // 
+            this.lbStyle.Location = new System.Drawing.Point(16, 250);
+            this.lbStyle.Name = "lbStyle";
+            this.lbStyle.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbStyle.Size = new System.Drawing.Size(147, 23);
+            this.lbStyle.TabIndex = 135;
+            this.lbStyle.Text = "Style";
+            this.lbStyle.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbSewingInline
+            // 
+            this.lbSewingInline.Location = new System.Drawing.Point(16, 221);
+            this.lbSewingInline.Name = "lbSewingInline";
+            this.lbSewingInline.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSewingInline.Size = new System.Drawing.Size(147, 23);
+            this.lbSewingInline.TabIndex = 134;
+            this.lbSewingInline.Text = "Sewing Inline";
+            this.lbSewingInline.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbSCIDelivery
+            // 
+            this.lbSCIDelivery.Location = new System.Drawing.Point(16, 192);
+            this.lbSCIDelivery.Name = "lbSCIDelivery";
+            this.lbSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbSCIDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbSCIDelivery.TabIndex = 133;
+            this.lbSCIDelivery.Text = "SCI Delivery";
+            this.lbSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbBuyerDelivery
+            // 
+            this.lbBuyerDelivery.Location = new System.Drawing.Point(16, 163);
+            this.lbBuyerDelivery.Name = "lbBuyerDelivery";
+            this.lbBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbBuyerDelivery.Size = new System.Drawing.Size(147, 23);
+            this.lbBuyerDelivery.TabIndex = 132;
+            this.lbBuyerDelivery.Text = "Buyer Delivery";
+            this.lbBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbCuttingSP
+            // 
+            this.lbCuttingSP.Location = new System.Drawing.Point(16, 134);
+            this.lbCuttingSP.Name = "lbCuttingSP";
+            this.lbCuttingSP.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbCuttingSP.Size = new System.Drawing.Size(147, 23);
+            this.lbCuttingSP.TabIndex = 131;
+            this.lbCuttingSP.Text = "Cutting SP#";
+            this.lbCuttingSP.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbActCuttingDate
+            // 
+            this.lbActCuttingDate.Location = new System.Drawing.Point(16, 105);
+            this.lbActCuttingDate.Name = "lbActCuttingDate";
+            this.lbActCuttingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbActCuttingDate.Size = new System.Drawing.Size(147, 23);
+            this.lbActCuttingDate.TabIndex = 130;
+            this.lbActCuttingDate.Text = "Act. Cutting Date";
+            this.lbActCuttingDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // lbEstCutDate
+            // 
+            this.lbEstCutDate.Location = new System.Drawing.Point(16, 76);
+            this.lbEstCutDate.Name = "lbEstCutDate";
+            this.lbEstCutDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbEstCutDate.Size = new System.Drawing.Size(147, 23);
+            this.lbEstCutDate.TabIndex = 129;
+            this.lbEstCutDate.Text = "Est. Cut Date";
+            this.lbEstCutDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // dateActCuttingDate
             // 
@@ -376,106 +476,6 @@
             this.label7.TabIndex = 97;
             this.label7.Text = "Paper Size A4";
             // 
-            // lbEstCutDate
-            // 
-            this.lbEstCutDate.Location = new System.Drawing.Point(16, 76);
-            this.lbEstCutDate.Name = "lbEstCutDate";
-            this.lbEstCutDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbEstCutDate.Size = new System.Drawing.Size(147, 23);
-            this.lbEstCutDate.TabIndex = 129;
-            this.lbEstCutDate.Text = "Est. Cut Date";
-            this.lbEstCutDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbActCuttingDate
-            // 
-            this.lbActCuttingDate.Location = new System.Drawing.Point(16, 105);
-            this.lbActCuttingDate.Name = "lbActCuttingDate";
-            this.lbActCuttingDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbActCuttingDate.Size = new System.Drawing.Size(147, 23);
-            this.lbActCuttingDate.TabIndex = 130;
-            this.lbActCuttingDate.Text = "Act. Cutting Date";
-            this.lbActCuttingDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbCuttingSP
-            // 
-            this.lbCuttingSP.Location = new System.Drawing.Point(16, 134);
-            this.lbCuttingSP.Name = "lbCuttingSP";
-            this.lbCuttingSP.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbCuttingSP.Size = new System.Drawing.Size(147, 23);
-            this.lbCuttingSP.TabIndex = 131;
-            this.lbCuttingSP.Text = "Cutting SP#";
-            this.lbCuttingSP.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbBuyerDelivery
-            // 
-            this.lbBuyerDelivery.Location = new System.Drawing.Point(16, 163);
-            this.lbBuyerDelivery.Name = "lbBuyerDelivery";
-            this.lbBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbBuyerDelivery.Size = new System.Drawing.Size(147, 23);
-            this.lbBuyerDelivery.TabIndex = 132;
-            this.lbBuyerDelivery.Text = "Buyer Delivery";
-            this.lbBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbSCIDelivery
-            // 
-            this.lbSCIDelivery.Location = new System.Drawing.Point(16, 192);
-            this.lbSCIDelivery.Name = "lbSCIDelivery";
-            this.lbSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbSCIDelivery.Size = new System.Drawing.Size(147, 23);
-            this.lbSCIDelivery.TabIndex = 133;
-            this.lbSCIDelivery.Text = "SCI Delivery";
-            this.lbSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbSewingInline
-            // 
-            this.lbSewingInline.Location = new System.Drawing.Point(16, 221);
-            this.lbSewingInline.Name = "lbSewingInline";
-            this.lbSewingInline.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbSewingInline.Size = new System.Drawing.Size(147, 23);
-            this.lbSewingInline.TabIndex = 134;
-            this.lbSewingInline.Text = "Sewing Inline";
-            this.lbSewingInline.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbStyle
-            // 
-            this.lbStyle.Location = new System.Drawing.Point(16, 250);
-            this.lbStyle.Name = "lbStyle";
-            this.lbStyle.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbStyle.Size = new System.Drawing.Size(147, 23);
-            this.lbStyle.TabIndex = 135;
-            this.lbStyle.Text = "Style";
-            this.lbStyle.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbEarliestBuyerDelivery
-            // 
-            this.lbEarliestBuyerDelivery.Location = new System.Drawing.Point(16, 279);
-            this.lbEarliestBuyerDelivery.Name = "lbEarliestBuyerDelivery";
-            this.lbEarliestBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbEarliestBuyerDelivery.Size = new System.Drawing.Size(147, 23);
-            this.lbEarliestBuyerDelivery.TabIndex = 136;
-            this.lbEarliestBuyerDelivery.Text = "Earliest Buyer Delivery ";
-            this.lbEarliestBuyerDelivery.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbEarliestSCIDelivery
-            // 
-            this.lbEarliestSCIDelivery.Location = new System.Drawing.Point(16, 308);
-            this.lbEarliestSCIDelivery.Name = "lbEarliestSCIDelivery";
-            this.lbEarliestSCIDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbEarliestSCIDelivery.Size = new System.Drawing.Size(147, 23);
-            this.lbEarliestSCIDelivery.TabIndex = 137;
-            this.lbEarliestSCIDelivery.Text = "Earliest SCI Delivery";
-            this.lbEarliestSCIDelivery.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbEarliestSewingInline
-            // 
-            this.lbEarliestSewingInline.Location = new System.Drawing.Point(16, 337);
-            this.lbEarliestSewingInline.Name = "lbEarliestSewingInline";
-            this.lbEarliestSewingInline.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.lbEarliestSewingInline.Size = new System.Drawing.Size(147, 23);
-            this.lbEarliestSewingInline.TabIndex = 138;
-            this.lbEarliestSewingInline.Text = "Earliest Sewing Inline";
-            this.lbEarliestSewingInline.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(611, 445);
@@ -487,6 +487,7 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03.Cutting Schedule List    ";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.R03_FormClosed);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);

@@ -200,7 +200,7 @@ namespace Sci.Production.Quality
 
             this.Helper.Controls.Grid.Generator(this.gridShrinkage)
             .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("Type", header: "Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("Type", header: "Type", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: beforeWash)
             .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2)
             .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2, settings: afterWash1Cell)
@@ -1013,18 +1013,18 @@ and st.Article = '{this.MasterRow["Article"]}'
       ,[Location]=case when Location='T' then 'TOP'
                                when Location='I' then 'INNER'
                                when Location='O' then 'OUTER'
-                               when Location='B' then 'BOTTOM' end
-       --排序專用
-      ,[LocationOrder]=case when Location='T' then 1
-                               when Location='I' then 2
-                               when Location='O' then 3
-                               when Location='B' then 4 end
+                               when Location='B' then 'BOTTOM' end     
       ,[Type]      ,[BeforeWash]      ,[SizeSpec]      ,[AfterWash1]      
       ,[Shrinkage1] = convert(numeric(11,2), round( (AfterWash1 - BeforeWash) / BeforeWash*100,2))    
 	  ,[AfterWash2]      
 	  ,[Shrinkage2] = convert(numeric(11,2), round( (AfterWash2 - BeforeWash) / BeforeWash*100,2))
 	  ,[AfterWash3]      
 	  ,[Shrinkage3] = convert(numeric(11,2), round( (AfterWash3 - BeforeWash) / BeforeWash*100,2))
+        --排序專用
+      ,[LocationOrder]=case when Location='T' then 1
+                               when Location='I' then 2
+                               when Location='O' then 3
+                               when Location='B' then 4 end
 from[SampleGarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}
 order by LocationOrder ,seq";
 
@@ -3504,8 +3504,8 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 TxtFibreComposition = this.txtFibreComposition.Text,
                 ComboNeck = this.comboNeck.Text,
                 NumTwisTingBottom = this.numTwisTingBottom.Text,
-                NumBottomS1 = this.numTwisTingBottom.Value,
-                NumBottomL = this.numTwisTingBottom.Value,
+                NumBottomS1 = this.numBottomS1.Value,
+                NumBottomL = this.numBottomL.Value,
                 NumTwisTingOuter = this.numTwisTingOuter.Text,
                 NumOuterS1 = this.numOuterS1.Value,
                 NumOuterS2 = this.numOuterS2.Value,
@@ -3513,7 +3513,7 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 NumTwisTingInner = this.numTwisTingInner.Text,
                 NumInnerS1 = this.numInnerS1.Value,
                 NumInnerS2 = this.numInnerS2.Value,
-                NumInnerL = this.numTwisTingBottom.Value,
+                NumInnerL = this.numInnerL.Value,
                 NumTwisTingTop = this.numTwisTingTop.Text,
                 NumTopS1 = this.numTopS1.Value,
                 NumTopS2 = this.numTopS2.Value,

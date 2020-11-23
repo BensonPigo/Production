@@ -291,7 +291,7 @@ drop table #tmp,#tmp2
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.CustomColumnDt != null)
             {
-                int col = this.radioSummary.Checked ? 21 : this.radioDetail_DefectType.Checked ? 22 : 24;
+                int col = this.radioSummary.Checked ? 22 : this.radioDetail_DefectType.Checked ? 23 : 25;
                 foreach (DataRow dr in this.CustomColumnDt.Rows)
                 {
                     worksheet.Cells[1, col] = dr["DisplayName"];
