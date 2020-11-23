@@ -177,7 +177,7 @@ outer apply
 	),1,1,'')
 ) as nbs
 where a.id = '{masterID}' 
-order by bundlegroup";
+order by bundlegroup,bundleno";
             this.DetailSelectCommand = cmdsql;
             #endregion
 
