@@ -345,6 +345,12 @@
     <Compile Include="Shipping_B07.Designer.cs">
       <DependentUpon>Shipping_B07.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shipping_B08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Shipping_B08.Designer.cs">
+      <DependentUpon>Shipping_B08.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubCon_B02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -474,6 +480,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Shipping_B07.resx">
       <DependentUpon>Shipping_B07.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shipping_B08.resx">
+      <DependentUpon>Shipping_B08.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubCon_B02.resx">
       <DependentUpon>SubCon_B02.cs</DependentUpon>

@@ -138,8 +138,11 @@ select distinct
         seq2		= a.seq2,
         Refno		= p.Refno,
         Receive.ETA,
-        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' 
+							WHEN p.FabricType = 'O' then 'Orher'
+							else p.FabricType 
+						end) + '-' + Fabric.MtlTypeID,
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
@@ -163,6 +166,7 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category
@@ -251,8 +255,11 @@ select distinct
         seq2		= a.seq2,
         Refno		= p.Refno,
         Receive.ETA,
-        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' 
+							WHEN p.FabricType = 'O' then 'Orher'
+							else p.FabricType 
+						end) + '-' + Fabric.MtlTypeID,
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
@@ -276,6 +283,7 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category
@@ -367,8 +375,11 @@ select distinct
         seq2		= a.seq2,
         Refno		= p.Refno,
         Receive.ETA,
-        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' 
+							WHEN p.FabricType = 'O' then 'Orher'
+							else p.FabricType 
+						end) + '-' + Fabric.MtlTypeID,
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
@@ -391,6 +402,7 @@ select distinct
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
 inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
@@ -495,8 +507,11 @@ select distinct
         seq2		= a.seq2,
         Refno		= p.Refno,
         Receive.ETA,
-        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' 
+							WHEN p.FabricType = 'O' then 'Orher'
+							else p.FabricType 
+						end) + '-' + Fabric.MtlTypeID,
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
@@ -519,6 +534,7 @@ select distinct
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
 inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
