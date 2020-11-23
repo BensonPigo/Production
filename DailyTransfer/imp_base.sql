@@ -3847,11 +3847,11 @@ update t SET
       ,t.EditDate = s.EditDate
       ,t.EditName = s.EditName
 from Trade_To_Pms.dbo.PortByBrandShipmode  s
-inner join Production.dbo.PortByBrandShipmode t on t.PortID = S.PortID and t.BrandID = S.BrandID
+inner join Production.dbo.PortByBrandShipmode t on t.PulloutPortID = S.PulloutPortID and t.BrandID = S.BrandID
 
 
 INSERT INTO Production.dbo.PortByBrandShipmode
-           (PortID
+           (PulloutPortID
            ,BrandID
            ,Remark
            ,Junk
@@ -3859,7 +3859,7 @@ INSERT INTO Production.dbo.PortByBrandShipmode
            ,AddName
            ,EditDate
            ,EditName)
-SELECT PortID
+SELECT PulloutPortID
       ,BrandID
       ,Remark
       ,Junk
@@ -3871,7 +3871,7 @@ FROM Trade_To_Pms.dbo.PortByBrandShipmode  s
 WHERE NOT EXISTS(
 	SELECT 1
 	FROM Production.dbo.PortByBrandShipmode t
-	WHERE t.PortID = S.PortID and t.BrandID = S.BrandID
+	WHERE t.PulloutPortID = S.PulloutPortID and t.BrandID = S.BrandID
 )
 
 DELETE s
@@ -3879,8 +3879,64 @@ from Production.dbo.PortByBrandShipmode s
 WHERE NOT EXISTS(
 	SELECT 1
 	FROM Trade_To_Pms.dbo.PortByBrandShipmode t
-	WHERE t.PortID = S.PortID and t.BrandID = S.BrandID
+	WHERE t.PulloutPortID = S.PulloutPortID and t.BrandID = S.BrandID
 )
+
+-- ¥þÂà¤JPulloutPort
+UPDATE t
+SET  
+t.Name =			   s.Name,
+t.InternationalCode =  s.InternationalCode,
+t.CountryID =		   s.CountryID,
+t.AirPort =			   s.AirPort,
+t.SeaPort =			   s.SeaPort,
+t.Remark =			   s.Remark,
+t.AddName =			   s.AddName,
+t.AddDate =			   s.AddDate,
+t.EditName =		   s.EditName,
+t.EditDate =		   s.EditDate,
+t.Junk =			   s.Junk
+FROM Production.dbo.PulloutPort t
+INNER JOIN Trade_To_Pms.dbo.PulloutPort as s 
+ON t.id	=s.id
+
+
+INSERT INTO Production.dbo.PulloutPort(
+	   [ID]
+      ,[Name]
+      ,[InternationalCode]
+      ,[CountryID]
+      ,[AirPort]
+      ,[SeaPort]
+      ,[Remark]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[Junk])
+SELECT [ID]
+      ,[Name]
+      ,[InternationalCode]
+      ,[CountryID]
+      ,[AirPort]
+      ,[SeaPort]
+      ,[Remark]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[Junk]
+FROM Trade_To_Pms.dbo.PulloutPort b
+WHERE NOT EXISTS(
+	SELECT  1
+	FROM Production.dbo.PulloutPort a WITH (NOLOCK)
+	WHERE a.id=b.id
+)
+
+DELETE Production.dbo.PulloutPort
+FROM Production.dbo.PulloutPort a
+LEFT JOIN Trade_To_Pms.dbo.PulloutPort b ON a.id=b.id 
+WHERE b.id is null
 
 
 END
