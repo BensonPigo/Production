@@ -61,7 +61,8 @@ namespace Sci.Production.Cutting
                 }
 
                 dr["cutOutput"] = e.FormattedValue;
-                dr["RealbalanceQty"] = MyUtility.Convert.GetInt(dr["RealCutOutput"]) - MyUtility.Convert.GetInt(dr["CreatedBundleQty"]) - MyUtility.Convert.GetInt(dr["OtherSelQty"]) - MyUtility.Convert.GetInt(dr["cutOutput"]);
+                int realbalanceQty = MyUtility.Convert.GetInt(dr["RealCutOutput"]) - MyUtility.Convert.GetInt(dr["CreatedBundleQty"]) - MyUtility.Convert.GetInt(dr["OtherSelQty"]) - MyUtility.Convert.GetInt(dr["cutOutput"]);
+                dr["RealbalanceQty"] = realbalanceQty < 0 ? 0 : realbalanceQty;
                 dr.EndEdit();
             };
             this.grid1.IsEditingReadOnly = false;

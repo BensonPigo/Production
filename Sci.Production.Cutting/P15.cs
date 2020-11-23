@@ -686,22 +686,23 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 int selQty = sel.Where(w => w.Pkey == (long)row["Pkey"]).Select(s => s.Qty).FirstOrDefault();
                 if (!MyUtility.Convert.GetBool(row["sel"]))
                 {
-                    row["cutoutput"] = MyUtility.Convert.GetInt(row["RealCutOutput"]) - selQty;
+                    row["cutoutput"] = MyUtility.Convert.GetInt(row["cutoutput"]) - selQty;
                 }
                 else
                 {
-                    row["cutoutput"] = seleAS.Where(w => (long)w["Pkey"] == (long)row["Pkey"])
+                    row["cutoutput"] = seleAS.Where(w => MyUtility.Convert.GetLong(w["Pkey"]) == (long)row["Pkey"])
                         .Select(s => MyUtility.Convert.GetInt(s["cutoutput"])).FirstOrDefault();
                 }
 
-                if (MyUtility.Check.Empty(row["cutoutput"]))
+                if (row["cutoutput"] == DBNull.Value)
                 {
                     row.Delete();
                 }
                 else
                 {
                     row["otherSelQty"] = otherSel.Where(w => w.Pkey == (long)row["Pkey"]).Select(s => s.Qty).FirstOrDefault();
-                    row["RealbalanceQty"] = MyUtility.Convert.GetInt(row["RealCutOutput"]) - MyUtility.Convert.GetInt(row["CreatedBundleQty"]) - MyUtility.Convert.GetInt(row["OtherSelQty"]) - MyUtility.Convert.GetInt(row["cutOutput"]);
+                    int realbalanceQty = MyUtility.Convert.GetInt(row["RealCutOutput"]) - MyUtility.Convert.GetInt(row["CreatedBundleQty"]) - MyUtility.Convert.GetInt(row["OtherSelQty"]) - MyUtility.Convert.GetInt(row["cutOutput"]);
+                    row["RealbalanceQty"] = realbalanceQty < 0 ? 0 : realbalanceQty;
                 }
             }
 
@@ -788,7 +789,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
 
         private bool BeforeQuery()
         {
-            if (!MyUtility.Check.Empty(this.txtCutRef.Text) && !MyUtility.Check.Empty(this.dateEstCutDate.Value) && !MyUtility.Check.Empty(this.txtPOID.Text))
+            if (MyUtility.Check.Empty(this.txtCutRef.Text) && MyUtility.Check.Empty(this.dateEstCutDate.Value) && MyUtility.Check.Empty(this.txtPOID.Text))
             {
                 MyUtility.Msg.WarningBox("[CutRef#] or [Est. Cut Date] or [PO ID] can’t be empty!!");
                 return false;
@@ -803,56 +804,56 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             string cutdate = this.dateEstCutDate.Value == null ? string.Empty : this.dateEstCutDate.Value.Value.ToShortDateString();
             string poid = this.txtPOID.Text;
             string factory = this.txtfactoryByM.Text;
-            string where = MyUtility.Check.Empty(cutref) ? string.Empty : Environment.NewLine + $"and a.cutref='{cutref}'";
-            where += MyUtility.Check.Empty(cutdate) ? string.Empty : Environment.NewLine + $"and a.estcutdate='{cutdate}'";
-            where += MyUtility.Check.Empty(poid) ? string.Empty : Environment.NewLine + $"and ord.poid='{poid}'";
-            where += MyUtility.Check.Empty(factory) ? string.Empty : Environment.NewLine + $"and ord.FtyGroup='{factory}'";
-            string distru_where = this.chkAEQ.Checked ? string.Empty : " and b.orderid <>'EXCESS'";
+            string where = MyUtility.Check.Empty(cutref) ? string.Empty : Environment.NewLine + $"and w.cutref='{cutref}'";
+            where += MyUtility.Check.Empty(cutdate) ? string.Empty : Environment.NewLine + $"and w.estcutdate='{cutdate}'";
+            where += MyUtility.Check.Empty(poid) ? string.Empty : Environment.NewLine + $"and o.poid='{poid}'";
+            where += MyUtility.Check.Empty(factory) ? string.Empty : Environment.NewLine + $"and o.FtyGroup='{factory}'";
+            string distru_where = this.chkAEQ.Checked ? string.Empty : " and wd.orderid <>'EXCESS'";
             this.gridArticleSize.Columns["isEXCESS"].Visible = this.chkAEQ.Checked;
 
             // 左上
             string query_cmd = $@"
 Select
 	 sel = cast(0 as bit)
-	, a.cutref
-	, ord.poid
-	, a.estcutdate
-	, a.Fabriccombo
-	, a.FabricPanelCode
-	, a.cutno
+	, w.cutref
+	, o.poid
+	, w.estcutdate
+	, w.Fabriccombo
+	, w.FabricPanelCode
+	, w.cutno
 	, item.item
-	, a.SpreadingNoID
-	, a.colorid
-	, a.Ukey
+	, w.SpreadingNoID
+	, w.colorid
+	, w.Ukey
 	, FabricKind.FabricKind
-	, TTLCutQty = (select SUM(qty) from WorkOrder_Distribute b with(nolock) where b.WorkOrderUkey = a.Ukey {distru_where})
-	, CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle b with(nolock) inner join bundle_detail_Qty bdq on bdq.id = b.id where b.cutref = a.cutref), 0)
-    , ord.StyleUkey
-	, a.MDivisionId
-from  workorder a WITH (NOLOCK) 
-inner join orders ord WITH (NOLOCK) on ord.ID = a.id and ord.cuttingsp = a.id
+	, TTLCutQty = (select SUM(qty) from WorkOrder_Distribute wd with(nolock) where wd.WorkOrderUkey = w.Ukey {distru_where})
+	, CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle wd with(nolock) inner join bundle_detail_Qty bdq on bdq.id = wd.id where wd.cutref = w.cutref), 0)
+    , o.StyleUkey
+	, w.MDivisionId
+from  workorder w WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
 	Select item = Reason.Name 
 	from Reason WITH (NOLOCK)
 	inner join Style WITH (NOLOCK) on Style.ApparelType = Reason.id
 	where Reason.Reasontypeid = 'Style_Apparel_Type' 
-	and Style.ukey = ord.styleukey 
+	and Style.ukey = o.styleukey 
 )item
-outer apply (SELECT TOP 1 b.patternpanel FROM workorder_PatternPanel b WITH (NOLOCK) WHERE a.ukey = b.workorderukey)b
+outer apply (SELECT TOP 1 wd.patternpanel FROM workorder_PatternPanel wd WITH (NOLOCK) WHERE w.ukey = wd.workorderukey)wd
 outer apply(
     SELECT TOP 1 FabricKind = DD.id + '-' + DD.NAME 
     FROM order_colorcombo OCC WITH (NOLOCK)
 	inner join order_bof OB WITH (NOLOCK) on OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
 	inner join  dropdownlist DD WITH (NOLOCK) on  DD.id = OB.kind
-    WHERE OCC.id = a.id
-	and OCC.patternpanel = b.patternpanel
+    WHERE OCC.id = w.id
+	and OCC.patternpanel = wd.patternpanel
 	and DD.[type] = 'FabricKind'
 
 )FabricKind
-where ord.mDivisionid = '{this.keyWord}' 
-and isnull(a.CutRef,'') <> ''
+where o.mDivisionid = '{this.keyWord}' 
+and isnull(w.CutRef,'') <> ''
 {where}
-order by ord.poid,a.estcutdate,a.Fabriccombo,a.cutno
+order by o.poid,w.estcutdate,w.Fabriccombo,w.cutno
 ";
             DualResult query_dResult = DBProxy.Current.Select(null, query_cmd, out this.CutRefTb);
             if (!query_dResult)
@@ -871,45 +872,44 @@ order by ord.poid,a.estcutdate,a.Fabriccombo,a.cutno
             string distru_cmd = $@"
 Select
 	 sel = cast(0 as bit)
-	, a.Ukey
-	, No = DENSE_RANK() over (partition by a.ukey order by article.article,b.sizecode) -- 對應 GridQty 的欄位
+	, w.Ukey
+	, No = DENSE_RANK() over (partition by w.ukey order by article.article,wd.sizecode) -- 對應 GridQty 的欄位
 	, iden = 0
-	, Pkey = ROW_NUMBER() over (order by b.sizecode,b.orderid,a.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
-	, a.cutref
-	, orderid = iif(b.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), b.OrderID)
+	, Pkey = ROW_NUMBER() over (order by wd.sizecode,wd.orderid,w.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
+	, w.cutref
+	, orderid = iif(wd.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), wd.OrderID)
 	, article.article
 	, sizecode.sizecode
-	, isEXCESS = iif(b.OrderID = 'EXCESS','Y','')
-	, a.colorid
-	, a.Fabriccombo
-	, a.FabricPanelCode
+	, isEXCESS = iif(wd.OrderID = 'EXCESS','Y','')
+	, w.colorid
+	, w.Fabriccombo
+	, w.FabricPanelCode
 	, Ratio = ''
-	, a.cutno
-	, Sewingline = ord.SewLine
-	, SewingCell= a.CutCellid
+	, w.cutno
+	, Sewingline = o.SewLine
+	, SewingCell= w.CutCellid
 	, item.item
 	, Qty = 1
-	, cutoutput = isnull(b.Qty,0)
-	, RealCutOutput = isnull(b.Qty,0)
+	, RealCutOutput = isnull(wd.Qty,0)
 	, TotalParts = 0
-	, ord.poid
+	, o.poid
 	, startno = 0
-	, ord.StyleUkey
-	, a.MDivisionId
+	, o.StyleUkey
+	, w.MDivisionId
 into #tmp
-from workorder a WITH (NOLOCK) 
-inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
-inner join orders ord WITH (NOLOCK) on ord.ID = a.id and ord.cuttingsp = a.id
+from workorder w WITH (NOLOCK) 
+inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
 	from workorder_Distribute wd WITH(NOLOCK)
-	where wd.WorkOrderUkey = a.Ukey and wd.orderid <>'EXCESS' and wd.SizeCode = b.SizeCode 
+	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS' and wd.SizeCode = wd.SizeCode 
 	order by wd.OrderID desc
 )l
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
 	from workorder_Distribute wd WITH(NOLOCK)
-	where wd.WorkOrderUkey = a.Ukey and wd.orderid <>'EXCESS'
+	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS'
 	order by wd.OrderID desc
 )l2
 outer apply(
@@ -917,22 +917,22 @@ outer apply(
 	from Reason WITH (NOLOCK)
 	inner join Style WITH (NOLOCK) on Style.ApparelType = Reason.id
 	where Reason.Reasontypeid = 'Style_Apparel_Type' 
-	and Style.ukey = ord.styleukey 
+	and Style.ukey = o.styleukey 
 )item
-outer apply(select article = iif(b.OrderID = 'EXCESS',isnull(l.article,l2.article),b.article))article
-outer apply(select sizecode = iif(b.OrderID = 'EXCESS',isnull(l.sizecode,l2.sizecode),b.sizecode))sizecode
-Where isnull(a.CutRef,'') <> ''
-and ord.mDivisionid = '{this.keyWord}'
+outer apply(select article = iif(wd.OrderID = 'EXCESS',isnull(l.article,l2.article),wd.article))article
+outer apply(select sizecode = iif(wd.OrderID = 'EXCESS',isnull(l.sizecode,l2.sizecode),wd.sizecode))sizecode
+Where isnull(w.CutRef,'') <> ''
+and o.mDivisionid = '{this.keyWord}'
 {where}
 {distru_where}
-order by article.article,b.sizecode,b.orderid,a.FabricPanelCode
+order by article.article,wd.sizecode,wd.orderid,w.FabricPanelCode
 
-select bdo.qty,b.id,bdo.BundleNo,bd.Patterncode,bd.BundleGroup,b.CutRef,b.Article,b.Sizecode,bdo.OrderID
+select bdo.qty,wd.id,bdo.BundleNo,bd.Patterncode,bd.BundleGroup,wd.CutRef,wd.Article,wd.Sizecode,bdo.OrderID
 into #tmpx
-from Bundle b with(nolock)
-inner join Bundle_Detail bd with(nolock) on bd.Id = b.ID
+from Bundle wd with(nolock)
+inner join Bundle_Detail bd with(nolock) on bd.Id = wd.ID
 inner join Bundle_Detail_Order bdo on bdo.BundleNo = bd.BundleNo
-where exists(select 1 from #tmp t where b.cutref = t.CutRef and b.Article = t.article and b.Sizecode = t.sizecode and bdo.OrderID = t.orderid)
+where exists(select 1 from #tmp t where wd.cutref = t.CutRef and wd.Article = t.article and bd.Sizecode = t.sizecode and bdo.OrderID = t.orderid)
 
 select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
 into #bundleSPCreatedQty
@@ -955,9 +955,15 @@ from (
 )x
 group by CutRef,Article,Sizecode,OrderID
 
-select t.*,CreatedBundleQty = b.qty, RealbalanceQty = t.RealCutOutput - t.CutOutput - b.qty, OtherSelQty = 0
+select t.*,
+	cutoutput = pb.PositiveBalQty, -- 預設帶出剩下數量 = WorkOrder數量 - Bundle已建立數量
+	CreatedBundleQty = bd.qty,
+	RealbalanceQty = pb.PositiveBalQty,
+	OtherSelQty = 0
 from #tmp t
-left join #bundleSPCreatedQty b on t.CutRef = b.CutRef and t.article = b.Article and t.sizecode = b.Sizecode and t.orderid = b.OrderID
+left join #bundleSPCreatedQty bd on t.CutRef = bd.CutRef and t.article = bd.Article and t.sizecode = bd.Sizecode and t.orderid = bd.OrderID
+outer apply(select balQty = isnull(t.RealCutOutput, 0) - isnull(bd.qty, 0))bal
+outer apply(select PositiveBalQty = IIF(isnull(bal.balQty, 0) < 0, 0, isnull(bal.balQty, 0)))pb
 
 select distinct MDivisionId, StyleUkey, Fabriccombo, Article, cutref, POID, ukey into #msfa from #tmp
 
@@ -994,20 +1000,20 @@ outer apply(
 )p
 
 select
-    b.patternCode,b.PatternDesc,b.Parts,b.art,b.cutref,b.poid,b.ukey,b.ispair,b.Location,b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,
-    b.MDivisionId,b.StyleUkey,b.Fabriccombo,b.Article
-from #bundleinfo b
+    wd.patternCode,wd.PatternDesc,wd.Parts,wd.art,wd.cutref,wd.poid,wd.ukey,wd.ispair,wd.Location,wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
+    wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.Article
+from #bundleinfo wd
 union all
 select distinct
 	patternCode='ALLPARTS',
 	PatternDesc='All Parts',
-	Parts=0,art='',b.cutref,b.poid,b.ukey,b.ispair,
-	Location='',b.NoBundleCardAfterSubprocess_String,b.PostSewingSubProcess_String,
-    b.MDivisionId,b.StyleUkey,b.Fabriccombo,b.article
-from #bundleinfo b
+	Parts=0,art='',wd.cutref,wd.poid,wd.ukey,wd.ispair,
+	Location='',wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
+    wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.article
+from #bundleinfo wd
 where not exists(select 1 from #bundleinfo c
-    where c.MDivisionId = b.MDivisionId and c.StyleUkey = b.StyleUkey and c.Fabriccombo = b.Fabriccombo and c.article = b.article
-    and c.CutRef = b.CutRef and c.Patterncode = 'ALLPARTS')
+    where c.MDivisionId = wd.MDivisionId and c.StyleUkey = wd.StyleUkey and c.Fabriccombo = wd.Fabriccombo and c.article = wd.article
+    and c.CutRef = wd.CutRef and c.Patterncode = 'ALLPARTS')
 
 select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,
     m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article
@@ -1029,13 +1035,13 @@ drop table #tmp, #msfa
             this.faDt = rightUpDt[2];
 
             string sizeRatio = $@"
-Select distinct a.ukey, ws.SizeCode, ws.Qty
-from workorder a WITH (NOLOCK) 
-inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
-inner join orders ord WITH (NOLOCK) on  ord.ID = a.id and ord.cuttingsp = a.id
-inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = a.Ukey and ws.SizeCode = b.SizeCode
-Where isnull(a.CutRef,'') <> '' 
-and ord.mDivisionid = '{this.keyWord}'
+Select distinct w.ukey, ws.SizeCode, ws.Qty
+from workorder w WITH (NOLOCK) 
+inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+inner join orders o WITH (NOLOCK) on  o.ID = w.id and o.cuttingsp = w.id
+inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = w.Ukey and ws.SizeCode = wd.SizeCode
+Where isnull(w.CutRef,'') <> '' 
+and o.mDivisionid = '{this.keyWord}'
 {where}
 ";
             query_dResult = DBProxy.Current.Select(null, sizeRatio, out this.SizeRatioTb);
@@ -1120,13 +1126,13 @@ and ord.mDivisionid = '{this.keyWord}'
         private void ShowExcessDatas(string where)
         {
             string excess_cmd = $@"
-Select  distinct a.cutref, a.orderid
-from workorder a WITH (NOLOCK) 
-inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
-inner join orders ord WITH (NOLOCK) on ord.ID = a.id and ord.cuttingsp = a.id
-Where ord.mDivisionid = '{this.keyWord}'   
-and isnull(a.CutRef,'') <> '' 
-and b.orderid = 'EXCESS' 
+Select distinct w.cutref, w.orderid
+from workorder w WITH (NOLOCK) 
+inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
+Where o.mDivisionid = '{this.keyWord}'   
+and isnull(w.CutRef,'') <> '' 
+and wd.orderid = 'EXCESS' 
 {where}
 ";
             DualResult query_dResult = DBProxy.Current.Select(null, excess_cmd, out this.ExcessTb);
@@ -2054,7 +2060,7 @@ where b.POID = '{poid}'
                     .Select(s => MyUtility.Convert.GetInt(s["Qty"])).FirstOrDefault();
                 var firstAS = selASList.Where(w => w.Iden == first.Iden).OrderBy(o => o.OrderID).First();
                 string sewingLine = firstAS.Sewingline.Empty() ? string.Empty : firstAS.Sewingline.Length > 2 ? firstAS.Sewingline.Substring(0, 2) : firstAS.Sewingline;
-                bool isEXCESS = selASList.Where(w => w.Iden == first.Iden && w.IsEXCESS == "Y").Any();
+                bool isEXCESS = selASList.Where(w => seldupList.Select(s => s.Iden).Contains(w.Iden) && w.IsEXCESS == "Y").Any();
                 bool byToneGenerate = selList.Where(w => w.Dup == dup && w.Tone == first.Tone).Count() > 1;
                 int bundleQty = selList.Where(w => w.Dup == dup).Count(); // 合併建單筆數, 寫入 P10 表頭 No of Bundle
                 #endregion
