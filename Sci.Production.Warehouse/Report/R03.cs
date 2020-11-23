@@ -193,11 +193,12 @@ select  F.MDivisionID
         ,PSD.Refno
         ,PSD.SEQ1
         ,PSD.SEQ2
-        ,fabrictype = case PSD.fabrictype 
+        ,fabrictype = (case PSD.fabrictype 
                         when 'F' then 'Fabric'
                         when 'A' then 'Accessory'
                         when 'O' then 'Other'
-                      end 
+						else PSD.FabricType 
+						end) + '-' + Fabric.MtlTypeID
         --,dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)
 		,ds5.string
         ,PSD.Qty
