@@ -1458,7 +1458,7 @@ namespace Sci.Production.Planning
             // DataTable dt0 = datas[1]; // [0] By Factory 最細的上下半月Capacity
             DataTable dt1 = datas[1]; // [1] By Factory Loading CPU
             DataTable dt2 = datas[2]; // [2] For Forecast shared
-            DataTable dt3 = datas[3].Select("SubconInType <> '2'").TryCopyToDataTable(datas[3]); // [3] For Output, 及Output後面的Max日期
+            DataTable dt3 = datas[3].Select("SubconInSisterFty = 0 AND SubconInType <> '2'").TryCopyToDataTable(datas[3]); // [3] For Output, 及Output後面的Max日期
             DataTable dt5 = datas[3].Select("SubconInType = '2'").TryCopyToDataTable(datas[3]); // [3] SubconInType = '2'
 
             string filterZoneMdivisionAdd =
