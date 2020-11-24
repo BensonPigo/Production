@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Windows.Forms;
-
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using System.Linq;
-using System.Transactions;
-using System.Reflection;
 using System.Data.SqlClient;
-using Sci.Win;
+using System.Linq;
+using System.Reflection;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
@@ -26,18 +25,7 @@ namespace Sci.Production.Subcon
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
-        private bool isTaipeiDBC = false;
-
         /// <inheritdoc/>
-        protected override void OnFormLoaded()
-        {
-            base.OnFormLoaded();
-        }
-
-        // Refresh
-
-        /// <inheritdoc/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -61,23 +49,18 @@ namespace Sci.Production.Subcon
             }
 
             this.lblTaipeiDebitNote.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["TaipeiDBC"]);
-
-            this.isTaipeiDBC = !MyUtility.Check.Empty(this.CurrentMaintain["TaipeiDBC"]);
-
             this.numTotalAmt.Value = decimal.Parse(this.CurrentMaintain["amount"].ToString()) + decimal.Parse(this.CurrentMaintain["tax"].ToString());
             this.btnDebitSchedule.Enabled = !this.EditMode && this.CurrentMaintain["status"].ToString().ToUpper() == "CONFIRMED";
 
             // 剛好settle的 voucher# & Date 顯示
-            DataRow dr;
             MyUtility.Check.Seek(
-                string.Format(
-                @";WITH cte as 
+                $@";WITH cte as 
 (select t.VoucherID,(select a.voucherdate from dbo.SciFMS_voucher a where a.id = t.VoucherID) voucherdate , sum(amount ) 
 over (order by issuedate
       rows between unbounded preceding and current row) as running_total 
-												 from dbo.Debit_Schedule T WITH (NOLOCK) where id='{0}' and voucherid !='' and voucherid is not null 
+												 from dbo.Debit_Schedule T WITH (NOLOCK) where id='{this.CurrentMaintain["id"]}' and voucherid !='' and voucherid is not null 
 )
-SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"], this.numTotalAmt.Value.ToString()), out dr);
+SELECT TOP 1 * FROM CTE  WHERE running_total >= {this.numTotalAmt.Value.ToString()} ", out DataRow dr);
             this.displaySettleVoucher.Text = dr == null ? string.Empty : dr["voucherid"].ToString();
             if (dr != null)
             {
@@ -126,8 +109,6 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
 
             #endregion
         }
-
-        // Detail Grid 設定
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
@@ -185,27 +166,6 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
             #endregion
 
         }
-
-        // 新增時預設資料
-
-        /// <inheritdoc/>
-        protected override void ClickNewAfter()
-        {
-            base.ClickNewAfter();
-            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
-            this.CurrentMaintain["issuedate"] = DateTime.Today;
-            this.CurrentMaintain["handle"] = Env.User.UserID;
-            this.CurrentMaintain["Amount"] = 0;
-            this.CurrentMaintain["Tax"] = 0;
-            this.CurrentMaintain["TaxRate"] = 0;
-            this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Env.User.UserID, "Pass1", "ID");
-            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
-            this.CurrentMaintain["exchange"] = 1;
-            this.dateReceiveDate.ReadOnly = true;
-        }
-
-        // save前檢查 & 取id
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
@@ -292,8 +252,6 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", this.CurrentMaintain["id"
             return base.ClickSaveBefore();
         }
 
-        // edit前檢查
-
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
@@ -359,7 +317,6 @@ Where a.id = '{0}' order by orderid ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void UpdateStatus(string oldvalue, string newValue, bool seleReason, string reasonType = "DebitNote_LS")
         {
             DualResult result;
@@ -404,9 +361,7 @@ values ('LocalDebit',@id,@oldvalue,@newvalue,'','',@addname,getdate())";
                 paraList.Add(new SqlParameter("@addname", Env.User.UserID));
             }
 
-            updateCmd = string.Format(
-                @"update LocalDebit set status='{0}', statuseditdate = GETDATE() , editname = '{1}' , editdate = GETDATE() ",
-                newValue, Env.User.UserID);
+            updateCmd = $@"update LocalDebit set status='{newValue}', statuseditdate = GETDATE() , editname = '{Env.User.UserID}' , editdate = GETDATE() ";
 
             // 狀態變成Received要update 2個欄位
             if (oldvalue.ToUpper() == "SENT" && newValue.ToUpper() == "RECEIVED")
@@ -502,16 +457,12 @@ where id = '{4}'",
                     return;
                 }
             }
-
-            transactionscope.Dispose();
-            transactionscope = null;
         }
 
         /// <inheritdoc/>
         protected override void ClickSend()
         {
             base.ClickSend();
-
             this.UpdateStatus(this.CurrentMaintain["status"].ToString(), "Sent", false);
         }
 
@@ -544,10 +495,21 @@ where id = '{4}'",
         }
 
         /// <inheritdoc/>
-        protected override bool ClickNew()
+        protected override void ClickNewAfter()
         {
+            base.ClickNewAfter();
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
+            this.CurrentMaintain["ResponFTY"] = Env.User.Factory;
+            this.CurrentMaintain["issuedate"] = DateTime.Today;
+            this.CurrentMaintain["handle"] = Env.User.UserID;
+            this.CurrentMaintain["Amount"] = 0;
+            this.CurrentMaintain["Tax"] = 0;
+            this.CurrentMaintain["TaxRate"] = 0;
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Env.User.UserID, "Pass1", "ID");
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.CurrentMaintain["exchange"] = 1;
             this.dateReceiveDate.ReadOnly = true;
-            return base.ClickNew();
         }
 
         /// <inheritdoc/>
@@ -609,8 +571,6 @@ where id = '{4}'",
             this.Refresh();
         }
 
-        // print
-
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
@@ -638,8 +598,10 @@ where id = '{4}'",
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
 
             #region -- 撈表頭資料 --
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
+            List<SqlParameter> pars = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", id),
+            };
             DualResult result;
             ReportDefinition report = new ReportDefinition();
 
@@ -647,9 +609,10 @@ where id = '{4}'",
 
             #endregion
             #region -- 撈表身資料 --
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataRow drSubject;
+            pars = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", id),
+            };
 
             string sqlSubject = @"
 select 
@@ -686,7 +649,7 @@ outer apply
 )poids
 where Ldeb.ID= @ID";
 
-            MyUtility.Check.Seek(sqlSubject, pars, out drSubject);
+            MyUtility.Check.Seek(sqlSubject, pars, out DataRow drSubject);
 
             string barcode = drSubject["ID"].ToString();
             string fROM = drSubject["FROM"].ToString();
@@ -727,8 +690,7 @@ where Ldeb.ID= @ID";
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
             string reportResourceName = "P36_Print.rdlc";
 
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
             {
                 // this.ShowException(result);
                 return false;
