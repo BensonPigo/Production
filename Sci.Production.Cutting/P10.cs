@@ -851,15 +851,17 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
                 return;
             }
 
-            Win.Tools.SelectItem item;
-            string cuttingid = MyUtility.GetValue.Lookup("Cuttingsp", this.CurrentMaintain["POID"].ToString(), "Orders", "ID");
             string selectCommand = $@"
-select distinct b.orderid 
-from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
-where a.cutref = '{this.CurrentMaintain["Cutref"]}' and a.id = '{cuttingid}' and a.ukey = b.workorderukey";
-            item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
-            DialogResult returnResult = item.ShowDialog();
-            if (returnResult == DialogResult.Cancel)
+select distinct wd.orderid 
+from workorder w WITH (NOLOCK)
+inner join workorder_distribute wd WITH (NOLOCK) on wd.workorderukey = w.ukey
+inner join orders o with(nolock) on o.Cuttingsp = w.id
+where  wd.orderid <> 'EXCESS'
+and w.cutref = '{this.CurrentMaintain["Cutref"]}'
+and o.id = '{this.CurrentMaintain["POID"]}'
+";
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
+            if (item.ShowDialog() == DialogResult.Cancel)
             {
                 return;
             }
@@ -893,7 +895,7 @@ where a.cutref = '{this.CurrentMaintain["Cutref"]}' and a.id = '{cuttingid}' and
                     return;
                 }
 
-                string work_cmd = $"Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{this.CurrentMaintain["Cutref"]}' and b.orderid ='{newvalue}' and a.MDivisionId = '{Env.User.Keyword}'";
+                string work_cmd = $"Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{this.CurrentMaintain["Cutref"]}' and b.orderid ='{newvalue}' and a.MDivisionId = '{Env.User.Keyword}' and b.orderid <> 'EXCESS'";
                 if (DBProxy.Current.Select(null, work_cmd, out DataTable articleTb))
                 {
                     if (articleTb.Rows.Count == 0)
