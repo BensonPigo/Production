@@ -141,7 +141,7 @@ where MDivisionID = '{Env.User.Keyword}'";
             #region 主 Detail
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = $@"
-Select a.*	,s.subProcessid, ps.NoBundleCardAfterSubprocess_String, nbs.PostSewingSubProcess_String, ukey1 = 0
+Select a.*	,s.subProcessid, ps.NoBundleCardAfterSubprocess_String, nbs.PostSewingSubProcess_String, ukey1 = 0,tmpseq=0
 From Bundle_Detail a WITH (NOLOCK) 
 outer apply
 (

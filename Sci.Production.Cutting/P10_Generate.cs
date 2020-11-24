@@ -331,9 +331,8 @@ order by ArticleGroup", patternukey);
             DataTable detailAccept = this.detailTb.Copy();
             detailAccept.AcceptChanges();
             string bundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
-            detailTb.Columns.Add("tmpSeq", type: typeof(int));
             int seq = 0;
-            detailTb.AsEnumerable().ToList().ForEach(f => f["tmpSeq"] = seq++);
+            this.detailTb.AsEnumerable().ToList().ForEach(f => f["tmpSeq"] = seq++);
 
             // 將Bundle_Detial_Art distinct PatternCode,
             string sqlCmd = $@"
@@ -1603,7 +1602,6 @@ drop table #tmp,#tmp2";
             #region Generate by Tone 有勾選再處理一次
             if (this.chkTone.Checked && this.numTone.Value > 0)
             {
-                this.detailTb.Columns.Add("tmpSeq", typeof(int));
                 int seq = 0;
                 this.detailTb.AsEnumerable().ToList().ForEach(f => f["tmpSeq"] = seq++);
                 int bundlegroupS = Convert.ToInt32(this.maindatarow["startno"]);
