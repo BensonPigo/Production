@@ -94,6 +94,10 @@ BEGIN
 	RAISERROR('PortByBrandShipmode  - Starts',0,0)
 	select * into dbo.PortByBrandShipmode from (select * from ProductionTPE.dbo.PortByBrandShipmode ) as tmp
 
+	-------------PulloutPort-------------------
+	RAISERROR('PulloutPort  - Starts',0,0)
+	select * into dbo.PulloutPort from (select * from ProductionTPE.dbo.PulloutPort ) as tmp
+
 	set transaction isolation level read committed
 END
 
