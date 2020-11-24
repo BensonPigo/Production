@@ -87,9 +87,9 @@ BEGIN
 
 				-- Update MDivisionPoDetail
 				 UPDATE MDivisionPoDetail 
-				 SET INQTY = t.inqty, OutQty = t.outqty , AdjustQty = t.adjustqty , LInvQty = t.BBalance , LObQty = t.CBalance
+				 SET INQTY = ISNULL(t.inqty,0), OutQty =  ISNULL(t.outqty,0) , AdjustQty =  ISNULL(t.adjustqty,0) , LInvQty =  ISNULL(t.BBalance ,0), LObQty =  ISNULL(t.CBalance,0)
 				 FROM MDivisionPoDetail WITH (NOLOCK)
-				 JOIN (SELECT a.PoId,a.seq1,a.seq2
+				 LEFT JOIN (SELECT a.PoId,a.seq1,a.seq2
 						 , sum(inqty) inqty, sum(outqty) outqty, sum(adjustqty) adjustqty
 						 , sum(BInqty) - sum(Boutqty) + sum(BAdjustQty) BBalance  
 						 , sum(CInqty) - sum(COutqty) + sum(CAdjustQty) CBalance
