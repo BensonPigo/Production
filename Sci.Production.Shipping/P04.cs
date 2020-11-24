@@ -442,15 +442,13 @@ where ed.ID = '{0}'", masterID);
             {
                 this.labelArrivePortDate.Text = "ETA";
                 this.labelDoxRcvDate.Text = "Dox Send Date";
-                this.dateShipDate.IsSupportEditMode = true;
-                this.dateShipDate.ReadOnly = true;
+                this.dateShipDate.ReadOnly = this.EditMode ? false : true;
             }
             else
             {
                 this.labelArrivePortDate.Text = "Arrive Port Date";
                 this.labelDoxRcvDate.Text = "Dox Rcv Date";
-                this.dateShipDate.IsSupportEditMode = false;
-                this.dateShipDate.ReadOnly = false;
+                this.dateShipDate.ReadOnly = true;
             }
 
             if (this.EditMode)

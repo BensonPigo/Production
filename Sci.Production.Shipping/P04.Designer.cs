@@ -160,6 +160,7 @@
             this.masterpanel.Controls.Add(this.labelForwarder);
             this.masterpanel.Controls.Add(this.labelFtyWKNo);
             this.masterpanel.Size = new System.Drawing.Size(1024, 254);
+            this.masterpanel.TabIndex = 2;
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFtyWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelForwarder, 0);
@@ -225,7 +226,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(887, 218);
-            this.gridicon.TabIndex = 13;
+            this.gridicon.TabIndex = 80;
             // 
             // refresh
             // 
@@ -343,7 +344,7 @@
             this.displayFtyWKNo.Location = new System.Drawing.Point(109, 6);
             this.displayFtyWKNo.Name = "displayFtyWKNo";
             this.displayFtyWKNo.Size = new System.Drawing.Size(120, 23);
-            this.displayFtyWKNo.TabIndex = 18;
+            this.displayFtyWKNo.TabIndex = 1;
             // 
             // txtInvoiceNo
             // 
@@ -353,7 +354,7 @@
             this.txtInvoiceNo.Location = new System.Drawing.Point(109, 89);
             this.txtInvoiceNo.Name = "txtInvoiceNo";
             this.txtInvoiceNo.Size = new System.Drawing.Size(230, 23);
-            this.txtInvoiceNo.TabIndex = 1;
+            this.txtInvoiceNo.TabIndex = 5;
             // 
             // txtPortofLoading
             // 
@@ -366,7 +367,7 @@
             this.txtPortofLoading.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtPortofLoading.ReadOnly = true;
             this.txtPortofLoading.Size = new System.Drawing.Size(185, 23);
-            this.txtPortofLoading.TabIndex = 14;
+            this.txtPortofLoading.TabIndex = 8;
             this.txtPortofLoading.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPortofLoading_PopUp);
             // 
             // txtPortofDischarge
@@ -380,7 +381,7 @@
             this.txtPortofDischarge.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtPortofDischarge.ReadOnly = true;
             this.txtPortofDischarge.Size = new System.Drawing.Size(185, 23);
-            this.txtPortofDischarge.TabIndex = 15;
+            this.txtPortofDischarge.TabIndex = 10;
             this.txtPortofDischarge.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPortofDischarge_PopUp);
             // 
             // displayPortofLoading
@@ -391,7 +392,7 @@
             this.displayPortofLoading.Location = new System.Drawing.Point(296, 174);
             this.displayPortofLoading.Name = "displayPortofLoading";
             this.displayPortofLoading.Size = new System.Drawing.Size(32, 23);
-            this.displayPortofLoading.TabIndex = 21;
+            this.displayPortofLoading.TabIndex = 9;
             // 
             // displayPortofDischarge
             // 
@@ -401,7 +402,7 @@
             this.displayPortofDischarge.Location = new System.Drawing.Point(296, 202);
             this.displayPortofDischarge.Name = "displayPortofDischarge";
             this.displayPortofDischarge.Size = new System.Drawing.Size(32, 23);
-            this.displayPortofDischarge.TabIndex = 22;
+            this.displayPortofDischarge.TabIndex = 11;
             // 
             // radioPanel1
             // 
@@ -424,7 +425,7 @@
             this.radioLocalPurchase.Location = new System.Drawing.Point(266, 2);
             this.radioLocalPurchase.Name = "radioLocalPurchase";
             this.radioLocalPurchase.Size = new System.Drawing.Size(110, 19);
-            this.radioLocalPurchase.TabIndex = 3;
+            this.radioLocalPurchase.TabIndex = 5;
             this.radioLocalPurchase.TabStop = true;
             this.radioLocalPurchase.Text = "Local Purchase";
             this.radioLocalPurchase.UseVisualStyleBackColor = true;
@@ -438,7 +439,7 @@
             this.radioTransferOut.Location = new System.Drawing.Point(172, 2);
             this.radioTransferOut.Name = "radioTransferOut";
             this.radioTransferOut.Size = new System.Drawing.Size(92, 19);
-            this.radioTransferOut.TabIndex = 2;
+            this.radioTransferOut.TabIndex = 4;
             this.radioTransferOut.TabStop = true;
             this.radioTransferOut.Text = "Transfer Out";
             this.radioTransferOut.UseVisualStyleBackColor = true;
@@ -452,7 +453,7 @@
             this.radioTransferIn.Location = new System.Drawing.Point(91, 2);
             this.radioTransferIn.Name = "radioTransferIn";
             this.radioTransferIn.Size = new System.Drawing.Size(83, 19);
-            this.radioTransferIn.TabIndex = 1;
+            this.radioTransferIn.TabIndex = 3;
             this.radioTransferIn.TabStop = true;
             this.radioTransferIn.Text = "Transfer In";
             this.radioTransferIn.UseVisualStyleBackColor = true;
@@ -531,7 +532,7 @@
             0,
             0});
             this.numPackages.Size = new System.Drawing.Size(67, 23);
-            this.numPackages.TabIndex = 5;
+            this.numPackages.TabIndex = 14;
             this.numPackages.Value = new decimal(new int[] {
             0,
             0,
@@ -552,7 +553,7 @@
             0,
             0});
             this.numCBM.Size = new System.Drawing.Size(67, 23);
-            this.numCBM.TabIndex = 6;
+            this.numCBM.TabIndex = 15;
             this.numCBM.Value = new decimal(new int[] {
             0,
             0,
@@ -678,7 +679,7 @@
             this.txtBLAWBNo.Location = new System.Drawing.Point(702, 34);
             this.txtBLAWBNo.Name = "txtBLAWBNo";
             this.txtBLAWBNo.Size = new System.Drawing.Size(185, 23);
-            this.txtBLAWBNo.TabIndex = 8;
+            this.txtBLAWBNo.TabIndex = 21;
             // 
             // txtVslvoyFltNo
             // 
@@ -688,7 +689,7 @@
             this.txtVslvoyFltNo.Location = new System.Drawing.Point(702, 62);
             this.txtVslvoyFltNo.Name = "txtVslvoyFltNo";
             this.txtVslvoyFltNo.Size = new System.Drawing.Size(254, 23);
-            this.txtVslvoyFltNo.TabIndex = 9;
+            this.txtVslvoyFltNo.TabIndex = 22;
             // 
             // dateArrivePortDate
             // 
@@ -696,7 +697,7 @@
             this.dateArrivePortDate.Location = new System.Drawing.Point(702, 145);
             this.dateArrivePortDate.Name = "dateArrivePortDate";
             this.dateArrivePortDate.Size = new System.Drawing.Size(130, 23);
-            this.dateArrivePortDate.TabIndex = 10;
+            this.dateArrivePortDate.TabIndex = 25;
             // 
             // dateArriveWHDate
             // 
@@ -706,7 +707,7 @@
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
-            this.dateArriveWHDate.TabIndex = 15;
+            this.dateArriveWHDate.TabIndex = 26;
             // 
             // dateDoxRcvDate
             // 
@@ -714,7 +715,7 @@
             this.dateDoxRcvDate.Location = new System.Drawing.Point(702, 201);
             this.dateDoxRcvDate.Name = "dateDoxRcvDate";
             this.dateDoxRcvDate.Size = new System.Drawing.Size(130, 23);
-            this.dateDoxRcvDate.TabIndex = 11;
+            this.dateDoxRcvDate.TabIndex = 27;
             // 
             // btnExpenseData
             // 
@@ -723,7 +724,7 @@
             this.btnExpenseData.Location = new System.Drawing.Point(886, 91);
             this.btnExpenseData.Name = "btnExpenseData";
             this.btnExpenseData.Size = new System.Drawing.Size(106, 30);
-            this.btnExpenseData.TabIndex = 43;
+            this.btnExpenseData.TabIndex = 90;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
             this.btnExpenseData.Click += new System.EventHandler(this.BtnExpenseData_Click);
@@ -735,7 +736,7 @@
             this.btnImportData.Location = new System.Drawing.Point(899, 127);
             this.btnImportData.Name = "btnImportData";
             this.btnImportData.Size = new System.Drawing.Size(93, 30);
-            this.btnImportData.TabIndex = 12;
+            this.btnImportData.TabIndex = 91;
             this.btnImportData.Text = "Import Data";
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
@@ -747,7 +748,7 @@
             this.txtUserHandle.Location = new System.Drawing.Point(702, 5);
             this.txtUserHandle.Name = "txtUserHandle";
             this.txtUserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txtUserHandle.TabIndex = 7;
+            this.txtUserHandle.TabIndex = 20;
             this.txtUserHandle.TextBox1Binding = "";
             // 
             // txtdropdownlistContainerType
@@ -761,7 +762,7 @@
             this.txtdropdownlistContainerType.Name = "txtdropdownlistContainerType";
             this.txtdropdownlistContainerType.OldText = "";
             this.txtdropdownlistContainerType.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlistContainerType.TabIndex = 4;
+            this.txtdropdownlistContainerType.TabIndex = 13;
             this.txtdropdownlistContainerType.Type = "ContainerCY";
             // 
             // txtSubconForwarder
@@ -775,7 +776,7 @@
             this.txtSubconForwarder.Location = new System.Drawing.Point(109, 61);
             this.txtSubconForwarder.Name = "txtSubconForwarder";
             this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
-            this.txtSubconForwarder.TabIndex = 0;
+            this.txtSubconForwarder.TabIndex = 4;
             this.txtSubconForwarder.TextBox1Binding = "";
             // 
             // labSisFtyWk
@@ -797,7 +798,7 @@
             this.txtSisFtyWK.Name = "txtSisFtyWK";
             this.txtSisFtyWK.ReadOnly = true;
             this.txtSisFtyWK.Size = new System.Drawing.Size(120, 23);
-            this.txtSisFtyWK.TabIndex = 45;
+            this.txtSisFtyWK.TabIndex = 3;
             // 
             // labShipper
             // 
@@ -816,7 +817,7 @@
             this.txtLocalSupp.Location = new System.Drawing.Point(109, 117);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(230, 23);
-            this.txtLocalSupp.TabIndex = 47;
+            this.txtLocalSupp.TabIndex = 6;
             this.txtLocalSupp.TextBox1Binding = "";
             // 
             // labOnBoard
@@ -834,7 +835,7 @@
             this.dateOnBoardDate.Location = new System.Drawing.Point(702, 117);
             this.dateOnBoardDate.Name = "dateOnBoardDate";
             this.dateOnBoardDate.Size = new System.Drawing.Size(130, 23);
-            this.dateOnBoardDate.TabIndex = 48;
+            this.dateOnBoardDate.TabIndex = 24;
             // 
             // comboShippMode
             // 
@@ -847,7 +848,7 @@
             this.comboShippMode.Name = "comboShippMode";
             this.comboShippMode.OldText = "";
             this.comboShippMode.Size = new System.Drawing.Size(121, 24);
-            this.comboShippMode.TabIndex = 50;
+            this.comboShippMode.TabIndex = 12;
             // 
             // chkNoCharge
             // 
@@ -857,7 +858,7 @@
             this.chkNoCharge.Location = new System.Drawing.Point(838, 186);
             this.chkNoCharge.Name = "chkNoCharge";
             this.chkNoCharge.Size = new System.Drawing.Size(182, 21);
-            this.chkNoCharge.TabIndex = 51;
+            this.chkNoCharge.TabIndex = 29;
             this.chkNoCharge.Text = "No Import/Export Charge";
             this.chkNoCharge.UseVisualStyleBackColor = true;
             // 
@@ -877,7 +878,7 @@
             this.displayCustomsDeclareNo.Location = new System.Drawing.Point(467, 203);
             this.displayCustomsDeclareNo.Name = "displayCustomsDeclareNo";
             this.displayCustomsDeclareNo.Size = new System.Drawing.Size(137, 23);
-            this.displayCustomsDeclareNo.TabIndex = 67;
+            this.displayCustomsDeclareNo.TabIndex = 19;
             // 
             // lbDeclareation
             // 
@@ -895,7 +896,7 @@
             this.displayDeclarationID.Location = new System.Drawing.Point(467, 174);
             this.displayDeclarationID.Name = "displayDeclarationID";
             this.displayDeclarationID.Size = new System.Drawing.Size(137, 23);
-            this.displayDeclarationID.TabIndex = 65;
+            this.displayDeclarationID.TabIndex = 18;
             // 
             // chkNonDeclare
             // 
@@ -905,7 +906,7 @@
             this.chkNonDeclare.Location = new System.Drawing.Point(838, 163);
             this.chkNonDeclare.Name = "chkNonDeclare";
             this.chkNonDeclare.Size = new System.Drawing.Size(106, 21);
-            this.chkNonDeclare.TabIndex = 69;
+            this.chkNonDeclare.TabIndex = 28;
             this.chkNonDeclare.Text = "Non Declare";
             this.chkNonDeclare.UseVisualStyleBackColor = true;
             // 
@@ -917,7 +918,7 @@
             this.txtLocalSupp1.Location = new System.Drawing.Point(109, 146);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(228, 23);
-            this.txtLocalSupp1.TabIndex = 70;
+            this.txtLocalSupp1.TabIndex = 7;
             this.txtLocalSupp1.TextBox1Binding = "";
             // 
             // lbShipDate
@@ -935,7 +936,7 @@
             this.dateShipDate.Location = new System.Drawing.Point(702, 89);
             this.dateShipDate.Name = "dateShipDate";
             this.dateShipDate.Size = new System.Drawing.Size(130, 23);
-            this.dateShipDate.TabIndex = 49;
+            this.dateShipDate.TabIndex = 23;
             // 
             // P04
             // 
