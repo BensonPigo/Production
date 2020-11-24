@@ -1,21 +1,17 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.Prg;
-using Sci.Win;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Linq;
-using Sci.Andy.ExtensionMethods;
-using System.Data.SqlClient;
 
 namespace Sci.Production.Cutting
 {
@@ -726,7 +722,7 @@ OPTION (RECOMPILE)"
         private void PrintBarcode(int layout)
         {
             this.grid1.ValidateControl();
-            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
+            DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
             if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
@@ -840,19 +836,20 @@ OPTION (RECOMPILE)"
 
             // 有按才更新列印日期printdate。
             StringBuilder ups = new StringBuilder();
-            foreach (var item in data)
+            foreach (DataRow dr in dtSelect.Rows)
             {
                 ups.Append($@"
 update bd
 set bd.PrintDate = GETDATE()
-from Bundle_Detail bd WITH (NOLOCK)
-where bd.BundleNo = '{item.Barcode}'
+from Bundle_Detail bd
+where bd.BundleNo = '{dr["Bundle"]}'
 
 update b
 set b.PrintDate = GETDATE()
-from Bundle b WITH (NOLOCK)
-inner join Bundle_Detail bd WITH (NOLOCK) on b.id=bd.ID
-where bd.BundleNo = '{item.Barcode}'");
+from Bundle b
+inner join Bundle_Detail bd on b.id=bd.ID
+where bd.BundleNo = '{dr["Bundle"]}'
+");
             }
 
             this.HideWaitMessage();
@@ -861,6 +858,7 @@ where bd.BundleNo = '{item.Barcode}'");
             {
                 string printer = pd.PrinterSettings.PrinterName;
                 workbook.PrintOutEx(ActivePrinter: printer);
+
                 DualResult result = DBProxy.Current.Execute(null, ups.ToString());
                 if (!result)
                 {
