@@ -1,7 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Data;
 using System.Windows.Forms;
 using Ict;
+using Ict.Win;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
@@ -94,6 +97,91 @@ namespace Sci.Production.Class
 
             this.TextBox1.Text = item.GetSelectedString();
             this.Validate();
+        }
+
+        /// <summary>
+        /// CellShippingReason
+        /// </summary>
+        public class CellShippingReason : DataGridViewGeneratorTextColumnSettings
+        {
+            /// <summary>
+            /// GetGridCell
+            /// </summary>
+            /// <param name="ctype">Type</param>
+            /// <param name="reasonID">reasonID</param>
+            /// <param name="descriptionColName">descriptionColName</param>
+            /// <returns>DataGridViewGeneratorTextColumnSettings</returns>
+            public static DataGridViewGeneratorTextColumnSettings GetGridCell(string ctype, string reasonID, string descriptionColName)
+            {
+                CellShippingReason ts = new CellShippingReason();
+
+                // Factory右鍵彈出功能
+                ts.EditingMouseDown += (s, e) =>
+                {
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+
+                        // Parent form 若是非編輯狀態就 return
+                        if (!((Win.Forms.Base)grid.FindForm()).EditMode)
+                        {
+                            return;
+                        }
+
+                        DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                        SelectItem sele = new SelectItem(string.Format("Select ID, Description from ShippingReason WITH (NOLOCK) where type='{0}' order by id", ctype), "10,40", row["ID"].ToString(), false, ",");
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        row[reasonID] = sele.GetSelectedString();
+                        if (!MyUtility.Check.Empty(descriptionColName))
+                        {
+                            row[descriptionColName] = sele.GetSelecteds()[0]["Description"].ToString();
+                        }
+                    }
+                };
+
+                // 正確性檢查
+                ts.CellValidating += (s, e) =>
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+
+                    // Parent form 若是非編輯狀態就 return
+                    if (!((Win.Forms.Base)grid.FindForm()).EditMode)
+                    {
+                        return;
+                    }
+
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    string oldValue = row[reasonID].ToString();
+                    string newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                    string sql = string.Format("Select ID, Description from ShippingReason WITH (NOLOCK) where type='{0}' and id = '{1}' and Junk = 0", ctype, newValue);
+
+                    if (MyUtility.Check.Empty(newValue))
+                    {
+                        row[reasonID] = string.Empty;
+                        row[descriptionColName] = string.Empty;
+                        row.EndEdit();
+                        return;
+                    }
+
+                    if (oldValue != newValue &&
+                        !MyUtility.Check.Seek(sql, out DataRow sqlRow, "Production"))
+                    {
+                        row[reasonID] = string.Empty;
+                        row[descriptionColName] = string.Empty;
+                        row.EndEdit();
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(string.Format("< Shipping Reason > : {0} not found!!!", newValue));
+                        return;
+                    }
+                };
+
+                return ts;
+            }
         }
     }
 }

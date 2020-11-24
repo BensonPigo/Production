@@ -2564,6 +2564,7 @@
     <Build Include="dbo\Tables\SystemWebAPIURL.sql" />
     <Build Include="dbo\Tables\ADIDASComplainDefect_FabricType.sql" />
     <Build Include="dbo\Functions\GetThreadUsedQtyByBOT.sql" />
+    <Build Include="dbo\Tables\ShipPlan_DeleteGBHistory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

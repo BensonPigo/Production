@@ -250,6 +250,12 @@
     <Compile Include="P05_UnconfirmHistory.Designer.cs">
       <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_DeleteGarmentBookingHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_DeleteGarmentBookingHistory.Designer.cs">
+      <DependentUpon>P10_DeleteGarmentBookingHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="P11_BatchApprove.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -982,6 +988,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_UnconfirmHistory.resx">
       <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P10_DeleteGarmentBookingHistory.resx">
+      <DependentUpon>P10_DeleteGarmentBookingHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P11_BatchApprove.resx">
       <DependentUpon>P11_BatchApprove.cs</DependentUpon>
