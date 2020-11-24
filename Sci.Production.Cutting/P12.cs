@@ -274,7 +274,7 @@ select
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
-    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
     , c.FactoryID  [left]
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
@@ -361,7 +361,7 @@ select
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , bda.Parts [Parts]
     , a.Qty [Qty]
-    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
     , c.FactoryID  [left]
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
@@ -492,7 +492,7 @@ select
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
-    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
     , c.FactoryID  [left]
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
@@ -579,7 +579,7 @@ select
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
-    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
     , c.FactoryID  [left]
     , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)

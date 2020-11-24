@@ -2552,6 +2552,9 @@
     <Build Include="dbo\Tables\GarmentTest_Detail_Shrinkage.sql" />
     <Build Include="dbo\Tables\PulloutPort.sql" />
     <Build Include="dbo\Functions\CheckShippingMarkSetting.sql" />
+    <Build Include="dbo\Tables\FtyStyleInnovation_Artwork.sql" />
+    <Build Include="dbo\Tables\FtyStyleInnovation.sql" />
+    <Build Include="dbo\Tables\FtyStyleInnovationAllPart.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
