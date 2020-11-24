@@ -141,7 +141,7 @@ where MDivisionID = '{Env.User.Keyword}'";
             #region 主 Detail
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = $@"
-Select a.*	,s.subProcessid, ps.NoBundleCardAfterSubprocess_String, nbs.PostSewingSubProcess_String, ukey1 = 0
+Select a.*	,s.subProcessid, ps.NoBundleCardAfterSubprocess_String, nbs.PostSewingSubProcess_String, ukey1 = 0,tmpseq=0
 From Bundle_Detail a WITH (NOLOCK) 
 outer apply
 (
@@ -177,7 +177,7 @@ outer apply
 	),1,1,'')
 ) as nbs
 where a.id = '{masterID}' 
-order by bundlegroup";
+order by bundlegroup,bundleno";
             this.DetailSelectCommand = cmdsql;
             #endregion
 
