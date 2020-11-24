@@ -1082,27 +1082,37 @@ select distinct
 ,[Seq2] = i2.Seq2
 ,[Roll] = i2.Roll
 ,[Dyelot] = i2.Dyelot
-,[Barcode] = fty.Barcode
+--,[Barcode] = fty.Barcode
 ,[Qty] = i2.Qty
 ,[Ukey] = i2.ukey
-,[Junk] = case when i.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[Status] = i.Status
 ,CmdTime = GetDate()
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
 left join Production.dbo.Cutplan c on c.ID = i.CutplanID
-outer apply(
-	select Barcode
-	from Production.dbo.FtyInventory
-	where POID = i2.POID and Seq1=i2.Seq1
-	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
-    and StockType = i2.StockType
-)fty
+--outer apply(
+	--select Barcode
+	--from Production.dbo.FtyInventory
+	--where POID = i2.POID and Seq1=i2.Seq1
+	--and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
+ --   and StockType = i2.StockType
+--)fty
 where i.Type = 'A'
 and exists(
-		select 1 from Production.dbo.PO_Supp_Detail 
-		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
-		and FabricType='F'
-	)
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and exists(
+	select 1
+	from Production.dbo.FtyInventory f
+	inner join FtyInventory_Detail fd on f.Ukey = fd.Ukey
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+	and ml.IsWMS = 1
+)
 and i.id = '{this.CurrentMaintain["ID"]}'
 
 ";

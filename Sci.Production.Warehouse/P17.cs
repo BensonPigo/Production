@@ -887,8 +887,8 @@ where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             transactionscope.Dispose();
             transactionscope = null;
 
-            // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric();
+            // AutoWHFabric WebAPI for Gensong (移除轉出ISP20201856)
+            //this.SentToGensong_AutoWHFabric();
         }
 
         /// <inheritdoc/>
@@ -1072,11 +1072,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void SentToGensong_AutoWHFabric()
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
+            // 移除轉出ISP20201856
+            /*
             DataTable dtDetail = new DataTable();
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
@@ -1122,6 +1119,7 @@ and ir.id = '{this.CurrentMaintain["id"]}'
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
+            */
         }
 
         // 寫明細撈出的sql command

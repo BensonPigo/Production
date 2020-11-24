@@ -2243,7 +2243,9 @@ SELECT [ID] = rd.id
 ,[StockType] = rd.StockType
 ,[Ukey] = rd.Ukey
 ,[IsInspection] = convert(bit, 0)
-,Junk = case when r.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[ETA] = r.ETA
+,[WhseArrival] = r.WhseArrival
+,[Status] = r.Status
 ,[Barcode] = f.Barcode
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id

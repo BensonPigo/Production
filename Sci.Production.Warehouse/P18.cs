@@ -1684,7 +1684,9 @@ SELECT [ID] = td.id
 ,[StockType] = td.StockType
 ,[Ukey] = td.Ukey
 ,[IsInspection] = convert(bit, 0)
-,Junk = case when t.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[ETA] = null
+,[WhseArrival] = t.WhseArrival
+,[Status] = t.Status
 FROM Production.dbo.TransferIn_Detail td
 inner join Production.dbo.TransferIn t on td.id = t.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= td.PoId 

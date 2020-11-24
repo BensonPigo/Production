@@ -706,7 +706,7 @@ select distinct
 ,[Barcode] = fty.Barcode
 ,[Qty] = ik2.Qty
 ,[Ukey] = ik2.Ukey
-,[Junk] = case when i.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[Status] = ik.Status
 ,CmdTime = GetDate()
 from Production.dbo.IssueLack_Detail ik2
 inner join Production.dbo.IssueLack ik on ik2.Id=ik.Id
@@ -721,6 +721,16 @@ and exists(
 		select 1 from Production.dbo.PO_Supp_Detail 
 		where id = ik2.Poid and seq1=ik2.seq1 and seq2=ik2.seq2 
 		and FabricType='F'
+)
+and exists(
+	select 1
+	from Production.dbo.FtyInventory f
+	inner join FtyInventory_Detail fd on f.Ukey = fd.Ukey
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.POID = ik2.POID and f.Seq1=ik2.Seq1
+	and f.Seq2=ik2.Seq2 and f.Roll=ik2.Roll and f.Dyelot=ik2.Dyelot
+    and f.StockType = ik2.StockType
+	and ml.IsWMS = 1
 )
 and ik.id = '{this.CurrentMaintain["ID"]}'
 ";

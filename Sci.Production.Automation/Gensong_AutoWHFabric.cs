@@ -55,7 +55,9 @@ namespace Sci.Production.Automation
                     StockType = dr["StockType"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     IsInspection = (bool)dr["IsInspection"],
-                    Junk = (bool)dr["Junk"],
+                    ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : (DateTime?)dr["ETA"],
+                    WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : (DateTime?)dr["WhseArrival"],
+                    Status = dr["Junk"].ToString(),
                     Barcode = dr["Barcode"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
@@ -98,7 +100,7 @@ namespace Sci.Production.Automation
                     Barcode = dr["Barcode"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
-                    Junk = (bool)dr["Junk"],
+                    Status = dr["Status"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
