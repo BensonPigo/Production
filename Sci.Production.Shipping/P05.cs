@@ -413,6 +413,14 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return false;
+            }
+            #endregion
+
             return base.ClickEditBefore();
         }
 
@@ -1317,6 +1325,14 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return;
+            }
+            #endregion
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 this.CheckIDD();
@@ -1451,6 +1467,14 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["Forwarder"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
+            {
+                return;
+            }
+            #endregion
+
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
             {
                 return;
             }
@@ -2119,6 +2143,48 @@ Offline Order: S/O#
         {
             SelectItem selectItem = new SelectItem("select [Brand] = ID, [Content] = Name from DropDownList where Type = 'DocumentRefNoFormat' order by Seq", "18,12", string.Empty);
             selectItem.ShowDialog();
+        }
+
+        private bool GMTCompleteCheck()
+        {
+            #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            DataTable isGMTComplete = new DataTable();
+            isGMTComplete.ColumnsStringAdd("SP#");
+            isGMTComplete.ColumnsDateTimeAdd("Complete Date");
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                // 拆解Order ID
+                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
+                foreach (var order in orders)
+                {
+                    string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, cmd, out dt);
+                    bool find = dt.Rows.Count > 0;
+                    if (find)
+                    {
+                        foreach (DataRow r in dt.Rows)
+                        {
+                            isGMTComplete.ImportRow(r);
+                        }
+                    }
+                }
+            }
+
+            if (isGMTComplete.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
+                m.Width = 800;
+                m.grid1.Columns[0].Width = 150;
+                m.grid1.Columns[1].Width = 150;
+                m.TopMost = true;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            #endregion
         }
     }
 }

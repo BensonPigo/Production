@@ -299,6 +299,14 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return false;
+            }
+            #endregion
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).ToUpper() != "NEW")
             {
                 MyUtility.Msg.WarningBox("This pullout report already confirmed, can't be edit!!");
@@ -562,6 +570,15 @@ where pd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return;
+            }
+            #endregion
+
             if (MyUtility.Convert.GetDate(this.CurrentMaintain["PulloutDate"]) > DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("Pullout date can't greater than today!");
@@ -1710,6 +1727,48 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
             Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
             #endregion
 
+        }
+
+        private bool GMTCompleteCheck()
+        {
+            #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            DataTable isGMTComplete = new DataTable();
+            isGMTComplete.ColumnsStringAdd("SP#");
+            isGMTComplete.ColumnsDateTimeAdd("Complete Date");
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                // 拆解Order ID
+                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
+                foreach (var order in orders)
+                {
+                    string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, cmd, out dt);
+                    bool find = dt.Rows.Count > 0;
+                    if (find)
+                    {
+                        foreach (DataRow r in dt.Rows)
+                        {
+                            isGMTComplete.ImportRow(r);
+                        }
+                    }
+                }
+            }
+
+            if (isGMTComplete.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
+                m.Width = 800;
+                m.grid1.Columns[0].Width = 150;
+                m.grid1.Columns[1].Width = 150;
+                m.TopMost = true;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            #endregion
         }
     }
 }
