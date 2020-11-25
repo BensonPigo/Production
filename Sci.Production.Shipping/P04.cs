@@ -443,12 +443,16 @@ where ed.ID = '{0}'", masterID);
                 this.labelArrivePortDate.Text = "ETA";
                 this.labelDoxRcvDate.Text = "Dox Send Date";
                 this.dateShipDate.ReadOnly = this.EditMode ? false : true;
+                this.dateArrivePortDate.DataBindings.Clear();
+                this.dateArrivePortDate.DataBindings.Add(new Binding("Value", this.mtbs, "ETA", true));
             }
             else
             {
                 this.labelArrivePortDate.Text = "Arrive Port Date";
                 this.labelDoxRcvDate.Text = "Dox Rcv Date";
                 this.dateShipDate.ReadOnly = true;
+                this.dateArrivePortDate.DataBindings.Clear();
+                this.dateArrivePortDate.DataBindings.Add(new Binding("Value", this.mtbs, "PortArrival", true));
             }
 
             if (this.EditMode)
