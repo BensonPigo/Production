@@ -6,7 +6,7 @@
     [Seq1]              VARCHAR (3)    NOT NULL,
     [Seq2]              VARCHAR (2)    NOT NULL,
     [Carton]            NVARCHAR (30)  NOT NULL,
-    [LotNo]             VARCHAR (30)   NULL,
+    [LotNo]             NVARCHAR(50)   NULL,
     [Qty]               NUMERIC (8, 2) NULL,
     [Foc]               NUMERIC (8, 2) NULL,
     [NetKg]             NUMERIC (7, 2) NULL,
