@@ -184,47 +184,83 @@ namespace Sci.Production.Quality
             }
             #region --撈ListExcel資料--
 
-            this.cmd = string.Format(@"select A.POID,(A.seq1+'-'+A.seq2)SEQ,x.FactoryID,x.BrandID,x.StyleID,x.SeasonID,t.ExportId,t.InvNo,t.WhseArrival,
-t.StockQty,
-(Select MinSciDelivery from DBO.GetSCI(A.poid,x.Category))[MinSciDelivery],
-(Select MinBuyerDelivery from DBO.GetSCI(A.poid,x.Category))[MinBuyerDelivery],
-A.refno,
-iif(C.Name is null,oc.name,c.name ) name,
-PS.SizeSpec,
-	                   PS.stockunit,(P.SuppID+'-'+s.AbbEN)Supplier,A.Result
-	                   ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
-	                   ,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
-,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
-	                   ,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date],a.Remark
-	                   ,AIRL_Encode.OvenEncode
-,AIRL.NonOven,AIRL.Oven,AIRL.OvenScale,AIRL.OvenDate,AIRL.NonWash,AIRL.Wash,AIRL.WashScale,
-	                   AIRL.WashDate
-                from dbo.AIR A WITH (NOLOCK) 
-                inner join (select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2,r.StockQty 
-                            from dbo.View_AllReceivingDetail r WITH (NOLOCK)  "
-                 + rWhere + @"
-			                ) t
-                on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
-                inner join (select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
-                 + oWhere + @"
-			                 ) x on x. id = A.POID
-                inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
-                inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
-                left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
-                inner join supp s WITH (NOLOCK) on s.id = P.SuppID
-OUTER APPLY(
+            this.cmd = string.Format(
+                @"
+select A.POID
+	,(A.seq1+'-'+A.seq2)SEQ
+	,x.FactoryID
+	,x.BrandID
+	,x.StyleID
+	,x.SeasonID
+	,t.ExportId
+	,t.InvNo
+	,t.WhseArrival
+	,t.StockQty
+	,(Select MinSciDelivery from DBO.GetSCI(A.poid,x.Category))[MinSciDelivery]
+	,(Select MinBuyerDelivery from DBO.GetSCI(A.poid,x.Category))[MinBuyerDelivery]
+	,A.refno
+	,[Article] = Style.Article
+	,[MaterialType] = fabric.MtlTypeID
+	,iif(C.Name is null,oc.name,c.name ) name
+	,PS.SizeSpec
+	,PS.stockunit
+	,(P.SuppID+'-'+s.AbbEN)Supplier
+	,[OrderQty] = Round(dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
+	,A.Result
+	,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
+	,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
+	,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
+	,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
+	,a.Remark
+	,AIRL_Encode.OvenEncode
+	,AIRL.NonOven
+	,AIRL.Oven
+	,AIRL.OvenScale
+	,AIRL.OvenDate
+	,AIRL.NonWash
+	,AIRL.Wash
+	,AIRL.WashScale
+	,AIRL.WashDate
+from dbo.AIR A WITH (NOLOCK) 
+inner join (
+		select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2,r.StockQty 
+        from dbo.View_AllReceivingDetail r WITH (NOLOCK)   
+		{0}
+) t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
+inner join (
+		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category 
+		from dbo.Orders o WITH (NOLOCK)  
+		{1}
+) x on x. id = A.POID
+inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
+inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
+left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
+inner join supp s WITH (NOLOCK) on s.id = P.SuppID
+left join fabric WITH (NOLOCK) on fabric.SCIRefno = PS.scirefno
+OUTER APPLY (
 	SELECT  [Val]=  STUFF((
 	SELECT ', '+ IIF(a.Defect = '' , '' ,ori.Data +'-'+ ISNULL(ad.Description,''))
 	FROM [SplitString](a.Defect,'+') ori
 	LEFT JOIN AccessoryDefect ad  WITH (NOLOCK) on ad.id = ori.Data
 	 FOR XML PATH('')
 	 ),1,1,'')
-
 )DefectText
-                OUTER APPLY(select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
-OUTER APPLY(select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID and NonOven =1 and NonWash =1)AIRL_Encode                
-        outer apply (select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
-               " + sqlWhere);
+OUTER APPLY ( select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
+OUTER APPLY ( select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID and NonOven =1 and NonWash =1)AIRL_Encode                
+OUTER APPLY ( select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
+OUTER APPLY (
+	select [Article] = Stuff((
+		select distinct concat( ',', tcd.Article) 
+		from Style s
+		Inner Join Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
+		Inner Join Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		where s.ID = x.StyleID
+	FOR XML PATH('')),1,1,'') 
+)Style
+{2}",
+                rWhere,
+                oWhere,
+                sqlWhere);
             #endregion
             return base.ValidateInput();
         }
