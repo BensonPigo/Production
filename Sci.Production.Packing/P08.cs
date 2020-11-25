@@ -1,36 +1,28 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
 using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    /// <summary>
-    /// Packing_P08
-    /// </summary>
+    /// <inheritdoc/>
     public partial class P08 : Win.Tems.QueryForm
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataTable gridData;
 
-        /// <summary>
-        /// P08
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        /// <inheritdoc/>
         public P08(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
         }
 
-        /// <summary>
-        /// OnFormLoaded
-        /// </summary>
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -40,17 +32,19 @@ namespace Sci.Production.Packing
             this.gridDetail.DataSource = this.listControlBindingSource1;
 
             this.Helper.Controls.Grid.Generator(this.gridDetail)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Type", header: "Packing Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
                 .Date("SewInLine", header: "Sewing Inline Date", iseditingreadonly: true)
                 .Date("EstCTNBooking", header: "Carton Est. Booking", iseditingreadonly: true)
-                .Date("EstCTNArrive", header: "Carton Est. Arrived", iseditingreadonly: true);
+                .Date("EstCTNArrive", header: "Carton Est. Arrived", iseditingreadonly: true)
+                .EditText("Description", header: "Dimension", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Numeric("CTNQty", header: "Ctn. Qty", iseditingreadonly: true)
+                ;
         }
 
-        // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtSPStart.Text) && MyUtility.Check.Empty(this.txtSPEnd.Text) && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2) && MyUtility.Check.Empty(this.dateSewingInlineDate.Value1) && MyUtility.Check.Empty(this.dateSewingInlineDate.Value2) && MyUtility.Check.Empty(this.dateCartonEstBooking.Value1) && MyUtility.Check.Empty(this.dateCartonEstBooking.Value2) && MyUtility.Check.Empty(this.dateCartonEstArrived.Value1) && MyUtility.Check.Empty(this.dateCartonEstArrived.Value2))
@@ -62,13 +56,40 @@ namespace Sci.Production.Packing
 
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select distinct 0 as Selected, pl.id,
+select distinct
+	Selected = cast(0 as bit),
+	pl.id,
+	pl.EstCTNBooking,
+	pl.EstCTNArrive,
+    pl.CTNQty,
 	Type = case when pl.Type = 'B' then 'Bulk'
 	                   when pl.Type = 'S' then 'Sample'
 	                   when pl.Type = 'L' then 'Local'
 		               end, 
-    pld.OrderID, o.SciDelivery, o.SewInLine, pl.EstCTNBooking, pl.EstCTNArrive
-from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) , Orders o WITH (NOLOCK) 
+    pld.OrderID, -- 表身只取 OrderID
+	o.SciDelivery,
+	o.SewInLine,
+	d.Description
+from PackingList pl WITH (NOLOCK)
+inner join PackingList_Detail pld WITH (NOLOCK) on pld.ID = pl.ID
+inner join Orders o WITH (NOLOCK) on o.ID = pld.OrderID
+outer apply(
+	select Description =
+	REPLACE(
+		REPLACE(
+			(select stuff((
+				select n=Description
+				from(
+					select distinct l.Description -- ISP20201882 LocalItem.Description 直接對應 PackingList 以[斷行]合併
+					from LocalItem l WITH (NOLOCK)
+					inner join PackingList_Detail pld2  WITH (NOLOCK) on pld2.RefNo = l.RefNo
+					where pld2.ID = pl.ID
+				)d
+				for xml path('')
+			),1,3,''))
+		,'</n>','')
+	,'<n>',CHAR(13)+char(10))
+)d
 where pl.MDivisionID = @mdivisionid
 and (pl.Type = 'B' or pl.Type = 'S' or pl.Type = 'L')
 and pl.ApvToPurchase = 0
@@ -182,18 +203,20 @@ and o.Junk = 0");
                 Value = !MyUtility.Check.Empty(this.dateCartonEstArrived.Value2) ? this.dateCartonEstArrived.Value2 : DateTime.Now,
             };
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-            cmds.Add(sp2);
-            cmds.Add(sp3);
-            cmds.Add(sp4);
-            cmds.Add(sp5);
-            cmds.Add(sp6);
-            cmds.Add(sp7);
-            cmds.Add(sp8);
-            cmds.Add(sp9);
-            cmds.Add(sp10);
-            cmds.Add(sp11);
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            {
+                sp1,
+                sp2,
+                sp3,
+                sp4,
+                sp5,
+                sp6,
+                sp7,
+                sp8,
+                sp9,
+                sp10,
+                sp11,
+            };
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.gridData);
             if (!result)
@@ -211,7 +234,6 @@ and o.Junk = 0");
             this.listControlBindingSource1.DataSource = this.gridData;
         }
 
-        // To Excel
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
@@ -240,7 +262,6 @@ and o.Junk = 0");
             }
         }
 
-        // Approve
         private void BtnApprove_Click(object sender, EventArgs e)
         {
             this.gridDetail.ValidateControl();
@@ -309,10 +330,14 @@ and o.Junk = 0");
             #endregion
         }
 
-        // Close
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void P08_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }

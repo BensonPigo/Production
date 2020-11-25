@@ -70,7 +70,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(959, 0);
+            this.panel2.Location = new System.Drawing.Point(1003, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 480);
             this.panel2.TabIndex = 2;
@@ -94,7 +94,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(954, 85);
+            this.panel3.Size = new System.Drawing.Size(998, 85);
             this.panel3.TabIndex = 3;
             // 
             // btnToExcel
@@ -119,6 +119,20 @@
             // 
             // dateCartonEstArrived
             // 
+            // 
+            // 
+            // 
+            this.dateCartonEstArrived.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCartonEstArrived.DateBox1.Name = "";
+            this.dateCartonEstArrived.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCartonEstArrived.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCartonEstArrived.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCartonEstArrived.DateBox2.Name = "";
+            this.dateCartonEstArrived.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCartonEstArrived.DateBox2.TabIndex = 1;
             this.dateCartonEstArrived.IsRequired = false;
             this.dateCartonEstArrived.Location = new System.Drawing.Point(522, 58);
             this.dateCartonEstArrived.Name = "dateCartonEstArrived";
@@ -127,6 +141,20 @@
             // 
             // dateCartonEstBooking
             // 
+            // 
+            // 
+            // 
+            this.dateCartonEstBooking.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCartonEstBooking.DateBox1.Name = "";
+            this.dateCartonEstBooking.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCartonEstBooking.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCartonEstBooking.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCartonEstBooking.DateBox2.Name = "";
+            this.dateCartonEstBooking.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCartonEstBooking.DateBox2.TabIndex = 1;
             this.dateCartonEstBooking.IsRequired = false;
             this.dateCartonEstBooking.Location = new System.Drawing.Point(522, 32);
             this.dateCartonEstBooking.Name = "dateCartonEstBooking";
@@ -182,6 +210,20 @@
             // 
             // dateSewingInlineDate
             // 
+            // 
+            // 
+            // 
+            this.dateSewingInlineDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInlineDate.DateBox1.Name = "";
+            this.dateSewingInlineDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInlineDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInlineDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingInlineDate.DateBox2.Name = "";
+            this.dateSewingInlineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInlineDate.DateBox2.TabIndex = 1;
             this.dateSewingInlineDate.IsRequired = false;
             this.dateSewingInlineDate.Location = new System.Drawing.Point(522, 5);
             this.dateSewingInlineDate.Name = "dateSewingInlineDate";
@@ -190,6 +232,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(89, 32);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -227,14 +283,14 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 436);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(954, 44);
+            this.panel4.Size = new System.Drawing.Size(998, 44);
             this.panel4.TabIndex = 4;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(863, 7);
+            this.btnClose.Location = new System.Drawing.Point(907, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 1;
@@ -245,7 +301,7 @@
             // btnApprove
             // 
             this.btnApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApprove.Location = new System.Drawing.Point(766, 7);
+            this.btnApprove.Location = new System.Drawing.Point(810, 7);
             this.btnApprove.Name = "btnApprove";
             this.btnApprove.Size = new System.Drawing.Size(91, 30);
             this.btnApprove.TabIndex = 0;
@@ -259,7 +315,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 85);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(954, 351);
+            this.panel5.Size = new System.Drawing.Size(998, 351);
             this.panel5.TabIndex = 5;
             // 
             // gridDetail
@@ -283,14 +339,15 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDetail.Size = new System.Drawing.Size(954, 351);
+            this.gridDetail.ShowCellToolTips = false;
+            this.gridDetail.Size = new System.Drawing.Size(998, 351);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
             // P08
             // 
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(964, 480);
+            this.ClientSize = new System.Drawing.Size(1008, 480);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -298,7 +355,9 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P08";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P08. Batch Approve to Purchase Cartons";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.P08_FormClosed);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
