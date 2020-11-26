@@ -44,50 +44,38 @@ namespace Sci.Production.Shipping
             DataGridViewGeneratorDateColumnSettings dateSettings = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings textSettings = new DataGridViewGeneratorTextColumnSettings();
 
-            ressonID.CellValidating += (s, e) =>
+            ressonID.CellEditable += (s, e) =>
             {
                 if (this.EditMode)
                 {
                     var dr = this.gridShipPlanDeleteGBHistory.GetDataRow<DataRow>(e.RowIndex);
                     if (dr == null || dr["Type"].EqualString("T"))
                     {
-                        return;
+                        e.IsEditable = false;
                     }
                 }
             };
 
-            dateSettings.CellValidating += (s, e) =>
+            dateSettings.CellEditable += (s, e) =>
             {
                 if (this.EditMode)
                 {
                     var dr = this.gridShipPlanDeleteGBHistory.GetDataRow<DataRow>(e.RowIndex);
                     if (dr == null || dr["Type"].EqualString("T"))
                     {
-                        return;
+                        e.IsEditable = false;
                     }
                 }
             };
 
-            textSettings.EditingMouseDown += (s, e) =>
+            textSettings.CellEditable += (s, e) =>
             {
                 if (this.EditMode)
                 {
                     var dr = this.gridShipPlanDeleteGBHistory.GetDataRow<DataRow>(e.RowIndex);
                     if (dr == null || dr["Type"].EqualString("T"))
                     {
-                        return;
-                    }
-                }
-            };
-
-            textSettings.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    var dr = this.gridShipPlanDeleteGBHistory.GetDataRow<DataRow>(e.RowIndex);
-                    if (dr == null || dr["Type"].EqualString("T"))
-                    {
-                        return;
+                        e.IsEditable = false;
                     }
                 }
             };
@@ -110,6 +98,14 @@ namespace Sci.Production.Shipping
             {
                 this.GridChangeColor();
             };
+
+            // change status
+            var dataRows = this.masterDataTable.AsEnumerable().Where(x => x.Field<string>("Type").EqualString("N"));
+
+            if (!dataRows.Any())
+            {
+                this.btnSave.Visible = false;
+            }
         }
 
         private void Init()
@@ -145,7 +141,6 @@ namespace Sci.Production.Shipping
                 }
                 else
                 {
-                    this.gridShipPlanDeleteGBHistory.Rows[i].ReadOnly = true;
                     dataGridViewRow.Cells["ReasonID"].Style.BackColor = Color.White;
                     dataGridViewRow.Cells["BackDate"].Style.BackColor = Color.White;
                     dataGridViewRow.Cells["NewShipModeID"].Style.BackColor = Color.White;
