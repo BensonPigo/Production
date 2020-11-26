@@ -68,6 +68,7 @@ declare @extend varchar(1) = @extend_p
 select distinct *
 from (
     select a.BundleGroup [Group_right]
+        ,a.Tone
 	    ,c.FactoryID  [Group_left]
         ,b.Sewinglineid [Line]
         ,b.SewingCell [Cell]
@@ -75,7 +76,7 @@ from (
 	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,b.Article
@@ -112,6 +113,7 @@ from (
     union all
 
     select a.BundleGroup [Group_right]
+        ,a.Tone
 	    ,c.FactoryID  [Group_left]
         ,b.Sewinglineid [Line]
         ,b.SewingCell [Cell]
@@ -119,7 +121,7 @@ from (
 	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
         ,c.StyleID [Style]
         ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
+        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
         ,b.Article
@@ -179,6 +181,7 @@ declare @extend varchar(1) = @extend_p
 select distinct *
 from (
 	select a.BundleGroup [Group_right]
+            ,a.Tone
 			,c.FactoryID  [Group_left]
 			,b.Sewinglineid [Line]
 			,b.SewingCell [Cell]
@@ -186,7 +189,7 @@ from (
 	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
+            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
             ,b.Article
@@ -218,6 +221,7 @@ from (
 	union all
 
 	select a.BundleGroup [Group_right]
+            ,a.Tone
 			,c.FactoryID  [Group_left]
 			,b.Sewinglineid [Line]
 			,b.SewingCell [Cell]
@@ -225,7 +229,7 @@ from (
 	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
 			,c.StyleID [Style]
 			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno), iif(a.Tone='','','-'+a.Tone))
+            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
             ,b.Article
@@ -494,6 +498,7 @@ order by x.[Bundle]");
                 {
                     Group_right = row1["Group_right"].ToString(),
                     Group_left = row1["Group_left"].ToString(),
+                    Tone = MyUtility.Convert.GetString(row1["Tone"]),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
                     POID = row1["POID"].ToString(),
@@ -706,12 +711,12 @@ order by x.[Bundle]");
                 string contian;
                 if (layout == 1)
                 {
-                    contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
 SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}
+Cut#: {r.Body_Cut}     Tone: {r.Tone}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
 Desc: {r.Desc}
@@ -720,12 +725,12 @@ Qty: {r.Quantity}     No: {no}";
                 }
                 else
                 {
-                    contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
 SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}
+Cut#: {r.Body_Cut}     Tone: {r.Tone}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
 Desc: {r.Desc}
