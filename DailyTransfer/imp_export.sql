@@ -289,7 +289,6 @@ update t set
 	,[AddDate]				=s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList_Line s
 inner join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
-where exists (select 1 from Trade_To_Pms.dbo.Export_Detail s where s.Ukey = t.Export_Detail_Ukey)
 
 --刪除:存在Trade_To_Pms.Export_Detail不存在Production.POShippingList_Line
 INSERT INTO [dbo].[POShippingList_Line]
@@ -368,7 +367,7 @@ select
 	,s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList_Line s
 left join Production.dbo.POShippingList_Line t on s.POShippingList_Ukey = t.POShippingList_Ukey and s.QRCode = t.QRCode and s.Line = t.Line
-where exists (select 1 from Trade_To_Pms.dbo.Export_Detail e where e.Ukey = s.Export_Detail_Ukey)
+where exists (select 1 from Trade_To_Pms.dbo.Export_Detail e where e.Ukey = s.Export_Detail_Ukey and e.id in (select ID from @T))
 and t.POShippingList_Ukey is null
 
 -----------------------POShippingList-----------------------------
@@ -400,7 +399,6 @@ UPDATE t set
 	,[AddDate]			=s.[AddDate]
 from Trade_To_Pms.dbo.POShippingList s
 inner join Production.dbo.POShippingList t on s.Ukey = t.Ukey
-and exists(select 1 from Production.dbo.POShippingList_Line where POShippingList_Ukey = s.Ukey)
 
 --新增: 存在表身 Production.dbo.POShippingList_Line, 表頭不存在
 INSERT INTO [dbo].[POShippingList]
