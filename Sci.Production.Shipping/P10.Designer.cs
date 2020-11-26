@@ -36,7 +36,7 @@
             this.btnUpdatePulloutDate = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.gridDetail = new Sci.Win.UI.Grid();
+            this.gridDetailPackingList = new Sci.Win.UI.Grid();
             this.labelDetail = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -57,6 +57,7 @@
             this.numericBoxTTLGW = new Sci.Win.UI.NumericBox();
             this.numericBoxCFSCBM = new Sci.Win.UI.NumericBox();
             this.numericBoxAIRGW = new Sci.Win.UI.NumericBox();
+            this.btnDeleteGBHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,7 +71,7 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetailPackingList)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnDeleteGBHistory);
             this.masterpanel.Controls.Add(this.numericBoxAIRGW);
             this.masterpanel.Controls.Add(this.numericBoxCFSCBM);
             this.masterpanel.Controls.Add(this.numericBoxTTLGW);
@@ -126,6 +128,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numericBoxTTLGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBoxCFSCBM, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBoxAIRGW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDeleteGBHistory, 0);
             // 
             // detailpanel
             // 
@@ -255,31 +258,31 @@
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
-            // gridDetail
+            // gridDetailPackingList
             // 
-            this.gridDetail.AllowUserToAddRows = false;
-            this.gridDetail.AllowUserToDeleteRows = false;
-            this.gridDetail.AllowUserToResizeRows = false;
-            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridDetail.DataSource = this.listControlBindingSource1;
-            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDetail.Location = new System.Drawing.Point(0, 0);
-            this.gridDetail.Name = "gridDetail";
-            this.gridDetail.RowHeadersVisible = false;
-            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridDetail.RowTemplate.Height = 24;
-            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(888, 145);
-            this.gridDetail.TabIndex = 2;
-            this.gridDetail.TabStop = false;
+            this.gridDetailPackingList.AllowUserToAddRows = false;
+            this.gridDetailPackingList.AllowUserToDeleteRows = false;
+            this.gridDetailPackingList.AllowUserToResizeRows = false;
+            this.gridDetailPackingList.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetailPackingList.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetailPackingList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetailPackingList.DataSource = this.listControlBindingSource1;
+            this.gridDetailPackingList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetailPackingList.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetailPackingList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetailPackingList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetailPackingList.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetailPackingList.Location = new System.Drawing.Point(0, 0);
+            this.gridDetailPackingList.Name = "gridDetailPackingList";
+            this.gridDetailPackingList.RowHeadersVisible = false;
+            this.gridDetailPackingList.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetailPackingList.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetailPackingList.RowTemplate.Height = 24;
+            this.gridDetailPackingList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetailPackingList.ShowCellToolTips = false;
+            this.gridDetailPackingList.Size = new System.Drawing.Size(888, 145);
+            this.gridDetailPackingList.TabIndex = 2;
+            this.gridDetailPackingList.TabStop = false;
             // 
             // labelDetail
             // 
@@ -301,7 +304,7 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.gridDetail);
+            this.panel3.Controls.Add(this.gridDetailPackingList);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 32);
             this.panel3.Name = "panel3";
@@ -531,6 +534,19 @@
             0,
             0});
             // 
+            // btnDeleteGBHistory
+            // 
+            this.btnDeleteGBHistory.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnDeleteGBHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnDeleteGBHistory.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnDeleteGBHistory.Location = new System.Drawing.Point(707, 110);
+            this.btnDeleteGBHistory.Name = "btnDeleteGBHistory";
+            this.btnDeleteGBHistory.Size = new System.Drawing.Size(160, 30);
+            this.btnDeleteGBHistory.TabIndex = 82;
+            this.btnDeleteGBHistory.Text = "Delete GB History";
+            this.btnDeleteGBHistory.UseVisualStyleBackColor = true;
+            this.btnDeleteGBHistory.Click += new System.EventHandler(this.BtnDeleteGBHistory_Click);
+            // 
             // P10
             // 
             this.ApvChkValue = "Checked";
@@ -569,7 +585,7 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetailPackingList)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -587,7 +603,7 @@
         private Win.UI.Label labelRemark;
         private Win.UI.Label labelID;
         private Win.UI.Label labelDetail;
-        private Win.UI.Grid gridDetail;
+        private Win.UI.Grid gridDetailPackingList;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel1;
@@ -608,5 +624,6 @@
         private Win.UI.NumericBox numericBoxCFSCBM;
         private Win.UI.NumericBox numericBoxTTLGW;
         private Win.UI.NumericBox numericBoxTTLCBM;
+        private Win.UI.Button btnDeleteGBHistory;
     }
 }
