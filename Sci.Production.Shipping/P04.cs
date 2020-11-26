@@ -539,15 +539,16 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 if (dtSendAccount != null && dtSendAccount.Rows.Count > 0)
                 {
+                    DateTime? eta = MyUtility.Convert.GetDate(this.CurrentMaintain["ETA"]);
                     string mailto = dtSendAccount.Rows[0]["ToAddress"].ToString();
                     string mailCC = dtSendAccount.Rows[0]["CCAddress"].ToString();
                     string subject = string.Format(
                             "[Pre-Alert] {0} / {1} / {2} / {3}",
                             this.CurrentMaintain["Shipper"].ToString(),
                             this.CurrentMaintain["Blno"].ToString(),
-                            this.CurrentMaintain["ETA"].ToString(),
+                            eta.HasValue ? eta.Value.ToString("yyyy/MM/dd") : string.Empty,
                             this.CurrentMaintain["ID"].ToString());
-                    string content = dtSendAccount.Rows[0]["Content"].ToString();
+                    string content = dtSendAccount.Rows[0]["Content"].ToString() + this.CurrentMaintain["ID"].ToString();
 
                     var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, null, content, false, true);
                     email.ShowDialog(this);
