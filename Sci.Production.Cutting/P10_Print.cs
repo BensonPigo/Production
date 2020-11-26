@@ -45,117 +45,78 @@ namespace Sci.Production.Cutting
         {
             if (this.radioBundleCard.Checked == true)
             {
-                #region report
-                string id = this.CurrentDataRow["ID"].ToString();
-
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
-                    new SqlParameter("@ID_p", id),
-                    new SqlParameter("@CutRef_p", this.CurrentDataRow["cutref"].ToString()),
-                    new SqlParameter("@POID_p", this.CurrentDataRow["POID"].ToString()),
-                    new SqlParameter("@extend_p", this.checkExtendAllParts.Checked ? "1" : "0"),
+                    new SqlParameter("@ID", SqlDbType.VarChar, 13) { Value = this.CurrentDataRow["ID"].ToString() },
+                    new SqlParameter("@POID", SqlDbType.VarChar, 13) { Value = this.CurrentDataRow["POID"].ToString() },
+                    new SqlParameter("@CutRef", SqlDbType.VarChar, 8) { Value = this.CurrentDataRow["cutref"].ToString() },
                 };
 
-                string scmd;
+                string columns = $@"
+    outer apply( select a.PatternCode) pc
+    outer apply( select a.PatternDesc) pd
+    outer apply( select a.Parts) pp
+";
                 if (this.checkExtendAllParts.Checked)
                 {
-                    scmd = string.Format(@"
-declare @extend varchar(1) = @extend_p
-,@POID varchar(13) = @POID_p
-,@Cutref varchar(8) = @CutRef_p
-,@ID varchar(13) = @ID_p
+                    columns = @"
+    left join dbo.Bundle_Detail_Allpart bdap WITH (NOLOCK) on bdap.id=a.Id and a.Patterncode = 'ALLPARTS'
+    outer apply( select PatternCode = iif(a.PatternCode = 'ALLPARTS',bdap.PatternCode,a.PatternCode)) pc
+    outer apply( select PatternDesc = iif(a.PatternCode = 'ALLPARTS',bdap.PatternDesc,a.PatternDesc)) pd
+    outer apply( select Parts = iif(a.PatternCode = 'ALLPARTS',bdap.Parts,a.Parts)) pp
+";
+                }
 
-select distinct *
+                string scmd = $@"
+select  *
 from (
-    select a.BundleGroup [Group_right]
+    select
+        [MarkerNo] = iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'')
+		,[Group_right] = a.BundleGroup
         ,a.Tone
-	    ,c.FactoryID  [Group_left]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
+        ,[Barcode] = a.BundleNo
+        ,[Size] = a.SizeCode
+        ,[Quantity] = a.Qty
+	    ,SP = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
+        ,[Desc] = CONCAT('(' + pc.PatternCode + ')', pd.PatternDesc)
+	    ,pp.Parts
+        ,NoBundleCardAfterSubprocess = (
+			select top 1 N'X'
+			from Bundle_Detail_Art bda with(nolock)
+			where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
+		
         ,b.POID
-	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-        ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-	    ,a.Parts [Parts]
-        ,b.Article + '\' + b.Colorid [Color]
         ,b.Article
-        ,a.SizeCode [Size]
-        ,'(' + qq.Cutpart + ')' + a.PatternDesc [Desc]
-        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-        ,a.Qty [Quantity]
-        ,a.BundleNo [Barcode]
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
-        ,brand.ShipCode
+        ,[Color] = CONCAT(b.Article, '\' + b.Colorid)
+        ,[Line] = b.Sewinglineid
+        ,[Cell] = b.SewingCell
+        ,b.FabricPanelCode
         ,b.item
         ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
+        ,[Body_Cut] = concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
+
+	    ,[Group_left] = c.FactoryID
+        ,[Style] = c.StyleID
+        ,SeasonID = concat(c.SeasonID,' ' + c.dest)
+        ,brand = c.brandid
+        ,brand.ShipCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
     inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
     left join brand WITH (NOLOCK) on brand.id = c.brandid
-    outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-    outer apply
-    (
-	    select Artwork = 
-	    (
-		    select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+    {columns}
+    outer apply(
+	    select Artwork = STUFF((
+		    select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId)
 		    from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-		    where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
+		    where e1.id=b.id and e1.PatternCode= pc.PatternCode and e1.Bundleno=a.BundleNo
 		    for xml path('')
-	    )
+	    ),1,1,'')
     )as Artwork
-    where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
-    union all
-
-    select a.BundleGroup [Group_right]
-        ,a.Tone
-	    ,c.FactoryID  [Group_left]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
-        ,b.POID
-	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-        ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-	    ,d.Parts [Parts]
-        ,b.Article + '\' + b.Colorid [Color]
-        ,b.Article
-        ,a.SizeCode [Size]
-         ,'(' + qq.Cutpart + ')' + d.PatternDesc [Desc]
-        --,Artwork.Artwork [Artwork]
-        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-        ,a.Qty [Quantity]
-        ,a.BundleNo [Barcode]
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
-        ,brand.ShipCode
-        ,b.item
-        ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
-    from dbo.Bundle_Detail a WITH (NOLOCK) 
-    inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
-    inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
-    left join brand WITH (NOLOCK) on brand.id = c.brandid
-    left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
-    outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-    outer apply
-    (
-	    select Artwork = 
-	    (
-		    select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-		    from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-		    where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-		    for xml path('')
-	    )
-    )as Artwork
-    where a.ID= @ID and a.Patterncode = 'ALLPARTS'
+    where a.ID= @ID 
 )x
 outer apply
 (
@@ -168,118 +129,14 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-order by x.[Barcode]");
-                }
-                else
-                {
-                    scmd = string.Format(@"
-declare @extend varchar(1) = @extend_p
-,@POID varchar(13) = @POID_p
-,@Cutref varchar(8) = @CutRef_p
-,@ID varchar(13) = @ID_p
-
-select distinct *
-from (
-	select a.BundleGroup [Group_right]
-            ,a.Tone
-			,c.FactoryID  [Group_left]
-			,b.Sewinglineid [Line]
-			,b.SewingCell [Cell]
-            ,b.POID
-	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-			,a.Parts [Parts]
-			,b.Article + '\' + b.Colorid [Color]
-            ,b.Article
-			,a.SizeCode [Size]
-			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-			,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-			,a.Qty [Quantity]
-			,a.BundleNo [Barcode]
-			,a.Patterncode
-            ,SeasonID = concat(c.SeasonID, ' ', c.dest)
-            ,brand=c.brandid
-        ,brand.ShipCode
-        ,b.item
-        ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
-	from dbo.Bundle_Detail a WITH (NOLOCK) 
-	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
-	inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
-    left join brand WITH (NOLOCK) on brand.id = c.brandid
-	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
-	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-															where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-															for xml path('')))as Artwork
-	where a.ID= @ID and a.Patterncode != 'ALLPARTS'
-
-	union all
-
-	select a.BundleGroup [Group_right]
-            ,a.Tone
-			,c.FactoryID  [Group_left]
-			,b.Sewinglineid [Line]
-			,b.SewingCell [Cell]
-            ,b.POID
-	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-			,a.Parts [Parts]
-			,b.Article + '\' + b.Colorid [Color]
-            ,b.Article
-			,a.SizeCode [Size]
-			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-	        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-			,a.Qty [Quantity]
-			,a.BundleNo [Barcode]
-			,a.Patterncode
-            ,SeasonID = concat(c.SeasonID, ' ', c.dest)
-            ,brand=c.brandid
-        ,brand.ShipCode
-            ,b.item
-            ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
-	from dbo.Bundle_Detail a WITH (NOLOCK) 
-	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
-	inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
-    left join brand WITH (NOLOCK) on brand.id = c.brandid
-	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
-	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-															where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-															for xml path('')))as Artwork
-	where a.ID= @ID and a.Patterncode = 'ALLPARTS'
-)x
-outer apply
-(
-	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
-	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
-		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
-		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
-		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
-	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
-	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
-)cu
-
-order by x.[Barcode]");
-                }
-
+order by x.[Barcode]
+";
                 this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
 
                 if (!this.result)
                 {
                     return this.result;
                 }
-                #endregion
             }
             else if (this.radioBundleChecklist.Checked)
             {
