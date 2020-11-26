@@ -56,6 +56,13 @@ Declare @ReturnValue Numeric(15,4)
 			Begin
 				Set @IsError = 1;
 			End;
+		
+		-- 6. 不可出現文字
+		If @StrValue like '%[a-zA-Z]%'
+			Begin
+				Set @IsError = 1;
+			End
+
 
 		If @IsError = 0
 			Begin
