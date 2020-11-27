@@ -115,7 +115,10 @@ WHERE  g.shipplanid = ''
        AND pd.orderid = oq.id 
        AND pd.ordershipmodeseq = oq.seq 
        AND g.forwarder = ls.id 
-	   AND o.ID = oq.Id AND o.junk = 0 ");
+	   AND o.ID = oq.Id 
+       AND o.junk = 0 
+       AND o.GMTComplete != 'S'
+");
             if (!MyUtility.Check.Empty(this.txtGBNoStart.Text))
             {
                 sqlCmd.Append(string.Format(" and g.id >= '{0}'", this.txtGBNoStart.Text));

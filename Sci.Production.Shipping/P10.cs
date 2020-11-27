@@ -405,6 +405,14 @@ where sdh.ID = '{0}'",  this.CurrentMaintain["id"]);
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return false;
+            }
+            #endregion
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be edit!", MyUtility.Convert.GetString(this.CurrentMaintain["Status"])));
@@ -885,6 +893,14 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         {
             base.ClickConfirm();
 
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return;
+            }
+            #endregion
+
             this.CheckIDD();
             this.CheckPulloutputIDD();
 
@@ -1334,6 +1350,7 @@ inner join #tmp t on t.ID = pd.ID
 
         }
 
+
         private void BtnDeleteGBHistory_Click(object sender, EventArgs e)
         {
             if (this.dtDeleteGBHistory == null || this.dtDeleteGBHistory.Rows.Count == 0)
@@ -1343,6 +1360,49 @@ inner join #tmp t on t.ID = pd.ID
 
             var frm = new P10_DeleteGarmentBookingHistory(this.dtDeleteGBHistory);
             frm.ShowDialog(this);
+		}
+        private bool GMTCompleteCheck()
+        {
+            #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            DataTable packingList_List = (DataTable)this.listControlBindingSource1.DataSource;
+
+            DataTable isGMTComplete = new DataTable();
+            isGMTComplete.ColumnsStringAdd("SP#");
+            isGMTComplete.ColumnsDateTimeAdd("Complete Date");
+            foreach (DataRow dr in packingList_List.Rows)
+            {
+                // 拆解Order ID
+                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
+                foreach (var order in orders)
+                {
+                    string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, cmd, out dt);
+                    bool find = dt.Rows.Count > 0;
+                    if (find)
+                    {
+                        foreach (DataRow r in dt.Rows)
+                        {
+                            isGMTComplete.ImportRow(r);
+                        }
+                    }
+                }
+            }
+
+            if (isGMTComplete.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
+                m.Width = 800;
+                m.grid1.Columns[0].Width = 150;
+                m.grid1.Columns[1].Width = 150;
+                m.TopMost = true;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            #endregion
         }
     }
 }
