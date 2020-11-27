@@ -741,6 +741,13 @@ outer apply(
 	inner join PackingList p on p.id = pd.id
 	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
 )plds
+outer apply(
+	select distinct p.ID, p.Status, p.PulloutDate, p.INVNo ,p.ExpressID, [ExpressStatus] = e.Status, p.ShipPlanID
+	from PackingList_Detail pd WITH (NOLOCK)
+	inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
+	left join Express e on p.ExpressID = e.ID
+	where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq
+)p
 
 where ((isnull(ot.IsGMTMaster,0) != 1
 	and o.PulloutComplete=0 and o.Qty > 0
@@ -750,6 +757,7 @@ or (
 	exists (select 1 from Order_Finish Where ID = o.ID)
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
 ))
+AND p.PulloutDate IS NOT NULL
  ");
 
             return sqlCmd;
