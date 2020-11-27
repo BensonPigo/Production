@@ -31,7 +31,7 @@ namespace Sci.Production.Basic
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -72,6 +72,8 @@ namespace Sci.Production.Basic
             this.panel1 = new Sci.Win.UI.Panel();
             this.chkIsFreightForwarder = new Sci.Win.UI.CheckBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtTaxNO = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -89,6 +91,8 @@ namespace Sci.Production.Basic
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtTaxNO);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.chkIsFreightForwarder);
             this.detailcont.Controls.Add(this.panel1);
@@ -492,14 +496,14 @@ namespace Sci.Production.Basic
             this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBankDetail.Location = new System.Drawing.Point(0, 0);
             this.gridBankDetail.Name = "gridBankDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBankDetail.RowTemplate.Height = 24;
@@ -581,13 +585,31 @@ namespace Sci.Production.Basic
             this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkJunk.IsSupportEditMode = false;
-            this.chkJunk.Location = new System.Drawing.Point(325, 17);
+            this.chkJunk.Location = new System.Drawing.Point(499, 17);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.ReadOnly = true;
             this.chkJunk.Size = new System.Drawing.Size(57, 21);
             this.chkJunk.TabIndex = 213;
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(277, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 23);
+            this.label4.TabIndex = 214;
+            this.label4.Text = "Tax No.";
+            // 
+            // txtTaxNO
+            // 
+            this.txtTaxNO.BackColor = System.Drawing.Color.White;
+            this.txtTaxNO.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TaxNo", true));
+            this.txtTaxNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTaxNO.Location = new System.Drawing.Point(343, 15);
+            this.txtTaxNO.Name = "txtTaxNO";
+            this.txtTaxNO.Size = new System.Drawing.Size(127, 23);
+            this.txtTaxNO.TabIndex = 215;
             // 
             // B04
             // 
@@ -671,5 +693,7 @@ namespace Sci.Production.Basic
         private Win.UI.Panel panel1;
         private Win.UI.CheckBox chkIsFreightForwarder;
         private Win.UI.CheckBox chkJunk;
+        private Win.UI.TextBox txtTaxNO;
+        private Win.UI.Label label4;
     }
 }
