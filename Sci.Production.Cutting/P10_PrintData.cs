@@ -10,6 +10,9 @@
         public string Group_left { get; set; }
 
         /// <inheritdoc/>
+        public string Tone { get; set; }
+
+        /// <inheritdoc/>
         public string Line { get; set; }
 
         /// <inheritdoc/>

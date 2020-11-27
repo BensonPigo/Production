@@ -332,7 +332,7 @@ order by ArticleGroup", patternukey);
             detailAccept.AcceptChanges();
             string bundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
             int seq = 0;
-            this.detailTb.AsEnumerable().ToList().ForEach(f => f["tmpSeq"] = seq++);
+            this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
 
             // 將Bundle_Detial_Art distinct PatternCode,
             string sqlCmd = $@"
@@ -1599,11 +1599,13 @@ drop table #tmp,#tmp2";
             }
             #endregion
 
+            this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["Tone"] = string.Empty);
+
             #region Generate by Tone 有勾選再處理一次
             if (this.chkTone.Checked && this.numTone.Value > 0)
             {
                 int seq = 0;
-                this.detailTb.AsEnumerable().ToList().ForEach(f => f["tmpSeq"] = seq++);
+                this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
                 int bundlegroupS = Convert.ToInt32(this.maindatarow["startno"]);
                 int tone = MyUtility.Convert.GetInt(this.numTone.Value);
                 DataTable dtDetail = new DataTable();
@@ -1640,7 +1642,7 @@ drop table #tmp,#tmp2";
                         foreach (DataRow item in dtCopy.Rows)
                         {
                             item["bundlegroup"] = bundlegroupS + i; // 重設bundlegroup
-
+                            item["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                             item["tmpNum"] = tmpNum; // 暫時紀錄原本資料對應拆出去的資料,要用來重分配Qty
                             tmpNum++;
 
@@ -1674,6 +1676,7 @@ drop table #tmp,#tmp2";
                     for (int i = 0; i < tone; i++)
                     {
                         row["BundleGroup"] = bundlegroupS + i;
+                        row["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                         int notAllpart = this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1;
                         notAllpart = notAllpart == 0 ? 1 : notAllpart;
                         row["Qty"] = this.detailTb.AsEnumerable().

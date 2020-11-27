@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -258,6 +259,7 @@ select
     , b.POID [POID]
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
+    , a.Tone
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
     , c.StyleID [Style]
@@ -345,6 +347,7 @@ select
     , b.POID [POID]
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
+    , a.Tone
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
     , c.StyleID [Style]
@@ -476,6 +479,7 @@ select
     , b.POID [POID]
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
+    , a.Tone
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
     , c.StyleID [Style]
@@ -563,6 +567,7 @@ select
     , b.POID [POID]
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
+    , a.Tone
     , b.Sewinglineid [Line]
     , b.SewingCell [Cell]
     , c.StyleID [Style]
@@ -735,6 +740,7 @@ OPTION (RECOMPILE)"
             {
                 Group_right = row1["Group"].ToString(),
                 Group_left = row1["left"].ToString(),
+                Tone = MyUtility.Convert.GetString(row1["Tone"]),
                 Line = row1["Line"].ToString(),
                 Cell = row1["Cell"].ToString(),
                 POID = row1["POID"].ToString(),
@@ -874,7 +880,12 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 }
             }
 
+            string excelName = Class.MicrosoftFile.GetName(fileName);
+            excelApp.ActiveWorkbook.SaveAs(excelName);
+            workbook.Close();
+            excelApp.Quit();
             Marshal.ReleaseComObject(excelApp);
+            File.Delete(excelName);
         }
 
         private void P12_FormClosed(object sender, FormClosedEventArgs e)

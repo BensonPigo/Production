@@ -35,7 +35,9 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.labelBalance = new Sci.Win.UI.Label();
+            this.labelAccumulateQty = new Sci.Win.UI.Label();
             this.labelBalanceValue = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
             this.labelToalCutOutputValue = new Sci.Win.UI.Label();
             this.labelTotalCutOutput = new Sci.Win.UI.Label();
             this.BtnQuery = new Sci.Win.UI.Button();
@@ -64,8 +66,6 @@
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
             this.label1 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
-            this.BtnGarmentList = new Sci.Win.UI.Button();
-            this.BtnColorComb = new Sci.Win.UI.Button();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
             this.gridCutpart = new Sci.Win.UI.Grid();
             this.art_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
@@ -78,14 +78,16 @@
             this.allpart_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.allpart_insert = new System.Windows.Forms.ToolStripMenuItem();
             this.allpart_delete = new System.Windows.Forms.ToolStripMenuItem();
+            this.lbinfo = new System.Windows.Forms.Label();
+            this.btnDefault = new Sci.Win.UI.Button();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.radiobegin1 = new Sci.Win.UI.RadioButton();
             this.radioWithcuto = new Sci.Win.UI.RadioButton();
             this.labelGroup = new Sci.Win.UI.Label();
+            this.BtnColorComb = new Sci.Win.UI.Button();
+            this.BtnGarmentList = new Sci.Win.UI.Button();
             this.BtnClose = new Sci.Win.UI.Button();
             this.BtnBatchCreate = new Sci.Win.UI.Button();
-            this.labelAccumulateQty = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -178,6 +180,17 @@
             this.labelBalance.Text = "Balance";
             this.labelBalance.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // labelAccumulateQty
+            // 
+            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelAccumulateQty.Location = new System.Drawing.Point(1153, 5);
+            this.labelAccumulateQty.Name = "labelAccumulateQty";
+            this.labelAccumulateQty.Size = new System.Drawing.Size(41, 23);
+            this.labelAccumulateQty.TabIndex = 104;
+            this.labelAccumulateQty.Text = "0";
+            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
             // labelBalanceValue
             // 
             this.labelBalanceValue.BackColor = System.Drawing.Color.Transparent;
@@ -188,6 +201,17 @@
             this.labelBalanceValue.TabIndex = 121;
             this.labelBalanceValue.Text = "0";
             this.labelBalanceValue.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label6.Location = new System.Drawing.Point(1083, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 23);
+            this.label6.TabIndex = 103;
+            this.label6.Text = "Accumulate";
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelToalCutOutputValue
             // 
@@ -331,8 +355,12 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.lbinfo);
+            this.splitContainer2.Panel2.Controls.Add(this.btnDefault);
             this.splitContainer2.Panel2.Controls.Add(this.radioGroup1);
             this.splitContainer2.Panel2.Controls.Add(this.labelGroup);
+            this.splitContainer2.Panel2.Controls.Add(this.BtnColorComb);
+            this.splitContainer2.Panel2.Controls.Add(this.BtnGarmentList);
             this.splitContainer2.Panel2.Controls.Add(this.BtnClose);
             this.splitContainer2.Panel2.Controls.Add(this.BtnBatchCreate);
             this.splitContainer2.Panel2MinSize = 45;
@@ -577,8 +605,6 @@
             // 
             this.splitContainer7.Panel1.Controls.Add(this.label1);
             this.splitContainer7.Panel1.Controls.Add(this.label5);
-            this.splitContainer7.Panel1.Controls.Add(this.BtnGarmentList);
-            this.splitContainer7.Panel1.Controls.Add(this.BtnColorComb);
             this.splitContainer7.Panel1MinSize = 28;
             // 
             // splitContainer7.Panel2
@@ -594,9 +620,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.label1.Location = new System.Drawing.Point(9, 3);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(139, 23);
+            this.label1.Size = new System.Drawing.Size(187, 23);
             this.label1.TabIndex = 111;
-            this.label1.Text = "Bundle Card Data";
+            this.label1.Text = "Bundle Card Information";
             this.label1.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // label5
@@ -610,30 +636,6 @@
             this.label5.TabIndex = 106;
             this.label5.Text = "All Parts Detail";
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // BtnGarmentList
-            // 
-            this.BtnGarmentList.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.BtnGarmentList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnGarmentList.Location = new System.Drawing.Point(525, 0);
-            this.BtnGarmentList.Name = "BtnGarmentList";
-            this.BtnGarmentList.Size = new System.Drawing.Size(97, 28);
-            this.BtnGarmentList.TabIndex = 102;
-            this.BtnGarmentList.Text = "Garment List";
-            this.BtnGarmentList.UseVisualStyleBackColor = true;
-            this.BtnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
-            // 
-            // BtnColorComb
-            // 
-            this.BtnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnColorComb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.BtnColorComb.Location = new System.Drawing.Point(1104, 0);
-            this.BtnColorComb.Name = "BtnColorComb";
-            this.BtnColorComb.Size = new System.Drawing.Size(97, 28);
-            this.BtnColorComb.TabIndex = 103;
-            this.BtnColorComb.Text = "Color Comb";
-            this.BtnColorComb.UseVisualStyleBackColor = true;
-            this.BtnColorComb.Click += new System.EventHandler(this.BtnColorComb_Click);
             // 
             // splitContainer8
             // 
@@ -803,6 +805,32 @@
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
+            // lbinfo
+            // 
+            this.lbinfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbinfo.AutoSize = true;
+            this.lbinfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lbinfo.ForeColor = System.Drawing.Color.Red;
+            this.lbinfo.Location = new System.Drawing.Point(98, 14);
+            this.lbinfo.Name = "lbinfo";
+            this.lbinfo.Size = new System.Drawing.Size(455, 15);
+            this.lbinfo.TabIndex = 105;
+            this.lbinfo.Text = "The bundle card information/All Parts Detail is different from  default(pattern r" +
+    "oom)\"";
+            this.lbinfo.Visible = false;
+            // 
+            // btnDefault
+            // 
+            this.btnDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDefault.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnDefault.Location = new System.Drawing.Point(12, 11);
+            this.btnDefault.Name = "btnDefault";
+            this.btnDefault.Size = new System.Drawing.Size(80, 28);
+            this.btnDefault.TabIndex = 104;
+            this.btnDefault.Text = "Default";
+            this.btnDefault.UseVisualStyleBackColor = true;
+            this.btnDefault.Click += new System.EventHandler(this.BtnDefault_Click);
+            // 
             // radioGroup1
             // 
             this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -853,6 +881,30 @@
             this.labelGroup.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.labelGroup.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // BtnColorComb
+            // 
+            this.BtnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnColorComb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.BtnColorComb.Location = new System.Drawing.Point(699, 11);
+            this.BtnColorComb.Name = "BtnColorComb";
+            this.BtnColorComb.Size = new System.Drawing.Size(97, 28);
+            this.BtnColorComb.TabIndex = 103;
+            this.BtnColorComb.Text = "Color Comb";
+            this.BtnColorComb.UseVisualStyleBackColor = true;
+            this.BtnColorComb.Click += new System.EventHandler(this.BtnColorComb_Click);
+            // 
+            // BtnGarmentList
+            // 
+            this.BtnGarmentList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnGarmentList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.BtnGarmentList.Location = new System.Drawing.Point(598, 11);
+            this.BtnGarmentList.Name = "BtnGarmentList";
+            this.BtnGarmentList.Size = new System.Drawing.Size(97, 28);
+            this.BtnGarmentList.TabIndex = 102;
+            this.BtnGarmentList.Text = "Garment List";
+            this.BtnGarmentList.UseVisualStyleBackColor = true;
+            this.BtnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
+            // 
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -877,28 +929,6 @@
             this.BtnBatchCreate.UseVisualStyleBackColor = true;
             this.BtnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
-            // labelAccumulateQty
-            // 
-            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
-            this.labelAccumulateQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelAccumulateQty.Location = new System.Drawing.Point(1153, 5);
-            this.labelAccumulateQty.Name = "labelAccumulateQty";
-            this.labelAccumulateQty.Size = new System.Drawing.Size(41, 23);
-            this.labelAccumulateQty.TabIndex = 104;
-            this.labelAccumulateQty.Text = "0";
-            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label6.Location = new System.Drawing.Point(1083, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(70, 23);
-            this.label6.TabIndex = 103;
-            this.label6.Text = "Accumulate";
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // P15
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -919,6 +949,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
@@ -1019,5 +1050,7 @@
         private System.Windows.Forms.ToolStripMenuItem DeleteAS_MenuItem;
         private Win.UI.Label labelAccumulateQty;
         private Win.UI.Label label6;
+        private System.Windows.Forms.Label lbinfo;
+        private Win.UI.Button btnDefault;
     }
 }
