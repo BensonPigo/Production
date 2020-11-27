@@ -266,9 +266,20 @@ INNER JOIN #CUR_PULLOUT1 b ON a.ID=b.ID
 WHERE a.SendToTPE IS NULL OR A.SendToTPE < A.EditDate
 
 -----ShipPlan_DeleteGBHistory
-select sdh.*
+select sdh.ID
+	, sdh.GMTBookingID
+	, sdh.ReasonID
+	, [ReasonDesc] = sr.Description
+	, sdh.BackDate
+	, sdh.NewShipModeID
+	, sdh.NewPulloutDate
+	, sdh.NewDestination
+	, sdh.Remark
+	, sdh.AddName
+	, sdh.AddDate
 into ShipPlan_DeleteGBHistory
 from Production.dbo.ShipPlan_DeleteGBHistory sdh
+left join Production.dbo.ShippingReason sr on sdh.ReasonID = sr.ID
 where exists (select 1 from Production.dbo.ShipPlan s where s.ID = sdh.ID and s.EditDate between dateadd(d,-7,GETDATE()) and GETDATE())
 
 DROP TABLE #CUR_PULLOUT1
