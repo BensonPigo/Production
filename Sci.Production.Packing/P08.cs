@@ -237,21 +237,17 @@ and o.Junk = 0");
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable gridData = (DataTable)this.listControlBindingSource1.DataSource;
-
             if (gridData == null || gridData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("No data!!");
                 return;
             }
 
-            DataTable excelTable;
-            try
+            string columns = "ID,Type,OrderId,SciDelivery,SewInLine,EstCTNBooking,EstCTNArrive,Description,CTNQty";
+            DualResult result1 = MyUtility.Tool.ProcessWithDatatable(gridData, columns, "select * from #tmp", out DataTable excelTable);
+            if (!result1)
             {
-                MyUtility.Tool.ProcessWithDatatable(gridData, "ID,Type,OrderId,SciDelivery,SewInLine,EstCTNBooking,EstCTNArrive", "select * from #tmp", out excelTable);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
+                this.ShowErr(result1);
                 return;
             }
 
