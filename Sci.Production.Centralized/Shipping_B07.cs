@@ -34,6 +34,9 @@ namespace Sci.Production.Centralized
 
             this.btnImport.Enabled = canEdit && !this.EditMode;
 
+            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'"));
+
+            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'"));
             base.OnDetailEntered();
         }
 
