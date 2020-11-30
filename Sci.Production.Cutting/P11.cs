@@ -2109,15 +2109,9 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             int bundleofnum = 0;
             int autono = 0, qtycount = 0, patterncount = 0;
 
-            // if (radioWithcuto.Checked) autono = 0; //自動根據之前的往下排
-            if (this.radiobegin1.Checked)
-            {
-                autono = 1; // 從1開始
-            }
-
             #region 計算Bundle數 並填入Ratio,Startno
             DataTable spStartnoTb = new DataTable(); // for Startno,分SP給
-            spStartnoTb.Columns.Add("orderid", typeof(string));
+            spStartnoTb.Columns.Add("POID", typeof(string));
             spStartnoTb.Columns.Add("startno", typeof(string));
 
             var artAy = this.ArticleSizeTb.Select("Sel=1", "Orderid").OrderBy(row => row["Fabriccombo"]).ThenBy(row => row["Cutno"]);
@@ -2174,17 +2168,17 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                 #endregion
 
                 #region Start no
-                DataRow[] spdr = spStartnoTb.Select(string.Format("orderid='{0}'", artar["Orderid"]));
+                DataRow[] spdr = spStartnoTb.Select(string.Format("POID='{0}'", artar["POID"]));
                 if (spdr.Length == 0)
                 {
                     DataRow new_spdr = spStartnoTb.NewRow();
-                    new_spdr["Orderid"] = artar["Orderid"];
+                    new_spdr["POID"] = artar["POID"];
 
                     // auto
                     if (autono == 0)
                     {
                         #region startno
-                        string max_cmd = string.Format("Select isnull(Max(startno+Qty),1) as Start from Bundle WITH (NOLOCK) Where OrderID = '{0}'", artar["Orderid"]);
+                        string max_cmd = string.Format("Select isnull(Max(startno+Qty),1) as Start from Bundle WITH (NOLOCK) Where POID = '{0}'", artar["POID"]);
                         DataTable max_st;
                         if (DBProxy.Current.Select(null, max_cmd, out max_st))
                         {
@@ -2225,7 +2219,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             {
                 int startno = 1;
                 int startno_bytone = 1;
-                DataRow[] startnoAry = spStartnoTb.Select(string.Format("orderid='{0}'", artar["OrderID"]));
+                DataRow[] startnoAry = spStartnoTb.Select(string.Format("POID='{0}'", artar["POID"]));
                 if (autono == 0)
                 {
                     startno = Convert.ToInt16(startnoAry[0]["Startno"]);

@@ -35,7 +35,9 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.labelBalance = new Sci.Win.UI.Label();
+            this.labelAccumulateQty = new Sci.Win.UI.Label();
             this.labelBalanceValue = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
             this.labelToalCutOutputValue = new Sci.Win.UI.Label();
             this.labelTotalCutOutput = new Sci.Win.UI.Label();
             this.BtnQuery = new Sci.Win.UI.Button();
@@ -78,14 +80,8 @@
             this.allpart_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.allpart_insert = new System.Windows.Forms.ToolStripMenuItem();
             this.allpart_delete = new System.Windows.Forms.ToolStripMenuItem();
-            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.radiobegin1 = new Sci.Win.UI.RadioButton();
-            this.radioWithcuto = new Sci.Win.UI.RadioButton();
-            this.labelGroup = new Sci.Win.UI.Label();
             this.BtnClose = new Sci.Win.UI.Button();
             this.BtnBatchCreate = new Sci.Win.UI.Button();
-            this.labelAccumulateQty = new Sci.Win.UI.Label();
-            this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -130,7 +126,6 @@
             this.splitContainer9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).BeginInit();
             this.allpart_contextMenuStrip.SuspendLayout();
-            this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -178,6 +173,17 @@
             this.labelBalance.Text = "Balance";
             this.labelBalance.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // labelAccumulateQty
+            // 
+            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelAccumulateQty.Location = new System.Drawing.Point(1153, 5);
+            this.labelAccumulateQty.Name = "labelAccumulateQty";
+            this.labelAccumulateQty.Size = new System.Drawing.Size(41, 23);
+            this.labelAccumulateQty.TabIndex = 104;
+            this.labelAccumulateQty.Text = "0";
+            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
             // labelBalanceValue
             // 
             this.labelBalanceValue.BackColor = System.Drawing.Color.Transparent;
@@ -188,6 +194,17 @@
             this.labelBalanceValue.TabIndex = 121;
             this.labelBalanceValue.Text = "0";
             this.labelBalanceValue.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label6.Location = new System.Drawing.Point(1083, 5);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 23);
+            this.label6.TabIndex = 103;
+            this.label6.Text = "Accumulate";
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelToalCutOutputValue
             // 
@@ -331,8 +348,6 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.radioGroup1);
-            this.splitContainer2.Panel2.Controls.Add(this.labelGroup);
             this.splitContainer2.Panel2.Controls.Add(this.BtnClose);
             this.splitContainer2.Panel2.Controls.Add(this.BtnBatchCreate);
             this.splitContainer2.Panel2MinSize = 45;
@@ -803,56 +818,6 @@
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
-            // radioGroup1
-            // 
-            this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioGroup1.Controls.Add(this.radiobegin1);
-            this.radioGroup1.Controls.Add(this.radioWithcuto);
-            this.radioGroup1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.radioGroup1.IsSupportEditMode = false;
-            this.radioGroup1.Location = new System.Drawing.Point(892, 1);
-            this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(114, 45);
-            this.radioGroup1.TabIndex = 19;
-            this.radioGroup1.TabStop = false;
-            // 
-            // radiobegin1
-            // 
-            this.radiobegin1.AutoSize = true;
-            this.radiobegin1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobegin1.Location = new System.Drawing.Point(10, 24);
-            this.radiobegin1.Name = "radiobegin1";
-            this.radiobegin1.Size = new System.Drawing.Size(91, 19);
-            this.radiobegin1.TabIndex = 16;
-            this.radiobegin1.Text = "begin with 1";
-            this.radiobegin1.UseVisualStyleBackColor = true;
-            // 
-            // radioWithcuto
-            // 
-            this.radioWithcuto.AutoSize = true;
-            this.radioWithcuto.Checked = true;
-            this.radioWithcuto.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioWithcuto.Location = new System.Drawing.Point(10, 9);
-            this.radioWithcuto.Name = "radioWithcuto";
-            this.radioWithcuto.Size = new System.Drawing.Size(74, 19);
-            this.radioWithcuto.TabIndex = 15;
-            this.radioWithcuto.TabStop = true;
-            this.radioWithcuto.Text = "with auto";
-            this.radioWithcuto.UseVisualStyleBackColor = true;
-            // 
-            // labelGroup
-            // 
-            this.labelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelGroup.BackColor = System.Drawing.Color.Transparent;
-            this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Location = new System.Drawing.Point(854, 14);
-            this.labelGroup.Name = "labelGroup";
-            this.labelGroup.Size = new System.Drawing.Size(35, 23);
-            this.labelGroup.TabIndex = 20;
-            this.labelGroup.Text = "Group";
-            this.labelGroup.TextStyle.BorderColor = System.Drawing.Color.Transparent;
-            this.labelGroup.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // BtnClose
             // 
             this.BtnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -876,28 +841,6 @@
             this.BtnBatchCreate.Text = "Batch Create";
             this.BtnBatchCreate.UseVisualStyleBackColor = true;
             this.BtnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
-            // 
-            // labelAccumulateQty
-            // 
-            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
-            this.labelAccumulateQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelAccumulateQty.Location = new System.Drawing.Point(1153, 5);
-            this.labelAccumulateQty.Name = "labelAccumulateQty";
-            this.labelAccumulateQty.Size = new System.Drawing.Size(41, 23);
-            this.labelAccumulateQty.TabIndex = 104;
-            this.labelAccumulateQty.Text = "0";
-            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label6.Location = new System.Drawing.Point(1083, 5);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(70, 23);
-            this.label6.TabIndex = 103;
-            this.label6.Text = "Accumulate";
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P15
             // 
@@ -958,8 +901,6 @@
             this.splitContainer9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).EndInit();
             this.allpart_contextMenuStrip.ResumeLayout(false);
-            this.radioGroup1.ResumeLayout(false);
-            this.radioGroup1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1002,10 +943,6 @@
         private Win.UI.Button btn_RighttoLeft;
         private Win.UI.Button btn_LefttoRight;
         private Win.UI.Grid gridAllPart;
-        private Win.UI.Label labelGroup;
-        private Win.UI.RadioGroup radioGroup1;
-        private Win.UI.RadioButton radiobegin1;
-        private Win.UI.RadioButton radioWithcuto;
         private Win.UI.Button BtnClose;
         private Win.UI.Button BtnBatchCreate;
         private Win.UI.ContextMenuStrip allpart_contextMenuStrip;

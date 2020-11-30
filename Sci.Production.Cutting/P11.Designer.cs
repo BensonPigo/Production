@@ -28,14 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.radioWithcuto = new Sci.Win.UI.RadioButton();
-            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.radiobegin1 = new Sci.Win.UI.RadioButton();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.label_TotalQty = new Sci.Win.UI.Label();
@@ -71,7 +68,6 @@
             this.gridQty = new Sci.Win.UI.Grid();
             this.gridCutRef = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.labelGroup = new Sci.Win.UI.Label();
             this.txtfactoryByM = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -79,6 +75,8 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.labelAccumulateQty = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
             this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
             this.label2 = new Sci.Win.UI.Label();
             this.chkAEQ = new Sci.Win.UI.CheckBox();
@@ -92,9 +90,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.chkTone = new Sci.Win.UI.CheckBox();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
-            this.label6 = new Sci.Win.UI.Label();
-            this.labelAccumulateQty = new Sci.Win.UI.Label();
-            this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridArticleSize)).BeginInit();
@@ -135,42 +130,6 @@
             this.splitContainer8.Panel2.SuspendLayout();
             this.splitContainer8.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // radioWithcuto
-            // 
-            this.radioWithcuto.AutoSize = true;
-            this.radioWithcuto.Checked = true;
-            this.radioWithcuto.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioWithcuto.Location = new System.Drawing.Point(10, 2);
-            this.radioWithcuto.Name = "radioWithcuto";
-            this.radioWithcuto.Size = new System.Drawing.Size(74, 19);
-            this.radioWithcuto.TabIndex = 15;
-            this.radioWithcuto.TabStop = true;
-            this.radioWithcuto.Text = "with auto";
-            this.radioWithcuto.UseVisualStyleBackColor = true;
-            // 
-            // radioGroup1
-            // 
-            this.radioGroup1.Controls.Add(this.radiobegin1);
-            this.radioGroup1.Controls.Add(this.radioWithcuto);
-            this.radioGroup1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.radioGroup1.IsSupportEditMode = false;
-            this.radioGroup1.Location = new System.Drawing.Point(854, 3);
-            this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(114, 43);
-            this.radioGroup1.TabIndex = 14;
-            this.radioGroup1.TabStop = false;
-            // 
-            // radiobegin1
-            // 
-            this.radiobegin1.AutoSize = true;
-            this.radiobegin1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobegin1.Location = new System.Drawing.Point(10, 21);
-            this.radiobegin1.Name = "radiobegin1";
-            this.radiobegin1.Size = new System.Drawing.Size(91, 19);
-            this.radiobegin1.TabIndex = 16;
-            this.radiobegin1.Text = "begin with 1";
-            this.radiobegin1.UseVisualStyleBackColor = true;
             // 
             // btnClose
             // 
@@ -454,14 +413,14 @@
             this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutpart.Location = new System.Drawing.Point(0, 0);
             this.gridCutpart.Name = "gridCutpart";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutpart.RowTemplate.Height = 24;
@@ -508,14 +467,14 @@
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridArticleSize.Location = new System.Drawing.Point(0, 0);
             this.gridArticleSize.Name = "gridArticleSize";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
@@ -542,14 +501,14 @@
             this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridAllPart.Location = new System.Drawing.Point(0, 0);
             this.gridAllPart.Name = "gridAllPart";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAllPart.RowTemplate.Height = 24;
@@ -596,14 +555,14 @@
             this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQty.Location = new System.Drawing.Point(0, 0);
             this.gridQty.Name = "gridQty";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQty.RowTemplate.Height = 24;
@@ -628,14 +587,14 @@
             this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutRef.Location = new System.Drawing.Point(0, 0);
             this.gridCutRef.Name = "gridCutRef";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;
@@ -656,18 +615,6 @@
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
-            // 
-            // labelGroup
-            // 
-            this.labelGroup.BackColor = System.Drawing.Color.Transparent;
-            this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Location = new System.Drawing.Point(826, 13);
-            this.labelGroup.Name = "labelGroup";
-            this.labelGroup.Size = new System.Drawing.Size(35, 23);
-            this.labelGroup.TabIndex = 17;
-            this.labelGroup.Text = "Group";
-            this.labelGroup.TextStyle.BorderColor = System.Drawing.Color.Transparent;
-            this.labelGroup.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // txtfactoryByM
             // 
@@ -795,6 +742,27 @@
             this.splitContainer5.Size = new System.Drawing.Size(1169, 630);
             this.splitContainer5.SplitterDistance = 52;
             this.splitContainer5.TabIndex = 100;
+            // 
+            // labelAccumulateQty
+            // 
+            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Location = new System.Drawing.Point(969, 24);
+            this.labelAccumulateQty.Name = "labelAccumulateQty";
+            this.labelAccumulateQty.RectStyle.Color = System.Drawing.Color.Transparent;
+            this.labelAccumulateQty.Size = new System.Drawing.Size(63, 23);
+            this.labelAccumulateQty.TabIndex = 102;
+            this.labelAccumulateQty.Text = "0";
+            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Location = new System.Drawing.Point(885, 24);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(74, 23);
+            this.label6.TabIndex = 101;
+            this.label6.Text = "Accumulate";
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtSpreadingNo1
             // 
@@ -980,9 +948,7 @@
             // splitContainer8.Panel2
             // 
             this.splitContainer8.Panel2.Controls.Add(this.labelTotalQty);
-            this.splitContainer8.Panel2.Controls.Add(this.labelGroup);
             this.splitContainer8.Panel2.Controls.Add(this.btnCopy_to_other_Cutref);
-            this.splitContainer8.Panel2.Controls.Add(this.radioGroup1);
             this.splitContainer8.Panel2.Controls.Add(this.btnCopy_to_same_Cutref);
             this.splitContainer8.Panel2.Controls.Add(this.btnClose);
             this.splitContainer8.Panel2.Controls.Add(this.label_TotalQty);
@@ -990,27 +956,6 @@
             this.splitContainer8.Size = new System.Drawing.Size(1169, 322);
             this.splitContainer8.SplitterDistance = 273;
             this.splitContainer8.TabIndex = 0;
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(885, 24);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(74, 23);
-            this.label6.TabIndex = 101;
-            this.label6.Text = "Accumulate";
-            this.label6.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // labelAccumulateQty
-            // 
-            this.labelAccumulateQty.BackColor = System.Drawing.Color.Transparent;
-            this.labelAccumulateQty.Location = new System.Drawing.Point(969, 24);
-            this.labelAccumulateQty.Name = "labelAccumulateQty";
-            this.labelAccumulateQty.RectStyle.Color = System.Drawing.Color.Transparent;
-            this.labelAccumulateQty.Size = new System.Drawing.Size(63, 23);
-            this.labelAccumulateQty.TabIndex = 102;
-            this.labelAccumulateQty.Text = "0";
-            this.labelAccumulateQty.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // P11
             // 
@@ -1023,8 +968,6 @@
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P11.Batch Create Bundle Card";
             this.Controls.SetChildIndex(this.splitContainer5, 0);
-            this.radioGroup1.ResumeLayout(false);
-            this.radioGroup1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).EndInit();
             this.art_contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridArticleSize)).EndInit();
@@ -1071,10 +1014,6 @@
         }
 
         #endregion
-
-        private Win.UI.RadioButton radioWithcuto;
-        private Win.UI.RadioGroup radioGroup1;
-        private Win.UI.RadioButton radiobegin1;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnBatchCreate;
         private Win.UI.Label label_TotalQty;
@@ -1110,7 +1049,6 @@
         private Win.UI.ContextMenuStrip art_contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem insertIntoRecordToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteRecordToolStripMenuItem;
-        private Win.UI.Label labelGroup;
         private Class.Txtfactory txtfactoryByM;
         private Win.UI.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
