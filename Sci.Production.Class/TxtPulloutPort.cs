@@ -37,10 +37,10 @@ namespace Sci.Production.Class
         private void TextBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string sql = @"
-SELECT p.ID,p.CountryID,[Country Name]=c.NameEN 
+SELECT p.ID,P.Name,p.CountryID,[Country Name]=c.NameEN 
     ,[AirPort]=IIF(p.AirPort=1,'Y','') 
     ,[SeaPort]=IIF(p.SeaPort=1,'Y','') 
-FROM Port p 
+FROM PulloutPort p 
 INNER JOIN Country c ON p.CountryID = c.ID 
 WHERE p.Junk = 0 
 ORDER BY p.ID";
@@ -48,9 +48,9 @@ ORDER BY p.ID";
             DataTable source;
             DBProxy.Current.Select("Production", sql, out source);
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,CountryID,Country Name,AirPort,SeaPort", "20,10,20,5,5", this.TextBox1.Text)
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,Name,CountryID,Country Name,AirPort,SeaPort", "20,25,10,20,5,5", this.TextBox1.Text)
             {
-                Size = new System.Drawing.Size(888, 666),
+                Size = new System.Drawing.Size(950, 666),
             };
 
             DialogResult result = item.ShowDialog();
@@ -74,7 +74,7 @@ ORDER BY p.ID";
 
             if (!string.IsNullOrWhiteSpace(nPulloutPort) && nPulloutPort != this.TextBox1.OldValue)
             {
-                string cmd = $"SELECT Name FROM Port WHERE ID=@ID AND Junk=0";
+                string cmd = $"SELECT Name FROM PulloutPort WHERE ID=@ID AND Junk=0";
 
                 List<SqlParameter> parameters = new List<SqlParameter>() { new SqlParameter("@ID", nPulloutPort) };
 
