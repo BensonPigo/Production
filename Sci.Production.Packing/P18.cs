@@ -312,11 +312,12 @@ namespace Sci.Production.Packing
                 }
             }
 
-            if (this.UseAutoScanPack)
+            // 確認該箱都有設定Barcode，只要有缺少，就清空該箱Barcode
+            if (this.UseAutoScanPack && MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE ID='{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' AND (Barcode = '' OR Barcode IS NULL) "))
             {
                 foreach (DataRow seledr in this.dt_scanDetail.Rows)
                 {
-                    seledr["barcode"] = DBNull.Value;
+                    seledr["Barcode"] = DBNull.Value;
                 }
 
                 DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ");
@@ -616,12 +617,17 @@ WHERE o.ID='{dr.OrderID}'");
             }
 
             DualResult sql_result;
+
+            // 判斷輸入的Barcode，有沒有存在gridScanDetail
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
 
-            // 無Barcode
+            // 不存在
             if (barcode_pos == -1)
             {
+                // 如果不存在，則找出Barcode還空著的Row填進去
                 int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
+
+                // 沒有Barcode還空著的Row，代表操作有錯誤，回傳停止指令
                 if (no_barcode_cnt == 0)
                 {
                     P18_Message msg = new P18_Message();
@@ -639,6 +645,7 @@ WHERE o.ID='{dr.OrderID}'");
                 }
                 else
                 {
+                    // 有Barcode還空著的Row，若筆數大於一筆，則跳出視窗給User選填
                     DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
                     DataRow no_barcode_dr = no_barcode_dt.NewRow();
                     if (no_barcode_dt.Rows.Count > 1)
@@ -698,6 +705,15 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
                 int scanQty = (short)cur_dr["ScanQty"];
                 int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
+
+                // 判斷該Barcode是否為第一次掃秒，是的話傳送指令避免停下
+                bool isFirstTimeScan = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetString(s["Barcode"]) == this.txtScanEAN.Text.Trim() && MyUtility.Check.Empty(s["ScanQty"])).Any();
+
+                if (isFirstTimeScan)
+                {
+                    this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim()).Length);
+                }
+
                 if (scanQty >= qtyPerCTN)
                 {
                     // 此barcode已足夠,或超過 送回
