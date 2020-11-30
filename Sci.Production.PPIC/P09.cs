@@ -324,6 +324,12 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
                 return false;
             }
 
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked")
+            {
+                MyUtility.Msg.WarningBox("This record is Checked, can't be modified!!");
+                return false;
+            }
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked")
             {
                 MyUtility.Msg.WarningBox("This record is junked, can't be modified!!");
@@ -559,7 +565,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
         {
             if (this.EditMode)
             {
-                if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+                if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.Text != this.txtSPNo.OldValue)
                 {
                     // sql參數
                     SqlParameter sp1 = new SqlParameter("@poid", this.txtSPNo.Text);
@@ -614,7 +620,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
         // SP No.
         private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.Text != this.txtSPNo.OldValue)
             {
                 // 清空表身Grid資料
                 foreach (DataRow dr in this.DetailDatas)
