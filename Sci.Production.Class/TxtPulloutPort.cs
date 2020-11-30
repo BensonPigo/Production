@@ -1,5 +1,6 @@
 ﻿using Sci.Data;
 using Sci.Win.UI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,11 +27,29 @@ namespace Sci.Production.Class
         public Win.UI.TextBox TextBox1 { get; private set; }
 
         /// <inheritdoc/>
+        public DisplayBox DisplayBox1 { get; private set; }
+
+        /// <inheritdoc/>
         [Bindable(true)]
         public string TextBox1Binding
         {
             get { return this.TextBox1.Text; }
             set { this.TextBox1.Text = value; }
+        }
+
+        /// <inheritdoc/>
+        [Bindable(true)]
+        public string DisplayBox1Binding
+        {
+            get { return this.DisplayBox1.Text; }
+            set { this.DisplayBox1.Text = value; }
+        }
+
+        private void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id");
+
+            // this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
         /// <inheritdoc/>

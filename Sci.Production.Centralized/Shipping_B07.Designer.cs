@@ -201,9 +201,10 @@
             // txtPulloutPortID
             // 
             this.txtPulloutPortID.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PulloutPortID", true));
+            this.txtPulloutPortID.DisplayBox1Binding = "";
             this.txtPulloutPortID.Location = new System.Drawing.Point(145, 80);
             this.txtPulloutPortID.Name = "txtPulloutPortID";
-            this.txtPulloutPortID.Size = new System.Drawing.Size(462, 22);
+            this.txtPulloutPortID.Size = new System.Drawing.Size(386, 22);
             this.txtPulloutPortID.TabIndex = 26;
             this.txtPulloutPortID.TextBox1Binding = "";
             this.txtPulloutPortID.Leave += new System.EventHandler(this.TxtPulloutPortID_Leave);
