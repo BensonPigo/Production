@@ -101,6 +101,7 @@ with IniBulkPack as (
             and p.Dest = '{3}'
             and p.CustCDID = '{4}'
             and o.junk = 0
+            and o.GMTComplete != 'S'
 ), IniSamplePack as (
     select  iif(p.CustCDID = '{4}',1,0) as Selected
             , p.id
@@ -132,6 +133,7 @@ with IniBulkPack as (
             and p.Dest = '{3}' 
             and p.ShipModeID = '{1}'
             and o.junk = 0
+            and o.GMTComplete != 'S'
 ), AllPackData as (
     select * 
     from IniBulkPack

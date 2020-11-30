@@ -45,115 +45,78 @@ namespace Sci.Production.Cutting
         {
             if (this.radioBundleCard.Checked == true)
             {
-                #region report
-                string id = this.CurrentDataRow["ID"].ToString();
-
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
-                    new SqlParameter("@ID_p", id),
-                    new SqlParameter("@CutRef_p", this.CurrentDataRow["cutref"].ToString()),
-                    new SqlParameter("@POID_p", this.CurrentDataRow["POID"].ToString()),
-                    new SqlParameter("@extend_p", this.checkExtendAllParts.Checked ? "1" : "0"),
+                    new SqlParameter("@ID", SqlDbType.VarChar, 13) { Value = this.CurrentDataRow["ID"].ToString() },
+                    new SqlParameter("@POID", SqlDbType.VarChar, 13) { Value = this.CurrentDataRow["POID"].ToString() },
+                    new SqlParameter("@CutRef", SqlDbType.VarChar, 8) { Value = this.CurrentDataRow["cutref"].ToString() },
                 };
 
-                string scmd;
+                string columns = $@"
+    outer apply( select a.PatternCode) pc
+    outer apply( select a.PatternDesc) pd
+    outer apply( select a.Parts) pp
+";
                 if (this.checkExtendAllParts.Checked)
                 {
-                    scmd = string.Format(@"
-declare @extend varchar(1) = @extend_p
-,@POID varchar(13) = @POID_p
-,@Cutref varchar(8) = @CutRef_p
-,@ID varchar(13) = @ID_p
+                    columns = @"
+    left join dbo.Bundle_Detail_Allpart bdap WITH (NOLOCK) on bdap.id=a.Id and a.Patterncode = 'ALLPARTS'
+    outer apply( select PatternCode = iif(a.PatternCode = 'ALLPARTS',bdap.PatternCode,a.PatternCode)) pc
+    outer apply( select PatternDesc = iif(a.PatternCode = 'ALLPARTS',bdap.PatternDesc,a.PatternDesc)) pd
+    outer apply( select Parts = iif(a.PatternCode = 'ALLPARTS',bdap.Parts,a.Parts)) pp
+";
+                }
 
-select distinct *
+                string scmd = $@"
+select  *
 from (
-    select a.BundleGroup [Group_right]
-	    ,c.FactoryID  [Group_left]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
+    select
+        [MarkerNo] = iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'')
+		,[Group_right] = a.BundleGroup
+        ,a.Tone
+        ,[Barcode] = a.BundleNo
+        ,[Size] = a.SizeCode
+        ,[Quantity] = a.Qty
+	    ,SP = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
+        ,[Desc] = CONCAT('(' + pc.PatternCode + ')', pd.PatternDesc)
+	    ,pp.Parts
+        ,NoBundleCardAfterSubprocess = (
+			select top 1 N'X'
+			from Bundle_Detail_Art bda with(nolock)
+			where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
+		
         ,b.POID
-	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-        ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-	    ,a.Parts [Parts]
-        ,b.Article + '\' + b.Colorid [Color]
         ,b.Article
-        ,a.SizeCode [Size]
-        ,'(' + qq.Cutpart + ')' + a.PatternDesc [Desc]
-        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-        ,a.Qty [Quantity]
-        ,a.BundleNo [Barcode]
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
-        ,brand.ShipCode
+        ,[Color] = CONCAT(b.Article, '\' + b.Colorid)
+        ,[Line] = b.Sewinglineid
+        ,[Cell] = b.SewingCell
+        ,b.FabricPanelCode
         ,b.item
         ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
+        ,[Body_Cut] = concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
+
+	    ,[Group_left] = c.FactoryID
+        ,[Style] = c.StyleID
+        ,SeasonID = concat(c.SeasonID,' ' + c.dest)
+        ,brand = c.brandid
+        ,brand.ShipCode
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
     inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
     left join brand WITH (NOLOCK) on brand.id = c.brandid
-    outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-    outer apply
-    (
-	    select Artwork = 
-	    (
-		    select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+    {columns}
+    outer apply(
+	    select Artwork = STUFF((
+		    select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId)
 		    from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-		    where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
+		    where e1.id=b.id and e1.PatternCode= pc.PatternCode and e1.Bundleno=a.BundleNo
 		    for xml path('')
-	    )
+	    ),1,1,'')
     )as Artwork
-    where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
-    union all
-
-    select a.BundleGroup [Group_right]
-	    ,c.FactoryID  [Group_left]
-        ,b.Sewinglineid [Line]
-        ,b.SewingCell [Cell]
-        ,b.POID
-	    ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-        ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-	    ,d.Parts [Parts]
-        ,b.Article + '\' + b.Colorid [Color]
-        ,b.Article
-        ,a.SizeCode [Size]
-         ,'(' + qq.Cutpart + ')' + d.PatternDesc [Desc]
-        --,Artwork.Artwork [Artwork]
-        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-        ,a.Qty [Quantity]
-        ,a.BundleNo [Barcode]
-        ,SeasonID = concat(c.SeasonID,' ', c.dest)
-        ,brand=c.brandid
-        ,brand.ShipCode
-        ,b.item
-        ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
-    from dbo.Bundle_Detail a WITH (NOLOCK) 
-    inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
-    inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
-    left join brand WITH (NOLOCK) on brand.id = c.brandid
-    left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
-    outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-    outer apply
-    (
-	    select Artwork = 
-	    (
-		    select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-		    from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-		    where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-		    for xml path('')
-	    )
-    )as Artwork
-    where a.ID= @ID and a.Patterncode = 'ALLPARTS'
+    where a.ID= @ID 
 )x
 outer apply
 (
@@ -166,116 +129,14 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-order by x.[Barcode]");
-                }
-                else
-                {
-                    scmd = string.Format(@"
-declare @extend varchar(1) = @extend_p
-,@POID varchar(13) = @POID_p
-,@Cutref varchar(8) = @CutRef_p
-,@ID varchar(13) = @ID_p
-
-select distinct *
-from (
-	select a.BundleGroup [Group_right]
-			,c.FactoryID  [Group_left]
-			,b.Sewinglineid [Line]
-			,b.SewingCell [Cell]
-            ,b.POID
-	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-			,a.Parts [Parts]
-			,b.Article + '\' + b.Colorid [Color]
-            ,b.Article
-			,a.SizeCode [Size]
-			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-			,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-			,a.Qty [Quantity]
-			,a.BundleNo [Barcode]
-			,a.Patterncode
-            ,SeasonID = concat(c.SeasonID, ' ', c.dest)
-            ,brand=c.brandid
-        ,brand.ShipCode
-        ,b.item
-        ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
-	from dbo.Bundle_Detail a WITH (NOLOCK) 
-	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
-	inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
-    left join brand WITH (NOLOCK) on brand.id = c.brandid
-	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
-	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-															where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-															for xml path('')))as Artwork
-	where a.ID= @ID and a.Patterncode != 'ALLPARTS'
-
-	union all
-
-	select a.BundleGroup [Group_right]
-			,c.FactoryID  [Group_left]
-			,b.Sewinglineid [Line]
-			,b.SewingCell [Cell]
-            ,b.POID
-	        ,SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
-			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
-            , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-			,a.Parts [Parts]
-			,b.Article + '\' + b.Colorid [Color]
-            ,b.Article
-			,a.SizeCode [Size]
-			,'(' + a.Patterncode + ')' + a.PatternDesc [Desc]
-	        ,[Artwork]= iif( len(Artwork.Artwork )>43,substring(Artwork.Artwork ,0,43),Artwork.Artwork )
-			,a.Qty [Quantity]
-			,a.BundleNo [Barcode]
-			,a.Patterncode
-            ,SeasonID = concat(c.SeasonID, ' ', c.dest)
-            ,brand=c.brandid
-        ,brand.ShipCode
-            ,b.item
-            ,b.IsEXCESS
-        ,NoBundleCardAfterSubprocess=(select top 1 N'X' from Bundle_Detail_Art bda with(nolock) where bda.Bundleno = a.Bundleno and bda.NoBundleCardAfterSubprocess = 1)
-        ,b.FabricPanelCode
-	from dbo.Bundle_Detail a WITH (NOLOCK) 
-	inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
-    outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
-	inner join dbo.orders c WITH (NOLOCK) on c.id=bdo.Orderid and c.MDivisionID = b.MDivisionID 
-    left join brand WITH (NOLOCK) on brand.id = c.brandid
-	outer apply ( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',a.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] ) [qq]
-	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
-															where e1.id=b.id and e1.PatternCode= qq.Cutpart and e1.Bundleno=a.BundleNo
-															for xml path('')))as Artwork
-	where a.ID= @ID and a.Patterncode = 'ALLPARTS'
-)x
-outer apply
-(
-	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
-	from MNOrder m
-		inner join Production.dbo.MNOrder_SizeItem msi on msi.ID = m.OrderComboID
-		left join Production.dbo.MNOrder_SizeCode msc on msi.Id = msc.Id
-		left join Production.dbo.MNOrder_SizeSpec mss on msi.Id = mss.Id and msi.SizeItem = mss.SizeItem and mss.SizeCode = msc.SizeCode
-		left join Production.dbo.MNOrder_SizeSpec_OrderCombo msso on msi.Id = msso.Id and msso.OrderComboID = m.id and msi.SizeItem = msso.SizeItem and msso.SizeCode = msc.SizeCode
-	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
-	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
-)cu
-
-order by x.[Barcode]");
-                }
-
+order by x.[Barcode]
+";
                 this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
 
                 if (!this.result)
                 {
                     return this.result;
                 }
-                #endregion
             }
             else if (this.radioBundleChecklist.Checked)
             {
@@ -494,6 +355,7 @@ order by x.[Bundle]");
                 {
                     Group_right = row1["Group_right"].ToString(),
                     Group_left = row1["Group_left"].ToString(),
+                    Tone = MyUtility.Convert.GetString(row1["Tone"]),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
                     POID = row1["POID"].ToString(),
@@ -539,151 +401,6 @@ order by x.[Bundle]");
                 excelApp.Quit();
                 Marshal.ReleaseComObject(excelApp);
                 File.Delete(excelName);
-
-                #region Bundle Card RDLC 先不要刪 / 不要刪 / 不要刪
-
-                // if (this.dt == null || this.dt.Rows.Count == 0)
-                // {
-                //    MyUtility.Msg.ErrorBox("Data not found");
-                //    return false;
-                // }
-
-                //// 顯示筆數於PrintForm上Count欄位
-                // this.SetCount(this.dt.Rows.Count);
-
-                // DataTable dt1, dt2, dt3;
-
-                //// int count =dt.Rows.Count;
-                // int count = 1;
-                // dt1 = this.dt.Clone();
-                // dt2 = this.dt.Clone();
-                // dt3 = this.dt.Clone();
-                // foreach (DataRow dr in this.dt.Rows)
-                // {
-                //    // 第一列資料
-                //    if (count % 3 == 1)
-                //    {
-                //        dt1.ImportRow(dr);
-                //    }
-
-                // // 第二列資料
-                //    if (count % 3 == 2)
-                //    {
-                //        dt2.ImportRow(dr);
-                //    }
-
-                // // 第三列資料
-                //    if (count % 3 == 0)
-                //    {
-                //        dt3.ImportRow(dr);
-                //    }
-
-                // count++;
-                // }
-
-                //// 傳 list 資料
-                // List<P10_PrintData> data = dt1.AsEnumerable()
-                //    .Select(row1 => new P10_PrintData()
-                //    {
-                //        Group_right = row1["Group_right"].ToString(),
-                //        Group_left = row1["Group_left"].ToString(),
-                //        Line = row1["Line"].ToString(),
-                //        Cell = row1["Cell"].ToString(),
-                //        SP = row1["SP"].ToString(),
-                //        Style = row1["Style"].ToString(),
-                //        MarkerNo = row1["MarkerNo"].ToString(),
-                //        Body_Cut = row1["Body_Cut"].ToString(),
-                //        Parts = row1["Parts"].ToString(),
-                //        Color = row1["Color"].ToString(),
-                //        Size = row1["Size"].ToString(),
-                //        SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
-                //        Desc = row1["Desc"].ToString(),
-                //        Artwork = row1["Artwork"].ToString(),
-                //        Quantity = row1["Quantity"].ToString(),
-                //        Barcode = row1["Barcode"].ToString(),
-                //        Season = row1["Seasonid"].ToString(),
-                //        brand = row1["brand"].ToString(),
-                //        item = row1["item"].ToString(),
-                //        EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                //        NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                //        Replacement1 = string.Empty,
-                //    }).ToList();
-                // data.AddRange(
-                // dt2.AsEnumerable().Select(row1 => new P10_PrintData()
-                // {
-                //     Group_right2 = row1["Group_right"].ToString(),
-                //     Group_left2 = row1["Group_left"].ToString(),
-                //     Line2 = row1["Line"].ToString(),
-                //     Cell2 = row1["Cell"].ToString(),
-                //     SP2 = row1["SP"].ToString(),
-                //     Style2 = row1["Style"].ToString(),
-                //     MarkerNo2 = row1["MarkerNo"].ToString(),
-                //     Body_Cut2 = row1["Body_Cut"].ToString(),
-                //     Parts2 = row1["Parts"].ToString(),
-                //     Color2 = row1["Color"].ToString(),
-                //     Size2 = row1["Size"].ToString(),
-                //     SizeSpec2 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
-                //     Desc2 = row1["Desc"].ToString(),
-                //     Artwork2 = row1["Artwork"].ToString(),
-                //     Quantity2 = row1["Quantity"].ToString(),
-                //     Barcode2 = row1["Barcode"].ToString(),
-                //     Season2 = row1["Seasonid"].ToString(),
-                //     brand2 = row1["brand"].ToString(),
-                //     item2 = row1["item"].ToString(),
-                //     EXCESS2 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                //     NoBundleCardAfterSubprocess2 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                //     Replacement2 = string.Empty,
-                // }).ToList());
-
-                // data.AddRange(
-                // dt3.AsEnumerable().Select(row1 => new P10_PrintData()
-                // {
-                //    Group_right3 = row1["Group_right"].ToString(),
-                //    Group_left3 = row1["Group_left"].ToString(),
-                //    Line3 = row1["Line"].ToString(),
-                //    Cell3 = row1["Cell"].ToString(),
-                //    SP3 = row1["SP"].ToString(),
-                //    Style3 = row1["Style"].ToString(),
-                //    MarkerNo3 = row1["MarkerNo"].ToString(),
-                //    Body_Cut3 = row1["Body_Cut"].ToString(),
-                //    Parts3 = row1["Parts"].ToString(),
-                //    Color3 = row1["Color"].ToString(),
-                //    Size3 = row1["Size"].ToString(),
-                //    SizeSpec3 = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
-                //    Desc3 = row1["Desc"].ToString(),
-                //    Artwork3 = row1["Artwork"].ToString(),
-                //    Quantity3 = row1["Quantity"].ToString(),
-                //    Barcode3 = row1["Barcode"].ToString(),
-                //    Season3 = row1["Seasonid"].ToString(),
-                //    brand3 = row1["brand"].ToString(),
-                //    item3 = row1["item"].ToString(),
-                //    EXCESS3 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
-                //    NoBundleCardAfterSubprocess3 = row1["NoBundleCardAfterSubprocess"].ToString(),
-                //    Replacement3 = string.Empty,
-                // }).ToList());
-
-                // report.ReportDataSource = data;
-
-                // Type reportResourceNamespace = typeof(P10_PrintData);
-                // Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-                // string reportResourceName = "P10_Print.rdlc";
-
-                // if (!(this.result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
-                // {
-                //    this.ShowException(this.result);
-                //    return this.result;
-                // }
-
-                // report.ReportResource = reportresource;
-
-                //// 開啟 report view
-                // var frm = new Win.Subs.ReportView(report)
-                // {
-                //    MdiParent = this.MdiParent,
-                //    DirectPrint = true,
-                // };
-                // frm.ShowDialog();
-                #endregion
             }
             else if (this.radioBundleChecklist.Checked)
             {
@@ -851,12 +568,12 @@ order by x.[Bundle]");
                 string contian;
                 if (layout == 1)
                 {
-                    contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
 SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}
+Cut#: {r.Body_Cut}     Tone: {r.Tone}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
 Desc: {r.Desc}
@@ -865,12 +582,12 @@ Qty: {r.Quantity}     No: {no}";
                 }
                 else
                 {
-                    contian = $@"Tone/Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
 SP#:{r.SP}
 Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
 Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}
+Cut#: {r.Body_Cut}     Tone: {r.Tone}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
 Desc: {r.Desc}

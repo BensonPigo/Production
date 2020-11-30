@@ -11,6 +11,12 @@ namespace Sci.Production.Class
     public partial class TxtLocalSupp : Win.UI._UserControl
     {
         /// <summary>
+        /// 是否要顯示 Junk 的資料
+        /// </summary>
+        [Description("是否要顯示 LocalSupp.IsFactory 的資料")]
+        public bool IsFactory { get; set; } = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TxtLocalSupp"/> class.
         /// </summary>
         public TxtLocalSupp()
@@ -53,12 +59,18 @@ namespace Sci.Production.Class
 
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.TextBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek($@"
+                string sql = string.Format(
+                    @"
 select l.ID
 from dbo.LocalSupp l WITH (NOLOCK) 
-WHERE  l.ID = '{textValue}'
+WHERE  l.ID = '{0}'
 and l.Junk=0 
-"))
+{1}
+",
+                    textValue,
+                    this.IsFactory ? "and IsFactory = 1" : string.Empty);
+
+                if (!MyUtility.Check.Seek(sql))
                 {
                     this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
@@ -78,12 +90,18 @@ and l.Junk=0
                 return;
             }
 
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                $@"
+            string sql = string.Format(
+                @"
 select l.ID,l.Name,l.Abb 
 from LocalSupp l WITH (NOLOCK) 
-WHERE l.Junk=0 
-order by l.ID",
+WHERE l.Junk = 0
+{0}
+order by l.ID
+",
+                this.IsFactory ? "and IsFactory = 1" : string.Empty);
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
+                sql,
                 "8,30,20",
                 this.TextBox1.Text)
             {

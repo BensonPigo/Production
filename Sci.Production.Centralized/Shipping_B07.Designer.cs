@@ -39,7 +39,7 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtPort = new Sci.Production.Class.TxtPort();
+            this.txtPulloutPortID = new Sci.Production.Class.TxtPulloutPort();
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.btnImport = new Sci.Win.UI.Button();
@@ -61,7 +61,7 @@
             this.detailcont.Controls.Add(this.chkIsAirPort);
             this.detailcont.Controls.Add(this.chkIsSeaPort);
             this.detailcont.Controls.Add(this.chkJunk);
-            this.detailcont.Controls.Add(this.txtPort);
+            this.detailcont.Controls.Add(this.txtPulloutPortID);
             this.detailcont.Controls.Add(this.editBoxRemark);
             this.detailcont.Controls.Add(this.txtContinent);
             this.detailcont.Controls.Add(this.displayContinent);
@@ -198,15 +198,16 @@
             this.label1.TabIndex = 16;
             this.label1.Text = "Brand";
             // 
-            // txtPort
+            // txtPulloutPortID
             // 
-            this.txtPort.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PulloutPortID", true));
-            this.txtPort.Location = new System.Drawing.Point(145, 80);
-            this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(462, 22);
-            this.txtPort.TabIndex = 26;
-            this.txtPort.TextBox1Binding = "";
-            this.txtPort.Leave += new System.EventHandler(this.TxtPort_Leave);
+            this.txtPulloutPortID.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PulloutPortID", true));
+            this.txtPulloutPortID.DisplayBox1Binding = "";
+            this.txtPulloutPortID.Location = new System.Drawing.Point(145, 80);
+            this.txtPulloutPortID.Name = "txtPulloutPortID";
+            this.txtPulloutPortID.Size = new System.Drawing.Size(386, 22);
+            this.txtPulloutPortID.TabIndex = 26;
+            this.txtPulloutPortID.TextBox1Binding = "";
+            this.txtPulloutPortID.Leave += new System.EventHandler(this.TxtPulloutPortID_Leave);
             // 
             // txtcountry
             // 
@@ -276,7 +277,7 @@
         private Win.UI.CheckBox chkIsAirPort;
         private Win.UI.CheckBox chkIsSeaPort;
         private Win.UI.CheckBox chkJunk;
-        private Class.TxtPort txtPort;
+        private Class.TxtPulloutPort txtPulloutPortID;
         private Win.UI.EditBox editBoxRemark;
         private Win.UI.TextBox txtContinent;
         private Win.UI.DisplayBox displayContinent;

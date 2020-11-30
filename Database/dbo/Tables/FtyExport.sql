@@ -29,6 +29,8 @@
     [OnBoard]       DATE            NULL,
     [NoCharges]     BIT             CONSTRAINT [DF_FtyExport_NoCharges] DEFAULT ((0)) NULL,
     [NonDeclare] BIT NOT NULL DEFAULT ((0)), 
+    [ShipDate] DATE NULL, 
+    [ETA] DATE NULL, 
     CONSTRAINT [PK_FtyExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -138,3 +140,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyExport', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'出貨日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyExport',
+    @level2type = N'COLUMN',
+    @level2name = N'ShipDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預計到達日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyExport',
+    @level2type = N'COLUMN',
+    @level2name = N'ETA'

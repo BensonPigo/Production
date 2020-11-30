@@ -412,6 +412,7 @@ where v.VNContractID = @contract
 		關倉日期比 GenerateDate 晚，代表當天還沒有關倉
 */
 select sdd.OrderID
+        , [StyleID] = t.OriStyleID
 		, sdd.ComboType
 		, sdd.Article
 		, sdd.SizeCode
@@ -432,7 +433,7 @@ where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
 			where sdd.ID= s.ID
 			and s.OutputDate <= @GenerateDate
         )
-group by sdd.OrderID, sdd.ComboType, sdd.Article, sdd.SizeCode, t.FactoryID
+group by sdd.OrderID, t.OriStyleID, sdd.ComboType, sdd.Article, sdd.SizeCode, t.FactoryID
 
 
 
@@ -500,6 +501,7 @@ from (
 	        , [NLCode] = f.NLCode
             , [WK] = e.ID
 	        , [PoID] = ed.PoID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = ed.Seq1+'-'+ed.Seq2
 	        , [Refno] = ed.refno
@@ -554,6 +556,7 @@ from (
 	        , [NLCode] = isnull(isnull(f.NLCode,li.NLCode),'')
             , [WK] = fe.ID
 	        , [POID] = fed.PoID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = fed.Seq1+'-'+fed.Seq2
 	        , [RefNo] = fed.refno
@@ -635,6 +638,7 @@ from (
 	select  [HSCode] = isnull(f.HSCode,'')
 	        , [NLCode] = isnull(f.NLCode,'')
 	        , [POID] = o.POID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = (fi.Seq1+'-'+fi.Seq2)
 	        , [Refno] = psd.Refno
@@ -683,6 +687,7 @@ from (
     select  HSCode
             , NLCode
             , POID
+            , StyleID
             , FactoryID
             , Seq
             , RefNo
@@ -700,6 +705,7 @@ from (
         select  [HSCode] = isnull(li.HSCode,'') 
 	            , [NLCode] = isnull(li.NLCode,'') 
 	            , [POID] = o.POID
+                , o.StyleID
                 , o.FactoryID
 	            , [Seq] = ''
 	            , [RefNo] = l.Refno
@@ -735,7 +741,7 @@ from (
 		and l.InQty-l.OutQty+l.AdjustQty != 0
         {whereftys}
     )x
-	group by HSCode,NLCode,POID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
+	group by HSCode,NLCode,POID,StyleID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
 ) a
 
 /*特定日期區間資料*/
@@ -800,6 +806,7 @@ from (
 	select  [HSCode] = isnull(f.HSCode,'')
 	        , [NLCode] = isnull(f.NLCode,'')
 	        , [POID] = o.POID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = (fi.Seq1+'-'+fi.Seq2)
 	        , [Refno] = psd.Refno
@@ -1027,6 +1034,7 @@ from (
     select  HSCode
             , NLCode
             , POID
+            , StyleID
             , FactoryID
             , Seq
             , RefNo
@@ -1044,6 +1052,7 @@ from (
         select  [HSCode] = isnull(li.HSCode,'') 
 	            , [NLCode] = isnull(li.NLCode,'') 
 	            , [POID] = o.POID
+                , o.StyleID
                 , o.FactoryID
 	            , [Seq] = ''
 	            , [RefNo] = l.Refno
@@ -1147,13 +1156,14 @@ from (
 			  )
             {whereftys}
     )x
-	group by HSCode,NLCode,POID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
+	group by HSCode,NLCode,POID,StyleID,FactoryID,Seq,RefNo,MaterialType,Description,Roll,Dyelot,StockType,Location,[W/House Unit],[Customs Unit]
 ) a
 
 select 
 HSCode = isnull(a.HSCode,b.HSCode)
 , NLCode = isnull(a.NLCode,b.NLCode)
 , POID = isnull(a.POID,b.POID)
+, StyleID = isnull(a.StyleID,b.StyleID)
 , FactoryID = isnull(a.FactoryID,b.FactoryID)
 , Seq = isnull(a.Seq,b.Seq)
 , Refno = isnull(a.Refno,b.Refno)
@@ -1177,7 +1187,7 @@ and a.HSCode = b.HSCode and a.NLCode = b.NLCode
 and a.StockType = b.StockType and a.Location = b.Location
 and a.[Stock Unit] = b.[Stock Unit]
 where isnull(a.[W/House Qty(Stock Unit)],0) + isnull(b.[W/House Qty(Stock Unit)],0) != 0
-group by isnull(a.HSCode,b.HSCode),isnull(a.NLCode,b.NLCode),isnull(a.POID,b.POID),isnull(a.FactoryID,b.FactoryID),isnull(a.Seq,b.Seq)
+group by isnull(a.HSCode,b.HSCode),isnull(a.NLCode,b.NLCode),isnull(a.POID,b.POID),isnull(a.StyleID,b.StyleID),isnull(a.FactoryID,b.FactoryID),isnull(a.Seq,b.Seq)
 ,isnull(a.Refno,b.Refno),isnull(a.MaterialType,b.MaterialType),isnull(a.Description,b.Description),isnull(a.Roll,b.Roll),isnull(a.Dyelot,b.Dyelot)
 ,isnull(a.StockType,b.StockType),isnull(a.Location,b.Location), isnull(a.[W/House Unit],b.[W/House Unit]),isnull(a.[Stock Unit],b.[Stock Unit])
 
@@ -1400,6 +1410,7 @@ order by POID
 ---- 訂單尚未關倉 - 已Sewing數量 ----
 select sdd.OrderId
 		, t.POID
+        , [StyleID] = t.OriStyleID
 		, t.FactoryID
 		, sdd.ComboType
 		, sdd.Article
@@ -1622,26 +1633,29 @@ select	HSCode,
 into #tmpWIP_step2
 from #tmpWIP_step1
 
-select  HSCode, 
-		NLCode,
-		POID,
-		RefNo,
-		MaterialType,
-        Description,
-		[Qty] = sum(Qty),
-		CustomsUnit,
-		[StockQty] = sum(StockQty),
-		StockUnit
+select  tw.HSCode, 
+		tw.NLCode,
+		tw.POID,
+        o.StyleID,
+		tw.RefNo,
+		tw.MaterialType,
+        tw.Description,
+		[Qty] = sum(tw.Qty),
+		tw.CustomsUnit,
+		[StockQty] = sum(tw.StockQty),
+		tw.StockUnit
 into    #tmpWIPDetail
-from #tmpWIP_step2
-group by    HSCode, 
-		    NLCode,
-		    POID,
-		    RefNo,
-		    MaterialType,
-            CustomsUnit,
-            StockUnit,
-            Description
+from #tmpWIP_step2 tw
+inner join Orders o with (nolock) on o.ID = tw.POID
+group by    tw.HSCode, 
+		    tw.NLCode,
+		    tw.POID,
+            o.StyleID,
+		    tw.RefNo,
+		    tw.MaterialType,
+            tw.CustomsUnit,
+            tw.StockUnit,
+            tw.Description
 
 ----------------------------------------------------------------
 --------- 04 Production成品庫存(Prod. Qty Detail) --------------
@@ -1720,6 +1734,7 @@ where GarmentStock.Qty != 0
 select  [HSCode] = v.HSCode
         , [NLCode] = v.NLCode
         , [SP#] = tpq.ID
+        , [StyleID] = tpq.StyleID
         , tpq.FactoryID
         , [Refno] = v.Refno
         , [MaterialType] = iif(v.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(v.FabricType))
@@ -1802,6 +1817,7 @@ where vd.VNContractID=@contract
 group by vd.id,vc.sizecode
 
 select [SP#] = vdd.OrderId
+        , o.StyleID
         , o.FactoryID
         , [Refno] = vcdd.Refno
         , [MaterialType] = iif(vcdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vcdd.FabricType))
@@ -1864,6 +1880,7 @@ from (
 	select  [HSCode] = isnull(f.HSCode,'')
 	        , [NLCode] = isnull(f.NLCode,'')
 	        , [POID] = ft.POID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = (ft.Seq1+'-'+ft.Seq2)
 	        , [Refno] = psd.Refno	
@@ -1908,6 +1925,7 @@ from (
     select  [HSCode] = isnull(li.HSCode,'')
 	        , [NLCode] = isnull(li.NLCode,'')
 	        , [POID] = l.OrderID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = ''
 	        , [Refno] = l.Refno	
@@ -1949,6 +1967,7 @@ from (
 	select  [HSCode] = isnull(f.HSCode,'')
 	        , [NLCode] = isnull(f.NLCode,'')
 	        , [POID] = ft.POID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = (ft.Seq1+'-'+ft.Seq2)
 	        , [Refno] = psd.Refno	
@@ -2045,6 +2064,7 @@ from (
     select  [HSCode] = isnull(li.HSCode,'')
 	        , [NLCode] = isnull(li.NLCode,'')
 	        , [POID] = l.OrderID
+            , o.StyleID
             , o.FactoryID
 	        , [Seq] = ''
 	        , [Refno] = l.Refno	
@@ -2125,6 +2145,7 @@ select
 HSCode = isnull(a.HSCode,b.HSCode)
 , NLCode = isnull(a.NLCode,b.NLCode)
 , POID = isnull(a.POID,b.POID)
+, StyleID = isnull(a.StyleID,b.StyleID)
 , FactoryID = isnull(a.FactoryID,b.FactoryID)
 , Seq = isnull(a.Seq,b.Seq)
 , Refno = isnull(a.Refno,b.Refno)
@@ -2147,7 +2168,7 @@ and a.Refno = b.Refno  and a.MaterialType = b.MaterialType
 and a.StockType = b.StockType and a.Location = b.Location
 and a.CustomsUnit = b.CustomsUnit and a.StockUnit = b.StockUnit
 where isnull(a.ScrapQty,0) + isnull(b.ScrapQty,0) != 0
-group by isnull(a.HSCode,b.HSCode),isnull(a.NLCode,b.NLCode),isnull(a.POID,b.POID),isnull(a.FactoryID,b.FactoryID),isnull(a.Seq,b.Seq)
+group by isnull(a.HSCode,b.HSCode),isnull(a.NLCode,b.NLCode),isnull(a.POID,b.POID), isnull(a.StyleID,b.StyleID),isnull(a.FactoryID,b.FactoryID),isnull(a.Seq,b.Seq)
 ,isnull(a.Refno,b.Refno),isnull(a.MaterialType,b.MaterialType),isnull(a.Description,b.Description),isnull(a.Roll,b.Roll),isnull(a.Dyelot,b.Dyelot)
 ,isnull(a.StockType,b.StockType),isnull(a.Location,b.Location),isnull(a.CustomsUnit ,b.CustomsUnit),isnull(a.StockUnit,b.StockUnit)
 
@@ -2537,6 +2558,7 @@ select  [RowID] = ROW_NUMBER() OVER (ORDER BY SP#, Article, SizeCode, ComboType)
         HSCode,
         NLCode,
         [SP#],
+        StyleID,
         FactoryID,
         Refno,
         MaterialType,
@@ -2587,6 +2609,7 @@ where Qty != 0  {0} {1}
                     sqlResult = @"
 select  [RowID] = ROW_NUMBER() OVER (ORDER BY OrderID),
         OrderID           ,
+        StyleID,
         FactoryID,
         Article       ,
         SizeCode      ,
@@ -2600,6 +2623,7 @@ select	[RowID] = ROW_NUMBER() OVER (ORDER BY OrderID, Article, SizeCode, ComboTy
         ,HSCode
 		, NLCode
 		, OrderID
+        , StyleID
 		, FactoryID
         , CustomSP
         , Article
@@ -2622,6 +2646,7 @@ select	[RowID] = ROW_NUMBER() OVER (ORDER BY OrderID, Article, SizeCode, ComboTy
         , HSCode
 		, NLCode
 		, OrderID
+        , StyleID
 		, FactoryID
         , Article
         , SizeCode
@@ -2641,6 +2666,7 @@ where Qty != 0  {0} {1}
                     sqlResult = @"
 select  [RowID] = ROW_NUMBER() OVER (ORDER BY id)
         , id 
+        , StyleID
         , FactoryID
         , Article
         , SizeCode
@@ -2657,6 +2683,7 @@ select  [RowID] = ROW_NUMBER() OVER (ORDER BY HSCode),
         HSCode,
         NLCode,
         [SP#],
+        StyleID,
         FactoryID,
         Refno,
         MaterialType,

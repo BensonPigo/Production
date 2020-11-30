@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
+using Sci.Win.UI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,13 +17,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
-using Sci.Production.Automation;
-using Sci.Production.PublicPrg;
-using Sci.Win.Tools;
-using Sci.Win.UI;
 using static Sci.Production.Automation.Guozi_AGV;
 
 namespace Sci.Production.Cutting
@@ -69,7 +69,6 @@ namespace Sci.Production.Cutting
         public void GridSetup()
         {
             #region 右鍵事件
-            Ict.Win.UI.DataGridViewTextBoxColumn item;
             DataGridViewGeneratorTextColumnSettings linecell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings cellcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qtycell = new DataGridViewGeneratorNumericColumnSettings();
@@ -275,11 +274,10 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     dr["PatternCode"] = sele.GetSelecteds()[0]["PatternCode"].ToString();
                     string[] ann = Regex.Replace(sele.GetSelecteds()[0]["Annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation
                     string art = string.Empty;
-                    bool lallpart;
                     #region 算Subprocess
                     if (ann.Length > 0)
                     {
-                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out lallpart);
+                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out bool lallpart);
                     }
                     #endregion
                     dr["art"] = art;
@@ -310,11 +308,10 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                     dr["PatternCode"] = gemdr[0]["PatternCode"].ToString();
                     string[] ann = Regex.Replace(gemdr[0]["Annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation
                     string art = string.Empty;
-                    bool lallpart;
                     #region 算Subprocess
                     if (ann.Length > 0)
                     {
-                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out lallpart);
+                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out bool lallpart);
                     }
                     #endregion
                     dr["art"] = art;
@@ -649,7 +646,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
            .Text("Fabriccombo", header: "Fabric" + Environment.NewLine + "Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("FabricPanelCode", header: "Pattern" + Environment.NewLine + "Panel", width: Widths.AnsiChars(2), iseditingreadonly: true)
            .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
-           .Text("Item", header: "Item", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: itemsetting).Get(out item)
+           .Text("Item", header: "Item", width: Widths.AnsiChars(20), iseditingreadonly: false, settings: itemsetting).Get(out Ict.Win.UI.DataGridViewTextBoxColumn item)
            .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(5), iseditingreadonly: true)
            .Text("FabricKind", header: "Fabric Kind", width: Widths.AnsiChars(5), iseditingreadonly: true)
            ;
@@ -944,51 +941,51 @@ Where   a.ukey = b.workorderukey
             #region where 條件
             if (!MyUtility.Check.Empty(cutref))
             {
-                query_cmd = query_cmd + string.Format(" and a.cutref='{0}'", cutref);
-                distru_cmd = distru_cmd + string.Format(" and a.cutref='{0}'", cutref);
+                query_cmd += string.Format(" and a.cutref='{0}'", cutref);
+                distru_cmd += string.Format(" and a.cutref='{0}'", cutref);
                 distru_cmd_Excess += string.Format(" and a.cutref='{0}'", cutref);
-                excess_cmd = excess_cmd + string.Format(" and a.cutref='{0}'", cutref);
+                excess_cmd += string.Format(" and a.cutref='{0}'", cutref);
                 sizeRatio.Append(string.Format(" and a.cutref='{0}'", cutref));
             }
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate.Value))
             {
-                query_cmd = query_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
-                distru_cmd = distru_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
+                query_cmd += string.Format(" and a.estcutdate='{0}'", cutdate);
+                distru_cmd += string.Format(" and a.estcutdate='{0}'", cutdate);
                 distru_cmd_Excess += string.Format(" and a.estcutdate='{0}'", cutdate);
-                excess_cmd = excess_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
+                excess_cmd += string.Format(" and a.estcutdate='{0}'", cutdate);
                 sizeRatio.Append(string.Format(" and a.estcutdate='{0}'", cutdate));
             }
 
             if (!MyUtility.Check.Empty(poid))
             {
-                query_cmd = query_cmd + string.Format(" and ord.poid='{0}'", poid);
-                distru_cmd = distru_cmd + string.Format(" and ord.poid='{0}'", poid);
+                query_cmd += string.Format(" and ord.poid='{0}'", poid);
+                distru_cmd += string.Format(" and ord.poid='{0}'", poid);
                 distru_cmd_Excess += string.Format(" and ord.poid='{0}'", poid);
-                excess_cmd = excess_cmd + string.Format(" and  ord.poid='{0}'", poid);
+                excess_cmd += string.Format(" and  ord.poid='{0}'", poid);
                 sizeRatio.Append(string.Format(" and ord.poid='{0}'", poid));
             }
 
             if (!MyUtility.Check.Empty(factory))
             {
-                query_cmd = query_cmd + string.Format(" and ord.FtyGroup='{0}'", factory);
-                distru_cmd = distru_cmd + string.Format(" and ord.FtyGroup='{0}'", factory);
+                query_cmd += string.Format(" and ord.FtyGroup='{0}'", factory);
+                distru_cmd += string.Format(" and ord.FtyGroup='{0}'", factory);
                 distru_cmd_Excess += string.Format(" and ord.FtyGroup='{0}'", factory);
-                excess_cmd = excess_cmd + string.Format(" and  ord.FtyGroup='{0}'", factory);
+                excess_cmd += string.Format(" and  ord.FtyGroup='{0}'", factory);
                 sizeRatio.Append(string.Format(" and ord.FtyGroup='{0}'", factory));
             }
 
             if (!MyUtility.Check.Empty(spreadingNoID))
             {
-                query_cmd = query_cmd + string.Format(" and a.SpreadingNoID='{0}'", spreadingNoID);
-                distru_cmd = distru_cmd + string.Format(" and a.SpreadingNoID='{0}'", spreadingNoID);
+                query_cmd += string.Format(" and a.SpreadingNoID='{0}'", spreadingNoID);
+                distru_cmd += string.Format(" and a.SpreadingNoID='{0}'", spreadingNoID);
                 distru_cmd_Excess += string.Format(" and a.SpreadingNoID='{0}'", spreadingNoID);
-                excess_cmd = excess_cmd + string.Format(" and  a.SpreadingNoID='{0}'", spreadingNoID);
+                excess_cmd += string.Format(" and  a.SpreadingNoID='{0}'", spreadingNoID);
                 sizeRatio.Append(string.Format(" and a.SpreadingNoID='{0}'", spreadingNoID));
             }
             #endregion
 
-            query_cmd = query_cmd + " order by ord.poid,a.estcutdate,a.Fabriccombo,a.cutno";
+            query_cmd += " order by ord.poid,a.estcutdate,a.Fabriccombo,a.cutno";
 
             DualResult query_dResult = DBProxy.Current.Select(null, query_cmd, out this.CutRefTb);
             if (!query_dResult)
@@ -1005,7 +1002,7 @@ Where   a.ukey = b.workorderukey
             }
 
             // Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
-            distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and isnull(a.CutRef,'') <> '' 
+            distru_cmd += @" and b.orderid !='EXCESS' and isnull(a.CutRef,'') <> '' 
 group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,a.Fabriccombo,a.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey  --,ag.ArticleGroup
 ";
             if (this.chkAEQ.Checked)
@@ -1134,7 +1131,6 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             // 找出相同PatternPanel 的subprocessid
             int npart = 0; // allpart 數量
             string patidsql;
-            DataTable garmentListTb;
             #region 輸出GarmentTb
             string styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
 
@@ -1161,11 +1157,11 @@ order by ArticleGroup", patternukey);
             string tablecreatesql = string.Format(@"Select '{0}' as orderid,a.*,'' as F_CODE", poid);
             foreach (DataRow dr in this.headertb.Rows)
             {
-                tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
+                tablecreatesql += string.Format(" ,'' as {0}", dr["ArticleGroup"]);
             }
 
-            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
-            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out garmentListTb);
+            tablecreatesql += string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
+            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out DataTable garmentListTb);
             if (!tablecreateResult)
             {
                 return;
@@ -1175,8 +1171,7 @@ order by ArticleGroup", patternukey);
             #region 寫入FCode~CodeA~CodeZ
             string lecsql = string.Empty;
             lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
-            DataTable drtb;
-            DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
+            DualResult drre = DBProxy.Current.Select(null, lecsql, out DataTable drtb);
             if (!drre)
             {
                 return;
@@ -1241,11 +1236,10 @@ order by ArticleGroup", patternukey);
                     #region Annotation有在Subprocess 內需要寫入bundle_detail_art，寫入Bundle_Detail_pattern
                     if (ann.Length > 0)
                     {
-                        bool lallpart;
                         #region 算Subprocess
 
                         // artTb 用不到只是因為共用BundleCardCheckSubprocess PRG其他需要用到
-                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out lallpart);
+                        art = Prgs.BundleCardCheckSubprocess(ann, dr["PatternCode"].ToString(), this.artTb, out bool lallpart);
                         #endregion
                         if (!lallpart)
                         {
@@ -1587,9 +1581,8 @@ order by ArticleGroup", patternukey);
                     string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation
                     if (ann.Length > 0)
                     {
-                        bool lallpart;
                         #region 算Subprocess
-                        art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out lallpart);
+                        art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out bool lallpart);
                         #endregion
                     }
 
@@ -1939,7 +1932,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         this.patternTb.Rows.Add(ndr);
                         if (!MyUtility.Check.Empty(dr2["Parts"]))
                         {
-                            npart = npart + Convert.ToInt16(dr2["Parts"]);
+                            npart += Convert.ToInt16(dr2["Parts"]);
                         }
                     }
 
@@ -2082,13 +2075,14 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             insert_Bundle_Detail_Qty.Columns.Add("Insert", typeof(string));
             DataTable insert_BundleNo = new DataTable();
             insert_BundleNo.Columns.Add("BundleNo", typeof(string));
+
+            #endregion
+            #region
             #endregion
 
             #region
-            DataTable bundle_Detail;
-            DataTable bundle_Detail_Art;
             string sqlcmdclone = $@"select top 0 * from Bundle_Detail";
-            DualResult result = DBProxy.Current.Select(null, sqlcmdclone, out bundle_Detail);
+            DualResult result = DBProxy.Current.Select(null, sqlcmdclone, out DataTable bundle_Detail);
             if (!result)
             {
                 this.ShowErr(result);
@@ -2096,7 +2090,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             }
 
             sqlcmdclone = $@"select top 0 * from Bundle_Detail_Art";
-            result = DBProxy.Current.Select(null, sqlcmdclone, out bundle_Detail_Art);
+            result = DBProxy.Current.Select(null, sqlcmdclone, out DataTable bundle_Detail_Art);
             if (!result)
             {
                 this.ShowErr(result);
@@ -2162,7 +2156,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
                 if (tone == 0)
                 {
-                    bundleofnum = bundleofnum + (qtycount * patterncount); // bundle 數
+                    bundleofnum += qtycount * patterncount; // bundle 數
                 }
                 else
                 {
@@ -2185,8 +2179,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     {
                         #region startno
                         string max_cmd = string.Format("Select isnull(Max(startno+Qty),1) as Start from Bundle WITH (NOLOCK) Where OrderID = '{0}'", artar["Orderid"]);
-                        DataTable max_st;
-                        if (DBProxy.Current.Select(null, max_cmd, out max_st))
+                        if (DBProxy.Current.Select(null, max_cmd, out DataTable max_st))
                         {
                             if (max_st.Rows.Count != 0)
                             {
@@ -2217,6 +2210,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             string iDKeyword = this.keyWord + "BC";
             List<string> id_list = MyUtility.GetValue.GetBatchID(iDKeyword, "Bundle", batchNumber: idofnum, sequenceMode: 2);
             List<string> bundleno_list = MyUtility.GetValue.GetBatchID(string.Empty, "Bundle_Detail", format: 3, checkColumn: "Bundleno", batchNumber: bundleofnum, sequenceMode: 2);
+
             #region Insert Table
             int idcount = 0;
             int bundlenocount = 0;
@@ -2437,6 +2431,7 @@ values
                             foreach (DataRow item in dtCopy.Rows)
                             {
                                 item["bundlegroup"] = startno_bytone + i; // 重設bundlegroup
+                                item["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                                 new_startno = startno_bytone + i;
 
                                 item["tmpNum"] = tmpNum; // 暫時紀錄原本資料對應拆出去的資料,要用來重分配Qty
@@ -2477,6 +2472,7 @@ values
                         for (int i = 0; i < tone; i++)
                         {
                             row["BundleGroup"] = startno_bytone + i;
+                            row["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                             new_startno = startno_bytone + i;
                             int notAllpart = patternAry.Rows.Count - 1;
                             notAllpart = notAllpart == 0 ? 1 : notAllpart;
@@ -2526,9 +2522,9 @@ values
                     nBundleDetail_dr["Insert"] = string.Format(
                         @"Insert into Bundle_Detail
                             (ID,Bundleno,BundleGroup,PatternCode,
-                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,isPair ,Location) Values
+                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,isPair ,Location,Tone) Values
                             ('{0}','{1}',{2},'{3}',
-                            '{4}','{5}',{6},{7},0,0,'{8}','{9}')",
+                            '{4}','{5}',{6},{7},0,0,'{8}','{9}','{10}')",
                         item["ID"],
                         item["Bundleno"],
                         item["BundleGroup"],
@@ -2538,7 +2534,8 @@ values
                         item["Qty"],
                         item["Parts"],
                         MyUtility.Convert.GetBool(item["isPair"]) ? 1 : 0,
-                        item["Location"]);
+                        item["Location"],
+                        item["Tone"]);
                     insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
 
                     DataRow drBundleNo = insert_BundleNo.NewRow();
@@ -2658,8 +2655,7 @@ from #tmp t
 inner join Bundle_Detail bd with (nolock) on t.BundleNo = bd.BundleNo
 inner join Bundle b with (nolock) on bd.ID = b.ID
 ";
-                DataTable dtBundleGZ;
-                result = MyUtility.Tool.ProcessWithDatatable(insert_BundleNo, "BundleNo", sqlGetData, out dtBundleGZ);
+                result = MyUtility.Tool.ProcessWithDatatable(insert_BundleNo, "BundleNo", sqlGetData, out DataTable dtBundleGZ);
 
                 if (dtBundleGZ.Rows.Count > 0)
                 {

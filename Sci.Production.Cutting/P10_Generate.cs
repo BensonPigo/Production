@@ -331,25 +331,32 @@ order by ArticleGroup", patternukey);
             DataTable detailAccept = this.detailTb.Copy();
             detailAccept.AcceptChanges();
             string bundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
+            int seq = 0;
+            this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
 
             // 將Bundle_Detial_Art distinct PatternCode,
             string sqlCmd = $@"
-Select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
+Select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq=min(tmpSeq)
 into #tmp2
 from #tmp where BundleGroup='{bundleGroup}'
 group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 
 union all
-select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
+select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq=min(tmpSeq)
 from #tmp where BundleGroup='{bundleGroup}' and IsPair = 1
 group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 
 select *
 from #tmp2
-order by iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
+order by tmpSeq,iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
 
 drop table #tmp,#tmp2";
-            MyUtility.Tool.ProcessWithDatatable(this.detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", sqlCmd, out DataTable tmp);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq", sqlCmd, out DataTable tmp);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
             // 需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
             MyUtility.Tool.ProcessWithDatatable(this.detailTb, "PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", "Select distinct PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String from #tmp WHERE PatternCode<>'ALLPARTS'", out this.artTb);
@@ -1357,6 +1364,8 @@ drop table #tmp,#tmp2";
 
             this.alltmpTb.Clear();
             this.bundle_detail_artTb.Clear();
+            bundle_detail_tmp.Columns.Add("ran", type: typeof(int));
+            bundle_detail_tmp.AsEnumerable().ToList().ForEach(r => r["ran"] = 0);
 
             // 平行覆蓋資料
             int j = 0;
@@ -1367,7 +1376,20 @@ drop table #tmp,#tmp2";
             {
                 if (j < tmpRow)
                 {
-                    DataRow tmpdr = bundle_detail_tmp.Rows[j];
+                    DataRow[] oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and Qty = '{dr["Qty"]}' and ran = 0");
+                    if (oridrs.Length == 0)
+                    {
+                        oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and ran = 0");
+                    }
+
+                    DataRow tmpdr = bundle_detail_tmp.Select("ran = 0").OrderBy(o => o["Ukey1"]).First();
+                    if (oridrs.Length > 0)
+                    {
+                        tmpdr = oridrs.OrderBy(o => o["Ukey1"]).First();
+                    }
+
+                    tmpdr["ran"] = 1;
+
                     dr["bundlegroup"] = tmpdr["bundlegroup"];
                     dr["PatternCode"] = tmpdr["PatternCode"];
                     dr["PatternDesc"] = tmpdr["PatternDesc"];
@@ -1577,9 +1599,13 @@ drop table #tmp,#tmp2";
             }
             #endregion
 
+            this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["Tone"] = string.Empty);
+
             #region Generate by Tone 有勾選再處理一次
             if (this.chkTone.Checked && this.numTone.Value > 0)
             {
+                int seq = 0;
+                this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
                 int bundlegroupS = Convert.ToInt32(this.maindatarow["startno"]);
                 int tone = MyUtility.Convert.GetInt(this.numTone.Value);
                 DataTable dtDetail = new DataTable();
@@ -1592,7 +1618,7 @@ drop table #tmp,#tmp2";
                 int a = this.detailTb.Select("PatternCode = 'AllParts'").Length;
                 if (na > 0)
                 {
-                    dtDetail = this.detailTb.Select("PatternCode <> 'AllParts'").CopyToDataTable();
+                    dtDetail = this.detailTb.Select("PatternCode <> 'AllParts'").OrderBy(o => o["tmpSeq"]).CopyToDataTable();
                     dtDetail.Columns.Add("tmpNum", typeof(int));
                 }
 
@@ -1616,7 +1642,7 @@ drop table #tmp,#tmp2";
                         foreach (DataRow item in dtCopy.Rows)
                         {
                             item["bundlegroup"] = bundlegroupS + i; // 重設bundlegroup
-
+                            item["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                             item["tmpNum"] = tmpNum; // 暫時紀錄原本資料對應拆出去的資料,要用來重分配Qty
                             tmpNum++;
 
@@ -1650,6 +1676,7 @@ drop table #tmp,#tmp2";
                     for (int i = 0; i < tone; i++)
                     {
                         row["BundleGroup"] = bundlegroupS + i;
+                        row["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                         int notAllpart = this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() - 1;
                         notAllpart = notAllpart == 0 ? 1 : notAllpart;
                         row["Qty"] = this.detailTb.AsEnumerable().

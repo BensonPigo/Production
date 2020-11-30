@@ -174,6 +174,7 @@
     [FinalDest] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_FinalDest] DEFAULT(''), 
     [Customer_PO] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_Customer_PO] DEFAULT(''), 
     [AFS_STOCK_CATEGORY] Varchar(50) NOT NULL CONSTRAINT [DF_Orders_AFS_STOCK_CATEGORY] DEFAULT(''), 
+    [CMPLTDATE] DATE NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

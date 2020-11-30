@@ -141,6 +141,21 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                 return false;
             }
 
+            string cmd = $@"SELECT 1 FROM LocalSupp WHERE ID != '{this.CurrentMaintain["ID"]}' AND TaxNo != '' AND TaxNo='{this.CurrentMaintain["TaxNo"]}' AND CurrencyID='{this.CurrentMaintain["CurrencyID"]}'";
+
+            if (MyUtility.Check.Seek(cmd))
+            {
+                MyUtility.Msg.InfoBox("Tax No shouldn't has same Currency used on different Supplier code.");
+                return false;
+            }
+
+            cmd = $"SELECT 1 FROM LocalSupp WHERE TaxNo='{this.CurrentMaintain["TaxNo"]}' AND TaxNo != '' AND Abb != '{this.CurrentMaintain["Abb"]}'";
+            if (MyUtility.Check.Seek(cmd))
+            {
+                MyUtility.Msg.InfoBox("Tax No can only be used on same Supplier Abbreviation.");
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 

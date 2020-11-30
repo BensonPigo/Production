@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
-using System.Transactions;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
+using Ict;
+using Ict.Win;
+using Sci.Data;
 using Sci.Production.PublicPrg;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -23,6 +24,7 @@ namespace Sci.Production.Shipping
         private Ict.Win.UI.DataGridViewDateBoxColumn col_inspdate;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_pulloutdate;
         private DataTable plData;
+        private DataTable dtDeleteGBHistory;
         private DataSet allData = new DataSet();
         private IList<string> updateCmds = new List<string>();
 
@@ -197,6 +199,32 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
 )
 ";
             this.displayTTLContainer.Text = MyUtility.GetValue.Lookup(sqlctnr);
+
+            sqlctnr = string.Format(
+                @"
+select [Type] = 'T'
+	, sdh.ID
+	, sdh.GMTBookingID
+	, sdh.ReasonID
+	, [Description] = sr.Description
+	, sdh.BackDate
+	, sdh.NewShipModeID
+	, sdh.NewPulloutDate
+	, sdh.NewDestination
+	, sdh.Remark
+	, sdh.AddName
+	, sdh.AddDate
+from ShipPlan_DeleteGBHistory sdh
+left join ShippingReason sr on sdh.ReasonID = sr.ID
+where sdh.ID = '{0}'",  this.CurrentMaintain["id"]);
+            DualResult result = DBProxy.Current.Select(null, sqlctnr, out this.dtDeleteGBHistory);
+            this.btnDeleteGBHistory.Enabled = false;
+            this.btnDeleteGBHistory.ForeColor = Color.Black;
+            if (this.dtDeleteGBHistory != null && this.dtDeleteGBHistory.Rows.Count > 0)
+            {
+                this.btnDeleteGBHistory.Enabled = true;
+                this.btnDeleteGBHistory.ForeColor = Color.Red;
+            }
         }
 
         private void SumData()
@@ -245,14 +273,14 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
         protected override void OnDetailUIConvertToMaintain()
         {
             base.OnDetailUIConvertToMaintain();
-            this.gridDetail.IsEditingReadOnly = false;
+            this.gridDetailPackingList.IsEditingReadOnly = false;
         }
 
         /// <inheritdoc/>
         protected override void OnDetailUIConvertToView()
         {
             base.OnDetailUIConvertToView();
-            this.gridDetail.IsEditingReadOnly = true;
+            this.gridDetailPackingList.IsEditingReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -277,7 +305,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                 .Numeric("ClogCTNQty", header: "Total CTN Q'ty at C-Logs", iseditingreadonly: true);
             this.detailgrid.SelectionChanged += (s, e) =>
             {
-                this.gridDetail.ValidateControl();
+                this.gridDetailPackingList.ValidateControl();
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
                 if (dr != null)
                 {
@@ -286,9 +314,9 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                 }
             };
 
-            this.gridDetail.DataSource = this.listControlBindingSource1;
-            this.gridDetail.IsEditingReadOnly = false;
-            this.Helper.Controls.Grid.Generator(this.gridDetail)
+            this.gridDetailPackingList.DataSource = this.listControlBindingSource1;
+            this.gridDetailPackingList.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridDetailPackingList)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -308,12 +336,12 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                 .Date("SendToTPE", header: "Send to SCI", iseditingreadonly: true)
                 ;
             #region 欄位值檢查
-            this.gridDetail.CellValidating += (s, e) =>
+            this.gridDetailPackingList.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.gridDetail.GetDataRow<DataRow>(e.RowIndex);
-                    if (this.gridDetail.Columns[e.ColumnIndex].DataPropertyName == this.col_inspdate.DataPropertyName)
+                    DataRow dr = this.gridDetailPackingList.GetDataRow<DataRow>(e.RowIndex);
+                    if (this.gridDetailPackingList.Columns[e.ColumnIndex].DataPropertyName == this.col_inspdate.DataPropertyName)
                     {
                         if (!MyUtility.Check.Empty(e.FormattedValue))
                         {
@@ -331,7 +359,7 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                     }
 
                     // 輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
-                    if (this.gridDetail.Columns[e.ColumnIndex].DataPropertyName == this.col_pulloutdate.DataPropertyName)
+                    if (this.gridDetailPackingList.Columns[e.ColumnIndex].DataPropertyName == this.col_pulloutdate.DataPropertyName)
                     {
                         if (MyUtility.Convert.GetDate(e.FormattedValue) != MyUtility.Convert.GetDate(dr["PulloutDate"]))
                         {
@@ -377,6 +405,14 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return false;
+            }
+            #endregion
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
             {
                 MyUtility.Msg.WarningBox(string.Format("This record status is < {0} >, can't be edit!", MyUtility.Convert.GetString(this.CurrentMaintain["Status"])));
@@ -427,14 +463,65 @@ where g.ShipPlanID =@ShipPlanID and type = '45HQ')d
                 this.CurrentMaintain["ID"] = id;
             }
 
+            if (this.dtDeleteGBHistory != null && this.dtDeleteGBHistory.Rows.Count > 0)
+            {
+                var query = this.dtDeleteGBHistory.AsEnumerable().Where(x => x.Field<string>("ReasonID").Empty());
+                if (query.Any())
+                {
+                    MyUtility.Msg.WarningBox("Delete GB History Reason cannot be empty!");
+                    return false;
+                }
+            }
+
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            if (this.dtDeleteGBHistory != null && this.dtDeleteGBHistory.Rows.Count > 0)
+            {
+                string sql =
+@"update sdh
+	set sdh.ReasonID = t.ReasonID
+	  , sdh.BackDate = t.BackDate
+	  , sdh.NewShipModeID = t.NewShipModeID
+	  , sdh.NewPulloutDate = t.NewPulloutDate
+	  , sdh.NewDestination = t.NewDestination
+	  , sdh.Remark = t.Remark
+	  , sdh.AddName = t.AddName
+	  , sdh.AddDate = GETDATE()
+from ShipPlan_DeleteGBHistory sdh
+inner join #tmp t on sdh.ID = t.ID and sdh.GMTBookingID = t.GMTBookingID
+and (sdh.ReasonID <> t.ReasonID
+    or sdh.BackDate <> t.BackDate
+    or sdh.NewShipModeID <> t.NewShipModeID
+    or sdh.NewPulloutDate <> t.NewPulloutDate
+    or sdh.NewDestination <> t.NewDestination
+    or sdh.Remark <> t.Remark
+    or sdh.AddName <> t.AddName)
+
+insert into ShipPlan_DeleteGBHistory(ID, GMTBookingID, ReasonID, BackDate, NewShipModeID, NewPulloutDate, NewDestination, Remark, AddName, AddDate)
+select t.ID, t.GMTBookingID, t.ReasonID, t.BackDate, t.NewShipModeID, t.NewPulloutDate, t.NewDestination, t.Remark, t.AddName, GETDATE()
+from #tmp t
+where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID and sdh.GMTBookingID = t.GMTBookingID)
+";
+
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtDeleteGBHistory, null, sql, out DataTable dt);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
             this.updateCmds.Clear();
-            this.gridDetail.EndEdit();
+            this.gridDetailPackingList.EndEdit();
             this.listControlBindingSource1.EndEdit();
 
             DataTable packingListDt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -728,7 +815,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
             // 檢查此筆記錄的Pullout Data是否還有值，若是則出訊息告知且無法刪除
             if (this.DetailDatas.Count > 0)
             {
-                this.gridDetail.ValidateControl();
+                this.gridDetailPackingList.ValidateControl();
                 foreach (DataRow pldr in this.plData.Select(string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentDetailData["ID"]))))
                 {
                     if (!MyUtility.Check.Empty(pldr["PulloutDate"]))
@@ -739,6 +826,22 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
 
                     this.plData.Rows.Remove(pldr);
                 }
+
+                // add into DeleteGBHistory
+                DataRow dr = this.dtDeleteGBHistory.NewRow();
+                dr["Type"] = "N";
+                dr["ID"] = this.CurrentMaintain["id"];
+                dr["GMTBookingID"] = this.CurrentDetailData["ID"];
+                dr["NewShipModeID"] = string.Empty;
+                dr["NewDestination"] = string.Empty;
+                dr["Remark"] = string.Empty;
+                dr["AddName"] = Env.User.UserID;
+                dr["AddDate"] = DateTime.Now;
+                this.dtDeleteGBHistory.Rows.Add(dr);
+
+                // show btnDeleteGBHistory
+                this.btnDeleteGBHistory.Enabled = true;
+                this.btnDeleteGBHistory.ForeColor = Color.Red;
 
                 if (this.DetailDatas.Count - 1 <= 0)
                 {
@@ -789,6 +892,14 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+
+            #region  表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            bool gMTCompleteCheck = this.GMTCompleteCheck();
+            if (!gMTCompleteCheck)
+            {
+                return;
+            }
+            #endregion
 
             this.CheckIDD();
             this.CheckPulloutputIDD();
@@ -1237,6 +1348,61 @@ inner join #tmp t on t.ID = pd.ID
             Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
             #endregion
 
+        }
+
+
+        private void BtnDeleteGBHistory_Click(object sender, EventArgs e)
+        {
+            if (this.dtDeleteGBHistory == null || this.dtDeleteGBHistory.Rows.Count == 0)
+            {
+                return;
+            }
+
+            var frm = new P10_DeleteGarmentBookingHistory(this.dtDeleteGBHistory);
+            frm.ShowDialog(this);
+		}
+        private bool GMTCompleteCheck()
+        {
+            #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
+            DataTable packingList_List = (DataTable)this.listControlBindingSource1.DataSource;
+
+            DataTable isGMTComplete = new DataTable();
+            isGMTComplete.ColumnsStringAdd("SP#");
+            isGMTComplete.ColumnsDateTimeAdd("Complete Date");
+            foreach (DataRow dr in packingList_List.Rows)
+            {
+                // 拆解Order ID
+                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
+                foreach (var order in orders)
+                {
+                    string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
+                    DataTable dt;
+                    DBProxy.Current.Select(null, cmd, out dt);
+                    bool find = dt.Rows.Count > 0;
+                    if (find)
+                    {
+                        foreach (DataRow r in dt.Rows)
+                        {
+                            isGMTComplete.ImportRow(r);
+                        }
+                    }
+                }
+            }
+
+            if (isGMTComplete.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
+                m.Width = 800;
+                m.grid1.Columns[0].Width = 150;
+                m.grid1.Columns[1].Width = 150;
+                m.TopMost = true;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            #endregion
         }
     }
 }
