@@ -12,12 +12,12 @@ namespace Sci.Production.Class
     /// <summary>
     /// TxtProt
     /// </summary>
-    public partial class TxtPort : _UserControl
+    public partial class TxtPulloutPort : _UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TxtPort"/> class.
+        /// Initializes a new instance of the <see cref="TxtPulloutPort"/> class.
         /// </summary>
-        public TxtPort()
+        public TxtPulloutPort()
         {
             this.InitializeComponent();
         }
@@ -70,23 +70,23 @@ ORDER BY p.ID";
         /// <inheritdoc/>
         private void TextBox1_Validating(object sender, CancelEventArgs e)
         {
-            string nPortID = this.TextBox1.Text;
+            string nPulloutPort = this.TextBox1.Text;
 
-            if (!string.IsNullOrWhiteSpace(nPortID) && nPortID != this.TextBox1.OldValue)
+            if (!string.IsNullOrWhiteSpace(nPulloutPort) && nPulloutPort != this.TextBox1.OldValue)
             {
                 string cmd = $"SELECT Name FROM Port WHERE ID=@ID AND Junk=0";
 
-                List<SqlParameter> parameters = new List<SqlParameter>() { new SqlParameter("@ID", nPortID) };
+                List<SqlParameter> parameters = new List<SqlParameter>() { new SqlParameter("@ID", nPulloutPort) };
 
                 if (!MyUtility.Check.Seek(cmd, parameters, "Production"))
                 {
                     this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Port: {0} > not found!!!", nPortID));
+                    MyUtility.Msg.WarningBox(string.Format("< PulloutPort: {0} > not found!!!", nPulloutPort));
                 }
             }
 
-            if (MyUtility.Check.Empty(nPortID))
+            if (MyUtility.Check.Empty(nPulloutPort))
             {
                 this.TextBox1.Text = string.Empty;
             }

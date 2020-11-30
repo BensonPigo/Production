@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class TxtPort 
+    partial class TxtPulloutPort
     {
         /// <summary> 
         /// 設計工具所需的變數。

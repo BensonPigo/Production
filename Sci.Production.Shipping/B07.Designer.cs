@@ -36,7 +36,7 @@
             this.displayContinent = new Sci.Win.UI.DisplayBox();
             this.txtContinent = new Sci.Win.UI.TextBox();
             this.editBoxRemark = new Sci.Win.UI.EditBox();
-            this.txtPort1 = new Sci.Production.Class.TxtPort();
+            this.txtPort1 = new Sci.Production.Class.TxtPulloutPort();
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.chkJunk = new Sci.Win.UI.CheckBox();
@@ -263,7 +263,7 @@
         private Win.UI.EditBox editBoxRemark;
         private Win.UI.TextBox txtContinent;
         private Win.UI.DisplayBox displayContinent;
-        private Class.TxtPort txtPort1;
+        private Class.TxtPulloutPort txtPort1;
         private Win.UI.CheckBox chkJunk;
         private Win.UI.CheckBox chkIsAirPort;
         private Win.UI.CheckBox chkIsSeaPort;
