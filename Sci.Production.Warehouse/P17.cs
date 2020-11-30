@@ -888,7 +888,7 @@ where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong (移除轉出ISP20201856)
-            //this.SentToGensong_AutoWHFabric();
+            // this.SentToGensong_AutoWHFabric();
         }
 
         /// <inheritdoc/>
@@ -1063,7 +1063,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric();
+            //this.SentToGensong_AutoWHFabric();
         }
 
         /// <summary>

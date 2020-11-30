@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Ict;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -55,9 +56,9 @@ namespace Sci.Production.Automation
                     StockType = dr["StockType"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     IsInspection = (bool)dr["IsInspection"],
-                    ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : (DateTime?)dr["ETA"],
-                    WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : (DateTime?)dr["WhseArrival"],
-                    Status = dr["Junk"].ToString(),
+                    ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd hh:mm:ss"),
+                    WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd hh:mm:ss"),
+                    Status = dr["Status"].ToString(),
                     Barcode = dr["Barcode"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
@@ -98,6 +99,7 @@ namespace Sci.Production.Automation
                     Roll = dr["Roll"].ToString(),
                     Dyelot = dr["Dyelot"].ToString(),
                     Barcode = dr["Barcode"].ToString(),
+                    NewBarcode = dr["NewBarcode"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
@@ -156,7 +158,6 @@ namespace Sci.Production.Automation
                 return; // 暫未開放
             }
 
-            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -170,28 +171,65 @@ namespace Sci.Production.Automation
             string sqlcmd = @"
 select distinct
 [ID] = sd.ID
-,s.Type
+,Type = 'D'
 ,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot,sd.FromStockType
+,[FromBarcode] = FromBarcode.value
+,[FromLocation] = Fromlocation.listValue
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
-,fty.Barcode
-,[Junk] = case when s.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[ToBarcode] = ToBarcode.value
+,[ToLocation] = sd.ToLocation
 ,sd.Ukey
+,[Status] = s.Status
 ,CmdTime = GetDate()
 from Production.dbo.SubTransfer_Detail sd
 inner join #tmp s on sd.ID=s.Id
+left join FtyInventory FI on sd.fromPoid = fi.poid 
+    and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
+    and sd.fromDyelot = fi.Dyelot and sd.fromRoll = fi.roll 
+    and sd.fromStocktype = fi.stocktype
 outer apply(
-    select Barcode
-    from Production.dbo.FtyInventory
-    where POID = sd.ToPOID and Seq1=sd.ToSeq1
-    and Seq2=sd.ToSeq2 and Roll=sd.ToRoll and Dyelot=sd.ToDyelot
-)fty
+	select listValue = Stuff((
+			select concat(',',FromLocation)
+			from (
+					select 	distinct
+						l.FromLocation
+					from dbo.LocationTrans_detail l
+					where l.FtyInventoryUkey = fi.Ukey
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = fi.Ukey
+)FromBarcode
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	inner join FtyInventory toFi on toFi.Ukey = fb.Ukey
+	where toFi.POID = sd.ToPOID
+	and tofi.Seq1= sd.ToSeq1 and toFi.Seq2 = sd.ToSeq2
+	and toFi.Roll = sd.ToRoll and toFi.Dyelot = sd.ToDyelot
+	and toFi.StockType = sd.ToStockType
+)ToBarcode
 where 1=1
 and exists(
     select 1 from Production.dbo.PO_Supp_Detail
     where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2
     and FabricType='F'
 )
-and s.Type in ('A','B','D')
+and exists(
+	select 1
+	from MtlLocation ml 
+	left join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID
+	where ml.IsWMS = 1
+	union all
+	select 1 from MtlLocation ml 
+	where ml.ID = sd.ToLocation
+	and ml.IsWMS = 1
+)
+
 ";
             DataTable dt = new DataTable();
             MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt);
@@ -227,7 +265,7 @@ and s.Type in ('A','B','D')
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
-            */
+            
         }
 
         /// <summary>
@@ -236,6 +274,7 @@ and s.Type in ('A','B','D')
         /// <param name="dtMaster">Master DataSource</param>
         public void SentMtlLocationToGensongAutoWHFabric(DataTable dtMaster)
         {
+            // ISP20201856 已移除此功能
             if (true)
             {
                 return; // 暫未開放
@@ -335,7 +374,7 @@ select distinct
     ,[Colorid] = cp2.Colorid
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
-    ,[Junk] = case when s.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+    ,[Status] = cp1.Status
     ,[CmdTime] = GETDATE()
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
@@ -392,7 +431,7 @@ select distinct
                     ColorID = s["ColorID"].ToString(),
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
-                    Junk = (bool)s["Junk"],
+                    Status = s["Status"].ToString(),
                     CmdTime = DateTime.Now
                 });
 
@@ -413,7 +452,6 @@ select distinct
                 return; // 暫未開放
             }
 
-            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -423,6 +461,70 @@ select distinct
             string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            string sqlcmd = @"
+select distinct
+[ID] = bb2.ID
+,bb2.FromPOID,bb2.FromSeq1,bb2.FromSeq2,bb2.FromRoll,bb2.FromDyelot,bb2.FromStockType
+,[FromBarcode] = FromBarcode.value
+,[FromLocation] = Fromlocation.listValue
+,bb2.ToPOID,bb2.ToSeq1,bb2.ToSeq2,bb2.ToRoll,bb2.ToDyelot,bb2.ToStockType
+,[ToBarcode] = ToBarcode.value
+,[ToLocation] = bb2.ToLocation
+,bb2.Qty
+,bb2.Ukey
+,[Status] = bb.Status
+,CmdTime = GetDate()
+from Production.dbo.BorrowBack_Detail bb2
+inner join #tmp bb on bb.ID=bb2.Id
+left join FtyInventory FI on bb2.FromPoid = Fi.Poid and bb2.FromSeq1 = Fi.Seq1 and bb2.FromSeq2 = Fi.Seq2 
+    and bb2.FromRoll = Fi.Roll and bb2.FromDyelot = Fi.Dyelot and bb2.FromStockType = FI.StockType
+outer apply(
+	select listValue = Stuff((
+			select concat(',',FromLocation)
+			from (
+					select 	distinct
+						l.FromLocation
+					from dbo.LocationTrans_detail l
+					where l.FtyInventoryUkey = fi.Ukey
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = fi.Ukey
+)FromBarcode
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	inner join FtyInventory toFi on toFi.Ukey = fb.Ukey
+	where toFi.POID = bb2.ToPOID
+	and tofi.Seq1= bb2.ToSeq1 and toFi.Seq2 = bb2.ToSeq2
+	and toFi.Roll = bb2.ToRoll and toFi.Dyelot = bb2.ToDyelot
+	and toFi.StockType = bb2.ToStockType
+)ToBarcode
+where 1=1
+and exists(
+	select 1
+	from MtlLocation ml 
+	left join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID
+	where ml.IsWMS = 1
+	union all
+	select 1 from MtlLocation ml 
+	where ml.ID = bb2.ToLocation
+	and ml.IsWMS = 1
+)
+";
+            DataTable dt = new DataTable();
+            MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dt);
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
+
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dtDetail.AsEnumerable()
                 .Select(dr => new
@@ -441,14 +543,13 @@ select distinct
                     ToDyelot = dr["ToDyelot"].ToString(),
                     ToStockType = dr["ToStockType"].ToString(),
                     Qty = (decimal)dr["Qty"],
-                    Ukey = (long)dr["Ukey"],
+                    Ukey = dr["Status"].ToString(),
                     Junk = isConfirmed,
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
-            */
         }
 
         /// <summary>
@@ -462,7 +563,6 @@ select distinct
                 return; // 暫未開放
             }
 
-            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -483,18 +583,126 @@ select rrd.Id
 ,rrd.Qty
 ,rrd.StockType
 ,rrd.Ukey
-,f.Barcode
+,[Barcode] = Barcode.value
 ,[CmdTime] = GETDATE()
-,[Junk] = case when rr.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[Status] = rr.Status
 from ReturnReceipt_Detail rrd
 inner join #tmp rr on rrd.Id=rr.Id
-inner join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
+left join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
 where 1=1
 and exists(
     select 1
     from PO_Supp_Detail psd
     where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
     and psd.SEQ2 = rrd.Seq2 and psd.FabricType='F'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where  fd.Ukey=f.Ukey
+	and ml.IsWMS =1 
+)
+";
+            DataTable dt = new DataTable();
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dt.AsEnumerable()
+                .Select(s => new
+                {
+                    ID = s["ID"].ToString(),
+                    POID = s["POID"].ToString(),
+                    Seq1 = s["Seq1"].ToString(),
+                    Seq2 = s["Seq2"].ToString(),
+                    Roll = s["Roll"].ToString(),
+                    Dyelot = s["Dyelot"].ToString(),
+                    Qty = (decimal)s["Qty"],
+                    StockType = s["StockType"].ToString(),
+                    Ukey = (long)s["Ukey"],
+                    Barcode = s["Barcode"].ToString(),
+                    Status = s["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// LocationTrans To Gensong
+        /// </summary>
+        /// <param name="dtMaster">dtMaster</param>
+        public void SentLocationTransToGensongAutoWHFabric(DataTable dtMaster)
+        {
+            if (true)
+            {
+                return; // 暫未開放
+            }
+
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentLocationTransToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            string sqlcmd = @"
+select lt2.Id
+,lt2.POID
+,lt2.Seq1
+,lt2.Seq2
+,lt2.Roll
+,lt2.Dyelot
+,lt2.FromLocation
+,lt2.ToLocation
+,[Barcode] = Barcode.value
+,lt2.Ukey
+,lt2.StockType
+,lt.Status
+,[CmdTime] = GETDATE()
+from LocationTrans_detail lt2
+inner join #tmp lt on lt.Id=lt2.Id
+left join FtyInventory f on lt2.FtyInventoryUkey = f.ukey
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+where 1=1
+and exists(
+    select 1
+    from PO_Supp_Detail psd
+    where psd.ID= lt2.POID and psd.SEQ1 = lt2.Seq1
+    and psd.SEQ2 = lt2.Seq2 and psd.FabricType='F'
+)
+and exists(
+	select 1
+	from MtlLocation ml
+	where ml.ID = lt2.ToLocation
+	and ml.IsWMS =1 
+	union all
+	select 1
+	from MtlLocation ml
+	where ml.ID = lt2.FromLocation
+	and ml.IsWMS =1 
 )
 ";
             DataTable dt = new DataTable();
@@ -520,18 +728,17 @@ and exists(
                     Seq2 = s["Seq2"].ToString(),
                     Roll = s["Roll"].ToString(),
                     Dyelot = s["Dyelot"].ToString(),
-                    Qty = (decimal)s["Qty"],
-                    StockType = s["StockType"].ToString(),
-                    Ukey = (long)s["Ukey"],
+                    FromLocation = s["FromLocation"].ToString(),
+                    ToLocation = s["ToLocation"].ToString(),
                     Barcode = s["Barcode"].ToString(),
-                    Junk = (bool)s["Junk"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    Ukey = (long)s["Ukey"],
+                    StockType = s["StockType"].ToString(),
+                    Status = s["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
-
-            */
         }
 
         private object CreateGensongStructure(string tableName, object structureID)

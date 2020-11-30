@@ -1811,11 +1811,11 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                     }
                 }
             }
-            
 
             var data_Fty_Barcode = (from m in this.DetailDatas.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
                                     select new
                                     {
+                                        TransactionID = m.Field<string>("ID"),
                                         poid = m.Field<string>("poid"),
                                         seq1 = m.Field<string>("seq1"),
                                         seq2 = m.Field<string>("seq2"),
@@ -2246,7 +2246,7 @@ SELECT [ID] = rd.id
 ,[ETA] = r.ETA
 ,[WhseArrival] = r.WhseArrival
 ,[Status] = r.Status
-,[Barcode] = f.Barcode
+,[Barcode] = Barcode.value
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
@@ -2262,6 +2262,11 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
 	 END
 )Color
+outer apply(
+	select value = min(fb.Barcode)
+	from FtyInventory_Barcode fb 
+	where fb.Ukey = f.Ukey
+)Barcode
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -2321,7 +2326,7 @@ select  a.id
         ,o.OrderTypeID
 		,b.ExportId
 		, [ContainerType]= Container.Val
-        ,Barcode = ''
+        ,Barcode = '' -- 虛擬欄位不要刪除
 		,a.CombineBarcode
         ,a.Unoriginal 
         ,a.EncodeSeq

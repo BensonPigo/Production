@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -352,6 +354,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                     }
 
                     transactionscope.Complete();
+                    this.SentToGensong_AutoWHFabric(true);
                 }
                 catch (Exception ex)
                 {
@@ -409,6 +412,17 @@ Where a.id = '{0}' ", masterID);
             var frm = new P26_Import(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+                Task.Run(() => new Gensong_AutoWHFabric().SentLocationTransToGensongAutoWHFabric(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
     }
 }

@@ -1253,6 +1253,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             var data_Fty_Barcode = (from m in this.DetailDatas.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
                                     select new
                                     {
+                                        TransactionID = m.Field<string>("ID"),
                                         poid = m.Field<string>("poid"),
                                         seq1 = m.Field<string>("seq1"),
                                         seq2 = m.Field<string>("seq2"),
@@ -1685,19 +1686,28 @@ SELECT [ID] = td.id
 ,[Ukey] = td.Ukey
 ,[IsInspection] = convert(bit, 0)
 ,[ETA] = null
-,[WhseArrival] = t.WhseArrival
+,[WhseArrival] = t.IssueDate
 ,[Status] = t.Status
+,[Barcode] = Barcode.value
 FROM Production.dbo.TransferIn_Detail td
 inner join Production.dbo.TransferIn t on td.id = t.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= td.PoId 
 	and po3.SEQ1=td.Seq1 and po3.SEQ2=td.Seq2
+outer apply(
+	select value = min(fb.Barcode)
+	from FtyInventory_Barcode fb 
+	inner join FtyInventory f on f.Ukey = fb.Ukey
+	where f.POID = td.POID
+	and f.Seq1 = td.Seq1 and f.Seq2= td.Seq2
+	and f.Roll = td.Roll and f.Dyelot = td.Dyelot
+	and f.StockType = td.StockType
+)Barcode
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
 	and FabricType='F'
 )
-
 and t.id = '{this.CurrentMaintain["id"]}'
 ";
 

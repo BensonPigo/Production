@@ -125,24 +125,24 @@ INSERT INTO [dbo].[MtlLocation]
             }
 
             // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                if (this.chkBulk.Checked)
-                {
-                    DataTable dtMain = new DataTable();
-                    string sqlcmd = $@"
-select * from MtlLocation 
-where id ='{this.txtID.Text}'
-and StockType = 'B'
-";
-                    DBProxy.Current.Select(string.Empty, sqlcmd, out dtMain);
-                    if (dtMain != null || dtMain.Rows.Count > 0)
-                    {
-                        Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
-                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                    }
-                }
-            }
+//            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+//            {
+//                if (this.chkBulk.Checked)
+//                {
+//                    DataTable dtMain = new DataTable();
+//                    string sqlcmd = $@"
+//select * from MtlLocation 
+//where id ='{this.txtID.Text}'
+//and StockType = 'B'
+//";
+//                    DBProxy.Current.Select(string.Empty, sqlcmd, out dtMain);
+//                    if (dtMain != null || dtMain.Rows.Count > 0)
+//                    {
+//                        Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
+//                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+//                    }
+//                }
+//            }
 
             this.txtID.Text = string.Empty;
             this.txtDescription.Text = string.Empty;
