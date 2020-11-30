@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class R02 : Win.Tems.PrintForm
     {
         private DateTime? DateArrStart; private DateTime? DateArrEnd;
@@ -18,6 +19,10 @@ namespace Sci.Production.Quality
         private List<SqlParameter> lis;
         private DataTable dt; private string cmd;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R02"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -251,10 +256,15 @@ OUTER APPLY ( select name from dbo.color c where c.id=ps.colorid_old and C.Brand
 OUTER APPLY (
 	select [Article] = Stuff((
 		select distinct concat( ',', tcd.Article) 
-		from Style s
-		Inner Join Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
-		Inner Join Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
+		from Style s WITH (NOLOCK)
+		Inner Join Style_ThreadColorCombo as tc WITH (NOLOCK) On tc.StyleUkey = s.Ukey
+		Inner Join Style_ThreadColorCombo_Detail as tcd WITH (NOLOCK) On tcd.Style_ThreadColorComboUkey = tc.Ukey
 		where s.ID = x.StyleID
+        and tcd.SuppId = P.SuppId
+        and tcd.SCIRefNo = PS.SCIRefNo
+        and tcd.ColorID = PS.ColorID
+        and PS.SEQ1 like 'T%' 
+        and exists (select 1 from MDivisionPoDetail m WITH (NOLOCK) where m.POID = x.ID)
 	FOR XML PATH('')),1,1,'') 
 )Style
 {2}",
