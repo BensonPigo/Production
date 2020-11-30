@@ -1993,7 +1993,7 @@ where b.POID = '{poid}'
                     maxBuundleGroup = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
                 }
 
-                maxBuundleGroup = this.radiobegin1.Checked ? 1 : maxBuundleGroup + 1;
+                maxBuundleGroup++;
 
                 // 紀錄 Startno, 合併建單先給同樣 Startno
                 selList.Where(w2 => w2.Dup == dup).ToList().ForEach(r => r.Startno = maxBuundleGroup);
