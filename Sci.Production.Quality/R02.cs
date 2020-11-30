@@ -233,7 +233,7 @@ inner join (
 		{0}
 ) t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
 inner join (
-		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category 
+		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,O.StyleUkey
 		from dbo.Orders o WITH (NOLOCK)  
 		{1}
 ) x on x. id = A.POID
@@ -259,7 +259,7 @@ OUTER APPLY (
 		from Style s WITH (NOLOCK)
 		Inner Join Style_ThreadColorCombo as tc WITH (NOLOCK) On tc.StyleUkey = s.Ukey
 		Inner Join Style_ThreadColorCombo_Detail as tcd WITH (NOLOCK) On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		where s.ID = x.StyleID
+		where s.Ukey = x.StyleUkey
         and tcd.SuppId = P.SuppId
         and tcd.SCIRefNo = PS.SCIRefNo
         and tcd.ColorID = PS.ColorID
