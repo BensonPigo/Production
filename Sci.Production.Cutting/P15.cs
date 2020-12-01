@@ -2194,7 +2194,7 @@ Values('{bundleID}','{bundleNo}','{ann[i]}','{pattern.PatternCode}','{ps}','{nb}
                         }
 
                         // Bundle_Detail_Order
-                        if (pattern.PatternCode.Equals("ALLPARTS"))
+                        if (pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0)
                         {
                             var spSumQtyList = selASList.Where(w => selDTAPList.Select(s => s.Iden).Distinct().Contains(w.Iden))
                                 .GroupBy(g => g.OrderID)
