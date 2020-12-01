@@ -186,7 +186,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 
 update t
 set t.inqty = isnull(t.inqty,0.00) + s.qty
-from mdivisionpodetail t WITH (NOLOCK) 
+from mdivisionpodetail t 
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     }
@@ -203,7 +203,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
                     
                     update t
                     set t.OutQty = isnull(t.OutQty,0.00) + s.qty
-                    from mdivisionpodetail t WITH (NOLOCK) 
+                    from mdivisionpodetail t 
                     inner join #TmpSource s
                     on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
@@ -265,7 +265,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 
 update t 
 set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
-from mdivisionpodetail t WITH (NOLOCK) 
+from mdivisionpodetail t 
 inner join #TmpSource s
 on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 
