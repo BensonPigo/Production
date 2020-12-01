@@ -145,6 +145,7 @@ namespace Sci.Production.Packing
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
 										   ,pd.Ukey
+										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -624,7 +625,7 @@ WHERE o.ID='{dr.OrderID}'");
             // 不存在
             if (barcode_pos == -1)
             {
-                // 如果不存在，則找出Barcode還空著的Row填進去
+                // 如果不存在，代表一定是第一次掃描，則找出Barcode還空著的Row填進去
                 int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
 
                 // 沒有Barcode還空著的Row，代表操作有錯誤，回傳退回指令
@@ -688,6 +689,9 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                         {
                             dr["Barcode"] = this.txtScanEAN.Text;
                             dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+
+                            // 變更是否為第一次掃描的標記
+                            dr["IsFirstTimeScan"] = false;
                             this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
                             break;
                         }
@@ -706,12 +710,15 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 int scanQty = (short)cur_dr["ScanQty"];
                 int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
 
-                // 判斷該Barcode是否為第一次掃秒，是的話傳送指令避免停下
-                bool isFirstTimeScan = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetString(s["Barcode"]) == this.txtScanEAN.Text.Trim() && MyUtility.Check.Empty(s["ScanQty"])).Any();
+                // 判斷該Barcode是否為第一次掃描，是的話傳送指令避免停下
+                bool isFirstTimeScan = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetString(s["Barcode"]) == this.txtScanEAN.Text.Trim() && MyUtility.Convert.GetBool(s["IsFirstTimeScan"])).Any();
 
                 if (isFirstTimeScan && this.UseAutoScanPack)
                 {
                     this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim()).Length);
+
+                    // 變更是否為第一次掃描的標記
+                    cur_dr["IsFirstTimeScan"] = false;
                 }
 
                 if (scanQty >= qtyPerCTN)
