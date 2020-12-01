@@ -62,6 +62,7 @@
     [ShippingMarkTemplatePath] VARCHAR(80)  NOT NULL CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT(''), 
     [WIP_FollowCutOutput] BIT NOT NULL DEFAULT ((0)), 
     [NoRestrictOrdersDelivery] BIT NOT NULL DEFAULT ((0)), 
+    [RFCardEraseBeforePrinting] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -287,3 +288,12 @@ Go
 	, @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
 GO
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'RF Card Erase Before Printing',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'RFCardEraseBeforePrinting'

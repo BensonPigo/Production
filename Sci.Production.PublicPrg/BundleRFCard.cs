@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace Sci.Production.Prg
 {
@@ -119,6 +120,7 @@ from
 		, bd.PatternDesc
         , [BundleID] = b.ID
         , bd.BundleNo
+        , bd.RFPrintDate
 	from Bundle b WITH (NOLOCK)
 	inner join Orders o WITH (NOLOCK) on b.Orderid = o.ID
 	inner join Bundle_Detail bd WITH (NOLOCK) on b.ID = bd.Id
@@ -167,6 +169,7 @@ from
 		, bda.PatternDesc
         , [BundleID] = b.ID
         , bd.BundleNo
+        , bd.RFPrintDate
 	from Bundle b WITH (NOLOCK)
 	inner join Orders o WITH (NOLOCK) on b.Orderid = o.ID
 	inner join Bundle_Detail bd WITH (NOLOCK) on b.ID = bd.Id
@@ -220,6 +223,7 @@ from
 		, bd.PatternDesc
         , [BundleID] = b.ID
         , bd.BundleNo
+        , bd.RFPrintDate
 	from Bundle b WITH (NOLOCK)
 	inner join Orders o WITH (NOLOCK) on b.Orderid = o.ID
 	inner join Bundle_Detail bd WITH (NOLOCK) on b.ID = bd.Id
@@ -268,6 +272,7 @@ from
 		, bd.PatternDesc
         , [BundleID] = b.ID
         , bd.BundleNo
+        , bd.RFPrintDate
 	from Bundle b WITH (NOLOCK)
 	inner join Orders o WITH (NOLOCK) on b.Orderid = o.ID
 	inner join Bundle_Detail bd WITH (NOLOCK) on b.ID = bd.Id
@@ -432,6 +437,235 @@ from
         }
 
         /// <summary>
+        /// Auto Bundle RFCard Print With Output Error Card
+        /// </summary>
+        /// <param name="dt">DataTable</param>
+        /// <param name="nowIndex">now index</param>
+        /// <param name="returnIndex">return Index</param>
+        /// <param name="isEraser">is Eraser</param>
+        /// <returns>DualResult</returns>
+        public static DualResult BundleRFCardPrint(DataTable dt, int nowIndex, out int returnIndex, bool isEraser = false)
+        {
+            DualResult result = new DualResult(false);
+            BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
+            bool initEraseSet = true;
+            returnIndex = nowIndex;
+            try
+            {
+                if (bundleRFCard.UsbPortOpen())
+                {
+                    while (nowIndex <= dt.Rows.Count - 1)
+                    {
+                        returnIndex = nowIndex;
+
+                        // C31
+                        result = CardFromStacker(bundleRFCard);
+                        if (!result)
+                        {
+                            if (result.Description.EqualString("0x2105"))
+                            {
+                                throw new Exception("No card in the stacker, printer cannot get the card.Please top up the card to continue printing.");
+                            }
+                            else if (result.Description.EqualString("0x2006"))
+                            {
+                                // C36
+                                result = CardDrop(bundleRFCard);
+                                if (!result)
+                                {
+                                    throw new Exception("Card Capture Error");
+                                }
+
+                                continue;
+                            }
+                        }
+
+                        // F30
+                        string cardUID = string.Empty;
+                        result = CardRFUiD(bundleRFCard);
+                        if (result)
+                        {
+                            cardUID = result.Description;
+                        }
+                        else
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Get RF UID Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        if (isEraser)
+                        {
+                            if (initEraseSet)
+                            {
+                                // P22 sets the partial Erase Area.
+                                result = CardEraseSettingArea(bundleRFCard);
+                                if (!result)
+                                {
+                                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card set Erase Error");
+                                    throw new Exception(result.Messages.ToString());
+                                }
+
+                                initEraseSet = false;
+                            }
+
+                            // P24 Card Erase the partial Area.
+                            result = CardErasePartialArea(bundleRFCard);
+                            if (!result)
+                            {
+                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Erase Error");
+                                throw new Exception(result.Messages.ToString());
+                            }
+                        }
+
+                        // P42 Sram Reset
+                        result = CardSramReset(bundleRFCard);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Sram Reset Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        // P35
+                        List<string> settings = new List<string>();
+                        result = GetSettingText(dt.Rows[nowIndex], out settings);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Get SettingText Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        result = CardSettingTextTOSram(bundleRFCard, settings);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card SettingText TO Sram Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        // P41
+                        result = CardPrint(bundleRFCard);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Print Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        // C36
+                        result = CardDrop(bundleRFCard);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Capture Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        // write DB
+                        result = UpdateBundleDetailRFUID(dt.Rows[nowIndex]["BundleID"].ToString(), dt.Rows[nowIndex]["BundleNo"].ToString(), cardUID);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Write To DB Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
+                        nowIndex++;
+                    }
+                }
+                else
+                {
+                    throw new Exception("Printer(CHP_1800) usb port not open");
+                }
+
+                result = new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, new BaseResult.MessageInfo(ex.Message.ToString()));
+            }
+            finally
+            {
+                bundleRFCard.UsbPortClose();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// RF Print 列印且出錯顯示confirmbox，選擇Continue 則重複執行，直到Stop或完成
+        /// </summary>
+        /// <param name="dt">DataTable</param>
+        /// <param name="nowIndex">DataTable now index</param>
+        /// <param name="isEraser">Is Eraser</param>
+        /// <returns>DualResult</returns>
+        public static DualResult BundleRFCardPrintAndRetry(DataTable dt, int nowIndex, bool isEraser = false)
+        {
+            DualResult result = new DualResult(false);
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return result;
+            }
+
+            string confirmTitle = "RF Print Error";
+            int returnIndex = 0;
+            while (!(result = BundleRFCardPrint(dt, nowIndex, out returnIndex, isEraser)))
+            {
+                nowIndex = returnIndex;
+                DialogResult confirmResult = MessageBox.Show(
+                            result.Messages.ToString(),
+                            confirmTitle,
+                            MessageBoxButtons.RetryCancel);
+                if (confirmResult == DialogResult.Retry)
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Print Error RFCard
+        /// </summary>
+        private static DualResult BundleRFCardPrintErrorMsg(BundleRFCardUSB bundleRFCard, string errMsg)
+        {
+            DualResult result;
+
+            // P42 Sram Reset
+            result = CardSramReset(bundleRFCard);
+            if (!result)
+            {
+                return new DualResult(false, new BaseResult.MessageInfo("Card Sram Reset Error"));
+            }
+
+            // P35
+            List<string> settings = new List<string>() { errMsg };
+            result = CardSettingTextTOSram(bundleRFCard, settings);
+            if (!result)
+            {
+                return new DualResult(false, new BaseResult.MessageInfo("Card SettingText TO Sram Error"));
+            }
+
+            // P41
+            result = CardPrint(bundleRFCard);
+            if (!result)
+            {
+                return new DualResult(false, new BaseResult.MessageInfo("Card Print Error"));
+            }
+
+            // C36
+            result = CardDrop(bundleRFCard);
+            if (!result)
+            {
+                return new DualResult(false, new BaseResult.MessageInfo("Card Capture Error"));
+            }
+
+            result = new DualResult(false, new BaseResult.MessageInfo(errMsg));
+
+            return result;
+        }
+
+        /// <summary>
         /// Only RF Card Erase (Stacker all Card)
         /// </summary>
         /// <returns>DualResult</returns>
@@ -457,10 +691,15 @@ from
                             }
                             else if (result.Description.EqualString("0x2006"))
                             {
-                                result = new DualResult(false, "Cannot make 2nd commit, Because there is a card in the machine.");
-                            }
+                                // C36
+                                result = CardDrop(bundleRFCard);
+                                if (!result)
+                                {
+                                    throw new Exception("Card Capture Error");
+                                }
 
-                            throw new Exception(string.Join("Card Get From Stacker Error :", Environment.NewLine, result.ToString()));
+                                continue;
+                            }
                         }
 
                         // P22 sets the partial Erase Area.
@@ -470,7 +709,8 @@ from
                             initEraseSet = true;
                             if (!result)
                             {
-                                throw new Exception(string.Join("Card set Erase Error :", Environment.NewLine, result.ToString()));
+                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card set Erase Error");
+                                throw new Exception(result.Messages.ToString());
                             }
                         }
 
@@ -478,14 +718,16 @@ from
                         result = CardErasePartialArea(bundleRFCard);
                         if (!result)
                         {
-                            throw new Exception(string.Join("Card Erase Error :", Environment.NewLine, result.ToString()));
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Erase Error");
+                            throw new Exception(result.Messages.ToString());
                         }
 
                         // C36
                         result = CardDrop(bundleRFCard);
                         if (!result)
                         {
-                            throw new Exception(string.Join("Card Capture Error :", Environment.NewLine, result.ToString()));
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Capture Error");
+                            throw new Exception(result.Messages.ToString());
                         }
                     }
                 }
@@ -1277,7 +1519,7 @@ from
         /// <returns>DualResult</returns>
         private static DualResult UpdateBundleDetailRFUID(string id, string bundleNO, string rfUID)
         {
-            string sqlCmd = $"update Bundle_Detail set RFUID = '{rfUID}' where ID = '{id}' and BundleNo = '{bundleNO}'";
+            string sqlCmd = $"update Bundle_Detail set RFUID = '{rfUID}', RFPrintDate = Getdate() where ID = '{id}' and BundleNo = '{bundleNO}'";
             DualResult result = Data.DBProxy.Current.Execute(string.Empty, sqlCmd);
             return result;
         }
@@ -1303,9 +1545,6 @@ from
         private static DualResult GetSettingText(DataRow dr, out List<string> settings)
         {
             DualResult result = new DualResult(false);
-            Bitmap m_Bitmap = new Bitmap(500, 556);
-            PointF point = new PointF(0, 0);
-            SizeF maxSize = new SizeF(500, 556);
 
             string styleIDLast = dr["StyleID"].ToString().Right(5);
             string styleIDFirst = styleIDLast.Empty() ? string.Empty : dr["StyleID"].ToString().Replace(styleIDLast, string.Empty);

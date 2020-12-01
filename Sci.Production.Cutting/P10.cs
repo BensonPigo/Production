@@ -1074,9 +1074,6 @@ where bdo.OrderID = '{orderid}'
             p.ShowDialog();
             string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.displayPrintDate.Text = dtn;
-            string sqlcmd = $@"update Bundle set PrintDate = '{dtn}' where ID = '{this.CurrentMaintain["ID"]}';
-                  update Bundle_Detail set PrintDate = '{dtn}' where ID = '{this.CurrentMaintain["ID"]}';";
-            DBProxy.Current.Execute(null, sqlcmd);
             string topID = this.CurrentMaintain["ID"].ToString();
             this.ReloadDatas();
             int newDataIdx = this.gridbs.Find("ID", topID);

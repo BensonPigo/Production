@@ -26,9 +26,8 @@ namespace Sci.Production.Cutting
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
             MyUtility.Tool.SetupCombox(this.comboLayout, 2, 1, "0,Layout1,1,Layout2");
-            this.chkRFPrint.Visible = false;
-            this.chkRFRraser.Visible = false;
             this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
+            this.linkLabelRFCardEraseBeforePrinting1.SetText();
         }
 
         /// <inheritdoc/>
@@ -334,6 +333,7 @@ order by x.[Bundle]");
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ExcelProcess();
+            this.WritePrintDate();
             return true;
         }
 
@@ -401,10 +401,12 @@ order by x.[Bundle]");
                 excelApp.Quit();
                 Marshal.ReleaseComObject(excelApp);
                 File.Delete(excelName);
+                this.WritePrintDate();
             }
             else if (this.radioBundleChecklist.Checked)
             {
                 this.ExcelProcess(true);
+                this.WritePrintDate();
             }
             else if (this.radioBundleCardRF.Checked)
             {
@@ -415,42 +417,71 @@ order by x.[Bundle]");
                     return false;
                 }
 
-                if (!this.chkRFPrint.Checked && !this.chkRFRraser.Checked)
+                try
                 {
-                    MyUtility.Msg.ErrorBox("Print, Eraser must choose one.");
-                    return false;
-                }
-                else if (!this.chkRFPrint.Checked && this.chkRFRraser.Checked)
-                {
-                    // 放在Stacker的所有卡片擦除
-                    DualResult result = Prg.BundleRFCard.BundleRFErase();
+                    bool rfCardErase = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select RFCardEraseBeforePrinting from [System]"));
+                    DataTable dataTable = this.dt;
+                    var query = this.dt.AsEnumerable()
+                                  .GroupBy(x => x.Field<DateTime?>("RFPrintDate").HasValue ?
+                                                  "Y" : string.Empty)
+                                  .Select(x => new
+                                  {
+                                      RFPrintDate = x.Key,
+                                      Count = x.Count(),
+                                  })
+                                  .ToList();
+                    if (query.Any() && query.Count > 1)
+                    {
+                        DialogResult confirmResult = Prg.MessageBoxEX.Show(
+                                     "The last printing has not yet completed, do you want to continue printing?",
+                                     "Continue Printing?",
+                                     MessageBoxButtons.YesNoCancel,
+                                     new string[] { "Continue", "Restart Printing", "Cancel" });
+                        if (confirmResult.EqualString("Yes"))
+                        {
+                            dataTable = this.dt.AsEnumerable().Where(x => !x.Field<DateTime?>("RFPrintDate").HasValue).CopyToDataTable();
+                        }
+                        else if (confirmResult.EqualString("No"))
+                        {
+                            dataTable = this.dt;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    this.ShowWaitMessage("Process Print!");
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(dataTable, 0, rfCardErase);
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox(result.ToString());
                         return false;
                     }
 
-                    MyUtility.Msg.InfoBox("Erase success, Please check result in Bin Box.");
+                    this.HideWaitMessage();
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        DualResult result = Prg.BundleRFCard.BundleRFCardPrint(this.dt, this.chkRFRraser.Checked);
-                        if (!result)
-                        {
-                            MyUtility.Msg.ErrorBox(result.ToString());
-                            return false;
-                        }
-
-                        MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
-                    }
-                    catch (Exception ex)
-                    {
-                        MyUtility.Msg.ErrorBox(ex.ToString());
-                        return false;
-                    }
+                    MyUtility.Msg.ErrorBox(ex.ToString());
+                    return false;
                 }
+            }
+            else if (this.radioBundleErase.Checked)
+            {
+                this.ShowWaitMessage("Process Erase!");
+
+                // 放在Stacker的所有卡片擦除
+                DualResult result = Prg.BundleRFCard.BundleRFErase();
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox(result.ToString());
+                    return false;
+                }
+
+                this.HideWaitMessage();
+                MyUtility.Msg.InfoBox("Erase success, Please check result in Bin Box.");
             }
 
             return true;
@@ -748,13 +779,16 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             this.RadioButtionChangeStatus();
         }
 
+        private void RadioBundleErase_CheckedChanged(object sender, EventArgs e)
+        {
+            this.RadioButtionChangeStatus();
+        }
+
         private void RadioButtionChangeStatus()
         {
             this.comboLayout.Visible = true;
             this.toexcel.Enabled = true;
             this.print.Enabled = true;
-            this.chkRFPrint.Visible = false;
-            this.chkRFRraser.Visible = false;
             if (this.radioBundleCard.Checked)
             {
                 this.toexcel.Enabled = false;
@@ -763,13 +797,19 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             {
                 this.comboLayout.Visible = false;
             }
-            else if (this.radioBundleCardRF.Checked)
+            else if (this.radioBundleCardRF.Checked || this.radioBundleErase.Checked)
             {
-                this.chkRFPrint.Visible = true;
-                this.chkRFRraser.Visible = true;
                 this.toexcel.Enabled = false;
                 this.comboLayout.Visible = false;
             }
+        }
+
+        private void WritePrintDate()
+        {
+            string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            string sqlcmd = $@"update Bundle set PrintDate = '{dtn}' where ID = '{this.CurrentDataRow["ID"]}';
+                  update Bundle_Detail set PrintDate = '{dtn}' where ID = '{this.CurrentDataRow["ID"]}';";
+            DBProxy.Current.Execute(null, sqlcmd);
         }
     }
 }

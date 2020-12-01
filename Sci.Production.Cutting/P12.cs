@@ -51,7 +51,8 @@ namespace Sci.Production.Cutting
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
-                .DateTime("PrintDate", header: "Print Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .DateTime("PrintDate", header: "Print Date\r\n(Bundle Card)", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .DateTime("RFPrintDate", header: "Print Date\r\n(RF Card)", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Date("CreateDate", header: "Create Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -288,6 +289,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -376,6 +378,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -508,6 +511,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -596,6 +600,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -895,8 +900,17 @@ where bd.BundleNo = '{dr["Bundle"]}'
 
         private void BtnBundleCardRF_Click(object sender, EventArgs e)
         {
-            var bundleIDs = this.dtt.AsEnumerable()
-                .Where(x => x["selected"].ToBool())
+            var selected = this.dtt.AsEnumerable()
+                .Where(x => x["selected"].ToBool());
+
+            if (!selected.Any())
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            var bundleIDs = selected
                 .GroupBy(x => new
                 {
                     BundleID = x["BundleID"],
@@ -916,6 +930,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 return;
             }
 
+            DataTable selectDt = new DataTable();
             string sqlWhere = "and bd.BundleNO = @bundleNO";
             string sqlCmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, sqlWhere);
             foreach (var item in bundleIDs)
@@ -934,21 +949,56 @@ where bd.BundleNo = '{dr["Bundle"]}'
                     return;
                 }
 
-                try
+                if (selectDt == null || selectDt.Rows.Count == 0)
                 {
-                    result = Prg.BundleRFCard.BundleRFCardPrint(dt);
-                    if (!result)
-                    {
-                        MyUtility.Msg.ErrorBox(result.ToString());
-                        return;
-                    }
-
-                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                    selectDt = dt;
                 }
-                catch (Exception ex)
+                else
                 {
-                    MyUtility.Msg.ErrorBox(ex.ToString());
-                    return;
+                    selectDt.Merge(dt);
+                }
+            }
+
+            if (selectDt.Rows.Count > 0)
+            {
+                P12_Print p = new P12_Print(selectDt);
+                p.ShowDialog();
+                this.Query();
+                this.Grid_Filter();
+            }
+        }
+
+        private void CheckBoxOnlyCompleted_CheckedChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            string filter = string.Empty;
+            if (this.grid1.RowCount > 0)
+            {
+                switch (this.checkBoxOnlyNotYetCompleted.Checked)
+                {
+                    case true:
+                        if (MyUtility.Check.Empty(this.grid1))
+                        {
+                            break;
+                        }
+
+                        filter = $@" RFPrintDate is null";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case false:
+                        if (MyUtility.Check.Empty(this.grid1))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
                 }
             }
         }
