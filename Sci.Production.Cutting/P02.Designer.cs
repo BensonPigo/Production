@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -117,6 +117,8 @@
             this.numLeadTime = new Sci.Win.UI.NumericBox();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
+            this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.btnExWip = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -145,11 +147,11 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnExWip);
             this.masterpanel.Controls.Add(this.dispSubprocess);
             this.masterpanel.Controls.Add(this.numLeadTime);
             this.masterpanel.Controls.Add(this.label5);
@@ -201,6 +203,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             this.masterpanel.Controls.SetChildIndex(this.numLeadTime, 0);
             this.masterpanel.Controls.SetChildIndex(this.dispSubprocess, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnExWip, 0);
             // 
             // detailpanel
             // 
@@ -217,12 +220,12 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(655, 61);
+            this.gridicon.Location = new System.Drawing.Point(727, 61);
             // 
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(7367, 561);
+            this.refresh.Location = new System.Drawing.Point(7677, 561);
             // 
             // detailgridcont
             // 
@@ -231,7 +234,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(830, 587);
+            this.detailgridcont.Size = new System.Drawing.Size(830, 585);
             // 
             // detail
             // 
@@ -475,7 +478,7 @@
             // btnBatchAssign
             // 
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnBatchAssign.Location = new System.Drawing.Point(292, 61);
+            this.btnBatchAssign.Location = new System.Drawing.Point(384, 61);
             this.btnBatchAssign.Name = "btnBatchAssign";
             this.btnBatchAssign.Size = new System.Drawing.Size(107, 30);
             this.btnBatchAssign.TabIndex = 17;
@@ -706,14 +709,14 @@
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
             this.gridSizeRatio.Name = "gridSizeRatio";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
@@ -789,14 +792,14 @@
             this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
             this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
@@ -847,14 +850,14 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -916,10 +919,10 @@
             // downloadid_Text
             // 
             this.downloadid_Text.BackColor = System.Drawing.Color.Transparent;
-            this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-            this.downloadid_Text.Location = new System.Drawing.Point(26, 61);
+            this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.downloadid_Text.Location = new System.Drawing.Point(5, 61);
             this.downloadid_Text.Name = "downloadid_Text";
-            this.downloadid_Text.Size = new System.Drawing.Size(263, 23);
+            this.downloadid_Text.Size = new System.Drawing.Size(266, 23);
             this.downloadid_Text.TabIndex = 53;
             this.downloadid_Text.Text = "DownLoad ID/ Apply # Different";
             this.downloadid_Text.TextStyle.Color = System.Drawing.Color.Red;
@@ -1180,7 +1183,7 @@
             // 
             // btnStdQtyWIP
             // 
-            this.btnStdQtyWIP.Location = new System.Drawing.Point(405, 61);
+            this.btnStdQtyWIP.Location = new System.Drawing.Point(490, 61);
             this.btnStdQtyWIP.Name = "btnStdQtyWIP";
             this.btnStdQtyWIP.Size = new System.Drawing.Size(119, 30);
             this.btnStdQtyWIP.TabIndex = 54;
@@ -1199,12 +1202,6 @@
             this.btnDist.UseVisualStyleBackColor = true;
             this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
             // 
-            // backgroundWorker1
-            // 
-            this.BackgroundWorker1.WorkerReportsProgress = true;
-            this.BackgroundWorker1.WorkerSupportsCancellation = true;
-            this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
-            // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(0, 0);
@@ -1221,7 +1218,7 @@
             // 
             // BtnImportMarker
             // 
-            this.BtnImportMarker.Location = new System.Drawing.Point(530, 61);
+            this.BtnImportMarker.Location = new System.Drawing.Point(608, 61);
             this.BtnImportMarker.Name = "BtnImportMarker";
             this.BtnImportMarker.Size = new System.Drawing.Size(119, 30);
             this.BtnImportMarker.TabIndex = 59;
@@ -1274,6 +1271,24 @@
             this.label6.Size = new System.Drawing.Size(79, 23);
             this.label6.TabIndex = 64;
             this.label6.Text = "Lead Time";
+            // 
+            // BackgroundWorker1
+            // 
+            this.BackgroundWorker1.WorkerReportsProgress = true;
+            this.BackgroundWorker1.WorkerSupportsCancellation = true;
+            this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            // 
+            // btnExWip
+            // 
+            this.btnExWip.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnExWip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExWip.Location = new System.Drawing.Point(277, 56);
+            this.btnExWip.Name = "btnExWip";
+            this.btnExWip.Size = new System.Drawing.Size(107, 35);
+            this.btnExWip.TabIndex = 68;
+            this.btnExWip.Text = "Exclude fabric combo in WIP";
+            this.btnExWip.UseVisualStyleBackColor = true;
+            this.btnExWip.Click += new System.EventHandler(this.BtnExWip_Click);
             // 
             // P02
             // 
@@ -1423,5 +1438,6 @@
         private Win.UI.NumericBox numLeadTime;
         private Win.UI.Label label5;
         private Win.UI.Label label6;
+        private Win.UI.Button btnExWip;
     }
 }

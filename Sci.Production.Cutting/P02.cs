@@ -4046,5 +4046,11 @@ DEALLOCATE CURSOR_
                 currentRow[columnName + "New"] = MyUtility.Convert.GetString(currentRow[columnName]).PadLeft(10, '0');
             }
         }
+
+        private void BtnExWip_Click(object sender, EventArgs e)
+        {
+            var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["id"].ToString());
+            exwip.ShowDialog();
+        }
     }
 }
