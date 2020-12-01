@@ -103,7 +103,7 @@ select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
     [Fabrication] = f.WeaveTypeID,
-    psd.RevisedETA,
+    psd.FinalETA,
     [PPIC Close] = iif(c.Finished=1,'V',''),
     wo.WKETA,
 	[Est.Cutting Date]= wo.EstCutDate,
@@ -383,7 +383,7 @@ where 1=1
             #endregion
             sqlCmd.Append(@"
 select 
-[M],[Factory],[Fabrication],[RevisedETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
+[M],[Factory],[Fabrication],[FinalETA],[PPIC Close],WKETA,[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Sewing Inline(SP)],[Master SP#],[SP#],[Brand]
 ,[Style#],[Switch to Workorder],[Ref#],[Seq],[Cut#],[SpreadingNoID],[Cut Cell],[Sewing Line],[Sewing Cell],[Combination]
 ,[Color Way],[Color],Artwork.Artwork,[Layers],[LackingLayers],[Qty],[Ratio],[OrderQty],[ExcessQty],[Consumption],[ActConsOutput]
 ,[Spreading Time (mins)],[Cutting Time (mins)]
