@@ -84,6 +84,8 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.label9 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.numericUpDownMiscPOApproveDay = new Sci.Win.UI.NumericUpDown();
@@ -105,12 +107,10 @@
             this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
             this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
             this.labelClipFilesPath = new Sci.Win.UI.Label();
-            this.txtUserPOApproved = new Sci.Production.Class.Txtuser();
             this.txtuserMiscPOApproveName = new Sci.Production.Class.Txtuser();
+            this.txtUserPOApproved = new Sci.Production.Class.Txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.label9 = new Sci.Win.UI.Label();
-            this.checkBox1 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -760,8 +760,8 @@
             this.panel1.Controls.Add(this.txtFTPID);
             this.panel1.Controls.Add(this.labelPOApproved);
             this.panel1.Controls.Add(this.labelFTPID);
-            this.panel1.Controls.Add(this.txtuserMiscPOApproveName);
             this.panel1.Controls.Add(this.txtUserPOApproved);
+            this.panel1.Controls.Add(this.txtuserMiscPOApproveName);
             this.panel1.Controls.Add(this.txtFTPIP);
             this.panel1.Controls.Add(this.labelAutoApprovedWhileDateBefore);
             this.panel1.Controls.Add(this.labelFTPIP);
@@ -792,6 +792,25 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(737, 684);
             this.panel1.TabIndex = 50;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WIP_ByShell", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(183, 238);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(15, 14);
+            this.checkBox1.TabIndex = 65;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(17, 233);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(158, 23);
+            this.label9.TabIndex = 64;
+            this.label9.Text = "WIP calculate by \"Shell\"";
             // 
             // label5
             // 
@@ -1029,16 +1048,6 @@
             this.labelClipFilesPath.TabIndex = 43;
             this.labelClipFilesPath.Text = "Clip Files Path";
             // 
-            // txtUserPOApproved
-            // 
-            this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
-            this.txtUserPOApproved.DisplayBox1Binding = "";
-            this.txtUserPOApproved.Location = new System.Drawing.Point(375, 54);
-            this.txtUserPOApproved.Name = "txtUserPOApproved";
-            this.txtUserPOApproved.Size = new System.Drawing.Size(300, 23);
-            this.txtUserPOApproved.TabIndex = 5;
-            this.txtUserPOApproved.TextBox1Binding = "";
-            // 
             // txtuserMiscPOApproveName
             // 
             this.txtuserMiscPOApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MiscPOApproveName", true));
@@ -1048,6 +1057,16 @@
             this.txtuserMiscPOApproveName.Size = new System.Drawing.Size(300, 23);
             this.txtuserMiscPOApproveName.TabIndex = 59;
             this.txtuserMiscPOApproveName.TextBox1Binding = "";
+            // 
+            // txtUserPOApproved
+            // 
+            this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
+            this.txtUserPOApproved.DisplayBox1Binding = "";
+            this.txtUserPOApproved.Location = new System.Drawing.Point(375, 54);
+            this.txtUserPOApproved.Name = "txtUserPOApproved";
+            this.txtUserPOApproved.Size = new System.Drawing.Size(300, 23);
+            this.txtUserPOApproved.TabIndex = 5;
+            this.txtUserPOApproved.TextBox1Binding = "";
             // 
             // shapeContainer2
             // 
@@ -1077,25 +1096,6 @@
             this.lineShape10.X2 = 727;
             this.lineShape10.Y1 = 338;
             this.lineShape10.Y2 = 338;
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(17, 233);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(253, 23);
-            this.label9.TabIndex = 64;
-            this.label9.Text = "WIP calculate as Cutting Output/Ignore";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "wIP_FollowCutOutput", true));
-            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(273, 237);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(15, 14);
-            this.checkBox1.TabIndex = 65;
-            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // B02
             // 

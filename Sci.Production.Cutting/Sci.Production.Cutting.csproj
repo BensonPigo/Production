@@ -132,6 +132,12 @@
     <Compile Include="B01.Designer.cs">
       <DependentUpon>B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_ExcludefabriccomboinWIP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ExcludefabriccomboinWIP.Designer.cs">
+      <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_PatternPanel_n.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -563,6 +569,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B02.resx">
       <DependentUpon>B02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ExcludefabriccomboinWIP.resx">
+      <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_PatternPanel_n.resx">
       <DependentUpon>P02_PatternPanel_n.cs</DependentUpon>
