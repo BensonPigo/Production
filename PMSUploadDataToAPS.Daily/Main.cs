@@ -42,6 +42,7 @@ namespace PMSUploadDataToAPS.Daily
             if (String.IsNullOrEmpty(_isAuto))
             {
                 isAuto = true;
+                this.OnFormLoaded();
             }
         }
 
@@ -51,7 +52,7 @@ namespace PMSUploadDataToAPS.Daily
 
             OnRequery();
 
-            transferPMS.fromSystem = "Production";
+            //transferPMS.fromSystem = "Production";
 
             if (isAuto)
             {
@@ -68,7 +69,18 @@ namespace PMSUploadDataToAPS.Daily
 
             DualResult result = DBProxy.Current.Select("Production", sqlCmd, out _mailTo);
 
-            if (!result) { ShowErr(result); return; }
+            if (!result)
+            {
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
+            }
 
             mailTo = _mailTo.Rows[0];
 
@@ -117,7 +129,18 @@ namespace PMSUploadDataToAPS.Daily
             {
                 Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
 
-                mail.ShowDialog();
+                DualResult mailResult = mail.Send();
+                if (!mailResult)
+                {
+                    if (this.isAuto)
+                    {
+                        throw mailResult.GetException();
+                    }
+                    else
+                    {
+                        this.ShowErr(mailResult);
+                    }
+                }
             }
         }
         #endregion
@@ -131,16 +154,32 @@ namespace PMSUploadDataToAPS.Daily
 
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
-            DualResult result = AsyncHelper.Current.DataProcess(this, () =>
+            DualResult result;
+            if (isAuto)
             {
-                return AsyncUpdateExport(conn);
-            });
+                result = AsyncUpdateExport(conn);
+            }
+            else
+            {
+                result = AsyncHelper.Current.DataProcess(this, () =>
+                {
+                    return AsyncUpdateExport(conn);
+                });
+            }
 
             mymailTo(result.ToSimpleString());
 
             if (!result)
             {
-                ShowErr(result);
+                if (this.isAuto)
+                {
+                    throw result.GetException();
+                }
+                else
+                {
+                    ShowErr(result);
+                    return;
+                }
             }
 
             conn.Close();
@@ -228,7 +267,7 @@ namespace PMSUploadDataToAPS.Daily
 
         private void btnTestWebAPI_Click(object sender, EventArgs e)
         {
-          this.CallJobLogApi("APS upload Test", "APS upload Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
+            this.CallJobLogApi("APS upload Test", "APS upload Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
         }
 
         private void btnTestMail_Click(object sender, EventArgs e)
