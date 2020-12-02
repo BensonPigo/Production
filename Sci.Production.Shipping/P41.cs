@@ -385,40 +385,6 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 }
             }
 
-            // 檢查CustomSP的Balance Qty是否會小於0
-            string sqlCmd = string.Format(
-                @"select CustomSP 
-from (select ed.CustomSP,sum(ed.ExportQty) as ExportQty, c.Qty-c.PulloutQty as RemainQty
-	  from VNExportDeclaration_Detail ed WITH (NOLOCK) 
-	  inner join VNConsumption c WITH (NOLOCK) on c.CustomSP = ed.CustomSP
-	  where c.VNContractID = '{0}'
-	  and ed.ID = '{1}'
-	  group by ed.CustomSP,c.Qty-c.PulloutQty) a
-where a.RemainQty - a.ExportQty < 0",
-                MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
-                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-
-            DataTable checkData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out checkData);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Check CustomSp Balance Qty fail!!");
-                return;
-            }
-
-            if (checkData.Rows.Count > 0)
-            {
-                StringBuilder errMsg = new StringBuilder();
-                errMsg.Append("Below Custom SP#'s balance will become minus.\r\n");
-                foreach (DataRow dr in checkData.Rows)
-                {
-                    errMsg.Append(string.Format("{0}\r\n", MyUtility.Convert.GetString(dr["CustomSP"])));
-                }
-
-                MyUtility.Msg.WarningBox(errMsg.ToString());
-                return;
-            }
-
             // 檢查報關數量是否跟Garment Booking數量一致，若不一致會請User確認是否要繼續做Confirmed
             string qty = MyUtility.GetValue.Lookup(string.Format(
                 @"select (isnull((select sum(pd.ShipQty)
@@ -439,13 +405,13 @@ isnull((select sum(ExportQty) as ExportQty from VNExportDeclaration_Detail WITH 
             }
 
             IList<string> updateCmds = new List<string>();
-            sqlCmd = string.Format(
+            string sqlCmd = string.Format(
                 @"select ed.CustomSP,sum(ed.ExportQty) as ExportQty
 from VNExportDeclaration_Detail ed WITH (NOLOCK) 
 where ed.ID = '{0}'
 group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DataTable updateData;
-            result = DBProxy.Current.Select(null, sqlCmd, out updateData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out updateData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Sum total export qty fail!!");
