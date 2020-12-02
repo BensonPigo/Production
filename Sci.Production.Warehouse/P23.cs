@@ -732,7 +732,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtMain = this.CurrentMaintain.Table.Clone();
+                DataTable dtMain = this.CurrentMaintain.Table.Copy();
                 dtMain.ImportRow(this.CurrentMaintain);
                 Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
@@ -755,10 +755,10 @@ select fb.Ukey,fb.TransactionID,fb.Barcode
 ,[StockType] = i2.ToStockType
 from Production.dbo.SubTransfer_Detail i2
 inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
-inner join FtyInventory f on f.POID = i2.ToPOID
-    and f.Seq1 = i2.ToSeq1 and f.Seq2 = i2.ToSeq2
-    and f.Roll = i2.ToRoll and f.Dyelot = i2.ToDyelot
-    and f.StockType = i2.ToStockType
+inner join FtyInventory f on f.POID = i2.FromPOID
+    and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
+    and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
+    and f.StockType = i2.FromStockType
 left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
 where 1=1
 and exists(
@@ -777,11 +777,11 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 {
                     if (dr["Barcode"].ToString().Contains("-"))
                     {
-                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString(), 1);
+                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString().Substring(14, 2), 1);
                     }
                     else
                     {
-                        dr["NewBarcode"] = dr["Barcode"].ToString() + "-01";
+                        dr["NewBarcode"] = MyUtility.Check.Empty(dr["Barcode"]) ? string.Empty : dr["Barcode"].ToString() + "-01";
                     }
                 }
                 else
@@ -791,10 +791,10 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 }
             }
 
-            var data_Fty_Barcode = (from m in dt.AsEnumerable()
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                     select new
                                     {
-                                        TransactionID = m.Field<string>("ID"),
+                                        TransactionID = this.CurrentMaintain["ID"].ToString(),
                                         poid = m.Field<string>("poid"),
                                         seq1 = m.Field<string>("seq1"),
                                         seq2 = m.Field<string>("seq2"),

@@ -1146,7 +1146,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
 select fb.Ukey,fb.TransactionID,fb.Barcode
 ,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
 ,[NewBarcode] = ''
-,i2.* 
+,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id 
 inner join FtyInventory f on f.POID = i2.POID
@@ -1171,11 +1171,11 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 {
                     if (dr["Barcode"].ToString().Contains("-"))
                     {
-                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString(), 1);
+                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString().Substring(14, 2), 1);
                     }
                     else
                     {
-                        dr["NewBarcode"] = dr["Barcode"].ToString() + "-01";
+                        dr["NewBarcode"] = MyUtility.Check.Empty(dr["Barcode"]) ? string.Empty : dr["Barcode"].ToString() + "-01";
                     }
                 }
                 else
@@ -1185,7 +1185,7 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 }
             }
 
-            var data_Fty_Barcode = (from m in dt.AsEnumerable()
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                     select new
                                     {
                                         TransactionID = m.Field<string>("ID"),

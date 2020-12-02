@@ -12,6 +12,7 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P01 : Win.Tems.Input1
     {
         private string dataType = string.Empty;
@@ -23,6 +24,7 @@ namespace Sci.Production.Warehouse
             form.Focus();
         }
 
+        /// <inheritdoc/>
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -39,6 +41,7 @@ namespace Sci.Production.Warehouse
             this.comboSubconInType.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         public P01(ToolStripMenuItem menuitem, string history)
             : this(menuitem)
         {
@@ -565,7 +568,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 // WHClose
                 if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
                 {
-                    DataTable dtMain = this.CurrentMaintain.Table.Clone();
+                    DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                     dtMain.ImportRow(this.CurrentMaintain);
                     Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMain))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);

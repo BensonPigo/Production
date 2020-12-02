@@ -462,11 +462,6 @@ having f.balanceQty - sum(d.Qty) < 0
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                if (true)
-                {
-                    return; // 暫未開放
-                }
-
                 DataTable dtDetail = new DataTable();
                 string sqlGetData = string.Empty;
                 sqlGetData = $@"

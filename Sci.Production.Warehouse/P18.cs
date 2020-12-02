@@ -1658,11 +1658,6 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void SentToGensong_AutoWHFabric()
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
             DataTable dtDetail = new DataTable();
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {

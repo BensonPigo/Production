@@ -1063,7 +1063,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
-            //this.SentToGensong_AutoWHFabric();
+            // this.SentToGensong_AutoWHFabric();
         }
 
         /// <summary>

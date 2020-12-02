@@ -54,12 +54,12 @@ namespace Sci.Production.Automation
                     ShipQty = (decimal)dr["ShipQty"],
                     Weight = (decimal)dr["Weight"],
                     StockType = dr["StockType"].ToString(),
+                    Barcode = dr["Barcode"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     IsInspection = (bool)dr["IsInspection"],
-                    ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd hh:mm:ss"),
-                    WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd hh:mm:ss"),
+                    ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
+                    WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
                     Status = dr["Status"].ToString(),
-                    Barcode = dr["Barcode"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
@@ -91,7 +91,7 @@ namespace Sci.Production.Automation
                     Id = dr["id"].ToString(),
                     Type = dr["Type"].ToString(),
                     CutPlanID = dr["CutPlanID"].ToString(),
-                    EstCutdate = MyUtility.Check.Empty(dr["EstCutdate"]) ? null : (DateTime?)dr["EstCutdate"],
+                    EstCutdate = MyUtility.Check.Empty(dr["EstCutdate"]) ? null : ((DateTime?)dr["EstCutdate"]).Value.ToString("yyyy/MM/dd"),
                     SpreadingNoID = dr["SpreadingNoID"].ToString(),
                     PoId = dr["PoId"].ToString(),
                     Seq1 = dr["Seq1"].ToString(),
@@ -117,12 +117,6 @@ namespace Sci.Production.Automation
         /// <param name="dtMaster">Master DataSource</param>
         public void SentWHCloseToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
-            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
                 return;
@@ -138,13 +132,12 @@ namespace Sci.Production.Automation
                 .Select(dr => new
                 {
                     POID = dr["POID"].ToString(),
-                    WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : (DateTime?)dr["WhseClose"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : ((DateTime?)dr["WhseClose"]).Value.ToString("yyyy/MM/dd"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
-            */
         }
 
         /// <summary>
@@ -153,11 +146,6 @@ namespace Sci.Production.Automation
         /// <param name="dtMaster">Master DataSource</param>
         public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -250,22 +238,24 @@ and exists(
                     FromRoll = dr["FromRoll"].ToString(),
                     FromDyelot = dr["FromDyelot"].ToString(),
                     FromStockType = dr["FromStockType"].ToString(),
+                    FromBarcode = dr["FromBarcode"].ToString(),
+                    FromLocation = dr["FromLocation"].ToString(),
                     ToPOID = dr["ToPOID"].ToString(),
                     ToSeq1 = dr["ToSeq1"].ToString(),
                     ToSeq2 = dr["ToSeq2"].ToString(),
                     ToRoll = dr["ToRoll"].ToString(),
                     ToDyelot = dr["ToDyelot"].ToString(),
                     ToStockType = dr["ToStockType"].ToString(),
-                    Barcode = dr["Barcode"].ToString(),
+                    ToBarcode = dr["ToBarcode"].ToString(),
+                    ToLocation = dr["ToLocation"].ToString(),
                     Ukey = (long)dr["Ukey"],
-                    Junk = (bool)dr["Junk"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    Status = dr["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
-            
         }
 
         /// <summary>
@@ -345,12 +335,6 @@ and exists(
         /// <param name="dtDetail">Detail DataSource</param>
         public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
-            /*
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -432,12 +416,11 @@ select distinct
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now
+                    CmdTime = DateTime.Now,
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
-            */
         }
 
         /// <summary>
@@ -447,11 +430,6 @@ select distinct
         /// <param name="isConfirmed">bool Confirmed</param>
         public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail, bool isConfirmed)
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
@@ -524,9 +502,8 @@ and exists(
                 return;
             }
 
-
             dynamic bodyObject = new ExpandoObject();
-            bodyObject = dtDetail.AsEnumerable()
+            bodyObject = dt.AsEnumerable()
                 .Select(dr => new
                 {
                     ID = dr["ID"].ToString(),
@@ -536,16 +513,20 @@ and exists(
                     FromRoll = dr["FromRoll"].ToString(),
                     FromDyelot = dr["FromDyelot"].ToString(),
                     FromStockType = dr["FromStockType"].ToString(),
+                    FromBarcode = dr["FromBarcode"].ToString(),
+                    FromLocation = dr["FromLocation"].ToString(),
                     ToPOID = dr["ToPOID"].ToString(),
                     ToSeq1 = dr["ToSeq1"].ToString(),
                     ToSeq2 = dr["ToSeq2"].ToString(),
                     ToRoll = dr["ToRoll"].ToString(),
                     ToDyelot = dr["ToDyelot"].ToString(),
                     ToStockType = dr["ToStockType"].ToString(),
+                    ToBarcode = dr["ToBarcode"].ToString(),
+                    ToLocation = dr["ToLocation"].ToString(),
                     Qty = (decimal)dr["Qty"],
-                    Ukey = dr["Status"].ToString(),
-                    Junk = isConfirmed,
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    Ukey = (long)dr["Ukey"],
+                    Status = dr["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack", bodyObject));
@@ -558,11 +539,6 @@ and exists(
         /// <param name="dtMaster">dtMaster</param>
         public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -636,7 +612,7 @@ and exists(
                     Ukey = (long)s["Ukey"],
                     Barcode = s["Barcode"].ToString(),
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss")
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
@@ -649,11 +625,6 @@ and exists(
         /// <param name="dtMaster">dtMaster</param>
         public void SentLocationTransToGensongAutoWHFabric(DataTable dtMaster)
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
@@ -712,7 +683,6 @@ and exists(
                 return;
             }
 
-            //MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt);
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return;
@@ -737,7 +707,7 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("LocationTrans", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 

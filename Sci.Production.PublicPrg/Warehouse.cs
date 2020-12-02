@@ -552,7 +552,7 @@ alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
 alter table #TmpSource alter column Dyelot varchar(15)
-alter table #TmpSource alter column Barcode varchar(13)
+alter table #TmpSource alter column Barcode varchar(16)
 
 select t.Ukey
 , s.TransactionID
@@ -569,11 +569,10 @@ and t.Roll = s.roll and t.Dyelot = s.Dyelot
                         sqlcmd += @"
 merge dbo.FtyInventory_Barcode as t
 using #tmpS1 as s 
-	on t.ukey = s.ukey 
+	on t.ukey = s.ukey  and s.TransactionID = t.TransactionID
 when matched then
     update
-	set t.Barcode = s.Barcode,
-		t.TransactionID = s.TransactionID
+    set t.Barcode = isnull(s.Barcode,'')
 when not matched and s.Ukey is not null then
 	insert(ukey,TransactionID,Barcode)
 	values(s.ukey,s.TransactionID,s.Barcode);
@@ -586,7 +585,8 @@ drop table #TmpSource;
                     {
                         sqlcmd += @"
 
-delete from FtyInventory_Barcode t
+delete t
+from FtyInventory_Barcode t
 where exists(
 	select 1 from #tmpS1 s where t.ukey = s.ukey
 	and s.TransactionID = t.TransactionID

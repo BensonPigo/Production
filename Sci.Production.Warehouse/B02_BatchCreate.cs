@@ -35,6 +35,11 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.InfoBox("<Code> can not be empty.");
                 return;
             }
+            else if (this.txtID.Text.Length >= 4 && this.txtID.Text.Substring(0, 4) == "WMS_")
+            {
+                MyUtility.Msg.WarningBox("Cannot type in \"WMS_\" words in <Code> !");
+                return;
+            }
             else if (!(this.chkBulk.Checked || this.chkInventory.Checked || this.chkScrap.Checked))
             {
                 MyUtility.Msg.InfoBox("At least one <Stock Type> is checked.");

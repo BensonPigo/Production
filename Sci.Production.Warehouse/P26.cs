@@ -354,7 +354,6 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                     }
 
                     transactionscope.Complete();
-                    this.SentToGensong_AutoWHFabric(true);
                 }
                 catch (Exception ex)
                 {
@@ -364,6 +363,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 }
             }
 
+            this.SentToGensong_AutoWHFabric(true);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -419,8 +419,8 @@ Where a.id = '{0}' ", masterID);
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
-                Task.Run(() => new Gensong_AutoWHFabric().SentLocationTransToGensongAutoWHFabric(dtDetail))
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHFabric().SentLocationTransToGensongAutoWHFabric(dtMain))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

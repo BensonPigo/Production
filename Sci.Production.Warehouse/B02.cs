@@ -47,6 +47,18 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["IsWMS"]))
+            {
+                MyUtility.Msg.WarningBox("Cannot edit WMS data!");
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -149,6 +161,23 @@ namespace Sci.Production.Warehouse
             B02_BatchCreate form = new B02_BatchCreate();
             form.ShowDialog();
             this.ReloadDatas();
+        }
+
+        private void TxtCode_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string strid = this.txtCode.Text;
+            if (!MyUtility.Check.Empty(strid))
+            {
+                if (strid.Length >= 4)
+                {
+                    if (strid.Substring(0, 4) == "WMS_")
+                    {
+                        MyUtility.Msg.WarningBox("Cannot type in \"WMS_\" words in <Code> !");
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

@@ -1161,8 +1161,8 @@ else
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
-                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtDetail, isConfirmed))
+                DataTable dtMain = this.CurrentMaintain.Table.Copy();
+                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
@@ -1205,11 +1205,11 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 {
                     if (dr["Barcode"].ToString().Contains("-"))
                     {
-                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString(), 1);
+                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString().Substring(14, 2), 1);
                     }
                     else
                     {
-                        dr["NewBarcode"] = dr["Barcode"].ToString() + "-01";
+                        dr["NewBarcode"] = MyUtility.Check.Empty(dr["Barcode"]) ? string.Empty : dr["Barcode"].ToString() + "-01";
                     }
                 }
                 else
@@ -1219,10 +1219,10 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 }
             }
 
-            var data_Fty_Barcode = (from m in dt.AsEnumerable()
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                     select new
                                     {
-                                        TransactionID = m.Field<string>("ID"),
+                                        TransactionID = this.CurrentMaintain["ID"].ToString(),
                                         poid = m.Field<string>("poid"),
                                         seq1 = m.Field<string>("seq1"),
                                         seq2 = m.Field<string>("seq2"),
