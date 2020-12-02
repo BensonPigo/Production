@@ -57,6 +57,8 @@ namespace Sci.Production.Warehouse
                 }
             };
             this.IsAutomation = UtilityAutomation.IsAutomationEnable;
+            MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory");
+            this.comboTypeFilter.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -1811,7 +1813,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                     }
                 }
             }
-            
+
 
             var data_Fty_Barcode = (from m in this.DetailDatas.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
                                     select new
@@ -2279,7 +2281,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
-    }
+        }
 
         // 寫明細撈出的sql command
 
@@ -2508,17 +2510,37 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
         // delete all
         private void BtDeleteAllDetail_Click(object sender, EventArgs e)
         {
-            // ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
-            for (int i = 0; i < ((DataTable)this.detailgridbs.DataSource).Rows.Count;)
-            {
-                DataRow dr = ((DataTable)this.detailgridbs.DataSource).Rows[i];
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    i++;
-                    continue;
-                }
+            List<DataRow> listCanDeleteDetail;
 
-                dr.Delete();
+            switch (this.comboTypeFilter.Text)
+            {
+                case "Fabric":
+                    listCanDeleteDetail = this.DetailDatas.Where(s => s["fabrictype"].ToString() == "F").ToList();
+                    break;
+                case "Accessory":
+                    listCanDeleteDetail = this.DetailDatas.Where(s => s["fabrictype"].ToString() == "A").ToList();
+                    break;
+                default:
+                    listCanDeleteDetail = this.DetailDatas.ToList();
+                    break;
+            }
+
+            // ((DataTable)detailgridbs.DataSource).Rows.Clear();  //清空表身資料
+            //for (int i = 0; i < ((DataTable)this.detailgridbs.DataSource).Rows.Count;)
+            //{
+            //    DataRow dr = ((DataTable)this.detailgridbs.DataSource).Rows[i];
+            //    if (dr.RowState == DataRowState.Deleted)
+            //    {
+            //        i++;
+            //        continue;
+            //    }
+
+            //    dr.Delete();
+            //}
+
+            foreach (DataRow item in listCanDeleteDetail)
+            {
+                item.Delete();
             }
         }
 
@@ -2539,12 +2561,15 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             {
                 case 0:
                     this.detailgridbs.Filter = string.Empty;
+                    this.btnDeleteAll.Text = "Delete all";
                     break;
                 case 1:
                     this.detailgridbs.Filter = "fabrictype ='F'";
+                    this.btnDeleteAll.Text = "Delete all fabric";
                     break;
                 case 2:
                     this.detailgridbs.Filter = "fabrictype ='A'";
+                    this.btnDeleteAll.Text = "Delete all acc.";
                     break;
             }
 
@@ -2958,6 +2983,28 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             }
 
             this.Change_record();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailGridDelete()
+        {
+            // 移除父項時子項也要一起刪除
+            if (!MyUtility.Check.Empty(this.CurrentDetailData["CombineBarcode"]) &&
+                (MyUtility.Convert.GetBool(this.CurrentDetailData["Unoriginal"]) == false))
+            {
+                var needDeleteChildItems = this.DetailDatas.Where(s => s["CombineBarcode"].ToString() == this.CurrentDetailData["CombineBarcode"].ToString() &&
+                                                                       MyUtility.Convert.GetBool(s["Unoriginal"]));
+
+                if (needDeleteChildItems.Any())
+                {
+                    foreach (DataRow dr in needDeleteChildItems)
+                    {
+                        dr.Delete();
+                    }
+                }
+            }
+
+            base.OnDetailGridDelete();
         }
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
