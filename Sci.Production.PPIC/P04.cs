@@ -235,7 +235,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             base.ClickEditAfter();
             this.txtStyleNo.ReadOnly = true;
             this.txtSeason.ReadOnly = true;
-            this.txtBrand.ReadOnly = true;
+            this.txtbrand1.ReadOnly = true;
             this.ComboPressing1_SelectedIndexChanged(null, null);
             this.ComboFolding1_SelectedIndexChanged(null, null);
 
@@ -285,7 +285,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
                 {
                     MyUtility.Msg.WarningBox("Brand can't empty");
-                    this.txtBrand.Focus();
+                    this.txtbrand1.Focus();
                     return false;
                 }
 
@@ -430,26 +430,15 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
         // Brand
         private void TxtBrand_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && this.txtBrand.OldValue != this.txtBrand.Text)
+            if (this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["LocalStyle"]).ToUpper() == "TRUE" && this.txtbrand1.OldValue != this.txtbrand1.Text)
             {
-                if (!MyUtility.Check.Empty(this.txtBrand.Text))
+                if (!MyUtility.Check.Empty(this.txtbrand1.Text))
                 {
-                    if (this.EnterWrongChar(this.txtBrand.Text))
+                    if (this.EnterWrongChar(this.txtbrand1.Text))
                     {
                         this.CurrentMaintain["BrandID"] = string.Empty;
                         e.Cancel = true;
                         return;
-                    }
-                    else
-                    {
-                        // 舊系統任意輸入都可以，感覺沒有檢核才對，先註解
-                        // if (MyUtility.Check.Seek(string.Format("select ID from Brand WITH (NOLOCK) where ID = '{0}'", txtBrand.Text)))
-                        // {
-                        //    CurrentMaintain["BrandID"] = "";
-                        //    e.Cancel = true;
-                        //    MyUtility.Msg.WarningBox(string.Format("Brand:{0} is belong to SCI, Factory can't use!!", txtBrand.Text));
-                        //    return;
-                        // }
                     }
                 }
             }
