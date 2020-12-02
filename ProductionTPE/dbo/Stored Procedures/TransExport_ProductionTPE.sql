@@ -93,10 +93,22 @@ BEGIN
 	-------------PortByBrandShipmode-------------------
 	RAISERROR('PortByBrandShipmode  - Starts',0,0)
 	select * into dbo.PortByBrandShipmode from (select * from ProductionTPE.dbo.PortByBrandShipmode ) as tmp
-
+	
 	-------------PulloutPort-------------------
 	RAISERROR('PulloutPort  - Starts',0,0)
 	select * into dbo.PulloutPort from (select * from ProductionTPE.dbo.PulloutPort ) as tmp
+	
+	-------------SubProDefectCode-------------------
+	RAISERROR('MachineTypeTPE  - Starts',0,0)
+	select * into dbo.MachineTypeTPE from (select * from ProductionTPE.dbo.MachineTypeTPE ) as tmp
+	
+	-------------SubProDefectCode-------------------
+	RAISERROR('ArtworkType_FTY  - Starts',0,0)
+	select * into dbo.ArtworkType_FTY from (select * from ProductionTPE.dbo.ArtworkType_FTY ) as tmp
+
+	-------------Mold-------------------
+	RAISERROR('MoldTPE  - Starts',0,0)
+	select * into dbo.MoldTPE from (select * from ProductionTPE.dbo.MoldTPE ) as tmp
 
 	set transaction isolation level read committed
 END

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
@@ -36,8 +37,12 @@ namespace Sci.Production.Basic
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlCmd;
 
-            string sqlCommand = string.Format(
+            #region Machine Button Color
+            sqlCmd = string.Format(
     @"
 IF (SELECT COUNT( m.ArtworkTypeID)FROm MachineType m 
 	INNER JOIN ArtworkType a On m.ArtworkTypeID=a.ID
@@ -70,15 +75,19 @@ END
 ",
     this.CurrentMaintain["ID"]);
 
-            DualResult returnResult;
-            DataTable machineTable = new DataTable();
-            if (returnResult = DBProxy.Current.Select(null, sqlCommand, out machineTable))
+            result = DBProxy.Current.Select(this.ConnectionName, sqlCmd, out dt);
+            if (!result)
             {
-                this.editMachineID.Text = machineTable.Rows[0]["MatchTypeID"].ToString();
+                this.ShowErr(result);
             }
 
+            this.editMachineID.Text = dt.Rows[0]["MatchTypeID"].ToString();
+            #endregion
+
+            #region Machine ID
+
             // 根據Code 第一碼決定顯示內容
-            string selectCommand = string.Format(
+            sqlCmd = string.Format(
                                     @"
 IF (SELECT COUNT( m.ArtworkTypeID)FROm MachineType m 
 	INNER JOIN ArtworkType a On m.ArtworkTypeID=a.ID
@@ -100,24 +109,48 @@ END
 ",
                                     this.CurrentMaintain["ID"].ToString());
 
-            DataTable selectDataTable;
-            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand, out selectDataTable);
-
-            if (selectResult1)
+            result = DBProxy.Current.Select(this.ConnectionName, sqlCmd, out dt);
+            if (!result)
             {
-                if (selectDataTable.Rows.Count > 0)
-                {
-                    this.btnMachine.ForeColor = Color.Blue;
-                }
-                else
-                {
-                    this.btnMachine.ForeColor = Color.Black;
-                }
+                this.ShowErr(result);
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                this.btnMachine.ForeColor = Color.Blue;
             }
             else
             {
-                this.ShowErr(selectResult1);
+                this.btnMachine.ForeColor = Color.Black;
             }
+            #endregion
+
+            #region checkbox color
+            sqlCmd = string.Format("select * from ArtworkType_FTY where ArtworkTypeID = '{0}'", this.CurrentMaintain["ID"].ToString());
+            result = DBProxy.Current.Select(this.ConnectionName, sqlCmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            this.chkIsShowinIEP01.Checked = dt.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP01").Equals(true)).Any();
+            var showinIEP03 = dt.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03").Equals(true));
+            this.chkIsShowinIEP03.Checked = showinIEP03.Any();
+            var sewingline = dt.AsEnumerable().Where(x => x.Field<bool>("IsSewingline").Equals(true));
+            this.chkIsSewingline.Checked = sewingline.Any();
+
+            this.txtCentralizedmulitFactoryIEP03.Text = string.Empty;
+            if (showinIEP03.Any())
+            {
+                this.txtCentralizedmulitFactoryIEP03.Text = string.Join(",", showinIEP03.Select(x => x.Field<string>("FactoryID")).ToArray());
+            }
+
+            this.txtCentralizedmulitFactorySewingline.Text = string.Empty;
+            if (sewingline.Any())
+            {
+                this.txtCentralizedmulitFactorySewingline.Text = string.Join(",", sewingline.Select(x => x.Field<string>("FactoryID")).ToArray());
+            }
+            #endregion
         }
 
         /// <inheritdoc/>

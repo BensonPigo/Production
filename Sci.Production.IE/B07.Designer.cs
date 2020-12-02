@@ -37,6 +37,8 @@
             this.editDescriptionEnglish = new Sci.Win.UI.EditBox();
             this.editDescriptionChinese = new Sci.Win.UI.EditBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.chkIsAttachment = new Sci.Win.UI.CheckBox();
+            this.chkIsTemplate = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,6 +53,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsTemplate);
+            this.detailcont.Controls.Add(this.chkIsAttachment);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.editDescriptionChinese);
             this.detailcont.Controls.Add(this.editDescriptionEnglish);
@@ -178,6 +182,30 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
+            // chkIsAttachment
+            // 
+            this.chkIsAttachment.AutoSize = true;
+            this.chkIsAttachment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsAttachment", true));
+            this.chkIsAttachment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsAttachment.Location = new System.Drawing.Point(468, 60);
+            this.chkIsAttachment.Name = "chkIsAttachment";
+            this.chkIsAttachment.Size = new System.Drawing.Size(112, 21);
+            this.chkIsAttachment.TabIndex = 11;
+            this.chkIsAttachment.Text = "Is Attachment";
+            this.chkIsAttachment.UseVisualStyleBackColor = true;
+            // 
+            // chkIsTemplate
+            // 
+            this.chkIsTemplate.AutoSize = true;
+            this.chkIsTemplate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsTemplate", true));
+            this.chkIsTemplate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsTemplate.Location = new System.Drawing.Point(468, 87);
+            this.chkIsTemplate.Name = "chkIsTemplate";
+            this.chkIsTemplate.Size = new System.Drawing.Size(100, 21);
+            this.chkIsTemplate.TabIndex = 12;
+            this.chkIsTemplate.Text = "Is Template";
+            this.chkIsTemplate.UseVisualStyleBackColor = true;
+            // 
             // B07
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -215,5 +243,7 @@
         private Win.UI.ComboBox comboType;
         private Win.UI.DisplayBox displayID;
         private Win.UI.CheckBox checkJunk;
+        private Win.UI.CheckBox chkIsTemplate;
+        private Win.UI.CheckBox chkIsAttachment;
     }
 }
