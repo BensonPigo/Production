@@ -183,7 +183,8 @@ select   a.GroupKey
                        when '{1}' = 'vn' then isnull(od.DescVI,o.DescEN)
                        when '{1}' = 'kh' then isnull(od.DescKH,o.DescEN)
             else o.DescEN end
-        ,rn = ROW_NUMBER() over(order by iif(IsPPa=1,1,0) ,a.NO, a.MachineTypeID, a.Attachment, a.Template, a.ThreadColor)
+        ,rn = ROW_NUMBER() over(order by case when left(a.No, 1) = 'P' then 1 when a.No <> '' then 2 else 3 end
+										,a.GroupKey ,iif(IsPPa=1,1,0) ,a.NO, a.MachineTypeID, a.Attachment, a.Template, a.ThreadColor)
         ,a.Cycle
         ,a.ActCycle
         ,a.IsPPa
@@ -210,10 +211,7 @@ outer apply
 	)
 )ld
 where a.ID = {0}
-order by case when left(a.No, 1) = 'P' then 1
-			 when a.No <> '' then 2
-			 else 3 end, 
-		a.GroupKey",
+",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
                 this.strLanguage);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
@@ -880,7 +878,7 @@ order by NO
             if (showMachineType)
             {
                 string[] noPPA = this.operationCode.AsEnumerable()
-                            .Where(s => (s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")) || s["IsPPa"].Equals(true))
+                            .Where(s => (s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")))
                             .Select(s => s["rn"].ToString()).ToArray();
                 if (noPPA.Length > 10)
                 {

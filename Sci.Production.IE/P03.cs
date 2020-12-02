@@ -248,7 +248,10 @@ order by case when ld.No = '' then 1
                         this.ComputeTaktTime();
                     }
 
-                    // this.Distable();
+                    this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
 
@@ -307,8 +310,10 @@ order by case when ld.No = '' then 1
                     dr.EndEdit();
                     this.ReclculateGridGSDCycleTime(MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString());
                     this.ComputeTaktTime();
-
                     this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
             #endregion
@@ -679,6 +684,9 @@ where Junk = 0
 
                     this.ComputeTaktTime();
                     this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
 
@@ -701,6 +709,9 @@ where Junk = 0
 
                     this.ComputeTaktTime();
                     this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
 
@@ -1034,6 +1045,8 @@ WHERE Ukey={item["Ukey"]}
                     this.ShowErr(reusult);
                 }
             }
+
+            this.Distable();
         }
 
         /// <summary>
