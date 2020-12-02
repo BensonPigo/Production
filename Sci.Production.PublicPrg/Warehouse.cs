@@ -1928,11 +1928,11 @@ select  a.id
         , a.fromftyinventoryukey
         , a.ukey
         , location = dbo.Getlocation (fi.ukey)
-from dbo.SubTransfer_detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId 
+from dbo.SubTransfer_detail a
+left join PO_Supp_Detail p1 on p1.ID = a.FromPoId 
                                              and p1.seq1 = a.FromSeq1 
                                              and p1.SEQ2 = a.FromSeq2
-left join FtyInventory FI WITH (NOLOCK) on a.FromPoid = fi.poid 
+left join FtyInventory FI on a.FromPoid = fi.poid 
                              and a.fromSeq1 = fi.seq1 
                              and a.fromSeq2 = fi.seq2
                              and a.fromRoll = fi.roll 
@@ -2266,9 +2266,9 @@ select
     ,dbo.Getlocation(f.Ukey)  as Fromlocation
     ,a.ukey
     ,a.tolocation
-from dbo.SubTransfer_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
-left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
+from dbo.SubTransfer_Detail a 
+left join PO_Supp_Detail p1 on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join FtyInventory f on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
 Where a.id = '{subTransfer_ID}'";
 
             result = DBProxy.Current.Select(null, sqlSubTransfer_Detail, out dtSubTransfer_Detail);
