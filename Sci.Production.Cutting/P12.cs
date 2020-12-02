@@ -900,17 +900,15 @@ where bd.BundleNo = '{dr["Bundle"]}'
 
         private void BtnBundleCardRF_Click(object sender, EventArgs e)
         {
-            var selected = this.dtt.AsEnumerable()
-                .Where(x => x["selected"].ToBool());
-
-            if (!selected.Any())
+            if (this.dtt == null || this.dtt.Rows.Count == 0)
             {
                 this.grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
-            var bundleIDs = selected
+            var bundleIDs = this.dtt.AsEnumerable()
+                .Where(x => x["selected"].ToBool())
                 .GroupBy(x => new
                 {
                     BundleID = x["BundleID"],
