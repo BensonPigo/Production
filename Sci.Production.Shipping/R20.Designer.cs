@@ -42,6 +42,8 @@
             this.lbCategory = new Sci.Win.UI.Label();
             this.txtLocalSupp = new Sci.Production.Class.TxtLocalSupp();
             this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.dateOnBoardDate = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -59,7 +61,7 @@
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(388, 156);
+            this.buttonCustomized.Location = new System.Drawing.Point(376, 174);
             // 
             // checkUseCustomized
             // 
@@ -85,7 +87,7 @@
             // 
             // lbWK
             // 
-            this.lbWK.Location = new System.Drawing.Point(13, 48);
+            this.lbWK.Location = new System.Drawing.Point(13, 84);
             this.lbWK.Name = "lbWK";
             this.lbWK.Size = new System.Drawing.Size(108, 23);
             this.lbWK.TabIndex = 98;
@@ -93,7 +95,7 @@
             // 
             // lbConsignee
             // 
-            this.lbConsignee.Location = new System.Drawing.Point(13, 84);
+            this.lbConsignee.Location = new System.Drawing.Point(13, 120);
             this.lbConsignee.Name = "lbConsignee";
             this.lbConsignee.Size = new System.Drawing.Size(108, 23);
             this.lbConsignee.TabIndex = 100;
@@ -101,7 +103,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(13, 192);
+            this.label4.Location = new System.Drawing.Point(13, 228);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(108, 23);
             this.label4.TabIndex = 101;
@@ -126,13 +128,13 @@
             this.dateArrivePortDate.Location = new System.Drawing.Point(124, 12);
             this.dateArrivePortDate.Name = "dateArrivePortDate";
             this.dateArrivePortDate.Size = new System.Drawing.Size(280, 23);
-            this.dateArrivePortDate.TabIndex = 1;
+            this.dateArrivePortDate.TabIndex = 0;
             // 
             // txtWKno_s
             // 
             this.txtWKno_s.BackColor = System.Drawing.Color.White;
             this.txtWKno_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWKno_s.Location = new System.Drawing.Point(124, 48);
+            this.txtWKno_s.Location = new System.Drawing.Point(124, 84);
             this.txtWKno_s.Name = "txtWKno_s";
             this.txtWKno_s.Size = new System.Drawing.Size(110, 23);
             this.txtWKno_s.TabIndex = 2;
@@ -141,7 +143,7 @@
             // 
             this.txtWKno_e.BackColor = System.Drawing.Color.White;
             this.txtWKno_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWKno_e.Location = new System.Drawing.Point(268, 48);
+            this.txtWKno_e.Location = new System.Drawing.Point(268, 84);
             this.txtWKno_e.Name = "txtWKno_e";
             this.txtWKno_e.Size = new System.Drawing.Size(110, 23);
             this.txtWKno_e.TabIndex = 3;
@@ -149,7 +151,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(240, 51);
+            this.label5.Location = new System.Drawing.Point(240, 87);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(22, 17);
             this.label5.TabIndex = 105;
@@ -159,7 +161,7 @@
             // 
             this.txtConsignee.BackColor = System.Drawing.Color.White;
             this.txtConsignee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtConsignee.Location = new System.Drawing.Point(124, 84);
+            this.txtConsignee.Location = new System.Drawing.Point(124, 120);
             this.txtConsignee.Name = "txtConsignee";
             this.txtConsignee.Size = new System.Drawing.Size(100, 23);
             this.txtConsignee.TabIndex = 4;
@@ -170,7 +172,7 @@
             this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode.FormattingEnabled = true;
             this.txtshipmode.IsSupportUnselect = true;
-            this.txtshipmode.Location = new System.Drawing.Point(124, 191);
+            this.txtshipmode.Location = new System.Drawing.Point(124, 227);
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(80, 24);
@@ -179,7 +181,7 @@
             // 
             // lbShipper
             // 
-            this.lbShipper.Location = new System.Drawing.Point(13, 120);
+            this.lbShipper.Location = new System.Drawing.Point(13, 156);
             this.lbShipper.Name = "lbShipper";
             this.lbShipper.Size = new System.Drawing.Size(108, 23);
             this.lbShipper.TabIndex = 106;
@@ -187,7 +189,7 @@
             // 
             // lbCategory
             // 
-            this.lbCategory.Location = new System.Drawing.Point(13, 156);
+            this.lbCategory.Location = new System.Drawing.Point(13, 192);
             this.lbCategory.Name = "lbCategory";
             this.lbCategory.Size = new System.Drawing.Size(108, 23);
             this.lbCategory.TabIndex = 107;
@@ -196,7 +198,8 @@
             // txtLocalSupp
             // 
             this.txtLocalSupp.DisplayBox1Binding = "";
-            this.txtLocalSupp.Location = new System.Drawing.Point(124, 120);
+            this.txtLocalSupp.IsFactory = false;
+            this.txtLocalSupp.Location = new System.Drawing.Point(124, 156);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(254, 23);
             this.txtLocalSupp.TabIndex = 5;
@@ -208,17 +211,55 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(124, 156);
+            this.comboCategory.Location = new System.Drawing.Point(124, 192);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
             this.comboCategory.TabIndex = 6;
+            this.comboCategory.SelectedIndexChanged += new System.EventHandler(this.ComboCategory_SelectedIndexChanged);
+            // 
+            // dateOnBoardDate
+            // 
+            // 
+            // 
+            // 
+            this.dateOnBoardDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOnBoardDate.DateBox1.Name = "";
+            this.dateOnBoardDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoardDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOnBoardDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOnBoardDate.DateBox2.Name = "";
+            this.dateOnBoardDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoardDate.DateBox2.TabIndex = 1;
+            this.dateOnBoardDate.Location = new System.Drawing.Point(124, 48);
+            this.dateOnBoardDate.Name = "dateOnBoardDate";
+            this.dateOnBoardDate.Size = new System.Drawing.Size(280, 23);
+            this.dateOnBoardDate.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(13, 48);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.RectStyle.BorderWidth = 1F;
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.RectStyle.ExtBorderWidth = 1F;
+            this.label1.Size = new System.Drawing.Size(108, 23);
+            this.label1.TabIndex = 109;
+            this.label1.Text = "On Board Date";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R20
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(514, 254);
+            this.ClientSize = new System.Drawing.Size(514, 282);
+            this.Controls.Add(this.dateOnBoardDate);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.txtLocalSupp);
             this.Controls.Add(this.lbCategory);
@@ -237,6 +278,7 @@
             this.Name = "R20";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R20. Raw Material Shipment Report";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.R20_FormClosed);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -257,6 +299,8 @@
             this.Controls.SetChildIndex(this.lbCategory, 0);
             this.Controls.SetChildIndex(this.txtLocalSupp, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.dateOnBoardDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -278,5 +322,7 @@
         private Win.UI.Label lbCategory;
         private Class.TxtLocalSupp txtLocalSupp;
         private Win.UI.ComboBox comboCategory;
+        private Win.UI.DateRange dateOnBoardDate;
+        private Win.UI.Label label1;
     }
 }
