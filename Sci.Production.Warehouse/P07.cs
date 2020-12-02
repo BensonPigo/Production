@@ -2323,16 +2323,20 @@ select  a.id
 		,a.CombineBarcode
         ,a.Unoriginal 
         ,a.EncodeSeq
-        ,[SortCmbPOID] = ISNULL(combine.PoId,a.PoId)
-		,[SortCmbSeq1] = ISNULL(combine.Seq1,a.Seq1)
-		,[SortCmbSeq2] = ISNULL(combine.Seq2,a.Seq2)
-		,[SortCmbRoll] = ISNULL(combine.Roll,a.Roll)
-		,[SortCmbDyelot] = ISNULL(combine.Dyelot,a.Dyelot)
+        ,[SortCmbPOID] = ISNULL(cmb.PoId,a.PoId)
+		,[SortCmbSeq1] = ISNULL(cmb.Seq1,a.Seq1)
+		,[SortCmbSeq2] = ISNULL(cmb.Seq2,a.Seq2)
+		,[SortCmbRoll] = ISNULL(cmb.Roll,a.Roll)
+		,[SortCmbDyelot] = ISNULL(cmb.Dyelot,a.Dyelot)
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join orders o WITH (NOLOCK) on o.id = a.PoId
 LEFT JOIN PO_Supp_Detail p  WITH (NOLOCK) ON p.ID=a.PoId AND p.SEQ1=a.Seq1 AND p.SEQ2 = a.Seq2
 LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
+left join Receiving_Detail cmb on  a.Id = cmb.Id
+									and a.CombineBarcode = cmb.CombineBarcode
+									and cmb.CombineBarcode is not null
+									and ISNULL(cmb.Unoriginal,0) = 0
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
@@ -2359,21 +2363,8 @@ outer apply(
 	and t.CombineBarcode=a.CombineBarcode
 	and t.CombineBarcode is not null
 )ttlQty
-outer apply(
-	-- 處理Combine資料 排序用
-	select PoId = IIF(a.CombineBarcode is null,a.PoId,cmb.poid)
-	,Seq1 = IIF(a.CombineBarcode is null,a.Seq1,cmb.Seq1)
-	,Seq2 = IIF(a.CombineBarcode is null,a.Seq2,cmb.Seq2)
-	,Roll = IIF(a.CombineBarcode is null,a.Roll,cmb.Roll)
-	,Dyelot = IIF(a.CombineBarcode is null,a.Dyelot,cmb.Dyelot)
-	from Receiving_Detail cmb
-	where a.Id = cmb.Id
-	and a.CombineBarcode = cmb.CombineBarcode
-	and cmb.CombineBarcode is not null
-	and ISNULL(cmb.Unoriginal,0) = 0
-)combine
 Where a.id = '{0}'
-order by EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot
+order by a.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, a.POID, a.Seq1, a.Seq2, a.Roll, a.Dyelot
 ", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
