@@ -119,17 +119,6 @@ order by rd.Seq1,rd.Seq2", masterID);
         }
 
         /// <inheritdoc/>
-        protected override void EnsureToolbarExt()
-        {
-            base.EnsureToolbarExt();
-            this.toolbar.cmdJunk.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Junked" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) && MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]) ? true : false;
-            this.toolbar.cmdCheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "New" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
-            this.toolbar.cmdUncheck.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])) ? true : false;
-            this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) ? true : false;
-            this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Approved" && Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])) && MyUtility.Check.Empty(this.CurrentMaintain["TPECFMDate"]) ? true : false;
-        }
-
-        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -316,6 +305,12 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]))
             {
                 MyUtility.Msg.WarningBox("This record is approved, can't be modified!!");
+                return false;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Checked")
+            {
+                MyUtility.Msg.WarningBox("This record is Checked, can't be modified!!");
                 return false;
             }
 
@@ -554,7 +549,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
         {
             if (this.EditMode)
             {
-                if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+                if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.Text != this.txtSPNo.OldValue)
                 {
                     // sql參數
                     SqlParameter sp1 = new SqlParameter("@poid", this.txtSPNo.Text);
@@ -609,7 +604,7 @@ where id = '{this.CurrentMaintain["id"]}'") ? Color.Blue : Color.Black;
         // SP No.
         private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.Text != this.txtSPNo.OldValue)
             {
                 // 清空表身Grid資料
                 foreach (DataRow dr in this.DetailDatas)
@@ -667,6 +662,18 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
         /// <inheritdoc/>
         protected override void ClickJunk()
         {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ApplyDate"]))
+            {
+                MyUtility.Msg.WarningBox("Since already checked, can not be Junk");
+                return;
+            }
+
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])))
+            {
+                MyUtility.Msg.WarningBox("only the \"Prepare by\" and his manager can do Junk ");
+                return;
+            }
+
             base.ClickJunk();
             DualResult result;
             string updateCmd = string.Format("update ReplacementReport set Status = 'Junked', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
@@ -679,8 +686,24 @@ group by f.Seq1,f.Seq2, left(f.Seq1+' ',3)+f.Seq2,f.Refno,[dbo].getMtlDesc(f.POI
         }
 
         /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (!this.EditMode && this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Junked")
+            {
+                this.toolbar.cmdJunk.Enabled = false;
+            }
+        }
+
+        /// <inheritdoc/>
         protected override void ClickCheck()
         {
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])))
+            {
+                MyUtility.Msg.WarningBox("only the \"Prepare by\" and his manager can do Check ");
+                return;
+            }
+
             base.ClickCheck();
             StringBuilder check = new StringBuilder();
             IList<string> updateCmds = new List<string>();
@@ -728,6 +751,12 @@ where rr.ID = '{0}') and POID = '{1}' and Seq1 = '{2}' and Seq2 = '{3}' and Repl
         /// <inheritdoc/>
         protected override void ClickUncheck()
         {
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApplyName"])))
+            {
+                MyUtility.Msg.WarningBox("only the \"Prepare by\" and his manager can do Uncheck ");
+                return;
+            }
+
             base.ClickUncheck();
             DialogResult confirmResult;
             confirmResult = MyUtility.Msg.QuestionBox("Are you sure you want to uncheck this data?", caption: "Confirm", buttons: MessageBoxButtons.YesNo);
@@ -762,6 +791,12 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])))
+            {
+                MyUtility.Msg.WarningBox("only the \"PPIC/Factory Mgr\" and his manager can do Confirm ");
+                return;
+            }
+
             base.ClickConfirm();
             DualResult result;
             if (!this.CheckRequestQty())
