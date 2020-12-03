@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
 
 namespace Sci.Production.Sewing
 {
@@ -31,8 +31,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable factory;
-            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
+            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out DataTable factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.dateDate.Value = DateTime.Today.AddDays(-1);
             this.comboFactory.Text = Env.User.Factory;
@@ -54,7 +53,6 @@ namespace Sci.Production.Sewing
                 return false;
             }
 
-            DataTable dt;
             string errMsg = string.Empty;
             string sql = string.Format(
             @"select OutputDate
@@ -72,7 +70,7 @@ namespace Sci.Production.Sewing
             ",
             Convert.ToDateTime(this.dateDate.Value).ToString("d"),
             this.comboFactory.Text);
-            DualResult result = DBProxy.Current.Select(null, sql, out dt);
+            DualResult result = DBProxy.Current.Select(null, sql, out DataTable dt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query data fail\r\n" + result.ToString());
@@ -227,8 +225,9 @@ into #wtmp
 from #tmpSewingGroup t
 inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
 										and w.SewingLineID = t.SewingLineID 
-										and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate and isnull(w.Hours,0) != 0
-
+										and w.Date between dateadd(day,-90,t.OutputDate) and  t.OutputDate
+                                        and w.Holiday=0
+                                        and isnull(w.Hours,0) != 0
 select cumulate = IIF(Count(1)=0, 1, Count(1))
 	   , s.style
 	   , s.SewingLineID
@@ -612,7 +611,7 @@ order by ArtworkTypeID"),
             excel.Visible = true;
 #endif
             worksheet.Cells[1, 1] = this._factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"),  "(Included Subcon-IN)");
+            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"), "(Included Subcon-IN)");
 
             object[,] objArray = new object[1, 19];
             string[] subTtlRowInOut = new string[8];
@@ -674,7 +673,7 @@ order by ArtworkTypeID"),
                     shift = MyUtility.Convert.GetString(dr["Shift"]);
                     team = MyUtility.Convert.GetString(dr["Team"]);
                     worksheet.Cells[insertRow + 2, 1] = string.Format("{0} SHIFT: {1} Team", shift, team);
-                    insertRow = insertRow + 4;
+                    insertRow += 4;
                     startRow = insertRow;
                     ttlShift++;
                     subRows++;
@@ -759,7 +758,7 @@ order by ArtworkTypeID"),
                 Marshal.ReleaseComObject(rng);
             }
 
-            insertRow = insertRow + 2;
+            insertRow += 2;
 
             // 填Grand Total資料
             string ttlManhour, targetCPU, targetQty, qaQty, ttlCPU, prodOutput, diff;
@@ -787,13 +786,13 @@ order by ArtworkTypeID"),
                             {
                                 if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
                                 {
-                                    ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowInOut[j]);
-                                    targetCPU = targetCPU + string.Format("H{0}+", subTtlRowInOut[j]);
-                                    targetQty = targetQty + string.Format("K{0}+", subTtlRowInOut[j]);
-                                    qaQty = qaQty + string.Format("L{0}+", subTtlRowInOut[j]);
-                                    ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowInOut[j]);
-                                    prodOutput = prodOutput + string.Format("R{0}+", subTtlRowInOut[j]);
-                                    diff = diff + string.Format("S{0}+", subTtlRowInOut[j]);
+                                    ttlManhour += string.Format("G{0}+", subTtlRowInOut[j]);
+                                    targetCPU += string.Format("H{0}+", subTtlRowInOut[j]);
+                                    targetQty += string.Format("K{0}+", subTtlRowInOut[j]);
+                                    qaQty += string.Format("L{0}+", subTtlRowInOut[j]);
+                                    ttlCPU += string.Format("M{0}+", subTtlRowInOut[j]);
+                                    prodOutput += string.Format("R{0}+", subTtlRowInOut[j]);
+                                    diff += string.Format("S{0}+", subTtlRowInOut[j]);
                                 }
                             }
                         }
@@ -803,13 +802,13 @@ order by ArtworkTypeID"),
                             {
                                 if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
                                 {
-                                    ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExOut[j]);
-                                    targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExOut[j]);
-                                    targetQty = targetQty + string.Format("K{0}+", subTtlRowExOut[j]);
-                                    qaQty = qaQty + string.Format("L{0}+", subTtlRowExOut[j]);
-                                    ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExOut[j]);
-                                    prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExOut[j]);
-                                    diff = diff + string.Format("S{0}+", subTtlRowExOut[j]);
+                                    ttlManhour += string.Format("G{0}+", subTtlRowExOut[j]);
+                                    targetCPU += string.Format("H{0}+", subTtlRowExOut[j]);
+                                    targetQty += string.Format("K{0}+", subTtlRowExOut[j]);
+                                    qaQty += string.Format("L{0}+", subTtlRowExOut[j]);
+                                    ttlCPU += string.Format("M{0}+", subTtlRowExOut[j]);
+                                    prodOutput += string.Format("R{0}+", subTtlRowExOut[j]);
+                                    diff += string.Format("S{0}+", subTtlRowExOut[j]);
                                 }
                             }
                         }
@@ -819,13 +818,13 @@ order by ArtworkTypeID"),
                             {
                                 if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
                                 {
-                                    ttlManhour = ttlManhour + string.Format("G{0}+", subTtlRowExInOut[j]);
-                                    targetCPU = targetCPU + string.Format("H{0}+", subTtlRowExInOut[j]);
-                                    targetQty = targetQty + string.Format("K{0}+", subTtlRowExInOut[j]);
-                                    qaQty = qaQty + string.Format("L{0}+", subTtlRowExInOut[j]);
-                                    ttlCPU = ttlCPU + string.Format("M{0}+", subTtlRowExInOut[j]);
-                                    prodOutput = prodOutput + string.Format("R{0}+", subTtlRowExInOut[j]);
-                                    diff = diff + string.Format("S{0}+", subTtlRowExInOut[j]);
+                                    ttlManhour += string.Format("G{0}+", subTtlRowExInOut[j]);
+                                    targetCPU += string.Format("H{0}+", subTtlRowExInOut[j]);
+                                    targetQty += string.Format("K{0}+", subTtlRowExInOut[j]);
+                                    qaQty += string.Format("L{0}+", subTtlRowExInOut[j]);
+                                    ttlCPU += string.Format("M{0}+", subTtlRowExInOut[j]);
+                                    prodOutput += string.Format("R{0}+", subTtlRowExInOut[j]);
+                                    diff += string.Format("S{0}+", subTtlRowExInOut[j]);
                                 }
                             }
                         }
@@ -866,7 +865,7 @@ order by ArtworkTypeID"),
             }
             #endregion
 
-            insertRow = insertRow + 2;
+            insertRow += 2;
             foreach (DataRow dr in this._subprocessData.Rows)
             {
                 worksheet.Cells[insertRow, 3] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["rs"]));
