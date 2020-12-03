@@ -170,7 +170,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(893, 159);
+            this.gridicon.Location = new System.Drawing.Point(902, 159);
             this.gridicon.TabIndex = 20;
             // 
             // refresh
@@ -230,7 +230,7 @@
             // 
             // labelID
             // 
-            this.labelID.Location = new System.Drawing.Point(16, 13);
+            this.labelID.Location = new System.Drawing.Point(3, 13);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
             this.labelID.TabIndex = 1;
@@ -238,7 +238,7 @@
             // 
             // labelInvoiceNo
             // 
-            this.labelInvoiceNo.Location = new System.Drawing.Point(16, 40);
+            this.labelInvoiceNo.Location = new System.Drawing.Point(3, 40);
             this.labelInvoiceNo.Name = "labelInvoiceNo";
             this.labelInvoiceNo.Size = new System.Drawing.Size(75, 23);
             this.labelInvoiceNo.TabIndex = 6;
@@ -246,7 +246,7 @@
             // 
             // labelWKNO
             // 
-            this.labelWKNO.Location = new System.Drawing.Point(16, 67);
+            this.labelWKNO.Location = new System.Drawing.Point(3, 67);
             this.labelWKNO.Name = "labelWKNO";
             this.labelWKNO.Size = new System.Drawing.Size(75, 23);
             this.labelWKNO.TabIndex = 7;
@@ -254,7 +254,7 @@
             // 
             // labelETA
             // 
-            this.labelETA.Location = new System.Drawing.Point(246, 40);
+            this.labelETA.Location = new System.Drawing.Point(233, 40);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(108, 23);
             this.labelETA.TabIndex = 9;
@@ -262,7 +262,7 @@
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Location = new System.Drawing.Point(246, 67);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(233, 67);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(108, 23);
             this.labelArriveWHDate.TabIndex = 11;
@@ -270,7 +270,7 @@
             // 
             // labelSendDate
             // 
-            this.labelSendDate.Location = new System.Drawing.Point(473, 67);
+            this.labelSendDate.Location = new System.Drawing.Point(460, 67);
             this.labelSendDate.Name = "labelSendDate";
             this.labelSendDate.Size = new System.Drawing.Size(95, 23);
             this.labelSendDate.TabIndex = 14;
@@ -278,7 +278,7 @@
             // 
             // labelPLRcvDate
             // 
-            this.labelPLRcvDate.Location = new System.Drawing.Point(473, 40);
+            this.labelPLRcvDate.Location = new System.Drawing.Point(460, 40);
             this.labelPLRcvDate.Name = "labelPLRcvDate";
             this.labelPLRcvDate.Size = new System.Drawing.Size(95, 23);
             this.labelPLRcvDate.TabIndex = 15;
@@ -286,7 +286,7 @@
             // 
             // labelDoxRcvDate
             // 
-            this.labelDoxRcvDate.Location = new System.Drawing.Point(246, 94);
+            this.labelDoxRcvDate.Location = new System.Drawing.Point(233, 94);
             this.labelDoxRcvDate.Name = "labelDoxRcvDate";
             this.labelDoxRcvDate.Size = new System.Drawing.Size(108, 23);
             this.labelDoxRcvDate.TabIndex = 18;
@@ -308,7 +308,7 @@
             this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(94, 13);
+            this.displayID.Location = new System.Drawing.Point(81, 13);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(120, 23);
             this.displayID.TabIndex = 0;
@@ -316,7 +316,7 @@
             // dateETA
             // 
             this.dateETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "eta", true));
-            this.dateETA.Location = new System.Drawing.Point(358, 40);
+            this.dateETA.Location = new System.Drawing.Point(345, 40);
             this.dateETA.Name = "dateETA";
             this.dateETA.Size = new System.Drawing.Size(110, 23);
             this.dateETA.TabIndex = 3;
@@ -326,7 +326,7 @@
             this.txtInvoiceNo.BackColor = System.Drawing.Color.White;
             this.txtInvoiceNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InvNo", true));
             this.txtInvoiceNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvoiceNo.Location = new System.Drawing.Point(94, 40);
+            this.txtInvoiceNo.Location = new System.Drawing.Point(81, 40);
             this.txtInvoiceNo.Name = "txtInvoiceNo";
             this.txtInvoiceNo.Size = new System.Drawing.Size(120, 23);
             this.txtInvoiceNo.TabIndex = 0;
@@ -337,14 +337,14 @@
             this.displayWKNO.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayWKNO.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "exportid", true));
             this.displayWKNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWKNO.Location = new System.Drawing.Point(94, 67);
+            this.displayWKNO.Location = new System.Drawing.Point(81, 67);
             this.displayWKNO.Name = "displayWKNO";
             this.displayWKNO.Size = new System.Drawing.Size(120, 23);
             this.displayWKNO.TabIndex = 1;
             // 
             // labelArrivePortDate
             // 
-            this.labelArrivePortDate.Location = new System.Drawing.Point(16, 94);
+            this.labelArrivePortDate.Location = new System.Drawing.Point(3, 94);
             this.labelArrivePortDate.Name = "labelArrivePortDate";
             this.labelArrivePortDate.Size = new System.Drawing.Size(109, 23);
             this.labelArrivePortDate.TabIndex = 46;
@@ -354,7 +354,7 @@
             // 
             this.dateArrivePortDate.IsSupportCalendar = false;
             this.dateArrivePortDate.IsSupportEditMode = false;
-            this.dateArrivePortDate.Location = new System.Drawing.Point(129, 94);
+            this.dateArrivePortDate.Location = new System.Drawing.Point(116, 94);
             this.dateArrivePortDate.Name = "dateArrivePortDate";
             this.dateArrivePortDate.ReadOnly = true;
             this.dateArrivePortDate.Size = new System.Drawing.Size(110, 23);
@@ -363,7 +363,7 @@
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "whseArrival", true));
-            this.dateArriveWHDate.Location = new System.Drawing.Point(358, 67);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(345, 67);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.Size = new System.Drawing.Size(110, 23);
             this.dateArriveWHDate.TabIndex = 4;
@@ -371,7 +371,7 @@
             // datePLRcvDate
             // 
             this.datePLRcvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackingReceive", true));
-            this.datePLRcvDate.Location = new System.Drawing.Point(573, 40);
+            this.datePLRcvDate.Location = new System.Drawing.Point(560, 40);
             this.datePLRcvDate.Name = "datePLRcvDate";
             this.datePLRcvDate.Size = new System.Drawing.Size(110, 23);
             this.datePLRcvDate.TabIndex = 6;
@@ -380,7 +380,7 @@
             // 
             this.dateDoxRcvDate.IsSupportCalendar = false;
             this.dateDoxRcvDate.IsSupportEditMode = false;
-            this.dateDoxRcvDate.Location = new System.Drawing.Point(358, 94);
+            this.dateDoxRcvDate.Location = new System.Drawing.Point(345, 94);
             this.dateDoxRcvDate.Name = "dateDoxRcvDate";
             this.dateDoxRcvDate.ReadOnly = true;
             this.dateDoxRcvDate.Size = new System.Drawing.Size(110, 23);
@@ -391,7 +391,7 @@
             this.dateSendDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Transfer2Taipei", true));
             this.dateSendDate.IsSupportCalendar = false;
             this.dateSendDate.IsSupportEditMode = false;
-            this.dateSendDate.Location = new System.Drawing.Point(573, 67);
+            this.dateSendDate.Location = new System.Drawing.Point(560, 67);
             this.dateSendDate.Name = "dateSendDate";
             this.dateSendDate.ReadOnly = true;
             this.dateSendDate.Size = new System.Drawing.Size(110, 23);
@@ -449,9 +449,9 @@
             // 
             this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportFromExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromExcel.Location = new System.Drawing.Point(723, 161);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(746, 161);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
-            this.btnImportFromExcel.Size = new System.Drawing.Size(161, 30);
+            this.btnImportFromExcel.Size = new System.Drawing.Size(155, 30);
             this.btnImportFromExcel.TabIndex = 18;
             this.btnImportFromExcel.Text = "Import From Excel";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
@@ -482,16 +482,16 @@
             // lineShape1
             // 
             this.lineShape1.Name = "lineShape1";
-            this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 994;
-            this.lineShape1.Y1 = 156;
-            this.lineShape1.Y2 = 156;
+            this.lineShape1.X1 = 2;
+            this.lineShape1.X2 = 1003;
+            this.lineShape1.Y1 = 155;
+            this.lineShape1.Y2 = 155;
             // 
             // lbWhenWKNo
             // 
             this.lbWhenWKNo.BackColor = System.Drawing.Color.Transparent;
             this.lbWhenWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbWhenWKNo.Location = new System.Drawing.Point(347, 13);
+            this.lbWhenWKNo.Location = new System.Drawing.Point(334, 13);
             this.lbWhenWKNo.Name = "lbWhenWKNo";
             this.lbWhenWKNo.Size = new System.Drawing.Size(338, 23);
             this.lbWhenWKNo.TabIndex = 55;
@@ -500,9 +500,9 @@
             // 
             // btnFind
             // 
-            this.btnFind.Location = new System.Drawing.Point(352, 160);
+            this.btnFind.Location = new System.Drawing.Point(320, 161);
             this.btnFind.Name = "btnFind";
-            this.btnFind.Size = new System.Drawing.Size(98, 30);
+            this.btnFind.Size = new System.Drawing.Size(81, 30);
             this.btnFind.TabIndex = 15;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
@@ -513,14 +513,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(128, 165);
+            this.txtLocateForSP.Location = new System.Drawing.Point(115, 165);
             this.txtLocateForSP.Name = "txtLocateForSP";
-            this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
+            this.txtLocateForSP.Size = new System.Drawing.Size(135, 23);
             this.txtLocateForSP.TabIndex = 13;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(16, 165);
+            this.labelLocateForSP.Location = new System.Drawing.Point(3, 165);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -528,7 +528,7 @@
             // 
             // labelTypeFilter
             // 
-            this.labelTypeFilter.Location = new System.Drawing.Point(458, 164);
+            this.labelTypeFilter.Location = new System.Drawing.Point(404, 165);
             this.labelTypeFilter.Name = "labelTypeFilter";
             this.labelTypeFilter.Size = new System.Drawing.Size(75, 23);
             this.labelTypeFilter.TabIndex = 16;
@@ -540,11 +540,7 @@
             this.comboTypeFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboTypeFilter.FormattingEnabled = true;
             this.comboTypeFilter.IsSupportUnselect = true;
-            this.comboTypeFilter.Items.AddRange(new object[] {
-            "ALL",
-            "Fabric",
-            "Accessory"});
-            this.comboTypeFilter.Location = new System.Drawing.Point(535, 163);
+            this.comboTypeFilter.Location = new System.Drawing.Point(481, 164);
             this.comboTypeFilter.Name = "comboTypeFilter";
             this.comboTypeFilter.OldText = "";
             this.comboTypeFilter.Size = new System.Drawing.Size(100, 24);
@@ -554,11 +550,11 @@
             // btnDeleteAll
             // 
             this.btnDeleteAll.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDeleteAll.Location = new System.Drawing.Point(640, 160);
+            this.btnDeleteAll.Location = new System.Drawing.Point(586, 161);
             this.btnDeleteAll.Name = "btnDeleteAll";
-            this.btnDeleteAll.Size = new System.Drawing.Size(80, 30);
+            this.btnDeleteAll.Size = new System.Drawing.Size(156, 30);
             this.btnDeleteAll.TabIndex = 17;
-            this.btnDeleteAll.Text = "Delete all";
+            this.btnDeleteAll.Text = "Delete all fabric";
             this.btnDeleteAll.UseVisualStyleBackColor = true;
             this.btnDeleteAll.Click += new System.EventHandler(this.BtDeleteAllDetail_Click);
             // 
@@ -568,7 +564,7 @@
             this.check3rdCountry.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "third", true));
             this.check3rdCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.check3rdCountry.IsSupportEditMode = false;
-            this.check3rdCountry.Location = new System.Drawing.Point(246, 15);
+            this.check3rdCountry.Location = new System.Drawing.Point(233, 15);
             this.check3rdCountry.Name = "check3rdCountry";
             this.check3rdCountry.ReadOnly = true;
             this.check3rdCountry.Size = new System.Drawing.Size(101, 21);
@@ -579,7 +575,7 @@
             // txtSeq1
             // 
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(280, 165);
+            this.txtSeq1.Location = new System.Drawing.Point(254, 165);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Seq1 = "";
             this.txtSeq1.Seq2 = "";
@@ -588,7 +584,7 @@
             // 
             // labSortBy
             // 
-            this.labSortBy.Location = new System.Drawing.Point(16, 122);
+            this.labSortBy.Location = new System.Drawing.Point(3, 124);
             this.labSortBy.Name = "labSortBy";
             this.labSortBy.Size = new System.Drawing.Size(110, 23);
             this.labSortBy.TabIndex = 63;
@@ -599,7 +595,7 @@
             this.radioPanel1.Controls.Add(this.radioEncodeSeq);
             this.radioPanel1.Controls.Add(this.radiobySP);
             this.radioPanel1.IsSupportEditMode = false;
-            this.radioPanel1.Location = new System.Drawing.Point(129, 120);
+            this.radioPanel1.Location = new System.Drawing.Point(116, 120);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(339, 31);
             this.radioPanel1.TabIndex = 64;
