@@ -1,38 +1,29 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using Sci.Win;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using Sci.Win;
 
 namespace Sci.Production.Shipping
 {
+    /// <inheritdoc/>
     public partial class R20 : Win.Tems.PrintForm
     {
         private DataTable[] PrintTable;
-        private string arrivePortDate_s;
-        private string arrivePortDate_e;
-        private string wk_s;
-        private string wk_e;
-        private string consignee;
-        private string shipper;
-        private string category;
-        private string shipMode;
+        private string sqlCmd;
+        private List<SqlParameter> paras = new List<SqlParameter>();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="R20"/> class.
-        /// </summary>
-        /// <param name="menuitem"></param>
+        /// <inheritdoc/>
         public R20(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable category;
             string sqlcmd = @"
-select [Type] = '', [Category] = ''
+select [Type] = NULL, [Category] = ''
 union
 select [Type] = cast(fe.Type as varchar(2)), 
 		(CASE WHEN fe.Type=1 THEN '3rd Country'
@@ -41,81 +32,95 @@ select [Type] = cast(fe.Type as varchar(2)),
 			 WHEN fe.Type=4 THEN 'Local Purchase' ELSE '' END) as [Category]
 from FtyExport fe
 group by fe.Type";
-            DBProxy.Current.Select(null, sqlcmd, out category);
+            DBProxy.Current.Select(null, sqlcmd, out DataTable category);
             MyUtility.Tool.SetupCombox(this.comboCategory, 2, category);
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (!this.dateArrivePortDate.HasValue1 || !this.dateArrivePortDate.HasValue2)
+            this.paras.Clear();
+            if (this.comboCategory.SelectedValue.ToString() == "3")
             {
-                MyUtility.Msg.InfoBox("Please input < Arrive Port Date > first!!");
-                return false;
+                if (!this.dateOnBoardDate.HasValue1 && !this.dateOnBoardDate.HasValue2)
+                {
+                    MyUtility.Msg.InfoBox("Please input < On Board Date > first!!");
+                    return false;
+                }
+            }
+            else if (this.comboCategory.SelectedValue.Empty())
+            {
+                if (!this.dateArrivePortDate.HasValue1 && !this.dateArrivePortDate.HasValue2 && !this.dateOnBoardDate.HasValue1 && !this.dateOnBoardDate.HasValue2)
+                {
+                    MyUtility.Msg.InfoBox("Please input < Arrive Port Date > or < On Board Date > first!!");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!this.dateArrivePortDate.HasValue1 && !this.dateArrivePortDate.HasValue2)
+                {
+                    MyUtility.Msg.InfoBox("Please input < Arrive Port Date > first!!");
+                    return false;
+                }
             }
 
-            this.arrivePortDate_s = this.dateArrivePortDate.Value1.Value.ToString("yyyyMMdd");
-            this.arrivePortDate_e = this.dateArrivePortDate.Value2.Value.ToString("yyyyMMdd");
-            this.wk_s = this.txtWKno_s.Text;
-            this.wk_e = this.txtWKno_e.Text;
-            this.consignee = this.txtConsignee.Text;
-            this.shipper = this.txtLocalSupp.TextBox1.Text;
-            this.category = this.comboCategory.SelectedValue.ToString();
-            this.shipMode = this.txtshipmode.Text;
-
-            return base.ValidateInput();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
-        {
-            string sqlCmd = string.Empty;
-
             #region Where 條件
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@arrivePortDate_s", this.arrivePortDate_s));
-            paras.Add(new SqlParameter("@arrivePortDate_e", this.arrivePortDate_e));
-            string where = $"where fe.PortArrival between @arrivePortDate_s AND @arrivePortDate_e " + Environment.NewLine;
+            string where = string.Empty;
 
-            if (!MyUtility.Check.Empty(this.wk_s))
+            if (this.dateArrivePortDate.HasValue1 && this.dateArrivePortDate.HasValue2)
             {
-                paras.Add(new SqlParameter("@wk_s", this.wk_s));
+                this.paras.Add(new SqlParameter("@arrivePortDate_1", SqlDbType.Date) { Value = this.dateArrivePortDate.Value1 });
+                this.paras.Add(new SqlParameter("@arrivePortDate_2", SqlDbType.Date) { Value = this.dateArrivePortDate.Value2 });
+                where = $"and fe.PortArrival between @arrivePortDate_1 AND @arrivePortDate_2 " + Environment.NewLine;
+            }
+
+            if (this.dateOnBoardDate.HasValue1 && this.dateOnBoardDate.HasValue2)
+            {
+                this.paras.Add(new SqlParameter("@dateOnBoardDate_1", SqlDbType.Date) { Value = this.dateOnBoardDate.Value1 });
+                this.paras.Add(new SqlParameter("@dateOnBoardDate_2", SqlDbType.Date) { Value = this.dateOnBoardDate.Value2 });
+                where = $"and fe.OnBoard between @dateOnBoardDate_1 AND @dateOnBoardDate_2 " + Environment.NewLine;
+            }
+
+            if (!MyUtility.Check.Empty(this.txtWKno_s.Text))
+            {
+                this.paras.Add(new SqlParameter("@wk_s", SqlDbType.VarChar, 13) { Value = this.txtWKno_s.Text });
                 where += "AND fe.ID >= @wk_s " + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.wk_e))
+            if (!MyUtility.Check.Empty(this.txtWKno_e.Text))
             {
-                paras.Add(new SqlParameter("@wk_e", this.wk_e));
+                this.paras.Add(new SqlParameter("@wk_e", SqlDbType.VarChar, 13) { Value = this.txtWKno_e.Text });
                 where += "AND fe.ID <= @wk_e " + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.consignee))
+            if (!MyUtility.Check.Empty(this.txtConsignee.Text))
             {
-                paras.Add(new SqlParameter("@Consignee", this.consignee));
+                this.paras.Add(new SqlParameter("@Consignee", SqlDbType.VarChar, 8) { Value = this.txtConsignee.Text });
                 where += "AND fe.Consignee = @Consignee " + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.shipper))
+            if (!MyUtility.Check.Empty(this.txtLocalSupp.TextBox1.Text))
             {
-                paras.Add(new SqlParameter("@Shipper", this.shipper));
+                this.paras.Add(new SqlParameter("@Shipper", SqlDbType.VarChar, 8) { Value = this.txtLocalSupp.TextBox1.Text });
                 where += "AND fe.shipper = @Shipper " + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.category))
+            if (!MyUtility.Check.Empty(this.comboCategory.SelectedValue.ToString()))
             {
-                paras.Add(new SqlParameter("@Category", this.category));
-                where += "AND fe.Type = @Category " + Environment.NewLine;
+                this.paras.Add(new SqlParameter("@Type", SqlDbType.TinyInt) { Value = this.comboCategory.SelectedValue.ToString() });
+                where += "AND fe.Type = @Type " + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.shipMode))
+            if (!MyUtility.Check.Empty(this.txtshipmode.Text))
             {
-                paras.Add(new SqlParameter("@ShipMode", this.shipMode));
-                where += "AND fe.ShipModeID = @ShipMode " + Environment.NewLine;
+                this.paras.Add(new SqlParameter("@ShipModeID", SqlDbType.VarChar, 10) { Value = this.txtshipmode.Text });
+                where += "AND fe.ShipModeID = @ShipModeID " + Environment.NewLine;
             }
             #endregion
 
             #region SQL
-            sqlCmd = $@"
+            this.sqlCmd = $@"
 -- Summary
 select (CASE WHEN fe.Type=1 THEN '3rd Country'
 			 WHEN fe.Type=2 THEN 'Transfer In'
@@ -154,6 +159,7 @@ outer apply (
 	from VNImportDeclaration WITH (NOLOCK)
 	where BLNo = fe.Blno and IsFtyExport = 1
 )BLNo
+where 1=1
 {where}
 
 select *
@@ -186,8 +192,13 @@ order by ed.ID,ed.POID
 drop table #tmp_FtyExport;
 ";
             #endregion
+            return base.ValidateInput();
+        }
 
-            return DBProxy.Current.Select(null, sqlCmd, paras, out this.PrintTable);
+        /// <inheritdoc/>
+        protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
+        {
+            return DBProxy.Current.Select(null, this.sqlCmd, this.paras, out this.PrintTable);
         }
 
         /// <inheritdoc/>
@@ -203,17 +214,45 @@ drop table #tmp_FtyExport;
             this.ShowWaitMessage("Excel processing...");
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Shipping_R20.xltx"); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.PrintTable[0], string.Empty, "Shipping_R20.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]); // 將datatable copy to excel
-            MyUtility.Excel.CopyToXls(this.PrintTable[1], string.Empty, "Shipping_R20.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]); // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(this.PrintTable[0], string.Empty, "Shipping_R20.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
+            MyUtility.Excel.CopyToXls(this.PrintTable[1], string.Empty, "Shipping_R20.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[2]);
 
             objApp.Sheets[1].Rows.AutoFit();
             objApp.Sheets[2].Rows.AutoFit();
-            #region Save & Show Excel
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
-            #endregion
+
             this.HideWaitMessage();
             return true;
+        }
+
+        private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 3. Transfer Out
+            if (this.comboCategory.SelectedValue.ToString() == "3")
+            {
+                this.dateArrivePortDate.ReadOnly = true;
+                this.dateOnBoardDate.ReadOnly = false;
+                this.dateArrivePortDate.Text1 = string.Empty;
+                this.dateArrivePortDate.Text2 = string.Empty;
+            }
+            else if (this.comboCategory.SelectedValue.Empty())
+            {
+                this.dateArrivePortDate.ReadOnly = false;
+                this.dateOnBoardDate.ReadOnly = false;
+            }
+            else
+            {
+                this.dateArrivePortDate.ReadOnly = false;
+                this.dateOnBoardDate.ReadOnly = true;
+                this.dateOnBoardDate.Text1 = string.Empty;
+                this.dateOnBoardDate.Text2 = string.Empty;
+            }
+        }
+
+        private void R20_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Dispose();
         }
     }
 }
