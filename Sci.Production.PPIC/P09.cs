@@ -777,11 +777,11 @@ where ReplacementReportID = '{0}'", MyUtility.Convert.GetString(this.CurrentMain
             this.SendMail();
 
             DualResult result;
-
-            result = Prgs.PostReplacementReportToTrade(this.CurrentMaintain["ID"].ToString());
+            string errorKind;
+            result = Prgs.PostReplacementReportToTrade(this.CurrentMaintain["ID"].ToString(), out errorKind);
             if (!result)
             {
-                this.ShowErr(result);
+                this.ShowErr(errorKind, result);
                 return;
             }
 
