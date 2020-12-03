@@ -25,7 +25,6 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
-            MyUtility.Tool.SetupCombox(this.comboLayout, 2, 1, "0,Layout1,1,Layout2");
             this.chkRFPrint.Visible = false;
             this.chkRFRraser.Visible = false;
             this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
@@ -385,8 +384,7 @@ order by x.[Bundle]");
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                int layout = this.comboLayout.SelectedValue.ToString() == "0" ? 1 : 2;
-                RunPagePrint(data, excelApp, layout);
+                RunPagePrint(data, excelApp);
                 this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
@@ -520,7 +518,7 @@ order by x.[Bundle]");
         }
 
         /// <inheritdoc/>
-        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int layout)
+        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp)
         {
             // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
             int page = ((data.Count - 1) / 9) + 1;
@@ -551,12 +549,12 @@ order by x.[Bundle]");
             {
                 var writedata = data.Skip((pi - 1) * 9).Take(9).ToList();
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
-                ProcessPrint(writedata, worksheet, layout, allNoDatas);
+                ProcessPrint(writedata, worksheet, allNoDatas);
             }
         }
 
         /// <inheritdoc/>
-        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout, DataTable allNoDatas)
+        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, DataTable allNoDatas)
         {
             int i = 0;
             int col_ref = 0;
@@ -566,34 +564,17 @@ order by x.[Bundle]");
             {
                 string no = GetNo(r.Barcode, allNoDatas);
                 string contian;
-                if (layout == 1)
-                {
-                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
 SP#:{r.SP}
 Style#: {r.Style}
-Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     Tone: {r.Tone}
+Cut#: {r.Body_Cut}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
-Desc: {r.Desc}
-Sub Process: {r.Artwork}
-Qty: {r.Quantity}     No: {no}";
-                }
-                else
-                {
-                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{r.SP}
-Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     Tone: {r.Tone}
-Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
-Desc: {r.Desc}
+MK#: {r.MarkerNo}     Cut/L:
 Sub Process: {r.Artwork}
-Qty: {r.Quantity}     Item: {r.Item}";
-                }
+Desc: {r.Desc}
+Qty: {r.Quantity}({no})  Item: {r.Item}";
 
                 row_ref = i / 3;
                 row_ref = (row_ref * 5) - (row_ref / 3);
@@ -750,7 +731,6 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 
         private void RadioButtionChangeStatus()
         {
-            this.comboLayout.Visible = true;
             this.toexcel.Enabled = true;
             this.print.Enabled = true;
             this.chkRFPrint.Visible = false;
@@ -761,14 +741,12 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             }
             else if (this.radioBundleChecklist.Checked)
             {
-                this.comboLayout.Visible = false;
             }
             else if (this.radioBundleCardRF.Checked)
             {
                 this.chkRFPrint.Visible = true;
                 this.chkRFRraser.Visible = true;
                 this.toexcel.Enabled = false;
-                this.comboLayout.Visible = false;
             }
         }
     }

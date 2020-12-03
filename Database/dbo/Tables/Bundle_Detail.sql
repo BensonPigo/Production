@@ -12,11 +12,15 @@
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
-    [RFUID] VARCHAR(20) NOT NULL CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT (''), 
+    [RFUID]       VARCHAR (20)   CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT ('') NOT NULL,
+    [RFPrintDate] DATETIME       NULL,
     [Tone]        VARCHAR (1)    CONSTRAINT [DF_Bundle_Detail_Tone] DEFAULT ('') NOT NULL,
+    [PrintGroup]  TINYINT        NULL,
     CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
     CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
+
+
 
 
 
@@ -98,4 +102,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 GO
 CREATE NONCLUSTERED INDEX [IDX_Bundle_Detail_PlanningR15]
     ON [dbo].[Bundle_Detail]([PatternDesc] ASC, [SizeCode] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Print Date', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'RFPrintDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'列印Bundle Card時的群組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle_Detail', @level2type = N'COLUMN', @level2name = N'PrintGroup';
 
