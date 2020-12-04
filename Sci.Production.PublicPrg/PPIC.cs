@@ -54,8 +54,9 @@ namespace Sci.Production.PublicPrg
         /// </summary>
         /// <param name="replacementID">replacementID</param>
         /// <returns>DualResult</returns>
-        public static DualResult PostReplacementReportToTrade(string replacementID)
+        public static DualResult PostReplacementReportToTrade(string replacementID, out string errorKind)
         {
+            errorKind = string.Empty;
             string sqlReplacementReport = $@"
 select ID
 ,CDate
@@ -127,12 +128,14 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             result = DBProxy.Current.Select(null, sqlReplacementReport, out dtReplacementReport);
             if (!result)
             {
+                errorKind = "Generate data from Replacement report failed.";
                 return result;
             }
 
             result = DBProxy.Current.Select(null, sqlReplacementReportDetail, out dtReplacementReportDetail);
             if (!result)
             {
+                errorKind = "Generate data from Replacement report failed.";
                 return result;
             }
 
@@ -142,6 +145,11 @@ from ReplacementReport_Detail where ID = '{replacementID}'
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(tradeWebApiUri);
 
             result = callTPEWebAPI.CallWebApiPost("/api/ReplacementReport/UpdateReplacement", postBody);
+            if (!result)
+            {
+                errorKind = "Networking problem.";
+            }
+
             return result;
         }
 
