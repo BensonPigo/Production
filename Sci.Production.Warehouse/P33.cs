@@ -1959,26 +1959,6 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     sqlcmd, out result, "#tmp");
             }
 
-            // 取BarcodeNo
-            IList<DataRow> listSubDetail = new List<DataRow>();
-            DataTable dtTmp;
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                this.GetSubDetailDatas(dr, out dtTmp);
-
-                foreach (DataRow subDr in dtTmp.Rows)
-                {
-                    listSubDetail.Add(subDr);
-                }
-            }
-
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(listSubDetail);
-
-            if (!resultBarcodeNo)
-            {
-                return this.ShowErr(resultBarcodeNo);
-            }
-
             // 將Issue_Detail的數量更新Issue_Summary
             DataTable subDetail;
             DataTable detail = (DataTable)this.detailgridbs.DataSource;

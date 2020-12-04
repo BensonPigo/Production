@@ -156,13 +156,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
-
-            if (!resultBarcodeNo)
-            {
-                return resultBarcodeNo;
-            }
-
             return base.ClickSavePre();
         }
 

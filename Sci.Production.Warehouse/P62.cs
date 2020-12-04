@@ -465,26 +465,6 @@ outer apply(
             //    }
             // }
 
-            // 取BarcodeNo
-            IList<DataRow> listSubDetail = new List<DataRow>();
-            DataTable dtTmp;
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                this.GetSubDetailDatas(dr, out dtTmp);
-
-                foreach (DataRow subDr in dtTmp.Rows)
-                {
-                    listSubDetail.Add(subDr);
-                }
-            }
-
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(listSubDetail);
-
-            if (!resultBarcodeNo)
-            {
-                return resultBarcodeNo;
-            }
-
             // 將Issue_Detail的數量更新Issue_Summary
             DataTable subDetail;
             foreach (DataRow detailRow in this.DetailDatas)

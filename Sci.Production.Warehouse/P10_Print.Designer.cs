@@ -30,7 +30,6 @@
         {
             this.radioFabricSticker = new Sci.Win.UI.RadioButton();
             this.radioTransferSlip = new Sci.Win.UI.RadioButton();
-            this.radioBarcode = new Sci.Win.UI.RadioButton();
             this.radioRelaxationSticker = new Sci.Win.UI.RadioButton();
             this.radioFabricsRelaxationLogsheet = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Ict.Win.UI.RadioGroup();
@@ -92,25 +91,12 @@
             this.radioTransferSlip.UseVisualStyleBackColor = true;
             this.radioTransferSlip.Value = "1";
             // 
-            // radioBarcode
-            // 
-            this.radioBarcode.AutoSize = true;
-            this.radioBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.radioBarcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioBarcode.Location = new System.Drawing.Point(17, 90);
-            this.radioBarcode.Name = "radioBarcode";
-            this.radioBarcode.Size = new System.Drawing.Size(87, 24);
-            this.radioBarcode.TabIndex = 0;
-            this.radioBarcode.Text = "Barcode";
-            this.radioBarcode.UseVisualStyleBackColor = true;
-            this.radioBarcode.Value = "3";
-            // 
             // radioRelaxationSticker
             // 
             this.radioRelaxationSticker.AutoSize = true;
             this.radioRelaxationSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioRelaxationSticker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioRelaxationSticker.Location = new System.Drawing.Point(17, 120);
+            this.radioRelaxationSticker.Location = new System.Drawing.Point(17, 94);
             this.radioRelaxationSticker.Name = "radioRelaxationSticker";
             this.radioRelaxationSticker.Size = new System.Drawing.Size(155, 24);
             this.radioRelaxationSticker.TabIndex = 1;
@@ -123,7 +109,7 @@
             this.radioFabricsRelaxationLogsheet.AutoSize = true;
             this.radioFabricsRelaxationLogsheet.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioFabricsRelaxationLogsheet.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioFabricsRelaxationLogsheet.Location = new System.Drawing.Point(17, 150);
+            this.radioFabricsRelaxationLogsheet.Location = new System.Drawing.Point(17, 124);
             this.radioFabricsRelaxationLogsheet.Name = "radioFabricsRelaxationLogsheet";
             this.radioFabricsRelaxationLogsheet.Size = new System.Drawing.Size(229, 24);
             this.radioFabricsRelaxationLogsheet.TabIndex = 2;
@@ -137,7 +123,6 @@
             this.radioGroup1.Controls.Add(this.radioRelaxationSticker);
             this.radioGroup1.Controls.Add(this.radioTransferSlip);
             this.radioGroup1.Controls.Add(this.radioFabricsRelaxationLogsheet);
-            this.radioGroup1.Controls.Add(this.radioBarcode);
             this.radioGroup1.Location = new System.Drawing.Point(22, 5);
             this.radioGroup1.Name = "radioGroup1";
             this.radioGroup1.Size = new System.Drawing.Size(266, 182);
@@ -169,7 +154,6 @@
         #endregion
         private Win.UI.RadioButton radioFabricSticker;
         private Win.UI.RadioButton radioTransferSlip;
-        private Win.UI.RadioButton radioBarcode;
         private Win.UI.RadioButton radioRelaxationSticker;
         private Win.UI.RadioButton radioFabricsRelaxationLogsheet;
         private Ict.Win.UI.RadioGroup radioGroup1;
