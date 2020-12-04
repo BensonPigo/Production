@@ -751,7 +751,10 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
 
             if (this.txtCutRef.Text == string.Empty)
             {
+                int oldstartno = MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]);
                 this.Clear();
+                int diffGroup = MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]) - oldstartno;
+                this.DetailDatas.ToList().ForEach(dr => dr["BundleGroup"] = Convert.ToDecimal(dr["BundleGroup"]) + diffGroup);
                 return;
             }
 
@@ -817,11 +820,7 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
 
                 string cellid = MyUtility.GetValue.Lookup("SewingCell", this.CurrentMaintain["sewinglineid"].ToString() + cutdr["factoryid"].ToString(), "SewingLine", "ID+factoryid");
                 this.CurrentMaintain["SewingCell"] = cellid;
-
-                #region Startno
-                int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
-                this.CurrentMaintain["startno"] = startno;
-                #endregion
+                this.CurrentMaintain["startno"] = this.StartNo_Function(this.CurrentMaintain["POID"].ToString());
 
                 string item_cmd = $"Select a.Name from Reason a WITH (NOLOCK) , Style b WITH (NOLOCK) where a.Reasontypeid ='Style_Apparel_Type' and b.ukey = '{cutdr["styleukey"]}' and b.ApparelType = a.id";
                 string item = MyUtility.GetValue.Lookup(item_cmd, null);
@@ -957,15 +956,14 @@ and o.id = '{this.CurrentMaintain["POID"]}'
                         this.CurrentMaintain["SewingCell"] = cellid;
                     }
                     #endregion
-                    #region startno
-                    int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
-                    int nGroup = startno - Convert.ToInt32(this.CurrentMaintain["startno"]);
+
+                    #region startno & BundleGroup
+                    int startno = this.StartNo_Function(this.CurrentMaintain["POID"].ToString());
+                    int diffGroup = startno - MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]);
                     this.CurrentMaintain["startno"] = startno;
-                    foreach (DataRow dr in this.DetailDatas)
-                    {
-                        dr["BundleGroup"] = Convert.ToDecimal(dr["BundleGroup"]) + nGroup;
-                    }
+                    this.DetailDatas.ToList().ForEach(dr => dr["BundleGroup"] = Convert.ToDecimal(dr["BundleGroup"]) + diffGroup);
                     #endregion
+
                     #region Article colorid
                     if (MyUtility.Check.Empty(this.CurrentMaintain["PatternPanel"]))
                     {
@@ -994,13 +992,13 @@ and o.id = '{this.CurrentMaintain["POID"]}'
             this.OnDetailEntered();
         }
 
-        private int StartNo_Function(string orderid) // Start No 計算
+        private int StartNo_Function(string poid) // Start No 計算
         {
             string sqlcmd = $@"
 select isnull(MAX(bd.BundleGroup), 0) + 1
-from Bundle_Detail_Order bdo with(nolock)
-inner join Bundle_Detail bd with(nolock) on bd.BundleNo = bdo.BundleNo
-where bdo.OrderID = '{orderid}'
+from Bundle b with(nolock)
+inner join Bundle_Detail bd with(nolock) on bd.id = b.id
+where b.poid = '{poid}'
 ";
             return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
         }
@@ -1008,23 +1006,23 @@ where bdo.OrderID = '{orderid}'
         /// <inheritdoc/>
         protected override void ClickCopyAfter()
         {
-            int oldstartno = MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]);
             base.ClickCopyAfter();
             this.CurrentMaintain["ID"] = string.Empty;
             this.CurrentMaintain["Cdate"] = DateTime.Now;
-            int startno = this.StartNo_Function(this.CurrentMaintain["OrderID"].ToString());
+            int startno = this.StartNo_Function(this.CurrentMaintain["POID"].ToString());
+            int diffGroup = startno - MyUtility.Convert.GetInt(this.CurrentMaintain["startno"]);
             this.CurrentMaintain["startno"] = startno;
             #region 清除Detail Bundleno,ID
             foreach (DataRow dr in this.DetailDatas)
             {
+                // 複製後的 BundleGroup ,加上 startno 新舊相差值
+                dr["BundleGroup"] = MyUtility.Convert.GetInt(dr["BundleGroup"]) + diffGroup;
                 dr["Bundleno"] = string.Empty;
                 dr["ID"] = string.Empty;
-                dr["BundleGroup"] = MyUtility.Convert.GetInt(dr["BundleGroup"]) + startno - oldstartno;
             }
 
             foreach (DataRow dr in this.bundle_Detail_allpart_Tb.Rows)
             {
-                // dr["Bundleno"] = "";
                 dr["ID"] = string.Empty;
             }
 
