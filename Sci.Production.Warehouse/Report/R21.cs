@@ -3,6 +3,7 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -25,6 +26,8 @@ namespace Sci.Production.Warehouse
         private string MtlTypeID;
         private string ST;
         private string WorkNo;
+        private string location1;
+        private string location2;
         private bool bulk;
         private bool sample;
         private bool material;
@@ -263,6 +266,8 @@ namespace Sci.Production.Warehouse
             this.arriveWH1 = this.dateArriveDate.Value1;
             this.arriveWH2 = this.dateArriveDate.Value2;
             this.WorkNo = this.txtWorkNo.Text;
+            this.location1 = this.txtMtlLocation1.Text;
+            this.location2 = this.txtMtlLocation2.Text;
 
             this.bulk = this.checkBulk.Checked;
             this.sample = this.checkSample.Checked;
@@ -289,6 +294,7 @@ namespace Sci.Production.Warehouse
         {
             this.sqlcmd.Clear();
             this.sqlcmd_fin.Clear();
+            List<SqlParameter> parameters = new List<SqlParameter>();
 
             if (this._reportType == 0)
             {
@@ -592,13 +598,42 @@ or
 ");
             }
 
+            if (!MyUtility.Check.Empty(this.location1) && !MyUtility.Check.Empty(this.location2))
+            {
+                parameters.Add(new SqlParameter("@location1", this.location1));
+                parameters.Add(new SqlParameter("@location2", this.location2));
+                this.sqlcmd.Append(
+                    @" 
+        and fi.ukey in ( select ukey 
+                        from dbo.ftyinventory_detail WITH (NOLOCK) 
+                        where mtllocationid >= @location1
+                        and  mtllocationid <= @location2 ) " + Environment.NewLine);
+            }
+            else if (!MyUtility.Check.Empty(this.location1))
+            {
+                parameters.Add(new SqlParameter("@location1", this.location1));
+                this.sqlcmd.Append(
+                    @" 
+        and fi.ukey in ( select ukey 
+                        from dbo.ftyinventory_detail WITH (NOLOCK) 
+                        where mtllocationid = @location1) " + Environment.NewLine);
+            }
+            else if (!MyUtility.Check.Empty(this.location2))
+            {
+                parameters.Add(new SqlParameter("@location2", this.location2));
+                this.sqlcmd.Append(
+                    @" 
+        and fi.ukey in ( select ukey 
+                        from dbo.ftyinventory_detail WITH (NOLOCK) 
+                        where mtllocationid = @location2) " + Environment.NewLine);
+            }
             #endregion
 
             #region Get Data
             DualResult result;
 
             // 先抓出資料筆數 大於100萬筆需另外處理(按年出多excel)
-            if (result = DBProxy.Current.Select(null, this.sql_cnt + this.sqlcmd.ToString(), out this.printData_cnt))
+            if (result = DBProxy.Current.Select(null, this.sql_cnt + this.sqlcmd.ToString(), parameters, out this.printData_cnt))
             {
                 this.data_cnt = (int)this.printData_cnt.Rows[0]["datacnt"];
 
@@ -806,11 +841,17 @@ or
         {
             if (this.radioGroupReportType.Value == "D")
             {
-                this.chkNoLocation.Enabled = true;
+                this.chkNoLocation.ReadOnly = false;
+                this.txtMtlLocation1.ReadOnly = false;
+                this.txtMtlLocation2.ReadOnly = false;
             }
             else
             {
-                this.chkNoLocation.Enabled = false;
+                this.txtMtlLocation1.Text = string.Empty;
+                this.txtMtlLocation2.Text = string.Empty;
+                this.txtMtlLocation1.ReadOnly = true;
+                this.txtMtlLocation2.ReadOnly = true;
+                this.chkNoLocation.ReadOnly = true;
                 this.chkNoLocation.Checked = false;
             }
         }

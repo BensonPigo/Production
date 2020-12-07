@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.rdbtnDetail = new Sci.Win.UI.RadioButton();
             this.rdbtnSummary = new Sci.Win.UI.RadioButton();
             this.cmbStockType = new Sci.Win.UI.ComboBox();
-            this.labelReportType = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
             this.textColor = new Sci.Win.UI.TextBox();
             this.labelColor = new Sci.Win.UI.Label();
@@ -67,6 +67,11 @@
             this.chkNoLocation = new Sci.Win.UI.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.radioGroupReportType = new Sci.Win.UI.RadioGroup();
+            this.lbLocation = new Sci.Win.UI.Label();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.txtMtlLocation1 = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.txtMtlLocation2 = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.label6 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.radioGroupReportType.SuspendLayout();
@@ -96,6 +101,32 @@
             // 
             this.checkUseCustomized.Location = new System.Drawing.Point(394, 122);
             // 
+            // rdbtnDetail
+            // 
+            this.rdbtnDetail.AutoSize = true;
+            this.rdbtnDetail.Checked = true;
+            this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnDetail.Location = new System.Drawing.Point(6, 12);
+            this.rdbtnDetail.Name = "rdbtnDetail";
+            this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
+            this.rdbtnDetail.TabIndex = 13;
+            this.rdbtnDetail.TabStop = true;
+            this.rdbtnDetail.Text = "Detail";
+            this.rdbtnDetail.UseVisualStyleBackColor = true;
+            this.rdbtnDetail.Value = "D";
+            // 
+            // rdbtnSummary
+            // 
+            this.rdbtnSummary.AutoSize = true;
+            this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnSummary.Location = new System.Drawing.Point(74, 12);
+            this.rdbtnSummary.Name = "rdbtnSummary";
+            this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
+            this.rdbtnSummary.TabIndex = 14;
+            this.rdbtnSummary.Text = "Summary";
+            this.rdbtnSummary.UseVisualStyleBackColor = true;
+            this.rdbtnSummary.Value = "S";
+            // 
             // cmbStockType
             // 
             this.cmbStockType.BackColor = System.Drawing.Color.White;
@@ -107,14 +138,6 @@
             this.cmbStockType.OldText = "";
             this.cmbStockType.Size = new System.Drawing.Size(117, 24);
             this.cmbStockType.TabIndex = 12;
-            // 
-            // labelReportType
-            // 
-            this.labelReportType.Location = new System.Drawing.Point(8, 359);
-            this.labelReportType.Name = "labelReportType";
-            this.labelReportType.Size = new System.Drawing.Size(114, 23);
-            this.labelReportType.TabIndex = 130;
-            this.labelReportType.Text = "Report Type";
             // 
             // labelStockType
             // 
@@ -148,7 +171,7 @@
             this.checkQty.Checked = true;
             this.checkQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkQty.Location = new System.Drawing.Point(8, 389);
+            this.checkQty.Location = new System.Drawing.Point(8, 423);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
             this.checkQty.TabIndex = 15;
@@ -430,7 +453,7 @@
             // 
             this.chkComplete.AutoSize = true;
             this.chkComplete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkComplete.Location = new System.Drawing.Point(87, 389);
+            this.chkComplete.Location = new System.Drawing.Point(87, 423);
             this.chkComplete.Name = "chkComplete";
             this.chkComplete.Size = new System.Drawing.Size(138, 21);
             this.chkComplete.TabIndex = 149;
@@ -481,7 +504,7 @@
             // 
             this.chkNoLocation.AutoSize = true;
             this.chkNoLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNoLocation.Location = new System.Drawing.Point(231, 389);
+            this.chkNoLocation.Location = new System.Drawing.Point(231, 423);
             this.chkNoLocation.Name = "chkNoLocation";
             this.chkNoLocation.Size = new System.Drawing.Size(103, 21);
             this.chkNoLocation.TabIndex = 152;
@@ -496,32 +519,6 @@
             this.panel2.Size = new System.Drawing.Size(156, 26);
             this.panel2.TabIndex = 154;
             // 
-            // rdbtnDetail
-            // 
-            this.rdbtnDetail.AutoSize = true;
-            this.rdbtnDetail.Checked = true;
-            this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetail.Location = new System.Drawing.Point(6, 12);
-            this.rdbtnDetail.Name = "rdbtnDetail";
-            this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
-            this.rdbtnDetail.TabIndex = 13;
-            this.rdbtnDetail.TabStop = true;
-            this.rdbtnDetail.Text = "Detail";
-            this.rdbtnDetail.UseVisualStyleBackColor = true;
-            this.rdbtnDetail.Value = "D";
-            // 
-            // rdbtnSummary
-            // 
-            this.rdbtnSummary.AutoSize = true;
-            this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnSummary.Location = new System.Drawing.Point(74, 12);
-            this.rdbtnSummary.Name = "rdbtnSummary";
-            this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
-            this.rdbtnSummary.TabIndex = 14;
-            this.rdbtnSummary.Text = "Summary";
-            this.rdbtnSummary.UseVisualStyleBackColor = true;
-            this.rdbtnSummary.Value = "S";
-            // 
             // radioGroupReportType
             // 
             this.radioGroupReportType.Controls.Add(this.rdbtnDetail);
@@ -534,9 +531,63 @@
             this.radioGroupReportType.Value = "D";
             this.radioGroupReportType.ValueChanged += new System.EventHandler(this.RadioGroupReportType_ValueChanged);
             // 
+            // lbLocation
+            // 
+            this.lbLocation.Location = new System.Drawing.Point(8, 389);
+            this.lbLocation.Name = "lbLocation";
+            this.lbLocation.Size = new System.Drawing.Size(114, 23);
+            this.lbLocation.TabIndex = 155;
+            this.lbLocation.Text = "Location";
+            // 
+            // labelReportType
+            // 
+            this.labelReportType.Location = new System.Drawing.Point(8, 359);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(114, 23);
+            this.labelReportType.TabIndex = 130;
+            this.labelReportType.Text = "Report Type";
+            // 
+            // txtMtlLocation1
+            // 
+            this.txtMtlLocation1.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation1.Location = new System.Drawing.Point(126, 387);
+            this.txtMtlLocation1.Name = "txtMtlLocation1";
+            this.txtMtlLocation1.Size = new System.Drawing.Size(99, 23);
+            this.txtMtlLocation1.StockTypeFilte = "";
+            this.txtMtlLocation1.TabIndex = 156;
+            // 
+            // txtMtlLocation2
+            // 
+            this.txtMtlLocation2.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation2.Location = new System.Drawing.Point(245, 387);
+            this.txtMtlLocation2.Name = "txtMtlLocation2";
+            this.txtMtlLocation2.Size = new System.Drawing.Size(99, 23);
+            this.txtMtlLocation2.StockTypeFilte = "";
+            this.txtMtlLocation2.TabIndex = 157;
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Location = new System.Drawing.Point(221, 387);
+            this.label6.Name = "label6";
+            this.label6.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label6.RectStyle.Color = System.Drawing.Color.Transparent;
+            this.label6.RectStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label6.Size = new System.Drawing.Size(22, 23);
+            this.label6.TabIndex = 158;
+            this.label6.Text = "～";
+            this.label6.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.label6.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(637, 438);
+            this.ClientSize = new System.Drawing.Size(637, 482);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.txtMtlLocation2);
+            this.Controls.Add(this.txtMtlLocation1);
+            this.Controls.Add(this.lbLocation);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.chkNoLocation);
             this.Controls.Add(this.textColor);
@@ -608,14 +659,18 @@
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.labelColor, 0);
             this.Controls.SetChildIndex(this.textColor, 0);
+            this.Controls.SetChildIndex(this.chkNoLocation, 0);
+            this.Controls.SetChildIndex(this.panel2, 0);
+            this.Controls.SetChildIndex(this.lbLocation, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.chkNoLocation, 0);
-            this.Controls.SetChildIndex(this.panel2, 0);
+            this.Controls.SetChildIndex(this.txtMtlLocation1, 0);
+            this.Controls.SetChildIndex(this.txtMtlLocation2, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.radioGroupReportType.ResumeLayout(false);
@@ -627,7 +682,6 @@
 
         #endregion
         private Win.UI.ComboBox cmbStockType;
-        private Win.UI.Label labelReportType;
         private Win.UI.Label labelStockType;
         private Win.UI.TextBox textColor;
         private Win.UI.Label labelColor;
@@ -665,5 +719,10 @@
         private Win.UI.RadioGroup radioGroupReportType;
         private Win.UI.RadioButton rdbtnDetail;
         private Win.UI.RadioButton rdbtnSummary;
+        private Win.UI.Label lbLocation;
+        private Win.UI.Label labelReportType;
+        private Class.TxtMtlLocation txtMtlLocation1;
+        private Class.TxtMtlLocation txtMtlLocation2;
+        private Win.UI.Label label6;
     }
 }
