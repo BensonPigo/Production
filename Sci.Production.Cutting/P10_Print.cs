@@ -623,6 +623,39 @@ Qty: {r.Quantity}({no})  Item: {r.Item}";
         public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
         {
             string sqlcmd = $@"
+SELECT 1
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+and bd.PrintGroup is null";
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                sqlcmd = $@"
+SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGroup), bd.BundleNo, bd.Qty, bd.Patterncode
+into #tmp
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+ORDER BY bd.id,bd.PrintGroup
+
+select
+	x.BundleNo,
+	No = CONCAT(x.startno, '~',  x.startno + Qty - 1)
+	,x.Id, x.DR, x.Patterncode	
+from(
+	select t.BundleNo, t.Qty,
+		startno = 1+isnull((select SUM(qty) from(select qty = min(qty) from #tmp where DR < t.DR group by DR)x), 0)
+		,t.Id,t.DR,t.Patterncode
+	from #tmp t
+)x
+order by BundleNo
+
+drop table #tmp
+";
+            }
+            else
+            {
+                sqlcmd = $@"
 SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair
 into #beforetmp
 FROM BUNDLE_DETAIL bd with(nolock)
@@ -676,6 +709,8 @@ from #tmp6
 
 drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 ";
+            }
+
             DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             return dt;
         }
