@@ -84,7 +84,7 @@ outer apply(
 					from LocalItem l WITH (NOLOCK)
 					inner join PackingList_Detail pld2  WITH (NOLOCK) on pld2.RefNo = l.RefNo
 					where pld2.ID = pl.ID
-				)d
+				)d  order by Description
 				for xml path('')
 			),1,3,''))
 		,'</n>','')
@@ -218,6 +218,9 @@ and o.Junk = 0");
                 sp11,
             };
             #endregion
+
+            sqlCmd.Append("\r\n order by pl.EstCTNBooking, o.SewInLine, pl.id");
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.gridData);
             if (!result)
             {
@@ -243,8 +246,19 @@ and o.Junk = 0");
                 return;
             }
 
-            string columns = "ID,Type,OrderId,SciDelivery,SewInLine,EstCTNBooking,EstCTNArrive,Description,CTNQty";
-            DualResult result1 = MyUtility.Tool.ProcessWithDatatable(gridData, columns, "select * from #tmp", out DataTable excelTable);
+            string columns = "ID,Type,OrderId,SciDelivery,SewInLine,EstCTNBooking,EstCTNArrive";
+            string sqlGetData = $@"
+alter table #tmp alter column ID varchar(13)
+alter table #tmp alter column OrderId varchar(13)
+
+select  t.ID, t.Type, t.OrderId, t.SciDelivery, t.SewInLine, t.EstCTNBooking, t.EstCTNArrive, l.Description, [CTNQty] = sum(pld.CTNQty)
+from    #tmp t
+inner join PackingList_Detail pld with (nolock) on pld.ID = t.ID and pld.OrderId = t.OrderId
+inner join LocalItem l with (nolock) on pld.Refno = l.Refno
+group by    t.ID, t.Type, t.OrderId, t.SciDelivery, t.SewInLine, t.EstCTNBooking, t.EstCTNArrive, l.Description
+order by    t.EstCTNBooking, t.SewInLine, t.id, l.Description
+";
+            DualResult result1 = MyUtility.Tool.ProcessWithDatatable(gridData, columns, sqlGetData, out DataTable excelTable);
             if (!result1)
             {
                 this.ShowErr(result1);
