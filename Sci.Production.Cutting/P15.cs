@@ -169,7 +169,7 @@ namespace Sci.Production.Cutting
                 }
 
                 DataRow dr = this.gridQty.GetDataRow(e.RowIndex);
-                dr["Tone"] = LetterToNumber(e.FormattedValue.ToString());
+                dr["Tone"] = this.LetterToNumber(e.FormattedValue.ToString());
                 dr["ToneChar"] = e.FormattedValue;
                 dr.EndEdit();
             };
@@ -2477,7 +2477,7 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             return true;
         }
 
-        private static int LetterToNumber(string columnName)
+        private int LetterToNumber(string columnName)
         {
             if (string.IsNullOrEmpty(columnName))
             {
