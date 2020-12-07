@@ -430,7 +430,6 @@ select  a.Id
                             ,'') 
         , a.Ukey
         , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty),0.00)
-        , a.BarcodeNo
         , AutoPickqty=(select SUM(AutoPickQty)  from Issue_Size iss where iss.Issue_DetailUkey = a.ukey)
         , OutputAutoPick=(
 			select  STUFF((
@@ -633,13 +632,6 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
         /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
-
-            if (!resultBarcodeNo)
-            {
-                return resultBarcodeNo;
-            }
-
             return base.ClickSavePre();
         }
 

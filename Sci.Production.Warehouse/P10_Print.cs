@@ -370,12 +370,6 @@ where t.id= @ID";
                 new P13_FabricSticker(this.drPrint["ID"]).ShowDialog();
             }
 
-            if (this.radioBarcode.Checked)
-            {
-                P10_PrintBarcode p10_PrintBarcode = new P10_PrintBarcode(this.drPrint["ID"].ToString());
-                p10_PrintBarcode.ShowDialog();
-            }
-
             if (this.radioRelaxationSticker.Checked)
             {
                 new P10_RelaxationSticker(this.drPrint["ID"].ToString()).ShowDialog();

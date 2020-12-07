@@ -175,13 +175,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
-
-            if (!resultBarcodeNo)
-            {
-                return resultBarcodeNo;
-            }
-
             return base.ClickSavePre();
         }
 
@@ -749,7 +742,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 ,a.StockType
 ,dbo.Getlocation(Fi.ukey) location
 ,a.ukey
-,a.BarcodeNo
 from dbo.issue_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and FI.Dyelot = a.Dyelot

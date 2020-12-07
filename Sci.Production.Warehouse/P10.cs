@@ -412,26 +412,6 @@ outer apply(
                 }
             }
 
-            // 取BarcodeNo
-            IList<DataRow> listSubDetail = new List<DataRow>();
-            DataTable dtTmp;
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                this.GetSubDetailDatas(dr, out dtTmp);
-
-                foreach (DataRow subDr in dtTmp.Rows)
-                {
-                    listSubDetail.Add(subDr);
-                }
-            }
-
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(listSubDetail);
-
-            if (!resultBarcodeNo)
-            {
-                return resultBarcodeNo;
-            }
-
             // 將Issue_Detail的數量更新Issue_Summary
             DataTable subDetail;
             foreach (DataRow detailRow in this.DetailDatas)
@@ -1138,12 +1118,6 @@ and i.id = '{this.CurrentMaintain["ID"]}'
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
-        }
-
-        private void Btn_printBarcode_Click(object sender, EventArgs e)
-        {
-            P10_PrintBarcode p10_PrintBarcode = new P10_PrintBarcode(this.CurrentMaintain["ID"].ToString());
-            p10_PrintBarcode.ShowDialog();
         }
     }
 }
