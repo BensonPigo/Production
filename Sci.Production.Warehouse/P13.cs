@@ -334,13 +334,6 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
         /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
-            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
-
-            if (!resultBarcodeNo)
-            {
-                return resultBarcodeNo;
-            }
-
             return base.ClickSavePre();
         }
 
@@ -829,7 +822,6 @@ select  o.FtyGroup
         , Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
         , dbo.Getlocation(c.ukey) location
         , a.ukey
-        , a.BarcodeNo
 		, p1.NetQty
 		, p1.LossQty
         , [Article] = case  when a.Seq1 like 'T%' then Stuff((Select distinct concat( ',',tcd.Article) 
