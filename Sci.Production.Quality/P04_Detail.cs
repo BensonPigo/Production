@@ -32,6 +32,69 @@ namespace Sci.Production.Quality
             this.MasterRow = masterrow;
             this.Deatilrow = deatilrow;
             this.EditMode = editmode;
+            this.gridFGPT.CellPainting += this.GridFGPT_CellPainting;
+            this.gridFGPT.CellFormatting += this.GridFGPT_CellFormatting;
+        }
+
+        private void GridFGPT_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex == 0 || this.gridFGPT.Columns[e.ColumnIndex].Name != "Description")
+            {
+                return;
+            }
+
+            if (this.IsTheSamePreviousCellValue("Description", e.RowIndex, this.gridFGPT))
+            {
+                e.Value = string.Empty;
+                e.FormattingApplied = true;
+            }
+        }
+
+        private void GridFGPT_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex == this.gridFGPT.Rows.Count - 1 || e.ColumnIndex < 0)
+            {
+                return;
+            }
+
+            if (this.gridFGPT.Columns[e.ColumnIndex].Name != "Description")
+            {
+                return;
+            }
+
+            e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
+            if (this.IsTheSameNextCellValue("Description", e.RowIndex, this.gridFGPT))
+            {
+                e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+            }
+            else
+            {
+                e.AdvancedBorderStyle.Bottom = this.gridFGPT.AdvancedCellBorderStyle.Bottom;
+            }
+        }
+
+        private bool IsTheSamePreviousCellValue(string column, int row, DataGridView tarGrid)
+        {
+            DataGridViewCell cell1 = tarGrid[column, row];
+            DataGridViewCell cell2 = tarGrid[column, row - 1];
+            if (cell1.Value == null || cell2.Value == null)
+            {
+                return false;
+            }
+
+            return cell1.Value.ToString() == cell2.Value.ToString();
+        }
+
+        private bool IsTheSameNextCellValue(string column, int row, DataGridView tarGrid)
+        {
+            DataGridViewCell cell1 = tarGrid[column, row];
+            DataGridViewCell cell2 = tarGrid[column, row + 1];
+            if (cell1.Value == null || cell2.Value == null)
+            {
+                return false;
+            }
+
+            return cell1.Value.ToString() == cell2.Value.ToString();
         }
 
         private void P04_Detail_Load(object sender, EventArgs e)
@@ -890,6 +953,7 @@ ex: 150.423");
 
             this.Helper.Controls.Grid.Generator(this.gridFGPT)
             .Text("LocationText", header: "Location", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Text("Description", header: "Test Name", width: Widths.AnsiChars(23), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(70), iseditingreadonly: true)
             .Text("TestResult", header: "TestResult", width: Widths.AnsiChars(10), settings: threeTestCell)
             .ComboBox("TestUnit", header: "Test Detail", width: Widths.AnsiChars(10), iseditable: false, settings: mm_N_ComboCell)
@@ -1135,7 +1199,9 @@ select [LocationText]= CASE WHEN Location='B' THEN 'Bottom'
 						 WHEN  f.TestUnit = 'Pass/Fail'  THEN f.[TestResult]
 					 	 ELSE ''
 					END
+        ,ddl.Description
 from GarmentTest_Detail_FGPT f 
+left join DropDownList ddl with (nolock) on  ddl.Type = 'PMS_FGPT_TestName' and ddl.ID = f.TestName
 where f.id = {this.Deatilrow["ID"]} and f.No = {this.Deatilrow["No"]} 
 order by LocationText DESC";
 

@@ -112,6 +112,7 @@ select  FactoryID = iif(ed.potype='M'
         , Category = (case  when o.Category = 'B' then 'Bulk' 
                             when o.Category = 'S' then 'Sample' 
                             when o.Category = 'M' then 'Material' 
+                            when o.Category = 'T' then 'Material' 
                             else '' 
                       end)
         , InspDate =iif(o.PFOrder = 1, dateadd(day,-10,o.SciDelivery)

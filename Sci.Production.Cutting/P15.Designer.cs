@@ -80,10 +80,6 @@
             this.allpart_delete = new System.Windows.Forms.ToolStripMenuItem();
             this.lbinfo = new System.Windows.Forms.Label();
             this.btnDefault = new Sci.Win.UI.Button();
-            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
-            this.radiobegin1 = new Sci.Win.UI.RadioButton();
-            this.radioWithcuto = new Sci.Win.UI.RadioButton();
-            this.labelGroup = new Sci.Win.UI.Label();
             this.BtnColorComb = new Sci.Win.UI.Button();
             this.BtnGarmentList = new Sci.Win.UI.Button();
             this.BtnClose = new Sci.Win.UI.Button();
@@ -132,7 +128,6 @@
             this.splitContainer9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).BeginInit();
             this.allpart_contextMenuStrip.SuspendLayout();
-            this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -357,8 +352,6 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.lbinfo);
             this.splitContainer2.Panel2.Controls.Add(this.btnDefault);
-            this.splitContainer2.Panel2.Controls.Add(this.radioGroup1);
-            this.splitContainer2.Panel2.Controls.Add(this.labelGroup);
             this.splitContainer2.Panel2.Controls.Add(this.BtnColorComb);
             this.splitContainer2.Panel2.Controls.Add(this.BtnGarmentList);
             this.splitContainer2.Panel2.Controls.Add(this.BtnClose);
@@ -831,56 +824,6 @@
             this.btnDefault.UseVisualStyleBackColor = true;
             this.btnDefault.Click += new System.EventHandler(this.BtnDefault_Click);
             // 
-            // radioGroup1
-            // 
-            this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.radioGroup1.Controls.Add(this.radiobegin1);
-            this.radioGroup1.Controls.Add(this.radioWithcuto);
-            this.radioGroup1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.radioGroup1.IsSupportEditMode = false;
-            this.radioGroup1.Location = new System.Drawing.Point(892, 1);
-            this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(114, 45);
-            this.radioGroup1.TabIndex = 19;
-            this.radioGroup1.TabStop = false;
-            // 
-            // radiobegin1
-            // 
-            this.radiobegin1.AutoSize = true;
-            this.radiobegin1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radiobegin1.Location = new System.Drawing.Point(10, 24);
-            this.radiobegin1.Name = "radiobegin1";
-            this.radiobegin1.Size = new System.Drawing.Size(91, 19);
-            this.radiobegin1.TabIndex = 16;
-            this.radiobegin1.Text = "begin with 1";
-            this.radiobegin1.UseVisualStyleBackColor = true;
-            // 
-            // radioWithcuto
-            // 
-            this.radioWithcuto.AutoSize = true;
-            this.radioWithcuto.Checked = true;
-            this.radioWithcuto.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioWithcuto.Location = new System.Drawing.Point(10, 9);
-            this.radioWithcuto.Name = "radioWithcuto";
-            this.radioWithcuto.Size = new System.Drawing.Size(74, 19);
-            this.radioWithcuto.TabIndex = 15;
-            this.radioWithcuto.TabStop = true;
-            this.radioWithcuto.Text = "with auto";
-            this.radioWithcuto.UseVisualStyleBackColor = true;
-            // 
-            // labelGroup
-            // 
-            this.labelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelGroup.BackColor = System.Drawing.Color.Transparent;
-            this.labelGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelGroup.Location = new System.Drawing.Point(854, 14);
-            this.labelGroup.Name = "labelGroup";
-            this.labelGroup.Size = new System.Drawing.Size(35, 23);
-            this.labelGroup.TabIndex = 20;
-            this.labelGroup.Text = "Group";
-            this.labelGroup.TextStyle.BorderColor = System.Drawing.Color.Transparent;
-            this.labelGroup.TextStyle.Color = System.Drawing.Color.Red;
-            // 
             // BtnColorComb
             // 
             this.BtnColorComb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -989,8 +932,6 @@
             this.splitContainer9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).EndInit();
             this.allpart_contextMenuStrip.ResumeLayout(false);
-            this.radioGroup1.ResumeLayout(false);
-            this.radioGroup1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1033,10 +974,6 @@
         private Win.UI.Button btn_RighttoLeft;
         private Win.UI.Button btn_LefttoRight;
         private Win.UI.Grid gridAllPart;
-        private Win.UI.Label labelGroup;
-        private Win.UI.RadioGroup radioGroup1;
-        private Win.UI.RadioButton radiobegin1;
-        private Win.UI.RadioButton radioWithcuto;
         private Win.UI.Button BtnClose;
         private Win.UI.Button BtnBatchCreate;
         private Win.UI.ContextMenuStrip allpart_contextMenuStrip;

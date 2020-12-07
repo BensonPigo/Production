@@ -92,8 +92,9 @@
     <Reference Include="PostJobLog">
       <HintPath>..\_Dll\PostJobLog.dll</HintPath>
     </Reference>
-    <Reference Include="Sci">
-      <HintPath>..\_Dll\Sci.dll</HintPath>
+    <Reference Include="Sci, Version=1.0.17.918, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll_For_Daily\Sci.dll</HintPath>
     </Reference>
     <Reference Include="Sci.Machine.Class">
       <HintPath>..\_Dll\Sci.Machine.Class.dll</HintPath>

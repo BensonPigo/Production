@@ -203,9 +203,9 @@ where id = @MDivision";
                 {
                     new SqlParameter("@ID", id),
                 };
-                string cCellNo;
+                string cCellNo, cPrintDate;
                 sqlcmd = @"
-select  b.CutCellID 
+select  b.CutCellID, [PrintDate] = Format(a.PrintDate, 'yyyy/MM/dd HH:mm')
 from dbo.Issue as a WITH (NOLOCK) 
 inner join dbo.cutplan as b WITH (NOLOCK) 
 on b.id = a.cutplanid
@@ -220,13 +220,16 @@ and a.id = @ID";
                 if (aa.Rows.Count == 0)
                 {
                     cCellNo = string.Empty;
+                    cPrintDate = string.Empty;
                 }
                 else
                 {
                     cCellNo = aa.Rows[0]["CutCellID"].ToString();
+                    cPrintDate = aa.Rows[0]["PrintDate"].ToString();
                 }
 
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cCellNo));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cPrintDate", cPrintDate));
 
                 pars = new List<SqlParameter>
                 {

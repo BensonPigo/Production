@@ -1,29 +1,26 @@
 ﻿using Ict;
+using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
-using System.Transactions;
-using System.Configuration;
-using Sci.Production.Automation;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.PublicForm
 {
     /// <inheritdoc/>
     public partial class EachConsumption_SwitchWorkOrder : Win.Subs.Base
     {
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
-        private string cuttingid;
+        private readonly string loginID = Env.User.UserID;
+        private readonly string keyWord = Env.User.Keyword;
+        private readonly string cuttingid;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EachConsumption_SwitchWorkOrder"/> class.
-        /// </summary>
-        /// <param name="cutid">Cutting id</param>
+        /// <inheritdoc/>
         public EachConsumption_SwitchWorkOrder(string cutid)
         {
             this.InitializeComponent();
@@ -38,6 +35,49 @@ namespace Sci.Production.PublicForm
             }
         }
 
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.GridSetup();
+            this.Query();
+        }
+
+        private void GridSetup()
+        {
+            this.grid1.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.grid1)
+                .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .CheckBox("ExWip", header: "Exclude in WIP", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Description", header: "Description", width: Widths.AnsiChars(55), iseditingreadonly: true)
+                ;
+        }
+
+        private void Query()
+        {
+            string sqlcmd = $@"
+select distinct
+	oe.FabricCombo,
+	ExWip=CAST(isnull((select 1 from Cutting_WIPExcludePatternPanel cw with(nolock) where cw.ID = oe.Id and cw.PatternPanel = oe.FabricCombo), 0) as bit),
+	oe.FabricCode,f.Refno,f.Description
+from Order_EachCons oe with(nolock)
+inner join Order_BOF bof with(nolock) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
+LEFT JOIN Fabric f with(nolock) ON bof.SCIRefno=f.SCIRefno
+where oe.Id = '{this.cuttingid}'
+and oe.CuttingPiece <> 1
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable gridtb);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.listControlBindingSource1.DataSource = gridtb;
+        }
+
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -45,7 +85,6 @@ namespace Sci.Production.PublicForm
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
-            DataTable workorder;
             string cmd = string.Empty;
             string worktype;
             if (this.radioCombination.Checked)
@@ -68,8 +107,7 @@ left join Order_EachCons_Color_Article b with(nolock)on a.SizeCode = b.SizeCode 
 where a.id = '{this.cuttingid}' and b.Article is null and a.Qty > 0
 and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 ";
-            DataTable dTcheckAS;
-            DualResult result = DBProxy.Current.Select(null, checkArticleSize, out dTcheckAS);
+            DualResult result = DBProxy.Current.Select(null, checkArticleSize, out DataTable dTcheckAS);
             if (!result)
             {
                 this.ShowErr(result);
@@ -97,8 +135,7 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 
             #region 若只要有一筆不存在BOF就不可轉
             cmd = string.Format(@"Select * from Order_EachCons a WITH (NOLOCK) Left join Order_Bof b WITH (NOLOCK) on a.id = b.id and a.FabricCode = b.FabricCode Where a.id = '{0}' and b.id is null", this.cuttingid);
-            DataTable bofnullTb;
-            DualResult worRes = DBProxy.Current.Select(null, cmd, out bofnullTb);
+            DualResult worRes = DBProxy.Current.Select(null, cmd, out DataTable bofnullTb);
             if (!worRes)
             {
                 this.ShowErr(cmd, worRes);
@@ -119,7 +156,7 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
             #endregion
 
             #region 若Cutplanid有值就不可刪除重轉
-            worRes = DBProxy.Current.Select(null, string.Format("Select id from workorder WITH (NOLOCK) where id = '{0}' and cutplanid  != '' ", this.cuttingid), out workorder);
+            worRes = DBProxy.Current.Select(null, string.Format("Select id from workorder WITH (NOLOCK) where id = '{0}' and cutplanid  != '' ", this.cuttingid), out DataTable workorder);
             if (!worRes)
             {
                 this.ShowErr(worRes);
@@ -163,8 +200,7 @@ where  b.fabricpanelcode is null
 
 drop table #tmp1,#tmp2
 ";
-            DataTable dTcheckFabricPanelCode_article_color;
-            worRes = DBProxy.Current.Select(null, checkByFabricPanelCode_article_color, out dTcheckFabricPanelCode_article_color);
+            worRes = DBProxy.Current.Select(null, checkByFabricPanelCode_article_color, out DataTable dTcheckFabricPanelCode_article_color);
             if (!worRes)
             {
                 this.ShowErr(worRes);
@@ -209,20 +245,34 @@ drop table #tmp1,#tmp2
                 try
                 {
                     cmd = string.Format(
-                    @"
-                      select Ukey from Workorder with (nolock) where id= '{0}' and CutRef <> '' and CutRef is not null;
-                      select WorkOrderUkey, OrderID, Article, SizeCode 
-                      from WorkOrder_Distribute  with (nolock)
-                      where WorkOrderUkey in (select Ukey from Workorder with (nolock) where id='{0}' and CutRef <> '' and CutRef is not null);
+                        @"
+select Ukey from Workorder with (nolock) where id= '{0}' and CutRef <> '' and CutRef is not null;
+select WorkOrderUkey, OrderID, Article, SizeCode 
+from WorkOrder_Distribute  with (nolock)
+where WorkOrderUkey in (select Ukey from Workorder with (nolock) where id='{0}' and CutRef <> '' and CutRef is not null);
 
-                      Delete Workorder where id='{0}';
-                      Delete WorkOrder_Distribute where id='{0}';
-                      Delete WorkOrder_SizeRatio where id='{0}';
-                      Delete WorkOrder_Estcutdate where id='{0}';
-                      Delete WorkOrder_PatternPanel where id='{0}'", this.cuttingid);
+Delete Workorder where id='{0}';
+Delete WorkOrder_Distribute where id='{0}';
+Delete WorkOrder_SizeRatio where id='{0}';
+Delete WorkOrder_Estcutdate where id='{0}';
+Delete WorkOrder_PatternPanel where id='{0}'
+
+Delete Cutting_WIPExcludePatternPanel where id = '{0}'
+", this.cuttingid);
                     if (!(dResult = DBProxy.Current.Select(null, cmd, out DataTable[] tablesWorkorder)))
                     {
                         throw new Exception(dResult.Messages.ToString());
+                    }
+
+                    DataTable sdt = (DataTable)this.listControlBindingSource1.DataSource;
+                    string insertcmd = $@"insert into Cutting_WIPExcludePatternPanel(ID,PatternPanel,AddName,AddDate)
+select '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #tmp where ExWip = 1";
+                    DualResult result1 = MyUtility.Tool.ProcessWithDatatable(sdt, string.Empty, insertcmd, out DataTable odt);
+                    if (!result1)
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result1);
+                        return;
                     }
 
                     string exswitch;
