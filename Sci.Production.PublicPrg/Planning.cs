@@ -169,7 +169,7 @@ from Bundle_Detail_Order bdo WITH (NOLOCK)
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bdo.BundleNo
 inner join Bundle bun WITH (NOLOCK) on bun.id = bd.id
 inner join Orders o WITH (NOLOCK) on bdo.Orderid = o.ID and  bun.MDivisionID = o.MDivisionID
-and exists (select 1 from #cte t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
+and exists (select 1 from {tempTable} t where t.OrderID = o.ID and o.LocalOrder = 1) --Local單
 
 select distinct t.Orderid,t.POID,t.Article,t.SizeCode,t.PatternPanel,t.FabricPanelCode
 into #AllOrders
