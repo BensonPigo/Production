@@ -61,6 +61,9 @@ namespace Sci.Production.Sewing
         public DateTime Date { get; set; }
 
         /// <inheritdoc/>
+        public string DateYYYYMMDD { get { return this.Date.ToString("yyyyMMdd"); } }
+
+        /// <inheritdoc/>
         public decimal SewTtlManpower { get; set; }
 
         /// <inheritdoc/>

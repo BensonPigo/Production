@@ -1268,6 +1268,31 @@ where f.Junk = 0",
                 return false;
             }
 
+            // 取得資料中IsSampleRoom的工廠
+            DataTable[] resultDts;
+            string sqlGetFactory = $@"
+alter table #tmp alter column FactoryID varchar(8)
+
+select distinct t.FactoryID, f.IsSampleRoom
+into    #tmpResult
+from    #tmp t
+inner join Factory f with (nolock) on f.ID = t.FactoryID
+
+select FactoryID from #tmpResult where IsSampleRoom = 0
+select FactoryID from #tmpResult where IsSampleRoom = 1
+";
+
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, "FactoryID", sqlGetFactory, out resultDts);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            DataTable dtNotSampleRoomFty = resultDts[0];
+            DataTable dtIsSampleRoomFty = resultDts[1];
+
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Env.Cfg.XltPathDir;
             switch (this.reportType)
@@ -1400,12 +1425,40 @@ where f.Junk = 0",
             }
             else
             {
-                if (pams != null)
+                List<string> listWorkDate = new List<string>();
+
+                if (dtIsSampleRoomFty.Rows.Count > 0)
                 {
-                    int ttlWorkDay = pams.Where(w => w.SewTtlManhours != 0).Count();
-                    worksheet.Cells[insertRow, 1] = "Total work day:";
-                    worksheet.Cells[insertRow, 3] = ttlWorkDay;
+                    string whereFty = dtIsSampleRoomFty.AsEnumerable().Select(s => $"'{s["FactoryID"].ToString()}'").JoinToString(",");
+                    string strWorkDay = $@"select Distinct [OutputDate] = Format(OutputDate,'yyyyMMdd') from #tmp where LastShift <> 'O' and FactoryID in ({whereFty})";
+                    DataTable dtWorkDay;
+                    DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
+                    if (failResult == false)
+                    {
+                        MyUtility.Msg.WarningBox(failResult.ToString());
+                    }
+                    else if (dtWorkDay.Rows.Count > 0)
+                    {
+                        listWorkDate.AddRange(dtWorkDay.AsEnumerable().Select(s => s["OutputDate"].ToString()).ToList());
+                    }
                 }
+
+                if (dtNotSampleRoomFty.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtNotSampleRoomFty.Rows)
+                    {
+                        List<APIData> listAPIData = new List<APIData>();
+                        GetApiData.GetAPIData(this.mDivision, dr["FactoryID"].ToString(), (DateTime)this.date1.Value, (DateTime)this.date2.Value, out listAPIData);
+                        if (listAPIData != null)
+                        {
+                            listWorkDate.AddRange(listAPIData.Where(w => w.SewTtlManhours != 0).Select(s => s.DateYYYYMMDD));
+                        }
+                    }
+                }
+
+                int ttlWorkDay = listWorkDate.Distinct().Count();
+                worksheet.Cells[insertRow, 1] = "Total work day:";
+                worksheet.Cells[insertRow, 3] = ttlWorkDay;
             }
             #endregion
 
