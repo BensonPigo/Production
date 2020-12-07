@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[System] (
+CREATE TABLE [dbo].[System] (
     [Mailserver]                 VARCHAR (60)   CONSTRAINT [DF_System_Mailserver] DEFAULT ('') NULL,
     [Sendfrom]                   VARCHAR (40)   CONSTRAINT [DF_System_Sendfrom] DEFAULT ('') NULL,
     [EmailID]                    VARCHAR (40)   CONSTRAINT [DF_System_Emailid] DEFAULT ('') NULL,
@@ -56,14 +56,17 @@
     [AutomationAutoRunTime]      TINYINT        CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)) NOT NULL,
     [CanReviseDailyLockData]     BIT            DEFAULT ((0)) NOT NULL,
     [AutoGenerateByTone]         BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
-    [MiscPOApproveName] VARCHAR(10) CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL, 
-    [MiscPOApproveDay] TINYINT CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL, 
-    [QMSAutoAdjustMtl] BIT CONSTRAINT [DF_System_QMSAutoAdjustMtl] NOT NULL DEFAULT ((0)), 
-    [ShippingMarkTemplatePath] VARCHAR(80)  NOT NULL CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT(''), 
-    [WIP_FollowCutOutput] BIT NOT NULL DEFAULT ((0)), 
-    [NoRestrictOrdersDelivery] BIT NOT NULL DEFAULT ((0)), 
+    [MiscPOApproveName]          VARCHAR (10)   CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL,
+    [MiscPOApproveDay]           TINYINT        CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL,
+    [QMSAutoAdjustMtl]           BIT            DEFAULT ((0)) NOT NULL,
+    [ShippingMarkTemplatePath]   VARCHAR (80)   CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT ('') NOT NULL,
+    [WIP_ByShell]                BIT            CONSTRAINT [DF_System_WIP_FollowCutOutput] DEFAULT ((0)) NOT NULL,
+    [NoRestrictOrdersDelivery]   BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
+    [RFCardEraseBeforePrinting]  BIT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
+
+
 
 
 GO
@@ -71,7 +74,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local 
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase 自動Approve的天數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveDay';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Misc Local Purchase �۰�Approve���Ѽ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'MiscPOApproveDay';
+
+
 
 
 GO
@@ -269,21 +274,16 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'驗布機�
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'QMS檢驗自動調整長度',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'System',
-    @level2type = N'COLUMN',
-    @level2name = N'QMSAutoAdjustMtl'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QMS����۰ʽվ����', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'QMSAutoAdjustMtl';
+
+
 
 Go
 
 
-	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'標籤範本檔路徑'
-	, @level0type = N'SCHEMA', @level0name = N'dbo'
-	, @level1type = N'TABLE', @level1name = N'System'
-	, @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ҽd���ɸ�|', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
+
+
 GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Card Erase Before Printing', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'RFCardEraseBeforePrinting';
 
