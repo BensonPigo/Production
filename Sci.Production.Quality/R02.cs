@@ -217,15 +217,16 @@ select A.POID
 	,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
 	,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
 	,a.Remark
-	,AIRL_Encode.OvenEncode
-	,AIRL.NonOven
-	,AIRL.Oven
-	,AIRL.OvenScale
-	,AIRL.OvenDate
-	,AIRL.NonWash
-	,AIRL.Wash
-	,AIRL.WashScale
-	,AIRL.WashDate
+	,[OvenEncode] = iif(AIRL.NonOven =1 and AIRL.NonWash =1, 'Y', '')
+    ,AIRL.Result
+	,[NonOven] = iif(AIRL.NonOven =1, 'Y', '')
+	,[Oven] = iif(AIRL.OvenEncode = 1, AIRL.Oven, null)
+	,[OvenScale] = iif(AIRL.OvenEncode = 1, AIRL.OvenScale, null) 
+	,[OvenDate] = iif(AIRL.OvenEncode = 1, AIRL.OvenDate, null)
+	,[NonWash] = iif(AIRL.NonWash =1, 'Y', '')
+	,[Wash] = iif(AIRL.WashEncode = 1, AIRL.Wash, null) 
+	,[WashScale] = iif(AIRL.WashEncode = 1, AIRL.WashScale, null)
+	,[WashDate] = iif(AIRL.WashEncode = 1, AIRL.WashDate, null)
 from dbo.AIR A WITH (NOLOCK) 
 inner join (
 		select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2,r.StockQty 
@@ -242,6 +243,7 @@ inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A
 left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
 inner join supp s WITH (NOLOCK) on s.id = P.SuppID
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = PS.scirefno
+left join dbo.AIR_Laboratory AIRL WITH (NOLOCK) on AIRL.ID = A.ID     
 OUTER APPLY (
 	SELECT  [Val]=  STUFF((
 	SELECT ', '+ IIF(a.Defect = '' , '' ,ori.Data +'-'+ ISNULL(ad.Description,''))
@@ -250,8 +252,6 @@ OUTER APPLY (
 	 FOR XML PATH('')
 	 ),1,1,'')
 )DefectText
-OUTER APPLY ( select * from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.OvenEncode = 1 and AL.ID = A.ID)AIRL
-OUTER APPLY ( select [OvenEncode]='Y' from dbo.AIR_Laboratory AL WITH (NOLOCK) where AL.ID = A.ID and NonOven =1 and NonWash =1)AIRL_Encode                
 OUTER APPLY ( select name from dbo.color c where c.id=ps.colorid_old and C.BrandId = x.BrandId) as oc
 OUTER APPLY (
 	select [Article] = Stuff((
