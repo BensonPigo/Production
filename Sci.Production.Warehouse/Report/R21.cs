@@ -221,6 +221,7 @@ namespace Sci.Production.Warehouse
         private DataTable printData;
         private DataTable printData_cnt;
         private DataTable printData_yyyy;
+        private List<SqlParameter> parameters = new List<SqlParameter>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="R21"/> class.
@@ -294,7 +295,7 @@ namespace Sci.Production.Warehouse
         {
             this.sqlcmd.Clear();
             this.sqlcmd_fin.Clear();
-            List<SqlParameter> parameters = new List<SqlParameter>();
+            this.parameters.Clear();
 
             if (this._reportType == 0)
             {
@@ -600,32 +601,35 @@ or
 
             if (!MyUtility.Check.Empty(this.location1) && !MyUtility.Check.Empty(this.location2))
             {
-                parameters.Add(new SqlParameter("@location1", this.location1));
-                parameters.Add(new SqlParameter("@location2", this.location2));
+                this.parameters.Add(new SqlParameter("@location1", this.location1));
+                this.parameters.Add(new SqlParameter("@location2", this.location2));
                 this.sqlcmd.Append(
                     @" 
-        and fi.ukey in ( select ukey 
+        and exists ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where mtllocationid >= @location1
-                        and  mtllocationid <= @location2 ) " + Environment.NewLine);
+                        where fi.ukey = ukey
+                        and mtllocationid >= @location1
+                        and mtllocationid <= @location2 ) " + Environment.NewLine);
             }
             else if (!MyUtility.Check.Empty(this.location1))
             {
-                parameters.Add(new SqlParameter("@location1", this.location1));
+                this.parameters.Add(new SqlParameter("@location1", this.location1));
                 this.sqlcmd.Append(
                     @" 
-        and fi.ukey in ( select ukey 
+        and exists in ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where mtllocationid = @location1) " + Environment.NewLine);
+                        where fi.ukey = ukey
+                        and mtllocationid = @location1) " + Environment.NewLine);
             }
             else if (!MyUtility.Check.Empty(this.location2))
             {
-                parameters.Add(new SqlParameter("@location2", this.location2));
+                this.parameters.Add(new SqlParameter("@location2", this.location2));
                 this.sqlcmd.Append(
                     @" 
-        and fi.ukey in ( select ukey 
+        and exists in ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where mtllocationid = @location2) " + Environment.NewLine);
+                        where fi.ukey = ukey
+                        and mtllocationid = @location2) " + Environment.NewLine);
             }
             #endregion
 
@@ -633,7 +637,7 @@ or
             DualResult result;
 
             // 先抓出資料筆數 大於100萬筆需另外處理(按年出多excel)
-            if (result = DBProxy.Current.Select(null, this.sql_cnt + this.sqlcmd.ToString(), parameters, out this.printData_cnt))
+            if (result = DBProxy.Current.Select(null, this.sql_cnt + this.sqlcmd.ToString(), this.parameters, out this.printData_cnt))
             {
                 this.data_cnt = (int)this.printData_cnt.Rows[0]["datacnt"];
 
@@ -679,7 +683,7 @@ or
                 string strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 int sheet_cnt = 1;
                 int split_cnt = 500000;
-                result = DBProxy.Current.Select(null, this.sql_yyyy + this.sqlcmd, out this.printData_yyyy);
+                result = DBProxy.Current.Select(null, this.sql_yyyy + this.sqlcmd, this.parameters, out this.printData_yyyy);
                 if (!result)
                 {
                     this.HideWaitMessage();
@@ -700,7 +704,7 @@ or
                     com.ColumnsAutoFit = false;
                     sheet_cnt = 1;
 
-                    if (DBProxy.Current.Select(null, sqlcmd_dtail, out this.printData))
+                    if (DBProxy.Current.Select(null, sqlcmd_dtail, this.parameters, out this.printData))
                     {
                         // 如果筆數超過split_cnt再拆一次sheet
                         if (this.printData.Rows.Count > split_cnt)
@@ -798,7 +802,7 @@ or
             }
             else
             {
-                result = DBProxy.Current.Select(null,  this.sqlcmd_fin.ToString(), out this.printData);
+                result = DBProxy.Current.Select(null,  this.sqlcmd_fin.ToString(), this.parameters, out this.printData);
                 if (!result)
                 {
                     this.HideWaitMessage();
