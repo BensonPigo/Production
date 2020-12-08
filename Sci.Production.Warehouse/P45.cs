@@ -315,9 +315,9 @@ from(
 	from
 	(
 		select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
-		from dbo.Adjust_Detail d WITH (NOLOCK) 
-		inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
-		inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
+		from dbo.Adjust_Detail d 
+		inner join FtyInventory f on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
+		inner join MDivisionPoDetail m on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
 		where d.Id = '{1}'
 		and f.StockType = 'O'
 		group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty

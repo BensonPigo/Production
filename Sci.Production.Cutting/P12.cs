@@ -690,7 +690,7 @@ OPTION (RECOMPILE)"
 
         private void BtnBundleCard_Click(object sender, EventArgs e)
         {
-            this.contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+            this.PrintBarcode();
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
@@ -719,17 +719,7 @@ OPTION (RECOMPILE)"
             this.Close();
         }
 
-        private void Layout1_Click(object sender, EventArgs e)
-        {
-            this.PrintBarcode(1);
-        }
-
-        private void Layout2_Click(object sender, EventArgs e)
-        {
-            this.PrintBarcode(2);
-        }
-
-        private void PrintBarcode(int layout)
+        private void PrintBarcode()
         {
             this.grid1.ValidateControl();
             DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
@@ -835,14 +825,14 @@ OPTION (RECOMPILE)"
                     {
                         var writedata = data.Skip((s - 1) * 9).Take(9).ToList();
                         Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
-                        P10_Print.ProcessPrint(writedata, worksheet, layout, allNoDatas);
+                        P10_Print.ProcessPrint(writedata, worksheet, allNoDatas);
                         pp++;
                     }
                 });
             }
             else
             {
-                P10_Print.RunPagePrint(data, excelApp, layout);
+                P10_Print.RunPagePrint(data, excelApp);
             }
 
             // 有按才更新列印日期printdate。

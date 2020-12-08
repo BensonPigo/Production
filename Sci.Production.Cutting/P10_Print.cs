@@ -42,7 +42,7 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            if (this.radioBundleCard.Checked == true)
+            if (this.radioBundleCard.Checked)
             {
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
@@ -385,8 +385,7 @@ order by x.[Bundle]");
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                int layout = this.comboLayout.SelectedValue.ToString() == "0" ? 1 : 2;
-                RunPagePrint(data, excelApp, layout);
+                RunPagePrint(data, excelApp);
                 this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
@@ -551,7 +550,7 @@ order by x.[Bundle]");
         }
 
         /// <inheritdoc/>
-        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int layout)
+        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp)
         {
             // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
             int page = ((data.Count - 1) / 9) + 1;
@@ -582,12 +581,12 @@ order by x.[Bundle]");
             {
                 var writedata = data.Skip((pi - 1) * 9).Take(9).ToList();
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
-                ProcessPrint(writedata, worksheet, layout, allNoDatas);
+                ProcessPrint(writedata, worksheet, allNoDatas);
             }
         }
 
         /// <inheritdoc/>
-        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout, DataTable allNoDatas)
+        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, DataTable allNoDatas)
         {
             int i = 0;
             int col_ref = 0;
@@ -597,34 +596,17 @@ order by x.[Bundle]");
             {
                 string no = GetNo(r.Barcode, allNoDatas);
                 string contian;
-                if (layout == 1)
-                {
-                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
 SP#:{r.SP}
 Style#: {r.Style}
-Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     Tone: {r.Tone}
+Cut#: {r.Body_Cut}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
-Desc: {r.Desc}
-Sub Process: {r.Artwork}
-Qty: {r.Quantity}     No: {no}";
-                }
-                else
-                {
-                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{r.SP}
-Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     Tone: {r.Tone}
-Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
-Desc: {r.Desc}
+MK#: {r.MarkerNo}     Cut/L:
 Sub Process: {r.Artwork}
-Qty: {r.Quantity}     Item: {r.Item}";
-                }
+Desc: {r.Desc}
+Qty: {r.Quantity}({no})  Item: {r.Item}";
 
                 row_ref = i / 3;
                 row_ref = (row_ref * 5) - (row_ref / 3);
@@ -673,6 +655,39 @@ Qty: {r.Quantity}     Item: {r.Item}";
         public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
         {
             string sqlcmd = $@"
+SELECT 1
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+and bd.PrintGroup is null";
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                sqlcmd = $@"
+SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGroup), bd.BundleNo, bd.Qty, bd.Patterncode
+into #tmp
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+ORDER BY bd.id,bd.PrintGroup
+
+select
+	x.BundleNo,
+	No = CONCAT(x.startno, '~',  x.startno + Qty - 1)
+	,x.Id, x.DR, x.Patterncode	
+from(
+	select t.BundleNo, t.Qty,
+		startno = 1+isnull((select SUM(qty) from(select qty = min(qty) from #tmp where DR < t.DR group by DR)x), 0)
+		,t.Id,t.DR,t.Patterncode
+	from #tmp t
+)x
+order by BundleNo
+
+drop table #tmp
+";
+            }
+            else
+            {
+                sqlcmd = $@"
 SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair
 into #beforetmp
 FROM BUNDLE_DETAIL bd with(nolock)
@@ -726,6 +741,8 @@ from #tmp6
 
 drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 ";
+            }
+
             DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             return dt;
         }
@@ -786,7 +803,6 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 
         private void RadioButtionChangeStatus()
         {
-            this.comboLayout.Visible = true;
             this.toexcel.Enabled = true;
             this.print.Enabled = true;
             if (this.radioBundleCard.Checked)
@@ -795,12 +811,10 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             }
             else if (this.radioBundleChecklist.Checked)
             {
-                this.comboLayout.Visible = false;
             }
             else if (this.radioBundleCardRF.Checked || this.radioBundleErase.Checked)
             {
                 this.toexcel.Enabled = false;
-                this.comboLayout.Visible = false;
             }
         }
 

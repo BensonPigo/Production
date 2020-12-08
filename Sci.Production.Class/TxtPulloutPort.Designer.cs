@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class TxtPort 
+    partial class TxtPulloutPort
     {
         /// <summary> 
         /// 設計工具所需的變數。
@@ -29,23 +29,33 @@
         private void InitializeComponent()
         {
             this.TextBox1 = new Sci.Win.UI.TextBox();
+            this.DisplayBox1 = new Sci.Win.UI.DisplayBox();
             this.SuspendLayout();
             // 
             // textBox1
             // 
             this.TextBox1.Location = new System.Drawing.Point(0, 0);
             this.TextBox1.Name = "textBox1";
-            this.TextBox1.Size = new System.Drawing.Size(190, 22);
+            this.TextBox1.Size = new System.Drawing.Size(80, 22);
             this.TextBox1.TabIndex = 0;
             this.TextBox1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TextBox1_PopUp);
             this.TextBox1.Validating += new System.ComponentModel.CancelEventHandler(this.TextBox1_Validating);
+            this.TextBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
-            // txtcountry
+            // displayBox1
+            // 
+            this.DisplayBox1.Location = new System.Drawing.Point(81, 0);
+            this.DisplayBox1.Name = "displayBox1";
+            this.DisplayBox1.Size = new System.Drawing.Size(180, 22);
+            this.DisplayBox1.TabIndex = 1;
+            // 
+            // txtPulloutPortID
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.TextBox1);
-            this.Name = "txtPort";
-            this.Size = new System.Drawing.Size(450, 22);
+            this.Controls.Add(this.DisplayBox1);
+            this.Name = "txtPulloutPortID";
+            this.Size = new System.Drawing.Size(260, 22);
             this.ResumeLayout(false);
             this.PerformLayout();
         }

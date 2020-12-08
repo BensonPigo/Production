@@ -56,7 +56,6 @@
             this.labelProcess = new Sci.Win.UI.Label();
             this.labelModularParent = new Sci.Win.UI.Label();
             this.txtStyleNo = new Sci.Win.UI.TextBox();
-            this.txtBrand = new Sci.Win.UI.TextBox();
             this.txtProgram = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.txtStyleName = new Sci.Win.UI.TextBox();
@@ -120,6 +119,7 @@
             this.comboPressing1 = new Sci.Win.UI.ComboBox();
             this.labelFabricType = new Sci.Win.UI.Label();
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -137,6 +137,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtbrand1);
             this.detailcont.Controls.Add(this.comboPressing1);
             this.detailcont.Controls.Add(this.comboFolding2);
             this.detailcont.Controls.Add(this.comboPressing2);
@@ -194,7 +195,6 @@
             this.detailcont.Controls.Add(this.txtStyleName);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtProgram);
-            this.detailcont.Controls.Add(this.txtBrand);
             this.detailcont.Controls.Add(this.txtStyleNo);
             this.detailcont.Controls.Add(this.labelModularParent);
             this.detailcont.Controls.Add(this.labelProcess);
@@ -516,17 +516,6 @@
             this.txtStyleNo.Size = new System.Drawing.Size(140, 23);
             this.txtStyleNo.TabIndex = 0;
             this.txtStyleNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyleNo_Validating);
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(108, 34);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(75, 23);
-            this.txtBrand.TabIndex = 3;
-            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBrand_Validating);
             // 
             // txtProgram
             // 
@@ -1220,6 +1209,17 @@
             this.displayFabricType.Size = new System.Drawing.Size(111, 23);
             this.displayFabricType.TabIndex = 73;
             // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(107, 34);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 81;
+            this.txtbrand1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBrand_Validating);
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1008, 632);
@@ -1299,7 +1299,6 @@
         private Win.UI.TextBox txtStyleName;
         private Win.UI.TextBox txtDescription;
         private Win.UI.TextBox txtProgram;
-        private Win.UI.TextBox txtBrand;
         private Win.UI.TextBox txtStyleNo;
         private Win.UI.Label labelModularParent;
         private Win.UI.Label labelProcess;
@@ -1344,5 +1343,6 @@
         private Win.UI.ComboBox comboPressing1;
         private Win.UI.DisplayBox displayFabricType;
         private Win.UI.Label labelFabricType;
+        private Class.Txtbrand txtbrand1;
     }
 }

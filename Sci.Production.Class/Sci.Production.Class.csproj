@@ -153,11 +153,11 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
-    <Compile Include="TxtPort.cs">
+    <Compile Include="TxtPulloutPort.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TxtPort.Designer.cs">
-      <DependentUpon>TxtPort.cs</DependentUpon>
+    <Compile Include="TxtPulloutPort.Designer.cs">
+      <DependentUpon>TxtPulloutPort.cs</DependentUpon>
     </Compile>
     <Compile Include="Txtbrand.cs">
       <SubType>Component</SubType>
@@ -690,8 +690,8 @@
     <EmbeddedResource Include="TxtMultiSubconNoConfirm.resx">
       <DependentUpon>TxtMultiSubconNoConfirm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TxtPort.resx">
-      <DependentUpon>TxtPort.cs</DependentUpon>
+    <EmbeddedResource Include="TxtPulloutPort.resx">
+      <DependentUpon>TxtPulloutPort.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TxtShippingReason.resx">
       <DependentUpon>TxtShippingReason.cs</DependentUpon>
