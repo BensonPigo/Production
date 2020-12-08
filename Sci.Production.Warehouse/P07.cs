@@ -1410,7 +1410,7 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
                     pre_row.EndEdit();
 
                     // 在插入新的row前，將現有資料clickInsert確保為1
-                    ((DataTable)this.detailgridbs.DataSource).AsEnumerable().ToList().ForEach(f => f["clickInsert"] = 1);
+                    ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["clickInsert"] = 1);
                     int insertIndex = ((DataTable)this.detailgridbs.DataSource).Rows.IndexOf(this.detailgrid.GetDataRow(e.RowIndex)) + 1;
 
                     // 新增資料，位置插入在點擊的下一行
@@ -2217,7 +2217,7 @@ select  a.id
         , a.ActualQty
 		, TtlQty = convert(varchar(20),
 			iif(a.CombineBarcode is null , a.ActualQty, 
-				iif(a.Unoriginal is null , ttlQty.value, null))) +' '+ a.PoUnit
+				iif(a.Unoriginal is  null , ttlQty.value, null))) +' '+ a.PoUnit
         , a.PoUnit
         , a.StockQty
         , a.StockUnit
@@ -2357,8 +2357,10 @@ select
 	, c.FactoryID
 	, c.OrderTypeID
 	, [ContainerType] = Container.Val
-	, pll.QRCode
+	, pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
     , clickInsert = 1
+	, CombineBarcode = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
+into #tmp
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
                                                  and a.Seq1 = b.SEQ1    
@@ -2384,6 +2386,28 @@ OUTER APPLY(
 )Color
 where a.id='{this.CurrentMaintain["exportid"]}'
 order by a.poid, a.seq1, a.seq2, b.FabricType
+
+select *,
+	Unoriginal_0 =  IIF(isnull(QRCode, '') <> '' and COUNT(1) over(partition by CombineBarcode) > 1,
+							row_number() over(partition by CombineBarcode order by  poid, seq1, seq2, FabricType) - 1,
+							null)
+into #tmp2
+from #tmp
+
+select t.*,
+	Unoriginal =  IIF(Unoriginal_0 = 0, Null, Unoriginal_0), -- 次項目為1, 主項或其它為 Null, 不能為 0
+	TtlQty = convert(varchar(20),
+		iif(t.Unoriginal_0 is null , t.ActualQty, 
+			iif(t.Unoriginal_0 = 0 , x.qty, null))) +' '+ PoUnit
+from #tmp2 t
+outer apply(
+	select qty = SUM(t2.Actualqty)
+	from #tmp2 t2
+	where t2.QRCode = t.QRCode
+)x
+order by poid, seq1, seq2, FabricType
+
+drop table #tmp,#tmp2
 ";
                     DualResult result = DBProxy.Current.Select(null, selCom, out DataTable dt);
                     if (!result)
