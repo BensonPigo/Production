@@ -1382,10 +1382,10 @@ drop table #tmp,#tmp2";
                         oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and ran = 0");
                     }
 
-                    DataRow tmpdr = bundle_detail_tmp.Select("ran = 0").OrderBy(o => o["Ukey1"]).First();
+                    DataRow tmpdr = bundle_detail_tmp.Select("ran = 0").OrderBy(o => MyUtility.Convert.GetLong(o["Ukey1"])).First();
                     if (oridrs.Length > 0)
                     {
-                        tmpdr = oridrs.OrderBy(o => o["Ukey1"]).First();
+                        tmpdr = oridrs.OrderBy(o => MyUtility.Convert.GetLong(o["Ukey1"])).First();
                     }
 
                     tmpdr["ran"] = 1;
@@ -1475,12 +1475,31 @@ drop table #tmp,#tmp2";
             }
 
             // 表示新增的比較多需要Insert
+            bundle_detail_tmp.AsEnumerable().ToList().ForEach(f => f["ran"] = 0);
+            foreach (DataRow dr in this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+            {
+                DataRow[] oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and Qty = '{dr["Qty"]}' and ran = 0");
+                if (oridrs.Length == 0)
+                {
+                    oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and ran = 0");
+                }
+
+                DataRow tmpdr = bundle_detail_tmp.Select("ran = 0").OrderBy(o => MyUtility.Convert.GetLong(o["Ukey1"])).First();
+                if (oridrs.Length > 0)
+                {
+                    tmpdr = oridrs.OrderBy(o => MyUtility.Convert.GetLong(o["Ukey1"])).First();
+                }
+
+                tmpdr["ran"] = 1;
+            }
+
             if (tmpRow > j)
             {
                 for (int i = 0; i < tmpRow - j; i++)
                 {
                     DataRow ndr = this.detailTb.NewRow();
-                    DataRow tmpdr = bundle_detail_tmp.Rows[j + i];
+                    DataRow tmpdr = bundle_detail_tmp.Select("ran = 0")[0];
+                    tmpdr["ran"] = 1;
                     ndr["bundlegroup"] = tmpdr["bundlegroup"];
                     ndr["PatternCode"] = tmpdr["PatternCode"];
                     ndr["PatternDesc"] = tmpdr["PatternDesc"];
@@ -1618,7 +1637,7 @@ drop table #tmp,#tmp2";
                 int a = this.detailTb.Select("PatternCode = 'AllParts'").Length;
                 if (na > 0)
                 {
-                    dtDetail = this.detailTb.Select("PatternCode <> 'AllParts'").OrderBy(o => o["tmpSeq"]).CopyToDataTable();
+                    dtDetail = this.detailTb.Select("PatternCode <> 'AllParts'").OrderBy(o => MyUtility.Convert.GetLong(o["tmpSeq"])).CopyToDataTable();
                     dtDetail.Columns.Add("tmpNum", typeof(int));
                 }
 
