@@ -138,6 +138,7 @@
             // chkAirPort
             // 
             this.chkAirPort.AutoSize = true;
+            this.chkAirPort.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AirPort", true));
             this.chkAirPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkAirPort.Location = new System.Drawing.Point(400, 60);
             this.chkAirPort.Name = "chkAirPort";
@@ -149,6 +150,7 @@
             // chkSeaPort
             // 
             this.chkSeaPort.AutoSize = true;
+            this.chkSeaPort.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeaPort", true));
             this.chkSeaPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkSeaPort.Location = new System.Drawing.Point(400, 33);
             this.chkSeaPort.Name = "chkSeaPort";
