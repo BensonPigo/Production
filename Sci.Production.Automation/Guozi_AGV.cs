@@ -143,6 +143,7 @@ where   BundleNo = '{bundle.BundleNo}'
                 s.Bundle_SubProcess,
                 s.Bundle_Order,
                 s.ID,
+                s.POID,
                 s.BundleNo,
                 s.CutRef,
                 s.Article,
@@ -186,6 +187,46 @@ where   BundleNo = '{bundle.BundleNo}'
                 });
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "SubProcess"));
+
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentOrdersToAGV
+        /// </summary>
+        /// <param name="listPOID">listPOID</param>
+        public void SentOrdersToAGV(List<string> listPOID)
+        {
+            if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
+            {
+                return;
+            }
+
+            if (listPOID.Count == 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentOrdersToAGV";
+            string suppAPIThread = "api/GuoziAGV/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            dynamic bodyObject = new ExpandoObject();
+            string wherePOID = listPOID.Select(s => $"'{s}'").JoinToString(",");
+            string sqlGetOrders = $@"
+select  distinct ID
+from Orders with (nolock) where POID in ({wherePOID})
+";
+            DataTable dtSentOrderID;
+            DualResult result = DBProxy.Current.Select(null, sqlGetOrders, out dtSentOrderID);
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            bodyObject.OrderID = dtSentOrderID.AsEnumerable().Select(s => s["ID"].ToString()).ToArray();
+            string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Orders"));
 
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
@@ -516,6 +557,11 @@ where   BundleNo = '{bundle.BundleNo}'
             /// Bundle ID
             /// </summary>
             public string ID { get; set; }
+
+            /// <summary>
+            /// POID
+            /// </summary>
+            public string POID { get; set; }
 
             /// <summary>
             /// Bundle No

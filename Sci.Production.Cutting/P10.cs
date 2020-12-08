@@ -655,6 +655,7 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
                     dr => new BundleToAGV_PostBody()
                     {
                         ID = dr["ID"].ToString(),
+                        POID = this.CurrentMaintain["POID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
                         CutRef = this.CurrentMaintain["CutRef"].ToString(),
                         OrderID = this.CurrentMaintain["OrderID"].ToString(),
