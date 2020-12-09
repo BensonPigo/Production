@@ -17,6 +17,8 @@
     [Seq]                     TINYINT      DEFAULT ((0)) NOT NULL,
     [IsBoundedProcess]        BIT          DEFAULT ((0)) NOT NULL,
     [IsSubprocessInspection] BIT NOT NULL DEFAULT ((0)), 
+    [InsDashboardDefectRate] NUMERIC(5, 2) CONSTRAINT [DF_SubProcess_InsDashboardDefectRate] NOT NULL DEFAULT ((0)), 
+    [InsDashboardRFT] NUMERIC(5, 2) CONSTRAINT [DF_SubProcess_InsDashboardRFT] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -102,3 +104,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'SubProcess',
     @level2type = N'COLUMN',
     @level2name = N'IsLackingAndReplacement'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dashboard Defect Rate標準值',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SubProcess',
+    @level2type = N'COLUMN',
+    @level2name = N'InsDashboardDefectRate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dashboard RFT 標準值',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SubProcess',
+    @level2type = N'COLUMN',
+    @level2name = N'InsDashboardRFT'
