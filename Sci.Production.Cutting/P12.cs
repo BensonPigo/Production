@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
@@ -897,59 +898,74 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 return;
             }
 
-            var bundleIDs = this.dtt.AsEnumerable()
-                .Where(x => x["selected"].ToBool())
-                .GroupBy(x => new
-                {
-                    BundleID = x["BundleID"],
-                    BundleNO = x["Bundle"],
-                })
-                .Select(x => new
-                {
-                    x.Key.BundleID,
-                    x.Key.BundleNO,
-                })
-                .ToList();
-
-            if (bundleIDs.Count == 0)
+            DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
+            if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
-            DataTable selectDt = new DataTable();
-            string sqlWhere = "and bd.BundleNO = @bundleNO";
-            string sqlCmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, sqlWhere);
-            foreach (var item in bundleIDs)
+            DataTable allNoDatas = null;
+            dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
             {
-                List<SqlParameter> pars = new List<SqlParameter>
+                POID = dr["POID"].ToString(),
+                FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                Article = dr["Article"].ToString(),
+                Size = dr["Size"].ToString(),
+            })
+            .Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+            {
+                if (allNoDatas == null)
                 {
-                    new SqlParameter("@ID", item.BundleID),
-                    new SqlParameter("@bundleNO", item.BundleNO),
-                };
-
-                DataTable dt = new DataTable();
-                DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
-                if (!this.result)
-                {
-                    MyUtility.Msg.ErrorBox(this.result.ToString());
-                    return;
-                }
-
-                if (selectDt == null || selectDt.Rows.Count == 0)
-                {
-                    selectDt = dt;
+                    allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
                 }
                 else
                 {
-                    selectDt.Merge(dt);
+                    allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                 }
-            }
+            });
 
-            if (selectDt.Rows.Count > 0)
+            List<P10_PrintData> data = dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
             {
-                P12_Print p = new P12_Print(selectDt);
+                Group_right = dr["Group"].ToString(),
+                Group_left = dr["left"].ToString(),
+                Tone = dr["Tone"].ToString(),
+                Line = dr["Line"].ToString(),
+                Cell = dr["Cell"].ToString(),
+                POID = dr["POID"].ToString(),
+                SP = dr["SP"].ToString(),
+                Style = dr["Style"].ToString(),
+                MarkerNo = dr["MarkerNo"].ToString(),
+                Body_Cut = dr["Body_Cut"].ToString(),
+                Parts = dr["Parts"].ToString(),
+                Color = dr["Color2"].ToString(),
+                Article = dr["Article"].ToString(),
+                Size = dr["Size"].ToString(),
+                SizeSpec = dr["SizeSpec"].ToString(),
+                Desc = dr["Patterncode"].ToString() + dr["Description"].ToString(),
+                Artwork = dr["SubProcess"].ToString(),
+                Quantity = dr["Qty"].ToString(),
+                Barcode = dr["Bundle"].ToString(),
+                Season = dr["Seasonid"].ToString(),
+                Brand = dr["brand"].ToString(),
+                Item = dr["item"].ToString(),
+                EXCESS1 = MyUtility.Convert.GetBool(dr["IsEXCESS"]) ? "EXCESS" : string.Empty,
+                NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "X",
+                Replacement1 = string.Empty,
+                ShipCode = dr["ShipCode"].ToString(),
+                FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                Comb = dr["Comb"].ToString(),
+                Cut = dr["cut"].ToString(),
+                GroupCombCut = 0,
+                No = P10_Print.GetNo(dr["Bundle"].ToString(), allNoDatas),
+                BundleID = dr["BundleID"].ToString(),
+                BundleNo = dr["Bundle"].ToString(),
+            }).ToList();
+
+            if (data.Count > 0)
+            {
+                P12_Print p = new P12_Print(data);
                 p.ShowDialog();
                 this.Query();
                 this.Grid_Filter();

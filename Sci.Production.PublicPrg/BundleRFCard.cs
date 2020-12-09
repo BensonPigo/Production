@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Prg
 {
@@ -328,11 +329,11 @@ from
                         result = CardFromStacker(bundleRFCard);
                         if (!result)
                         {
-                            if (result.Description.EqualString("0x2105"))
+                            if (result.Messages.EqualString("0x2105"))
                             {
                                 result = new DualResult(false, "No card in the stacker, this machine cannot get the card.");
                             }
-                            else if (result.Description.EqualString("0x2006"))
+                            else if (result.Messages.EqualString("0x2006"))
                             {
                                 result = new DualResult(false, "Cannot make 2nd commit, Because there is a card in the machine.");
                             }
@@ -439,12 +440,12 @@ from
         /// <summary>
         /// Auto Bundle RFCard Print With Output Error Card
         /// </summary>
-        /// <param name="dt">DataTable</param>
+        /// <param name="data">List.P10_PrintData</param>
         /// <param name="nowIndex">now index</param>
         /// <param name="returnIndex">return Index</param>
         /// <param name="isEraser">is Eraser</param>
         /// <returns>DualResult</returns>
-        public static DualResult BundleRFCardPrint(DataTable dt, int nowIndex, out int returnIndex, bool isEraser = false)
+        public static DualResult BundleRFCardPrint(List<P10_PrintData> data, int nowIndex, out int returnIndex, bool isEraser = false)
         {
             DualResult result = new DualResult(false);
             BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
@@ -454,7 +455,7 @@ from
             {
                 if (bundleRFCard.UsbPortOpen())
                 {
-                    while (nowIndex <= dt.Rows.Count - 1)
+                    while (nowIndex <= data.Count - 1)
                     {
                         returnIndex = nowIndex;
 
@@ -462,11 +463,11 @@ from
                         result = CardFromStacker(bundleRFCard);
                         if (!result)
                         {
-                            if (result.Description.EqualString("0x2105"))
+                            if (result.Messages.EqualString("0x2105"))
                             {
                                 throw new Exception("No card in the stacker, printer cannot get the card.Please top up the card to continue printing.");
                             }
-                            else if (result.Description.EqualString("0x2006"))
+                            else if (result.Messages.EqualString("0x2006"))
                             {
                                 // C36
                                 result = CardDrop(bundleRFCard);
@@ -476,6 +477,10 @@ from
                                 }
 
                                 continue;
+                            }
+                            else
+                            {
+                                throw new Exception("Card Capture Error" + result.Messages.ToString());
                             }
                         }
 
@@ -526,7 +531,7 @@ from
 
                         // P35
                         List<string> settings = new List<string>();
-                        result = GetSettingText(dt.Rows[nowIndex], out settings);
+                        result = GetSettingText(data[nowIndex], out settings);
                         if (!result)
                         {
                             result = BundleRFCardPrintErrorMsg(bundleRFCard, "Get SettingText Error");
@@ -557,7 +562,7 @@ from
                         }
 
                         // write DB
-                        result = UpdateBundleDetailRFUID(dt.Rows[nowIndex]["BundleID"].ToString(), dt.Rows[nowIndex]["BundleNo"].ToString(), cardUID);
+                        result = UpdateBundleDetailRFUID(data[nowIndex].BundleID.ToString(), data[nowIndex].BundleNo.ToString(), cardUID);
                         if (!result)
                         {
                             result = BundleRFCardPrintErrorMsg(bundleRFCard, "Write To DB Error");
@@ -589,22 +594,22 @@ from
         /// <summary>
         /// RF Print 列印且出錯顯示confirmbox，選擇Continue 則重複執行，直到Stop或完成
         /// </summary>
-        /// <param name="dt">DataTable</param>
+        /// <param name="data">List.P10_PrintData</param>
         /// <param name="nowIndex">DataTable now index</param>
         /// <param name="isEraser">Is Eraser</param>
         /// <returns>DualResult</returns>
-        public static DualResult BundleRFCardPrintAndRetry(DataTable dt, int nowIndex, bool isEraser = false)
+        public static DualResult BundleRFCardPrintAndRetry(List<P10_PrintData> data, int nowIndex, bool isEraser = false)
         {
             DualResult result = new DualResult(false);
 
-            if (dt == null || dt.Rows.Count == 0)
+            if (data == null || data.Count == 0)
             {
                 return result;
             }
 
             string confirmTitle = "RF Print Error";
             int returnIndex = 0;
-            while (!(result = BundleRFCardPrint(dt, nowIndex, out returnIndex, isEraser)))
+            while (!(result = BundleRFCardPrint(data, nowIndex, out returnIndex, isEraser)))
             {
                 nowIndex = returnIndex;
                 DialogResult confirmResult = MessageBox.Show(
@@ -684,12 +689,12 @@ from
                         result = CardFromStacker(bundleRFCard);
                         if (!result)
                         {
-                            if (result.Description.EqualString("0x2105"))
+                            if (result.Messages.EqualString("0x2105"))
                             {
                                 result = new DualResult(true);
                                 break;
                             }
-                            else if (result.Description.EqualString("0x2006"))
+                            else if (result.Messages.EqualString("0x2006"))
                             {
                                 // C36
                                 result = CardDrop(bundleRFCard);
@@ -699,6 +704,10 @@ from
                                 }
 
                                 continue;
+                            }
+                            else
+                            {
+                                throw new Exception("Card Capture Error" + result.Messages.ToString());
                             }
                         }
 
@@ -915,7 +924,7 @@ from
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
             else
             {
@@ -962,7 +971,7 @@ from
             }
             else
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
 
             return result;
@@ -1110,7 +1119,7 @@ from
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
             else
             {
@@ -1224,7 +1233,7 @@ from
             errcode = string.Format("0x{0:x4}", res);
             if (res != 0x0000)
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
             else
             {
@@ -1312,7 +1321,7 @@ from
             }
             else
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
 
             return result;
@@ -1345,7 +1354,7 @@ from
             }
             else
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
 
             return result;
@@ -1441,7 +1450,7 @@ from
                 errcode = string.Format("0x{0:x4}", res);
                 if (res != 0x0000)
                 {
-                    result = new DualResult(false, errcode);
+                    result = new DualResult(false, new BaseResult.MessageInfo(errcode));
                 }
 
                 if (!result)
@@ -1482,7 +1491,7 @@ from
             }
             else
             {
-                result = new DualResult(false, errcode);
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
             }
 
             return result;
@@ -1541,7 +1550,6 @@ from
         /// <summary>
         /// Convert Html To Image
         /// </summary>
-        /// <param name="dr">DataRow</param>
         private static DualResult GetSettingText(DataRow dr, out List<string> settings)
         {
             DualResult result = new DualResult(false);
@@ -1582,6 +1590,51 @@ from
             catch (Exception ex)
             {
                 result = new DualResult(false, ex.ToString());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Convert Html To Image
+        /// </summary>
+        /// <param name="dr">DataRow</param>
+        private static DualResult GetSettingText(P10_PrintData printData, out List<string> settings)
+        {
+            DualResult result = new DualResult(false);
+            settings = new List<string>()
+            {
+                $"Grp:{printData.Group_right}  Tone:{printData.Tone}  Line#:{printData.Line} {printData.Group_left}",
+            };
+
+            string nSP = "SP#:" + printData.SP;
+            int len = nSP.Length % 32 == 0 ? nSP.Length / 32 : (nSP.Length / 32) + 1;
+            for (int i = 0; i <= len - 1; i++)
+            {
+                settings.Add($"{nSP.Left(32)}");
+                nSP = nSP.Replace(nSP.Left(32), string.Empty);
+            }
+
+            settings.AddRange(new List<string>()
+            {
+                $"Style#:{printData.Style}",
+                $"Cut#:{printData.Body_Cut}",
+                $"Color:{printData.Color}",
+                $"Size:{printData.Size}     Part:{printData.Parts}",
+                $"Sea:{printData.Season}     Brand:{printData.ShipCode}",
+                $"MK#:{printData.MarkerNo}     Cut/L:",
+                $"Sub Process:{printData.Artwork}",
+                $"Desc:{printData.Desc}",
+                $"Qty:{printData.Quantity}(#{printData.No})  Item:{printData.Item}",
+            });
+
+            try
+            {
+                result = new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, new BaseResult.MessageInfo(ex.ToString()));
             }
 
             return result;

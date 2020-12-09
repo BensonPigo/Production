@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
@@ -16,13 +17,13 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P12_Print : Win.Tems.PrintForm
     {
-        private DataTable dt;
+        private List<P10_PrintData> p10_PrintDatas;
 
         /// <inheritdoc/>
-        public P12_Print(DataTable masterDT)
+        public P12_Print(List<P10_PrintData> p10_PrintDatas)
         {
             this.InitializeComponent();
-            this.dt = masterDT;
+            this.p10_PrintDatas = p10_PrintDatas;
             this.toexcel.Enabled = false;
             this.linkLabelRFCardEraseBeforePrinting1.SetText();
         }
@@ -45,7 +46,7 @@ namespace Sci.Production.Cutting
             if (this.radioBundleCardRF.Checked)
             {
                 // 是否有資料
-                if (this.dt == null || this.dt.Rows.Count == 0)
+                if (this.p10_PrintDatas == null || this.p10_PrintDatas.Count == 0)
                 {
                     MyUtility.Msg.ErrorBox("Data not found");
                     return false;
@@ -55,7 +56,7 @@ namespace Sci.Production.Cutting
                 {
                     bool rfCardErase = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select RFCardEraseBeforePrinting from [System]"));
                     this.ShowWaitMessage("Process Print!");
-                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(this.dt, 0, rfCardErase);
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(this.p10_PrintDatas, 0, rfCardErase);
                     this.HideWaitMessage();
                     if (!result)
                     {
@@ -80,6 +81,7 @@ namespace Sci.Production.Cutting
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
+                    this.HideWaitMessage();
                     return false;
                 }
 

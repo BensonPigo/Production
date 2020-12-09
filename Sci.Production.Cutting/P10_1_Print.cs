@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO;
+using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Cutting
 {

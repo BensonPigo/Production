@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
@@ -42,7 +43,8 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            if (this.radioBundleCard.Checked)
+            this.result = new DualResult(true);
+            if (this.radioBundleCard.Checked || this.radioBundleCardRF.Checked)
             {
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
@@ -100,6 +102,9 @@ from (
         ,SeasonID = concat(c.SeasonID,' ' + c.dest)
         ,brand = c.brandid
         ,brand.ShipCode
+        , a.RFPrintDate
+        , [BundleID] = b.ID
+        , a.BundleNo
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -310,21 +315,6 @@ order by x.[Bundle]");
                 }
                 #endregion
             }
-            else if (this.radioBundleCardRF.Checked)
-            {
-                DataRow row = this.CurrentDataRow;
-                string id = row["ID"].ToString();
-                List<SqlParameter> pars = new List<SqlParameter>
-                {
-                    new SqlParameter("@ID", id),
-                };
-                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
-                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
-                if (!this.result)
-                {
-                    return this.result;
-                }
-            }
 
             return this.result;
         }
@@ -450,10 +440,65 @@ order by x.[Bundle]");
                         }
                     }
 
+                    DataTable allNoDatas = null;
+                    dataTable.AsEnumerable().Select(dr => new P10_PrintData()
+                    {
+                        POID = dr["POID"].ToString(),
+                        FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                        Article = dr["Article"].ToString(),
+                        Size = dr["Size"].ToString(),
+                    })
+                    .Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+                    {
+                        if (allNoDatas == null)
+                        {
+                            allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                        }
+                        else
+                        {
+                            allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                        }
+                    });
+
+                    List<P10_PrintData> data = dataTable.AsEnumerable().Select(dr => new P10_PrintData()
+                    {
+                        Group_right = dr["Group_right"].ToString(),
+                        Group_left = dr["Group_left"].ToString(),
+                        Tone = dr["Tone"].ToString(),
+                        Line = dr["Line"].ToString(),
+                        Cell = dr["Cell"].ToString(),
+                        POID = dr["POID"].ToString(),
+                        SP = dr["SP"].ToString(),
+                        Style = dr["Style"].ToString(),
+                        MarkerNo = dr["MarkerNo"].ToString(),
+                        Body_Cut = dr["Body_Cut"].ToString(),
+                        Parts = dr["Parts"].ToString(),
+                        Color = dr["Color"].ToString(),
+                        Article = dr["Article"].ToString(),
+                        Size = dr["Size"].ToString(),
+                        SizeSpec = MyUtility.Check.Empty(dr["SizeSpec"].ToString()) ? string.Empty : "(" + dr["SizeSpec"].ToString() + ")",
+                        Desc = dr["Desc"].ToString(),
+                        Artwork = dr["Artwork"].ToString(),
+                        Quantity = dr["Quantity"].ToString(),
+                        Barcode = dr["Barcode"].ToString(),
+                        Season = dr["Seasonid"].ToString(),
+                        Brand = dr["brand"].ToString(),
+                        Item = dr["item"].ToString(),
+                        EXCESS1 = MyUtility.Convert.GetBool(dr["isEXCESS"]) ? "EXCESS" : string.Empty,
+                        NoBundleCardAfterSubprocess1 = dr["NoBundleCardAfterSubprocess"].ToString().Empty() ? string.Empty : "X",
+                        Replacement1 = string.Empty,
+                        ShipCode = dr["ShipCode"].ToString(),
+                        FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                        No = GetNo(dr["Barcode"].ToString(), allNoDatas),
+                        BundleID = dr["BundleID"].ToString(),
+                        BundleNo = dr["BundleNo"].ToString(),
+                    }).ToList();
+
                     this.ShowWaitMessage("Process Print!");
-                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(dataTable, 0, rfCardErase);
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(data, 0, rfCardErase);
                     if (!result)
                     {
+                        this.HideWaitMessage();
                         MyUtility.Msg.ErrorBox(result.ToString());
                         return false;
                     }
@@ -476,6 +521,7 @@ order by x.[Bundle]");
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
+                    this.HideWaitMessage();
                     return false;
                 }
 
@@ -594,6 +640,7 @@ order by x.[Bundle]");
 
             data.ForEach(r =>
             {
+                // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
                 string no = GetNo(r.Barcode, allNoDatas);
                 string contian;
                 contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
@@ -606,7 +653,7 @@ Sea: {r.Season}     Brand: {r.ShipCode}
 MK#: {r.MarkerNo}     Cut/L:
 Sub Process: {r.Artwork}
 Desc: {r.Desc}
-Qty: {r.Quantity}({no})  Item: {r.Item}";
+Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                 row_ref = i / 3;
                 row_ref = (row_ref * 5) - (row_ref / 3);
