@@ -72,7 +72,7 @@ namespace Sci.Production.Centralized
             int intColumnsCount = worksheet.UsedRange.Columns.Count;
 
             // 必要欄位
-            List<string> mustColumn = new List<string>() { "Brand", "Continent", "Country", "Port Code", "Air Port", "Sea Port", "Junk" };
+            List<string> mustColumn = new List<string>() { "Brand", "Continent", "Country", "Port Code", "Air Port", "Sea Port" };
 
             // 紀錄必要欄位橫向的欄位位置
             int idx_Brand = 0;
@@ -81,7 +81,6 @@ namespace Sci.Production.Centralized
             int idx_Port_Code = 0;
             int idx_Air_Port = 0;
             int idx_Sea_Port = 0;
-            int idx_Junk = 0;
 
             for (int x = 1; x <= intColumnsCount; x++)
             {
@@ -113,10 +112,6 @@ namespace Sci.Production.Centralized
                         idx_Sea_Port = x;
                         mustColumn.Remove("Sea Port");
                         break;
-                    case "Junk":
-                        idx_Junk = x;
-                        mustColumn.Remove("Junk");
-                        break;
                     default:
                         break;
                 }
@@ -125,8 +120,7 @@ namespace Sci.Production.Centralized
             if (mustColumn.Count > 0)
             {
                 string msg = $"Could not found column <{mustColumn.JoinToString(",")}> .";
-
-                MyUtility.Msg.WarningBox(msg);
+                this.ShowErr(msg);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
                 return;
@@ -164,7 +158,7 @@ namespace Sci.Production.Centralized
                 var pSea_Port = MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Sea_Port].Value) == "T" ? true : false;
 
                 // Junk
-                var pJunk = MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Junk].Value) == "N" ? false : true;
+                bool pJunk = false;
 
                 // brand, continent, Country, Port 若有空的直接跳過，不進DB驗證
                 if (pBrand == null || pPort_Code == null || pContinent == null || pCountry == null ||
@@ -173,13 +167,6 @@ namespace Sci.Production.Centralized
                     intRowsReading++;
                     continue;
                 }
-
-                this.portByBrandShipmodeList.Add(new PortByBrandShipmode()
-                {
-                    PulloutPortID = pPort_Code,
-                    BrandID = pBrand,
-                    Junk = pJunk,
-                });
 
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
@@ -221,6 +208,16 @@ namespace Sci.Production.Centralized
 
                 #endregion
 
+                if (isBrandExists && isPortExists && isCountryExists && isContinentExists)
+                {
+                    this.portByBrandShipmodeList.Add(new PortByBrandShipmode()
+                    {
+                        PulloutPortID = pPort_Code,
+                        BrandID = pBrand,
+                        Junk = pJunk,
+                    });
+                }
+
                 intRowsReading++;
             }
 
@@ -250,18 +247,23 @@ namespace Sci.Production.Centralized
                 errorMsg += "Continent : " + notExistsContinent.JoinToString(",") + Environment.NewLine;
             }
 
+            this.MergeDatabase(this.portByBrandShipmodeList);
+
             if (notExistsBrand.Count > 0 || notExistsPort.Count > 0 || notExistsCountry.Count > 0 || notExistsContinent.Count > 0)
             {
-                MyUtility.Msg.WarningBox(errorMsg);
-                return;
+                this.ShowErr(errorMsg);
             }
-
-            this.MergeDatabase(this.portByBrandShipmodeList);
         }
 
         private void MergeDatabase(List<PortByBrandShipmode> portByBrandShipmodeList)
         {
             string tmpTable = string.Empty;
+
+            if (portByBrandShipmodeList == null || portByBrandShipmodeList.Count == 0)
+            {
+                this.ShowErr("No Data Import");
+                return;
+            }
 
             int count = 1;
             foreach (PortByBrandShipmode portByBrandShipmode in portByBrandShipmodeList)
