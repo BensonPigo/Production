@@ -43,6 +43,7 @@ namespace Sci.Production.Warehouse
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Date("TaipeiLastOutput", header: "Taipei" + Environment.NewLine + "Last Output", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("TaipeiOutput", header: "Taipei" + Environment.NewLine + "Output", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .Numeric("TotalTransfer", header: "Total Transfer", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                ;
 
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
@@ -60,13 +61,24 @@ namespace Sci.Production.Warehouse
                     {
                         dr["qty"] = e.FormattedValue;
                     }
-
                     dr.EndEdit();
+                    this.CaculateTotalTransfer();
                 }
             };
+
+            DataGridViewGeneratorCheckBoxColumnSettings selectedSetting = new DataGridViewGeneratorCheckBoxColumnSettings();
+            selectedSetting.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
+                dr["Selected"] = e.FormattedValue;
+                dr.EndEdit();
+
+                this.CaculateTotalTransfer();
+            };
+
             this.grid2.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid2)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: selectedSetting)
                 .Text("PoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -81,6 +93,38 @@ namespace Sci.Production.Warehouse
                 .Text("ToSeq", header: "To Seq", iseditingreadonly: true, width: Widths.AnsiChars(6))
                ;
             this.grid2.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid2.ColumnHeaderMouseClick += this.Grid2_ColumnHeaderMouseClick;
+        }
+
+        private void Grid2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                this.CaculateTotalTransfer();
+            }
+        }
+
+        private void CaculateTotalTransfer()
+        {
+            decimal totalTransfer = 0;
+            foreach (DataGridViewRow gridDr in this.grid2.Rows)
+            {
+                DataRow dr = this.grid2.GetDataRow(gridDr.Index);
+                if (MyUtility.Convert.GetBool(dr["Selected"]))
+                {
+                    if (MyUtility.Convert.GetInt(dr["FirstCheck"]) == 0)
+                    {
+                        dr["FirstCheck"] = 1;
+                        dr["qty"] = dr["StockBalance"];
+                        dr.EndEdit();
+                    }
+
+                    totalTransfer += MyUtility.Convert.GetDecimal(gridDr.Cells["qty"].Value);
+                }
+            }
+
+            DataRow mainDr = this.grid1.GetDataRow(this.grid1.SelectedRows[0].Index);
+            mainDr["TotalTransfer"] = totalTransfer;
         }
 
         private void BtnFindNow_Click(object sender, EventArgs e)
@@ -121,15 +165,6 @@ where (i.type='2' or i.type='6')
 group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit
 
 
-select distinct aa.* 
-from #tmp aa
-inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = aa.InventoryPOID 
-												and fi.seq1 = aa.Inventoryseq1 
-												and fi.seq2 = aa.InventorySEQ2 
-												and fi.StockType = 'I'
-where fi.Lock = 0
-order by aa.poid,aa.seq1,aa.seq2 ;
-
 select  selected = cast(0 as bit)
 		, MDivisionID = @MDivisionID
         , '' id
@@ -151,6 +186,14 @@ select  selected = cast(0 as bit)
         , ToSeq2 = #tmp.seq2 
         , ToSeq = concat(Ltrim(Rtrim(#tmp.seq1)), ' ', #tmp.seq2)
         , GroupQty = Sum(isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) over (partition by #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
+        , [FirstCheck] = 0
+        , #tmp.ToFactory
+        , #tmp.InventoryPOID
+        , #tmp.Inventoryseq1
+        , #tmp.InventorySEQ2
+        , #tmp.TaipeiLastOutput
+        , #tmp.TaipeiOutput
+into #tmpDetailResult
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
@@ -159,7 +202,27 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
 where fi.Lock = 0
 Order by GroupQty desc, Dyelot, StockBalance desc
 
-drop table #tmp
+select distinct  [POID] = ToPOID
+		        , [Seq1] = ToSeq1
+		        , [Seq2] = ToSeq2
+		        , ToFactory
+		        , InventoryPOID
+                , Inventoryseq1
+                , InventorySEQ2
+		        , StockUnit
+                , TaipeiLastOutput
+                , TaipeiOutput
+                , [TotalTransfer] = 0.0
+from #tmpDetailResult
+where   StockBalance > 0
+order by ToPOID, ToSeq1, ToSeq2;
+
+select  *
+from    #tmpDetailResult
+where   StockBalance > 0
+
+
+drop table #tmp, #tmpDetailResult
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listPar, out DataTable[] dt);
@@ -192,8 +255,8 @@ drop table #tmp
             dataSet.Relations.Add(relation);
             this.listControlBindingSource1.DataSource = dataSet;
             this.listControlBindingSource1.DataMember = "masterdt";
-            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource2.DataMember = "rel1";
+            this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
