@@ -616,7 +616,7 @@ or
                 this.parameters.Add(new SqlParameter("@location1", this.location1));
                 this.sqlcmd.Append(
                     @" 
-        and exists in ( select ukey 
+        and exists ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
                         where fi.ukey = ukey
                         and mtllocationid = @location1) " + Environment.NewLine);
@@ -626,7 +626,7 @@ or
                 this.parameters.Add(new SqlParameter("@location2", this.location2));
                 this.sqlcmd.Append(
                     @" 
-        and exists in ( select ukey 
+        and exists ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
                         where fi.ukey = ukey
                         and mtllocationid = @location2) " + Environment.NewLine);
