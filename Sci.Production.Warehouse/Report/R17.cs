@@ -70,7 +70,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-          // objSheets.Columns[12].ColumnWidth = 50;
+            // objSheets.Columns[12].ColumnWidth = 50;
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
@@ -95,7 +95,6 @@ namespace Sci.Production.Warehouse
             string locationEnd = this.txtLocationEnd.Text;
             string factory = this.txtfactory.Text;
             bool chkbalance = this.checkBalanceQty.Checked;
-            string locationFilte = string.Empty;
             string eta1 = string.Empty;
             string eta2 = string.Empty;
             if (!MyUtility.Check.Empty(this.dateETA.TextBox1.Value))
@@ -108,398 +107,11 @@ namespace Sci.Production.Warehouse
                 eta2 = this.dateETA.TextBox2.Text;
             }
 
-            if (locationStart.Empty() == false && locationEnd.Empty() == false)
-            {
-                locationFilte = string.Format("b.mtllocationid between '{0}' and '{1}'", locationStart, locationEnd);
-            }
-            else if (locationStart.Empty() == true && locationEnd.Empty() == false)
-            {
-                locationFilte = locationFilte = string.Format("b.mtllocationid < '{0}'", locationEnd);
-            }
-            else if (locationStart.Empty() == false && locationEnd.Empty() == true)
-            {
-                locationFilte = locationFilte = string.Format("'{0}' < b.mtllocationid", locationStart);
-            }
-
             DualResult result = Ict.Result.True;
             StringBuilder sqlcmd = new StringBuilder();
             #region sql command
-            if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
-            {
-                // SCI Delivery empty
-                if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd))
-                {
-                    // Location empty
-                    sqlcmd.Append(@"
-select distinct 
-        Factory		= orders.Factoryid ,
-        sp			= a.Poid,
-        seq1		= a.seq1,
-        seq2		= a.seq2,
-        Refno		= p.Refno,
-        Receive.ETA,
-        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' 
-							WHEN p.FabricType = 'O' then 'Orher'
-							else p.FabricType 
-						end) + '-' + Fabric.MtlTypeID,
-        Category = DropDownList.Name,
-        location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
-        width		= p.Width,
-        color		= p.ColorID,
-        size		= p.SizeSpec,
-        description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) ,
-        roll		= a.Roll,
-        dyelot		= a.Dyelot,
-        sotckType	= case a.StockType
-                        when 'b' then 'Bulk'
-                        when 'i' then 'Inventory'
-                        when 'o' then 'Scrap'
-                      end,
-        deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
-				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select orders.Factoryid from orders WITH (NOLOCK) where orders.id = a.poid)),
-        InQty		= a.InQty,
-        OutQty		= a.OutQty,
-        AdjustQty	= a.AdjustQty,
-        Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a WITH (NOLOCK) 
-inner join Orders on orders.id = a.poid
-left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
-outer apply(
-	select distinct name from DropDownList where Type='Pms_MtlCategory'
-	and SUBSTRING(ID,2,1)= orders.Category
-    and name !='ALL'
-)DropDownList
-OUTER APPLY(
-	select r.ETA
-	from Receiving_Detail rd
-	inner join Receiving r on rd.id=r.id
-	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
-	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
-)Receive
-where   1=1");
-                    if (!MyUtility.Check.Empty(spno))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @"
-        And a.Poid like '{0}%'", spno));
-                    }
-
-                    if (!this.txtSeq.CheckSeq1Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @"
-        and a.seq1 = '{0}'", this.txtSeq.Seq1));
-                    }
-
-                    if (!this.txtSeq.CheckSeq2Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and a.seq2 = '{0}'", this.txtSeq.Seq2));
-                    }
-
-                    if (chkbalance)
-                    {
-                        sqlcmd.Append(@" 
-        And a.inqty- a.outqty + a.adjustqty > 0");
-                    }
-
-                    if (!MyUtility.Check.Empty(factory))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and orders.FactoryID = '{0}'", factory));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta1))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA >= '{0}'", eta1));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta2))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA <= '{0}'", eta2));
-                    }
-
-                    switch (this.selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" 
-        And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" 
-        And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" 
-        And a.stocktype = 'I'");
-                            break;
-                    }
-                }
-                else
-                {
-                    sqlcmd.Append(string.Format(
-                        @"
-select distinct 
-        Factory		= orders.Factoryid,
-        sp			= a.Poid,
-        seq1		= a.seq1,
-        seq2		= a.seq2,
-        Refno		= p.Refno,
-        Receive.ETA,
-        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' 
-							WHEN p.FabricType = 'O' then 'Orher'
-							else p.FabricType 
-						end) + '-' + Fabric.MtlTypeID,
-        Category = DropDownList.Name,
-        location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
-        width		= p.Width,
-        color		= p.ColorID,
-        size		= p.SizeSpec,
-        description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0) ,
-        roll		= a.Roll,
-        dyelot		= a.Dyelot,
-        sotckType	= case a.StockType
-                        when 'b' then 'Bulk'
-                        when 'i' then 'Inventory'
-                        when 'o' then 'Scrap'
-                      end,
-        deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
-				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = (select FactoryID from orders WITH (NOLOCK) where id = a.Poid)),
-        InQty		= a.InQty,
-        OutQty		= a.OutQty,
-        AdjustQty	= a.AdjustQty,
-        Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a WITH (NOLOCK) 
-inner join Orders on orders.id = a.poid
-left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
-outer apply(
-	select distinct name from DropDownList where Type='Pms_MtlCategory'
-	and SUBSTRING(ID,2,1)= orders.Category
-    and name !='ALL'
-)DropDownList
-OUTER APPLY(
-	select r.ETA
-	from Receiving_Detail rd
-	inner join Receiving r on rd.id=r.id
-	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
-	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
-)Receive
-where   1=1 
-        And {0} ", locationFilte));
-                    if (!MyUtility.Check.Empty(spno))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        And a.Poid like '{0}%'", spno));
-                    }
-
-                    if (!this.txtSeq.CheckSeq1Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @"
-        and a.seq1 = '{0}'", this.txtSeq.Seq1));
-                    }
-
-                    if (!this.txtSeq.CheckSeq2Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and a.seq2 = '{0}'", this.txtSeq.Seq2));
-                    }
-
-                    if (chkbalance)
-                    {
-                        sqlcmd.Append(@" 
-        And a.inqty- a.outqty + a.adjustqty > 0");
-                    }
-
-                    if (!MyUtility.Check.Empty(factory))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and orders.FactoryID = '{0}'", factory));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta1))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA >= '{0}'", eta1));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta2))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA <= '{0}'", eta2));
-                    }
-
-                    switch (this.selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" 
-        And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" 
-        And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" 
-        And a.stocktype = 'I'");
-                            break;
-                    }
-                }
-            }
-            else
-            {// 有下sci delivery 條件
-                if (MyUtility.Check.Empty(locationStart) && MyUtility.Check.Empty(locationEnd))
-                {
-                    sqlcmd.Append(string.Format(@"
-select distinct 
-        Factory		= orders.factoryid,
-        sp			= a.Poid,
-        seq1		= a.seq1,
-        seq2		= a.seq2,
-        Refno		= p.Refno,
-        Receive.ETA,
-        MaterialType = (case when p.FabricType = 'F'then 'Fabric' 
-							when p.FabricType = 'A'then 'Accessory' 
-							WHEN p.FabricType = 'O' then 'Orher'
-							else p.FabricType 
-						end) + '-' + Fabric.MtlTypeID,
-        Category = DropDownList.Name,
-        location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
-        width		= p.Width,
-        color		= p.ColorID,
-        size		= p.SizeSpec,
-        description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
-        roll		= a.Roll,
-        dyelot		= a.Dyelot,
-        sotckType	= case a.StockType
-                        when 'b' then 'Bulk'
-                        when 'i' then 'Inventory'
-                        when 'o' then 'Scrap'
-                      end,
-        deadline	= (select max(Deadline) from dbo.Inventory i WITH (NOLOCK) 
-				        where i.POID=a.Poid and i.seq1 =a.Seq1 and i.Seq2 =a.Seq2 and i.FactoryID = orders.Factoryid),
-        InQty		= a.InQty,
-        OutQty		= a.OutQty,
-        AdjustQty	= a.AdjustQty,
-        Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
-from dbo.FtyInventory a WITH (NOLOCK) 
-left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
-inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
-left join fabric WITH (NOLOCK) on fabric.SCIRefno = p.SCIRefno
-inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
-outer apply(
-	select distinct name from DropDownList where Type='Pms_MtlCategory'
-	and SUBSTRING(ID,2,1)= orders.Category
-    and name !='ALL'
-)DropDownList
-OUTER APPLY(
-	select r.ETA
-	from Receiving_Detail rd
-	inner join Receiving r on rd.id=r.id
-	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
-	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
-)Receive
-where   1=1"));
-
-                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
-                    }
-
-                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
-                    }
-
-                    if (!MyUtility.Check.Empty(spno))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        And a.Poid like '{0}%'", spno));
-                    }
-
-                    if (!this.txtSeq.CheckSeq1Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @"
-        and a.seq1 = '{0}'", this.txtSeq.Seq1));
-                    }
-
-                    if (!this.txtSeq.CheckSeq2Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and a.seq2 = '{0}'", this.txtSeq.Seq2));
-                    }
-
-                    if (chkbalance)
-                    {
-                        sqlcmd.Append(@" 
-        And a.inqty- a.outqty + a.adjustqty > 0");
-                    }
-
-                    if (!MyUtility.Check.Empty(factory))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and orders.FactoryID = '{0}'", factory));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta1))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA >= '{0}'", eta1));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta2))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA <= '{0}'", eta2));
-                    }
-
-                    switch (this.selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" 
-        And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" 
-        And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" 
-        And a.stocktype = 'I'");
-                            break;
-                    }
-                }
-                else
-                {
-                    sqlcmd.Append(string.Format(
-                        @"
+            sqlcmd.Append(
+                @"
 select distinct
         Factory		= orders.factoryid,
         sp			= a.Poid,
@@ -515,7 +127,7 @@ select distinct
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
-        color		= p.ColorID,
+        color		= iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread'), p.SuppColor, dbo.GetColorMultipleID(Orders.BrandID, p.ColorID)),
         size		= p.SizeSpec,
         description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
         roll		= a.Roll,
@@ -548,82 +160,93 @@ OUTER APPLY(
 	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
 	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
 )Receive
-where   1=1
-        And {0} ", locationFilte));
+where   1=1");
 
-                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
-                    }
-
-                    if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
-                    }
-
-                    if (!MyUtility.Check.Empty(spno))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        And a.Poid like '{0}%'", spno));
-                    }
-
-                    if (!this.txtSeq.CheckSeq1Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @"
-        and a.seq1 = '{0}'", this.txtSeq.Seq1));
-                    }
-
-                    if (!this.txtSeq.CheckSeq2Empty())
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and a.seq2 = '{0}'", this.txtSeq.Seq2));
-                    }
-
-                    if (chkbalance)
-                    {
-                        sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
-                    }
-
-                    if (!MyUtility.Check.Empty(factory))
-                    {
-                        sqlcmd.Append(string.Format(@" and orders.FactoryId = '{0}'", factory));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta1))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA >= '{0}'", eta1));
-                    }
-
-                    if (!MyUtility.Check.Empty(eta2))
-                    {
-                        sqlcmd.Append(string.Format(
-                            @" 
-        and Receive.ETA <= '{0}'", eta2));
-                    }
-
-                    switch (this.selectindex)
-                    {
-                        case 0:
-                            sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
-                            break;
-                        case 1:
-                            sqlcmd.Append(@" And a.stocktype = 'B'");
-                            break;
-                        case 2:
-                            sqlcmd.Append(@" And a.stocktype = 'I'");
-                            break;
-                    }
-                }
+            if (locationStart.Empty() == false && locationEnd.Empty() == false)
+            {
+                sqlcmd.Append(string.Format(" and b.mtllocationid between '{0}' and '{1}'", locationStart, locationEnd));
             }
+            else if (locationStart.Empty() == true && locationEnd.Empty() == false)
+            {
+                sqlcmd.Append(string.Format(" and b.mtllocationid < '{0}'", locationEnd));
+            }
+            else if (locationStart.Empty() == false && locationEnd.Empty() == true)
+            {
+                sqlcmd.Append(string.Format(" and '{0}' < b.mtllocationid", locationStart));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
+            {
+                sqlcmd.Append(string.Format(
+                    @" 
+        and '{0}' <= orders.scidelivery", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+            {
+                sqlcmd.Append(string.Format(
+                    @" 
+        and orders.scidelivery <= '{0}'", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(spno))
+            {
+                sqlcmd.Append(string.Format(
+                    @" 
+        And a.Poid like '{0}%'", spno));
+            }
+
+            if (!this.txtSeq.CheckSeq1Empty())
+            {
+                sqlcmd.Append(string.Format(
+                    @"
+        and a.seq1 = '{0}'", this.txtSeq.Seq1));
+            }
+
+            if (!this.txtSeq.CheckSeq2Empty())
+            {
+                sqlcmd.Append(string.Format(
+                    @" 
+        and a.seq2 = '{0}'", this.txtSeq.Seq2));
+            }
+
+            if (chkbalance)
+            {
+                sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
+            }
+
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlcmd.Append(string.Format(@" and orders.FactoryId = '{0}'", factory));
+            }
+
+            if (!MyUtility.Check.Empty(eta1))
+            {
+                sqlcmd.Append(string.Format(
+                    @" 
+        and Receive.ETA >= '{0}'", eta1));
+            }
+
+            if (!MyUtility.Check.Empty(eta2))
+            {
+                sqlcmd.Append(string.Format(
+                    @" 
+        and Receive.ETA <= '{0}'", eta2));
+            }
+
+            switch (this.selectindex)
+            {
+                case 0:
+                    sqlcmd.Append(@" And (a.stocktype = 'B' or a.stocktype = 'I')");
+                    break;
+                case 1:
+                    sqlcmd.Append(@" And a.stocktype = 'B'");
+                    break;
+                case 2:
+                    sqlcmd.Append(@" And a.stocktype = 'I'");
+                    break;
+            }
+
             #endregion
             try
             {
