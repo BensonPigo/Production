@@ -112,9 +112,8 @@ namespace Sci.Production.Warehouse
                 DataRow dr = this.grid2.GetDataRow(gridDr.Index);
                 if (MyUtility.Convert.GetBool(dr["Selected"]))
                 {
-                    if (MyUtility.Convert.GetInt(dr["FirstCheck"]) == 0)
+                    if (dr["qty"].Empty())
                     {
-                        dr["FirstCheck"] = 1;
                         dr["qty"] = dr["StockBalance"];
                         dr.EndEdit();
                     }
@@ -186,7 +185,6 @@ select  selected = cast(0 as bit)
         , ToSeq2 = #tmp.seq2 
         , ToSeq = concat(Ltrim(Rtrim(#tmp.seq1)), ' ', #tmp.seq2)
         , GroupQty = Sum(isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) over (partition by #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
-        , [FirstCheck] = 0
         , #tmp.ToFactory
         , #tmp.InventoryPOID
         , #tmp.Inventoryseq1
