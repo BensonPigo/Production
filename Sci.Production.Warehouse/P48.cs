@@ -35,7 +35,8 @@ namespace Sci.Production.Warehouse
             string sp2 = this.txtSPNo2.Text.TrimEnd();
             string factory = this.txtfactory.Text.TrimEnd();
             string refno = this.txtRef.Text.TrimEnd();
-            string location = this.txtLocation.Text.TrimEnd();
+            string location1 = this.txtMtlLocation1.Text.TrimEnd();
+            string location2 = this.txtMtlLocation2.Text.TrimEnd();
             string fabrictype = this.txtdropdownlistFabricType.SelectedValue.ToString();
             string strCategory = this.comboCategory.SelectedValue.ToString();
             string brand = this.txtbrand.Text;
@@ -44,7 +45,7 @@ namespace Sci.Production.Warehouse
             if (string.IsNullOrWhiteSpace(sp1)
                 && string.IsNullOrWhiteSpace(sp2)
                 && string.IsNullOrWhiteSpace(refno)
-                && string.IsNullOrWhiteSpace(location)
+                && string.IsNullOrWhiteSpace(location1)
                 && string.IsNullOrWhiteSpace(season))
             {
                 MyUtility.Msg.WarningBox("< Season > < SP# > < Ref# > < Location > can't be empty!!");
@@ -53,6 +54,21 @@ namespace Sci.Production.Warehouse
             }
             else
             {
+
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@sp1", sp1),
+                    new SqlParameter("@sp2", sp2),
+                    new SqlParameter("@factory", factory),
+                    new SqlParameter("@refno", refno),
+                    new SqlParameter("@location1", location1),
+                    new SqlParameter("@location2", location2),
+                    new SqlParameter("@fabrictype", fabrictype),
+                    new SqlParameter("@strCategory", strCategory),
+                    new SqlParameter("@brand", brand),
+                    new SqlParameter("@season", season),
+                };
+
                 strSQLCmd.Append(string.Format(
                     @"
 select  0 as selected 
@@ -93,51 +109,58 @@ Where   c.lock = 0
 
                 if (!MyUtility.Check.Empty(sp1))
                 {
-                    strSQLCmd.Append(string.Format(
-                        @" 
-        and a.id >= '{0}'  ", sp1));
+                    strSQLCmd.Append("and a.id >= @sp1" + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(sp2))
                 {
-                    strSQLCmd.Append(string.Format(
-                        @" 
-        and a.id <= '{0}'  ", sp2));
+                    strSQLCmd.Append("and a.id <= @sp2" + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(refno))
                 {
-                    strSQLCmd.Append(string.Format(
-                        @" 
-        and a.refno = '{0}' ", refno));
+                    strSQLCmd.Append("and a.refno = @refno" + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(factory))
                 {
-                    strSQLCmd.Append($"AND o.FtyGroup='{factory}'");
+                    strSQLCmd.Append("and o.FtyGroup = @factory" + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(brand))
                 {
-                    strSQLCmd.Append(string.Format(
-                        @" 
-        and o.BrandID = '{0}' ", brand));
+                    strSQLCmd.Append("and o.BrandID = @brand" + Environment.NewLine);
                 }
 
                 if (!MyUtility.Check.Empty(season))
                 {
-                    strSQLCmd.Append(string.Format(
-                        @" 
-        and o.SeasonID = '{0}' ", season));
+                    strSQLCmd.Append("and o.SeasonID = @season" + Environment.NewLine);
                 }
 
-                if (!MyUtility.Check.Empty(location))
+                if (!MyUtility.Check.Empty(location1) && !MyUtility.Check.Empty(location2))
                 {
-                    strSQLCmd.Append(string.Format(
+                    strSQLCmd.Append(
                         @" 
         and c.ukey in ( select ukey 
                         from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where mtllocationid = '{0}') ", location));
+                        where mtllocationid >= @location1
+                        and  mtllocationid <= @location2 ) " + Environment.NewLine);
+                }
+                else if (!MyUtility.Check.Empty(location1))
+                {
+                    strSQLCmd.Append(
+                        @" 
+        and c.ukey in ( select ukey 
+                        from dbo.ftyinventory_detail WITH (NOLOCK) 
+                        where mtllocationid = @location1) " + Environment.NewLine);
+                }
+                else if (!MyUtility.Check.Empty(location2))
+                {
+                    strSQLCmd.Append(
+                        @" 
+        and c.ukey in ( select ukey 
+                        from dbo.ftyinventory_detail WITH (NOLOCK) 
+                        where mtllocationid = @location2) " + Environment.NewLine);
                 }
 
                 switch (fabrictype)
@@ -145,12 +168,10 @@ Where   c.lock = 0
                     case "ALL":
                         break;
                     case "F":
-                        strSQLCmd.Append(@" 
-        And a.fabrictype = 'F'");
+                        strSQLCmd.Append("And a.fabrictype = 'F'" + Environment.NewLine);
                         break;
                     case "A":
-                        strSQLCmd.Append(@" 
-        And a.fabrictype = 'A'");
+                        strSQLCmd.Append("And a.fabrictype = 'A'" + Environment.NewLine);
                         break;
                 }
 
@@ -158,7 +179,7 @@ Where   c.lock = 0
 
                 this.ShowWaitMessage("Data Loading....");
                 DualResult result;
-                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtInventory))
+                if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), parameters, out this.dtInventory))
                 {
                     if (this.dtInventory.Rows.Count == 0)
                     {
@@ -349,56 +370,6 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
                 item["reasonid"] = reasonid;
                 item["reason_nm"] = this.comboReason.Text;
             }
-        }
-
-        // Location Valid
-        private void TxtLocation_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.txtLocation.Text.ToString() == string.Empty)
-            {
-                return;
-            }
-
-            if (!MyUtility.Check.Seek(
-                string.Format(
-                @"
-select 1 
-where exists(
-    select * 
-    from    dbo.MtlLocation WITH (NOLOCK) 
-    where   StockType='O' 
-            and id = '{0}'
-            and junk != '1'
-)", this.txtLocation.Text), null))
-            {
-                e.Cancel = true;
-                MyUtility.Msg.WarningBox("Location is not exist!!", "Data not found");
-            }
-        }
-
-        // Location 右鍵
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        private void TxtLocation_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            if (!this.EditMode)
-            {
-                return;
-            }
-
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                string.Format(@"
-select  id
-        , [Description] 
-from    dbo.MtlLocation WITH (NOLOCK) 
-where   StockType='O'
-        and junk != '1'"), "10,40", this.txtLocation.Text, "ID,Desc");
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtLocation.Text = item.GetSelectedString();
         }
 
         // Create Batch

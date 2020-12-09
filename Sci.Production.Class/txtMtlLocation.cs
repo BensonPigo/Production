@@ -61,6 +61,7 @@ EX : 只需要 Type = C, 'C'
                     @"
 SELECT ID
 	   , StockType 
+       , Description
 FROM MtlLocation 
 WHERE Junk = 0 
       -- StockType --
@@ -87,15 +88,16 @@ WHERE Junk = 0
                 @"
 SELECT ID
 	   , StockType 
+       , Description
 FROM MtlLocation 
 WHERE Junk = 0 
       -- StockType --
 	  {0}
 ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             #endregion
-            SelectItem item = new SelectItem(strSQLCmd, "15,5", this.Text)
+            SelectItem item = new SelectItem(strSQLCmd, "15,5,20", this.Text)
             {
-                Size = new System.Drawing.Size(400, 530),
+                Size = new System.Drawing.Size(550, 530),
             };
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
@@ -144,12 +146,13 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
                             $@"
 SELECT ID
        , StockType
+       , Description
 FROM MtlLocation
 WHERE Junk = 0
       -- StockType--
 
       {dicSQLFilte["StockType"]}
-ORDER BY ID, StockType", "15,5",
+ORDER BY ID, StockType", "15,5,20",
                             row["tolocation"].ToString(),
                             false,
                             ",");
@@ -187,6 +190,7 @@ ORDER BY ID, StockType", "15,5",
                         @"
 SELECT ID
 	   , StockType 
+       , Description
 FROM MtlLocation 
 WHERE Junk = 0 
       -- StockType --
