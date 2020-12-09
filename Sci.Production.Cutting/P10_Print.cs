@@ -26,7 +26,6 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
-            MyUtility.Tool.SetupCombox(this.comboLayout, 2, 1, "0,Layout1,1,Layout2");
             this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
             this.linkLabelRFCardEraseBeforePrinting1.SetText();
         }

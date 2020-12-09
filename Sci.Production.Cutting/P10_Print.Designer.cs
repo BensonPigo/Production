@@ -31,7 +31,6 @@
             this.checkExtendAllParts = new System.Windows.Forms.CheckBox();
             this.radioBundleChecklist = new System.Windows.Forms.RadioButton();
             this.radioBundleCard = new System.Windows.Forms.RadioButton();
-            this.comboLayout = new Sci.Win.UI.ComboBox();
             this.radioBundleCardRF = new System.Windows.Forms.RadioButton();
             this.panel1 = new Sci.Win.UI.Panel();
             this.comboBoxSetting = new Sci.Win.UI.ComboBox();
@@ -105,18 +104,6 @@
             this.radioBundleCard.UseVisualStyleBackColor = true;
             this.radioBundleCard.CheckedChanged += new System.EventHandler(this.RadioBundleCard_CheckedChanged);
             // 
-            // comboLayout
-            // 
-            this.comboLayout.BackColor = System.Drawing.Color.White;
-            this.comboLayout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLayout.FormattingEnabled = true;
-            this.comboLayout.IsSupportUnselect = true;
-            this.comboLayout.Location = new System.Drawing.Point(170, 45);
-            this.comboLayout.Name = "comboLayout";
-            this.comboLayout.OldText = "";
-            this.comboLayout.Size = new System.Drawing.Size(121, 24);
-            this.comboLayout.TabIndex = 97;
-            // 
             // radioBundleCardRF
             // 
             this.radioBundleCardRF.AutoSize = true;
@@ -188,7 +175,6 @@
             this.Controls.Add(this.btnSetting);
             this.Controls.Add(this.comboBoxSetting);
             this.Controls.Add(this.radioBundleCardRF);
-            this.Controls.Add(this.comboLayout);
             this.Controls.Add(this.checkExtendAllParts);
             this.Controls.Add(this.radioBundleChecklist);
             this.Controls.Add(this.radioBundleCard);
@@ -208,7 +194,6 @@
             this.Controls.SetChildIndex(this.radioBundleChecklist, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.checkExtendAllParts, 0);
-            this.Controls.SetChildIndex(this.comboLayout, 0);
             this.Controls.SetChildIndex(this.radioBundleCardRF, 0);
             this.Controls.SetChildIndex(this.comboBoxSetting, 0);
             this.Controls.SetChildIndex(this.btnSetting, 0);
@@ -223,7 +208,6 @@
         private System.Windows.Forms.CheckBox checkExtendAllParts;
         private System.Windows.Forms.RadioButton radioBundleChecklist;
         private System.Windows.Forms.RadioButton radioBundleCard;
-        private Win.UI.ComboBox comboLayout;
         private System.Windows.Forms.RadioButton radioBundleCardRF;
         private Win.UI.Panel panel1;
         private Win.UI.ComboBox comboBoxSetting;
