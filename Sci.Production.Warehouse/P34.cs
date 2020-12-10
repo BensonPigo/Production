@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -464,6 +466,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
 
             transactionscope.Dispose();
             transactionscope = null;
+            this.SentToGensong_AutoWH_ACC();
         }
 
         /// <inheritdoc/>
@@ -654,6 +657,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 
             transactionscope.Dispose();
             transactionscope = null;
+            this.SentToGensong_AutoWH_ACC();
         }
 
         // 寫明細撈出的sql command
@@ -720,6 +724,20 @@ Where a.id = '{0}' ", masterID);
             else
             {
                 this.detailgridbs.Position = index;
+            }
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC()
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentAdjust_DetailToGensongAutoWHAccessory(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }

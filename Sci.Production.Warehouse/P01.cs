@@ -12,6 +12,7 @@ using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P01 : Win.Tems.Input1
     {
         private string dataType = string.Empty;
@@ -23,6 +24,7 @@ namespace Sci.Production.Warehouse
             form.Focus();
         }
 
+        /// <inheritdoc/>
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -39,6 +41,7 @@ namespace Sci.Production.Warehouse
             this.comboSubconInType.DisplayMember = "Value";
         }
 
+        /// <inheritdoc/>
         public P01(ToolStripMenuItem menuitem, string history)
             : this(menuitem)
         {
@@ -565,8 +568,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 // WHClose
                 if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
                 {
-                    DataTable dtMain = this.CurrentMaintain.Table.Clone();
-                    dtMain.ImportRow(this.CurrentMaintain);
+                    DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                     Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMain))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
@@ -577,13 +579,44 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     DataTable dtMain = new DataTable();
                     dtMain.Columns.Add("ID", typeof(string));
                     dtMain.Columns.Add("Type", typeof(string));
+                    dtMain.Columns.Add("Status", typeof(string));
                     DataRow row = dtMain.NewRow();
                     row["ID"] = this.CurrentMaintain["Poid"].ToString();
                     row["Type"] = "D";
+                    row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
                     Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
+                #endregion
+
+                #region Sent W/H Accessory to Gensong
+
+                // WHClose
+                if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    Task.Run(() => new Gensong_AutoWHAccessory().SentWHCloseToGensongAutoWHAccessory(dtMain))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                // SubTransfer_Detail
+                if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtMain = new DataTable();
+                    dtMain.Columns.Add("ID", typeof(string));
+                    dtMain.Columns.Add("Type", typeof(string));
+                    dtMain.Columns.Add("Status", typeof(string));
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = this.CurrentMaintain["Poid"].ToString();
+                    row["Type"] = "D";
+                    row["Status"] = "Confirmed";
+                    dtMain.Rows.Add(row);
+                    Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                // this.QueryData();
                 #endregion
 
                 MyUtility.Msg.WarningBox("Finished!");

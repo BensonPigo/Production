@@ -11,6 +11,8 @@ using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
 using Microsoft.Reporting.WinForms;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -470,6 +472,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             if (result)
             {
                 MyUtility.Msg.InfoBox("Confirmed successful");
+                this.SentToGensong_AutoWH_ACC();
             }
             else
             {
@@ -662,6 +665,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             if (result)
             {
                 MyUtility.Msg.InfoBox("Confirmed successful");
+                this.SentToGensong_AutoWH_ACC();
             }
             else
             {
@@ -754,6 +758,20 @@ Where a.id = '{0}'
             else
             {
                 this.detailgridbs.Position = index;
+            }
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC()
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentAdjust_DetailToGensongAutoWHAccessory(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }

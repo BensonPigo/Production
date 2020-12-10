@@ -2556,6 +2556,7 @@
     <Build Include="dbo\Tables\FtyStyleInnovation_Artwork.sql" />
     <Build Include="dbo\Tables\FtyStyleInnovation.sql" />
     <Build Include="dbo\Tables\FtyStyleInnovationAllPart.sql" />
+    <Build Include="dbo\Tables\FtyInventory_Barcode.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

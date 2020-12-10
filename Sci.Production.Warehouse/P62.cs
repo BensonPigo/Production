@@ -700,6 +700,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+                    this.FtyBarcodeData(true);
                     this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
@@ -880,6 +881,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+                    this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
@@ -907,11 +909,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
         private void SentToGensong_AutoWHFabric()
         {
-            if (true)
-            {
-                return; // 暫未開放
-            }
-
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
@@ -929,27 +926,41 @@ select distinct
 ,[Seq2] = i2.Seq2
 ,[Roll] = i2.Roll
 ,[Dyelot] = i2.Dyelot
-,[Barcode] = fty.Barcode
+,[Barcode] = Barcode.value
+,[NewBarcode] = NewBarcode.value
 ,[Qty] = i2.Qty
 ,[Ukey] = i2.ukey
-,[Junk] = case when i.Status = 'Confirmed' then convert(bit, 0) else convert(bit, 1) end
+,[Status] = i.Status
 ,CmdTime = GetDate()
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
 left join Production.dbo.Cutplan c on c.ID = i.CutplanID
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
 outer apply(
-	select Barcode
-	from Production.dbo.FtyInventory
-	where POID = i2.POID and Seq1=i2.Seq1
-	and Seq2=i2.Seq2 and Roll=i2.Roll and Dyelot=i2.Dyelot
-    and StockType = i2.StockType
-)fty
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+outer apply(
+	select value = fb.Barcode
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
+)NewBarcode
 where i.Type = 'I'
 and exists(
 		select 1 from Production.dbo.PO_Supp_Detail 
 		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 		and FabricType='F'
 	)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
 and i.id = '{this.CurrentMaintain["ID"]}'
 
 ";
@@ -962,6 +973,78 @@ and i.id = '{this.CurrentMaintain["ID"]}'
 
                 Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        private void FtyBarcodeData(bool isConfirmed)
+        {
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlcmd = $@"
+select fb.Ukey,fb.TransactionID,fb.Barcode
+,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[NewBarcode] = ''
+,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
+from Production.dbo.Issue_Detail i2
+inner join Production.dbo.Issue i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.POID
+    and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
+    and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+    and f.StockType = i2.StockType
+inner join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+where i.Type = 'I'
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and i2.id ='{this.CurrentMaintain["ID"]}'
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                {
+                    if (dr["Barcode"].ToString().Contains("-"))
+                    {
+                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString().Substring(14, 2), 1);
+                    }
+                    else
+                    {
+                        dr["NewBarcode"] = MyUtility.Check.Empty(dr["Barcode"]) ? string.Empty : dr["Barcode"].ToString() + "-01";
+                    }
+                }
+                else
+                {
+                    // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                    dr["NewBarcode"] = dr["Barcode"];
+                }
+            }
+
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                    select new
+                                    {
+                                        TransactionID = m.Field<string>("ID"),
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("NewBarcode"),
+                                    }).ToList();
+
+            string upd_Fty_Barcode = Prgs.UpdateFtyInventory_IO(70, null, isConfirmed);
+            DataTable resulttb;
+            if (data_Fty_Barcode.Count >= 1)
+            {
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
         }
 

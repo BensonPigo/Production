@@ -306,7 +306,9 @@ WHERE   StockType='{0}'
             }
             else
             {
+                this.FtyBarcodeData(true);
                 this.SentToGensong_AutoWHFabric();
+                this.SentToGensong_AutoWH_ACC();
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
         }
@@ -710,7 +712,9 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+                    this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWH_ACC();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -730,10 +734,100 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtMain = this.CurrentMaintain.Table.Clone();
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 dtMain.ImportRow(this.CurrentMaintain);
                 Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC()
+        {
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        private void FtyBarcodeData(bool isConfirmed)
+        {
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlcmd = $@"
+select fb.Ukey,fb.TransactionID,fb.Barcode
+,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[NewBarcode] = ''
+,[Poid] = i2.ToPOID
+,[Seq1] = i2.ToSeq1
+,[Seq2] = i2.ToSeq2
+,[Roll] = i2.ToRoll
+,[Dyelot] = i2.ToDyelot
+,[StockType] = i2.ToStockType
+from Production.dbo.SubTransfer_Detail i2
+inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.FromPOID
+    and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
+    and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
+    and f.StockType = i2.FromStockType
+left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.ToPoid and seq1=i2.Toseq1 and seq2=i2.Toseq2 
+	and FabricType='F'
+)
+and i2.id ='{this.CurrentMaintain["ID"]}'
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                {
+                    if (dr["Barcode"].ToString().Contains("-"))
+                    {
+                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString().Substring(14, 2), 1);
+                    }
+                    else
+                    {
+                        dr["NewBarcode"] = MyUtility.Check.Empty(dr["Barcode"]) ? string.Empty : dr["Barcode"].ToString() + "-01";
+                    }
+                }
+                else
+                {
+                    // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                    dr["NewBarcode"] = dr["Barcode"];
+                }
+            }
+
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                    select new
+                                    {
+                                        TransactionID = this.CurrentMaintain["ID"].ToString(),
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("NewBarcode"),
+                                    }).ToList();
+
+            string upd_Fty_Barcode = Prgs.UpdateFtyInventory_IO(70, null, isConfirmed);
+            DataTable resulttb;
+            if (data_Fty_Barcode.Count >= 1)
+            {
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
         }
 

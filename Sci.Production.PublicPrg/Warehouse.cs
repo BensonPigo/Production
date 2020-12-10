@@ -545,34 +545,58 @@ drop table #TmpSource
                 case 70:
                     #region 更新Barcode
                     sqlcmd = @"
+alter table #TmpSource alter column TransactionID varchar(15)
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
 alter table #TmpSource alter column roll varchar(15)
-alter table #TmpSource alter column Barcode varchar(13)
+alter table #TmpSource alter column Dyelot varchar(15)
+alter table #TmpSource alter column Barcode varchar(16)
 
-select distinct poid, seq1, seq2, stocktype
-, roll = RTRIM(LTRIM(isnull(roll, '')))
-, dyelot = isnull(dyelot, '')
-, Barcode
+select t.Ukey
+, s.TransactionID
+, s.Barcode
 into #tmpS1
-from #TmpSource
-
-merge dbo.FtyInventory as target
-using #tmpS1 as s
-on target.poid = s.poid 
-    and target.seq1 = s.seq1 
-    and target.seq2 = s.seq2 
-    and target.stocktype = s.stocktype 
-    and target.roll = s.roll 
-    and target.dyelot = s.dyelot
+from FtyInventory t
+inner join #TmpSource s on t.POID = s.poid
+and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+and t.StockType = s.stocktype 
+and t.Roll = s.roll and t.Dyelot = s.Dyelot
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+merge dbo.FtyInventory_Barcode as t
+using #tmpS1 as s 
+	on t.ukey = s.ukey  and s.TransactionID = t.TransactionID
 when matched then
     update
-    set Barcode = s.Barcode;
+    set t.Barcode = isnull(s.Barcode,'')
+when not matched and s.Ukey is not null then
+	insert(ukey,TransactionID,Barcode)
+	values(s.ukey,s.TransactionID,s.Barcode);
 
 drop table #tmpS1; 
-drop table #TmpSource;";
+drop table #TmpSource;
+";
+                    }
+                    else
+                    {
+                        sqlcmd += @"
+
+delete t
+from FtyInventory_Barcode t
+where exists(
+	select 1 from #tmpS1 s where t.ukey = s.ukey
+	and s.TransactionID = t.TransactionID
+)
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+
                     #endregion
                     break;
             }

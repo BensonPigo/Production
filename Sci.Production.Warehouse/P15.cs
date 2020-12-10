@@ -15,6 +15,8 @@ using System.Reflection;
 using Microsoft.Reporting.WinForms;
 using Sci.Win;
 using System.Data.SqlClient;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -524,6 +526,8 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
+
+                this.SentToGensong_AutoWH_ACC();
             }
         }
 
@@ -714,6 +718,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     this.ShowErr("Commit transaction error.", ex);
                     return;
                 }
+
+                this.SentToGensong_AutoWH_ACC();
             }
         }
 
@@ -1006,6 +1012,68 @@ where a.id= @ID";
             frm.Show();
 
             return true;
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC()
+        {
+            // AutoWHACC WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = new DataTable();
+                string sqlGetData = string.Empty;
+                sqlGetData = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = i.Type
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[StockType] = i2.StockType
+,[Qty] = i2.Qty
+,[StockPOID] = po3.StockPOID
+,[StockSeq1] = po3.StockSeq1
+,[StockSeq2] = po3.StockSeq2
+,[Ukey] = i2.ukey
+,[Status] = i.Status
+,CmdTime = GetDate()
+from Production.dbo.IssueLack_Detail i2
+inner join Production.dbo.IssueLack i on i2.Id=i.Id
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+left join PO_Supp_Detail po3 on po3.ID = i2.POID
+	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where i.Type = 'R' and i.FabricType='A'
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='A'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+and i.id = '{this.CurrentMaintain["ID"]}'
+
+";
+
+                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
+                if (!drResult)
+                {
+                    this.ShowErr(drResult);
+                }
+
+                Task.Run(() => new Gensong_AutoWHAccessory().SentIssue_DetailToGensongAutoWHAccessory(dtDetail))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
     }
 }
