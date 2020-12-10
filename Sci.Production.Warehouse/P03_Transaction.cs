@@ -55,26 +55,45 @@ namespace Sci.Production.Warehouse
 						     end
                 	,inqty = 0 
                 	,outqty = 0
-                	,adjust = sum(QtyAfter - QtyBefore) 
+                	,adjust = adjust.Qty
                 	,remark 
                 	,location = MtlLocation.location 
                 	,AddDate
-            from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
+            from Adjust a WITH (NOLOCK)
+            outer apply (
+	                    	select qty = sum (QtyAfter - QtyBefore)
+	                    	from Adjust_Detail b WITH (NOLOCK)
+	                    	where a.id = b.id and  b.poid='{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
+	                    ) adjust
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where ad.poid = fty.poid and ad.seq1 = fty.seq1 and ad.seq2 = fty.seq2 and ad.Roll = fty.Roll and ad.Dyelot = fty.Dyelot
-																	            and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from Adjust_Detail ad
-									           where b.id = ad.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from Adjust_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation            
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and a.Type not in  ('R','O')",
+            where a.Status = 'Confirmed' and a.Type not in  ('R','O')
+                    and exists (
+			                    	select 1
+			                    	from Adjust_Detail b WITH (NOLOCK)
+			                    	where a.Id = b.Id
+			                    			and poid = '{0}'
+			                    			and seq1 = '{1}'
+			                    			and seq2 = '{2}'
+			                    )",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -86,35 +105,51 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type,AddDate, MtlLocation.location 
 
             union all
             select 	a.IssueDate
             		, a.id
             		,name = 'P31. Material Borrow out' 
             		,inqty = 0
-            		,released = sum(qty) 
+            		,released = released.qty
             		,adjust = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
-            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+            from BorrowBack a WITH (NOLOCK)
+            outer apply (
+	                    	select qty = sum (qty)
+	                    	from BorrowBack_Detail b WITH (NOLOCK)
+	                    	where a.id = b.id and  b.FromPoId='{0}' and b.FromSeq1 = '{1}' and b.FromSeq2 = '{2}' 
+	                    ) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where BBD.FromPOID = fty.poid and BBD.Fromseq1 = fty.seq1 and BBD.Fromseq2 = fty.seq2 and BBD.FromRoll = fty.Roll 
-																				and BBD.FromDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD
-									           where b.id = BBD.id and Frompoid='{0}' and Fromseq1 = '{1}'and Fromseq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.FromPoId = fty.poid 
+																		and d.FromSeq1 = fty.seq1 
+																		and d.FromSeq2 = fty.seq2 
+																		and d.FromRoll = fty.roll 
+																		and d.FromDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.FromPoId = '{0}' 
+												and d.FromSeq1 = '{1}'
+												and d.FromSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation             
-            where type='A' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id ",
+            where type='A' and Status='Confirmed'  
+                        and exists (
+			                    	select 1
+			                    	from BorrowBack_Detail b WITH (NOLOCK)
+			                    	where a.Id = b.Id
+			                    			and b.Frompoid = '{0}'
+			                    			and b.Fromseq1 = '{1}'
+			                    			and b.Fromseq2 = '{2}')",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -126,35 +161,51 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
 			select 	issuedate
 					,a.id
             		,name = 'P31. Material Borrow In' 
-            		,arrived = sum(qty) 
+            		,arrived = arrived.qty
             		,ouqty = 0 
             		,adjust = 0 
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
-            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+            from BorrowBack a WITH (NOLOCK)
+            outer apply (
+	                    	select qty = sum (qty)
+	                    	from BorrowBack_Detail b WITH (NOLOCK)
+	                    	where a.id = b.id and  b.ToPoId='{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}' 
+	                    ) arrived
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where BBD.ToPOID = fty.poid and BBD.Toseq1 = fty.seq1 and BBD.Toseq2 = fty.seq2 and BBD.ToRoll = fty.Roll 
-																				and BBD.ToDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD
-									           where b.id = BBD.id and  Topoid='{0}' and Toseq1 = '{1}'and Toseq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
-			) MtlLocation                
-            where type='A' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-                and a.id = b.id ",
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.ToPoId = fty.poid 
+																		and d.ToSeq1 = fty.seq1 
+																		and d.ToSeq2 = fty.seq2 
+																		and d.ToRoll = fty.roll 
+																		and d.ToDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.ToPoId = '{0}' 
+												and d.ToSeq1 = '{1}'
+												and d.ToSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
+			) MtlLocation             
+            where type='A' and Status='Confirmed'  
+                        and exists (
+			                    	select 1
+			                    	from BorrowBack_Detail b WITH (NOLOCK)
+			                    	where a.Id = b.Id
+			                    			and b.ToPoId = '{0}'
+			                    			and b.ToSeq1 = '{1}'
+			                    			and b.ToSeq2 = '{2}') ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -165,35 +216,51 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
             select 	a.IssueDate
             		,a.id
             		,name = 'P32. Return Borrowing out' 
             		,inqty = 0
-            		,released = sum(qty) 
+            		,released = released.qty
             		,adjust = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
-            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b  WITH (NOLOCK) 
+            from BorrowBack a WITH (NOLOCK)
+            outer apply (
+	                    	select qty = sum (qty)
+	                    	from BorrowBack_Detail b WITH (NOLOCK)
+	                    	where a.id = b.id and  b.FromPoId='{0}' and b.FromSeq1 = '{1}' and b.FromSeq2 = '{2}' 
+	                    ) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where BBD.FromPOID = fty.poid and BBD.Fromseq1 = fty.seq1 and BBD.Fromseq2 = fty.seq2 and BBD.FromRoll = fty.Roll 
-																				and BBD.FromDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD
-									           where b.id = BBD.id and Frompoid='{0}' and Fromseq1 = '{1}'and Fromseq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
-			) MtlLocation
-            where type='B' and Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  
-                and a.id = b.id ",
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.FromPoId = fty.poid 
+																		and d.FromSeq1 = fty.seq1 
+																		and d.FromSeq2 = fty.seq2 
+																		and d.FromRoll = fty.roll 
+																		and d.FromDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.FromPoId = '{0}' 
+												and d.FromSeq1 = '{1}'
+												and d.FromSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
+			) MtlLocation             
+            where type='B' and Status='Confirmed'  
+                        and exists (
+			                    	select 1
+			                    	from BorrowBack_Detail b WITH (NOLOCK)
+			                    	where a.Id = b.Id
+			                    			and b.Frompoid = '{0}'
+			                    			and b.Fromseq1 = '{1}'
+			                    			and b.Fromseq2 = '{2}')",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -205,35 +272,51 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
             select 	issuedate
             		,a.id
             		,name = 'P32. Return Borrowing In' 
-            		,arrived = sum(qty) 
+            		,arrived = arrived.qty
             		,ouqty = 0
             		,adjust = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
-            from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
+            from BorrowBack a WITH (NOLOCK)
+            outer apply (
+	                    	select qty = sum (qty)
+	                    	from BorrowBack_Detail b WITH (NOLOCK)
+	                    	where a.id = b.id and  b.ToPoId='{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}' 
+	                    ) arrived
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where BBD.ToPOID = fty.poid and BBD.Toseq1 = fty.seq1 and BBD.Toseq2 = fty.seq2 and BBD.ToRoll = fty.Roll 
-																				and BBD.ToDyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD
-									           where b.id = BBD.id and  Topoid='{0}' and Toseq1 = '{1}'and Toseq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
-			) MtlLocation 
-            where type='B' and Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  
-                and a.id = b.id ",
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.ToPoId = fty.poid 
+																		and d.ToSeq1 = fty.seq1 
+																		and d.ToSeq2 = fty.seq2 
+																		and d.ToRoll = fty.roll 
+																		and d.ToDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.ToPoId = '{0}' 
+												and d.ToSeq1 = '{1}'
+												and d.ToSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
+			) MtlLocation             
+            where type='B' and Status='Confirmed'  
+                        and exists (
+			                    	select 1
+			                    	from BorrowBack_Detail b WITH (NOLOCK)
+			                    	where a.Id = b.Id
+			                    			and b.ToPoId = '{0}'
+			                    			and b.ToSeq1 = '{1}'
+			                    			and b.ToSeq2 = '{2}') ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -244,38 +327,59 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
-	            select issuedate, a.id
-	            ,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
-			            when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
-			            when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-			            when 'D' then 'P13. Issue Material by Item'
-			            when 'E' then 'P33. Issue Thread'
-			            when 'I' then 'P62. Issue Fabric for Cutting Tape'
-                        end name
-	            ,0 as inqty
-                , sum(Qty) released
-                ,0 as adjust, remark
-                ,location = MtlLocation.location
-                ,AddDate
-            from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
-            outer apply(
-				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where Is_D.POID = fty.poid and Is_D.seq1 = fty.seq1 and Is_D.seq2 = fty.seq2 and Is_D.Roll = fty.Roll 
-																				and Is_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from Issue_Detail Is_D
-									           where b.id = Is_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
-			) MtlLocation
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+	            select issuedate
+                        , a.id
+                	    , name = case type 
+                					when 'A' then 'P10. Issue Fabric to Cutting Section' 
+                					when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
+                					when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
+                					when 'D' then 'P13. Issue Material by Item'
+                					when 'E' then 'P33. Issue Thread'
+                					when 'I' then 'P62. Issue Fabric for Cutting Tape'
+                                end 
+                	    , inqty = 0 
+                		, Released.qty
+                        , adjust = 0
+                		, remark
+                        , location = MtlLocation.location
+                        , AddDate
+                    from Issue a WITH (NOLOCK)
+                	outer apply (
+                		select qty = sum (qty)
+                		from issue_detail is_d WITH (NOLOCK)
+                		where a.id = is_d.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}' 
+                	) released
+                    outer apply(
+                		select  location = stuff((select ',' + x.location								
+								    from(select distinct location = fty_d.MtlLocationID
+									    from issue_detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
+                	) MtlLocation
+                    where Status='Confirmed' 
+                			and exists (
+                				select 1
+                				from Issue_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.poid = '{0}' 
+                						and b.seq1 = '{1}'
+                						and b.seq2 = '{2}'
+                			) ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -286,7 +390,6 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, poid, seq1, Seq2, remark, a.IssueDate, a.type, AddDate, MtlLocation.location
 
             union all
             select 	issuedate
@@ -296,28 +399,46 @@ namespace Sci.Production.Warehouse
 		           				when 'F' then 'P16. Issue Fabric Lacking & Replacement' 
 		       		 end 
         			,inqty = 0
-        			,outqty = sum(b.Qty)  
+        			,outqty = released.qty
         			,adjust = 0 
         			,a.remark 
         			,location = MtlLocation.location
         			,AddDate
-            from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+            from IssueLack a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (qty)
+                		from IssueLack_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.poid = '{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
+                	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where IL_D.POID = fty.poid and IL_D.seq1 = fty.seq1 and IL_D.seq2 = fty.seq2 and IL_D.Roll = fty.Roll 
-																				and IL_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from IssueLack_Detail IL_D
-									           where b.id = IL_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from IssueLack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation 
-            where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
-                and a.id = b.id and Type='R'  ",
+            where a.Status in ('Confirmed','Closed') and a.Type='R'
+                			and exists (
+                				select 1
+                				from IssueLack_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.poid = '{0}' 
+                						and b.seq1 = '{1}'
+                						and b.seq2 = '{2}'
+                			) ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -328,34 +449,52 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,AddDate, MtlLocation.location 
 
             union all
             select 	issuedate
             		,a.id
             		,name = 'P17. R/Mtl Return' 
             		,inqty = 0
-            		,released = sum(0-b.Qty) 
+            		,released = released.qty
             		,adjust = 0
             		,remark
             		,location = MtlLocation.location
             		,AddDate
-            from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
+            from IssueReturn a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (-b.Qty)
+                		from IssueReturn_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.poid = '{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
+                	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where IR_D.POID = fty.poid and IR_D.seq1 = fty.seq1 and IR_D.seq2 = fty.seq2 and IR_D.Roll = fty.Roll 
-																				and IR_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from IssueReturn_Detail IR_D
-									           where b.id = IR_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from IssueReturn_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation   
-            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+            where status='Confirmed' 
+                			and exists (
+                				select 1
+                				from IssueReturn_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.poid = '{0}' 
+                						and b.seq1 = '{1}'
+                						and b.seq2 = '{2}'
+                			) ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -366,23 +505,41 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.Id, poid, seq1,Seq2, remark,a.IssueDate,AddDate, MtlLocation.location 
 
             union all
-            select case type when 'A' then a.eta else a.WhseArrival end as issuedate, a.id
-            ,case type when 'A' then 'P07. Material Receiving' 
-                        when 'B' then 'P08. Warehouse Shopfloor Receiving' end name
-            , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,X.Location,AddDate
-            from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
+            select  issuedate = case type when 'A' then a.eta else a.WhseArrival end
+                    ,a.id
+                    ,name = case type when 'A' then 'P07. Material Receiving' 
+                                      when 'B' then 'P08. Warehouse Shopfloor Receiving' end 
+                    ,arrived = arrived.qty
+                    ,ouqty = 0
+                    ,adjust = 0
+                    ,remark = '' 
+                    ,X.Location
+                    ,AddDate
+            from Receiving a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.StockQty)
+                		from Receiving_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.poid = '{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
+                	) arrived
 			outer apply(
 				select Location = (
 					select distinct concat(c.Location,'')
 					from Receiving_Detail c WITH (NOLOCK) 
-					where c.Id = b.Id and c.Seq1 = b.Seq1 and c.Seq2 = b.Seq2
+					where c.Id = a.Id and c.Seq1 = '{1}' and c.Seq2 = '{2}'
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+            where Status='Confirmed'
+                    and exists (
+                				select 1
+                				from Receiving_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.poid = '{0}' 
+                						and b.seq1 = '{1}'
+                						and b.seq2 = '{2}'
+                			) ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -393,34 +550,52 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type,a.eta,AddDate,X.Location
 
             union all
             select 	issuedate
             		,a.id
             		,name = 'P37. Return Receiving Material'             
             		,inqty = 0
-            		,released = sum(Qty) 
+            		,released = released.qty
             		,adjust = 0
             		,remark
             		,location = MtlLocation.location
             		,AddDate
-            from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
+            from ReturnReceipt a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from ReturnReceipt_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.poid = '{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
+                	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where RR_D.POID = fty.poid and RR_D.seq1 = fty.seq1 and RR_D.seq2 = fty.seq2 and RR_D.Roll = fty.Roll 
-																				and RR_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from ReturnReceipt_Detail RR_D
-									           where b.id = RR_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from ReturnReceipt_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation     
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+            where Status='Confirmed' 
+                    and exists (
+                				select 1
+                				from ReturnReceipt_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.poid = '{0}' 
+                						and b.seq1 = '{1}'
+                						and b.seq2 = '{2}'
+                			) ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -431,23 +606,40 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, poid, seq1,Seq2, remark,a.IssueDate ,AddDate, MtlLocation.location 
                                                                               
             union all
-	        select issuedate, a.id
-	        ,'P23. Transfer Inventory to Bulk' as name
-	        , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,X.Location,AddDate
-            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
+	        select issuedate
+                    , a.id
+	                , name = 'P23. Transfer Inventory to Bulk'
+	                , inqty = 0
+                    , released = released.qty
+                    , adjust = 0 
+                    , remark = ''  
+                    , X.Location
+                    , AddDate
+            from SubTransfer a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from SubTransfer_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.Frompoid = '{0}' and b.Fromseq1 = '{1}' and b.FromSeq2 = '{2}' 
+                	) released
 			outer apply(
 				select Location = (
 					select distinct concat(c.toLocation,'')
 					from SubTransfer_Detail c WITH (NOLOCK) 
-					where c.Id = b.Id and c.toSeq1 = b.toSeq1 and c.toSeq2 = b.toSeq2
+					where c.Id = a.Id  and c.Fromseq1 = '{1}' and c.FromSeq2 = '{2}'
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  
-            and a.id = b.id and type = 'B' ",
+            where a.Status='Confirmed' and a.type = 'B'
+                    and exists (
+                				select 1
+                				from SubTransfer_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.Frompoid = '{0}' 
+                						and b.Fromseq1 = '{1}'
+                						and b.FromSeq2 = '{2}'
+                			)",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -457,23 +649,40 @@ namespace Sci.Production.Warehouse
             }
 
             selectCommand1.Append(string.Format(
-                @"
-            group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type ,AddDate,X.Location                                                                               
+                @"                                                                          
             union all
-	            select issuedate, a.id
-            ,'P23. Transfer Inventory to Bulk' name
-            , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
-	        ,(Select cast(tmp.ToLocation as nvarchar)+',' 
-                                    from (select b1.ToLocation 
-                                                from SubTransfer a1 WITH (NOLOCK) 
-                                                inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                                where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                                    and b1.ToPoid = b.ToPoid
-                                                    and b1.ToSeq1 = b.ToSeq1
-                                                    and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
-                                    for XML PATH('')) as ToLocation,AddDate
-            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and ToPoid='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id and type = 'B' 
+	            select  issuedate
+                        , a.id
+                        ,'P23. Transfer Inventory to Bulk' name
+                        , arrived.qty arrived
+                        ,0 as ouqty
+                        ,0 as adjust
+                        , remark
+	                    ,ToLocation = (Select cast(tmp.ToLocation as nvarchar)+',' 
+                                       from (select b1.ToLocation 
+                                                   from SubTransfer a1 WITH (NOLOCK) 
+                                                   inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+                                                   where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
+                                                       and b1.ToPoid = '{0}'
+                                                       and b1.ToSeq1 = '{1}'
+                                                       and b1.ToSeq2 = '{2}'  group by b1.ToLocation) tmp 
+                                       for XML PATH(''))
+                        ,AddDate
+            from SubTransfer a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from SubTransfer_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.ToPoid = '{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}' 
+                	) arrived
+            where a.Status = 'Confirmed' and a.type = 'B'  
+                    and exists (
+                				select 1
+                				from SubTransfer_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.ToPoid = '{0}' 
+                						and b.ToSeq1 = '{1}'
+                						and b.ToSeq2 = '{2}'
+                			)
             ",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
@@ -485,23 +694,40 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, ToPoid, ToSeq1,ToSeq2, remark ,a.IssueDate,AddDate
 
             union all
-	            select issuedate, a.id
-            ,'P18. TransferIn' name
-            , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
-	            ,(Select cast(tmp.Location as nvarchar)+',' 
+	            select  issuedate
+                        , a.id
+                        ,'P18. TransferIn' name
+                        , arrived.qty arrived
+                        , 0 as ouqty
+                        , 0 as adjust
+                        , a.remark
+	                    , (Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
                                                 from TransferIn a1 WITH (NOLOCK) 
                                                 inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
-                                                    and b1.Poid = b.Poid
-                                                    and b1.Seq1 = b.Seq1
-                                                    and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
-                                    for XML PATH('')) as Location,AddDate
-            from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+                                                    and b1.Poid = '{0}'
+                                                    and b1.Seq1 = '{1}'
+                                                    and b1.Seq2 = '{2}' group by b1.Location) tmp 
+                                    for XML PATH('')) as Location
+                        , AddDate
+            from TransferIn a WITH (NOLOCK) 
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from TransferIn_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.Poid = '{0}' and b.Seq1 = '{1}' and b.Seq2 = '{2}' 
+                	) arrived
+            where Status='Confirmed' 
+                    and exists (
+                				select 1
+                				from TransferIn_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.Poid = '{0}' 
+                						and b.Seq1 = '{1}'
+                						and b.Seq2 = '{2}'
+                			)",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -512,34 +738,52 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,AddDate
 
             union all
 	        select 	issuedate
 	        		,a.id
             		,name = 'P19. TransferOut' 
             		,inqty = 0
-            		,released = sum(Qty) 
+            		,released = released.qty
             		,adjust = 0
             		,remark
             		,location = MtlLocation.location
             		,AddDate
-            from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
+            from TransferOut a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.Qty) 
+                		from TransferOut_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.Poid = '{0}' and b.Seq1 = '{1}' and b.Seq2 = '{2}' 
+                	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID from FtyInventory fty 
-																             join FtyInventory_Detail fty_D on fty.ukey = fty_D.ukey
-																             Where TfD_D.POID = fty.poid and TfD_D.seq1 = fty.seq1 and TfD_D.seq2 = fty.seq2 and TfD_D.Roll = fty.Roll 
-																				and TfD_D.Dyelot = fty.Dyelot and MtlLocationID != '' and MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from TransferOut_Detail TfD_D
-									           where b.id = TfD_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from TransferOut_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation   
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+            where Status='Confirmed' 
+                    and exists (
+                				select 1
+                				from TransferOut_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.Poid = '{0}' 
+                						and b.Seq1 = '{1}'
+                						and b.Seq2 = '{2}'
+                			)",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -549,26 +793,41 @@ namespace Sci.Production.Warehouse
             }
 
             selectCommand1.Append(string.Format(
-                @"
-            group by a.id, poid, Seq1,Seq2, remark,a.IssueDate,AddDate, MtlLocation.location 
+                @" 
 
             union all
-	            select issuedate, a.id
+	            select issuedate
+                , a.id
 	            ,'P36. Transfer Scrap to Inventory' as name
-	            , sum(qty) as inqty, 0 as released,0 as adjust ,isnull(a.remark,'') remark 
+	            , inqty.qty as inqty
+                , 0 as released
+                , 0 as adjust 
+                , isnull(a.remark,'') remark 
 				,(Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
                                                 from SubTransfer a1 WITH (NOLOCK) 
                                                 inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                                    and b1.ToPoid = b.ToPoid
-                                                    and b1.ToSeq1 = b.ToSeq1
-                                                    and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
+                                                    and b1.ToPoid = '{0}'
+                                                    and b1.ToSeq1 = '{1}'
+                                                    and b1.ToSeq2 = '{2}' group by b1.ToLocation) tmp 
                                     for XML PATH('')) as ToLocation
-									,AddDate
-            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-            where type='C' and Status='Confirmed' and topoid='{0}' and toseq1 = '{1}' and toSeq2 = '{2}'  
-            and a.id = b.id ",
+				,AddDate
+            from SubTransfer a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from SubTransfer_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.topoid = '{0}' and b.toseq1 = '{1}' and b.toSeq2 = '{2}' 
+                	) inqty
+            where type='C' and Status='Confirmed'
+                    and exists (
+                				select 1
+                				from SubTransfer_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.topoid = '{0}' 
+                						and b.toseq1 = '{1}'
+                						and b.toSeq2 = '{2}'
+                			)",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -581,24 +840,42 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, topoid, toSeq1, toSeq2,a.IssueDate,a.Type,a.remark,AddDate
             
             union all
-            select issuedate, a.id
-	            ,case type when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
-			            when 'D' then 'P76. Material Borrow cross M (Receive)' 
-			            when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
-	            ,sum(Qty) as inqty, 0 released,0 as adjust, remark,X.location,AddDate
-            from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
+            select  issuedate
+                    , a.id
+	                , case type  when 'B' then 'P73. Transfer Inventory to Bulk cross M (Receive)' 
+			                     when 'D' then 'P76. Material Borrow cross M (Receive)' 
+			                     when 'G' then 'P78. Material Return Back cross M (Receive)'  end name
+	                , inqty.qty as inqty
+                    , 0 released
+                    , 0 as adjust
+                    , remark
+                    , X.location
+                    , AddDate
+            from RequestCrossM a WITH (NOLOCK) 
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from RequestCrossM_Receive b WITH (NOLOCK)
+                		where a.id = b.id and b.POID = '{0}' and b.Seq1 = '{1}' and b.Seq2 = '{2}' 
+                	) inqty
 			outer apply(
 				select Location = (
 					select distinct concat(c.Location,',')
 					from RequestCrossM_Receive c WITH (NOLOCK) 
-					where c.Id = b.Id and c.Seq1 = b.Seq1 and c.Seq2 = b.Seq2
+					where c.Id = a.Id and c.Seq1 = '{1}'  and c.Seq2 = '{2}' 
 					for xml path('')
 				)
 			)X
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id ",
+            where Status='Confirmed' 
+                    and exists (
+                				select 1
+                				from RequestCrossM_Receive b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.POID = '{0}' 
+                						and b.Seq1 = '{1}'
+                						and b.Seq2 = '{2}'
+                			)",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -609,27 +886,42 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(string.Format(
                 @"
-            group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type,a.remark,AddDate,X.location
 
             union all
-            select issuedate, a.id
-            ,case type when 'D' then 'P25. Transfer Bulk to Scrap' 
-            when 'E' then 'P24. Transfer Inventory to Scrap'
-            end as name
-            , 0 as inqty, sum(Qty) released,0 as adjust ,isnull(a.remark,'') remark 
-			,(Select cast(tmp.ToLocation as nvarchar)+',' 
+            select  issuedate
+                    , a.id
+                    ,case type  when 'D' then 'P25. Transfer Bulk to Scrap' 
+                                when 'E' then 'P24. Transfer Inventory to Scrap'
+                                end as name
+                    , 0 as inqty
+                    , released.qty released
+                    , 0 as adjust 
+                    , isnull(a.remark,'') remark 
+			        , (Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
                                                 from SubTransfer a1 WITH (NOLOCK) 
                                                 inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
                                                 where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                                    and b1.ToPoid = b.ToPoid
-                                                    and b1.ToSeq1 = b.ToSeq1
-                                                    and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
+                                                    and b1.ToPoid = '{0}' 
+                                                    and b1.ToSeq1 = '{1}' 
+                                                    and b1.ToSeq2 = '{2}'  group by b1.ToLocation) tmp 
                                     for XML PATH('')) as ToLocation
-									,AddDate
-            from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-            where (type='D' or type='E') and Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}' 
-            and FromSeq2 = '{2}'  and a.id = b.id ",
+					 , AddDate
+            from SubTransfer a WITH (NOLOCK)
+            outer apply (
+                		select qty = sum (b.Qty)
+                		from SubTransfer_Detail b WITH (NOLOCK)
+                		where a.id = b.id and b.Frompoid = '{0}' and b.Fromseq1 = '{1}' and b.FromSeq2 = '{2}' 
+                	) released
+            where (type='D' or type='E') and Status='Confirmed' 
+                    and exists (
+                				select 1
+                				from SubTransfer_Detail b WITH (NOLOCK)
+                				where a.Id = b.Id
+                						and b.Frompoid = '{0}' 
+                						and b.Fromseq1 = '{1}'
+                						and b.FromSeq2 = '{2}'
+                			)",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString()));
@@ -641,7 +933,6 @@ namespace Sci.Production.Warehouse
             }
 
             selectCommand1.Append(@"
-            group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type,a.remark,AddDate, ToPoid, ToSeq1,ToSeq2
                 ) tmp
                 group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
                 order by IssueDate,tmp.addDate,name");
