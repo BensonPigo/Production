@@ -799,7 +799,8 @@ else
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(true);
-                    this.SentToGensong_AutoWHFabric(true);
+                    this.SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWH_ACC();
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -1141,7 +1142,8 @@ else
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
-                    this.SentToGensong_AutoWHFabric(false);
+                    this.SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWH_ACC();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1156,13 +1158,23 @@ else
             transactionscope = null;
         }
 
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
+        private void SentToGensong_AutoWHFabric()
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtMain = this.CurrentMaintain.Table.Copy();
-                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtMain, isConfirmed))
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        private void SentToGensong_AutoWH_ACC()
+        {
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentBorrowBackToGensongAutoWHAccessory(dtMain))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

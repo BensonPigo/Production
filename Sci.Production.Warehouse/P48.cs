@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -633,6 +635,14 @@ from #tmp";
                 }
             }
             #endregion
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMaster))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             MyUtility.Msg.InfoBox("Create Successful.");
 
             // DataTable dtCreate = new DataTable();

@@ -1047,6 +1047,13 @@ and i2.id ='{dr["ID"]}'
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMaster))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             // Create後Btn失效，需重新Qurey才能再使用。
             this.btnCreate.Enabled = false;
             this.gridRel.ValidateControl();

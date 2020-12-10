@@ -939,6 +939,13 @@ and i2.id ='{dr["ID"]}'
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
+            // AutoWHAccessory WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMaster))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");
 
             this.btnCreate.Enabled = false;

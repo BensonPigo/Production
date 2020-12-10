@@ -363,7 +363,8 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 }
             }
 
-            this.SentToGensong_AutoWHFabric(true);
+            this.SentToGensong_AutoWHFabric();
+            this.SentToGensong_AutoWH_ACC();
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -414,13 +415,26 @@ Where a.id = '{0}' ", masterID);
             this.RenewData();
         }
 
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
+        private void SentToGensong_AutoWHFabric()
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Gensong_AutoWHFabric().SentLocationTransToGensongAutoWHFabric(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC()
+        {
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentLocationTransToGensongAutoWHAccessory(dtMain))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

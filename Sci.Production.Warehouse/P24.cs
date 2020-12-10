@@ -299,6 +299,7 @@ WHERE   StockType='{0}'
 
                 this.FtyBarcodeData(true);
                 this.SentToGensong_AutoWHFabric();
+                this.SentToGensong_AutoWH_ACC();
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
             catch (Exception ex)
@@ -576,6 +577,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWH_ACC();
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -793,10 +795,23 @@ where a.id= @ID";
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtMain = this.CurrentMaintain.Table.Copy();
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 dtMain.ImportRow(this.CurrentMaintain);
                 Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC()
+        {
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
 
