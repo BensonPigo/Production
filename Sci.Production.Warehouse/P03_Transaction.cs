@@ -67,23 +67,23 @@ namespace Sci.Production.Warehouse
 	                    ) adjust
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                             from FtyInventory fty WITH (NOLOCK) 
-																             join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																             Where  ad.poid = fty.poid and 
-                                                                                    ad.seq1 = fty.seq1 and 
-                                                                                    ad.seq2 = fty.seq2 and 
-                                                                                    ad.Roll = fty.Roll and 
-                                                                                    ad.Dyelot = fty.Dyelot and
-																	                MtlLocationID != '' and 
-                                                                                    MtlLocationID is not null) t 
-															            for xml path('')),1,1,'') 
-									           from Adjust_Detail ad WITH (NOLOCK)
-									           where a.id = ad.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from Adjust_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation            
             where a.Status = 'Confirmed' and a.Type not in  ('R','O')
                     and exists (
@@ -124,23 +124,23 @@ namespace Sci.Production.Warehouse
 	                    ) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                                from FtyInventory fty WITH (NOLOCK)
-																                join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																                 Where  BBD.FromPOID = fty.poid and 
-                                                                                        BBD.Fromseq1 = fty.seq1 and 
-                                                                                        BBD.Fromseq2 = fty.seq2 and 
-                                                                                        BBD.FromRoll = fty.Roll and
-                                                                                        BBD.FromDyelot = fty.Dyelot and 
-                                                                                        MtlLocationID != '' and 
-                                                                                        MtlLocationID is not null)t 
-															                    for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD WITH (NOLOCK)
-									           where a.id = BBD.id and Frompoid='{0}' and Fromseq1 = '{1}'and Fromseq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.FromPoId = fty.poid 
+																		and d.FromSeq1 = fty.seq1 
+																		and d.FromSeq2 = fty.seq2 
+																		and d.FromRoll = fty.roll 
+																		and d.FromDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.FromPoId = '{0}' 
+												and d.FromSeq1 = '{1}'
+												and d.FromSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation             
             where type='A' and Status='Confirmed'  
                         and exists (
@@ -180,23 +180,23 @@ namespace Sci.Production.Warehouse
 	                    ) arrived
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                                from FtyInventory fty WITH (NOLOCK)
-																                join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																                 Where  BBD.ToPoId = fty.poid and 
-                                                                                        BBD.ToSeq1 = fty.seq1 and 
-                                                                                        BBD.ToSeq2 = fty.seq2 and 
-                                                                                        BBD.FromRoll = fty.Roll and
-                                                                                        BBD.FromDyelot = fty.Dyelot and 
-                                                                                        MtlLocationID != '' and 
-                                                                                        MtlLocationID is not null)t 
-															                    for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD WITH (NOLOCK)
-									           where a.id = BBD.id and ToPoId='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.ToPoId = fty.poid 
+																		and d.ToSeq1 = fty.seq1 
+																		and d.ToSeq2 = fty.seq2 
+																		and d.ToRoll = fty.roll 
+																		and d.ToDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.ToPoId = '{0}' 
+												and d.ToSeq1 = '{1}'
+												and d.ToSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation             
             where type='A' and Status='Confirmed'  
                         and exists (
@@ -235,23 +235,23 @@ namespace Sci.Production.Warehouse
 	                    ) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                                from FtyInventory fty WITH (NOLOCK)
-																                join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																                 Where  BBD.FromPOID = fty.poid and 
-                                                                                        BBD.Fromseq1 = fty.seq1 and 
-                                                                                        BBD.Fromseq2 = fty.seq2 and 
-                                                                                        BBD.FromRoll = fty.Roll and
-                                                                                        BBD.FromDyelot = fty.Dyelot and 
-                                                                                        MtlLocationID != '' and 
-                                                                                        MtlLocationID is not null)t 
-															                    for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD WITH (NOLOCK)
-									           where a.id = BBD.id and Frompoid='{0}' and Fromseq1 = '{1}'and Fromseq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.FromPoId = fty.poid 
+																		and d.FromSeq1 = fty.seq1 
+																		and d.FromSeq2 = fty.seq2 
+																		and d.FromRoll = fty.roll 
+																		and d.FromDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.FromPoId = '{0}' 
+												and d.FromSeq1 = '{1}'
+												and d.FromSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation             
             where type='B' and Status='Confirmed'  
                         and exists (
@@ -291,23 +291,23 @@ namespace Sci.Production.Warehouse
 	                    ) arrived
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                                from FtyInventory fty WITH (NOLOCK)
-																                join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																                 Where  BBD.ToPoId = fty.poid and 
-                                                                                        BBD.ToSeq1 = fty.seq1 and 
-                                                                                        BBD.ToSeq2 = fty.seq2 and 
-                                                                                        BBD.FromRoll = fty.Roll and
-                                                                                        BBD.FromDyelot = fty.Dyelot and 
-                                                                                        MtlLocationID != '' and 
-                                                                                        MtlLocationID is not null)t 
-															                    for xml path('')),1,1,'') 
-									           from BorrowBack_Detail BBD WITH (NOLOCK)
-									           where a.id = BBD.id and ToPoId='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from BorrowBack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.ToPoId = fty.poid 
+																		and d.ToSeq1 = fty.seq1 
+																		and d.ToSeq2 = fty.seq2 
+																		and d.ToRoll = fty.roll 
+																		and d.ToDyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.ToPoId = '{0}' 
+												and d.ToSeq1 = '{1}'
+												and d.ToSeq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation             
             where type='B' and Status='Confirmed'  
                         and exists (
@@ -353,23 +353,23 @@ namespace Sci.Production.Warehouse
                 	) released
                     outer apply(
                 		select  location = stuff((select ',' + x.location								
-                								    from(select distinct location = fty_d.MtlLocationID
-                									    from issue_detail is_d WITH (NOLOCK)
-                										inner join ftyinventory fty WITH (NOLOCK) on is_d.poid = fty.poid 
-                																		and is_d.seq1 = fty.seq1 
-                																		and is_d.seq2 = fty.seq2 
-                																		and is_d.roll = fty.roll 
-                																		and is_d.dyelot = fty.dyelot 
-                										inner join ftyinventory_detail fty_d WITH (NOLOCK) on fty.ukey = fty_d.ukey
-                										where a.id = is_d.id 
-                												and is_d.poid = '{0}' 
-                												and is_d.seq1 = '{1}'
-                												and is_d.seq2 = '{2}'
-                												and fty_d.mtllocationid != '' 
-                												and fty_d.mtllocationid is not null
-                																	
-                								    )x			
-                								    for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from issue_detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
                 	) MtlLocation
                     where Status='Confirmed' 
                 			and exists (
@@ -412,23 +412,23 @@ namespace Sci.Production.Warehouse
                 	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                             from FtyInventory fty WITH (NOLOCK)
-																             join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																             Where  IL_D.POID = fty.poid and 
-                                                                                    IL_D.seq1 = fty.seq1 and 
-                                                                                    IL_D.seq2 = fty.seq2 and 
-                                                                                    IL_D.Roll = fty.Roll and 
-                                                                                    IL_D.Dyelot = fty.Dyelot and 
-                                                                                    MtlLocationID != '' and 
-                                                                                    MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from IssueLack_Detail IL_D WITH (NOLOCK)
-									           where a.id = IL_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from IssueLack_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation 
             where a.Status in ('Confirmed','Closed') and a.Type='R'
                 			and exists (
@@ -468,23 +468,23 @@ namespace Sci.Production.Warehouse
                 	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                             from FtyInventory fty WITH (NOLOCK)
-																             join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																             Where  IR_D.POID = fty.poid and 
-                                                                                    IR_D.seq1 = fty.seq1 and 
-                                                                                    IR_D.seq2 = fty.seq2 and 
-                                                                                    IR_D.Roll = fty.Roll and 
-                                                                                    IR_D.Dyelot = fty.Dyelot and 
-                                                                                    MtlLocationID != '' and 
-                                                                                    MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from IssueReturn_Detail IR_D WITH (NOLOCK)
-									           where a.id = IR_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from IssueReturn_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation   
             where status='Confirmed' 
                 			and exists (
@@ -569,23 +569,23 @@ namespace Sci.Production.Warehouse
                 	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                             from FtyInventory fty WITH (NOLOCK)
-																             join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																             Where  RR_D.POID = fty.poid and 
-                                                                                    RR_D.seq1 = fty.seq1 and 
-                                                                                    RR_D.seq2 = fty.seq2 and 
-                                                                                    RR_D.Roll = fty.Roll and 
-                                                                                    RR_D.Dyelot = fty.Dyelot and 
-                                                                                    MtlLocationID != '' and 
-                                                                                    MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from ReturnReceipt_Detail RR_D WITH (NOLOCK)
-									           where a.id = RR_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from ReturnReceipt_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation     
             where Status='Confirmed' 
                     and exists (
@@ -757,23 +757,23 @@ namespace Sci.Production.Warehouse
                 	) released
             outer apply(
 				select  location = stuff((select ',' + x.location								
-								          from(select location = stuff((select ',' + t.MtlLocationID 
-															            from
-																            (SELECT MtlLocationID 
-                                                                             from FtyInventory fty WITH (NOLOCK)
-																             join FtyInventory_Detail fty_D WITH (NOLOCK) on fty.ukey = fty_D.ukey
-																             Where  TfD_D.POID = fty.poid and 
-                                                                                    TfD_D.seq1 = fty.seq1 and 
-                                                                                    TfD_D.seq2 = fty.seq2 and 
-                                                                                    TfD_D.Roll = fty.Roll and 
-                                                                                    TfD_D.Dyelot = fty.Dyelot and 
-                                                                                    MtlLocationID != '' and 
-                                                                                    MtlLocationID is not null)t 
-															            for xml path('')),1,1,'') 
-									           from TransferOut_Detail TfD_D WITH (NOLOCK)
-									           where a.id = TfD_D.id and  poid='{0}' and seq1 = '{1}'and seq2 = '{2}'
-								          )x			
-								          for xml path('')),1,1,'') 
+								    from(select distinct location = fty_d.MtlLocationID
+									    from TransferOut_Detail d with (nolock)
+										inner join ftyinventory fty with (nolock) on d.poid = fty.poid 
+																		and d.seq1 = fty.seq1 
+																		and d.seq2 = fty.seq2 
+																		and d.roll = fty.roll 
+																		and d.dyelot = fty.dyelot 
+										inner join ftyinventory_detail fty_d with (nolock) on fty.ukey = fty_d.ukey
+										where a.id = d.id 
+												and d.poid = '{0}' 
+												and d.seq1 = '{1}'
+												and d.seq2 = '{2}'
+												and fty_d.mtllocationid != '' 
+												and fty_d.mtllocationid is not null
+																	
+								    )x			
+								    for xml path('')),1,1,'') 
 			) MtlLocation   
             where Status='Confirmed' 
                     and exists (
