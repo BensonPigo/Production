@@ -337,7 +337,7 @@ select
 	, StdCtn = isnull(Std.Ctn,0)
 into #QtyBySetPerCutpart2{subprocessIDtmp}
 from #QtyBySetPerCutpart{subprocessIDtmp} st0
-inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessIDtmp}'
+inner join SubProcess sub WITH (NOLOCK) on sub.ID = '{subprocessID}'
 OUTER APPLY(----裁剪組合缺少的數量
 	SELECT [Ctn]=COUNT(t.FabricPanelCode)
 	FROM #{subprocessIDtmp}_StdCount t
