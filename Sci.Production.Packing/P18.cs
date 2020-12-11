@@ -111,6 +111,8 @@ namespace Sci.Production.Packing
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
 
+            /*注意！  這裡有異動的話，要注意Reset()是否需要同步異動*/
+
             // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
             // 2.=Orders.ID
             // 3.=Orders.CustPoNo
@@ -1330,6 +1332,7 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
 										   ,pd.Ukey
+										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
