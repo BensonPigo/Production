@@ -206,7 +206,7 @@ namespace Sci.Production.Packing
                     }
                 }
 
-                if (this.UseAutoScanPack)
+                if (this.UseAutoScanPack && MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE ID='{this.PackingListID}' AND CTNStartNo='{this.CTNStarNo}' AND (Barcode = '' OR Barcode IS NULL) "))
                 {
                     foreach (DataRow dr in this.dt_scanDetail.Rows)
                     {
