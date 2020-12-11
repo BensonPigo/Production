@@ -126,7 +126,6 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             string isMorethenOrderQty = "0")
         {
             // 若 WIP_ByShell ，從 Order_BOF 判斷必須是 Kind = 1
-            bool wIP_ByShell = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"select WIP_ByShell from system", connectionName: "Production"));
             string sqlcmd = $@"
 -- 成套標準：
 -- 找出組成一件成衣，需要哪些裁片
@@ -148,7 +147,10 @@ inner join WorkOrder_PatternPanel wp with(nolock) on wp.WorkOrderUkey = w.Ukey
 inner join Orders o with(nolock) on wd.OrderID  = o.ID
 where exists(select 1 from {tempTable}  t where t.orderid = o.id and o.LocalOrder = 0) --非local單
 and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.ID = w.ID and cw.PatternPanel = wp.PatternPanel) -- ISP20201886 排除指定 PatternPanel
-{(wIP_ByShell ? "and exists(select 1 from Order_BOF bof WITH (NOLOCK) where bof.Id = w.Id and bof.FabricCode = w.FabricCode and bof.Kind = 1)" : string.Empty)}
+and(((select WIP_ByShell from system) = 1
+        and exists(select 1 from Order_BOF bof WITH (NOLOCK) where bof.Id = w.Id and bof.FabricCode = w.FabricCode and bof.Kind = 1))
+    or (select WIP_ByShell from system) = 0
+)
 
 --當相同 OrderID,Article,Size,Fabric,Color 只取第一個 PatternPanel,FabricCombo 為基準
 select x.*,x2.PatternPanel,x2.FabricCombo,FabricPanelCode
