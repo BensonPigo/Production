@@ -604,21 +604,21 @@ drop table #tmp
 
         private void BtnCreate_Click(object sender, EventArgs e)
         {
-             if (MyUtility.Check.Empty(this.detail))
+            if (MyUtility.Check.Empty(this.detail))
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
                 return;
             }
 
-             DataRow[] findrow = this.detail.Select(@"selected = true and qty <> 0");
-             if (findrow.Length == 0)
+            DataRow[] findrow = this.detail.Select(@"selected = true and qty <> 0");
+            if (findrow.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
                 return;
             }
 
-             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
-             if (dResult == DialogResult.No)
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
+            if (dResult == DialogResult.No)
             {
                 return;
             }
@@ -626,9 +626,9 @@ drop table #tmp
             /*
              * 依照 To POID 建立 P24
              */
-             var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
-             var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
-             if (MyUtility.Check.Empty(tmpId))
+            var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
+            var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
+            if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
                 return;
@@ -637,14 +637,14 @@ drop table #tmp
             #region 準備 insert subtransfer & subtransfer_detail 語法與 DataTable dtMaster & dtDetail
 
             // insert 欄位順序必須與 dtMaster, dtDetail 一致
-             string insertMaster = @"
+            string insertMaster = @"
 insert into subtransfer
         (id      , type   , issuedate, mdivisionid, FactoryID
          , status, addname, adddate,  remark)
 select   id      , type   , issuedate, mdivisionid, FactoryID
          , status, addname, adddate,   remark
 from #tmp";
-             string insertDetail = @"
+            string insertDetail = @"
 insert into subtransfer_detail
 (ID        , FromFtyInventoryUkey, FromFactoryID, FromPOID  , FromSeq1
  , FromSeq2, FromRoll            , FromStockType, FromDyelot, ToFactoryID
@@ -656,39 +656,39 @@ from #tmp
 
 ";
 
-             DataTable dtMaster = new DataTable();
-             dtMaster.Columns.Add("Poid");
-             dtMaster.Columns.Add("id");
-             dtMaster.Columns.Add("type");
-             dtMaster.Columns.Add("issuedate");
-             dtMaster.Columns.Add("mdivisionid");
-             dtMaster.Columns.Add("FactoryID");
-             dtMaster.Columns.Add("status");
-             dtMaster.Columns.Add("addname");
-             dtMaster.Columns.Add("adddate");
-             dtMaster.Columns.Add("remark");
+            DataTable dtMaster = new DataTable();
+            dtMaster.Columns.Add("Poid");
+            dtMaster.Columns.Add("id");
+            dtMaster.Columns.Add("type");
+            dtMaster.Columns.Add("issuedate");
+            dtMaster.Columns.Add("mdivisionid");
+            dtMaster.Columns.Add("FactoryID");
+            dtMaster.Columns.Add("status");
+            dtMaster.Columns.Add("addname");
+            dtMaster.Columns.Add("adddate");
+            dtMaster.Columns.Add("remark");
 
-             DataTable dtDetail = new DataTable();
-             dtDetail.Columns.Add("ID");
-             dtDetail.Columns.Add("FromFtyInventoryUkey");
-             dtDetail.Columns.Add("FromFactoryID");
-             dtDetail.Columns.Add("FromPOID");
-             dtDetail.Columns.Add("FromSeq1");
-             dtDetail.Columns.Add("FromSeq2");
-             dtDetail.Columns.Add("FromRoll");
-             dtDetail.Columns.Add("FromStockType");
-             dtDetail.Columns.Add("FromDyelot");
-             dtDetail.Columns.Add("ToFactoryID");
-             dtDetail.Columns.Add("ToPOID");
-             dtDetail.Columns.Add("ToSeq1");
-             dtDetail.Columns.Add("ToSeq2");
-             dtDetail.Columns.Add("ToRoll");
-             dtDetail.Columns.Add("ToStockType");
-             dtDetail.Columns.Add("ToDyelot");
-             dtDetail.Columns.Add("Qty");
-             dtDetail.Columns.Add("ToLocation");
+            DataTable dtDetail = new DataTable();
+            dtDetail.Columns.Add("ID");
+            dtDetail.Columns.Add("FromFtyInventoryUkey");
+            dtDetail.Columns.Add("FromFactoryID");
+            dtDetail.Columns.Add("FromPOID");
+            dtDetail.Columns.Add("FromSeq1");
+            dtDetail.Columns.Add("FromSeq2");
+            dtDetail.Columns.Add("FromRoll");
+            dtDetail.Columns.Add("FromStockType");
+            dtDetail.Columns.Add("FromDyelot");
+            dtDetail.Columns.Add("ToFactoryID");
+            dtDetail.Columns.Add("ToPOID");
+            dtDetail.Columns.Add("ToSeq1");
+            dtDetail.Columns.Add("ToSeq2");
+            dtDetail.Columns.Add("ToRoll");
+            dtDetail.Columns.Add("ToStockType");
+            dtDetail.Columns.Add("ToDyelot");
+            dtDetail.Columns.Add("Qty");
+            dtDetail.Columns.Add("ToLocation");
 
-             for (int i = 0; i < listPoid.Count; i++)
+            for (int i = 0; i < listPoid.Count; i++)
             {
                 DataRow drNewMaster = dtMaster.NewRow();
                 drNewMaster["poid"] = listPoid[i].ToString();
@@ -704,7 +704,7 @@ from #tmp
                 dtMaster.Rows.Add(drNewMaster);
             }
 
-             foreach (DataRow item in findrow)
+            foreach (DataRow item in findrow)
             {
                 DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(item["ToPOID"])).ToArray();
                 DataRow drNewDetail = dtDetail.NewRow();
@@ -730,9 +730,9 @@ from #tmp
             }
             #endregion
 
-             TransactionScope transactionscope = new TransactionScope();
-             DualResult result;
-             using (transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            DualResult result;
+            using (transactionscope)
             {
                 try
                 {
@@ -763,12 +763,12 @@ from #tmp
                 }
             }
 
-             transactionscope = null;
+            transactionscope = null;
 
             #region confirm save成功的P24單子
-             List<string> success_list = new List<string>();
-             List<string> fail_list = new List<string>();
-             foreach (DataRow dr in dtMaster.Rows)
+            List<string> success_list = new List<string>();
+            List<string> fail_list = new List<string>();
+            foreach (DataRow dr in dtMaster.Rows)
             {
                 if (Prgs.P24confirm(dr["ID"].ToString()))
                 {
@@ -782,7 +782,7 @@ from #tmp
 
             #region New Barcode
 
-             foreach (DataRow dr in dtMaster.Rows)
+            foreach (DataRow dr in dtMaster.Rows)
             {
                 DataTable dt = new DataTable();
                 string sqlcmd = $@"
@@ -859,18 +859,18 @@ and i2.id ='{dr["ID"]}'
             }
             #endregion
 
-             string msg = string.Empty;
-             msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
-             msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
-             this.p30_msg.Show(msg);
+            string msg = string.Empty;
+            msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
+            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
+            this.p30_msg.Show(msg);
             #endregion
 
-             if (!this.master.Columns.Contains("TransID"))
+            if (!this.master.Columns.Contains("TransID"))
             {
                 this.master.Columns.Add("TransID", typeof(string));
             }
 
-             foreach (DataRow alldetailrows in this.detail.Rows)
+            foreach (DataRow alldetailrows in this.detail.Rows)
             {
                 if (alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
@@ -889,8 +889,8 @@ and i2.id ='{dr["ID"]}'
 
             // Create後Btn失效，需重新Qurey才能再使用。
             this.btnCreate.Enabled = false;
-             this.gridRel.ValidateControl();
-             this.gridComplete.ValidateControl();
+            this.gridRel.ValidateControl();
+            this.gridComplete.ValidateControl();
         }
 
         private void BtnExcel_Click(object sender, EventArgs e)
