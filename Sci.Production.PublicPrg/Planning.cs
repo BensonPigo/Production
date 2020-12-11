@@ -404,7 +404,7 @@ OUTER APPLY(  --取得這個bundle no的指定加工段
     WHERE bda.BundleNo = bunD.BundleNo and bda.SubProcessId = st0.SubprocessId
 )BundleArt
 where (st0.IsRFIDDefault = 1 or st0.QtyBySubprocess != 0)
-  {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessIDtmp}'" : string.Empty)}
+ {(subprocessIDtmp != "Sorting" && subprocessIDtmp != "Loading" && subprocessIDtmp != "SewingLine" ? $"and BundleArt.SubprocessId='{subprocessID}'" : string.Empty)}
 
 select
 	st3.*
