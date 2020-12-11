@@ -1389,11 +1389,12 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
                 }
 
-                if (this.UseAutoScanPack)
+                // 確認該箱都有設定Barcode，只要有缺少，就清空該箱Barcode
+                if (this.UseAutoScanPack && MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE ID='{this.PackingListID}' AND CTNStartNo='{this.CTNStarNo}' AND (Barcode = '' OR Barcode IS NULL) "))
                 {
                     foreach (DataRow dr in this.dt_scanDetail.Rows)
                     {
-                        dr["barcode"] = DBNull.Value;
+                        dr["Barcode"] = DBNull.Value;
                     }
 
                     DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
