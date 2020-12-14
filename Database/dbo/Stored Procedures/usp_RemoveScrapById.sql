@@ -1,9 +1,6 @@
 USE [Production]
 GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+
 -- =============================================
 -- Author:		<Willy>
 -- Create date: <2017/11/13>
@@ -16,7 +13,7 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-		--¨ÌSP#+SEQ#+Roll#+ StockType = 'O' ÀË¬d®w¦s¬O§_¨¬°÷
+--¨ÌSP#+SEQ#+Roll#+ StockType = 'O' ÀË¬d®w¦s¬O§_¨¬°÷
 Select  d.POID
 		,seq = concat(d.Seq1,'-',d.Seq2)
 		,d.Seq1
@@ -43,35 +40,48 @@ BEGIN Try
 			EXEC sp_executesql @sql
 		END 
 	ELSE
-		BEGIN		
+		BEGIN
+			declare @POID varchar(13)
+					, @seq1 varchar(3)
+					, @seq2 varchar(3)
+					, @Roll varchar(8)
+					, @Dyelot varchar(8)
+					, @StockType varchar(1)
+					, @AdjustQty numeric(11, 2)
 
-			--Update FtyInventory.AdjustQty
-			Update f set f.AdjustQty = f.AdjustQty +(d.QtyAfter- d.QtyBefore) 
-			from dbo.Adjust_Detail d WITH (NOLOCK) 
-			inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll  and d.dyelot = f.dyelot and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
-			where 1=1
-			and d.Id = @ID
-			and f.StockType = 'O'
 
-			--Update MDivisionPoDetail.LObQty
-			update m2 set 
-			LObQty = b.l
-			from(
-				select l=sum(a.InQty-a.OutQty+a.AdjustQty),POID,Seq1,Seq2
-				from
-				(
-					select f.InQty,f.OutQty,f.AdjustQty,d.POID,d.Seq1,d.Seq2
-					from dbo.Adjust_Detail d WITH (NOLOCK) 
-					inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.StockType = f.StockType
-					inner join MDivisionPoDetail m WITH (NOLOCK) on m.POID = d.POID and m.Seq1 = d.Seq1 and m.Seq2 = d.Seq2
-					where d.Id = @ID
-					and f.StockType = 'O'
-					group by d.POID,d.Seq1,d.Seq2,f.InQty,f.OutQty,f.AdjustQty
-				)a
-				group by POID,Seq1,Seq2
-			)b
-			,MDivisionPoDetail m2
-			where m2.POID = b.POID and m2.Seq1 = b.Seq1 and m2.Seq2 = b.Seq2
+			DECLARE _cursor CURSOR FOR
+			select ad.POID, ad.Seq1, ad.Seq2, ad.Roll, ad.Dyelot, ad.StockType, [AdjustQty] = (ad.QtyAfter- ad.QtyBefore) 
+			from Adjust_Detail ad
+			where ad.id	 = @ID
+
+			OPEN _cursor
+			FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				--Update FtyInventory.AdjustQty
+				update f
+					set [AdjustQty] = f.AdjustQty + @AdjustQty
+				from FtyInventory f
+				where f.POID = @POID
+				and f.Seq1 = @seq1
+				and f.Seq2 = @seq2
+				and f.Roll = @Roll
+				and f.Dyelot = @Dyelot
+				and f.StockType = 'O'
+
+				--Update MDivisionPoDetail.LObQty
+				update m
+					set [LObQty] = m.LObQty + @AdjustQty  
+				from MDivisionPoDetail m
+				where m.POID = @POID
+				and m.Seq1 = @seq1
+				and m.Seq2 = @seq2
+
+				FETCH NEXT FROM _cursor INTO @POID, @seq1, @seq2, @Roll, @Dyelot, @StockType, @AdjustQty
+			END
+			CLOSE _cursor
+			DEALLOCATE _cursor
 
 			--Update Adjust.Status
 			update Adjust set Status ='Confirmed' where id = @ID
