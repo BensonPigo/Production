@@ -2348,8 +2348,8 @@ select
 	, stockqty = round(x.qty * v.RateValue,2)
 	, shipqty = x.qty
 	, Actualqty = x.qty
-	, Roll = iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.PackageNo, '')
-	, Dyelot = iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.BatchNo, '')
+	, Roll = convert(varchar(8), iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.PackageNo, ''))
+	, Dyelot = convert(varchar(8), iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.BatchNo, ''))
 	, remark = ''
 	, location = ''
 	, b.Refno
@@ -2359,7 +2359,7 @@ select
 	, [ContainerType] = Container.Val
 	, pll.QRCode -- b.FabricType = 'F'  相同 QRCode 其中一筆為 [+] 剩下為 [-]
     , clickInsert = 1
-	, CombineBarcode = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
+	, DRQ = IIF(isnull(pll.QRCode, '') = '', Null, DENSE_RANK() over(order by pll.QRCode))
 into #tmp
 from dbo.Export_Detail a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id   
@@ -2388,26 +2388,39 @@ where a.id='{this.CurrentMaintain["exportid"]}'
 order by a.poid, a.seq1, a.seq2, b.FabricType
 
 select *,
-	Unoriginal_0 =  IIF(isnull(QRCode, '') <> '' and COUNT(1) over(partition by CombineBarcode) > 1,
-							row_number() over(partition by CombineBarcode order by  poid, seq1, seq2, FabricType) - 1,
-							null)
+	Unoriginal_0 =  IIF(isnull(QRCode, '') <> '' and COUNT(1) over(partition by DRQ) > 1,
+							row_number() over(partition by DRQ order by poid, seq1, seq2, FabricType) - 1,
+							null),
+	DRQ_0 = IIF(isnull(QRCode, '') <> '' and COUNT(1) over(partition by DRQ) > 1,DRQ,null)
 into #tmp2
 from #tmp
 
 select t.*,
-	Unoriginal =  IIF(Unoriginal_0 = 0, Null, Unoriginal_0), -- 次項目為1, 主項或其它為 Null, 不能為 0
+	Unoriginal =  CAST(IIF(Unoriginal_0 = 0, Null, Unoriginal_0) as bit), -- 次項目為1, 主項或其它為 Null, 不能為 0
+	CombineBarcode_0 = IIF(DRQ_0 is not null and COUNT(1) over(partition by DRQ_0) > 1,
+							DENSE_RANK() over(order by DRQ_0)
+							,null),
 	TtlQty = convert(varchar(20),
 		iif(t.Unoriginal_0 is null , t.ActualQty, 
 			iif(t.Unoriginal_0 = 0 , x.qty, null))) +' '+ PoUnit
+into #tmp3
 from #tmp2 t
 outer apply(
 	select qty = SUM(t2.Actualqty)
 	from #tmp2 t2
 	where t2.QRCode = t.QRCode
 )x
+
+select *, CombineBarcode_num = IIF(min(CombineBarcode_0) over() >1, CombineBarcode_0 - 1, CombineBarcode_0)
+into #tmp4
+from #tmp3
+
+select*,CombineBarcode = IIF(CombineBarcode_num > 9,char(CombineBarcode_num + 55),convert(varchar(1), CombineBarcode_num)) -- CombineBarcode 編碼為1,2,3~9,A,B,C~Z
+from #tmp4
+
 order by poid, seq1, seq2, FabricType
 
-drop table #tmp,#tmp2
+drop table #tmp,#tmp2,#tmp3,#tmp4
 ";
                     DualResult result = DBProxy.Current.Select(null, selCom, out DataTable dt);
                     if (!result)
