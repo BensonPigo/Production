@@ -32,6 +32,13 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtMtlLocation2 = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.txtMtlLocation1 = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtseason = new Sci.Production.Class.Txtseason();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.lbSeason = new Sci.Win.UI.Label();
+            this.lbBrand = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label2 = new Sci.Win.UI.Label();
             this.txtdropdownlistFabricType = new Sci.Production.Class.ComboDropDownList(this.components);
@@ -39,7 +46,6 @@
             this.labCategory = new Sci.Win.UI.Label();
             this.txtSPNo2 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtLocation = new Sci.Win.UI.TextBox();
             this.labelLocation = new Sci.Win.UI.Label();
             this.labelFabricType = new Sci.Win.UI.Label();
             this.txtRef = new Sci.Win.UI.TextBox();
@@ -54,10 +60,6 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.lbBrand = new Sci.Win.UI.Label();
-            this.lbSeason = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.txtseason = new Sci.Production.Class.Txtseason();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -69,9 +71,9 @@
             // 
             this.panel1.Controls.Add(this.gridImport);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 89);
+            this.panel1.Location = new System.Drawing.Point(0, 116);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1096, 331);
+            this.panel1.Size = new System.Drawing.Size(1096, 304);
             this.panel1.TabIndex = 23;
             // 
             // gridImport
@@ -95,12 +97,15 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(1096, 331);
+            this.gridImport.Size = new System.Drawing.Size(1096, 304);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtMtlLocation2);
+            this.groupBox1.Controls.Add(this.txtMtlLocation1);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txtseason);
             this.groupBox1.Controls.Add(this.txtbrand);
             this.groupBox1.Controls.Add(this.lbSeason);
@@ -112,7 +117,6 @@
             this.groupBox1.Controls.Add(this.labCategory);
             this.groupBox1.Controls.Add(this.txtSPNo2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtLocation);
             this.groupBox1.Controls.Add(this.labelLocation);
             this.groupBox1.Controls.Add(this.labelFabricType);
             this.groupBox1.Controls.Add(this.txtRef);
@@ -123,9 +127,73 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1096, 89);
+            this.groupBox1.Size = new System.Drawing.Size(1096, 116);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
+            // 
+            // txtMtlLocation2
+            // 
+            this.txtMtlLocation2.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation2.Location = new System.Drawing.Point(763, 50);
+            this.txtMtlLocation2.Name = "txtMtlLocation2";
+            this.txtMtlLocation2.Size = new System.Drawing.Size(132, 23);
+            this.txtMtlLocation2.StockTypeFilte = "O";
+            this.txtMtlLocation2.TabIndex = 120;
+            // 
+            // txtMtlLocation1
+            // 
+            this.txtMtlLocation1.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation1.Location = new System.Drawing.Point(601, 51);
+            this.txtMtlLocation1.Name = "txtMtlLocation1";
+            this.txtMtlLocation1.Size = new System.Drawing.Size(132, 23);
+            this.txtMtlLocation1.StockTypeFilte = "O";
+            this.txtMtlLocation1.TabIndex = 119;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(741, 54);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(16, 17);
+            this.label3.TabIndex = 118;
+            this.label3.Text = "~";
+            // 
+            // txtseason
+            // 
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = null;
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(601, 20);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(132, 23);
+            this.txtseason.TabIndex = 116;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(431, 20);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(92, 23);
+            this.txtbrand.TabIndex = 115;
+            // 
+            // lbSeason
+            // 
+            this.lbSeason.Location = new System.Drawing.Point(529, 20);
+            this.lbSeason.Name = "lbSeason";
+            this.lbSeason.Size = new System.Drawing.Size(69, 23);
+            this.lbSeason.TabIndex = 114;
+            this.lbSeason.Text = "Season";
+            // 
+            // lbBrand
+            // 
+            this.lbBrand.Location = new System.Drawing.Point(359, 19);
+            this.lbBrand.Name = "lbBrand";
+            this.lbBrand.Size = new System.Drawing.Size(69, 23);
+            this.lbBrand.TabIndex = 113;
+            this.lbBrand.Text = "Brand";
             // 
             // txtfactory
             // 
@@ -168,7 +236,7 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(827, 50);
+            this.comboCategory.Location = new System.Drawing.Point(81, 81);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(143, 24);
@@ -177,9 +245,9 @@
             // 
             // labCategory
             // 
-            this.labCategory.Location = new System.Drawing.Point(739, 50);
+            this.labCategory.Location = new System.Drawing.Point(9, 81);
             this.labCategory.Name = "labCategory";
-            this.labCategory.Size = new System.Drawing.Size(85, 23);
+            this.labCategory.Size = new System.Drawing.Size(69, 23);
             this.labCategory.TabIndex = 111;
             this.labCategory.Text = "Category";
             // 
@@ -201,17 +269,6 @@
             this.label1.TabIndex = 109;
             this.label1.Text = "~";
             this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtLocation
-            // 
-            this.txtLocation.BackColor = System.Drawing.Color.White;
-            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocation.Location = new System.Drawing.Point(601, 50);
-            this.txtLocation.Name = "txtLocation";
-            this.txtLocation.Size = new System.Drawing.Size(132, 23);
-            this.txtLocation.TabIndex = 3;
-            this.txtLocation.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLocation_PopUp);
-            this.txtLocation.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLocation_Validating);
             // 
             // labelLocation
             // 
@@ -353,41 +410,6 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
-            // lbBrand
-            // 
-            this.lbBrand.Location = new System.Drawing.Point(359, 19);
-            this.lbBrand.Name = "lbBrand";
-            this.lbBrand.Size = new System.Drawing.Size(69, 23);
-            this.lbBrand.TabIndex = 113;
-            this.lbBrand.Text = "Brand";
-            // 
-            // lbSeason
-            // 
-            this.lbSeason.Location = new System.Drawing.Point(529, 20);
-            this.lbSeason.Name = "lbSeason";
-            this.lbSeason.Size = new System.Drawing.Size(69, 23);
-            this.lbSeason.TabIndex = 114;
-            this.lbSeason.Text = "Season";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(431, 20);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(92, 23);
-            this.txtbrand.TabIndex = 115;
-            // 
-            // txtseason
-            // 
-            this.txtseason.BackColor = System.Drawing.Color.White;
-            this.txtseason.BrandObjectName = null;
-            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(601, 20);
-            this.txtseason.Name = "txtseason";
-            this.txtseason.Size = new System.Drawing.Size(132, 23);
-            this.txtseason.TabIndex = 116;
-            // 
             // P48
             // 
             this.ClientSize = new System.Drawing.Size(1096, 473);
@@ -416,7 +438,6 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid gridImport;
         private Win.UI.GroupBox groupBox1;
-        private Win.UI.TextBox txtLocation;
         private Win.UI.Label labelLocation;
         private Win.UI.Label labelFabricType;
         private Win.UI.TextBox txtRef;
@@ -442,5 +463,8 @@
         private Class.Txtbrand txtbrand;
         private Win.UI.Label lbSeason;
         private Win.UI.Label lbBrand;
+        private System.Windows.Forms.Label label3;
+        private Class.TxtMtlLocation txtMtlLocation1;
+        private Class.TxtMtlLocation txtMtlLocation2;
     }
 }
