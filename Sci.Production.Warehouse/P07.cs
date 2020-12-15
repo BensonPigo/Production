@@ -2338,8 +2338,8 @@ select
 	, a.seq1
 	, a.seq2
 	, a.UnitId
-	, Weight = a.WeightKg
-	, ActualWeight = a.NetKg
+	, Weight = iif(b.FabricType = 'F' and pll.GW is not null, pll.GW, a.WeightKg)
+	, ActualWeight = iif(b.FabricType = 'F' and pll.GW is not null, pll.GW, a.NetKg)
 	, stocktype = iif(c.category='M','I','B')
 	, b.POUnit 
 	, StockUnit = dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
@@ -2385,7 +2385,6 @@ OUTER APPLY(
 	 END
 )Color
 where a.id='{this.CurrentMaintain["exportid"]}'
-order by a.poid, a.seq1, a.seq2, b.FabricType
 
 select *,
 	Unoriginal_0 =  IIF(isnull(QRCode, '') <> '' and COUNT(1) over(partition by DRQ) > 1,
@@ -2416,11 +2415,14 @@ into #tmp4
 from #tmp3
 
 select*,CombineBarcode = IIF(CombineBarcode_num > 9,char(CombineBarcode_num + 55),convert(varchar(1), CombineBarcode_num)) -- CombineBarcode 編碼為1,2,3~9,A,B,C~Z
+into #tmp5
 from #tmp4
 
-order by poid, seq1, seq2, FabricType
+select *
+from #tmp5
+order by isnull(CombineBarcode, 'ZZ'), Unoriginal_0, poid, seq1, seq2, FabricType
 
-drop table #tmp,#tmp2,#tmp3,#tmp4
+drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
 ";
                     DualResult result = DBProxy.Current.Select(null, selCom, out DataTable dt);
                     if (!result)
