@@ -428,7 +428,7 @@ from #tmp Group BY A,B,C order by A,B,C";
                     @"
 {0} 
 Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F
-, QARate, TotalCPUOut,TotalManHour, ModularParent AS L, CPUAdjusted AS M, Category, OutputDate, SewingLineID
+, QARate, TotalCPUOut,TotalManHour, ModularParent AS L, CPUAdjusted AS M, Category, OutputDate, SewingLineID, FactoryID
 FROM #tmpz ",
                     strSQL);
                 foreach (string conString in connectionString)
@@ -447,16 +447,26 @@ FROM #tmpz ",
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E,F
+                sqlcmd = @"
+alter table #tmp alter column A  varchar(15)
+alter table #tmp alter column B  varchar(8)
+alter table #tmp alter column E  varchar(100)
+
+select A,B,C,D,E,F
 ,G=sum(QARate)
 ,H=sum(TotalCPUOut),I=sum(TotalManHour)
 ,J=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
 ,K=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
 ,L,M
-,N= case    when Max(OutputDate) is null then 'New Style'
-            when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
-            else concat(min(SewingLineID),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
-            end
+,N= Stuff((select   concat('/', a.FactoryID + ' ' + (case     when Max(a.OutputDate) is null then 'New Style'
+                                                               when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
+                                                               else concat(min(a.SewingLineID),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
+                                                               end))
+                from #tmp a where   a.A = #tmp.A and 
+                                    a.B = #tmp.B and
+                                    a.E = #tmp.E 
+                group by a.FactoryID FOR XML PATH(''))
+        ,1,1,'') 
 from #tmp 
 Group BY A,B,C,D,E,F,L,M 
 order by A,B,C,E";
@@ -568,7 +578,10 @@ FROM #tmpz  ",
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E,F,G,H,I,J
+                sqlcmd = @"
+alter table #tmp alter column B  varchar(13)
+
+select A,B,C,D,E,F,G,H,I,J
 ,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
 ,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
 ,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
