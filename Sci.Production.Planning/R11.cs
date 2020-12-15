@@ -242,12 +242,10 @@ from #tmp_AR_Basic a
 group by a.StyleID
 --
 select a.StyleID
-	,R = iif(max_OutputDate is null,'New Style'
-			,iif(null = null 
-				,concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')+IIF(a.S > 0 AND a.B = 0, 'Only Sample', '')
-				,iif(a.S > 0 AND a.B = 0, 'New Style',concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')'))
-				)
-			)
+	,R =    case    when max_OutputDate is null then 'New Style'
+                    when a.S > 0 AND a.B = 0 then 'New Style'
+                    else concat(min(a.SewingLineID),'(',format(b.max_OutputDate,'yyyy/MM/dd'),')')
+                    end
 into #tmp_R
 from #tmp_AR_Basic a inner join (select StyleID,max_OutputDate = max(OutputDate) from #tmp_AR_Basic group by StyleID) b
 on a.StyleID = b.StyleID and a.OutputDate = b.max_OutputDate
