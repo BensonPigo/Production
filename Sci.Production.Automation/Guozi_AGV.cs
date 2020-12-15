@@ -225,7 +225,7 @@ from Orders with (nolock) where POID in ({wherePOID})
                 throw result.GetException();
             }
 
-            bodyObject.OrderID = dtSentOrderID.AsEnumerable().Select(s => s["ID"].ToString()).ToArray();
+            bodyObject.ID = dtSentOrderID.AsEnumerable().Select(s => s["ID"].ToString()).ToArray();
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Orders"));
 
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
