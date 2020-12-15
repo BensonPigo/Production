@@ -1,21 +1,16 @@
-﻿using System.Data;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using System.Data;
 
 namespace Sci.Production.PPIC
 {
-    /// <summary>
-    /// P01_CuttingCombo
-    /// </summary>
+    /// <inheritdoc/>
     public partial class P01_CuttingCombo : Win.Subs.Base
     {
-        private string poID;
+        private readonly string poID;
 
-        /// <summary>
-        /// P01_CuttingCombo
-        /// </summary>
-        /// <param name="pOID">string pOID</param>
+        /// <inheritdoc/>
         public P01_CuttingCombo(string pOID)
         {
             this.InitializeComponent();
@@ -26,15 +21,6 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable gridData;
-            string sqlCmd = string.Format("select CuttingSP,ID,KPILETA,PFETA,LETA,SewETA from Orders WITH (NOLOCK) where POID = '{0}'", this.poID);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
-            }
-
-            this.listControlBindingSource1.DataSource = gridData;
 
             // 設定Grid1的顯示欄位
             this.gridCuttingCombo.IsEditingReadOnly = true;
@@ -45,7 +31,30 @@ namespace Sci.Production.PPIC
                 .Date("KPILETA", header: "KPI L/ETA(Material)", width: Widths.AnsiChars(12))
                 .Date("PFETA", header: "PF ETA", width: Widths.AnsiChars(12))
                 .Date("LETA", header: "SCHD L/ETA", width: Widths.AnsiChars(12))
-                .Date("SewETA", header: "Sew. MTL ETA(SP)", width: Widths.AnsiChars(12));
+                .Date("SewETA", header: "Sew. MTL ETA(SP)", width: Widths.AnsiChars(12))
+                .Text("Colorway", header: "Colorway", width: Widths.AnsiChars(20));
+
+            string sqlCmd = $@"
+select CuttingSP,ID,KPILETA,PFETA,LETA,SewETA,oq.Colorway
+from Orders o WITH (NOLOCK)
+outer apply(
+	select Colorway = STUFF((
+		select distinct CONCAT(',', oq.Article)
+		from Order_Qty oq
+		where oq.ID = o.id and oq.Qty >0 
+		order by CONCAT(',', oq.Article)
+		for xml path('')
+	),1,1,'')
+)oq
+where POID = '{this.poID}'";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable gridData);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Query data fail!!" + result.ToString());
+                return;
+            }
+
+            this.listControlBindingSource1.DataSource = gridData;
         }
     }
 }
