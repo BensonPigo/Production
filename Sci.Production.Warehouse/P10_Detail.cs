@@ -175,7 +175,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 10
             .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 11
             .Text("DetailFIR", header: "Phy/Wei/Shade/Cont/Odor", width: Widths.AnsiChars(18), iseditingreadonly: true) // 13
-            .Text("Tone", header: "Shade Band \n Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true) // 13
+            .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
 
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
