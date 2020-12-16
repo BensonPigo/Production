@@ -98,57 +98,60 @@ namespace Sci.Production.IE
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-
-select  ld.OriNO
-	, ld.No
-	, ld.IsPPA
-	, [IsHide] = cast(iif(ld.IsHide = 1, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)
-	, ld.MachineTypeID
-	, ld.MasterPlusGroup	
-    , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
-	, ld.Annotation
-	, ld.Template
-	, ld.Attachment
-	, ld.ThreadColor
-	, ld.Notice
-	, ld.EmployeeID
-	, e.Name as EmployeeName
-    , e.Skill as EmployeeSkill
-	, iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-    , o.MasterPlusGroup
-    , [IsGroupHeader] = cast(iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0) as bit)
-	, [IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-    , [IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
-	, ld.ID
-	, ld.No
-	, ld.GroupKey
-	, ld.MasterPlusGroup
-	, ld.Ukey
-	, ld.ActCycle
-	, ld.TotalGSD
-	, ld.TotalCycle
-	, ld.GSD
-	, ld.Cycle
-    , ld.OperationID
-    , ld.New
-from LineMapping_Detail ld WITH (NOLOCK) 
-left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-outer apply (
-	select IsShowinIEP03 = atf.IsShowinIEP03
-		, IsSewingline = atf.IsSewingline
-		, IsDesignatedArea = m.IsDesignatedArea
-	from Operation o2 WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
-	where o.ID = o2.ID
-)show
-where ld.ID = '{0}' 
+select *
+    , [sortNO] = case when ld.IsHide = 1 then 1 
+                      when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
+                      when left(ld.No, 1) = 'P' then 3
+                      else 4 end
+from (
+    select  ld.OriNO
+	    , ld.No
+	    , ld.IsPPA
+	    , [IsHide] = cast(iif(ld.IsHide = 1, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)
+	    , ld.MachineTypeID
+	    , ld.MasterPlusGroup	
+        , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
+	    , ld.Annotation
+	    , ld.Template
+	    , ld.Attachment
+	    , ld.ThreadColor
+	    , ld.Notice
+	    , ld.EmployeeID
+	    , e.Name as EmployeeName
+        , e.Skill as EmployeeSkill
+	    , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+        , [IsGroupHeader] = cast(iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0) as bit)
+	    , [IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+        , [IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+	    , ld.ID
+	    , ld.GroupKey
+	    , ld.Ukey
+	    , ld.ActCycle
+	    , ld.TotalGSD
+	    , ld.TotalCycle
+	    , ld.GSD
+	    , ld.Cycle
+        , ld.OperationID
+        , ld.New
+    from LineMapping_Detail ld WITH (NOLOCK) 
+    left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+    left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+    outer apply (
+	    select IsShowinIEP03 = atf.IsShowinIEP03
+		    , IsSewingline = atf.IsSewingline
+		    , IsDesignatedArea = m.IsDesignatedArea
+	    from Operation o2 WITH (NOLOCK)
+	    inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	    inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	    inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
+	    where o.ID = o2.ID
+    )show
+    where ld.ID = '{0}' 
+)ld
 order by case when ld.No = '' then 1
-			when left(ld.No, 1) = 'P' then 2
-			else 3
-			end, 
+	    when left(ld.No, 1) = 'P' then 2
+	    else 3
+	    end, 
         ld.GroupKey",
                 masterID,
                 Env.User.Factory);
@@ -772,9 +775,26 @@ where Junk = 0
                 }
                 #endregion
             };
+
+            // [No.] 特殊排序規則 [Hide]有打勾-> [No.][PPA][Hide]皆空白-> [No.]為P開頭-> [No.]為一般數字
+            int rowIndex = 0;
+            int columIndex = 0;
+            this.detailgrid.CellClick += (s, e) =>
+            {
+                rowIndex = e.RowIndex;
+                columIndex = e.ColumnIndex;
+            };
+
             this.detailgrid.Sorted += (s, e) =>
             {
                 this.Distable();
+
+                if (columIndex == 1)
+                {
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    dt.DefaultView.Sort = "sortNO, No";
+                    this.detailgridbs.DataSource = dt;
+                }
             };
 
             Ict.Win.UI.DataGridViewNumericBoxColumn act;

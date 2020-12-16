@@ -210,10 +210,22 @@ outer apply
 		and not exists (select 1 from DropDownList d where d.Type = 'IEP03HideGroupHeader' and d.ID = ld.OperationID)
 	)
 )ld
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from Operation o2 WITH (NOLOCK)
+	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{2}'
+	where o.ID = o2.ID
+)show
 where a.ID = {0}
+and cast(isnull(show.IsShowinIEP03, 1) as bit) = 1
 ",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
-                this.strLanguage);
+                this.strLanguage,
+                Env.User.Factory);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
             {
