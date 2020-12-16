@@ -132,6 +132,9 @@ namespace Sci.Production.Quality
 
             this.btnSettingSpSeq.Enabled = this.EditMode && MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]);
 
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
+            this.IsSapmle = isSample;
+
             #region -- Grid欄位設定 --
             this.gridSpSeq.DataSource = null;
             this.gridSpSeq.DataSource = dt_GridSpSeq;
