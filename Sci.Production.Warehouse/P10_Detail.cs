@@ -66,6 +66,7 @@ select t.poid
 	   , [location] = dbo.Getlocation(FTY.Ukey)
 	   , GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
+       , [Tone] = ShadeboneTone.Tone
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
@@ -95,6 +96,12 @@ outer apply (select  TOP 1 fc.Result
 	        inner join dbo.FIR_Odor fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
 	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
 			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Odor
+outer apply (select [Tone] = MAX(fs.Tone)
+            from FtyInventory fi with (nolock) 
+            Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+	        where fi.Ukey = FTY.Ukey
+			) ShadeboneTone
 order by GroupQty desc, t.dyelot, balanceqty desc";
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(
                         temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
@@ -168,6 +175,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 10
             .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 11
             .Text("DetailFIR", header: "Phy/Wei/Shade/Cont/Odor", width: Widths.AnsiChars(18), iseditingreadonly: true) // 13
+            .Text("Tone", header: "Shade Band \n Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true) // 13
             ;
 
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
