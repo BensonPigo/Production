@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
         private readonly P32Header _sourceHeader = new P32Header();
         private string _oldStage = string.Empty;
         private bool _canConfirm = false;
+        private bool IsSapmle = false;
         private string topOrderID = string.Empty;
         private string topSeq = string.Empty;
         private DataTable CFAInspectionRecord_OrderSEQ;
@@ -130,6 +131,9 @@ namespace Sci.Production.Quality
             this.txtSpSeq.TextBoxSeqBinding = this.topSeq;
 
             this.btnSettingSpSeq.Enabled = this.EditMode && MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]);
+
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
+            this.IsSapmle = isSample;
 
             #region -- Grid欄位設定 --
             this.gridSpSeq.DataSource = null;
@@ -431,6 +435,9 @@ WHERE a.ID ='{masterID}'
                     this.disArticle.Value = this._sourceHeader.Article;
                     this.dateBuyerDev.Value = MyUtility.Convert.GetDate(this._sourceHeader.BuyerDev);
 
+                    bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
+                    this.IsSapmle = isSample;
+
                     DataRow nRow = this.CFAInspectionRecord_OrderSEQ.NewRow();
                     nRow["OrderID"] = this.topOrderID;
                     nRow["Seq"] = this.topSeq;
@@ -706,6 +713,7 @@ SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.
                     (this.CurrentMaintain["Stage"].ToString() == "Staggered" ||
                     this.CurrentMaintain["Stage"].ToString() == "Final" ||
                     this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") &&
+                    !this.IsSapmle &&
                     !MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
                 {
                     MyUtility.Msg.WarningBox("Inspected Carton can't be empty!!");
@@ -1061,7 +1069,7 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             }
 
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
-
+            this.IsSapmle = isSample;
             if (isSample && this.comboStage.Items.Contains("Staggered"))
             {
                 this.comboStage.Items.RemoveAt(2);
@@ -1165,6 +1173,11 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
         {
             if (this.EditMode)
             {
+                if (this.IsSapmle)
+                {
+                    return;
+                }
+
                 List<SqlParameter> paras = new List<SqlParameter>();
                 paras.Add(new SqlParameter("@OrderID", this.topOrderID));
                 paras.Add(new SqlParameter("@Seq", this.topSeq));
@@ -1336,6 +1349,12 @@ DROP TABLE #MixCTNStartNo
         {
             if (this.EditMode && this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
+                if (this.IsSapmle)
+                {
+                    this.CurrentMaintain["Carton"] = string.Empty;
+                    return;
+                }
+
                 List<string> cartons = this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
                 List<string> errorCartons = new List<string>();
 
@@ -1445,12 +1464,6 @@ AND CTNStartNo = @CTNStartNo
                     this.txtInspectedCarton.ReadOnly = false;
                 }
 
-                // this.CurrentMaintain["Carton"] = string.Empty;
-
-                // this.CurrentMaintain["Shift"] = string.Empty;
-                // this.txtshift.Text = string.Empty;
-                // this.txtshift.IsSupportEditMode = false;
-                // this.txtshift.ReadOnly = true;
                 this.txtshift.IsSupportEditMode = true;
                 this.txtshift.ReadOnly = false;
             }
