@@ -432,6 +432,9 @@ WHERE a.ID ='{masterID}'
                     this.disArticle.Value = this._sourceHeader.Article;
                     this.dateBuyerDev.Value = MyUtility.Convert.GetDate(this._sourceHeader.BuyerDev);
 
+                    bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
+                    this.IsSapmle = isSample;
+
                     DataRow nRow = this.CFAInspectionRecord_OrderSEQ.NewRow();
                     nRow["OrderID"] = this.topOrderID;
                     nRow["Seq"] = this.topSeq;
@@ -1167,6 +1170,11 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
         {
             if (this.EditMode)
             {
+                if (this.IsSapmle)
+                {
+                    return;
+                }
+
                 List<SqlParameter> paras = new List<SqlParameter>();
                 paras.Add(new SqlParameter("@OrderID", this.topOrderID));
                 paras.Add(new SqlParameter("@Seq", this.topSeq));
@@ -1338,6 +1346,12 @@ DROP TABLE #MixCTNStartNo
         {
             if (this.EditMode && this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
+                if (this.IsSapmle)
+                {
+                    this.CurrentMaintain["Carton"] = string.Empty;
+                    return;
+                }
+
                 List<string> cartons = this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
                 List<string> errorCartons = new List<string>();
 
@@ -1486,14 +1500,6 @@ AND CFAIs3rdInspect = 1
                     this.CurrentMaintain["Stage"] = string.Empty;
                     this.ShowErr(ex);
                 }
-            }
-
-            // 若是Sample單，不給使用Carton
-            if (this.IsSapmle)
-            {
-                this.txtInspectedCarton.Text = string.Empty;
-                this.txtInspectedCarton.IsSupportEditMode = false;
-                this.txtInspectedCarton.ReadOnly = true;
             }
 
             // Final的時候Inspection result才能有Fail but release
