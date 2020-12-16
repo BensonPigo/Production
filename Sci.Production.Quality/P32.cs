@@ -20,6 +20,7 @@ namespace Sci.Production.Quality
         private readonly P32Header _sourceHeader = new P32Header();
         private string _oldStage = string.Empty;
         private bool _canConfirm = false;
+        private bool IsSapmle = false;
         private string topOrderID = string.Empty;
         private string topSeq = string.Empty;
         private DataTable CFAInspectionRecord_OrderSEQ;
@@ -706,6 +707,7 @@ SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.
                     (this.CurrentMaintain["Stage"].ToString() == "Staggered" ||
                     this.CurrentMaintain["Stage"].ToString() == "Final" ||
                     this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") &&
+                    !this.IsSapmle &&
                     !MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
                 {
                     MyUtility.Msg.WarningBox("Inspected Carton can't be empty!!");
@@ -1061,7 +1063,7 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             }
 
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
-
+            this.IsSapmle = isSample;
             if (isSample && this.comboStage.Items.Contains("Staggered"))
             {
                 this.comboStage.Items.RemoveAt(2);
@@ -1445,12 +1447,6 @@ AND CTNStartNo = @CTNStartNo
                     this.txtInspectedCarton.ReadOnly = false;
                 }
 
-                // this.CurrentMaintain["Carton"] = string.Empty;
-
-                // this.CurrentMaintain["Shift"] = string.Empty;
-                // this.txtshift.Text = string.Empty;
-                // this.txtshift.IsSupportEditMode = false;
-                // this.txtshift.ReadOnly = true;
                 this.txtshift.IsSupportEditMode = true;
                 this.txtshift.ReadOnly = false;
             }
@@ -1490,6 +1486,14 @@ AND CFAIs3rdInspect = 1
                     this.CurrentMaintain["Stage"] = string.Empty;
                     this.ShowErr(ex);
                 }
+            }
+
+            // 若是Sample單，不給使用Carton
+            if (this.IsSapmle)
+            {
+                this.txtInspectedCarton.Text = string.Empty;
+                this.txtInspectedCarton.IsSupportEditMode = false;
+                this.txtInspectedCarton.ReadOnly = true;
             }
 
             // Final的時候Inspection result才能有Fail but release
