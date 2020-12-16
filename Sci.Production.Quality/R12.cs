@@ -75,6 +75,39 @@ where 1 = 1
             this.comboInspectionResult.SelectedIndex = 0;
         }
 
+        private string AddNonInspectionWhere(string srcWhere, string inspectionType)
+        {
+            string returnResult = srcWhere;
+
+            if (this.comboInspectionResult.Text != "Not yet inspected")
+            {
+                return returnResult;
+            }
+
+            switch (inspectionType)
+            {
+                case "Physical":
+                    returnResult += $@" and f.Nonphysical = 0";
+                    break;
+                case "Weight":
+                    returnResult += $@" and f.nonWeight = 0";
+                    break;
+                case "Shade Band":
+                    returnResult += $@" and f.nonShadebond = 0";
+                    break;
+                case "Continuity":
+                    returnResult += $@" and f.nonContinuity = 0";
+                    break;
+                case "Odor":
+                    returnResult += $@" and f.nonOdor = 0";
+                    break;
+                default:
+                    break;
+            }
+
+            return returnResult;
+        }
+
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
@@ -112,8 +145,8 @@ where 1 = 1
             if (!this.txtWK1.Text.Empty())
             {
                 where1 += $"and a.ExportID between @ExportID1 and @ExportID2" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@ExportID1", this.txtSP1.Text));
-                this.parameters.Add(new SqlParameter("@ExportID2", this.txtSP2.Text));
+                this.parameters.Add(new SqlParameter("@ExportID1", this.txtWK1.Text));
+                this.parameters.Add(new SqlParameter("@ExportID2", this.txtWK2.Text));
             }
 
             if (this.dateInspectionDate.HasValue)
@@ -159,8 +192,8 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate,
-i.Roll,
-i.Dyelot,
+b.Roll,
+b.Dyelot,
 i.TicketYds,
 i.ActualYds,
 [DiffLth] = i.ActualYds - i.TicketYds,
@@ -178,9 +211,9 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name)
 ";
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colPhysical, "FIR_Physical", where1, joinPhysical)}
+{string.Format(this.baseReceivingSql, colPhysical, "FIR_Physical", this.AddNonInspectionWhere(where1, "Physical"), joinPhysical)}
 union all
-{string.Format(this.baseTransferInSql, colPhysical, "FIR_Physical", where2, joinPhysical)}
+{string.Format(this.baseTransferInSql, colPhysical, "FIR_Physical", this.AddNonInspectionWhere(where2, "Physical"), joinPhysical)}
 ";
             }
             #endregion
@@ -199,8 +232,8 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
 [WeightInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate,
-i.Roll,
-i.Dyelot,
+b.Roll,
+b.Dyelot,
 i.WeightM2,
 i.AverageWeightM2,
 i.Difference,
@@ -210,9 +243,9 @@ Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colWeight, "FIR_Weight", where1, joinWeight)}
+{string.Format(this.baseReceivingSql, colWeight, "FIR_Weight", this.AddNonInspectionWhere(where1, "Weight"), joinWeight)}
 union all
-{string.Format(this.baseTransferInSql, colWeight, "FIR_Weight", where2, joinWeight)}
+{string.Format(this.baseTransferInSql, colWeight, "FIR_Weight", this.AddNonInspectionWhere(where2, "Weight"), joinWeight)}
 ";
             }
             #endregion
@@ -231,8 +264,8 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
 [ShadeboneInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate,
-i.Roll,
-i.Dyelot,
+b.Roll,
+b.Dyelot,
 i.TicketYds,
 i.Scale,
 i.Result,
@@ -242,9 +275,9 @@ Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colShadeBand, "FIR_Shadebone", where1, joinShadeBand)}
+{string.Format(this.baseReceivingSql, colShadeBand, "FIR_Shadebone", this.AddNonInspectionWhere(where1, "Shade Band"), joinShadeBand)}
 union all
-{string.Format(this.baseTransferInSql, colShadeBand, "FIR_Shadebone", where2, joinShadeBand)}
+{string.Format(this.baseTransferInSql, colShadeBand, "FIR_Shadebone", this.AddNonInspectionWhere(where2, "Shade Band"), joinShadeBand)}
 ";
             }
             #endregion
@@ -263,8 +296,8 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
 [ContinuityInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate,
-i.Roll,
-i.Dyelot,
+b.Roll,
+b.Dyelot,
 i.TicketYds,
 i.Scale,
 i.Result,
@@ -273,9 +306,9 @@ Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colContinuity, "FIR_Continuity", where1, joinContinuity)}
+{string.Format(this.baseReceivingSql, colContinuity, "FIR_Continuity", this.AddNonInspectionWhere(where1, "Continuity"), joinContinuity)}
 union all
-{string.Format(this.baseTransferInSql, colContinuity, "FIR_Continuity", where2, joinContinuity)}
+{string.Format(this.baseTransferInSql, colContinuity, "FIR_Continuity", this.AddNonInspectionWhere(where2, "Continuity"), joinContinuity)}
 ";
             }
             #endregion
@@ -294,17 +327,17 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
 [OdorInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate,
-i.Roll,
-i.Dyelot,
+b.Roll,
+b.Dyelot,
 i.Result,
 i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colOdor, "FIR_Odor", where1, joinOdor)}
+{string.Format(this.baseReceivingSql, colOdor, "FIR_Odor", this.AddNonInspectionWhere(where1, "Odor"), joinOdor)}
 union all
-{string.Format(this.baseTransferInSql, colOdor, "FIR_Odor", where2, joinOdor)}
+{string.Format(this.baseTransferInSql, colOdor, "FIR_Odor", this.AddNonInspectionWhere(where2, "Odor"), joinOdor)}
 ";
             }
             #endregion
