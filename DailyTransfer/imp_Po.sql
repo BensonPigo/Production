@@ -313,7 +313,7 @@ SET
 	  ,a.BrandId = (select top 1 a.BrandID from Orders a where a.POID=b.ID)
 	  ,a.POAmt			=b.POAmt
 	  ,a.ShipAmt		=b.ShipAmt
-
+	  ,a.StockSuppID	=b.StockSuppID
 from Production.dbo.PO_Supp_Detail as a 
 inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
 inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
@@ -386,6 +386,7 @@ ID
 	  ,BrandId
 	  ,POAmt
 	  ,ShipAmt
+	  ,StockSuppID
 )
 select 
        b.ID
@@ -452,6 +453,7 @@ select
 	  ,(select top 1 a.BrandID from Orders a WITH (NOLOCK) where a.POID=b.ID)
 	  ,b.POAmt
 	  ,b.ShipAmt
+	  ,b.StockSuppID
 from Trade_To_Pms.dbo.PO_Supp_Detail as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2	)
 

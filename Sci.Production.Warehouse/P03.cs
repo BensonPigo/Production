@@ -823,7 +823,7 @@ from(
 												a.SEQ1 like 'T%' 
 
 			LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
-			LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = b.SuppID  
+			LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID)
             outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 			OUTER APPLY(
 			SELECT [FabricCombo]=STUFF((
@@ -935,7 +935,7 @@ from(
 									aft.ColorID	   = a.ColorID	and
 									a.SEQ1 like 'T%' 
 		LEFT JOIN Order_BOF ob ON  a.RefNo=ob.RefNo AND a.ID=ob.Id
-		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = b.SuppID 
+		LEFT JOIN Fabric_Supp fs WITH (NOLOCK) ON fs.SCIRefno = a.SCIRefno AND fs.SuppID = iif(left(a.SEQ1, 1) = '7', a.StockSuppID, b.SuppID) 
         outer apply(select fabrictype2 = iif(a.FabricType='F','Fabric',iif(a.FabricType='A','Accessory',iif(a.FabricType='O','Orher',a.FabricType))))mt
 		OUTER APPLY(
 		SELECT [FabricCombo]=STUFF((
