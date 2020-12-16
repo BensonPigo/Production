@@ -21,6 +21,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[AddDate] [datetime] NULL,
 	[EditName] [varchar](10) NOT NULL,
 	[EditDate] [datetime] NULL,
+	FirstInspection Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_FirstInspection] DEFAULT 0,
 	IsCombinePO Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT 0,
 	CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
 	(
@@ -80,3 +81,6 @@ ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [EditName]
 GO
 
 
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該單據所有的紙箱是否是第一次檢驗 Stagger', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord', @level2type = N'COLUMN', @level2name = N'FirstInspection';
+GO
