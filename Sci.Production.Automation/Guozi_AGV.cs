@@ -413,11 +413,13 @@ from Orders with (nolock) where POID in ({wherePOID})
         /// SentDeleteBundle
         /// </summary>
         /// <param name="dtBundle">dtSewingSchedule</param>
-        public void SentDeleteBundle(DataTable dtBundle)
+        /// <returns>DualResult</returns>
+        public DualResult SentDeleteBundle(DataTable dtBundle)
         {
+            DualResult result;
             if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
-                return;
+                return new DualResult(true);
             }
 
             string apiThread = "SentDeleteBundleFromAGV";
@@ -434,18 +436,21 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            result = SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            return result;
         }
 
         /// <summary>
         /// SentDeleteBundle_SubProcess
         /// </summary>
         /// <param name="dtBundle_SubProcess">dtSewingSchedule</param>
-        public void SentDeleteBundle_SubProcess(DataTable dtBundle_SubProcess)
+        /// <returns>DualResult</returns>
+        public DualResult SentDeleteBundle_SubProcess(DataTable dtBundle_SubProcess)
         {
+            DualResult result;
             if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
-                return;
+                return new DualResult(true);
             }
 
             string apiThread = "SentDeleteBundle_SubProcessFromAGV";
@@ -462,18 +467,21 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_SubProcess"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            result = SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            return result;
         }
 
         /// <summary>
         /// SentDeleteBundle_Detail_Order
         /// </summary>
         /// <param name="dtBundle_Detail_Order">dtSewingSchedule</param>
-        public void SentDeleteBundle_Detail_Order(DataTable dtBundle_Detail_Order)
+        /// <returns>DualResult</returns>
+        public DualResult SentDeleteBundle_Detail_Order(DataTable dtBundle_Detail_Order)
         {
+            DualResult result;
             if (!IsModuleAutomationEnable(this.guoziSuppID, this.moduleName))
             {
-                return;
+                return new DualResult(true);
             }
 
             string apiThread = "SentDeleteBundle_Detail_OrderFromAGV";
@@ -490,7 +498,8 @@ from Orders with (nolock) where POID in ({wherePOID})
 
             string jsonBody = JsonConvert.SerializeObject(UtilityAutomation.AppendBaseInfo(bodyObject, "Bundle_Order"));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            result = SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            return result;
         }
 
         /// <summary>
