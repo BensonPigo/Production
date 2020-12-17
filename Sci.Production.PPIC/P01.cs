@@ -1396,6 +1396,11 @@ where POID = @poid group by POID,b.spno";
                 return;
             }
 
+            List<string> listPOID = new List<string>();
+            listPOID.Add(this.CurrentMaintain["POID"].ToString());
+            Task.Run(() => new Guozi_AGV().SentOrdersToAGV(listPOID))
+                          .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+
             sqlCmd = string.Format("update sewingschedule set OrderFinished = 1 where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
