@@ -373,15 +373,19 @@ union all
 		, [ouqty] = 0
 		, [adjust] = 0
 		, a.remark
-	    , isnull((Select cast(tmp.ToLocation as nvarchar)+',' 
-                        from (select b1.ToLocation 
-                                    from SubTransfer a1 WITH (NOLOCK) 
-                                    inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.ToLocation is not null or b1.ToLocation !='')
-                                        and b1.ToPoid = b.ToPoid
-                                        and b1.ToSeq1 = b.ToSeq1
-                                        and b1.ToSeq2 = b.ToSeq2 group by b1.ToLocation) tmp 
-                        for XML PATH('')),'') as ToLocation
+	    , [ToLocation] = isnull(stuff((Select concat(',', tmp.ToLocation)
+										from (select b1.ToLocation 
+											  from SubTransfer a1 WITH (NOLOCK) 
+											  inner join SubTransfer_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
+											  where a1.status = 'Confirmed' 
+											  and b1.ToPoid = b.ToPoid
+											  and b1.ToSeq1 = b.ToSeq1
+											  and b1.ToSeq2 = b.ToSeq2 
+											  and b1.ToRoll = b.ToRoll
+											  and b1.ToDyelot = b.ToDyelot
+                                              and ISNULL(b1.ToLocation, '') <> ''
+											  group by b1.ToLocation) tmp 
+									for XML PATH('')) ,1,1,'') ,'') 
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and ToPoid = '{0}'
@@ -403,15 +407,19 @@ union all
 		, [ouqty] = 0
 		, [adjust] = 0
 		, a.remark
-		, (Select cast(tmp.Location as nvarchar)+',' 
+		, [Location] = ISNULL(stuff((Select concat(',', tmp.Location)
                         from (select b1.Location 
                                     from TransferIn a1 WITH (NOLOCK) 
                                     inner join TransferIn_Detail b1 WITH (NOLOCK) on a1.id = b1.id 
-                                    where a1.status = 'Confirmed' and (b1.Location is not null or b1.Location !='')
+                                    where a1.status = 'Confirmed' 
                                         and b1.Poid = b.Poid
                                         and b1.Seq1 = b.Seq1
-                                        and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
-                        for XML PATH('')) as Location
+                                        and b1.Seq2 = b.Seq2 
+										and b1.Roll = b.Roll
+										and b1.Dyelot = b.Dyelot
+                                        and ISNULL(b1.Location, '') <> ''
+										group by b1.Location) tmp 
+                        for XML PATH('')) ,1,1,''), '')
 	from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
 	where Status = 'Confirmed'
 	and poid = '{0}'
