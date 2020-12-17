@@ -479,7 +479,11 @@
             this.ClientSize = new System.Drawing.Size(627, 578);
             this.Controls.Add(this.panel1);
             this.Name = "R01";
-            this.Text = "R01.Fabric Inspection & Laboratory List Report";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
+            this.Text = "R01. Fabric Inspection & Laboratory Summary Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

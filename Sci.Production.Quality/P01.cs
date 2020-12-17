@@ -90,16 +90,48 @@ namespace Sci.Production.Quality
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
-@"Select a.id,a.poid,a.SEQ1,a.SEQ2,Receivingid,a.Refno,a.SCIRefno,Suppid,
-ArriveQty,InspDeadline,Result,
-PhysicalEncode,WeightEncode,ShadeBondEncode,ContinuityEncode,
-NonPhysical,Physical,TotalInspYds,PhysicalDate,Physical,
-NonWeight, Weight,WeightDate,Weight,
-NonShadebond,Shadebond,ShadebondDate,shadebond,
-NonContinuity,Continuity,ContinuityDate,Continuity,
-a.Status,ReplacementReportID,(a.seq1+a.seq2) as seq,
+@"Select 
+a.id,
+a.poid,
+a.SEQ1,
+a.SEQ2,
+Receivingid,
+a.Refno,
+a.SCIRefno,
+Suppid,
+ArriveQty,
+InspDeadline,
+Result,
+PhysicalEncode,
+WeightEncode,
+ShadeBondEncode,
+ContinuityEncode,
+NonPhysical,
+Physical,
+TotalInspYds,
+PhysicalDate,
+Physical,
+NonWeight, 
+Weight,
+WeightDate,
+Weight,
+NonShadebond,
+Shadebond,
+ShadebondDate,
+shadebond,
+NonContinuity,
+Continuity,
+ContinuityDate,
+Continuity,
+a.Status,
+ReplacementReportID,
+(a.seq1+a.seq2) as seq,
 (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
-c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
+c.Exportid,
+[whseArrival] = isnull(c.whseArrival, ti.IssueDate),
+dbo.getPass1(a.Approve) as approve1,
+approveDate,
+approve,
 d.ColorID,
 (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
 c.ExportID as Wkno
@@ -113,7 +145,9 @@ c.ExportID as Wkno
 ,[ShadeboneInspector] = (select name from pass1 where id = a.ShadeboneInspector)
 ,[ContinuityInspector] = (select name from pass1 where id = a.ContinuityInspector)
 ,[OdorInspector] = (select name from pass1 where id = a.OdorInspector)
-From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+From FIR a WITH (NOLOCK) 
+Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
 outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
 Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
