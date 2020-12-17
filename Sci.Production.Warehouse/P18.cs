@@ -1024,7 +1024,6 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             string upd_MD_2T = string.Empty;
             string upd_MD_8T = string.Empty;
             string upd_Fty_2T = string.Empty;
-            string upd_Fty_Barcode = string.Empty;
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
@@ -1223,32 +1222,31 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                 ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
                 foreach (DataRow drDis in this.DetailDatas)
                 {
-                    if (string.Compare(drDis["FabricType"].ToString(), "F") == 0)
+                    if (string.Compare(drDis["FabricType"].ToString(), "F") == 0 && MyUtility.Check.Empty(drDis["Barcode"]))
                     {
-                        // 代表尚未展開的主料,直接給barcodeNo
                         if (MyUtility.Check.Empty(drDis["CombineBarcode"]))
                         {
                             drDis["Barcode"] = barcodeList[cnt];
-                            cnt++;
                         }
                         else
                         {
-                            if (MyUtility.Check.Empty(drDis["Barcode"]))
+                            // 相同CombinBarcode, 則Barcode要寫入一樣的!
+                            foreach (var item in this.DetailDatas)
                             {
-                                foreach (var item in this.DetailDatas)
+                                if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
                                 {
-                                    if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
-                                    {
-                                        item["Barcode"] = barcodeList[cnt];
-                                    }
+                                    item["Barcode"] = barcodeList[cnt];
                                 }
-
-                                cnt++;
                             }
                         }
+
+                        cnt++;
                     }
                 }
             }
+
+            string upd_Fty_Barcode_V1 = string.Empty;
+            string upd_Fty_Barcode_V2 = string.Empty;
 
             var data_Fty_Barcode = (from m in this.DetailDatas.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
                                     select new
@@ -1263,7 +1261,8 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                                         Barcode = m.Field<string>("Barcode"),
                                     }).ToList();
 
-            upd_Fty_Barcode = Prgs.UpdateFtyInventory_IO(70, null, true);
+            upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, true);
+            upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
 
             #endregion
 
@@ -1331,7 +1330,14 @@ when matched then
                     // 更新FtyInventory Barcode
                     if (data_Fty_Barcode.Count >= 1)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource", conn: sqlConn)))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource", conn: sqlConn)))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             transactionscope.Dispose();
                             this.ShowErr(result);
@@ -1395,8 +1401,8 @@ when matched then
             transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric();
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWHFabric(true);
+            this.SentToGensong_AutoWH_ACC(true);
         }
 
         // Unconfirm
@@ -1578,6 +1584,27 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
+            #region 刪除Barcode
+            string upd_Fty_Barcode_V1 = string.Empty;
+            string upd_Fty_Barcode_V2 = string.Empty;
+            var data_Fty_Barcode = (from m in this.DetailDatas.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
+                                    select new
+                                    {
+                                        TransactionID = m.Field<string>("ID"),
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("Barcode"),
+                                    }).ToList();
+
+            upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+            upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
+            #endregion
+
             #region -- Transaction --
             TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;
@@ -1600,6 +1627,24 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                         transactionscope.Dispose();
                         this.ShowErr(result);
                         return;
+                    }
+
+                    // 更新FtyInventory Barcode
+                    if (data_Fty_Barcode.Count >= 1)
+                    {
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            transactionscope.Dispose();
+                            this.ShowErr(result);
+                            return;
+                        }
                     }
                     #endregion
 
@@ -1650,15 +1695,15 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             transactionscope = null;
 
             // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric();
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWHFabric(false);
+            this.SentToGensong_AutoWH_ACC(false);
         }
 
         /// <summary>
         ///  AutoWHFabric WebAPI for Gensong
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        private void SentToGensong_AutoWHFabric()
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
             DataTable dtDetail = new DataTable();
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
@@ -1684,7 +1729,8 @@ SELECT [ID] = td.id
 ,[IsInspection] = convert(bit, 0)
 ,[ETA] = null
 ,[WhseArrival] = t.IssueDate
-,[Status] = t.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,[Barcode] = Barcode.value
 FROM Production.dbo.TransferIn_Detail td
 inner join Production.dbo.TransferIn t on td.id = t.id
@@ -1722,7 +1768,7 @@ and t.id = '{this.CurrentMaintain["id"]}'
         /// <summary>
         ///  AutoWH Acc WebAPI for Gensong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC()
+        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
         {
             DataTable dtDetail = new DataTable();
             if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
@@ -1748,7 +1794,8 @@ SELECT
 ,[Ukey] = rd.Ukey
 ,[ETA] = null
 ,[WhseArrival] = r.IssueDate
-,[Status] = r.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 FROM Production.dbo.TransferIn_Detail rd
 inner join Production.dbo.TransferIn r on rd.id = r.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
@@ -1813,7 +1860,7 @@ select  a.id
                         else '' end
         , p.Refno
 		, [ColorID] = Color.Value
-        ,Barcode=''
+        ,[Barcode] = isnull(Barcode.value,'')
         ,a.CombineBarcode
         ,a.Unoriginal 
         ,[ActualWeight] = isnull(a.ActualWeight, 0)
@@ -1842,6 +1889,14 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(p.BrandID,p.ColorID)
 	 END
 )Color
+outer apply(
+	select value = ft.barcode
+	from FtyInventory ft
+	where ft.POID = a.PoId
+	and ft.Seq1 = a.Seq1 and ft.Seq2 = a.Seq2
+	and ft.StockType = a.StockType 
+	and ft.Roll =a.Roll and ft.Dyelot = a.Dyelot
+)Barcode
 Where a.id = '{0}'
 order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
 ", masterID, fromFty);

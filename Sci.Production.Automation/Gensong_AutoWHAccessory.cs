@@ -97,9 +97,9 @@ namespace Sci.Production.Automation
                     SizeCode = dr["SizeCode"].ToString(),
                     StockType = dr["StockType"].ToString(),
                     Qty = (decimal)dr["Qty"],
-                    StockPoId = dr["PoId"].ToString(),
-                    StockSeq1 = dr["Seq1"].ToString(),
-                    StockSeq2 = dr["Seq2"].ToString(),
+                    StockPoId = dr["StockPoId"].ToString(),
+                    StockSeq1 = dr["StockSeq1"].ToString(),
+                    StockSeq2 = dr["StockSeq2"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
@@ -114,7 +114,8 @@ namespace Sci.Production.Automation
         /// RemoveC_Detail To Gensong
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
-        public void SentRemoveC_DetailToGensongAutoWHAccessory(DataTable dtMaster)
+        /// <param name="isConfirmed"> confirmed</param>
+        public void SentRemoveC_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -126,7 +127,7 @@ namespace Sci.Production.Automation
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
 ,[PoId] = i2.POID
@@ -134,7 +135,9 @@ select distinct
 ,[Seq2] = i2.Seq2
 ,[Qty]  = i2.QtyBefore - i2.QtyAfter
 ,[Ukey] = i2.ukey
-,[Status] = i.Status
+,i2.StockType
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.Adjust_Detail i2
 inner join #tmp i on i.Id = i2.Id
@@ -143,6 +146,7 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where 1 = 1 
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
@@ -178,6 +182,7 @@ and exists(
                     Seq2 = dr["Seq2"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
+                    StockType = dr["StockType"].ToString(),
                     Status = dr["Status"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
@@ -191,7 +196,8 @@ and exists(
         /// SubTransfer To Gensong
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
-        public void SentSubTransfer_DetailToGensongAutoWHAccessory(DataTable dtMaster)
+        /// <param name="isConfirmed">bool</param>
+        public void SentSubTransfer_DetailToGensongAutoWHAccessory(DataTable dtMaster,bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -203,7 +209,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct
 [ID] = sd.ID
 ,s.Type
@@ -213,7 +219,8 @@ select distinct
 ,[ToLocation] = sd.ToLocation
 ,sd.Qty
 ,sd.Ukey
-,[Status] = s.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.SubTransfer_Detail sd
 inner join #tmp s on sd.ID=s.Id
@@ -273,11 +280,11 @@ and exists(
                     FromSeq2 = dr["FromSeq2"].ToString(),
                     FromStockType = dr["FromStockType"].ToString(),
                     FromLocation = dr["FromLocation"].ToString(),
-                    ToPoId = dr["FromPoId"].ToString(),
-                    ToSeq1 = dr["FromSeq1"].ToString(),
-                    ToSeq2 = dr["FromSeq2"].ToString(),
-                    ToStockType = dr["FromStockType"].ToString(),
-                    ToLocation = dr["FromLocation"].ToString(),
+                    ToPoId = dr["ToPoId"].ToString(),
+                    ToSeq1 = dr["ToSeq1"].ToString(),
+                    ToSeq2 = dr["ToSeq2"].ToString(),
+                    ToStockType = dr["ToStockType"].ToString(),
+                    ToLocation = dr["ToLocation"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
@@ -322,7 +329,8 @@ and exists(
         /// ReturnReceipt To Gensong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
-        public void SentReturnReceiptToGensongAutoWHAccessory(DataTable dtMaster)
+        /// <param name="isConfirmed">bool</param>
+        public void SentReturnReceiptToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -334,7 +342,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select rrd.Id
 ,rrd.POID
 ,rrd.Seq1
@@ -342,7 +350,8 @@ select rrd.Id
 ,rrd.Qty
 ,rrd.StockType
 ,rrd.Ukey
-,[Status] = rr.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,[CmdTime] = GETDATE()
 from ReturnReceipt_Detail rrd
 inner join #tmp rr on rrd.Id=rr.Id
@@ -390,15 +399,16 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
         /// BorrowBack to Gensong
         /// </summary>
-        /// <param name="dtDetail">bool</param>
-        public void SentBorrowBackToGensongAutoWHAccessory(DataTable dtDetail)
+        /// <param name="dtDetail">DataTable</param>
+        /// <param name="isConfirmed">bool</param>
+        public void SentBorrowBackToGensongAutoWHAccessory(DataTable dtDetail, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -410,7 +420,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct
 [ID] = bb2.ID
 ,bb2.FromPOID,bb2.FromSeq1,bb2.FromSeq2,bb2.FromStockType
@@ -419,7 +429,8 @@ select distinct
 ,[ToLocation] = bb2.ToLocation
 ,bb2.Qty
 ,bb2.Ukey
-,[Status] = bb.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.BorrowBack_Detail bb2
 inner join #tmp bb on bb.ID=bb2.Id
@@ -482,7 +493,7 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
@@ -490,7 +501,8 @@ and exists(
         /// LocationTrans To Gensong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
-        public void SentLocationTransToGensongAutoWHAccessory(DataTable dtMaster)
+        /// <param name="isConfirmed">bool</param>
+        public void SentLocationTransToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -502,7 +514,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select lt2.Id
 ,lt2.POID
 ,lt2.Seq1
@@ -511,7 +523,9 @@ select lt2.Id
 ,lt2.ToLocation
 ,lt2.Ukey
 ,lt2.StockType
-,lt.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
+,[Qty] = f.InQty - f.OutQty + f.AdjustQty
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
@@ -557,13 +571,14 @@ and exists(
                     Seq2 = s["Seq2"].ToString(),
                     FromLocation = s["FromLocation"].ToString(),
                     ToLocation = s["ToLocation"].ToString(),
+                    Qty = (decimal)s["Qty"],
                     Ukey = (long)s["Ukey"],
                     StockType = s["StockType"].ToString(),
                     Status = s["Status"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("LocationTrans", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("LocationTrans_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
@@ -571,7 +586,8 @@ and exists(
         /// Adjust_Detail To Gensong
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
-        public void SentAdjust_DetailToGensongAutoWHAccessory(DataTable dtMaster)
+        /// <param name="isConfirmed">bool</param>
+        public void SentAdjust_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -583,7 +599,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
 ,[PoId] = i2.POID
@@ -593,7 +609,8 @@ select distinct
 ,[StockType] = i2.StockType
 ,[QtyBefore] = i2.QtyBefore
 ,[QtyAfter] = i2.QtyAfter
-,[Status] = i.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.Adjust_Detail i2
 inner join #tmp i on i.Id = i2.Id
@@ -602,6 +619,7 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where 1=1 
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 

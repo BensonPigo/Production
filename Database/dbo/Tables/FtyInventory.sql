@@ -14,6 +14,7 @@
     [LockDate]              DATETIME        NULL,
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
+    [Barcode] VARCHAR(16) NULL DEFAULT (''), 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

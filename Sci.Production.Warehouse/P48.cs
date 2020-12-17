@@ -610,7 +610,7 @@ from #tmp";
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
             {
-                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMaster))
+                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMaster, true))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

@@ -840,11 +840,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     transactionscope.Complete();
                     transactionscope.Dispose();
 
-                    // 要在confirmed 後才能取得當前Balance
+                    // confirmed後取得當前Balance,才能設定Barcode
                     this.FtyBarcodeData(true);
 
                     // AutoWHFabric WebAPI for Gensong
-                    this.SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric(true);
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -1027,11 +1027,11 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     transactionscope.Complete();
                     transactionscope.Dispose();
 
-                    // 刪除Ftyinventory barcode
+                    // unconfirmed後取得當前Balance,才能設定Barcode
                     this.FtyBarcodeData(false);
 
                     // AutoWHFabric WebAPI for Gensong
-                    this.SentToGensong_AutoWHFabric();
+                    this.SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1049,7 +1049,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         /// <summary>
         ///  AutoWHFabric WebAPI for Gensong
         /// </summary>
-        private void SentToGensong_AutoWHFabric()
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
@@ -1072,7 +1072,8 @@ select distinct
 ,[NewBarcode] = NewBarcode.value
 ,[Qty] = i2.Qty
 ,[Ukey] = i2.ukey
-,[Status] = i.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
@@ -1123,7 +1124,9 @@ and i.id = '{this.CurrentMaintain["ID"]}'
             DualResult result;
             DataTable dt = new DataTable();
             string sqlcmd = $@"
-select fb.Ukey,fb.TransactionID,fb.Barcode
+select f.Ukey,fb.TransactionID
+,[Barcode1] = f.Barcode
+,[Barcode2] = fb.Barcode
 ,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
 ,[NewBarcode] = ''
 ,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
@@ -1134,6 +1137,7 @@ inner join FtyInventory f on f.POID = i2.POID
     and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
     and f.StockType = i2.StockType
 left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+and fb.TransactionID = i2.Id
 where i.Type = 'A'
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1146,22 +1150,24 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
 
             foreach (DataRow dr in dt.Rows)
             {
+                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
+
                 // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
                 if (!MyUtility.Check.Empty(dr["balanceQty"]))
                 {
-                    if (dr["Barcode"].ToString().Contains("-"))
+                    if (strBarcode.Contains("-"))
                     {
-                        dr["NewBarcode"] = Prgs.GetNextValue(dr["Barcode"].ToString().Substring(14, 2), 1);
+                        dr["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
                     }
                     else
                     {
-                        dr["NewBarcode"] = MyUtility.Check.Empty(dr["Barcode"]) ? string.Empty : dr["Barcode"].ToString() + "-01";
+                        dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
                     }
                 }
                 else
                 {
                     // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                    dr["NewBarcode"] = dr["Barcode"];
+                    dr["NewBarcode"] = strBarcode;
                 }
             }
 
@@ -1178,11 +1184,20 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                                         Barcode = m.Field<string>("NewBarcode"),
                                     }).ToList();
 
-            string upd_Fty_Barcode = Prgs.UpdateFtyInventory_IO(70, null, isConfirmed);
+            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+            string upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
+            string upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
             DataTable resulttb;
             if (data_Fty_Barcode.Count >= 1)
             {
-                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode, out resulttb, "#TmpSource")))
+                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
                 {
                     this.ShowErr(result);
                     return;

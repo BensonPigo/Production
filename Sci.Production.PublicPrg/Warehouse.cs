@@ -151,7 +151,8 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'I' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.blocation = src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty 
+    , target.blocation = src.location
 when not matched by target and src.stocktype = 'I' then
     insert ([Poid],[Seq1],[Seq2],[inqty],[blocation])
     values (src.poid,src.seq1,src.seq2,src.qty,src.location);
@@ -161,7 +162,8 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'B' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.alocation = src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty 
+    , target.alocation = src.location
 when not matched by target and src.stocktype = 'B' then
     insert ([Poid],[Seq1],[Seq2],[inqty],[alocation])
     values (src.poid,src.seq1,src.seq2,src.qty,src.location);
@@ -171,7 +173,8 @@ using  #TmpSource as src
 on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
 when matched and src.stocktype = 'O' then
 	update 
-	set target.inqty = isnull(target.inqty,0.00) + src.qty , target.Clocation = src.location
+	set target.inqty = isnull(target.inqty,0.00) + src.qty 
+    , target.Clocation = src.location
 when not matched by target and src.stocktype = 'O' then
     insert ([Poid],[Seq1],[Seq2],[inqty],[Clocation])
     values (src.poid,src.seq1,src.seq2,src.qty,src.location);
@@ -543,7 +546,60 @@ drop table #TmpSource
                     #endregion
                     break;
                 case 70:
-                    #region 更新Barcode
+                    #region 更新Ftyinventor.Barcode 第一層
+                    sqlcmd = @"
+alter table #TmpSource alter column TransactionID varchar(15)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
+alter table #TmpSource alter column Barcode varchar(16)
+
+select t.Ukey
+, s.Barcode
+,[Balance] = t.InQty - t.OutQty + t.AdjustQty
+into #tmpS1
+from FtyInventory t
+inner join #TmpSource s on t.POID = s.poid
+and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+and t.StockType = s.stocktype 
+and t.Roll = s.roll and t.Dyelot = s.Dyelot
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+merge dbo.FtyInventory as t
+using #tmpS1 as s 
+	on t.ukey = s.ukey
+when matched then
+    update
+    set t.Barcode = isnull(s.Barcode,'');
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+                    else
+                    {
+                        sqlcmd += @"
+merge dbo.FtyInventory as t
+using #tmpS1 as s 
+	on t.ukey = s.ukey
+when matched and s.Balance = 0 then
+    update
+    set t.Barcode = '';
+
+drop table #tmpS1; 
+drop table #TmpSource;
+";
+                    }
+
+                    #endregion
+                    break;
+                case 71:
+                    #region 更新Ftyinventory_Barcode 第二層
                     sqlcmd = @"
 alter table #TmpSource alter column TransactionID varchar(15)
 alter table #TmpSource alter column poid varchar(20)
@@ -584,7 +640,6 @@ drop table #TmpSource;
                     else
                     {
                         sqlcmd += @"
-
 delete t
 from FtyInventory_Barcode t
 where exists(
@@ -596,6 +651,39 @@ drop table #tmpS1;
 drop table #TmpSource;
 ";
                     }
+
+                    #endregion
+                    break;
+                case 72:
+                    #region 更新Ftyinventory_Barcode 第二層補回到第一層
+                    sqlcmd = @"
+alter table #TmpSource alter column TransactionID varchar(15)
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
+alter table #TmpSource alter column Barcode varchar(16)
+
+update t
+set t.Barcode = ftyBarcode.value
+from FtyInventory t
+outer apply(
+	select value = min(Barcode)
+	from FtyInventory_Barcode fb
+	where fb.Ukey = t.Ukey
+)ftyBarcode
+where exists(
+    select 1 from #TmpSource s
+    where t.POID = s.poid
+    and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+    and t.StockType = s.stocktype 
+    and t.Roll = s.roll 
+    and t.Dyelot = s.Dyelot
+)
+and ftyBarcode.value != ''
+";
 
                     #endregion
                     break;

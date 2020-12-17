@@ -585,7 +585,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
-                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, true))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
                 #endregion
@@ -612,7 +612,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
-                    Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain))
+                    Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain, true))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
 

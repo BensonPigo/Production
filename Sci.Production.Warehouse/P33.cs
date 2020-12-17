@@ -2193,7 +2193,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWH_ACC(true);
         }
 
         /// <inheritdoc/>
@@ -2313,7 +2313,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWH_ACC(false);
         }
 
         /// <inheritdoc/>
@@ -3429,7 +3429,7 @@ order by [OrderID],[Article]
         /// <summary>
         ///  AutoWH ACC WebAPI for Gensong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC()
+        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
         {
             // AutoWHACC WebAPI for Gensong
             if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
@@ -3451,7 +3451,8 @@ select distinct
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
 ,[Ukey] = i2.ukey
-,[Status] = i.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id

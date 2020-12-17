@@ -316,7 +316,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     dtMain.Rows.Add(row);
                 }
 
-                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, true))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
@@ -350,7 +350,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     dtMain.Rows.Add(row);
                 }
 
-                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain))
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain, true))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

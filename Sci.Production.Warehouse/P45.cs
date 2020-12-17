@@ -154,7 +154,7 @@ Reason can’t be empty!!",
             if (dts.Length < 1)
             {
                 MyUtility.Msg.InfoBox("Confirmed Successful.");
-                this.SentToGensong_AutoWH_ACC();
+                this.SentToGensong_AutoWH_ACC(true);
                 return;
             }
             else
@@ -341,7 +341,7 @@ update Adjust set Status ='New' where id = '{1}'
             }
             #endregion
 
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWH_ACC(false);
         }
 
         /// <inheritdoc/>
@@ -652,13 +652,13 @@ where ad.Id='{0}'
         /// <summary>
         ///  AutoWH ACC WebAPI for Gensong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC()
+        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMain))
+                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

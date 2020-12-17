@@ -659,7 +659,7 @@ drop table #tmp2
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWH_ACC(true);
         }
 
         // Unconfirm
@@ -851,7 +851,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC();
+            this.SentToGensong_AutoWH_ACC(false);
         }
 
         // 寫明細撈出的sql command
@@ -935,7 +935,7 @@ Where a.id = '{0}' ", masterID);
         /// <summary>
         ///  AutoWH Acc WebAPI for Gensong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC()
+        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
         {
             DataTable dtDetail = new DataTable();
             if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
@@ -961,7 +961,8 @@ SELECT
 ,[Ukey] = rd.Ukey
 ,[ETA] = null
 ,[WhseArrival] = null
-,[Status] = r.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 

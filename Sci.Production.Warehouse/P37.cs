@@ -475,9 +475,12 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
-from dbo.ReturnReceipt_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
+                @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+,[balanceQty] = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+,d.Dyelot
+from dbo.ReturnReceipt_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) 
 on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -633,8 +636,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    this.SentToGensong_AutoWHFabric();
-                    this.SentToGensong_AutoWH_ACC();
+                    this.SentToGensong_AutoWHFabric(true);
+                    this.SentToGensong_AutoWH_ACC(true);
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -863,8 +866,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-                    this.SentToGensong_AutoWHFabric();
-                    this.SentToGensong_AutoWH_ACC();
+                    this.SentToGensong_AutoWHFabric(false);
+                    this.SentToGensong_AutoWH_ACC(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -876,26 +879,112 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
         }
 
-        private void SentToGensong_AutoWHFabric()
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 dtMain.ImportRow(this.CurrentMaintain);
-                Task.Run(() => new Gensong_AutoWHFabric().SentReturnReceiptToGensongAutoWHFabric(dtMain))
+                Task.Run(() => new Gensong_AutoWHFabric().SentReturnReceiptToGensongAutoWHFabric(dtMain, isConfirmed))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
 
-        private void SentToGensong_AutoWH_ACC()
+        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHAccessory().SentReturnReceiptToGensongAutoWHAccessory(dtMain))
+                Task.Run(() => new Gensong_AutoWHAccessory().SentReturnReceiptToGensongAutoWHAccessory(dtMain, isConfirmed))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        private void FtyBarcodeData(bool isConfirmed)
+        {
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlcmd = $@"
+select f.Ukey,fb.TransactionID
+,[Barcode1] = f.Barcode
+,[Barcode2] = fb.Barcode
+,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[NewBarcode] = ''
+,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
+from Production.dbo.returnReceipt_Detail i2
+inner join Production.dbo.returnReceipt i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.POID
+    and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
+    and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+    and f.StockType = i2.StockType
+left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+and fb.TransactionID = i2.Id
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and i2.id ='{this.CurrentMaintain["ID"]}'
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
+
+                // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                {
+                    if (strBarcode.Contains("-"))
+                    {
+                        dr["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                    }
+                    else
+                    {
+                        dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                    }
+                }
+                else
+                {
+                    // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                    dr["NewBarcode"] = strBarcode;
+                }
+            }
+
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                    select new
+                                    {
+                                        TransactionID = m.Field<string>("ID"),
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("NewBarcode"),
+                                    }).ToList();
+
+            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+            string upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
+            string upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
+            DataTable resulttb;
+            if (data_Fty_Barcode.Count >= 1)
+            {
+                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
             }
         }
 

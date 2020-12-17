@@ -144,7 +144,8 @@ namespace Sci.Production.Automation
         /// SubTransfer_Detail To Gensong
         /// </summary>
         /// <param name="dtMaster">Master DataSource</param>
-        public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtMaster)
+        /// <param name="isConfirmed">bool</param>
+        public void SentSubTransfer_DetailToGensongAutoWHFabric(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -156,7 +157,7 @@ namespace Sci.Production.Automation
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct
 [ID] = sd.ID
 ,Type = 'D'
@@ -167,7 +168,8 @@ select distinct
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = sd.ToLocation
 ,sd.Ukey
-,[Status] = s.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.SubTransfer_Detail sd
 inner join #tmp s on sd.ID=s.Id
@@ -333,7 +335,7 @@ and exists(
         /// Cutplan_Detail To Gensong
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail)
+        public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -345,7 +347,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct
     [CutplanID] = cp2.ID
     ,[CutRef] = cp2.CutRef
@@ -358,7 +360,8 @@ select distinct
     ,[Colorid] = cp2.Colorid
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
-    ,[Status] = cp1.Status
+    ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
     ,[CmdTime] = GETDATE()
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
@@ -428,7 +431,7 @@ select distinct
         /// </summary>
         /// <param name="dtDetail">bool</param>
         /// <param name="isConfirmed">bool Confirmed</param>
-        public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail)
+        public void SentBorrowBackToGensongAutoWHFabric(DataTable dtDetail, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -440,7 +443,7 @@ select distinct
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select distinct
 [ID] = bb2.ID
 ,bb2.FromPOID,bb2.FromSeq1,bb2.FromSeq2,bb2.FromRoll,bb2.FromDyelot,bb2.FromStockType
@@ -451,7 +454,8 @@ select distinct
 ,[ToLocation] = bb2.ToLocation
 ,bb2.Qty
 ,bb2.Ukey
-,[Status] = bb.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,CmdTime = GetDate()
 from Production.dbo.BorrowBack_Detail bb2
 inner join #tmp bb on bb.ID=bb2.Id
@@ -537,7 +541,7 @@ and exists(
         /// ReturnReceipt To Gensong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
-        public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster)
+        public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -549,7 +553,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select rrd.Id
 ,rrd.POID
 ,rrd.Seq1
@@ -561,7 +565,8 @@ select rrd.Id
 ,rrd.Ukey
 ,[Barcode] = Barcode.value
 ,[CmdTime] = GETDATE()
-,[Status] = rr.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 from ReturnReceipt_Detail rrd
 inner join #tmp rr on rrd.Id=rr.Id
 left join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
@@ -623,7 +628,8 @@ and exists(
         /// LocationTrans To Gensong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
-        public void SentLocationTransToGensongAutoWHFabric(DataTable dtMaster)
+        /// <param name="isConfirmed">bool</param>
+        public void SentLocationTransToGensongAutoWHFabric(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
@@ -635,7 +641,7 @@ and exists(
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
-            string sqlcmd = @"
+            string sqlcmd = $@"
 select lt2.Id
 ,lt2.POID
 ,lt2.Seq1
@@ -647,7 +653,8 @@ select lt2.Id
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
-,lt.Status
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
