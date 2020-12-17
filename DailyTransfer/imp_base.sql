@@ -1429,6 +1429,10 @@ SET
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate		
 	  ,a.MaxLossQty		 = b.MaxLossQty
+	  ,a.MinGmtQty		 = b.MinGmtQty
+	  ,a.MinLossQty		 = b.MinLossQty
+	  ,a.PerGmtQty		 = b.PerGmtQty
+	  ,a.PlsLossQty		 = b.PlsLossQty
 from Production.dbo.LossRateFabric as a inner join Trade_To_Pms.dbo.LossRateFabric as b ON a.WeaveTypeID=b.WeaveTypeID
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.LossRateFabric(
@@ -1447,6 +1451,10 @@ INSERT INTO Production.dbo.LossRateFabric(
       ,EditName
       ,EditDate
 	  ,MaxLossQty
+	  ,MinGmtQty
+	  ,MinLossQty
+	  ,PerGmtQty
+	  ,PlsLossQty
 )
 select 
        WeaveTypeID
@@ -1464,6 +1472,10 @@ select
       ,EditName
       ,EditDate
 	  ,MaxLossQty
+	  ,MinGmtQty
+	  ,MinLossQty
+	  ,PerGmtQty
+	  ,PlsLossQty
 from Trade_To_Pms.dbo.LossRateFabric as b WITH (NOLOCK)
 where not exists(select WeaveTypeID from Production.dbo.LossRateFabric as a WITH (NOLOCK) where a.WeaveTypeID = b.WeaveTypeID)
 --Acc_Loss
@@ -1846,6 +1858,7 @@ SET
 	  ,a.IsGMTMaster	  =b.IsGMTMaster
 	  ,a.IsGMTDetail      =b.IsGMTDetail
 	  ,a.IsDevSample      =b.IsDevSample
+	  ,a.CalByBOFConsumption      =b.CalByBOFConsumption
 from Production.dbo.OrderType as a inner join Trade_To_Pms.dbo.OrderType as b ON a.id=b.id and a.BrandID =b.BrandID
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.OrderType(
@@ -1869,6 +1882,7 @@ INSERT INTO Production.dbo.OrderType(
 	  ,IsGMTMaster
 	  ,IsGMTDetail
 	  ,IsDevSample
+	  ,CalByBOFConsumption
 )
 select 
 		 ID
@@ -1891,6 +1905,7 @@ select
 	  ,IsGMTMaster
 	  ,IsGMTDetail
 	  ,IsDevSample
+	  ,CalByBOFConsumption
 from Trade_To_Pms.dbo.OrderType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.OrderType as a WITH (NOLOCK) where a.id = b.id and a.BrandID =b.BrandID)
 

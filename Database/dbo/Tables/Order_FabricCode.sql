@@ -1,14 +1,17 @@
 ﻿CREATE TABLE [dbo].[Order_FabricCode] (
-    [Id]              VARCHAR (13) CONSTRAINT [DF_Order_FabricCode_Id] DEFAULT ('') NOT NULL,
-    [PatternPanel]    VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
-    [FabricCode]      VARCHAR (3)  CONSTRAINT [DF_Order_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
-    [FabricPanelCode] VARCHAR (2)  CONSTRAINT [DF_Order_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [AddName]         VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_AddName] DEFAULT ('') NULL,
-    [AddDate]         DATETIME     NULL,
-    [EditName]        VARCHAR (10) CONSTRAINT [DF_Order_FabricCode_EditName] DEFAULT ('') NULL,
-    [EditDate]        DATETIME     NULL,
+    [Id]              VARCHAR (13)    CONSTRAINT [DF_Order_FabricCode_Id] DEFAULT ('') NOT NULL,
+    [PatternPanel]    VARCHAR (2)     CONSTRAINT [DF_Order_FabricCode_PatternPanel] DEFAULT ('') NOT NULL,
+    [FabricCode]      VARCHAR (3)     CONSTRAINT [DF_Order_FabricCode_FabricCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode] VARCHAR (2)     CONSTRAINT [DF_Order_FabricCode_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [AddName]         VARCHAR (10)    CONSTRAINT [DF_Order_FabricCode_AddName] DEFAULT ('') NULL,
+    [AddDate]         DATETIME        NULL,
+    [EditName]        VARCHAR (10)    CONSTRAINT [DF_Order_FabricCode_EditName] DEFAULT ('') NULL,
+    [EditDate]        DATETIME        NULL,
+    [ConsPC]          NUMERIC (12, 4) NULL,
     CONSTRAINT [PK_Order_FabricCode] PRIMARY KEY CLUSTERED ([Id] ASC, [FabricPanelCode] ASC)
 );
+
+
 
 
 

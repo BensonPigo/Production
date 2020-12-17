@@ -4,7 +4,7 @@
     [Name]         NVARCHAR (500) CONSTRAINT [DF_Reason_Name] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (500) CONSTRAINT [DF_Reason_Remark] DEFAULT ('') NULL,
     [No]           SMALLINT       CONSTRAINT [DF_Reason_No] DEFAULT ((0)) NULL,
-    [ReasonGroup]  VARCHAR (2)    CONSTRAINT [DF_Reason_ReasonGroup] DEFAULT ('') NULL,
+    [ReasonGroup]  VARCHAR (5)    CONSTRAINT [DF_Reason_ReasonGroup] DEFAULT ('') NULL,
     [Junk]         BIT            CONSTRAINT [DF_Reason_Junk] DEFAULT ((0)) NULL,
     [Kpi]          BIT            CONSTRAINT [DF_Reason_Kpi] DEFAULT ((0)) NULL,
     [AccountID]    VARCHAR (8)    CONSTRAINT [DF_Reason_AccountNo] DEFAULT ('') NULL,
