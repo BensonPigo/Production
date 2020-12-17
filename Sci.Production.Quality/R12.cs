@@ -145,6 +145,9 @@ where 1 = 1
             if (!this.txtWK1.Text.Empty())
             {
                 where1 += $"and a.ExportID between @ExportID1 and @ExportID2" + Environment.NewLine;
+
+                // Trandfer In 沒有 WK#
+                where2 += $"and 1=0" + Environment.NewLine;
                 this.parameters.Add(new SqlParameter("@ExportID1", this.txtWK1.Text));
                 this.parameters.Add(new SqlParameter("@ExportID2", this.txtWK2.Text));
             }
@@ -214,6 +217,7 @@ Inspector = Concat(p3.ID, '-', p3.Name)
 {string.Format(this.baseReceivingSql, colPhysical, "FIR_Physical", this.AddNonInspectionWhere(where1, "Physical"), joinPhysical)}
 union all
 {string.Format(this.baseTransferInSql, colPhysical, "FIR_Physical", this.AddNonInspectionWhere(where2, "Physical"), joinPhysical)}
+order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
 ";
             }
             #endregion
@@ -246,6 +250,7 @@ i.Remark
 {string.Format(this.baseReceivingSql, colWeight, "FIR_Weight", this.AddNonInspectionWhere(where1, "Weight"), joinWeight)}
 union all
 {string.Format(this.baseTransferInSql, colWeight, "FIR_Weight", this.AddNonInspectionWhere(where2, "Weight"), joinWeight)}
+order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
 ";
             }
             #endregion
@@ -278,6 +283,7 @@ i.Remark
 {string.Format(this.baseReceivingSql, colShadeBand, "FIR_Shadebone", this.AddNonInspectionWhere(where1, "Shade Band"), joinShadeBand)}
 union all
 {string.Format(this.baseTransferInSql, colShadeBand, "FIR_Shadebone", this.AddNonInspectionWhere(where2, "Shade Band"), joinShadeBand)}
+order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
 ";
             }
             #endregion
@@ -309,6 +315,7 @@ i.Remark
 {string.Format(this.baseReceivingSql, colContinuity, "FIR_Continuity", this.AddNonInspectionWhere(where1, "Continuity"), joinContinuity)}
 union all
 {string.Format(this.baseTransferInSql, colContinuity, "FIR_Continuity", this.AddNonInspectionWhere(where2, "Continuity"), joinContinuity)}
+order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
 ";
             }
             #endregion
@@ -338,6 +345,7 @@ i.Remark
 {string.Format(this.baseReceivingSql, colOdor, "FIR_Odor", this.AddNonInspectionWhere(where1, "Odor"), joinOdor)}
 union all
 {string.Format(this.baseTransferInSql, colOdor, "FIR_Odor", this.AddNonInspectionWhere(where2, "Odor"), joinOdor)}
+order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
 ";
             }
             #endregion
