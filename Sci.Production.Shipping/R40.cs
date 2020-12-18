@@ -84,7 +84,6 @@ namespace Sci.Production.Shipping
             this.nlcode = this.txtNLCode.Text;
             this.liguidationonly = this.checkLiquidationDataOnly.Checked;
             this.strGenerateDate = ((DateTime)this.dateGenerate.Value).ToString("yyyy/MM/dd");
-
             #region import Ecus Qty
             DialogResult importResult = DialogResult.Cancel;
 
@@ -168,7 +167,7 @@ namespace Sci.Production.Shipping
                 whereftys = "and o.FactoryID in ('" + string.Join("','", this.FactoryList) + "')";
             }
             #endregion
-
+            string dynamicNLCode = this.radioReportByNLCode.Checked ? "NLCode" : "NLCode2";
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
             /*
@@ -498,7 +497,7 @@ select  *
 into #tmpOnRoadMaterial
 from (
 	select  [HSCode] = f.HSCode
-	        , [NLCode] = f.NLCode
+	        , [NLCode] = f.{dynamicNLCode}
             , [WK] = e.ID
 	        , [PoID] = ed.PoID
             , o.StyleID
@@ -553,7 +552,7 @@ from (
 	
 	select distinct
 	        [HSCode] = isnull(isnull(f.HSCode,li.HSCode),'')
-	        , [NLCode] = isnull(isnull(f.NLCode,li.NLCode),'')
+	        , [NLCode] = isnull(isnull(f.{dynamicNLCode},li.{dynamicNLCode}),'')
             , [WK] = fe.ID
 	        , [POID] = fed.PoID
             , o.StyleID
@@ -636,7 +635,7 @@ select *
 into #tmpWHQty1
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = o.POID
             , o.StyleID
             , o.FactoryID
@@ -703,7 +702,7 @@ from (
             , [Customs Unit]
     from(
         select  [HSCode] = isnull(li.HSCode,'') 
-	            , [NLCode] = isnull(li.NLCode,'') 
+	            , [NLCode] = isnull(li.{dynamicNLCode},'') 
 	            , [POID] = o.POID
                 , o.StyleID
                 , o.FactoryID
@@ -804,7 +803,7 @@ select *
 into #tmpWHQty2
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = o.POID
             , o.StyleID
             , o.FactoryID
@@ -1050,7 +1049,7 @@ from (
             , [Customs Unit]
     from(
         select  [HSCode] = isnull(li.HSCode,'') 
-	            , [NLCode] = isnull(li.NLCode,'') 
+	            , [NLCode] = isnull(li.{dynamicNLCode},'') 
 	            , [POID] = o.POID
                 , o.StyleID
                 , o.FactoryID
@@ -1270,7 +1269,7 @@ from (
 	select  ttt.TransactionID
             ,ttt.TransactionName
             , [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
             , t.FactoryID
             , [Seq] = ttt.Seq1 + ' ' + ttt.Seq2
 	        , [ID] = t.ID
@@ -1317,7 +1316,7 @@ from (
 	select  ttl.TransactionID
             ,ttl.TransactionName
             , [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
+	        , [NLCode] = isnull(li.{dynamicNLCode},'')
             , t.FactoryID
             , [Seq] = ''
 	        , [ID] = t.ID
@@ -1878,7 +1877,7 @@ select *
 into #tmpScrapQty1
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = ft.POID
             , o.StyleID
             , o.FactoryID
@@ -1923,7 +1922,7 @@ from (
     union all
 	
     select  [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
+	        , [NLCode] = isnull(li.{dynamicNLCode},'')
 	        , [POID] = l.OrderID
             , o.StyleID
             , o.FactoryID
@@ -1965,7 +1964,7 @@ select *
 into #tmpScrapQty2
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = ft.POID
             , o.StyleID
             , o.FactoryID
@@ -2062,7 +2061,7 @@ from (
     union all
 	
     select  [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
+	        , [NLCode] = isnull(li.{dynamicNLCode},'')
 	        , [POID] = l.OrderID
             , o.StyleID
             , o.FactoryID

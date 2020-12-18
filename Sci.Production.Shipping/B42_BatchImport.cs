@@ -98,7 +98,6 @@ from VNConsumption where 1=0";
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intRowsCount = worksheet.UsedRange.Rows.Count;
-            int intColumnsCount = worksheet.UsedRange.Columns.Count;
             int intRowsStart = 2;
             int intRowsRead = intRowsStart - 1;
 

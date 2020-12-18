@@ -43,8 +43,6 @@
             this.editDescription2 = new Sci.Win.UI.EditBox();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.displayMaterialType = new Sci.Win.UI.DisplayBox();
-            this.txtUnitUsageUnit = new Sci.Production.Class.Txtunit();
-            this.txtNLCode = new Sci.Win.UI.TextBox();
             this.displayHSCode = new Sci.Win.UI.DisplayBox();
             this.displayCustomsUnit = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
@@ -62,6 +60,10 @@
             this.checkNoNeedToDeclare = new Sci.Win.UI.CheckBox();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.checkBoxPreShrink = new Sci.Win.UI.CheckBox();
+            this.txtUnitUsageUnit = new Sci.Production.Class.Txtunit();
+            this.txtNLCode = new Sci.Production.Class.TxtNLCode();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtNLCode2 = new Sci.Production.Class.TxtNLCode();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -76,6 +78,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtNLCode2);
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.txtNLCode);
             this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.checkBoxPreShrink);
             this.detailcont.Controls.Add(this.checkNoNeedToDeclare);
@@ -93,7 +98,6 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayCustomsUnit);
             this.detailcont.Controls.Add(this.displayHSCode);
-            this.detailcont.Controls.Add(this.txtNLCode);
             this.detailcont.Controls.Add(this.txtUnitUsageUnit);
             this.detailcont.Controls.Add(this.displayMaterialType);
             this.detailcont.Controls.Add(this.comboType);
@@ -262,6 +266,7 @@
             this.comboType.IsSupportUnselect = true;
             this.comboType.Location = new System.Drawing.Point(109, 154);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 13;
             // 
@@ -274,28 +279,6 @@
             this.displayMaterialType.Name = "displayMaterialType";
             this.displayMaterialType.Size = new System.Drawing.Size(190, 23);
             this.displayMaterialType.TabIndex = 14;
-            // 
-            // txtUnitUsageUnit
-            // 
-            this.txtUnitUsageUnit.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UsageUnit", true));
-            this.txtUnitUsageUnit.DisplayBox1Binding = "";
-            this.txtUnitUsageUnit.Location = new System.Drawing.Point(109, 218);
-            this.txtUnitUsageUnit.Name = "txtUnitUsageUnit";
-            this.txtUnitUsageUnit.Size = new System.Drawing.Size(320, 23);
-            this.txtUnitUsageUnit.TabIndex = 15;
-            this.txtUnitUsageUnit.TextBox1Binding = "";
-            // 
-            // txtNLCode
-            // 
-            this.txtNLCode.BackColor = System.Drawing.Color.White;
-            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
-            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtNLCode.Location = new System.Drawing.Point(109, 250);
-            this.txtNLCode.Name = "txtNLCode";
-            this.txtNLCode.Size = new System.Drawing.Size(100, 23);
-            this.txtNLCode.TabIndex = 0;
-            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
-            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
             // 
             // displayHSCode
             // 
@@ -511,15 +494,57 @@
             this.checkBoxPreShrink.AutoSize = true;
             this.checkBoxPreShrink.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PreShrink", true));
             this.checkBoxPreShrink.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkBoxPreShrink.IsSupportEditMode = false;
             this.checkBoxPreShrink.Location = new System.Drawing.Point(466, 300);
             this.checkBoxPreShrink.Name = "checkBoxPreShrink";
-            this.checkBoxPreShrink.IsSupportEditMode = false;
             this.checkBoxPreShrink.ReadOnly = true;
             this.checkBoxPreShrink.Size = new System.Drawing.Size(89, 21);
             this.checkBoxPreShrink.TabIndex = 4;
             this.checkBoxPreShrink.Text = "PreShrink";
             this.checkBoxPreShrink.UseVisualStyleBackColor = true;
             this.checkBoxPreShrink.Visible = false;
+            // 
+            // txtUnitUsageUnit
+            // 
+            this.txtUnitUsageUnit.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UsageUnit", true));
+            this.txtUnitUsageUnit.DisplayBox1Binding = "";
+            this.txtUnitUsageUnit.Location = new System.Drawing.Point(109, 218);
+            this.txtUnitUsageUnit.Name = "txtUnitUsageUnit";
+            this.txtUnitUsageUnit.Size = new System.Drawing.Size(320, 23);
+            this.txtUnitUsageUnit.TabIndex = 15;
+            this.txtUnitUsageUnit.TextBox1Binding = "";
+            // 
+            // txtNLCode
+            // 
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(108, 250);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(100, 23);
+            this.txtNLCode.TabIndex = 34;
+            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
+            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(211, 250);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(136, 23);
+            this.label1.TabIndex = 35;
+            this.label1.Text = "Customs Code(2021)";
+            // 
+            // txtNLCode2
+            // 
+            this.txtNLCode2.BackColor = System.Drawing.Color.White;
+            this.txtNLCode2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode2", true));
+            this.txtNLCode2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode2.Location = new System.Drawing.Point(350, 250);
+            this.txtNLCode2.Name = "txtNLCode2";
+            this.txtNLCode2.Size = new System.Drawing.Size(100, 23);
+            this.txtNLCode2.TabIndex = 36;
+            this.txtNLCode2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode2_PopUp);
+            this.txtNLCode2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode2_Validating);
             // 
             // B40
             // 
@@ -532,6 +557,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B40";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B40. Customs Code - Fabric/Accessory";
             this.UniqueExpress = "SCIRefno";
             this.WorkAlias = "Fabric";
@@ -565,7 +591,6 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displayCustomsUnit;
         private Win.UI.DisplayBox displayHSCode;
-        private Win.UI.TextBox txtNLCode;
         private Class.Txtunit txtUnitUsageUnit;
         private Win.UI.DisplayBox displayMaterialType;
         private Win.UI.ComboBox comboType;
@@ -584,5 +609,8 @@
         private Win.UI.Label labelRefNo;
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.CheckBox checkBoxPreShrink;
+        private Class.TxtNLCode txtNLCode;
+        private Class.TxtNLCode txtNLCode2;
+        private Win.UI.Label label1;
     }
 }

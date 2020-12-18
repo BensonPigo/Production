@@ -39,7 +39,6 @@
             this.displayRefNo = new Sci.Win.UI.DisplayBox();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.displayMaterialType = new Sci.Win.UI.DisplayBox();
-            this.txtNLCode = new Sci.Win.UI.TextBox();
             this.displayHSCode = new Sci.Win.UI.DisplayBox();
             this.displayCustomsUnit = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
@@ -54,6 +53,9 @@
             this.checkNoNeedToDeclare = new Sci.Win.UI.CheckBox();
             this.txtSubconSupplier = new Sci.Production.Class.TxtsubconNoConfirm();
             this.displayUnit = new Sci.Win.UI.DisplayBox();
+            this.txtNLCode2 = new Sci.Production.Class.TxtNLCode();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtNLCode = new Sci.Production.Class.TxtNLCode();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -68,6 +70,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtNLCode);
+            this.detailcont.Controls.Add(this.txtNLCode2);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.displayUnit);
             this.detailcont.Controls.Add(this.txtSubconSupplier);
             this.detailcont.Controls.Add(this.checkNoNeedToDeclare);
@@ -82,7 +87,6 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayCustomsUnit);
             this.detailcont.Controls.Add(this.displayHSCode);
-            this.detailcont.Controls.Add(this.txtNLCode);
             this.detailcont.Controls.Add(this.displayMaterialType);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.displayRefNo);
@@ -127,7 +131,6 @@
             // 
             // labelRefNo
             // 
-            this.labelRefNo.Lines = 0;
             this.labelRefNo.Location = new System.Drawing.Point(15, 13);
             this.labelRefNo.Name = "labelRefNo";
             this.labelRefNo.Size = new System.Drawing.Size(90, 23);
@@ -136,7 +139,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(15, 45);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(90, 23);
@@ -145,7 +147,6 @@
             // 
             // labelMaterialType
             // 
-            this.labelMaterialType.Lines = 0;
             this.labelMaterialType.Location = new System.Drawing.Point(15, 122);
             this.labelMaterialType.Name = "labelMaterialType";
             this.labelMaterialType.Size = new System.Drawing.Size(90, 23);
@@ -154,7 +155,6 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(15, 154);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(90, 23);
@@ -163,7 +163,6 @@
             // 
             // labelNLCode
             // 
-            this.labelNLCode.Lines = 0;
             this.labelNLCode.Location = new System.Drawing.Point(15, 186);
             this.labelNLCode.Name = "labelNLCode";
             this.labelNLCode.Size = new System.Drawing.Size(90, 23);
@@ -172,7 +171,6 @@
             // 
             // labelHSCode
             // 
-            this.labelHSCode.Lines = 0;
             this.labelHSCode.Location = new System.Drawing.Point(15, 218);
             this.labelHSCode.Name = "labelHSCode";
             this.labelHSCode.Size = new System.Drawing.Size(90, 23);
@@ -181,7 +179,6 @@
             // 
             // labelCustomsUnit
             // 
-            this.labelCustomsUnit.Lines = 0;
             this.labelCustomsUnit.Location = new System.Drawing.Point(15, 250);
             this.labelCustomsUnit.Name = "labelCustomsUnit";
             this.labelCustomsUnit.Size = new System.Drawing.Size(90, 23);
@@ -190,8 +187,7 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
-            this.labelSupplier.Location = new System.Drawing.Point(440, 13);
+            this.labelSupplier.Location = new System.Drawing.Point(464, 13);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
             this.labelSupplier.TabIndex = 9;
@@ -228,18 +224,6 @@
             this.displayMaterialType.Size = new System.Drawing.Size(190, 23);
             this.displayMaterialType.TabIndex = 14;
             // 
-            // txtNLCode
-            // 
-            this.txtNLCode.BackColor = System.Drawing.Color.White;
-            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
-            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtNLCode.Location = new System.Drawing.Point(109, 186);
-            this.txtNLCode.Name = "txtNLCode";
-            this.txtNLCode.Size = new System.Drawing.Size(100, 23);
-            this.txtNLCode.TabIndex = 0;
-            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
-            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
-            // 
             // displayHSCode
             // 
             this.displayHSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -274,8 +258,7 @@
             // 
             // labelWidthPcs
             // 
-            this.labelWidthPcs.Lines = 0;
-            this.labelWidthPcs.Location = new System.Drawing.Point(440, 122);
+            this.labelWidthPcs.Location = new System.Drawing.Point(464, 122);
             this.labelWidthPcs.Name = "labelWidthPcs";
             this.labelWidthPcs.Size = new System.Drawing.Size(75, 23);
             this.labelWidthPcs.TabIndex = 21;
@@ -283,8 +266,7 @@
             // 
             // labelLengthPcs
             // 
-            this.labelLengthPcs.Lines = 0;
-            this.labelLengthPcs.Location = new System.Drawing.Point(440, 154);
+            this.labelLengthPcs.Location = new System.Drawing.Point(464, 154);
             this.labelLengthPcs.Name = "labelLengthPcs";
             this.labelLengthPcs.Size = new System.Drawing.Size(75, 23);
             this.labelLengthPcs.TabIndex = 22;
@@ -292,8 +274,7 @@
             // 
             // labelKGPcs
             // 
-            this.labelKGPcs.Lines = 0;
-            this.labelKGPcs.Location = new System.Drawing.Point(440, 186);
+            this.labelKGPcs.Location = new System.Drawing.Point(464, 186);
             this.labelKGPcs.Name = "labelKGPcs";
             this.labelKGPcs.Size = new System.Drawing.Size(75, 23);
             this.labelKGPcs.TabIndex = 23;
@@ -305,7 +286,7 @@
             this.numWidthPcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsWidth", true));
             this.numWidthPcs.DecimalPlaces = 4;
             this.numWidthPcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numWidthPcs.Location = new System.Drawing.Point(520, 122);
+            this.numWidthPcs.Location = new System.Drawing.Point(544, 122);
             this.numWidthPcs.Name = "numWidthPcs";
             this.numWidthPcs.NullValue = new decimal(new int[] {
             0,
@@ -326,7 +307,7 @@
             this.numLengthPcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsLength", true));
             this.numLengthPcs.DecimalPlaces = 4;
             this.numLengthPcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numLengthPcs.Location = new System.Drawing.Point(520, 154);
+            this.numLengthPcs.Location = new System.Drawing.Point(544, 154);
             this.numLengthPcs.Name = "numLengthPcs";
             this.numLengthPcs.NullValue = new decimal(new int[] {
             0,
@@ -347,7 +328,7 @@
             this.numKGPcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PcsKg", true));
             this.numKGPcs.DecimalPlaces = 4;
             this.numKGPcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numKGPcs.Location = new System.Drawing.Point(520, 186);
+            this.numKGPcs.Location = new System.Drawing.Point(544, 186);
             this.numKGPcs.Name = "numKGPcs";
             this.numKGPcs.NullValue = new decimal(new int[] {
             0,
@@ -365,8 +346,7 @@
             // label16
             // 
             this.label16.BackColor = System.Drawing.Color.Transparent;
-            this.label16.Lines = 0;
-            this.label16.Location = new System.Drawing.Point(599, 122);
+            this.label16.Location = new System.Drawing.Point(623, 122);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(16, 23);
             this.label16.TabIndex = 30;
@@ -379,8 +359,7 @@
             // label17
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
-            this.label17.Lines = 0;
-            this.label17.Location = new System.Drawing.Point(599, 154);
+            this.label17.Location = new System.Drawing.Point(623, 154);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(16, 23);
             this.label17.TabIndex = 31;
@@ -395,7 +374,7 @@
             this.checkNoNeedToDeclare.AutoSize = true;
             this.checkNoNeedToDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoDeclare", true));
             this.checkNoNeedToDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkNoNeedToDeclare.Location = new System.Drawing.Point(440, 218);
+            this.checkNoNeedToDeclare.Location = new System.Drawing.Point(464, 218);
             this.checkNoNeedToDeclare.Name = "checkNoNeedToDeclare";
             this.checkNoNeedToDeclare.Size = new System.Drawing.Size(148, 21);
             this.checkNoNeedToDeclare.TabIndex = 4;
@@ -407,7 +386,10 @@
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppid", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = false;
-            this.txtSubconSupplier.Location = new System.Drawing.Point(520, 13);
+            this.txtSubconSupplier.IsMisc = false;
+            this.txtSubconSupplier.IsShipping = false;
+            this.txtSubconSupplier.IsSubcon = false;
+            this.txtSubconSupplier.Location = new System.Drawing.Point(544, 13);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtSubconSupplier.TabIndex = 33;
@@ -423,6 +405,38 @@
             this.displayUnit.Size = new System.Drawing.Size(80, 23);
             this.displayUnit.TabIndex = 34;
             // 
+            // txtNLCode2
+            // 
+            this.txtNLCode2.BackColor = System.Drawing.Color.White;
+            this.txtNLCode2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode2", true));
+            this.txtNLCode2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode2.Location = new System.Drawing.Point(351, 186);
+            this.txtNLCode2.Name = "txtNLCode2";
+            this.txtNLCode2.Size = new System.Drawing.Size(100, 23);
+            this.txtNLCode2.TabIndex = 38;
+            this.txtNLCode2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode2_PopUp);
+            this.txtNLCode2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode2_Validating);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(212, 186);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(136, 23);
+            this.label1.TabIndex = 37;
+            this.label1.Text = "Customs Code(2021)";
+            // 
+            // txtNLCode
+            // 
+            this.txtNLCode.BackColor = System.Drawing.Color.White;
+            this.txtNLCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
+            this.txtNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode.Location = new System.Drawing.Point(109, 186);
+            this.txtNLCode.Name = "txtNLCode";
+            this.txtNLCode.Size = new System.Drawing.Size(100, 23);
+            this.txtNLCode.TabIndex = 39;
+            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
+            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
+            // 
             // B41
             // 
             this.ClientSize = new System.Drawing.Size(745, 372);
@@ -434,6 +448,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B41";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B41. Customs Code - Local Purchase Item";
             this.UniqueExpress = "RefNo";
             this.WorkAlias = "LocalItem";
@@ -464,7 +479,6 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displayCustomsUnit;
         private Win.UI.DisplayBox displayHSCode;
-        private Win.UI.TextBox txtNLCode;
         private Win.UI.DisplayBox displayMaterialType;
         private Win.UI.EditBox editDescription;
         private Win.UI.DisplayBox displayRefNo;
@@ -478,5 +492,8 @@
         private Win.UI.Label labelRefNo;
         private Win.UI.DisplayBox displayUnit;
         private Sci.Production.Class.TxtsubconNoConfirm txtSubconSupplier;
+        private Class.TxtNLCode txtNLCode;
+        private Class.TxtNLCode txtNLCode2;
+        private Win.UI.Label label1;
     }
 }

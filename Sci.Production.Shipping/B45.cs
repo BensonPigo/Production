@@ -67,7 +67,7 @@ namespace Sci.Production.Shipping
 
         private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            this.PopCustomRefno("NLCode");
+            this.PopCustomRefno("NLCode2");
         }
 
         private void TxtRefno_Validating(object sender, CancelEventArgs e)
@@ -121,7 +121,7 @@ namespace Sci.Production.Shipping
 
             if (!MyUtility.Check.Empty(this.txtNLCode.Text))
             {
-                sqlWhere += " and NLCode = @NLCode";
+                sqlWhere += " and NLCode2 = @NLCode";
             }
 
             DataRow drResult;
@@ -153,7 +153,7 @@ namespace Sci.Production.Shipping
 
             if (!MyUtility.Check.Empty(this.txtNLCode.Text))
             {
-                sqlWhere += " and NLCode = @NLCode";
+                sqlWhere += " and NLCode2 = @NLCode";
             }
 
             List<SqlParameter> parCheckRefno = new List<SqlParameter>() { new SqlParameter("@refno", this.txtRefno.Text) };
@@ -170,7 +170,8 @@ namespace Sci.Production.Shipping
             if (dialogResult == DialogResult.OK)
             {
                 IList<DataRow> popResult = selectItem.GetSelecteds();
-                this.CurrentMaintain[popFrom] = popResult[0][popFrom];
+                string mainCol = popFrom == "NLCode2" ? "NLCode" : popFrom;
+                this.CurrentMaintain[mainCol] = popResult[0][popFrom];
             }
         }
     }

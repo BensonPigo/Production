@@ -41,28 +41,34 @@
             this.dateGenerate = new Sci.Win.UI.DateBox();
             this.gridExcelStatus = new Sci.Win.UI.Grid();
             this.label1 = new Sci.Win.UI.Label();
+            this.radioReportByNLCode = new Sci.Win.UI.RadioButton();
+            this.radioReportByNLCode2021 = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.gridExcelStatus)).BeginInit();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(373, 18);
+            this.print.Location = new System.Drawing.Point(529, 18);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(373, 54);
+            this.toexcel.Location = new System.Drawing.Point(529, 54);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(373, 90);
+            this.close.Location = new System.Drawing.Point(529, 90);
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Location = new System.Drawing.Point(165, 1);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(244, 37);
+            this.checkUseCustomized.Location = new System.Drawing.Point(181, 7);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(267, 68);
+            this.txtVersion.Location = new System.Drawing.Point(181, 1);
             // 
             // labelContractNo
             // 
@@ -186,7 +192,7 @@
             this.gridExcelStatus.RowTemplate.Height = 24;
             this.gridExcelStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridExcelStatus.ShowCellToolTips = false;
-            this.gridExcelStatus.Size = new System.Drawing.Size(448, 333);
+            this.gridExcelStatus.Size = new System.Drawing.Size(604, 333);
             this.gridExcelStatus.TabIndex = 107;
             // 
             // label1
@@ -202,9 +208,35 @@
             this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
+            // radioReportByNLCode
+            // 
+            this.radioReportByNLCode.AutoSize = true;
+            this.radioReportByNLCode.Checked = true;
+            this.radioReportByNLCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioReportByNLCode.Location = new System.Drawing.Point(287, 13);
+            this.radioReportByNLCode.Name = "radioReportByNLCode";
+            this.radioReportByNLCode.Size = new System.Drawing.Size(148, 21);
+            this.radioReportByNLCode.TabIndex = 109;
+            this.radioReportByNLCode.TabStop = true;
+            this.radioReportByNLCode.Text = "Report By NL Code";
+            this.radioReportByNLCode.UseVisualStyleBackColor = true;
+            // 
+            // radioReportByNLCode2021
+            // 
+            this.radioReportByNLCode2021.AutoSize = true;
+            this.radioReportByNLCode2021.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioReportByNLCode2021.Location = new System.Drawing.Point(287, 41);
+            this.radioReportByNLCode2021.Name = "radioReportByNLCode2021";
+            this.radioReportByNLCode2021.Size = new System.Drawing.Size(229, 21);
+            this.radioReportByNLCode2021.TabIndex = 110;
+            this.radioReportByNLCode2021.Text = "Report By NL Code(Since 2021)";
+            this.radioReportByNLCode2021.UseVisualStyleBackColor = true;
+            // 
             // R40
             // 
-            this.ClientSize = new System.Drawing.Size(470, 535);
+            this.ClientSize = new System.Drawing.Size(626, 535);
+            this.Controls.Add(this.radioReportByNLCode2021);
+            this.Controls.Add(this.radioReportByNLCode);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.gridExcelStatus);
             this.Controls.Add(this.dateGenerate);
@@ -239,6 +271,8 @@
             this.Controls.SetChildIndex(this.dateGenerate, 0);
             this.Controls.SetChildIndex(this.gridExcelStatus, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.radioReportByNLCode, 0);
+            this.Controls.SetChildIndex(this.radioReportByNLCode2021, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridExcelStatus)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -259,5 +293,7 @@
         private Win.UI.DateBox dateGenerate;
         private Win.UI.Grid gridExcelStatus;
         private Win.UI.Label label1;
+        private Win.UI.RadioButton radioReportByNLCode;
+        private Win.UI.RadioButton radioReportByNLCode2021;
     }
 }

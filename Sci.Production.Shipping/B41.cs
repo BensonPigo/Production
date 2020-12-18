@@ -81,65 +81,49 @@ namespace Sci.Production.Shipping
         // NL Code
         private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-order by NLCode",
-                "5,11,8",
-                this.Text,
-                false,
-                ",",
-                headercaptions: "Customs Code, HSCode, Unit");
-
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            IList<DataRow> selectedData = item.GetSelecteds();
-            this.CurrentMaintain["NLCode"] = item.GetSelectedString();
-            this.CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
-            this.CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
-            this.CurrentMaintain.EndEdit();
+            this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
+            this.CurrentMaintain["HSCode"] = this.txtNLCode.HSCode;
+            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode.CustomsUnit;
         }
 
         // NL Code
         private void TxtNLCode_Validating(object sender, CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtNLCode.Text))
+            this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
+            this.CurrentMaintain["HSCode"] = this.txtNLCode.HSCode;
+            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode.CustomsUnit;
+            this.CheckHSCode();
+        }
+
+        private void TxtNLCode2_Validating(object sender, CancelEventArgs e)
+        {
+            this.CurrentMaintain["NLCode2"] = this.txtNLCode2.Text;
+            this.CurrentMaintain["HSCode"] = this.txtNLCode2.HSCode;
+            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode2.CustomsUnit;
+            this.CheckHSCode();
+        }
+
+        private void TxtNLCode2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.CurrentMaintain["NLCode2"] = this.txtNLCode2.Text;
+            this.CurrentMaintain["HSCode"] = this.txtNLCode2.HSCode;
+            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode2.CustomsUnit;
+        }
+
+        private void CheckHSCode()
+        {
+            if (MyUtility.Check.Empty(this.txtNLCode.HSCode) ||
+               MyUtility.Check.Empty(this.txtNLCode2.HSCode))
             {
-                this.CurrentMaintain["NLCode"] = string.Empty;
-                this.CurrentMaintain["HSCode"] = string.Empty;
-                this.CurrentMaintain["CustomsUnit"] = string.Empty;
-            }
-            else
-            {
-                DataRow nLCodeDate;
-                if (MyUtility.Check.Seek(
-                    string.Format(
-                        @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.txtNLCode.Text), out nLCodeDate))
-                {
-                    this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
-                    this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
-                    this.CurrentMaintain["CustomsUnit"] = nLCodeDate["UnitID"];
-                }
-                else
-                {
-                    this.CurrentMaintain["NLCode"] = string.Empty;
-                    this.CurrentMaintain["HSCode"] = string.Empty;
-                    this.CurrentMaintain["CustomsUnit"] = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
-                    return;
-                }
+                return;
             }
 
-            this.CurrentMaintain.EndEdit();
+            if (this.txtNLCode.HSCode != this.txtNLCode2.HSCode ||
+                this.txtNLCode.CustomsUnit != this.txtNLCode2.CustomsUnit)
+            {
+                MyUtility.Msg.InfoBox($@"[Customs Code]({this.txtNLCode.HSCode}, {this.txtNLCode.CustomsUnit}) and
+[Customs Code(2021)]({this.txtNLCode2.HSCode}, {this.txtNLCode2.CustomsUnit})'s <HS Code> or <Customs Unit> are different");
+            }
         }
     }
 }

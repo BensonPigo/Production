@@ -41,6 +41,7 @@
     [RibItem]          BIT             CONSTRAINT [DF_Fabric_RibItem] DEFAULT ((0)) NOT NULL,
     [DWR]              BIT             CONSTRAINT [DF_Fabric_DWR] DEFAULT ((0)) NOT NULL,
     [Clima]            BIT             CONSTRAINT [DF_Fabric_Clima] DEFAULT ((0)) NOT NULL,
+    [NLCode2] VARCHAR(9) CONSTRAINT [DF_Fabric_NLCode2] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
 

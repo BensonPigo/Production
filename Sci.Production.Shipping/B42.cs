@@ -557,11 +557,11 @@ from System WITH (NOLOCK) ");
                 bool isExists = false;
                 if (dr["FabricType"].Equals("L"))
                 {
-                    isExists = MyUtility.Check.Seek($"select 1 from LocalItem with (nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLCode"]}'");
+                    isExists = MyUtility.Check.Seek($"select 1 from LocalItem with (nolock) where Refno = '{dr["Refno"]}' and NLCode2 = '{dr["NLCode"]}'");
                 }
                 else
                 {
-                    isExists = MyUtility.Check.Seek($"select 1 from Fabric with (nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLCode"]}'");
+                    isExists = MyUtility.Check.Seek($"select 1 from Fabric with (nolock) where Refno = '{dr["Refno"]}' and NLCode2 = '{dr["NLCode"]}'");
                 }
 
                 if (!isExists)
@@ -942,7 +942,7 @@ left join Style_BOF sb1 WITH (NOLOCK) on sb1.StyleUkey = t.StyleUkey and sb1.Fab
 ),
 tmpBOFRateData
 as (
-select 'YDS' as UsageUnit,f.SCIRefno,f.Refno,f.BrandID,f.NLCode,f.CustomsUnit,f.Type,
+select 'YDS' as UsageUnit,f.SCIRefno,f.Refno,f.BrandID,f.NLCode2,f.CustomsUnit,f.Type,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit),'') as UnitRate,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M'),'') as M2UnitRate
 from tmpFabricCode t
@@ -952,7 +952,7 @@ and f.NoDeclare = 0),
 tmpBOA
 as (
 select sb.StyleUkey,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
-sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID
+sc.ColorID,f.UsageUnit,f.HSCode,f.NLCode2,f.CustomsUnit,f.PcsWidth,f.PcsLength,f.PcsKg,f.BomTypeCalculate,f.Type,f.BrandID
 from Style_BOA sb WITH (NOLOCK) 
 left join Style_ColorCombo sc WITH (NOLOCK) on sc.StyleUkey = sb.StyleUkey and sc.FabricPanelCode = sb.PatternPanel and sc.Article = @article
 left join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
@@ -962,7 +962,7 @@ and (sb.SuppIDBulk <> 'FTY' and sb.SuppIDBulk <> 'FTY-C')
 ),
 tmpBOAPrepareData
 as (
-select t.UsageUnit,t.SCIRefno,t.Refno,t.BrandID,t.NLCode,t.CustomsUnit,t.Type,
+select t.UsageUnit,t.SCIRefno,t.Refno,t.BrandID,t.NLCode2,t.CustomsUnit,t.Type,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = t.CustomsUnit),'') as UnitRate,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = t.UsageUnit and UnitTo = 'M'),'') as M2UnitRate
 from tmpBOA t
@@ -970,23 +970,23 @@ where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or
 ),
 tmpLocalPO
 as (
-select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty
+select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode2,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty
 ,isnull(vd.Waste,0) as Waste
 from LocalPO_Detail ld WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ld.Refno
 left join Orders o WITH (NOLOCK) on ld.OrderId = o.ID
-left join View_VNNLCodeWaste vd WITH (NOLOCK) on vd.NLCode = li.NLCode
+left join View_VNNLCodeWaste vd WITH (NOLOCK) on vd.NLCode = li.NLCode2
 where ld.OrderId = (select TOP 1 ID from Orders WITH (NOLOCK) where StyleUkey = @styleukey and Category = @category order by BuyerDelivery,ID)
 and li.NoDeclare = 0
 ),
 tmpConeToM
 as (
 select Refno,IIF(UnitId = 'CONE',Qty*MeterToCone,Qty) as Qty,OrderQty, IIF(UnitId = 'CONE','M',UnitId) as UnitId,Waste,
-NLCode,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg
+NLCode2,HSCode,CustomsUnit,PcsWidth,PcsLength,PcsKg
 from tmpLocalPO),
 tmpPrepareRate
 as (
-select UnitId as UsageUnit,Refno as SCIRefno,Refno,'' as BrandID,NLCode,CustomsUnit,'' as Type,
+select UnitId as UsageUnit,Refno as SCIRefno,Refno,'' as BrandID,NLCode2,CustomsUnit,'' as Type,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = CustomsUnit),'') as UnitRate,
 isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and UnitTo = 'M'),'') as M2UnitRate
 from tmpConeToM),
@@ -999,19 +999,19 @@ union
 select * from tmpPrepareRate),
 tmpEmptyNLCode
 as (
-select '1' as DataType,* from tmpfinal where NLCode = ''
+select '1' as DataType,* from tmpfinal where NLCode2 = ''
 ),
 tmpUnitNotFound
 as (
-select distinct '2' as DataType,UsageUnit,SCIRefno,RefNo,'' as BrandID, '' as NLCode,'' as CustomsUnit,IIF(Type = 'F',Type,'') as Type,
+select distinct '2' as DataType,UsageUnit,SCIRefno,RefNo,'' as BrandID, '' as NLCode2,'' as CustomsUnit,IIF(Type = 'F',Type,'') as Type,
 UnitRate,M2UnitRate
 from tmpfinal 
 where UsageUnit <> CustomsUnit 
 AND NOT (UsageUnit = 'PCS' and (CustomsUnit = 'KGS' OR CustomsUnit = 'M2' OR CustomsUnit = 'M'))
 )
-select * from tmpEmptyNLCode
+select *,[NLCode] = NLCode2 from tmpEmptyNLCode
 union all
-select * from tmpUnitNotFound
+select *,[NLCode] = NLCode2 from tmpUnitNotFound
 order by DataType,SCIRefno,UsageUnit",
                 MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
                 MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]),

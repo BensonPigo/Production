@@ -150,6 +150,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtNLCode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtNLCode.Designer.cs">
+      <DependentUpon>txtNLCode.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtPulloutPort.cs">
       <SubType>UserControl</SubType>
     </Compile>
