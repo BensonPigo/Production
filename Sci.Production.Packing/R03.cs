@@ -157,31 +157,25 @@ select  pl.MDivisionID,pl.FactoryID,pl.ID,PackingListDetail_Sum.SciDelivery,Pack
 	TtlQty=PackingListDetail_Sum.TtlQty,
 	TtlNw=PackingListDetail_Sum.TtlNw,
 	TtlGW=PackingListDetail_Sum.TtlGW,
-	TtlCBM=(cbm.CBM*PackingListDetail_Sum.TtlCTNS),
-	PurchaseCTN= iif(LocalPo.RequestID is null ,'N','Y'),
+	TtlCBM=(pl.CBM*PackingListDetail_Sum.TtlCTNS),
+	PurchaseCTN= iif(exists(select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id where ld.RequestID=pl.ID and l.status = 'Approved') ,'Y','N'),
 	ClogCFMStatus=iif(PackingListDetail_Sum.CtnID = PackingListDetail_Sum.CtnRecDate, 'Y','N'),
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
 	pl.Remark
 from PackingList pl 
 outer apply(
-	select RequestID from LocalPO_Detail ld with(nolock) 
-	inner join LocalPO l with(nolock) on l.id = ld.Id
-	where RequestID=pl.ID and l.status = 'Approved'
-)LocalPo
-outer apply(
 	select [TtlCTNS]=sum(pd.CTNQty) 
-	,[TtlQty]=SUM(pd.ShipQty) 
-	,[TtlNw]=sum(pd.NW)
-	,[TtlGW]=sum(pd.GW)
-	,[CtnID]=count(pd.ID)
-	,[CtnRecDate]=count(pd.ReceiveDate)
-	,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
-	,o.Junk,o.StyleID,o.BrandID,o.SewLine,o.SewInLine,o.SewOffLine
-	,o.Qty
-	,pd.RefNo
-	,pd.DisposeFromClog
-    ,o.FOC,o.LocalOrder
+	    ,[TtlQty]=SUM(pd.ShipQty) 
+	    ,[TtlNw]=sum(pd.NW)
+	    ,[TtlGW]=sum(pd.GW)
+	    ,[CtnID]=count(pd.ID)
+	    ,[CtnRecDate]=count(pd.ReceiveDate)
+	    ,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
+	    ,o.Junk,o.StyleID,o.BrandID,o.SewLine,o.SewInLine,o.SewOffLine
+	    ,o.Qty
+	    ,pd.DisposeFromClog
+        ,o.FOC,o.LocalOrder
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
 	where pd.ID=pl.ID
@@ -189,11 +183,9 @@ outer apply(
 	group by o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID
 	,o.Junk,o.StyleID,o.BrandID,o.SewLine,o.SewInLine,o.SewOffLine
 	,o.Qty
-	,pd.RefNo
 	,pd.DisposeFromClog
 	,o.FOC,o.LocalOrder
 )PackingListDetail_Sum
-outer apply(select CBM from LocalItem where Refno = PackingListDetail_Sum.Refno) cbm
 where 1=1 
 and PackingListDetail_Sum.DisposeFromClog= 0
 {where}
