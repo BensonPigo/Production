@@ -80,7 +80,6 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Seek(receiving_cmd, out rec_dr))
             {
                 this.displayWKNo.Text = rec_dr["exportid"].ToString();
-                this.dateArriveWHDate.Value = MyUtility.Convert.GetDate(rec_dr["WhseArrival"]);
                 this.displayRefno.Text = rec_dr["Refno"].ToString();
             }
             else
@@ -104,6 +103,7 @@ namespace Sci.Production.Quality
             this.displayApprover.Text = this.maindr["ApproveDate"].ToString();
             this.displayArriveQty.Text = this.maindr["arriveQty"].ToString();
             this.dateLastInspectionDate.Value = MyUtility.Convert.GetDate(this.maindr["OdorDate"]);
+            this.dateArriveWHDate.Value = MyUtility.Convert.GetDate(this.maindr["WhseArrival"]);
             this.displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", this.maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
             this.displaySEQ.Text = this.maindr["Seq1"].ToString() + "-" + this.maindr["Seq2"].ToString();
             this.displaySP.Text = this.maindr["POID"].ToString();

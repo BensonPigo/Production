@@ -108,16 +108,21 @@ namespace Sci.Production.Automation
         /// <param name="requestUri">Request Url</param>
         /// <param name="jsonBody">Json Body</param>
         /// <param name="automationErrMsg">Automation Err Msg</param>
-        public static void SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
+        /// <returns>DualResult</returns>
+        public static DualResult SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
+            DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 130);
 
             if (!webApiBaseResult.isSuccess)
             {
+                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
                 SaveAutomationErrMsg(automationErrMsg);
             }
+
+            return result;
         }
 
         /// <summary>

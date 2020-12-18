@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Sci.Data;
-using System.Xml.Linq;
-using System.Data.SqlClient;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Sci.Production.Centralized
 {
@@ -36,10 +35,7 @@ namespace Sci.Production.Centralized
         private DataTable printData;
         private DataTable dtAllData;
 
-        /// <summary>
-        /// R21
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        /// <inheritdoc/>
         public R21(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -231,6 +227,7 @@ namespace Sci.Production.Centralized
 		,pkINVNo.pkINVNo
 		,gb.FCRDate
 		,pkPulloutDate.PulloutDate
+        ,pkPulloutID.PulloutID
 		,o.CustPONo
 		,o.StyleID
 		,o.SeasonID
@@ -393,6 +390,19 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )pkPulloutDate
+outer apply(
+	select PulloutID = stuff((
+		select concat(',',PulloutID)
+		from(
+			select distinct p.PulloutID
+			from packinglist_detail pd
+			inner join PackingList p on p.id = pd.id
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+		)a
+		order by a.PulloutID
+		for xml path('')
+	),1,1,'')
+)pkPulloutID
 left join
 (
 	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq,p.ShipPlanID,gb.SONo,gb.SOCFMDate,gb.CutOffDate
@@ -460,6 +470,7 @@ select 	oq.BuyerDelivery
 										, 'Sample')
         ,oq.seq
         ,[If Partial] = (select iif(count(1) > 1, 'Y', '') from Order_QtyShip with (nolock) where ID = o.ID)
+		,NULL
 		,NULL
 		,NULL
 		,NULL
@@ -554,6 +565,7 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 		,p.INVNo
 		,gb.FCRDate
 		,p.PulloutDate
+        ,p.PulloutID
 		,o.CustPONo
 		,o.StyleID
 		,o.SeasonID
@@ -616,7 +628,7 @@ left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.Ord
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Brand b WITH (NOLOCK) on o.BrandID=b.id
 outer apply(
-	select distinct p.ID, p.Status, p.PulloutDate, p.INVNo ,p.ExpressID, [ExpressStatus] = e.Status, p.ShipPlanID
+	select distinct p.ID, p.Status, p.PulloutDate, p.PulloutID, p.INVNo ,p.ExpressID, [ExpressStatus] = e.Status, p.ShipPlanID
 	from PackingList_Detail pd WITH (NOLOCK)
 	inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 	left join Express e on p.ExpressID = e.ID
@@ -673,6 +685,7 @@ select oq.BuyerDelivery
 		,NULL
 		,NULL
 		,NULL
+        ,NULL
 		,o.CustPONo
 		,o.StyleID
 		,o.SeasonID

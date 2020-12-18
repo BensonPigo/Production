@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtRefno2 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtRefno1 = new Sci.Win.UI.TextBox();
+            this.lbRefno = new Sci.Win.UI.Label();
             this.txtmulituser = new Sci.Production.Class.Txtmulituser();
             this.radioSummery = new Sci.Win.UI.RadioButton();
             this.radioDetail = new Sci.Win.UI.RadioButton();
@@ -43,10 +47,6 @@
             this.labelInspectionDate = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.lbRefno = new Sci.Win.UI.Label();
-            this.txtRefno1 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtRefno2 = new Sci.Win.UI.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,6 +86,47 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(426, 225);
             this.panel1.TabIndex = 94;
+            // 
+            // txtRefno2
+            // 
+            this.txtRefno2.BackColor = System.Drawing.Color.White;
+            this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno2.Location = new System.Drawing.Point(262, 147);
+            this.txtRefno2.MaxLength = 13;
+            this.txtRefno2.Name = "txtRefno2";
+            this.txtRefno2.Size = new System.Drawing.Size(116, 23);
+            this.txtRefno2.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(239, 147);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 23);
+            this.label1.TabIndex = 118;
+            this.label1.Text = "～";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtRefno1
+            // 
+            this.txtRefno1.BackColor = System.Drawing.Color.White;
+            this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno1.Location = new System.Drawing.Point(120, 147);
+            this.txtRefno1.MaxLength = 13;
+            this.txtRefno1.Name = "txtRefno1";
+            this.txtRefno1.Size = new System.Drawing.Size(116, 23);
+            this.txtRefno1.TabIndex = 5;
+            // 
+            // lbRefno
+            // 
+            this.lbRefno.Location = new System.Drawing.Point(12, 147);
+            this.lbRefno.Name = "lbRefno";
+            this.lbRefno.Size = new System.Drawing.Size(105, 23);
+            this.lbRefno.TabIndex = 116;
+            this.lbRefno.Text = "Refno";
             // 
             // txtmulituser
             // 
@@ -232,47 +273,6 @@
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
             // 
-            // lbRefno
-            // 
-            this.lbRefno.Location = new System.Drawing.Point(12, 147);
-            this.lbRefno.Name = "lbRefno";
-            this.lbRefno.Size = new System.Drawing.Size(105, 23);
-            this.lbRefno.TabIndex = 116;
-            this.lbRefno.Text = "Refno";
-            // 
-            // txtRefno1
-            // 
-            this.txtRefno1.BackColor = System.Drawing.Color.White;
-            this.txtRefno1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno1.Location = new System.Drawing.Point(120, 147);
-            this.txtRefno1.MaxLength = 13;
-            this.txtRefno1.Name = "txtRefno1";
-            this.txtRefno1.Size = new System.Drawing.Size(116, 23);
-            this.txtRefno1.TabIndex = 5;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(239, 147);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 23);
-            this.label1.TabIndex = 118;
-            this.label1.Text = "～";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // txtRefno2
-            // 
-            this.txtRefno2.BackColor = System.Drawing.Color.White;
-            this.txtRefno2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno2.Location = new System.Drawing.Point(262, 147);
-            this.txtRefno2.MaxLength = 13;
-            this.txtRefno2.Name = "txtRefno2";
-            this.txtRefno2.Size = new System.Drawing.Size(116, 23);
-            this.txtRefno2.TabIndex = 6;
-            // 
             // R08
             // 
             this.ClientSize = new System.Drawing.Size(557, 279);
@@ -280,7 +280,7 @@
             this.Controls.Add(this.panel1);
             this.Name = "R08";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R08.Fabric Inspection Daily Report";
+            this.Text = "R08. Fabric Physical Inspection Daily Report";
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);

@@ -100,9 +100,16 @@ select 0 as selected
        , c.inqty
        , c.outqty
        , c.adjustqty 
+       , [Tone] = ShadeboneTone.Tone
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
+outer apply (select [Tone] = MAX(fs.Tone)
+            from FtyInventory fi with (nolock) 
+            Left join FIR f with (nolock) on f.poid = fi.poid and f.seq1 = fi.seq1 and f.seq2 = fi.seq2
+	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
+	        where fi.Ukey = c.Ukey
+			) ShadeboneTone
 Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
 and a.Refno='{2}' and a.colorid='{3}' {5}--and ltrim(a.seq1) between '01' and '99'
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
@@ -172,7 +179,8 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 5
                 .Numeric("balanceqty", header: "Balance Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 6
                 .Numeric("qty", header: "Issue Qty", iseditable: true, decimal_places: 2, integer_places: 10, settings: ns) // 7
-               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)); // 8
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) // 8
+                .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             this.gridRollNo.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
         }

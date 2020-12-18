@@ -8,6 +8,8 @@ using Ict.Win;
 using Sci.Data;
 using System.Transactions;
 using System.Runtime.InteropServices;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
 
 namespace Sci.Production.PPIC
 {
@@ -236,6 +238,7 @@ select SP = (select ID + ','
 
             #region 更新Orders, Chgover資料
             IList<string> updateCmds = new List<string>();
+            List<string> listPOID = new List<string>();
 
             // 只存畫面上看到的那幾筆資料
             foreach (DataRowView currentRowView in detailData.DefaultView)
@@ -244,6 +247,7 @@ select SP = (select ID + ','
                 if (currentRow["Selected"].ToString() == "1")
                 {
                     updateCmds.Add(string.Format("exec [dbo].usp_closeOrder '{0}','1'", currentRowView["POID"].ToString()));
+                    listPOID.Add(currentRowView["POID"].ToString());
                 }
             }
 
@@ -258,6 +262,8 @@ select SP = (select ID + ','
                         transactionScope.Complete();
                         transactionScope.Dispose();
                         this.Haveupdate = true;
+                        Task.Run(() => new Guozi_AGV().SentOrdersToAGV(listPOID))
+              .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                         MyUtility.Msg.InfoBox("Update completed!");
                     }
                     else
