@@ -773,7 +773,7 @@ outer apply(
 )w
 where o.ID ='{drSelected["OrderID"]}'
 
-select   b.Orderid
+select   OrderID = o.id
         ,bd.BundleNo
         ,s.SubProcessID
         ,s.ShowSeq
@@ -789,10 +789,10 @@ select   b.Orderid
 		,[FabricKind] = FabricKind.val
 		,s.IsSelection
 into #tmpBundleNo
-from Bundle b with(nolock)
-inner join #tmpOrders o on b.MDivisionID = o.MDivisionID 
-inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.BundleNo = bd.BundleNo)
+from #tmpOrders o 
+inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID
+inner join Bundle_Detail bd WITH (NOLOCK) on bdo.BundleNo = bd.BundleNo
+inner join Bundle b with(nolock) on b.id = bd.Id and b.MDivisionID = o.MDivisionID
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s
@@ -998,7 +998,7 @@ outer apply(
 where o.ID ='{drSelected["OrderID"]}' and oq.Article='{drSelected["Article"]}' and oq.SizeCode='{drSelected["SizeCode"]}'
 
 
-select   b.Orderid
+select   OrderID = o.id
 		,SubProcess.SubProcess
         ,b.Article
         ,bd.Sizecode
@@ -1015,10 +1015,10 @@ select   b.Orderid
 		,[FabricKind] = FabricKind.val
 		,s.IsSelection
 into #tmpBundleNo
-from Bundle b with(nolock)
-inner join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.Id
-inner join #tmpOrders o on b.MDivisionID = o.MDivisionID and b.Article = o.Article and bd.Sizecode = o.SizeCode
-        and exists(select 1 from Bundle_Detail_Order bdo WITH (NOLOCK) where bdo.Orderid = o.ID and bdo.BundleNo = bd.BundleNo)
+from #tmpOrders o 
+inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.Orderid = o.ID
+inner join Bundle_Detail bd WITH (NOLOCK) on bdo.BundleNo = bd.BundleNo and bd.sizecode = o.sizecode
+inner join Bundle b with(nolock) on b.id = bd.Id and b.MDivisionID = o.MDivisionID and b.Article = o.Article
 cross join(
 	select SubProcessID=id,s.ShowSeq,s.InOutRule,s.IsRFIDDefault,s.IsSelection
 	from SubProcess s

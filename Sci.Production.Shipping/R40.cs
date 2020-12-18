@@ -411,7 +411,8 @@ where v.VNContractID = @contract
         WIP 確認尚未關倉的訂單 &&
 		關倉日期比 GenerateDate 晚，代表當天還沒有關倉
 */
-select sdd.OrderID
+select  v.CustomSP
+        , sdd.OrderID
         , [StyleID] = t.OriStyleID
 		, sdd.ComboType
 		, sdd.Article
@@ -421,6 +422,11 @@ select sdd.OrderID
 into #tmpSewingOutput_WHNotClose
 from #tmpOrderList t
 inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.id
+inner join #tmpCustomSP v on t.StyleID = v.StyleID
+					         and t.BrandID = v.BrandID
+					         and t.Category = v.Category
+					         and sdd.SizeCode = v.SizeCode
+					         and sdd.Article = v.Article
 where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
         and not exists (
             select 1
@@ -433,7 +439,7 @@ where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
 			where sdd.ID= s.ID
 			and s.OutputDate <= @GenerateDate
         )
-group by sdd.OrderID, t.OriStyleID, sdd.ComboType, sdd.Article, sdd.SizeCode, t.FactoryID
+group by sdd.OrderID, t.OriStyleID, sdd.ComboType, sdd.Article, sdd.SizeCode, t.FactoryID, v.CustomSP
 
 
 
@@ -2608,6 +2614,7 @@ where Qty != 0  {0} {1}
                 case DetailExcel.WIPSewingOutputList:
                     sqlResult = @"
 select  [RowID] = ROW_NUMBER() OVER (ORDER BY OrderID),
+        CustomSP,
         OrderID           ,
         StyleID,
         FactoryID,
@@ -2645,6 +2652,7 @@ where Qty != 0  {0} {1}
 select	[RowID] = ROW_NUMBER() OVER (ORDER BY OrderID, Article, SizeCode, ComboType)
         , HSCode
 		, NLCode
+        , CustomSP
 		, OrderID
         , StyleID
 		, FactoryID
@@ -2654,6 +2662,7 @@ select	[RowID] = ROW_NUMBER() OVER (ORDER BY OrderID, Article, SizeCode, ComboTy
 		, Refno
 		, MaterialType
 		, Description
+        , QAQty
 		, Qty
 		, CustomsUnit
 		, StockQty
