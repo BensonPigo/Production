@@ -62,6 +62,10 @@
             this.checkNoNeedToDeclare = new Sci.Win.UI.CheckBox();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.checkBoxPreShrink = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayT2HSCode = new Sci.Win.UI.DisplayBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -76,6 +80,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numericBox1);
+            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.displayT2HSCode);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.displayBrand);
             this.detailcont.Controls.Add(this.checkBoxPreShrink);
             this.detailcont.Controls.Add(this.checkNoNeedToDeclare);
@@ -262,6 +270,7 @@
             this.comboType.IsSupportUnselect = true;
             this.comboType.Location = new System.Drawing.Point(109, 154);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 13;
             // 
@@ -489,7 +498,7 @@
             this.checkNoNeedToDeclare.AutoSize = true;
             this.checkNoNeedToDeclare.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoDeclare", true));
             this.checkNoNeedToDeclare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkNoNeedToDeclare.Location = new System.Drawing.Point(466, 282);
+            this.checkNoNeedToDeclare.Location = new System.Drawing.Point(466, 309);
             this.checkNoNeedToDeclare.Name = "checkNoNeedToDeclare";
             this.checkNoNeedToDeclare.Size = new System.Drawing.Size(148, 21);
             this.checkNoNeedToDeclare.TabIndex = 4;
@@ -511,15 +520,63 @@
             this.checkBoxPreShrink.AutoSize = true;
             this.checkBoxPreShrink.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PreShrink", true));
             this.checkBoxPreShrink.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkBoxPreShrink.Location = new System.Drawing.Point(466, 300);
-            this.checkBoxPreShrink.Name = "checkBoxPreShrink";
             this.checkBoxPreShrink.IsSupportEditMode = false;
+            this.checkBoxPreShrink.Location = new System.Drawing.Point(466, 327);
+            this.checkBoxPreShrink.Name = "checkBoxPreShrink";
             this.checkBoxPreShrink.ReadOnly = true;
             this.checkBoxPreShrink.Size = new System.Drawing.Size(89, 21);
             this.checkBoxPreShrink.TabIndex = 4;
             this.checkBoxPreShrink.Text = "PreShrink";
             this.checkBoxPreShrink.UseVisualStyleBackColor = true;
             this.checkBoxPreShrink.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(222, 282);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 23);
+            this.label1.TabIndex = 34;
+            this.label1.Text = "T2 HS Code";
+            // 
+            // displayT2HSCode
+            // 
+            this.displayT2HSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayT2HSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayT2HSCode.Location = new System.Drawing.Point(315, 282);
+            this.displayT2HSCode.Name = "displayT2HSCode";
+            this.displayT2HSCode.Size = new System.Drawing.Size(100, 23);
+            this.displayT2HSCode.TabIndex = 35;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(466, 282);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(101, 23);
+            this.label2.TabIndex = 36;
+            this.label2.Text = "Weight (g/yds) ";
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Weight", true));
+            this.numericBox1.DecimalPlaces = 4;
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.IsSupportEditMode = false;
+            this.numericBox1.Location = new System.Drawing.Point(570, 282);
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.ReadOnly = true;
+            this.numericBox1.Size = new System.Drawing.Size(124, 23);
+            this.numericBox1.TabIndex = 37;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B40
             // 
@@ -532,6 +589,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B40";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B40. Customs Code - Fabric/Accessory";
             this.UniqueExpress = "SCIRefno";
             this.WorkAlias = "Fabric";
@@ -584,5 +642,9 @@
         private Win.UI.Label labelRefNo;
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.CheckBox checkBoxPreShrink;
+        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Label label2;
+        private Win.UI.DisplayBox displayT2HSCode;
+        private Win.UI.Label label1;
     }
 }
