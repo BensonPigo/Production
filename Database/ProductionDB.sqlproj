@@ -2557,6 +2557,8 @@
     <Build Include="dbo\Tables\FtyStyleInnovation.sql" />
     <Build Include="dbo\Tables\FtyStyleInnovationAllPart.sql" />
     <Build Include="dbo\Functions\GetDateRange.sql" />
+    <Build Include="dbo\Tables\Consignee.sql" />
+    <Build Include="dbo\Tables\Consignee_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Ict;
+using Sci.Utility.Report;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using MsExcel = Microsoft.Office.Interop.Excel;
@@ -113,6 +117,73 @@ namespace Sci.Production.Prg
                     step = diff;
                 }
             }
+        }
+
+        /// <summary>
+        /// 匯出Grid直接存檔案併回傳檔名
+        /// </summary>
+        /// <param name="fileName">Excel Title, FileName</param>
+        /// <param name="grid">Grid</param>
+        /// <returns>
+        /// true : fileName in description
+        /// flase : errorMSG in Exception
+        /// </returns>
+        public static DualResult GridToExcelOnlySave(string fileName, System.Windows.Forms.DataGridView grid)
+        {
+            if (grid == null)
+            {
+                return Result.F_ArgNull("grid");
+            }
+
+            DualResult result;
+            string strExcelName;
+            MsExcel.Application objApp = null;
+            try
+            {
+                strExcelName = Class.MicrosoftFile.GetName(fileName);
+                DataTable gridSource = null;
+                if (grid.DataSource is DataTable)
+                {
+                    gridSource = (DataTable)grid.DataSource;
+                }
+                else if (grid.DataSource is System.Windows.Forms.BindingSource)
+                {
+                    gridSource = (DataTable)((System.Windows.Forms.BindingSource)grid.DataSource).DataSource;
+                }
+                else
+                {
+                    return Result.F("Grid data should be DataTable");
+                }
+
+                ExcelCOM com = new ExcelCOM(null, objApp);
+                if (com.ExcelApp == null)
+                {
+                    com.CreateApplication();
+                }
+
+                objApp = com.ExcelApp;
+                DualResult ok = com.WriteTable(gridSource, 1, needHeader: true);
+                if (!ok)
+                {
+                    throw new Exception(ok.Messages.ToString());
+                }
+
+                com.ColumnsAutoFit = true;
+                com.SaveOnly(strExcelName);
+                objApp.Quit();
+
+                result = new DualResult(true, strExcelName);
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, ex);
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(objApp);
+            }
+
+            return result;
         }
     }
 }

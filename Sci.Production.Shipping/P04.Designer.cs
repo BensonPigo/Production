@@ -87,6 +87,7 @@
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.lbShipDate = new Sci.Win.UI.Label();
             this.dateShipDate = new Sci.Win.UI.DateBox();
+            this.btnConsigneeMail = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -938,9 +939,20 @@
             this.dateShipDate.Size = new System.Drawing.Size(130, 23);
             this.dateShipDate.TabIndex = 23;
             // 
+            // btnConsigneeMail
+            // 
+            this.btnConsigneeMail.Location = new System.Drawing.Point(631, 64);
+            this.btnConsigneeMail.Name = "btnConsigneeMail";
+            this.btnConsigneeMail.Size = new System.Drawing.Size(91, 29);
+            this.btnConsigneeMail.TabIndex = 4;
+            this.btnConsigneeMail.Text = "Consignee Mail";
+            this.btnConsigneeMail.UseVisualStyleBackColor = true;
+            this.btnConsigneeMail.Click += new System.EventHandler(this.BtnConsigneeMail_Click);
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1032, 556);
+            this.Controls.Add(this.btnConsigneeMail);
             this.DefaultControl = "txtSubconForwarder";
             this.DefaultControlForEdit = "txtSubconForwarder";
             this.DefaultDetailOrder = "POID,Seq1,Seq2";
@@ -957,6 +969,7 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "FtyExport";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnConsigneeMail, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -1039,5 +1052,6 @@
         private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.DateBox dateShipDate;
         private Win.UI.Label lbShipDate;
+        private System.Windows.Forms.Button btnConsigneeMail;
     }
 }
