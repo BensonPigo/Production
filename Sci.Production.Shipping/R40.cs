@@ -570,12 +570,12 @@ from (
 		                ,isnull(li.PcsLength,0)
 		                ,isnull(li.PcsKg,0)
 		                ,isnull(IIF(isnull(li.CustomsUnit, '') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
-			                (select RateValue from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) 
+			                (select RateValue from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
+			                (select RateValue from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) 
 			                and TO_U = isnull (li.CustomsUnit,''))),1)
 		                ,isnull(IIF(isnull(li.CustomsUnit, '') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
-			                (select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = isnull(f.CustomsUnit,''))),'')
+			                (select Rate from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
+			                (select Rate from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = isnull(f.CustomsUnit,''))),'')
 	                    ,isnull(li.Refno,'')))
 	        , [CustomsUnit] = isnull(isnull(f.CustomsUnit,li.CustomsUnit),'')
 	        , [OnRaodQty] = isnull(UnitRateQty.qty,0)
@@ -1283,11 +1283,11 @@ from (
 		                ,isnull(f.PcsLength,0)
 		                ,isnull(f.PcsKg,0)
 		                ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			                ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
+			                (select RateValue from dbo.View_Unitrate  with (nolock) where FROM_U = psd.StockUnit and TO_U = 'M')
+			                ,(select RateValue from dbo.View_Unitrate with (nolock) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 		                ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			                ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+			                (select Rate from dbo.View_Unitrate with (nolock) where FROM_U = psd.StockUnit and TO_U = 'M')
+			                ,(select Rate from dbo.View_Unitrate with (nolock) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                             ,default)
             , f.Refno
             , [MaterialType] = dbo.GetMaterialTypeDesc(f.Type)

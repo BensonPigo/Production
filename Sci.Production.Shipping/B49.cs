@@ -30,50 +30,12 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
         }
 
-        private void TxtCustomerCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
         {
-            this.CurrentMaintain["NLCode"] = this.txtCustomerCode.Text;
-            this.CurrentMaintain["HSCode"] = this.txtCustomerCode.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtCustomerCode.CustomsUnit;
-        }
-
-        private void TxtCustomerCode_Validating(object sender, CancelEventArgs e)
-        {
-            this.CurrentMaintain["NLCode"] = this.txtCustomerCode.Text;
-            this.CurrentMaintain["HSCode"] = this.txtCustomerCode.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtCustomerCode.CustomsUnit;
-            this.CheckHSCode();
-        }
-
-        private void TxtNLCode2_Validating(object sender, CancelEventArgs e)
-        {
-            this.CurrentMaintain["NLCode2"] = this.txtNLCode2.Text;
-            this.CurrentMaintain["HSCode"] = this.txtNLCode2.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode2.CustomsUnit;
-            this.CheckHSCode();
-        }
-
-        private void TxtNLCode2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            this.CurrentMaintain["NLCode2"] = this.txtNLCode2.Text;
-            this.CurrentMaintain["HSCode"] = this.txtNLCode2.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode2.CustomsUnit;
-        }
-
-        private void CheckHSCode()
-        {
-            if (MyUtility.Check.Empty(this.txtCustomerCode.HSCode) ||
-               MyUtility.Check.Empty(this.txtNLCode2.HSCode))
-            {
-                return;
-            }
-
-            if (this.txtCustomerCode.HSCode != this.txtNLCode2.HSCode ||
-                this.txtCustomerCode.CustomsUnit != this.txtNLCode2.CustomsUnit)
-            {
-                MyUtility.Msg.InfoBox($@"[Customs Code]({this.txtCustomerCode.HSCode}, {this.txtCustomerCode.CustomsUnit}) and
-[Customs Code(2021)]({this.txtNLCode2.HSCode}, {this.txtNLCode2.CustomsUnit})'s <HS Code> or <Customs Unit> are different");
-            }
+            this.txtCustomerCode.MainDataRow = this.CurrentMaintain;
+            this.txtNLCode2.MainDataRow = this.CurrentMaintain;
+            return base.ClickEditBefore();
         }
 
         /// <inheritdoc/>

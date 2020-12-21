@@ -414,8 +414,6 @@
             this.txtNLCode2.Name = "txtNLCode2";
             this.txtNLCode2.Size = new System.Drawing.Size(100, 23);
             this.txtNLCode2.TabIndex = 38;
-            this.txtNLCode2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode2_PopUp);
-            this.txtNLCode2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode2_Validating);
             // 
             // label1
             // 
@@ -434,8 +432,6 @@
             this.txtNLCode.Name = "txtNLCode";
             this.txtNLCode.Size = new System.Drawing.Size(100, 23);
             this.txtNLCode.TabIndex = 39;
-            this.txtNLCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode_PopUp);
-            this.txtNLCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode_Validating);
             // 
             // B41
             // 

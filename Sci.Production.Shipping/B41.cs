@@ -30,6 +30,8 @@ namespace Sci.Production.Shipping
         {
             this.editName = MyUtility.Convert.GetString(this.CurrentMaintain["EditName"]);
             this.editDate = MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]);
+            this.txtNLCode.MainDataRow = this.CurrentMaintain;
+            this.txtNLCode2.MainDataRow = this.CurrentMaintain;
             return base.ClickEditBefore();
         }
 
@@ -76,54 +78,6 @@ namespace Sci.Production.Shipping
             }
 
             return DBProxy.Current.Execute(null, updateCmd);
-        }
-
-        // NL Code
-        private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
-            this.CurrentMaintain["HSCode"] = this.txtNLCode.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode.CustomsUnit;
-        }
-
-        // NL Code
-        private void TxtNLCode_Validating(object sender, CancelEventArgs e)
-        {
-            this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
-            this.CurrentMaintain["HSCode"] = this.txtNLCode.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode.CustomsUnit;
-            this.CheckHSCode();
-        }
-
-        private void TxtNLCode2_Validating(object sender, CancelEventArgs e)
-        {
-            this.CurrentMaintain["NLCode2"] = this.txtNLCode2.Text;
-            this.CurrentMaintain["HSCode"] = this.txtNLCode2.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode2.CustomsUnit;
-            this.CheckHSCode();
-        }
-
-        private void TxtNLCode2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            this.CurrentMaintain["NLCode2"] = this.txtNLCode2.Text;
-            this.CurrentMaintain["HSCode"] = this.txtNLCode2.HSCode;
-            this.CurrentMaintain["CustomsUnit"] = this.txtNLCode2.CustomsUnit;
-        }
-
-        private void CheckHSCode()
-        {
-            if (MyUtility.Check.Empty(this.txtNLCode.HSCode) ||
-               MyUtility.Check.Empty(this.txtNLCode2.HSCode))
-            {
-                return;
-            }
-
-            if (this.txtNLCode.HSCode != this.txtNLCode2.HSCode ||
-                this.txtNLCode.CustomsUnit != this.txtNLCode2.CustomsUnit)
-            {
-                MyUtility.Msg.InfoBox($@"[Customs Code]({this.txtNLCode.HSCode}, {this.txtNLCode.CustomsUnit}) and
-[Customs Code(2021)]({this.txtNLCode2.HSCode}, {this.txtNLCode2.CustomsUnit})'s <HS Code> or <Customs Unit> are different");
-            }
         }
     }
 }

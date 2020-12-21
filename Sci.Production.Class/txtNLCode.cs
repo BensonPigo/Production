@@ -13,16 +13,47 @@ namespace Sci.Production.Class
     {
         private string hSCode;
         private string customsUnit;
+        private DataRow mainDataRow;
+
+        /// <summary>
+        /// MainDataRow
+        /// </summary>
+        public DataRow MainDataRow
+        {
+            get { return this.mainDataRow; } set { this.mainDataRow = value; }
+        }
 
         /// <summary>
         /// HSCode
         /// </summary>
-        public string HSCode { get { return this.hSCode; } }
+        public string HSCode
+        {
+            get { return this.hSCode; }
+        }
 
         /// <summary>
         /// HSCode
         /// </summary>
-        public string CustomsUnit { get { return this.customsUnit; } }
+        public string CustomsUnit
+        {
+            get { return this.customsUnit; }
+        }
+
+        /// <summary>
+        /// HSCode
+        /// </summary>
+        public DataRow HSCodeCustomsUnit { get
+            {
+                DataRow drResult;
+                string getNLCodeInfo = string.Format(
+                        @"select NLCode,HSCode,UnitID
+from VNContract_Detail WITH (NOLOCK) 
+where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
+and NLCode = '{0}'", this.Text);
+                MyUtility.Check.Seek(getNLCodeInfo, out drResult);
+                return drResult;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TxtNLCode"/> class.
@@ -55,10 +86,20 @@ order by NLCode",
 
             IList<DataRow> selectedData = item.GetSelecteds();
             this.Text = item.GetSelectedString();
-            this.hSCode = selectedData[0]["HSCode"].ToString();
-            this.customsUnit = selectedData[0]["UnitID"].ToString();
 
-            base.OnPopUp(e);
+            if (this.MainDataRow != null)
+            {
+                this.MainDataRow[this.DataBindings[0].BindingMemberInfo.BindingField] = selectedData[0]["NLCode"].ToString();
+                this.OldValue = selectedData[0]["NLCode"].ToString();
+                if (this.IsNeedUpdateHSCodeAndCustomsUnit(this.MainDataRow, selectedData[0]))
+                {
+                    this.hSCode = selectedData[0]["HSCode"].ToString();
+                    this.MainDataRow["HSCode"] = selectedData[0]["HSCode"].ToString();
+
+                    this.customsUnit = selectedData[0]["UnitID"].ToString();
+                    this.MainDataRow["CustomsUnit"] = selectedData[0]["UnitID"].ToString();
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -77,16 +118,19 @@ order by NLCode",
             }
             else
             {
-                DataRow nLCodeDate;
-                if (MyUtility.Check.Seek(
-                    string.Format(
-                        @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.Text), out nLCodeDate))
+                DataRow nLCodeDate = this.HSCodeCustomsUnit;
+                if (nLCodeDate != null)
                 {
-                    this.hSCode = nLCodeDate["HSCode"].ToString();
-                    this.customsUnit = nLCodeDate["UnitID"].ToString();
+                    this.MainDataRow[this.DataBindings[0].BindingMemberInfo.BindingField] = nLCodeDate["NLCode"].ToString();
+
+                    if (this.IsNeedUpdateHSCodeAndCustomsUnit(this.MainDataRow, nLCodeDate))
+                    {
+                        this.hSCode = nLCodeDate["HSCode"].ToString();
+                        this.MainDataRow["HSCode"] = nLCodeDate["HSCode"].ToString();
+
+                        this.customsUnit = nLCodeDate["UnitID"].ToString();
+                        this.MainDataRow["CustomsUnit"] = nLCodeDate["UnitID"].ToString();
+                    }
                 }
                 else
                 {
@@ -99,8 +143,28 @@ and NLCode = '{0}'", this.Text), out nLCodeDate))
                     return;
                 }
             }
+        }
 
-            base.OnValidating(e);
+        private bool IsNeedUpdateHSCodeAndCustomsUnit(DataRow curDataRow, DataRow newDataRow)
+        {
+            if (MyUtility.Check.Empty(curDataRow["CustomsUnit"]) &&
+                MyUtility.Check.Empty(curDataRow["HSCode"]))
+            {
+                return true;
+            }
+
+            bool isCustomsUnitChanged = curDataRow["CustomsUnit"].ToString() != newDataRow["UnitID"].ToString();
+
+            bool isHSCodeChanged = curDataRow["HSCode"].ToString() != newDataRow["HSCode"].ToString();
+
+            DialogResult dialogResult = DialogResult.Yes;
+
+            if (isCustomsUnitChanged || isHSCodeChanged)
+            {
+               dialogResult = MyUtility.Msg.QuestionBox($@"{newDataRow["NLCode"]} [HS Code] or [Customs Unit] does not match the current data. Do you want to overwrite the data?");
+            }
+
+            return dialogResult == DialogResult.Yes;
         }
     }
 }

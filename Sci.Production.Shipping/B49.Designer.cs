@@ -451,8 +451,6 @@
             this.txtNLCode2.Name = "txtNLCode2";
             this.txtNLCode2.Size = new System.Drawing.Size(100, 23);
             this.txtNLCode2.TabIndex = 72;
-            this.txtNLCode2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtNLCode2_PopUp);
-            this.txtNLCode2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtNLCode2_Validating);
             // 
             // txtCustomerCode
             // 
@@ -463,8 +461,6 @@
             this.txtCustomerCode.Name = "txtCustomerCode";
             this.txtCustomerCode.Size = new System.Drawing.Size(100, 23);
             this.txtCustomerCode.TabIndex = 73;
-            this.txtCustomerCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCustomerCode_PopUp);
-            this.txtCustomerCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomerCode_Validating);
             // 
             // B49
             // 
