@@ -19,8 +19,12 @@
     [EditName]           VARCHAR (10)    CONSTRAINT [DF_Order_BOF_EditName] DEFAULT ('') NULL,
     [EditDate]           DATETIME        NULL,
     [SpecialWidth]       NUMERIC (5, 2)  NULL,
+    [LimitUp]            DECIMAL (7, 2)  NULL,
+    [LimitDown]          DECIMAL (7, 2)  NULL,
     CONSTRAINT [PK_Order_BOF] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
