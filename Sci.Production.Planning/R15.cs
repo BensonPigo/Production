@@ -334,7 +334,7 @@ namespace Sci.Production.Planning
             {
                 string filename = "Planning_R15_WIP_bySPLine";
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"{filename}.xltx");
-                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Planning_R15_WIP_byArticleSize.xltx", 1, false, null, objApp);
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{filename}.xltx", 1, false, null, objApp);
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 if (this.isArtwork)
                 {
@@ -351,7 +351,7 @@ namespace Sci.Production.Planning
                 // 客製化欄位，記得設定this.IsSupportCopy = true
                 this.CreateCustomizedExcel(ref objSheets);
                 #region Save & Show Excel
-                string strExcelName = Class.MicrosoftFile.GetName("Planning_R15_WIP_byArticleSize");
+                string strExcelName = Class.MicrosoftFile.GetName(filename);
                 Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
