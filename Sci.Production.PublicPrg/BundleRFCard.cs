@@ -545,6 +545,14 @@ from
                             throw new Exception(result.Messages.ToString());
                         }
 
+                        // P37 Barcode
+                        result = CardSettingBarcodeSram(bundleRFCard, data[nowIndex].Barcode);
+                        if (!result)
+                        {
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Setting Barcode TO Sram Error");
+                            throw new Exception(result.Messages.ToString());
+                        }
+
                         // P41
                         result = CardPrint(bundleRFCard);
                         if (!result)
@@ -1459,6 +1467,87 @@ from
                 }
 
                 y = y + 40;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// [P37] It sets Bar Code options into the Sram buffer.
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardSettingBarcodeSram(BundleRFCardUSB bundleRFCard, string barcode)
+        {
+            DualResult result = new DualResult(true);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            ushort tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+            byte[] chr = new byte[4];
+            int len;
+            byte[] chrTdat = new byte[100];
+
+            if (barcode.Empty())
+            {
+                return new DualResult(true);
+            }
+
+            int x = 10;
+            int y = 725;
+            int h = 80;
+
+            // P37
+            gbacmd[0] = 0x50;
+            gbacmd[1] = 0x33;
+            gbacmd[2] = 0x37;
+
+            #region x setting
+            len = CaclLen(x);
+            chr = Encoding.ASCII.GetBytes(x.ToString());
+
+            tDat[0] = (byte)(len >> 8);
+            tDat[1] = (byte)len; // x Point
+            #endregion
+            #region y setting
+            len = CaclLen(y);
+            chr = Encoding.ASCII.GetBytes(y.ToString());
+
+            tDat[2] = (byte)(len >> 8);
+            tDat[3] = (byte)len; // y Point
+            #endregion
+
+            tDat[4] = (byte)1; // Font Select
+            tDat[5] = (byte)3; // Text Direction
+            tDat[6] = (byte)1; // Bar-Code Scale
+
+            len = CaclLen(h);
+            chr = Encoding.ASCII.GetBytes(h.ToString());
+            tDat[7] = (byte)(len >> 8);
+            tDat[8] = (byte)len; // Height
+
+            tDat[9] = (byte)1; // Bar Code Digit On/Off
+
+            // Text Data
+            char[] charArray = barcode.ToCharArray();
+            chrTdat = Encoding.ASCII.GetBytes(charArray);
+            for (int i = 0; i < charArray.Length; i++)
+            {
+                tDat[i + 10] = chrTdat[i];
+            }
+
+            tLen = Convert.ToUInt16(10 + charArray.Length);
+
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (res != 0x0000)
+            {
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
+            }
+
+            if (!result)
+            {
+                return result;
             }
 
             return result;
