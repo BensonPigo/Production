@@ -9,7 +9,6 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[Team] [varchar](1) NOT NULL,
 	[Shift] [varchar](1) NOT NULL,
 	[Stage] [varchar](10) NOT NULL,
-	[Carton] [varchar](500) NOT NULL,
 	[InspectQty] [numeric](7, 0) NOT NULL,
 	[DefectQty] [numeric](7, 0) NOT NULL,
 	[ClogReceivedPercentage] [numeric](3, 0) NOT NULL,
@@ -50,7 +49,7 @@ GO
 ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Stage]
 GO
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Carton]
+
 GO
 
 ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ((0)) FOR [InspectQty]
