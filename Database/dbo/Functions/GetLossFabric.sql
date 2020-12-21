@@ -1,9 +1,11 @@
 ﻿
+
 CREATE Function [dbo].[GetLossFabric]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@FabricCode	VarChar(3)		--Fabric Code(空值表示為全部計算)
- 	 ,@IsExpendArticle	Bit			= 0			--add by Edward 是否展開至Article，For U.A轉單
+ 	 ,@IsExpendArticle	Int			= 0			
+	 --add by harry  0.無資料重展開BOF,不依Article展開 1.無資料重展開BOF,依Article展開 2.一律重展開BOF,不依Article展開 3.一律重展開BOF,依Article展開
 )
 Returns @FabricColorQty Table
 	(  RowID		BigInt Identity(1,1) Not Null
@@ -15,6 +17,8 @@ Returns @FabricColorQty Table
 	 , Special		NVarChar(Max)
 	 , MarkerLength	Numeric(7,4)
 	 , MarkerYDS	Numeric(10,4)
+	 , LossUp       Numeric(10,4) -- 最終上限判斷值
+	 , LossDown     Numeric(10,4) -- 最終下限判斷值
 	 , LossYds		Numeric(10,4)
 	 , RealLoss		Numeric(10,4)
 	 , PlusName		VarChar(30)
@@ -22,16 +26,16 @@ Returns @FabricColorQty Table
 As
 Begin
 	Set @FabricCode = IsNull(@FabricCode, '');
-
+	
 	Declare @FabricColorQtyRowID Int;		--Row ID
 	Declare @FabricColorQtyRowCount Int;		--資料筆數
-
+	
 	Declare @FabricColorQty_Detial Table
 		(  RowID BigInt Identity(1,1) Not Null, SciRefNo VarChar(30), LossType Numeric(1,0)
 		 , FabricCombo VarChar(2), FabricCode VarChar(3)
 		 , ColorID VarChar(6), Special NVarChar(Max), Article VarChar(8), SizeSeq VarChar(2), SizeCode VarChar(8)
 		 , MarkerLength Numeric(7,4), MarkerYDS Numeric(10,4), TotalQty Numeric(7,0), Qty Numeric(6,0)
-		 , ConsPC Numeric(7,4), LossQty Numeric(6,0), LossYDS Numeric(10,4)
+		 , ConsPC Numeric(12,4), LossQty Numeric(6,0), LossYDS Numeric(10,4), LimitDown decimal(7, 2), LossUp decimal(7, 2), LossDown decimal(7, 2)
 		);
 	Declare @FabricColorQty_DetialRowID Int;		--Row ID
 	Declare @FabricColorQty_DetialRowCount Int;		--資料筆數
@@ -45,6 +49,12 @@ Begin
 	Declare @LimitUP_Allowance Numeric(4,0);
 	Declare @LimitUP_LossQty Numeric(6,0);
 	Declare @LossSampleFabric Numeric(3,1);
+
+	Declare @MinGmtQty Numeric(6,0);
+	Declare @MinLossQty Numeric(6,0);
+	Declare @PerGmtQty Numeric(6,0);
+	Declare @PlsLossQty Numeric(6,0);
+	Declare @Real_MaxLossQty Numeric(6,0);
 	
 	Declare @SciRefNo VarChar(30);
 	Declare @WeaveTypeID VarChar(20);
@@ -79,6 +89,13 @@ Begin
 	   And ID = @StyleID
 	   And SeasonID = @SeasonID;
 	
+	--為了WOVEN、KNIT + spandex (8%↑)後代碼不同，需用同樣的Loss計算方式
+	Declare @ReasonGroup Varchar(5) = ISNULL((SELECT ReasonGroup FROM Reason WHERE ReasonTypeID = 'Fabric_Kind' and ID = @FabricType), '')
+	IF @ReasonGroup != ''
+	BEGIN
+		SET @FabricType = @ReasonGroup;
+	END
+	
 	Select @LossSampleFabric = LossSampleFabric
 	  From production.dbo.Brand
 	 Where ID = @BrandID;
@@ -89,6 +106,10 @@ Begin
 	Select @LimitUP_Rate = TWLimitUp
 		 , @LimitUP_Allowance = Allowance
 		 , @LimitUP_LossQty = MaxLossQty
+		 , @MinGmtQty = MinGmtQty
+		 , @MinLossQty = MinLossQty
+		 , @PerGmtQty = PerGmtQty
+		 , @PlsLossQty = PlsLossQty
 	  From production.dbo.LossRateFabric
 	 Where WeaveTypeID = @FabricType;
 	---------------------------------------------------------------------------
@@ -101,17 +122,21 @@ Begin
 	Insert Into @Article_SizeCode_Qty
 		(Article, Seq, SizeCode, Qty)
 		Select Article, Seq, SizeCode, Qty
-		  From (Select Order_Qty.Article, Order_SizeCode.Seq, Order_Qty.SizeCode, Sum(Order_Qty.Qty) as Qty
+		  From (Select Order_Qty.Article, Min(Order_SizeCode.Seq) as Seq, IsNull(Order_SizeSpec.SizeSpec, Order_Qty.SizeCode) as SizeCode, Sum(Order_Qty.Qty) as Qty
 				 From dbo.Orders
 				 Left Join dbo.Order_SizeCode
 				   On Order_SizeCode.ID = Orders.PoID
 				 Left Join dbo.Order_Qty
 				   On	  Order_Qty.ID = Orders.ID
 					  And Order_Qty.SizeCode = Order_SizeCode.SizeCode
+				 Left Join dbo.Order_SizeSpec
+				   On Order_SizeSpec.ID = Orders.PoID
+					  And Order_SizeSpec.SizeItem = 'S00'
+					  And Order_SizeSpec.SizeCode = Order_Qty.SizeCode
 				Where Orders.PoID = @PoID
-				  And Orders.Junk = 0
+				  And dbo.CheckOrder_CalculateMtlUsage(Orders.ID) = 1
 				  And Order_Qty.Qty > 0
-				Group by Order_Qty.Article, Order_SizeCode.Seq, Order_Qty.SizeCode
+				Group by Order_Qty.Article, IsNull(Order_SizeSpec.SizeSpec, Order_Qty.SizeCode)
 			   ) Sum_Article
 		 Order by Article, Seq;
 	
@@ -133,7 +158,7 @@ Begin
 		(RowID BigInt Identity(1,1) Not Null, SizeCode VarChar(8), Qty Numeric(6,0));
 	Declare @Size_LossRowID Int;	--Row ID
 	Declare @Size_LossRowCount Int;	--資料筆數
-
+	
 	Insert Into @Article_Loss
 		(Article, TtlQty)
 		Select Article, Sum(Qty) as TtlQty
@@ -179,12 +204,23 @@ Begin
 			Set @Sum_LossQty_Article = @LossQty_Total;
 		End;
 		--------------------------------
-
-		--Article Loss Qty不得超過設定的Loss Qty上限
-		If @LossQty_Article > @LimitUP_LossQty
-		Begin
-			Set @LossQty_Article = @LimitUP_LossQty;
-		End;
+		
+		--總Qty若小於設定的成衣限制，則以固定數為上限，若大於則以累進數為上限
+		if(@Qty_Article < @MinGmtQty)
+		BEGIN			
+			If @LossQty_Article > @LimitUP_LossQty
+			Begin
+				set @LossQty_Article = @LimitUP_LossQty;
+			End;
+		END
+		ELSE
+		BEGIN
+			set @Real_MaxLossQty = (Production.dbo.GetCeiling(@Qty_Article, 0, @PerGmtQty) / @PerGmtQty - 1) * @PlsLossQty
+			If @LossQty_Article > @Real_MaxLossQty
+			Begin
+				Set @LossQty_Article = @Real_MaxLossQty;
+			End;
+		END
 		
 		--將Article Loss Qty 依比例分配至各Size
 		Delete From @Size_Loss;
@@ -238,14 +274,19 @@ Begin
 	--------------------Loop End @Article_Loss--------------------
 	Declare @BofUkey BigInt;
 	Declare @LossType Numeric(1,0);
-	Declare @LossPercent Numeric(3,1);
+	Declare @LossPercent Numeric(5,1);
 	Declare @tmpBOF Table
-		(RowID BigInt Identity(1,1) Not Null, BofUkey BigInt, FabricCode VarChar(3), SCIRefNo VarChar(30), LossType Numeric(1,0), LossPercent Numeric(3,1), SuppID varchar(6), Kind varchar(1), SpecialWidth numeric(5,1));
+		(RowID BigInt Identity(1,1) Not Null, BofUkey BigInt, FabricCode VarChar(3), SCIRefNo VarChar(30), LossType Numeric(1,0), LossPercent Numeric(5,1), SuppID varchar(6), Kind varchar(1), SpecialWidth numeric(5,1), LimitUp decimal(7, 2), LimitDown decimal(7, 2));
 	Declare @tmpBOFRowID Int;		--Row ID
 	Declare @tmpBOFRowCount Int;	--總資料筆數
 	Declare @SuppID VarChar(6);
 	Declare @Kind varchar(1); 
 	Declare @SpecialWidth numeric(5,1)
+	Declare @LimitUp decimal(7, 2)
+	Declare @LimitDown decimal(7, 2)
+	Declare @LossUp decimal(7, 2)
+	Declare @LossDown decimal(7, 2)
+
 	Declare @IsQT bit;
 	Declare @CountryID VarChar(2);
 	Declare @UsageQty Numeric(9,2);
@@ -261,14 +302,14 @@ Begin
 	Declare @CuttingPiece Bit;
 	Declare @MarkerUkey BigInt;
 	Declare @For_Article Numeric(1);
-	Declare @ConsPC Numeric(7,4);
+	Declare @ConsPC Numeric(12,4);
 	Declare @MarkerLength Numeric(7,4);
 	Declare @MarkerQty Numeric(4,0);
 	Declare @MarkerYDS Numeric(10,4);
 	Declare @MarkerList Table
 		(  RowID BigInt Identity(1,1) Not Null, FabricCombo VarChar(2), FabricCode VarChar(3), FabricPanelCode VarChar(2), CuttingPiece Bit
 		 , MarkerName VarChar(20), Ukey BigInt, For_Article Numeric(1)
-		 , ConsPC Numeric(7,4), MarkerLength Numeric(7,4), SizeCode VarChar(8), Qty Numeric(4,0)
+		 , ConsPC Numeric(12,4), MarkerLength Numeric(7,4), SizeCode VarChar(8), Qty Numeric(4,0)
 		);
 	Declare @MarkerListRowID Int;		--Marker List Row ID
 	Declare @MarkerListRowCount Int;	--Marker List 總資料筆數
@@ -292,8 +333,8 @@ Begin
 	Declare @mPlus numeric(4,1);
 
 	Insert Into @tmpBOF
-		(BofUkey, FabricCode, SCIRefNo, LossType, LossPercent, SuppID, Kind, SpecialWidth)
-		Select Ukey, FabricCode, SCIRefNo, LossType, LossPercent, SuppID, Kind, SpecialWidth
+		(BofUkey, FabricCode, SCIRefNo, LossType, LossPercent, SuppID, Kind, SpecialWidth, LimitUp, LimitDown)
+		Select Ukey, FabricCode, SCIRefNo, LossType, LossPercent, SuppID, Kind, SpecialWidth, LimitUp, LimitDown
 		  From dbo.Order_BOF
 		 Where ID = @PoID
 		   And (   @FabricCode = ''
@@ -313,13 +354,31 @@ Begin
 			 , @SuppID = SuppID
 			 , @Kind = Kind
 			 , @SpecialWidth = SpecialWidth
+			 , @LimitUp = LimitUp
+			 , @LimitDown = LimitDown
 		  From @tmpBOF
 		 Where RowID = @tmpBOFRowID;
 
 		select 
 			@CountryID = CountryID
 		from production.dbo.Supp where id = @SuppID;
+		
+		-- 2020/05/06 [IST20200411] 取得上限與下限設定,若BOF有設定先抓BOF,沒有設定再抓LossRateFabric
+		if @LimitUp > 0
+		Begin
+			Set @LossUp = @LimitUp;
+		End
+		Else
+		Begin
+			Set @LossUp = @LimitUP_Allowance;
+		End;
 
+		Set @LossDown = isnull(@LimitDown,0);
+
+		select 
+			@CountryID = CountryID
+		from Production.dbo.Supp where id = @SuppID;
+		
 		set @isQt = 0;
 		select @isQt = 1 from Order_BOF 
 		inner join Order_FabricCode on Order_BOF.Id = Order_FabricCode.Id and Order_BOF.FabricCode = Order_FabricCode.FabricCode 
@@ -327,22 +386,48 @@ Begin
 			AND FabricPanelCode in (select FabricPanelCode from Order_FabricCode_QT where Id = @PoID and FabricPanelCode <> QTFabricPanelCode)
 			
 		Delete @tmpBOF_Expend;
-		Insert Into @tmpBOF_Expend
-			(ColorID, Special, UsageQty, QTFabricPanelCode)
-			Select ColorID, Special, UsageQty, QTFabricPanelCode
-			  From dbo.Order_BOF_Expend
-			 Where Order_BOFUkey = @BofUkey
-			 Order by ColorID;
+		if(@IsExpendArticle<2)
+		begin
+			INSERT INTO @tmpBOF_Expend (ColorID, Special, UsageQty, QTFabricPanelCode)
+				SELECT
+					ColorID
+				   ,Special
+				   ,UsageQty
+				   ,QTFabricPanelCode
+				FROM dbo.Order_BOF_Expend
+				WHERE Order_BOFUkey = @BofUkey
+				ORDER BY ColorID;
 
-		--若不存在Bof展開，則預跑一次Bof展開資料
-		if not exists(select 1 from @tmpBOF_Expend)
+			--若不存在Bof展開，則預跑一次Bof展開資料
+			IF NOT EXISTS (SELECT
+						1
+					FROM @tmpBOF_Expend)
+			BEGIN
+			INSERT INTO @tmpBOF_Expend (ColorID, Special, UsageQty, QTFabricPanelCode)
+				SELECT
+					ColorID
+				   ,Special
+				   ,SUM(UsageQty) AS UsageQty
+				   ,QTFabricPanelCode
+				FROM dbo.GetBOFExpend(@PoID, @FabricCode, @IsExpendArticle)
+				GROUP BY ColorID
+						,Special
+						,QTFabricPanelCode
+			END;
+		END;
+		Else
 			Begin
-				insert into @tmpBOF_Expend
-				( ColorID, Special, UsageQty, QTFabricPanelCode )
-					select ColorID, Special, sum(UsageQty) as UsageQty, QTFabricPanelCode
-					from dbo.GetBOFExpend(@PoID,@FabricCode,@IsExpendArticle)
-					group by ColorID, Special, QTFabricPanelCode
-			End;
+				INSERT INTO @tmpBOF_Expend (ColorID, Special, UsageQty, QTFabricPanelCode)				
+				SELECT
+					ColorID
+				   ,Special
+				   ,SUM(UsageQty) AS UsageQty
+				   ,QTFabricPanelCode
+				FROM dbo.GetBOFExpend(@PoID, @FabricCode, @IsExpendArticle-2)
+				GROUP BY ColorID
+						,Special
+						,QTFabricPanelCode
+			END;
 		--------------------Loop Start @tmpBOF_Expend--------------------
 		Set @tmpBOF_ExpendRowID = 1;
 		Select @tmpBOF_ExpendRowID = Min(RowID), @tmpBOF_ExpendRowCount = Max(RowID) From @tmpBOF_Expend;
@@ -355,12 +440,15 @@ Begin
 			  From @tmpBOF_Expend
 			 Where RowID = @tmpBOF_ExpendRowID;
 			
+			Set @LossYDS = 0;
+			Set @PlusName = '';
+			
 			If (@LossType = 1 And @Category In ('S','T')) Or (@LossType = 2) or (@IsQT = 1)--2018/03/01 [IST20180148] modify by Anderson 加上Category=T判斷
 			Begin
 				Set @WeaveTypeID = '';
 				Set @WeightM2 = 0;
 				Set @mLimit = 0;
-
+				
 				Select @WeaveTypeID = Fabric.WeaveTypeID,
 					@WeightM2 = WeightM2
 				  From production.dbo.Fabric
@@ -377,7 +465,7 @@ Begin
 				If (@LossType = 2)
 				Begin
 					Set @LossYDS = @UsageQty * (@LossPercent / 100);
-					Set @PlusName = 'By Percent:' + LTrim(Convert(VarChar(4), @LossPercent)) + '%';
+					Set @PlusName = 'By Percent:' + LTrim(Convert(VarChar(5), @LossPercent)) + '%';
 				End;
 				
 				if (@isQt = 1 and @SpecialWidth > 0) --2018/07/11 [IST20180936] modify by Vicky 移除@Kind = 3判斷
@@ -396,7 +484,7 @@ Begin
 							@LRFLimit = Limit,
 							@LRFLossType = LossType
 						from production.dbo.LossRateFabric where WeaveTypeID = @WeaveTypeID
-
+						
 						if (@LRFLossType = 2)
 							set @CalValue = @WeightM2;
 						else
@@ -428,10 +516,22 @@ Begin
 					end
 				end
 				
+				/*--計算過後如果超過上限值，則帶上限值。
+				If @LimitUp > 0 And @LossYDS > @LimitUp
+				Begin
+					Set @LossYDS = @LimitUp;
+				End;*/
+
+				--計算過後如果低於下限值，則帶下限值。
+				If @LimitDown > 0 And @LossYDS < @LimitDown
+				Begin
+					Set @LossYDS = @LimitDown;
+				End;
+
 				Insert Into @FabricColorQty
-					(SciRefNo, LossType, WeaveTypeID, FabricCode, ColorID, Special, MarkerLength, MarkerYDS, LossYds, RealLoss, PlusName)
+					(SciRefNo, LossType, WeaveTypeID, FabricCode, ColorID, Special, MarkerLength, MarkerYDS, LossUp, LossDown, LossYds, RealLoss, PlusName)
 				Values
-					(@SciRefNo, @LossType, @WeaveTypeID, @FabricCode, @ColorID, @Special, 0, 0, @LossYDS, @LossYDS, @PlusName);
+					(@SciRefNo, @LossType, @WeaveTypeID, @FabricCode, @ColorID, @Special, 0, 0, @LossUp, @LossDown, @LossYDS, @LossYDS, @PlusName);
 			End;	-- End If (@LossType = 1 And @Category = 'S') Or (@LossType = 2)
 			Else
 			Begin
@@ -512,6 +612,18 @@ Begin
 						Begin
 							Set @LossYDS = @LossQty * @ConsPC;
 
+							/*--計算過後如果超過上限值，則帶上限值。
+							If @LimitUp > 0 And @LossYDS > @LimitUp
+							Begin
+								Set @LossYDS = @LimitUp;
+							End;*/
+
+							--計算過後如果低於下限值，則帶下限值。
+							/*If @LimitDown > 0 And @LossYDS < @LimitDown
+							Begin
+								Set @LossYDS = @LimitDown;
+							End;*/
+
 							Update @FabricColorQty_Detial
 							   Set Qty += @Qty
 							 Where SciRefNo = @SciRefNo
@@ -527,11 +639,11 @@ Begin
 							Begin
 								Insert Into @FabricColorQty_Detial
 									(SciRefNo, LossType, FabricCode, FabricCombo, ColorID, Special, Article, SizeSeq, SizeCode, MarkerLength, MarkerYDS
-									 , Qty, ConsPC, LossQty, LossYDS
+									 , Qty, ConsPC, LossQty, LossYDS, LimitDown, LossUp, LossDown
 									)
 								Values
 									(@SciRefNo, @LossType, @FabricCode, @FabricCombo, @ColorID, @Special, @Article, @SizeSeq, @SizeCode, @MarkerLength, @MarkerYDS
-									 , @Qty, @ConsPC, @LossQty, @LossYDS
+									 , @Qty, @ConsPC, @LossQty, @LossYDS, @LimitDown, @LossUp, @LossDown
 									);
 							End;
 						End;
@@ -562,16 +674,19 @@ Begin
 			 , @MarkerLength = MarkerLength
 			 , @MarkerYDS = MarkerYDS
 			 , @LossYDS = LossYDS
+			 , @LimitDown = LimitDown
+			 , @LossUp = LossUp
+			 , @LossDown = LossDown
 		  From @FabricColorQty_Detial
 		 Where RowID = @FabricColorQty_DetialRowID;
 		
 		Set @WeaveTypeID = '';
 		Select @WeaveTypeID = Fabric.WeaveTypeID
-		  From production.dbo.Fabric
-		  Join production.dbo.LossRateFabric
+		  From Production.dbo.Fabric
+		  Join Production.dbo.LossRateFabric
 			On LossRateFabric.WeaveTypeID = Fabric.WeaveTypeID
 		 Where SciRefNo = @SciRefNo;
-
+				
 		Update @FabricColorQty
 		   Set LossYds += @LossYDS
 			 , MarkerLength = IIF(MarkerLength <= @MarkerLength, @MarkerLength, MarkerLength)
@@ -583,31 +698,32 @@ Begin
 		
 		If @@RowCount = 0
 		Begin
-			Insert Into @FabricColorQty
-				(SciRefNo, LossType, WeaveTypeID, FabricCode, ColorID, Special, MarkerLength, MarkerYDS, LossYds)
-			Values
-				(@SciRefNo, @LossType, @WeaveTypeID, @FabricCode, @ColorID, @Special, @MarkerLength, @MarkerYDS, @LossYDS);
-		End;
-		Set @FabricColorQty_DetialRowID += 1;
+			INSERT INTO @FabricColorQty (SciRefNo, LossType, WeaveTypeID, FabricCode, ColorID, Special, MarkerLength, MarkerYDS, LossUp, LossDown, LossYDS)
+				VALUES (@SciRefNo, @LossType, @WeaveTypeID, @FabricCode, @ColorID, @Special, @MarkerLength, @MarkerYDS, @LossUp, @LossDown, @LossYDS);
+			END;
+			SET @FabricColorQty_DetialRowID += 1;
 	End;
-	---------------------------------------------------------------------------
-	--計算最終的Loss YDS
-	-- 1. 當Fabric的WeaveType不存在於LossRateFabric內時，Loss YDS = 0
-	-- 2. 當Loss Yds小於該布種最長馬克之兩層長度時，Loss YDS = 最長馬克之兩層長度
-	-- 3. 當Loss Yds大於系統設定最大允許Loss長度時，Loss YDS = Max Allowance YDS
-	Update @FabricColorQty
-	   Set RealLoss = IIF(IsNull(WeaveTypeID, '') = ''
-						  , 0
-						  , IIF(IIF(MarkerYDS >= LossYDS, MarkerYDS, LossYDS) >= @LimitUP_Allowance
-								, @LimitUP_Allowance
-								, IIF(MarkerYDS >= LossYDS, MarkerYDS, LossYDS)
-							   )
-						 )
-	 Where LossType = 1;
-	
-	Update @FabricColorQty
-	   Set PlusName = Convert(VarChar(9), RealLoss)
-	 Where LossType = 1 AND WeaveTypeID <> 'QT';
+			---------------------------------------------------------------------------
+			--計算最終的Loss YDS
+			-- 1. 當Fabric的WeaveType不存在於LossRateFabric內時，Loss YDS = 0
+			-- 2. 當Loss Yds小於最終判斷上限值(LossDown)，Loss YDS = LossDown
+			-- 3. 當Loss Yds大於最終判斷上限值(LossUp)，Loss YDS = LossUp
+			-- LossUp => 比較最長馬克之兩層長度(MarkerYDS)與BOF設定的Lower Limit,取大的
+			-- LossDown => 先抓BOF設定的Upper Limit若沒有設定則抓系統設定值
+			-- 2020/05/06 [IST20200411] 取消Category判斷,不看Category
+			UPDATE @FabricColorQty
+			SET RealLoss = IIF(ISNULL(WeaveTypeID, '') = '', 0
+								, IIF(IIF(MarkerYDS >= LossYDS, MarkerYDS, LossYDS) >= LossUp, LossUp
+									 , IIF(IIF(MarkerYDS >= LossDown, MarkerYDS, LossDown) >= LossYDS, iif(MarkerYDS >= LossDown, MarkerYDS, LossDown), LossYDS)
+									 )
+							 )
+			, LossDown = iif(MarkerYDS >= LossDown, MarkerYDS, LossDown)
+			WHERE LossType = 1;
+
+			UPDATE @FabricColorQty
+			SET PlusName = CONVERT(VARCHAR(9), RealLoss)
+			WHERE LossType = 1
+			AND WeaveTypeID <> 'QT';
 	
 	Return;
 End

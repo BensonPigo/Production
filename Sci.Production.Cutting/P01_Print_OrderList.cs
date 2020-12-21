@@ -387,10 +387,14 @@ select [SP] =
                 }
 
                 DataRow dr = dts[0].Rows[0];
-                this.Extra_P01_Report_TTLconsumptionPOCombo(dts[1], Convert.ToInt32(dr["QTY"]));
+                decimal orderQty = MyUtility.Convert.GetDecimal(dr["Qty"]);
+                this.Extra_P01_Report_TTLconsumptionPOCombo(dts[1], orderQty);
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_TTLconsumptionPOCombo.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
+                sxr.DicDatas.Add(sxr.VPrefix + "APPLYNO", dr["APPLYNO"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "MARKERNO", dr["MARKERNO"]);
+
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
 
@@ -403,12 +407,12 @@ select [SP] =
 
                 sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
-                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
+                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dts[1]);
 
                 // 欄位水平對齊
                 for (int i = 3; i <= dt.Columns.Count; i++)
                 {
-                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
+                    SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight);
 
                     if (i == 4 | i == 6 | i == 8 | i == 7)
                     {
@@ -416,7 +420,7 @@ select [SP] =
                     }
                     else if (i == 9)
                     {
-                        citbl.PointCnt = 0;
+                        citbl.PointCnt = 1;
                     }
                     else if (i == 13)
                     {
@@ -426,8 +430,8 @@ select [SP] =
                     dt.LisColumnInfo.Add(citbl);
                 }
 
-                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new SaveXltReportCls.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
 
                 // 合併儲存格
                 // dt.LisTitleMerge.Add(new Dictionary<string, string> { { "Usage", string.Format("{0},{1}", 3, 4) }, { "Purchase", string.Format("{0},{1}", 5, 6) } });
@@ -1525,7 +1529,7 @@ select distinct sizecode,Seq
             }
         }
 
-        private void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, int qty)
+        private void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, decimal orderQty)
         {
             string coltmp = string.Empty;
             decimal totaltmp = 0;
@@ -1542,7 +1546,7 @@ select distinct sizecode,Seq
                     else
                     {
                         coltmp = col1content;
-                        this.AddSubTotalRow(dt, totaltmp, i, qty);
+                        this.AddSubTotalRow(dt, totaltmp, i, orderQty);
 
                         totaltmp = 0;
                         i += 1;
@@ -1559,15 +1563,15 @@ select distinct sizecode,Seq
                 totaltmp += decimal.Parse(dt.Rows[i]["TOTAL(Inclcut. use)"].ToString());
             }
 
-            this.AddSubTotalRow(dt, totaltmp, dt.Rows.Count, qty);
+            this.AddSubTotalRow(dt, totaltmp, dt.Rows.Count, orderQty);
         }
 
-        private void AddSubTotalRow(DataTable dt, decimal tot, int idx, int qty)
+        private void AddSubTotalRow(DataTable dt, decimal tot, int idx, decimal orderQty)
         {
             DataRow dr = dt.NewRow();
             dr["TOTAL(Inclcut. use)"] = tot;
             dr["M/WEIGHT"] = "SubTotal";
-            dr["CONS/PC"] = qty == 0 ? 0 : Math.Round(tot / qty, 3);
+            dr["CONS/PC"] = orderQty == 0 ? 0 : Math.Round(tot / orderQty, 3);
             dt.Rows.InsertAt(dr, idx);
         }
 

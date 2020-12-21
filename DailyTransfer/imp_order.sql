@@ -1014,14 +1014,15 @@ else
 				t.AddName			= s.AddName,
 				t.AddDate			= s.AddDate,
 				t.EditName			= s.EditName,
-				t.EditDate			= s.EditDate
+				t.EditDate			= s.EditDate,
+				t.ConsPC			= s.ConsPC
 		when not matched by target then 
 			insert (
 				Id			, PatternPanel		, FabricCode	, FabricPanelCode	, AddName
-				, AddDate	, EditName			, EditDate
+				, AddDate	, EditName			, EditDate		, ConsPC
 			) values (
 				s.Id		, s.PatternPanel	, s.FabricCode	, s.FabricPanelCode	, s.AddName
-				, s.AddDate	, s.EditName		, s.EditDate
+				, s.AddDate	, s.EditName		, s.EditDate	, s.ConsPC
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
@@ -1073,18 +1074,22 @@ else
 				t.AddDate				= s.AddDate,
 				t.EditName				= s.EditName,
 				t.EditDate				= s.EditDate,
-				t.SpecialWidth          = s.SpecialWidth
+				t.SpecialWidth          = s.SpecialWidth,
+				t.LimitUp				= s.LimitUp,
+				t.LimitDown				= s.LimitDown
 		when not matched by target then 
 			insert (
 				Id				, FabricCode	, Refno					, SCIRefno				, SuppID
 				, ConsPC		, Seq1			, Kind					, Ukey					, Remark
 				, LossType		, LossPercent	, RainwearTestPassed	, HorizontalCutting		, ColorDetail
 				, AddName		, AddDate		, EditName				, EditDate              , SpecialWidth 
+				, LimitUp		, LimitDown
 			) values (
 				s.Id			, s.FabricCode	, s.Refno				, s.SCIRefno			, s.SuppID
 				, s.ConsPC		, s.Seq1		, s.Kind				, s.Ukey				, s.Remark
 				, s.LossType	, s.LossPercent	, s.RainwearTestPassed	, s.HorizontalCutting	, s.ColorDetail
 				, s.AddName		, s.AddDate		, s.EditName			, s.EditDate            , s.SpecialWidth
+				, s.LimitUp		, s.LimitDown
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
