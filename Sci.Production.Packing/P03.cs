@@ -2057,7 +2057,7 @@ update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() whe
                 Microsoft.Office.Interop.Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
                 Microsoft.Office.Interop.Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
                 Microsoft.Office.Interop.Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
-                Microsoft.Office.Interop.Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell);
+                Microsoft.Office.Interop.Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell, Type.Missing);
                 Microsoft.Office.Interop.Excel.Range xlsRange = xlsSheet.get_Range(xlsRangeFirstCell, xlsRangeLastCell);
                 object[,] objValue = xlsRange.Value2 as object[,];
 
@@ -2067,9 +2067,13 @@ update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() whe
                 DataTable dtExcel = new DataTable();
                 for (int j = 1; j <= lngColumnCount; j++)
                 {
-                    dtExcel.Columns.Add(objValue[1, j].ToString());
+                    if (!MyUtility.Check.Empty(objValue[1, j]))
+                    {
+                        dtExcel.Columns.Add(objValue[1, j].ToString());
+                    }
                 }
 
+                lngColumnCount = (long)dtExcel.Columns.Count;
                 for (int i = 2; i <= lngRowCount; i++)
                 {
                     DataRow drRow = dtExcel.NewRow();
