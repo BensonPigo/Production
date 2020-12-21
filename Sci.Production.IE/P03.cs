@@ -487,7 +487,25 @@ where Junk = 0";
                 if (this.EditMode)
                 {
                     List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
-                    string sqlcmd = "select o.MoldID from Operation o WITH (NOLOCK) where o.ID = @OperationID";
+                    string sqlcmd = @"
+select [Attachment] = STUFF((
+		        select concat(',' ,s.Data)
+		        from SplitString(o.MoldID, ';') s
+		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		        where m.IsAttachment = 1
+                and m.Junk = 0
+		        for xml path ('')) 
+	        ,1,1,'')
+	,[Template] = STUFF((
+		            select concat(',' ,s.Data)
+		            from SplitString(o.MoldID, ';') s
+		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		            where m.IsTemplate = 1
+                    and m.Junk = 0
+		            for xml path ('')) 
+	            ,1,1,'')
+from Operation o WITH (NOLOCK) 
+where o.ID = @OperationID";
                     DataTable dtOperation;
                     DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
                     List<string> operationList = new List<string>();
@@ -496,23 +514,22 @@ where Junk = 0";
                         this.CurrentDetailData["Attachment"] = string.Empty;
                         MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
                     }
-                    else
-                    {
-                        var query = dtOperation.AsEnumerable().Select(x => x.Field<string>("MoldID"));
-                        if (query.Any())
-                        {
-                            operationList = query.FirstOrDefault().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-                        }
-                    }
 
-                    if (MyUtility.Check.Empty(e.FormattedValue))
+                    if (dtOperation.Rows.Count > 0)
                     {
-                        if (operationList.Any())
+                        operationList = dtOperation.Rows[0]["Attachment"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+
+                        if (this.CurrentDetailData["Template"].Empty())
                         {
-                            this.CurrentDetailData["Attachment"] = string.Join(",", operationList.ToList());
+                            this.CurrentDetailData["Template"] = dtOperation.Rows[0]["Template"].ToString();
                         }
 
-                        return;
+                        if (e.FormattedValue.Empty())
+                        {
+                            this.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
+
+                            return;
+                        }
                     }
 
                     sqlcmd = @"
