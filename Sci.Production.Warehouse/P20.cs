@@ -167,8 +167,8 @@ from
 			, i.Ukey
 			, I.SCIRefno
 			, I.UnitID POUNIT
-			, DBO.getStockUnit(b.SCIRefno,s.suppid) AS STOCKUNIT
-			, dbo.GetUnitRate(I.UnitID, DBO.getStockUnit(I.SCIRefno,I.suppid)) RATE	
+			, [dbo].[GetStockUnitBySPSeq](i.PoID, i.Seq1, i.Seq2) AS STOCKUNIT
+			, dbo.GetUnitRate(I.UnitID, [dbo].[GetStockUnitBySPSeq](i.PoID, i.Seq1, i.Seq2)) RATE	
 	from inventory i WITH (NOLOCK) 
 	inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
 	left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2

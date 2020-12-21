@@ -71,6 +71,7 @@
     [RevisedETD]      DATE            NULL,
     [POAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
     [ShipAmt] NUMERIC(16, 4) NOT NULL DEFAULT ((0)), 
+    [StockSuppID] VARCHAR(6) CONSTRAINT [DF_Po_Supp_Detail_StockSuppID] NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_PO_Supp_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
@@ -376,3 +377,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'需求量(�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'耗損數量-自動轉單存入', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO_Supp_Detail', @level2type = N'COLUMN', @level2name = N'lossQty';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始庫存項的SuppID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PO_Supp_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'StockSuppID'

@@ -3954,6 +3954,69 @@ LEFT JOIN Trade_To_Pms.dbo.PulloutPort b ON a.id=b.id
 WHERE b.id is null
 
 
+-- 全轉入Consignee
+UPDATE t
+SET  
+t.Junk =			   s.Junk,
+t.AddName =			   s.AddName,
+t.AddDate =			   s.AddDate,
+t.EditName =		   s.EditName,
+t.EditDate =		   s.EditDate
+FROM Production.dbo.Consignee t
+INNER JOIN Trade_To_Pms.dbo.Consignee as s ON t.id	=s.id
+
+INSERT INTO Production.dbo.Consignee(
+	   [ID]
+      ,[Junk]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate])
+SELECT [ID]
+      ,[Junk]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+FROM Trade_To_Pms.dbo.Consignee b
+WHERE NOT EXISTS(
+	SELECT  1
+	FROM Production.dbo.Consignee a WITH (NOLOCK)
+	WHERE a.id = b.id
+)
+
+DELETE Production.dbo.Consignee
+FROM Production.dbo.Consignee a
+LEFT JOIN Trade_To_Pms.dbo.Consignee b ON a.id = b.id 
+WHERE b.id is null
+
+-- 全轉入Consignee_Detail
+UPDATE t
+SET  
+t.ID =			   s.ID,
+t.Email =		   s.Email
+FROM Production.dbo.Consignee_Detail t
+INNER JOIN Trade_To_Pms.dbo.Consignee_Detail as s ON t.Ukey = s.Ukey
+
+INSERT INTO Production.dbo.Consignee_Detail(
+	   [Ukey]
+	  ,[ID]
+      ,[Email])
+SELECT [Ukey]
+      ,[ID]
+      ,[Email]
+FROM Trade_To_Pms.dbo.Consignee_Detail b
+WHERE NOT EXISTS(
+	SELECT  1
+	FROM Production.dbo.Consignee_Detail a WITH (NOLOCK)
+	WHERE a.id = b.id
+)
+
+DELETE Production.dbo.Consignee_Detail
+FROM Production.dbo.Consignee_Detail a
+LEFT JOIN Trade_To_Pms.dbo.Consignee_Detail b ON a.Ukey = b.Ukey 
+WHERE b.Ukey is null
+
 END
 
 

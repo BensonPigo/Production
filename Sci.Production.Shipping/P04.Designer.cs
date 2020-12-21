@@ -87,6 +87,7 @@
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.lbShipDate = new Sci.Win.UI.Label();
             this.dateShipDate = new Sci.Win.UI.DateBox();
+            this.btnConsigneeMail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -98,6 +99,7 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -263,7 +265,9 @@
             // 
             // browse
             // 
+            this.browse.Controls.Add(this.btnConsigneeMail);
             this.browse.Size = new System.Drawing.Size(1024, 494);
+            this.browse.Controls.SetChildIndex(this.btnConsigneeMail, 0);
             // 
             // tabs
             // 
@@ -938,6 +942,16 @@
             this.dateShipDate.Size = new System.Drawing.Size(130, 23);
             this.dateShipDate.TabIndex = 23;
             // 
+            // btnConsigneeMail
+            // 
+            this.btnConsigneeMail.Location = new System.Drawing.Point(627, 6);
+            this.btnConsigneeMail.Name = "btnConsigneeMail";
+            this.btnConsigneeMail.Size = new System.Drawing.Size(135, 29);
+            this.btnConsigneeMail.TabIndex = 4;
+            this.btnConsigneeMail.Text = "Consignee Mail";
+            this.btnConsigneeMail.UseVisualStyleBackColor = true;
+            this.btnConsigneeMail.Click += new System.EventHandler(this.BtnConsigneeMail_Click);
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1032, 556);
@@ -970,6 +984,7 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
@@ -1039,5 +1054,6 @@
         private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.DateBox dateShipDate;
         private Win.UI.Label lbShipDate;
+        private Win.UI.Button btnConsigneeMail;
     }
 }

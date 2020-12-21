@@ -2285,6 +2285,7 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             {
                 string sqlGetData = $@"
             select  bd.ID          ,
+                    b.POID          ,
                     bd.BundleNo    ,
                     b.CutRef             ,
                     b.OrderID            ,
@@ -2310,6 +2311,7 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
                        dr => new BundleToAGV_PostBody()
                        {
                            ID = dr["ID"].ToString(),
+                           POID = dr["POID"].ToString(),
                            BundleNo = dr["BundleNo"].ToString(),
                            CutRef = dr["CutRef"].ToString(),
                            OrderID = dr["OrderID"].ToString(),

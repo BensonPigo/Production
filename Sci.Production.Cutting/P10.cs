@@ -655,6 +655,7 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
                     dr => new BundleToAGV_PostBody()
                     {
                         ID = dr["ID"].ToString(),
+                        POID = this.CurrentMaintain["POID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
                         CutRef = this.CurrentMaintain["CutRef"].ToString(),
                         OrderID = this.CurrentMaintain["OrderID"].ToString(),
@@ -1314,33 +1315,54 @@ AND DD.id = LIST.kind ";
             string deleteBundleDetailQty = string.Format(
                     @"
 select Ukey from Bundle_Detail_Art with (nolock) where id = '{0}'
-
 select Ukey from Bundle_Detail_qty with (nolock) where id = '{0}'
+",
+                    id);
 
+            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable[] dtDeleteResults);
+            if (!result)
+            {
+                return result;
+            }
+
+            result = new Guozi_AGV().SentDeleteBundle((DataTable)this.detailgridbs.DataSource);
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtDeleteResults[0].Rows.Count > 0)
+            {
+                result = new Guozi_AGV().SentDeleteBundle_SubProcess(dtDeleteResults[0]);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            if (dtDeleteResults[1].Rows.Count > 0)
+            {
+                result = new Guozi_AGV().SentDeleteBundle_Detail_Order(dtDeleteResults[1]);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            deleteBundleDetailQty = string.Format(
+                    @"
 delete bundle where id = '{0}';
 delete Bundle_Detail where id = '{0}';
 delete Bundle_Detail_Art where id = '{0}';
 delete Bundle_Detail_AllPart where id = '{0}';
 delete Bundle_Detail_qty where id = '{0}';
 delete Bundle_Detail_Order where id = '{0}';
-", id);
-
-            DualResult result = DBProxy.Current.Select(null, deleteBundleDetailQty, out DataTable[] dtDeleteResults);
-
+",
+                    id);
+            result = DBProxy.Current.Execute(null, deleteBundleDetailQty);
             if (!result)
             {
                 return result;
-            }
-
-            Task.Run(() => new Guozi_AGV().SentDeleteBundle((DataTable)this.detailgridbs.DataSource));
-            if (dtDeleteResults[0].Rows.Count > 0)
-            {
-                Task.Run(() => new Guozi_AGV().SentDeleteBundle_SubProcess(dtDeleteResults[0]));
-            }
-
-            if (dtDeleteResults[1].Rows.Count > 0)
-            {
-                Task.Run(() => new Guozi_AGV().SentDeleteBundle_Detail_Order(dtDeleteResults[1]));
             }
 
             return base.ClickDeletePost();
