@@ -87,7 +87,7 @@
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.lbShipDate = new Sci.Win.UI.Label();
             this.dateShipDate = new Sci.Win.UI.DateBox();
-            this.btnConsigneeMail = new System.Windows.Forms.Button();
+            this.btnConsigneeMail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -99,6 +99,7 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -264,7 +265,9 @@
             // 
             // browse
             // 
+            this.browse.Controls.Add(this.btnConsigneeMail);
             this.browse.Size = new System.Drawing.Size(1024, 494);
+            this.browse.Controls.SetChildIndex(this.btnConsigneeMail, 0);
             // 
             // tabs
             // 
@@ -941,9 +944,9 @@
             // 
             // btnConsigneeMail
             // 
-            this.btnConsigneeMail.Location = new System.Drawing.Point(631, 64);
+            this.btnConsigneeMail.Location = new System.Drawing.Point(627, 6);
             this.btnConsigneeMail.Name = "btnConsigneeMail";
-            this.btnConsigneeMail.Size = new System.Drawing.Size(91, 29);
+            this.btnConsigneeMail.Size = new System.Drawing.Size(135, 29);
             this.btnConsigneeMail.TabIndex = 4;
             this.btnConsigneeMail.Text = "Consignee Mail";
             this.btnConsigneeMail.UseVisualStyleBackColor = true;
@@ -952,7 +955,6 @@
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1032, 556);
-            this.Controls.Add(this.btnConsigneeMail);
             this.DefaultControl = "txtSubconForwarder";
             this.DefaultControlForEdit = "txtSubconForwarder";
             this.DefaultDetailOrder = "POID,Seq1,Seq2";
@@ -969,7 +971,6 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "FtyExport";
             this.Controls.SetChildIndex(this.tabs, 0);
-            this.Controls.SetChildIndex(this.btnConsigneeMail, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -983,6 +984,7 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
@@ -1052,6 +1054,6 @@
         private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.DateBox dateShipDate;
         private Win.UI.Label lbShipDate;
-        private System.Windows.Forms.Button btnConsigneeMail;
+        private Win.UI.Button btnConsigneeMail;
     }
 }
