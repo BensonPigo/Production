@@ -206,5 +206,22 @@ namespace Sci.Production.Prg
                 return s;
             }
         }
+
+        /// <summary>
+        /// 正規表示法 檢查 Email格式
+        /// </summary>
+        /// <param name="s">Email</param>
+        /// <returns>bool</returns>
+        public static bool IsEmail(this string s)
+        {
+            if (s.Empty())
+            {
+                return false;
+            }
+            else
+            {
+                return System.Text.RegularExpressions.Regex.IsMatch(s, @"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
+            }
+        }
     }
 }

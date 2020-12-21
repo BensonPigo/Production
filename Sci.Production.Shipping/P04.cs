@@ -535,22 +535,45 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
         {
             string strSendAccount = "select * from MailTo where ID = '023'";
             DualResult result = DBProxy.Current.Select(string.Empty, strSendAccount, out DataTable dtSendAccount);
-            if (result)
+
+            strSendAccount = $@"
+select 
+	[Email] = STUFF((
+        select CONCAT(';', Email) 
+        from Consignee_Detail cd
+        where cd.ID = f.Consignee 
+        and exists (select 1 from Consignee c where c.ID = cd.ID and c.Junk = 0)
+        for xml path(''))  ,1,1,'')
+ from FtyExport f
+where f.ID = '{this.CurrentMaintain["ID"].ToString()}'
+";
+            DualResult result2 = DBProxy.Current.Select(string.Empty, strSendAccount, out DataTable dtToAddress);
+            if (result && result2)
             {
-                if (dtSendAccount != null && dtSendAccount.Rows.Count > 0)
+                if (dtSendAccount != null && dtSendAccount.Rows.Count > 0 &&
+                    dtToAddress != null && dtToAddress.Rows.Count > 0)
                 {
                     DateTime? eta = MyUtility.Convert.GetDate(this.CurrentMaintain["ETA"]);
-                    string mailto = dtSendAccount.Rows[0]["ToAddress"].ToString();
+                    string mailto = dtToAddress.Rows[0]["Email"].ToString();
                     string mailCC = dtSendAccount.Rows[0]["CCAddress"].ToString();
                     string subject = string.Format(
-                            "[Pre-Alert] {0} / {1} / {2} / {3}",
+                            "[Pre-Alert] {0} / BL(AWB)#{1} / ETA{2} / WK#{3}",
                             this.CurrentMaintain["Shipper"].ToString(),
                             this.CurrentMaintain["Blno"].ToString(),
                             eta.HasValue ? eta.Value.ToString("yyyy/MM/dd") : string.Empty,
                             this.CurrentMaintain["ID"].ToString());
-                    string content = dtSendAccount.Rows[0]["Content"].ToString() + this.CurrentMaintain["ID"].ToString();
+                    string content = dtSendAccount.Rows[0]["Content"].ToString()
+                            .Replace("{0}", this.CurrentMaintain["ID"].ToString())
+                            .Replace("{1}", Environment.NewLine);
+                    string attachment = null;
 
-                    var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, null, content, false, true);
+                    result = Prg.ExcelExtension.GridToExcelOnlySave("Shipping_P04", this.detailgrid);
+                    if (result)
+                    {
+                        attachment = result.Description.ToString();
+                    }
+
+                    var email = new MailTo(Env.Cfg.MailFrom, mailto, mailCC, subject, attachment, content, false, true);
                     email.ShowDialog(this);
                 }
             }
@@ -558,7 +581,17 @@ where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMa
             {
                 MyUtility.Msg.WarningBox(result.ToString());
             }
+        }
 
+        private void BtnConsigneeMail_Click(object sender, EventArgs e)
+        {
+            B09 b09 = new B09();
+            b09.ShowDialog(this);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.SendMail();
         }
     }
 }

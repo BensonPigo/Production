@@ -98,6 +98,14 @@ BEGIN
 	RAISERROR('PulloutPort  - Starts',0,0)
 	select * into dbo.PulloutPort from (select * from ProductionTPE.dbo.PulloutPort ) as tmp
 
+	-------------Consignee-------------------
+	RAISERROR('Consignee  - Starts',0,0)
+	select * into dbo.Consignee from (select * from ProductionTPE.dbo.Consignee ) as tmp
+
+	-------------Consignee_Detail-------------------
+	RAISERROR('Consignee_Detail  - Starts',0,0)
+	select * into dbo.Consignee_Detail from (select * from ProductionTPE.dbo.Consignee_Detail ) as tmp
+
 	set transaction isolation level read committed
 END
 
