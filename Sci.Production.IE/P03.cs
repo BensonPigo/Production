@@ -1643,8 +1643,22 @@ select ID = null
 	   , Cycle = td.SMV
 	   , TotalCycle = td.SMV
 	   , td.MachineTypeID
-       , Attachment = td.Mold
-       , Template --= null
+	   , [Attachment] = STUFF((
+		        select concat(',' ,s.Data)
+		        from SplitString(td.Mold, ';') s
+		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		        where m.IsAttachment = 1
+                and m.Junk = 0
+		        for xml path ('')) 
+	        ,1,1,'')
+	    , [Template] = STUFF((
+		            select concat(',' ,s.Data)
+		            from SplitString(td.Mold, ';') s
+		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		            where m.IsTemplate = 1
+                    and m.Junk = 0
+		            for xml path ('')) 
+	            ,1,1,'')
 	   , td.OperationID
 	   , MoldID = td.Mold
 	   , GroupKey = 0
