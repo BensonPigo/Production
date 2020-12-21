@@ -1979,8 +1979,6 @@ SELECT STUFF(
 
                 this.AutoInsertBySP(this.topOrderID, this.topSeq);
 
-                this.CurrentMaintain["Stage"] = string.Empty;
-                this.CurrentMaintain["Result"] = string.Empty;
                 this.txtInspectedCarton.Text = string.Empty;
                 this.topCarton = string.Empty;
             }
