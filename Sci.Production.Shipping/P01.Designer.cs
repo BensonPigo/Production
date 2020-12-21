@@ -562,7 +562,7 @@
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(87, 18);
             this.labelETA.TabIndex = 25;
-            this.labelETA.Text = "Act. ETD";
+            this.labelETA.Text = "On Board";
             // 
             // dateCreatedate
             // 
