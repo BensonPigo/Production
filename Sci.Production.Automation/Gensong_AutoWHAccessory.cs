@@ -248,11 +248,13 @@ and exists(
 and exists(
 	select 1
 	from MtlLocation ml 
-	left join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID
+	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID
+    and ml.StockType=sd.FromStockType
 	where ml.IsWMS = 1
 	union all
 	select 1 from MtlLocation ml 
 	where ml.ID = sd.ToLocation
+    and ml.StockType=sd.ToStockType
 	and ml.IsWMS = 1
 )
 
@@ -457,12 +459,14 @@ and exists(
 and exists(
 	select 1
 	from MtlLocation ml 
-	left join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID
+	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
+		and ml.StockType=sd.FromStockType
 	where ml.IsWMS = 1
 	union all
 	select 1 from MtlLocation ml 
-	where ml.ID = bb2.ToLocation
-	and ml.IsWMS = 1
+	where ml.ID = sd.ToLocation
+	    and ml.StockType=sd.ToStockType
+	    and ml.IsWMS = 1
 )
 ";
             DataTable dt = new DataTable();

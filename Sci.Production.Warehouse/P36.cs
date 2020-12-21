@@ -1057,7 +1057,7 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
 
                 // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
                 {
                     if (strBarcode.Contains("-"))
                     {
@@ -1113,9 +1113,10 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
 
             sqlcmd = $@"
 select f.Ukey,fb.TransactionID
-,[Barcode1] = f.Barcode
-,[Barcode2] = fb.Barcode
-,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[ToBarcode] = iif(isnull(f.Barcode,'') = '', isnull(fb.Barcode,''), isnull(f.Barcode,''))
+,[FromBarcode] = fromBarcode.Barcode
+,[ToBalanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[FromBalanceQty] = fromBarcode.BalanceQty
 ,[NewBarcode] = ''
 ,[Poid] = i2.ToPOID
 ,[Seq1] = i2.ToSeq1
@@ -1130,6 +1131,16 @@ left join FtyInventory f on f.POID = i2.ToPOID
     and f.Roll = i2.ToRoll and f.Dyelot = i2.ToDyelot
     and f.StockType = i2.ToStockType
 left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+outer apply(
+	select Barcode = iif(f2.Barcode = '' , fb2.Barcode,f2.Barcode)
+	,BalanceQty = f2.InQty-f2.OutQty+f2.AdjustQty
+	from FtyInventory f2
+	left join FtyInventory_Barcode fb2 on fb2.Ukey = f2.Ukey and fb2.TransactionID = i2.ID
+	where f2.POID = i2.FromPOID
+	and f2.Seq1 = i2.FromSeq1 and f2.Seq2 = i2.FromSeq2
+	and f2.Roll = i2.FromRoll and f2.Dyelot = i2.FromDyelot
+	and f2.StockType = i2.FromStockType
+)fromBarcode
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1142,10 +1153,10 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
 
             foreach (DataRow dr in dt.Rows)
             {
-                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
+                string strBarcode = MyUtility.Check.Empty(dr["ToBarcode"]) ? dr["FromBarcode"].ToString() : dr["ToBarcode"].ToString();
 
                 // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                if (!MyUtility.Check.Empty(dr["FromBalanceQty"]) && !MyUtility.Check.Empty(strBarcode))
                 {
                     if (strBarcode.Contains("-"))
                     {

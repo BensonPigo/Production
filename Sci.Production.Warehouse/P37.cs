@@ -636,6 +636,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+
+                    this.FtyBarcodeData(true);
                     this.SentToGensong_AutoWHFabric(true);
                     this.SentToGensong_AutoWH_ACC(true);
                     MyUtility.Msg.InfoBox("Confirmed successful");
@@ -866,6 +868,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+
+                    this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric(false);
                     this.SentToGensong_AutoWH_ACC(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
@@ -936,7 +940,7 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
 
                 // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                if (!MyUtility.Check.Empty(dr["balanceQty"]))
+                if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
                 {
                     if (strBarcode.Contains("-"))
                     {
