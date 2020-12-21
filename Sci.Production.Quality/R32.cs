@@ -78,7 +78,8 @@ namespace Sci.Production.Quality
                 #region SQL
 
                 sqlCmd.Append($@"
-SELECT c.*,co.OrderID,co.SEQ
+----QA R32 Summary
+SELECT c.*,co.OrderID,co.SEQ, co.Carton ,co.Ukey
 INTO #MainData1
 FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
@@ -140,7 +141,7 @@ WHERE 1=1
 
                 sqlCmd.Append($@"
 
-SELECT c.*,co.OrderID,co.SEQ
+SELECT c.*,co.OrderID,co.SEQ, co.Carton ,co.Ukey
 INTO #MainData
 FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
@@ -164,9 +165,10 @@ SELECT
 	,c.Team
 	,Qty = (SELECT Qty FROM Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
 	,c.Status
-	,c.Carton
+	,[Carton]= IIF(c.Carton ='' AND c.Stage = '3rd party','N/A',c.Carton)
 	,[CFA] = dbo.getPass1(c.CFA)
 	,c.stage
+	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 	,c.Result
 	,c.InspectQty
 	,c.DefectQty
@@ -194,29 +196,21 @@ SELECT
 	,c.Remark
 	,c.ID
 	,c.IsCombinePO
-	,[InsCtn]=IIF(c.stage = 'Final' OR c.Stage ='3rd party',
-	( 
-		SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
-		FROM CFAInspectionRecord cr
-		INNER JOIN CFAInspectionRecord_OrderSEQ crd ON cr.ID = crd.ID
-		WHERE crd.OrderID=c.OrderID AND crd.SEQ=c.SEQ
-	    AND cr.Status = 'Confirmed'
-	    AND cr.Stage=c.Stage
-	    AND cr.AuditDate <= c.AuditDate
-	    AND cr.ID  != c.ID
-	)
-	,NULL)
 	, Action = (
 		SELECT STUFF((SELECT DISTINCT CHAR(10)+ Action FROM CFAInspectionRecord_Detail WHERE ID = c.ID FOR XML PATH('')),1,1,'')
 	)
 INTO #tmp
 FROm #MainData  c
 
+----找出Staggered階段的紙箱資訊
 SELECT pd.*
-INTO #PackingList_Detail
+INTO #PackingList_Detail_Staggered
 FROM PackingList_Detail pd
 INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ AND t.ID = pd.StaggeredCFAInspectionRecordID
-
+UNION
+SELECT pd.*
+FROM PackingList_Detail pd
+INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ AND t.ID = pd.FirstStaggeredCFAInspectionRecordID
 
 SELECT DISTINCT pd.*
 INTO #PackingList_Detail2
@@ -246,12 +240,12 @@ SELECT  t.ID
 		,Qty
 		,Status
 		,[TTL CTN] = TtlCtn.Val
-		,[Inspected Ctn] = InspectedCtn.Val
-		,[Inspected PoQty]=InspectedPoQty.Val
+		,[Inspected Ctn] = IIF(t.Stage='Staggered', InspectedCtn_Staggered.Val, NULL)
+		,[Inspected PoQty] = IIF(t.Stage='Staggered', InspectedPoQty_Staggered.Val, NULL)
 		,Carton
 		,CFA
 		,Stage
-		,InsCtn = IIF(IsCombinePO=1,NULL,InsCtn)
+		,FirstInspection
 		,Result
 		,InspectQty
 		,DefectQty
@@ -259,81 +253,24 @@ SELECT  t.ID
 		,Remark
 FROM  #tmp t
 OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
+	SELECT [Val] = COUNT(1)
 	FROM #PackingList_Detail2 pd
-	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty=1
+	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty > 0 AND pd.CTNStartNo != ''
 )TtlCtn
 OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM #PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= t.ID AND pd.CTNQty=1
-)InspectedCtn
+	FROM #PackingList_Detail_Staggered pd
+	WHERE (pd.StaggeredCFAInspectionRecordID = t.ID OR pd.FirstStaggeredCFAInspectionRecordID = t.ID)
+          AND pd.CTNQty=1
+)InspectedCtn_Staggered    --計算Staggered階段的總箱數
 OUTER APPLY(
-	SELECT [Val] = SUM(DISTINCT pd.ShipQty)
-	FROM #PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= t.ID
-)InspectedPoQty
+	SELECT [Val] = SUM(pd.ShipQty)
+	FROM #PackingList_Detail_Staggered pd
+	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
+	AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,','))
+)InspectedPoQty_Staggered   --計算Staggered階段的總成衣件數
 
-DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
-");
-                }
-
-                // ISP20201551 的Detail寫法，先保留
-                if (this.reportType == "Detail")
-                {
-                    sqlCmd.Append($@"
-SELECT  t.ID
-        ,AuditDate
-		,BuyerDelivery
-		,OrderID
-		,CustPoNo
-		,StyleID
-		,BrandID
-		,Dest
-		,Seq
-        ,SewingLineID
-		,VasShas
-		,ClogReceivedPercentage
-		,MDivisionid
-		,FactoryID
-		,Shift
-		,Team
-		,Qty
-		,Status
-		,[TTL CTN] = TtlCtn.Val
-		,[Inspected Ctn] = InspectedCtn.Val
-		,[Inspected PoQty]=InspectedPoQty.Val
-		,Carton
-		,CFA
-		,Stage
-		,InsCtn = IIF(IsCombinePO=1,NULL,InsCtn)
-		,Result
-		,InspectQty
-		,DefectQty
-		,SQR
-		,DefectDescription
-		,AreaCodeDesc
-		,NoOfDefect
-		,Remark
-		,Action
-FROM  #tmp t
-OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM #PackingList_Detail2 pd
-	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty=1
-)TtlCtn
-OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM #PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= t.ID AND pd.CTNQty=1
-)InspectedCtn
-OUTER APPLY(
-	SELECT [Val] = SUM(DISTINCT pd.ShipQty)
-	FROM #PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= t.ID
-)InspectedPoQty
-
-DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
+DROP TABLE #tmp ,#PackingList_Detail_Staggered ,#MainData ,#PackingList_Detail2,#MainData1
 ");
                 }
 
@@ -346,7 +283,8 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 #region SQL
 
                 sqlCmd.Append($@"
-SELECT c.*,co.OrderID,co.SEQ
+----QA R32 Detail
+SELECT c.*,co.OrderID,co.SEQ, co.Carton
 INTO #MainData1
 FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
@@ -416,7 +354,7 @@ WHERE 1=1
 
                 sqlCmd.Append($@"
 
-SELECT c.*,co.OrderID,co.SEQ
+SELECT c.*,co.OrderID,co.SEQ, co.Carton
 INTO #MainData
 FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
@@ -440,9 +378,10 @@ SELECT
 	,c.Team
 	,Qty = (SELECT Qty FROM Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
 	,c.Status
-	,c.Carton
+	,[Carton]= IIF(c.Carton ='' AND c.Stage = '3rd party','N/A',c.Carton)
 	,[CFA] = dbo.getPass1(c.CFA)
 	,c.stage
+	,[FirstInspection] = IIF(c.FirstInspection = 1, 'Y','')
 	,c.Result
 	,c.InspectQty
 	,c.DefectQty
@@ -453,18 +392,6 @@ SELECT
 	,cd.Remark
 	,c.ID
 	,c.IsCombinePO
-	,[InsCtn]=IIF(c.stage = 'Final' OR c.Stage ='3rd party',
-	( 
-		SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
-		FROM CFAInspectionRecord cr
-		INNER JOIN CFAInspectionRecord_OrderSEQ crd ON cr.ID = crd.ID
-		WHERE crd.OrderID=c.OrderID AND crd.SEQ=c.SEQ
-	    AND cr.Status = 'Confirmed'
-	    AND cr.Stage=c.Stage
-	    AND cr.AuditDate <= c.AuditDate
-	    AND cr.ID  != c.ID
-	)
-	,NULL)
 	, [Action]= cd.Action
 	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,iif(isnull(cd.GarmentDefectCodeID, '') = '', concat(row_Number()over(order by c.ID),''), cd.GarmentDefectCodeID))
 INTO #tmp
@@ -474,10 +401,15 @@ LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
 LEFT JOIN CfaArea ON CfaArea.ID = cd.CFAAreaID
 
 
+----找出Staggered階段的紙箱資訊
 SELECT pd.*
-INTO #PackingList_Detail
+INTO #PackingList_Detail_Staggered
 FROM PackingList_Detail pd
 INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ AND t.ID = pd.StaggeredCFAInspectionRecordID
+UNION
+SELECT pd.*
+FROM PackingList_Detail pd
+INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ AND t.ID = pd.FirstStaggeredCFAInspectionRecordID
 
 
 SELECT DISTINCT pd.*
@@ -506,12 +438,12 @@ SELECT   t.ID
 		,Qty
 		,Status
 		,[TTL CTN] = TtlCtn.Val
-		,[Inspected Ctn] = InspectedCtn.Val
-		,[Inspected PoQty]=InspectedPoQty.Val
+		,[Inspected Ctn] = IIF(t.Stage='Staggered', InspectedCtn_Staggered.Val, NULL)
+		,[Inspected PoQty] = IIF(t.Stage='Staggered', InspectedPoQty_Staggered.Val, NULL)
 		,Carton
 		,CFA
 		,Stage
-		,InsCtn = IIF(IsCombinePO=1,NULL,InsCtn)
+		,FirstInspection
 		,Result
 		,InspectQty
 		,DefectQty
@@ -523,23 +455,25 @@ SELECT   t.ID
 		,Action
 FROM  #tmp t
 OUTER APPLY(
-	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
+	SELECT [Val] = COUNT(1)
 	FROM #PackingList_Detail2 pd
-	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty=1
+	WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq AND pd.CTNQty > 0 AND pd.CTNStartNo != ''
 )TtlCtn
 OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-	FROM #PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= t.ID AND pd.CTNQty=1
-)InspectedCtn
+	FROM #PackingList_Detail_Staggered pd
+	WHERE (pd.StaggeredCFAInspectionRecordID = t.ID OR pd.FirstStaggeredCFAInspectionRecordID = t.ID)
+          AND pd.CTNQty=1
+)InspectedCtn_Staggered  --計算Staggered階段的總箱數
 OUTER APPLY(
-	SELECT [Val] = SUM(DISTINCT pd.ShipQty)
-	FROM #PackingList_Detail pd
-	WHERE pd.StaggeredCFAInspectionRecordID= t.ID
-)InspectedPoQty
+	SELECT [Val] = SUM(pd.ShipQty)
+	FROM #PackingList_Detail_Staggered pd
+	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
+	AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,','))
+)InspectedPoQty_Staggered  --計算Staggered階段的總成衣件數
 Order by id
 
-DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
+DROP TABLE #tmp ,#PackingList_Detail_Staggered ,#MainData ,#PackingList_Detail2,#MainData1
 
 ");
                 #endregion
@@ -585,7 +519,7 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 this.printData.ColumnsStringAdd("Carton");
                 this.printData.ColumnsStringAdd("CFA");
                 this.printData.ColumnsStringAdd("Stage");
-                this.printData.ColumnsStringAdd("InsCtn");
+                this.printData.ColumnsStringAdd("FirstInspection");
                 this.printData.ColumnsStringAdd("Result");
 
                 this.printData.ColumnsIntAdd("InspectQty");
@@ -597,6 +531,7 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 {
                     DataRow nRow = this.printData.NewRow();
                     List<DataRow> sameIDs = orderList.Where(o => MyUtility.Convert.GetString(o["ID"]) == cFAInspectionRecord_ID).ToList();
+                    string stage = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
 
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
@@ -619,13 +554,32 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["Qty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Qty"]));
                     nRow["Status"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Status"]);
                     nRow["TTL CTN"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["TTL CTN"]));
-                    nRow["Inspected Ctn"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected Ctn"]));
-                    nRow["Inspected PoQty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected PoQty"]));
 
-                    nRow["Carton"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Carton"]);
+                    // 非Staggered則顯示空白
+                    int? inspectedCtn = stage.ToUpper() == "STAGGERED" ? (int?)sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected Ctn"])) : null;
+                    if (inspectedCtn.HasValue)
+                    {
+                        nRow["Inspected Ctn"] = inspectedCtn.Value.ToString();
+                    }
+                    else
+                    {
+                        nRow["Inspected Ctn"] = DBNull.Value;
+                    }
+
+                    int? inspectedPoQty = stage.ToUpper() == "STAGGERED" ? (int?)sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected PoQty"])) : null;
+                    if (inspectedPoQty.HasValue)
+                    {
+                        nRow["Inspected PoQty"] = inspectedPoQty.Value.ToString();
+                    }
+                    else
+                    {
+                        nRow["Inspected PoQty"] = DBNull.Value;
+                    }
+
+                    nRow["Carton"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Carton"])).JoinToString(Environment.NewLine);
                     nRow["CFA"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["CFA"]);
-                    nRow["Stage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
-                    nRow["InsCtn"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["InsCtn"]);
+                    nRow["Stage"] = stage;
+                    nRow["FirstInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FirstInspection"]);
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
 
                     // 表頭 CFAInspectionRecord 的值, 不重複加總
@@ -670,7 +624,7 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 this.printData.ColumnsStringAdd("Carton");
                 this.printData.ColumnsStringAdd("CFA");
                 this.printData.ColumnsStringAdd("Stage");
-                this.printData.ColumnsStringAdd("InsCtn");
+                this.printData.ColumnsStringAdd("FirstInspection");
                 this.printData.ColumnsStringAdd("Result");
 
                 this.printData.ColumnsIntAdd("InspectQty");
@@ -689,6 +643,7 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                 {
                     DataRow nRow = this.printData.NewRow();
                     List<DataRow> sameIDs = orderList.Where(o => MyUtility.Convert.GetString(o["CFAInspectionRecord_Detail_Key"]) == cFAInspectionRecord_ID).ToList();
+                    string stage = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
 
                     nRow["AuditDate"] = MyUtility.Convert.GetDate(sameIDs.FirstOrDefault()["AuditDate"]).Value.ToShortDateString();
                     nRow["BuyerDelivery"] = sameIDs.Select(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]).Value.ToShortDateString()).JoinToString(Environment.NewLine);
@@ -711,13 +666,32 @@ DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#PackingList_Detail2,#MainData1
                     nRow["Qty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Qty"]));
                     nRow["Status"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Status"]);
                     nRow["TTL CTN"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["TTL CTN"]));
-                    nRow["Inspected Ctn"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected Ctn"]));
-                    nRow["Inspected PoQty"] = sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected PoQty"]));
 
-                    nRow["Carton"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Carton"]);
+                    // 非Staggered則顯示空白
+                    int? inspectedCtn = stage.ToUpper() == "STAGGERED" ? (int?)sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected Ctn"])) : null;
+                    if (inspectedCtn.HasValue)
+                    {
+                        nRow["Inspected Ctn"] = inspectedCtn.Value.ToString();
+                    }
+                    else
+                    {
+                        nRow["Inspected Ctn"] = DBNull.Value;
+                    }
+
+                    int? inspectedPoQty = stage.ToUpper() == "STAGGERED" ? (int?)sameIDs.Sum(o => MyUtility.Convert.GetInt(o["Inspected PoQty"])) : null;
+                    if (inspectedPoQty.HasValue)
+                    {
+                        nRow["Inspected PoQty"] = inspectedPoQty.Value.ToString();
+                    }
+                    else
+                    {
+                        nRow["Inspected PoQty"] = DBNull.Value;
+                    }
+
+                    nRow["Carton"] = sameIDs.Select(o => MyUtility.Convert.GetString(o["Carton"])).JoinToString(Environment.NewLine);
                     nRow["CFA"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["CFA"]);
                     nRow["Stage"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Stage"]);
-                    nRow["InsCtn"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["InsCtn"]);
+                    nRow["FirstInspection"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["FirstInspection"]);
                     nRow["Result"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Result"]);
 
                     nRow["InspectQty"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["InspectQty"]);

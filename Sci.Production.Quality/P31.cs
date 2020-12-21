@@ -98,7 +98,7 @@ AND b.OrderID='{this.CurrentMaintain["ID"].ToString()}'
 AND b.Seq='{this.CurrentMaintain["Seq"].ToString()}'
 ";
 
-            this.disFinalCtn.Value = MyUtility.GetValue.Lookup(query);
+            //this.disFinalCtn.Value = MyUtility.GetValue.Lookup(query);
 
             query = $@"
 select COUNT(DISTINCT a.ID)
@@ -110,7 +110,7 @@ AND b.OrderID='{this.CurrentMaintain["ID"].ToString()}'
 AND b.Seq='{this.CurrentMaintain["Seq"].ToString()}'
 ";
 
-            this.dis3rdPartyCtn.Value = MyUtility.GetValue.Lookup(query);
+            //this.dis3rdPartyCtn.Value = MyUtility.GetValue.Lookup(query);
 
             this.disPO.Value = MyUtility.GetValue.Lookup($@"
 SELECT  CustPoNo

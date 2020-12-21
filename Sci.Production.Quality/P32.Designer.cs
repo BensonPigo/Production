@@ -80,10 +80,10 @@
             this.txtSpSeq = new Sci.Production.Class.TxtSpSeq();
             this.disArticle = new Sci.Win.UI.DisplayBox();
             this.label9 = new Sci.Win.UI.Label();
-            this.disInsCtn = new Sci.Win.UI.DisplayBox();
             this.chkIsCombinePO = new Sci.Win.UI.CheckBox();
             this.btnSettingSpSeq = new Sci.Win.UI.Button();
             this.gridSpSeq = new Sci.Win.UI.Grid();
+            this.chkFirstInspection = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -103,10 +103,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkFirstInspection);
             this.masterpanel.Controls.Add(this.gridSpSeq);
             this.masterpanel.Controls.Add(this.btnSettingSpSeq);
             this.masterpanel.Controls.Add(this.chkIsCombinePO);
-            this.masterpanel.Controls.Add(this.disInsCtn);
             this.masterpanel.Controls.Add(this.disArticle);
             this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.labelStatus);
@@ -205,10 +205,10 @@
             this.masterpanel.Controls.SetChildIndex(this.labelStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.label9, 0);
             this.masterpanel.Controls.SetChildIndex(this.disArticle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.disInsCtn, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkIsCombinePO, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSettingSpSeq, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridSpSeq, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkFirstInspection, 0);
             // 
             // detailpanel
             // 
@@ -507,7 +507,7 @@
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(137, 23);
             this.label26.TabIndex = 55;
-            this.label26.Text = "Inspection stage & No";
+            this.label26.Text = "Inspection stage";
             // 
             // label27
             // 
@@ -632,7 +632,6 @@
             // txtInspectedCarton
             // 
             this.txtInspectedCarton.BackColor = System.Drawing.Color.White;
-            this.txtInspectedCarton.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Carton", true));
             this.txtInspectedCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInspectedCarton.Location = new System.Drawing.Point(604, 118);
             this.txtInspectedCarton.Name = "txtInspectedCarton";
@@ -773,15 +772,6 @@
             this.label9.TabIndex = 70;
             this.label9.Text = "Article";
             // 
-            // disInsCtn
-            // 
-            this.disInsCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disInsCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disInsCtn.Location = new System.Drawing.Point(714, 64);
-            this.disInsCtn.Name = "disInsCtn";
-            this.disInsCtn.Size = new System.Drawing.Size(33, 23);
-            this.disInsCtn.TabIndex = 72;
-            // 
             // chkIsCombinePO
             // 
             this.chkIsCombinePO.AutoSize = true;
@@ -818,7 +808,7 @@
             this.gridSpSeq.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSpSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSpSeq.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSpSeq.Location = new System.Drawing.Point(749, 35);
+            this.gridSpSeq.Location = new System.Drawing.Point(720, 35);
             this.gridSpSeq.Name = "gridSpSeq";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -833,8 +823,20 @@
             this.gridSpSeq.RowTemplate.Height = 24;
             this.gridSpSeq.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSpSeq.ShowCellToolTips = false;
-            this.gridSpSeq.Size = new System.Drawing.Size(200, 250);
+            this.gridSpSeq.Size = new System.Drawing.Size(229, 250);
             this.gridSpSeq.TabIndex = 75;
+            // 
+            // chkFirstInspection
+            // 
+            this.chkFirstInspection.AutoSize = true;
+            this.chkFirstInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstInspection", true));
+            this.chkFirstInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkFirstInspection.Location = new System.Drawing.Point(464, 10);
+            this.chkFirstInspection.Name = "chkFirstInspection";
+            this.chkFirstInspection.Size = new System.Drawing.Size(114, 21);
+            this.chkFirstInspection.TabIndex = 76;
+            this.chkFirstInspection.Text = "1st Inspection";
+            this.chkFirstInspection.UseVisualStyleBackColor = true;
             // 
             // P32
             // 
@@ -929,9 +931,9 @@
         private Win.UI.Label labelStatus;
         private Win.UI.DisplayBox disArticle;
         private Win.UI.Label label9;
-        private Win.UI.DisplayBox disInsCtn;
         private Win.UI.Grid gridSpSeq;
         private Win.UI.Button btnSettingSpSeq;
         private Win.UI.CheckBox chkIsCombinePO;
+        private Win.UI.CheckBox chkFirstInspection;
     }
 }

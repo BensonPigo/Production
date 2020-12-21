@@ -89,10 +89,8 @@ namespace Sci.Production.Quality
 
 SELECT  
 oq.CFAFinalInspectResult
-,[FinalInsCtn]=FinalInsCtn.Val
 ,[CFAIs3rdInspect] = IIF(oq.CFAIs3rdInspect = 1, 'Y','N')
 ,oq.CFA3rdInspectResult 
-,[ThirdInsCtn]=ThirdInsCtn.Val
 ,o.MDivisionID
 ,o.FactoryID
 ,oq.BuyerDelivery
@@ -211,24 +209,6 @@ OUTER APPLY(
 				and pdCheck.ReceiveDate is null
 	)
 )LastReceived 
-OUTER APPLY (
-	select Val=COUNT(DISTINCT a.ID)
-	from CFAInspectionRecord a
-    INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID= b.ID
-	where Status='Confirmed'
-		AND Stage='Final'
-		AND b.OrderID=oq.Id
-		AND b.Seq=oq.Seq
-)FinalInsCtn
-OUTER APPLY (
-	select Val=COUNT(DISTINCT a.ID)
-	from CFAInspectionRecord a
-    INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID= b.ID
-	where Status='Confirmed'
-		AND Stage='3rd party'
-		AND b.OrderID=oq.Id
-		AND b.Seq=oq.Seq
-)ThirdInsCtn
 WHERE 1=1
 ");
             #endregion
