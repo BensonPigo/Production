@@ -13,6 +13,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class B02 : Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public B02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -115,18 +116,6 @@ namespace Sci.Production.Warehouse
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-
-            // AutoWHFabric WebAPI for Gensong
-            //if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            //{
-            //    if (string.Compare(this.CurrentMaintain["StockType"].ToString(), "B", true) == 0)
-            //    {
-            //        DataTable dtMain = this.CurrentMaintain.Table.Clone();
-            //        dtMain.ImportRow(this.CurrentMaintain);
-            //        Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
-            //       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            //    }
-            //}
         }
 
         private bool CheckCode()

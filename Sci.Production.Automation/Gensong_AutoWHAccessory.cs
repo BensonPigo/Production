@@ -197,7 +197,7 @@ and exists(
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
         /// <param name="isConfirmed">bool</param>
-        public void SentSubTransfer_DetailToGensongAutoWHAccessory(DataTable dtMaster,bool isConfirmed)
+        public void SentSubTransfer_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {

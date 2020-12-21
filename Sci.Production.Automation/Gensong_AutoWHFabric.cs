@@ -337,6 +337,7 @@ and exists(
         /// Cutplan_Detail To Gensong
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="isConfirmed">bool</param>
         public void SentCutplan_DetailToGensongAutoWHFabric(DataTable dtDetail, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
@@ -545,6 +546,7 @@ and exists(
         /// ReturnReceipt To Gensong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
+        /// <param name="isConfirmed">bool</param>
         public void SentReturnReceiptToGensongAutoWHFabric(DataTable dtMaster, bool isConfirmed)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
