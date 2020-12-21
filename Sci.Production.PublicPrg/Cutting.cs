@@ -2430,6 +2430,9 @@ DROP TABLE #beforeTmp
             public string Group_left { get; set; }
 
             /// <inheritdoc/>
+            public string CutRef { get; set; }
+
+            /// <inheritdoc/>
             public string Tone { get; set; }
 
             /// <inheritdoc/>
@@ -2452,6 +2455,9 @@ DROP TABLE #beforeTmp
 
             /// <inheritdoc/>
             public string Body_Cut { get; set; }
+
+            /// <inheritdoc/>
+            public int SubCut { get; set; }
 
             /// <inheritdoc/>
             public string Parts { get; set; }

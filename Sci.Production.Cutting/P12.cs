@@ -723,7 +723,13 @@ OPTION (RECOMPILE)"
         private void PrintBarcode()
         {
             this.grid1.ValidateControl();
-            DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
+            if (this.dtt == null)
+            {
+                return;
+            }
+
+            // DefaultView 是依據使用者排序列印
+            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
             if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
@@ -736,6 +742,7 @@ OPTION (RECOMPILE)"
             {
                 Group_right = row1["Group"].ToString(),
                 Group_left = row1["left"].ToString(),
+                CutRef = string.Empty,
                 Tone = MyUtility.Convert.GetString(row1["Tone"]),
                 Line = row1["Line"].ToString(),
                 Cell = row1["Cell"].ToString(),
@@ -744,6 +751,7 @@ OPTION (RECOMPILE)"
                 Style = row1["Style"].ToString(),
                 MarkerNo = row1["MarkerNo"].ToString(),
                 Body_Cut = row1["Body_Cut"].ToString(),
+                SubCut = -1,
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
                 Article = row1["Article"].ToString(),
@@ -765,6 +773,7 @@ OPTION (RECOMPILE)"
                 Cut = MyUtility.Convert.GetString(row1["cut"]),
                 GroupCombCut = 0,
             }).ToList();
+            P10_Print.SubCutno(data);
 
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -930,6 +939,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
             {
                 Group_right = dr["Group"].ToString(),
                 Group_left = dr["left"].ToString(),
+                CutRef = string.Empty,
                 Tone = dr["Tone"].ToString(),
                 Line = dr["Line"].ToString(),
                 Cell = dr["Cell"].ToString(),
@@ -938,6 +948,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 Style = dr["Style"].ToString(),
                 MarkerNo = dr["MarkerNo"].ToString(),
                 Body_Cut = dr["Body_Cut"].ToString(),
+                SubCut = -1,
                 Parts = dr["Parts"].ToString(),
                 Color = dr["Color2"].ToString(),
                 Article = dr["Article"].ToString(),
@@ -962,6 +973,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 BundleID = dr["BundleID"].ToString(),
                 BundleNo = dr["Bundle"].ToString(),
             }).ToList();
+            P10_Print.SubCutno(data);
 
             if (data.Count > 0)
             {

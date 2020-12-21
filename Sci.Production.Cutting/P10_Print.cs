@@ -344,6 +344,7 @@ order by x.[Bundle]");
                 {
                     Group_right = row1["Group_right"].ToString(),
                     Group_left = row1["Group_left"].ToString(),
+                    CutRef = string.Empty,
                     Tone = MyUtility.Convert.GetString(row1["Tone"]),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
@@ -352,6 +353,7 @@ order by x.[Bundle]");
                     Style = row1["Style"].ToString(),
                     MarkerNo = row1["MarkerNo"].ToString(),
                     Body_Cut = row1["Body_Cut"].ToString(),
+                    SubCut = -1,
                     Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
                     Article = row1["Article"].ToString(),
@@ -370,6 +372,7 @@ order by x.[Bundle]");
                     ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
                 }).ToList();
+                SubCutno(data);
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
@@ -463,6 +466,7 @@ order by x.[Bundle]");
                     {
                         Group_right = dr["Group_right"].ToString(),
                         Group_left = dr["Group_left"].ToString(),
+                        CutRef = string.Empty,
                         Tone = dr["Tone"].ToString(),
                         Line = dr["Line"].ToString(),
                         Cell = dr["Cell"].ToString(),
@@ -471,6 +475,7 @@ order by x.[Bundle]");
                         Style = dr["Style"].ToString(),
                         MarkerNo = dr["MarkerNo"].ToString(),
                         Body_Cut = dr["Body_Cut"].ToString(),
+                        SubCut = -1,
                         Parts = dr["Parts"].ToString(),
                         Color = dr["Color"].ToString(),
                         Article = dr["Article"].ToString(),
@@ -492,6 +497,7 @@ order by x.[Bundle]");
                         BundleID = dr["BundleID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
                     }).ToList();
+                    SubCutno(data);
 
                     this.ShowWaitMessage("Process Print!");
                     DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(data, 0, rfCardErase);
@@ -676,6 +682,21 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                 i++;
             });
+        }
+
+        /// <inheritdoc/>
+        internal static void SubCutno(List<P10_PrintData> data)
+        {
+            // 處理時排序不能變
+            foreach (var item in data)
+            {
+                item.SubCut = data.Where(w => w.CutRef == item.CutRef && w.Body_Cut == item.Body_Cut).Max(m => m.SubCut) + 1;
+            }
+
+            foreach (var item in data)
+            {
+                item.Body_Cut += item.SubCut == 0 ? string.Empty : "-" + item.SubCut.ToString();
+            }
         }
 
         /// <inheritdoc/>
