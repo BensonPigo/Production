@@ -808,7 +808,7 @@ where Junk = 0
 
                 if (columIndex == 1)
                 {
-                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    DataTable dt = ((DataTable)this.detailgridbs.DataSource).Select("IsShow = 1").CopyToDataTable();
                     dt.DefaultView.Sort = "sortNO, No";
                     this.detailgridbs.DataSource = dt;
                 }
