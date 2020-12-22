@@ -325,13 +325,44 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Check.Seek(string.Format("select ID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            //if (MyUtility.Check.Seek(string.Format("select ID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            //{
+            //    MyUtility.Msg.WarningBox("The pullout has detail data, it can't be deleted!!");
+            //    return false;
+            //}
+
+            string ttlShipQty = MyUtility.GetValue.Lookup($"select Sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
+            bool existsPullout_History = MyUtility.Check.Seek($"select 1 from Pullout_History WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
+            bool existsPullout_Revise = MyUtility.Check.Seek($"select 1 from Pullout_Revise WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New" || MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]) || ttlShipQty == "0" || !existsPullout_History || !existsPullout_Revise)
             {
-                MyUtility.Msg.WarningBox("The pullout has detail data, it can't be deleted!!");
+                MyUtility.Msg.WarningBox("This pullout has transaction record, it cannot be delete!!");
                 return false;
             }
 
             return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePre()
+        {
+            string sqlClearPackingList = $@"
+update p
+SET p.PulloutDate  = NULL
+FROM Pullout pu
+INNER JOIN Pullout_Detail pud ON pu.ID = pud.ID
+INNER JOIN PackingList p ON p.ID = pud.PackingListID AND p.PulloutID = pu.ID
+WHERE pu.ID = '{this.CurrentMaintain["ID"]}'
+
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlClearPackingList);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickDeletePre();
         }
 
         /// <inheritdoc/>
