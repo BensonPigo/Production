@@ -241,7 +241,7 @@ namespace Sci.Production.Planning
                         PROManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
                         SIOEarnedHrs = x.Sum(y => y.Field<decimal>("Earnedhours")),
                         SIOManhours = x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
-                        SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
+                        SamplesSIO = x.Sum(y => y.Field<decimal>("Earnedhours")) == 0 ? 0 : x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
                                      x.Sum(y => y.Field<decimal>("Earnedhours")),
                     })
                     .ToList();
@@ -255,8 +255,8 @@ namespace Sci.Production.Planning
                         x.Key.Country,
                         x.Key.SeasonID,
                         x.Key.Orderseq,
-                        ProEff = x.Sum(y => y.Field<decimal>("Earnedhours2")) / x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
-                        SIOEff = x.Sum(y => y.Field<decimal>("Earnedhours")) / x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
+                        ProEff = x.Sum(y => y.Field<decimal>("TotalWorkingHours")) == 0 ? 0 : x.Sum(y => y.Field<decimal>("Earnedhours2")) / x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
+                        SIOEff = x.Sum(y => y.Field<decimal>("TotalWorkingHours")) == 0 ? 0 : x.Sum(y => y.Field<decimal>("Earnedhours")) / x.Sum(y => y.Field<decimal>("TotalWorkingHours")),
                     })
                     .OrderBy(x => x.Country)
                     .ThenBy(x => x.SeasonID)
@@ -269,7 +269,7 @@ namespace Sci.Production.Planning
                         .Select(x => new
                         {
                             x.Key.Country,
-                            SamplesSIO = x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
+                            SamplesSIO = x.Sum(y => y.Field<decimal>("Earnedhours")) == 0 ? 0 : x.Where(y => y.Field<string>("IsGSDPro").EqualString("V")).Sum(y => y.Field<int>("TotalOutput") * y.Field<decimal>("GSD") / 60) /
                                          x.Sum(y => y.Field<decimal>("Earnedhours")),
                         })
                         .ToList();
