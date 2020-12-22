@@ -20,6 +20,7 @@ namespace Sci.Production.IE
         private string contentType;
         private string strLanguage;
         private DataTable operationCode;
+        private DataTable machineTypeDT;
         private DataTable nodist;
         private DataTable nodist2;
         private DataTable nodistPPA;
@@ -191,6 +192,7 @@ select   a.GroupKey
         ,a.No
         ,a.IsHide
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
+        ,[IsShowinIEP03] = cast(isnull(show.IsShowinIEP03, 1) as bit)
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join OperationDesc od on o.ID = od.ID
@@ -221,17 +223,18 @@ outer apply (
 	where o.ID = o2.ID
 )show
 where a.ID = {0}
-and cast(isnull(show.IsShowinIEP03, 1) as bit) = 1
 ",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
                 this.strLanguage,
                 Env.User.Factory);
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.machineTypeDT);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query operation code data fail\r\n" + result.ToString());
                 return failResult;
             }
+
+            this.operationCode = this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).CopyToDataTable();
             #endregion
             #region Machine Type IsPPa
             sqlCmd = string.Format(
@@ -889,13 +892,20 @@ order by NO
             #region Machine Type
             if (showMachineType)
             {
-                string[] noPPA = this.operationCode.AsEnumerable()
-                            .Where(s => (s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")))
-                            .Select(s => s["rn"].ToString()).ToArray();
-                if (noPPA.Length > 10)
+                var noPPA = this.machineTypeDT.AsEnumerable()
+                            .Where(s => (s["IsShowinIEP03"].Equals(false) && s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")))
+                            .Select(s => new
+                            {
+                                rn = s["rn"].ToString(),
+                                MachineTypeID = s["MachineTypeID"].ToString(),
+                                ArtWork = this.contentType == "A" ? MyUtility.Convert.GetString(s["Annotation"]).Trim() : MyUtility.Convert.GetString(s["DescEN"]).Trim(),
+                                OperationID = s["OperationID"].ToString(),
+                            })
+                            .ToList();
+                if (noPPA.Count() > 10)
                 {
                     rngToCopy = worksheet.get_Range("A92:A92").EntireRow; // 選取要被複製的資料
-                    for (int i = 10; i < noPPA.Length; i++)
+                    for (int i = 10; i < noPPA.Count(); i++)
                     {
                         Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A93", Type.Missing).EntireRow; // 選擇要被貼上的位置
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
@@ -903,12 +913,12 @@ order by NO
                 }
 
                 int idxppa = 0;
-                foreach (string item in noPPA)
+                foreach (var item in noPPA)
                 {
-                    worksheet.Cells[93 + idxppa, 1] = $"=IF(ISNA(VLOOKUP(D{93 + idxppa},Operation,11,0)),\"\",VLOOKUP(D{93 + idxppa},Operation,11,0))";
-                    worksheet.Cells[93 + idxppa, 5] = $"=IF(ISNA(VLOOKUP(D{93 + idxppa},Operation,3,0)),\"\",VLOOKUP(D{93 + idxppa},Operation,3,0))";
-                    worksheet.Cells[93 + idxppa, 10] = $"=IF(ISNA(VLOOKUP(D{93 + idxppa},Operation,4,0)),\"\",VLOOKUP(D{93 + idxppa},Operation,4,0))";
-                    worksheet.Cells[93 + idxppa, 4] = item;
+                    worksheet.Cells[93 + idxppa, 1] = item.OperationID;
+                    worksheet.Cells[93 + idxppa, 5] = item.ArtWork;
+                    worksheet.Cells[93 + idxppa, 10] = item.MachineTypeID;
+                    worksheet.Cells[93 + idxppa, 4] = item.rn;
                     idxppa++;
                 }
             }
