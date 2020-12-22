@@ -311,6 +311,7 @@
             this.txtuser2 = new Sci.Production.Class.Txtuser();
             this.txttpeuser1 = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.Txttpeuser();
+            this.chkHangerPack = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -327,6 +328,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkHangerPack);
             this.detailcont.Controls.Add(this.chkNonRevenue);
             this.detailcont.Controls.Add(this.displayBuyBackReason);
             this.detailcont.Controls.Add(this.btnComboType);
@@ -463,10 +465,10 @@
             this.detailcont.Controls.Add(this.txtpaytermar1);
             this.detailcont.Controls.Add(this.txtcurrency1);
             this.detailcont.Controls.Add(this.txtcountry1);
-            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txtuser2);
-            this.detailcont.Controls.Add(this.txttpeuser1);
+            this.detailcont.Controls.Add(this.txtuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
+            this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
@@ -3486,6 +3488,20 @@
             this.txttpeuser2.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser2.TabIndex = 6;
             // 
+            // chkHangerPack
+            // 
+            this.chkHangerPack.AutoSize = true;
+            this.chkHangerPack.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HangerPack", true));
+            this.chkHangerPack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkHangerPack.IsSupportEditMode = false;
+            this.chkHangerPack.Location = new System.Drawing.Point(825, 311);
+            this.chkHangerPack.Name = "chkHangerPack";
+            this.chkHangerPack.ReadOnly = true;
+            this.chkHangerPack.Size = new System.Drawing.Size(97, 19);
+            this.chkHangerPack.TabIndex = 241;
+            this.chkHangerPack.Text = "Hanger Pack";
+            this.chkHangerPack.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3800,5 +3816,6 @@
         private Win.UI.Label labelKpiMNotice;
         private Win.UI.Button btnIntendedDeliveryDate;
         private Win.UI.CheckBox chkNonRevenue;
+        private Win.UI.CheckBox chkHangerPack;
     }
 }
