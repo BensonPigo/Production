@@ -30,7 +30,7 @@
         {
             this.lbConsignee = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
-            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
+            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSuppPMSDB();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -131,6 +131,7 @@
             this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ID", true));
             this.txtLocalSupp1.DisplayBox1Binding = "";
             this.txtLocalSupp1.IsFactory = true;
+            this.txtLocalSupp1.ConnectionName = "ProductionTPE";
             this.txtLocalSupp1.Location = new System.Drawing.Point(80, 9);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(258, 25);
@@ -175,6 +176,6 @@
         #endregion
         private Win.UI.Label lbConsignee;
         private Win.UI.CheckBox checkJunk;
-        private Class.TxtLocalSupp txtLocalSupp1;
+        private Class.TxtLocalSuppPMSDB txtLocalSupp1;
     }
 }
