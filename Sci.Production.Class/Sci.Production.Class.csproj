@@ -150,6 +150,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtLocalSuppPMSDB.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TxtLocalSuppPMSDB.Designer.cs">
+      <DependentUpon>TxtLocalSuppPMSDB.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtPulloutPort.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -677,6 +683,9 @@
     <EmbeddedResource Include="Txtcountry.resx">
       <DependentUpon>Txtcountry.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TxtLocalSuppPMSDB.resx">
+      <DependentUpon>TxtLocalSuppPMSDB.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TxtLocalSuppNoConfirm.resx">
       <DependentUpon>TxtLocalSuppNoConfirm.cs</DependentUpon>
