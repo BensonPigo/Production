@@ -48,6 +48,7 @@
     [TotalAPPEstAmtVW] NUMERIC(21, 2) NULL DEFAULT ((0)), 
     [NonDeclare] BIT NOT NULL DEFAULT (0), 
     [Foundry] BIT NULL DEFAULT ((0)), 
+    [DischargePortID] VARCHAR(20) NULL, 
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

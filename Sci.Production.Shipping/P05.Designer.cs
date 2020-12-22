@@ -94,13 +94,6 @@
             this.dateForward = new Sci.Win.UI.DateBox();
             this.labActFCRDate = new Sci.Win.UI.Label();
             this.dateActFCRDate = new Sci.Win.UI.DateBox();
-            this.txtSubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
-            this.txtUserHandle = new Sci.Production.Class.Txtuser();
-            this.txtShiptermShipmentTerm = new Sci.Production.Class.Txtshipterm();
-            this.txtShipmodeShippingMode = new Sci.Production.Class.Txtshipmode();
-            this.txtpaytermarPaymentTerm = new Sci.Production.Class.Txtpaytermar();
-            this.txtCountryDestination = new Sci.Production.Class.Txtcountry();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.btnBatchImportSO = new Sci.Win.UI.Button();
             this.btnUnCfmHis = new Sci.Win.UI.Button();
             this.numTotalAPPBookingVW = new Sci.Win.UI.NumericBox();
@@ -118,6 +111,15 @@
             this.labelDocumentRefNo = new Sci.Win.UI.Label();
             this.txtDocumentRefNo = new Sci.Win.UI.TextBox();
             this.btnDocumentRefNoFormat = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtPulloutPort1 = new Sci.Production.Class.TxtPulloutPort();
+            this.txtSubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.txtUserHandle = new Sci.Production.Class.Txtuser();
+            this.txtShiptermShipmentTerm = new Sci.Production.Class.Txtshipterm();
+            this.txtShipmodeShippingMode = new Sci.Production.Class.Txtshipmode();
+            this.txtpaytermarPaymentTerm = new Sci.Production.Class.Txtpaytermar();
+            this.txtCountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -134,6 +136,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtPulloutPort1);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnDocumentRefNoFormat);
             this.masterpanel.Controls.Add(this.txtDocumentRefNo);
             this.masterpanel.Controls.Add(this.labelDocumentRefNo);
@@ -315,6 +319,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelDocumentRefNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtDocumentRefNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDocumentRefNoFormat, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtPulloutPort1, 0);
             // 
             // detailpanel
             // 
@@ -1106,85 +1112,6 @@
             this.dateActFCRDate.Size = new System.Drawing.Size(130, 23);
             this.dateActFCRDate.TabIndex = 7;
             // 
-            // txtSubconForwarder
-            // 
-            this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
-            this.txtSubconForwarder.DisplayBox1Binding = "";
-            this.txtSubconForwarder.IsIncludeJunk = false;
-            this.txtSubconForwarder.IsMisc = false;
-            this.txtSubconForwarder.IsShipping = false;
-            this.txtSubconForwarder.IsSubcon = false;
-            this.txtSubconForwarder.Location = new System.Drawing.Point(679, 31);
-            this.txtSubconForwarder.Name = "txtSubconForwarder";
-            this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
-            this.txtSubconForwarder.TabIndex = 14;
-            this.txtSubconForwarder.TextBox1Binding = "";
-            // 
-            // txtUserHandle
-            // 
-            this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtUserHandle.DisplayBox1Binding = "";
-            this.txtUserHandle.Location = new System.Drawing.Point(679, 4);
-            this.txtUserHandle.Name = "txtUserHandle";
-            this.txtUserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txtUserHandle.TabIndex = 13;
-            this.txtUserHandle.TextBox1Binding = "";
-            // 
-            // txtShiptermShipmentTerm
-            // 
-            this.txtShiptermShipmentTerm.BackColor = System.Drawing.Color.White;
-            this.txtShiptermShipmentTerm.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ShipTermID", true));
-            this.txtShiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShiptermShipmentTerm.Location = new System.Drawing.Point(447, 29);
-            this.txtShiptermShipmentTerm.Name = "txtShiptermShipmentTerm";
-            this.txtShiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
-            this.txtShiptermShipmentTerm.TabIndex = 12;
-            // 
-            // txtShipmodeShippingMode
-            // 
-            this.txtShipmodeShippingMode.BackColor = System.Drawing.Color.White;
-            this.txtShipmodeShippingMode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
-            this.txtShipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtShipmodeShippingMode.FormattingEnabled = true;
-            this.txtShipmodeShippingMode.IsSupportUnselect = true;
-            this.txtShipmodeShippingMode.Location = new System.Drawing.Point(447, 2);
-            this.txtShipmodeShippingMode.Name = "txtShipmodeShippingMode";
-            this.txtShipmodeShippingMode.OldText = "";
-            this.txtShipmodeShippingMode.Size = new System.Drawing.Size(100, 24);
-            this.txtShipmodeShippingMode.TabIndex = 11;
-            this.txtShipmodeShippingMode.UseFunction = "ORDER";
-            // 
-            // txtpaytermarPaymentTerm
-            // 
-            this.txtpaytermarPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
-            this.txtpaytermarPaymentTerm.DisplayBox1Binding = "";
-            this.txtpaytermarPaymentTerm.Location = new System.Drawing.Point(102, 274);
-            this.txtpaytermarPaymentTerm.Name = "txtpaytermarPaymentTerm";
-            this.txtpaytermarPaymentTerm.Size = new System.Drawing.Size(347, 23);
-            this.txtpaytermarPaymentTerm.TabIndex = 10;
-            this.txtpaytermarPaymentTerm.TextBox1Binding = "";
-            // 
-            // txtCountryDestination
-            // 
-            this.txtCountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
-            this.txtCountryDestination.DisplayBox1Binding = "";
-            this.txtCountryDestination.Location = new System.Drawing.Point(101, 220);
-            this.txtCountryDestination.Name = "txtCountryDestination";
-            this.txtCountryDestination.Size = new System.Drawing.Size(200, 22);
-            this.txtCountryDestination.TabIndex = 9;
-            this.txtCountryDestination.TextBox1Binding = "";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(101, 111);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand.TabIndex = 5;
-            this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
-            // 
             // btnBatchImportSO
             // 
             this.btnBatchImportSO.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1387,6 +1314,105 @@
             this.btnDocumentRefNoFormat.UseVisualStyleBackColor = true;
             this.btnDocumentRefNoFormat.Click += new System.EventHandler(this.BtnDocumentRefNoFormat_Click);
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label1.Location = new System.Drawing.Point(5, 246);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.TabIndex = 91;
+            this.label1.Text = "Port Discharge";
+            // 
+            // txtPulloutPort1
+            // 
+            this.txtPulloutPort1.CountryID = "";
+            this.txtPulloutPort1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "DischargePortID", true));
+            this.txtPulloutPort1.DisplayBox1Binding = "";
+            this.txtPulloutPort1.Location = new System.Drawing.Point(102, 246);
+            this.txtPulloutPort1.Name = "txtPulloutPort1";
+            this.txtPulloutPort1.Size = new System.Drawing.Size(199, 22);
+            this.txtPulloutPort1.TabIndex = 92;
+            this.txtPulloutPort1.TextBox1Binding = "";
+            // 
+            // txtSubconForwarder
+            // 
+            this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
+            this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsIncludeJunk = false;
+            this.txtSubconForwarder.IsMisc = false;
+            this.txtSubconForwarder.IsShipping = false;
+            this.txtSubconForwarder.IsSubcon = false;
+            this.txtSubconForwarder.Location = new System.Drawing.Point(679, 31);
+            this.txtSubconForwarder.Name = "txtSubconForwarder";
+            this.txtSubconForwarder.Size = new System.Drawing.Size(170, 23);
+            this.txtSubconForwarder.TabIndex = 14;
+            this.txtSubconForwarder.TextBox1Binding = "";
+            // 
+            // txtUserHandle
+            // 
+            this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
+            this.txtUserHandle.DisplayBox1Binding = "";
+            this.txtUserHandle.Location = new System.Drawing.Point(679, 4);
+            this.txtUserHandle.Name = "txtUserHandle";
+            this.txtUserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txtUserHandle.TabIndex = 13;
+            this.txtUserHandle.TextBox1Binding = "";
+            // 
+            // txtShiptermShipmentTerm
+            // 
+            this.txtShiptermShipmentTerm.BackColor = System.Drawing.Color.White;
+            this.txtShiptermShipmentTerm.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ShipTermID", true));
+            this.txtShiptermShipmentTerm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShiptermShipmentTerm.Location = new System.Drawing.Point(447, 29);
+            this.txtShiptermShipmentTerm.Name = "txtShiptermShipmentTerm";
+            this.txtShiptermShipmentTerm.Size = new System.Drawing.Size(50, 23);
+            this.txtShiptermShipmentTerm.TabIndex = 12;
+            // 
+            // txtShipmodeShippingMode
+            // 
+            this.txtShipmodeShippingMode.BackColor = System.Drawing.Color.White;
+            this.txtShipmodeShippingMode.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ShipModeID", true));
+            this.txtShipmodeShippingMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShipmodeShippingMode.FormattingEnabled = true;
+            this.txtShipmodeShippingMode.IsSupportUnselect = true;
+            this.txtShipmodeShippingMode.Location = new System.Drawing.Point(447, 2);
+            this.txtShipmodeShippingMode.Name = "txtShipmodeShippingMode";
+            this.txtShipmodeShippingMode.OldText = "";
+            this.txtShipmodeShippingMode.Size = new System.Drawing.Size(100, 24);
+            this.txtShipmodeShippingMode.TabIndex = 11;
+            this.txtShipmodeShippingMode.UseFunction = "ORDER";
+            // 
+            // txtpaytermarPaymentTerm
+            // 
+            this.txtpaytermarPaymentTerm.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PayTermARID", true));
+            this.txtpaytermarPaymentTerm.DisplayBox1Binding = "";
+            this.txtpaytermarPaymentTerm.Location = new System.Drawing.Point(102, 274);
+            this.txtpaytermarPaymentTerm.Name = "txtpaytermarPaymentTerm";
+            this.txtpaytermarPaymentTerm.Size = new System.Drawing.Size(347, 23);
+            this.txtpaytermarPaymentTerm.TabIndex = 10;
+            this.txtpaytermarPaymentTerm.TextBox1Binding = "";
+            // 
+            // txtCountryDestination
+            // 
+            this.txtCountryDestination.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
+            this.txtCountryDestination.DisplayBox1Binding = "";
+            this.txtCountryDestination.Location = new System.Drawing.Point(101, 220);
+            this.txtCountryDestination.Name = "txtCountryDestination";
+            this.txtCountryDestination.Size = new System.Drawing.Size(200, 22);
+            this.txtCountryDestination.TabIndex = 9;
+            this.txtCountryDestination.TextBox1Binding = "";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(101, 111);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 5;
+            this.txtbrand.Validated += new System.EventHandler(this.Txtbrand_Validated);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1521,5 +1547,7 @@
         private Win.UI.TextBox txtDocumentRefNo;
         private Win.UI.Label labelDocumentRefNo;
         private Win.UI.Button btnDocumentRefNoFormat;
+        private Class.TxtPulloutPort txtPulloutPort1;
+        private Win.UI.Label label1;
     }
 }
