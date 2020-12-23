@@ -893,7 +893,7 @@ order by NO
             if (showMachineType)
             {
                 var noPPA = this.machineTypeDT.AsEnumerable()
-                            .Where(s => (s["IsShowinIEP03"].Equals(false) && s["IsHide"].Equals(true) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--")))
+                            .Where(s => (s["IsShowinIEP03"].Equals(false) || s["IsHide"].Equals(true)) && !s["OperationID"].ToString().Substring(0, 2).EqualString("--"))
                             .Select(s => new
                             {
                                 rn = s["rn"].ToString(),
