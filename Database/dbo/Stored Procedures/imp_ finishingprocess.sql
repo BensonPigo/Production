@@ -109,22 +109,32 @@ UpdLocation : Clog 儲位調整', N'SCHEMA', N'dbo', N'TABLE', N'TransferLocatio
 	END
 
 	IF OBJECT_ID(N'CompleteSacnPack') IS NULL
-	BEGIN
-		CREATE TABLE [dbo].[CompleteSacnPack](
-		[ID] [bigint] NOT NULL,
-		[SCICtnNo] [varchar](15) NOT NULL,
-		[ScanQty] [smallint] NOT NULL,
-		[ScanName] [varchar](10) NOT NULL,
-		[ScanEditDate] [datetime] NOT NULL,
-		[Lacking] [bit] NOT NULL,
-		[Time] [datetime] NOT NULL,
-		[SCIUpdate] [bit] NOT NULL DEFAULT ((0)),
-	 CONSTRAINT [PK_CompleteSacnPack] PRIMARY KEY CLUSTERED 
-	(
-		[ID] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
-
+	BEGIN 
+		CREATE TABLE [dbo].[CompleteSacnPack] (
+			ID				bigint NOT NULL,
+			SCICtnNo		varchar(15) NOT NULL,
+			Article			varchar(8) NOT NULL,
+			SizeCode		varchar(8) NOT NULL,
+			ScanQty			smallint NOT NULL,
+			ScanName		varchar(10) NOT NULL,
+			ScanEditDate	datetime NOT NULL,
+			Time			datetime NOT NULL,
+			SCIUpdate		bit NOT NULL,
+			CONSTRAINT [PK_CompleteSacnPack] PRIMARY KEY CLUSTERED 
+			(
+				ID ASC
+			)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+			) ON [PRIMARY]
+		;	
+		EXECUTE sp_addextendedproperty N'MS_Description', N'完成Sacn & Pack單號', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'ID';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'SCI箱號', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'SCICtnNo';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'顏色', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'Article';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'尺寸', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'SizeCode';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'掃描數量', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'ScanQty';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'掃描人員', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'ScanName';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'掃描日期', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'ScanEditDate';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'Sunrise完成時間', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'Time';
+		EXECUTE sp_addextendedproperty N'MS_Description', N'SCI是否已轉製', N'SCHEMA', N'dbo', N'TABLE', N'CompleteSacnPack', N'COLUMN', N'SCIUpdate';
 	END
 	
 	IF OBJECT_ID(N'CompleteCFAReceive') IS NULL
@@ -548,29 +558,43 @@ Begin
 		into #tmpCompleteSacnPack
 		from CompleteSacnPack where SCIUpdate=0
 
+		--根據SCICtnNo, Article, SizeCode，取出最後更新的時間
+		select SCICtnNo, Article, SizeCode,[Time]=MAX(Time)
+		INTO #LastTime
+		from #tmpCompleteSacnPack 
+		GROUP BY SCICtnNo, Article, SizeCode
+
+		--抓出最後更新的那一筆，更新PackingList_Detail
+		SELECT TOP  1 *
+		INTO #Last
+		FROm #tmpCompleteSacnPack c
+		WHERE EXISTS(SELECT 1 from #LastTime l WHERE l.SCICtnNo = c.SCICtnNo AND l.Article = c.Article AND l.SizeCode = c.SizeCode AND l.Time = c.Time)
+
+		----更新PackingList_Detail
 		update t
-		set t.ScanQty = s.ScanQty
-		,t.ScanName = s.ScanName
-		,t.ScanEditDate = s.ScanEditDate
-		,t.Lacking=s.Lacking
+		set  t.ScanQty = s.ScanQty
+			,t.ScanName = s.ScanName
+			,t.ScanEditDate = s.ScanEditDate
 		from Production.dbo.PackingList_Detail t
-		inner join #tmpCompleteSacnPack s on t.SCICtnNo=s.SCICtnNo
+		inner join #Last s on t.SCICtnNo=s.SCICtnNo AND t.Article=s.Article AND t.SizeCode=s.SizeCode 
 
 		-- 新增@tmpPacking
 		insert into @tmpPackingList
 		select distinct t.ID
 		from Production.dbo.PackingList_Detail t
-		inner join #tmpCompleteSacnPack s on t.SCICtnNo=s.SCICtnNo
+		inner join #Last s on t.SCICtnNo=s.SCICtnNo AND t.Article=s.Article AND t.SizeCode=s.SizeCode 
 
+		--更新SCIUpdate
 		update t
 		set t.SCIUpdate=1
 		from CompleteSacnPack t
 		where exists(
 			select * 
-			from #tmpCompleteSacnPack tmp
-			inner join Production.dbo.PackingList_Detail pd 
-				on tmp.SCICtnNo = pd.SCICtnNo
-			where t.ID = tmp.id)
+			from #Last l
+			inner join Production.dbo.PackingList_Detail pd on l.SCICtnNo = pd.SCICtnNo AND  l.Article = pd.Article AND  l.SizeCode = pd.SizeCode
+			where t.SCICtnNo = l.SCICtnNo AND t.Article = l.Article AND t.SizeCode = l.SizeCode
+			AND t.Time <= l.Time ----最後一筆Time之前的(包含最後一筆)都更新成true
+		)
 	End
 
 	
