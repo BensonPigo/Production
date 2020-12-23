@@ -124,7 +124,9 @@ a.Ukey	= b.Ukey
 ,a.ExpectionFormStatus   = b.ExpectionFormStatus
 ,a.ExpectionFormDate   = b.ExpectionFormDate
 ,a.ThickFabricBulk = b.ThickFabricBulk
-from Production.dbo.Style as a inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
+,a.HangerPack	= b.HangerPack
+from Production.dbo.Style as a 
+inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
 
 RAISERROR('imp_Style - Starts',0,0)
@@ -201,6 +203,7 @@ ID
 ,ExpectionFormStatus
 ,ExpectionFormDate
 ,ThickFabricBulk
+,HangerPack
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -267,6 +270,7 @@ select
 ,b.ExpectionFormStatus
 ,b.ExpectionFormDate
 ,b.ThickFabricBulk
+,b.HangerPack
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )

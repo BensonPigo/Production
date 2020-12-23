@@ -69,6 +69,7 @@
 	ExpectionFormStatus Varchar(1) NOT NULL CONSTRAINT [DF_Style_ExpectionFormStatus] DEFAULT(''),
 	ExpectionFormDate Date NULL,
     [ThickFabricBulk] BIT NULL DEFAULT ((0)), 
+    [HangerPack] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 GO
