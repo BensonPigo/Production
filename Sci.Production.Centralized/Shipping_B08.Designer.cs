@@ -214,6 +214,7 @@
             // Shipping_B08
             // 
             this.ClientSize = new System.Drawing.Size(692, 457);
+            this.ConnectionName = "ProductionTPE";
             this.IsDeleteOnBrowse = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
