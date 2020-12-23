@@ -79,6 +79,7 @@ namespace Sci.Production.Warehouse
             this.grid2.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid2)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: selectedSetting)
+                .Text("WK", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("PoId", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14))
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -165,6 +166,10 @@ group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory,
 
 
 select  selected = cast(0 as bit)
+		, [WK] = Stuff((select distinct concat(',', rd.id)
+				from Receiving_Detail rd WITH (NOLOCK)
+				where rd.PoId = fi.POID and rd.Seq1 = fi.SEQ1 and rd.Seq2 = fi.SEQ2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+				FOR XML PATH('')),1,1,'') 
 		, MDivisionID = @MDivisionID
         , '' id
         , ftyinventoryukey = FI.ukey
