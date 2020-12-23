@@ -111,6 +111,8 @@ namespace Sci.Production.Packing
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
 
+            /*注意！  這裡有異動的話，要注意Reset()是否需要同步異動*/
+
             // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
             // 2.=Orders.ID
             // 3.=Orders.CustPoNo
@@ -145,6 +147,7 @@ namespace Sci.Production.Packing
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
 										   ,pd.Ukey
+										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -203,7 +206,7 @@ namespace Sci.Production.Packing
                     }
                 }
 
-                if (this.UseAutoScanPack)
+                if (this.UseAutoScanPack && MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE ID='{this.PackingListID}' AND CTNStartNo='{this.CTNStarNo}' AND (Barcode = '' OR Barcode IS NULL) "))
                 {
                     foreach (DataRow dr in this.dt_scanDetail.Rows)
                     {
@@ -312,11 +315,12 @@ namespace Sci.Production.Packing
                 }
             }
 
-            if (this.UseAutoScanPack)
+            // 確認該箱都有設定Barcode，只要有缺少，就清空該箱Barcode
+            if (this.UseAutoScanPack && MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE ID='{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' AND (Barcode = '' OR Barcode IS NULL) "))
             {
                 foreach (DataRow seledr in this.dt_scanDetail.Rows)
                 {
-                    seledr["barcode"] = DBNull.Value;
+                    seledr["Barcode"] = DBNull.Value;
                 }
 
                 DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ");
@@ -616,12 +620,17 @@ WHERE o.ID='{dr.OrderID}'");
             }
 
             DualResult sql_result;
+
+            // 判斷輸入的Barcode，有沒有存在gridScanDetail
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
 
-            // 無Barcode
+            // 不存在
             if (barcode_pos == -1)
             {
+                // 如果不存在，代表一定是第一次掃描，則找出Barcode還空著的Row填進去
                 int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
+
+                // 沒有Barcode還空著的Row，代表操作有錯誤，回傳退回指令
                 if (no_barcode_cnt == 0)
                 {
                     P18_Message msg = new P18_Message();
@@ -639,6 +648,7 @@ WHERE o.ID='{dr.OrderID}'");
                 }
                 else
                 {
+                    // 有Barcode還空著的Row，若筆數大於一筆，則跳出視窗給User選填
                     DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
                     DataRow no_barcode_dr = no_barcode_dt.NewRow();
                     if (no_barcode_dt.Rows.Count > 1)
@@ -681,6 +691,9 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                         {
                             dr["Barcode"] = this.txtScanEAN.Text;
                             dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+
+                            // 變更是否為第一次掃描的標記
+                            dr["IsFirstTimeScan"] = false;
                             this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
                             break;
                         }
@@ -698,6 +711,18 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
                 int scanQty = (short)cur_dr["ScanQty"];
                 int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
+
+                // 判斷該Barcode是否為第一次掃描，是的話傳送指令避免停下
+                bool isFirstTimeScan = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Convert.GetString(s["Barcode"]) == this.txtScanEAN.Text.Trim() && MyUtility.Convert.GetBool(s["IsFirstTimeScan"])).Any();
+
+                if (isFirstTimeScan && this.UseAutoScanPack)
+                {
+                    this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + cur_dr["QtyPerCtn"].ToString().Trim()).Length);
+
+                    // 變更是否為第一次掃描的標記
+                    cur_dr["IsFirstTimeScan"] = false;
+                }
+
                 if (scanQty >= qtyPerCTN)
                 {
                     // 此barcode已足夠,或超過 送回
@@ -1307,6 +1332,7 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                                            isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
 										   ,pd.Ukey
+										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -1363,11 +1389,12 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
                 }
 
-                if (this.UseAutoScanPack)
+                // 確認該箱都有設定Barcode，只要有缺少，就清空該箱Barcode
+                if (this.UseAutoScanPack && MyUtility.Check.Seek($"SELECT 1 FROM PackingList_Detail WHERE ID='{this.PackingListID}' AND CTNStartNo='{this.CTNStarNo}' AND (Barcode = '' OR Barcode IS NULL) "))
                 {
                     foreach (DataRow dr in this.dt_scanDetail.Rows)
                     {
-                        dr["barcode"] = DBNull.Value;
+                        dr["Barcode"] = DBNull.Value;
                     }
 
                     DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
