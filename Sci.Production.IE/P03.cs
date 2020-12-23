@@ -1644,21 +1644,17 @@ select ID = null
 	   , TotalCycle = td.SMV
 	   , td.MachineTypeID
 	   , [Attachment] = STUFF((
-		        select concat(',' ,s.Data)
-		        from SplitString(td.Mold, ';') s
-		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		        where m.IsAttachment = 1
-                and m.Junk = 0
-		        for xml path ('')) 
-	        ,1,1,'')
+					select concat(',' ,s.Data)
+					from SplitString(td.Mold, ',') s
+					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsTemplate = 1)) 
+					for xml path ('')) 
+				,1,1,'')
 	    , [Template] = STUFF((
-		            select concat(',' ,s.Data)
-		            from SplitString(td.Mold, ';') s
-		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
-		            where m.IsTemplate = 1
-                    and m.Junk = 0
-		            for xml path ('')) 
-	            ,1,1,'')
+					select concat(',' ,s.Data)
+					from SplitString(td.Template, ',') s
+					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsAttachment = 1)) 
+					for xml path ('')) 
+				,1,1,'')
 	   , td.OperationID
 	   , MoldID = td.Mold
 	   , GroupKey = 0
