@@ -565,7 +565,7 @@ Begin
 		GROUP BY SCICtnNo, Article, SizeCode
 
 		--抓出最後更新的那一筆，更新PackingList_Detail
-		SELECT TOP  1 *
+		SELECT *
 		INTO #Last
 		FROm #tmpCompleteSacnPack c
 		WHERE EXISTS(SELECT 1 from #LastTime l WHERE l.SCICtnNo = c.SCICtnNo AND l.Article = c.Article AND l.SizeCode = c.SizeCode AND l.Time = c.Time)
