@@ -329,6 +329,11 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
             bool existsPullout_History = MyUtility.Check.Seek($"select 1 from Pullout_History WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
             bool existsPullout_Revise = MyUtility.Check.Seek($"select 1 from Pullout_Revise WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
 
+            if (MyUtility.Check.Empty(ttlShipQty))
+            {
+                ttlShipQty = "0";
+            }
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New" || !MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]) || ttlShipQty != "0" || existsPullout_History || existsPullout_Revise)
             {
                 MyUtility.Msg.WarningBox("This pullout has transaction record, it cannot be delete!!");
