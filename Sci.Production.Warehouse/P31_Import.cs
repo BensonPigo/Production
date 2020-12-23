@@ -105,8 +105,8 @@ select  selected = 0
         ,balance = c.InQty - c.OutQty + c.AdjustQty 
         ,location = dbo.Getlocation(c.ukey)
         ,toseq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) 
-        ,toroll = iif(toSP.Roll is not null, toSP.Roll, c.Roll)
-        ,todyelot = iif(toSP.Roll is not null, toSP.Dyelot, c.Dyelot)
+        ,toroll = c.Roll 
+        ,todyelot = c.Dyelot 
         ,Qty = 0.00 
         ,ToStocktype = 'B' 
         ,topoid = b.id 
@@ -121,15 +121,6 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 inner join Orders on c.poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
 left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
-outer apply(
-    select	Top 1 Roll
-		    , Dyelot
-    from FtyInventory
-    where POID = b.id
-	    and Seq1 = b.seq1
-	    and Seq2 = b.seq2
-        and Roll = c.Roll
-) as toSP
 Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.Seq1}' 
 and b.seq2='{this.txtSeq.Seq2}' and Factory.MDivisionID = '{Env.User.Keyword}'
 and c.inqty-c.outqty + c.adjustqty > 0 and  c.StockType='B'
