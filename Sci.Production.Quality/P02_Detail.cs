@@ -269,6 +269,8 @@ WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
                 else
                 {
                     string sqlup = $@"
+alter table #Tmp alter column OrderID varchar(13)
+
 update a 
 set Status = 'Preparing'
 from #tmp t
