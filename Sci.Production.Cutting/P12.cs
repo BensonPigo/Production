@@ -742,7 +742,7 @@ OPTION (RECOMPILE)"
             {
                 Group_right = row1["Group"].ToString(),
                 Group_left = row1["left"].ToString(),
-                CutRef = string.Empty,
+                CutRef = row1["CutRef"].ToString(),
                 Tone = MyUtility.Convert.GetString(row1["Tone"]),
                 Line = row1["Line"].ToString(),
                 Cell = row1["Cell"].ToString(),
@@ -772,6 +772,7 @@ OPTION (RECOMPILE)"
                 Comb = MyUtility.Convert.GetString(row1["Comb"]),
                 Cut = MyUtility.Convert.GetString(row1["cut"]),
                 GroupCombCut = 0,
+                BundleID = row1["BundleID"].ToString(),
             }).ToList();
             P10_Print.SubCutno(data);
 
@@ -939,7 +940,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
             {
                 Group_right = dr["Group"].ToString(),
                 Group_left = dr["left"].ToString(),
-                CutRef = string.Empty,
+                CutRef = dr["CutRef"].ToString(),
                 Tone = dr["Tone"].ToString(),
                 Line = dr["Line"].ToString(),
                 Cell = dr["Cell"].ToString(),

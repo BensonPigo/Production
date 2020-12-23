@@ -344,7 +344,7 @@ order by x.[Bundle]");
                 {
                     Group_right = row1["Group_right"].ToString(),
                     Group_left = row1["Group_left"].ToString(),
-                    CutRef = string.Empty,
+                    CutRef = this.CurrentDataRow["CutRef"].ToString(),
                     Tone = MyUtility.Convert.GetString(row1["Tone"]),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
@@ -371,6 +371,7 @@ order by x.[Bundle]");
                     Replacement1 = string.Empty,
                     ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
+                    BundleID = row1["BundleID"].ToString(),
                 }).ToList();
                 SubCutno(data);
                 string fileName = "Cutting_P10_Layout1";
@@ -466,7 +467,7 @@ order by x.[Bundle]");
                     {
                         Group_right = dr["Group_right"].ToString(),
                         Group_left = dr["Group_left"].ToString(),
-                        CutRef = string.Empty,
+                        CutRef = this.CurrentDataRow["CutRef"].ToString(),
                         Tone = dr["Tone"].ToString(),
                         Line = dr["Line"].ToString(),
                         Cell = dr["Cell"].ToString(),
@@ -687,16 +688,38 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
         /// <inheritdoc/>
         internal static void SubCutno(List<P10_PrintData> data)
         {
-            // 處理時排序不能變
+            DataTable dt = GetSubCutno(data);
+
+            // 處理時 data 排序不能變, 同 CutRef 不同ID, SubCut數字依序(CreateDate,ID)遞增
             foreach (var item in data)
             {
-                item.SubCut = data.Where(w => w.CutRef == item.CutRef && w.Body_Cut == item.Body_Cut).Max(m => m.SubCut) + 1;
+                item.SubCut = dt.Select($"CutRef='{item.CutRef}' and ID = '{item.BundleID}'").AsEnumerable().
+                    Select(s => MyUtility.Convert.GetInt(s["Body_Cut"])).First();
             }
 
             foreach (var item in data)
             {
                 item.Body_Cut += item.SubCut == 0 ? string.Empty : "-" + item.SubCut.ToString();
             }
+        }
+
+        /// <inheritdoc/>
+        internal static DataTable GetSubCutno(List<P10_PrintData> data)
+        {
+            string cutrefList = "'" + data.Select(s => s.CutRef).Distinct().ToList().JoinToString("','") + "'";
+            string sqlcmd = $@"
+select b.CutRef,b.Cdate,b.ID,Body_Cut = ROW_NUMBER() over(partition by b.CutRef order by b.Cdate,b.ID) - 1
+from Bundle b with(nolock)
+where b.CutRef in({cutrefList})
+order by b.CutRef,b.Cdate,b.ID
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+            }
+
+            return dt;
         }
 
         /// <inheritdoc/>
