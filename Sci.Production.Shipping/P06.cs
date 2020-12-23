@@ -325,13 +325,44 @@ values('{0}','{1}','{2}','{3}','New','{4}',GETDATE());",
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
-            if (MyUtility.Check.Seek(string.Format("select ID from Pullout_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            string ttlShipQty = MyUtility.GetValue.Lookup($"select Sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
+            bool existsPullout_History = MyUtility.Check.Seek($"select 1 from Pullout_History WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
+            bool existsPullout_Revise = MyUtility.Check.Seek($"select 1 from Pullout_Revise WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'");
+
+            if (MyUtility.Check.Empty(ttlShipQty))
             {
-                MyUtility.Msg.WarningBox("The pullout has detail data, it can't be deleted!!");
+                ttlShipQty = "0";
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New" || !MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]) || ttlShipQty != "0" || existsPullout_History || existsPullout_Revise)
+            {
+                MyUtility.Msg.WarningBox("This pullout has transaction record, it cannot be delete!!");
                 return false;
             }
 
             return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            // 刪除後將Pullout箱數回寫回Orders.PulloutCTNQty
+            string updateCmd = $@"
+update Orders set PulloutCTNQty = (select isnull(sum(pd.CTNQty),0)
+								   from PackingList_Detail pd, PackingList p
+								   where pd.OrderID = Orders.ID 
+								   and pd.ID = p.ID
+								   and p.PulloutID <> '')
+where ID in (select distinct OrderID from Pullout_Detail where ID = '{this.CurrentMaintain["ID"]}');
+";
+            DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Update orders fail!!\r\n" + result.ToString());
+                return failResult;
+            }
+
+            return base.ClickDeletePost();
         }
 
         /// <inheritdoc/>
