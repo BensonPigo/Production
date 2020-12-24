@@ -393,7 +393,12 @@ SELECT
 	,c.ID
 	,c.IsCombinePO
 	, [Action]= cd.Action
-	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,iif(isnull(cd.GarmentDefectCodeID, '') = '', concat(row_Number()over(order by c.ID),''), cd.GarmentDefectCodeID))
+	,[CFAInspectionRecord_Detail_Key]= concat(c.ID,
+		iif( isnull(cd.GarmentDefectCodeID, '') = ''
+			, ''
+			, cd.GarmentDefectCodeID
+		)	
+	)
 INTO #tmp
 FROm #MainData  c
 LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
@@ -700,7 +705,15 @@ DROP TABLE #tmp ,#PackingList_Detail_Staggered ,#MainData ,#PackingList_Detail2,
                     nRow["DefectDescription"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["DefectDescription"]);
                     nRow["AreaCodeDesc"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["AreaCodeDesc"]);
 
-                    nRow["NoOfDefect"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["NoOfDefect"]);
+                    if (sameIDs.FirstOrDefault()["NoOfDefect"] == DBNull.Value)
+                    {
+                        nRow["NoOfDefect"] = DBNull.Value;
+                    }
+                    else
+                    {
+                        nRow["NoOfDefect"] = MyUtility.Convert.GetInt(sameIDs.FirstOrDefault()["NoOfDefect"]);
+                    }
+
                     nRow["Remark"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Remark"]);
                     nRow["Action"] = MyUtility.Convert.GetString(sameIDs.FirstOrDefault()["Action"]);
 
