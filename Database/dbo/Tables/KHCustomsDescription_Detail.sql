@@ -1,9 +1,11 @@
 ﻿CREATE TABLE [dbo].[KHCustomsDescription_Detail] (
-    [ID]           VARCHAR (30)   NOT NULL,
+    [ID]           VARCHAR (50)   NOT NULL,
     [PurchaseUnit] VARCHAR (8)    NOT NULL,
     [Ratio]        NUMERIC (8, 4) CONSTRAINT [DF_KHCustomsDescription_Detail_Ratio] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_KHCustomsDescription_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [PurchaseUnit] ASC)
 );
+
+
 
 
 GO

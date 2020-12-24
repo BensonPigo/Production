@@ -42,9 +42,14 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
 select ked2.* 
+,[PoNo] = o.CustPONo
+,[DiffNw] = ked2.NetKg - ked2.ActNetKg
+,[DiffGW] = ked2.WeightKg - ked2.ActWeightKg
+,[TtlFOB] = ked2.POPrice * ked2.ShipModeSeqQty
 ,[StyleID] = s.ID
 from KHExportDeclaration_Detail ked2
 left join Style s on ked2.StyleUkey = s.Ukey
+left join orders o on o.ID = ked2.OrderID
 where ked2.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
@@ -53,16 +58,53 @@ where ked2.id = '{masterID}'
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+            DataGridViewGeneratorNumericColumnSettings col_ActNW = new DataGridViewGeneratorNumericColumnSettings();
+            col_ActNW.CellValidating += (s, e) =>
+            {
+                if (this.CurrentDetailData == null && !this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                decimal actNW = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                dr["DiffNW"] = MyUtility.Convert.GetDecimal(dr["NetKg"]) - actNW;
+                dr["ActNetKg"] = e.FormattedValue;
+                dr.EndEdit();
+            };
+
+            DataGridViewGeneratorNumericColumnSettings col_ActGW = new DataGridViewGeneratorNumericColumnSettings();
+            col_ActGW.CellValidating += (s, e) =>
+            {
+                if (this.CurrentDetailData == null && !this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                decimal actGW = MyUtility.Convert.GetDecimal(e.FormattedValue);
+                dr["DiffGW"] = MyUtility.Convert.GetDecimal(dr["WeightKg"]) - actGW;
+                dr["ActWeightKg"] = e.FormattedValue;
+                dr.EndEdit();
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+           .Text("PoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Text("INVNo", header: "Invoice No", width: Widths.AnsiChars(25), iseditingreadonly: true)
+           .Date("ETD", header: "ETD", width: Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
            .Numeric("CTNQty", header: "CTN", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
            .Numeric("POPrice", header: "FOB", width: Widths.AnsiChars(9), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
+           .Numeric("TtlFOB", header: "Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5, iseditingreadonly: true)
            .Text("LocalINVNo", header: "Local Invoice No", width: Widths.AnsiChars(25), iseditingreadonly: false)
-           .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
-           .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7, iseditingreadonly: true)
+           .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
+           .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
+           .Numeric("ActNetKg", header: "Act N.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: false, settings: col_ActNW)
+           .Numeric("ActWeightKg", header: "Act G.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: false, settings: col_ActGW)
+           .Numeric("DiffNW", header: "Diff N.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
+           .Numeric("DiffGW", header: "Diff G.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
            .Text("Description", header: "Style Description", width: Widths.AnsiChars(30), iseditingreadonly: false)
            .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(14), iseditingreadonly: false)
            .Text("COFormType", header: "CO Form Type", width: Widths.AnsiChars(20), iseditingreadonly: false)
@@ -162,10 +204,9 @@ where id = '{this.CurrentMaintain["ID"]}'
             if (MyUtility.Check.Empty(this.CurrentMaintain["Buyer"]) || MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["CustCDID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Dest"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Cdate"]) || MyUtility.Check.Empty(this.CurrentMaintain["DeclareNo"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["ETD"]) || MyUtility.Check.Empty(this.CurrentMaintain["Forwarder"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["ExportPort"]))
+                MyUtility.Check.Empty(this.CurrentMaintain["Forwarder"]) || MyUtility.Check.Empty(this.CurrentMaintain["ExportPort"]))
             {
-                MyUtility.Msg.WarningBox(@"<Buyer>, <Shipmode>, <CustCD>, <Destination>, <Declaration Date>, < Declaration#>, <ETD>, <Forwarder>, <Loading> cannot be empty.");
+                MyUtility.Msg.WarningBox(@"<Buyer>, <Shipmode>, <CustCD>, <Destination>, <Declaration Date>, < Declaration#>, <Forwarder>, <Loading> cannot be empty.");
                 return false;
             }
 
@@ -240,6 +281,12 @@ where id = '{this.CurrentMaintain["ID"]}'
                     MyUtility.Msg.WarningBox($@"The <Destination> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [Destination]");
                     return false;
                 }
+
+                if (MyUtility.Check.Empty(dr["ActNetKg"]) || MyUtility.Check.Empty(dr["ActWeightKg"]))
+                {
+                    MyUtility.Msg.WarningBox(@"<Act N.W.]> or <Act G.W.> cannot be empty.");
+                    return false;
+                }
             }
 
             this.ReCalculat();
@@ -265,13 +312,15 @@ where id = '{this.CurrentMaintain["ID"]}'
         /// </summary>
         private void ReCalculat()
         {
-            decimal ttlDecQty = 0, ttlDecCTN = 0, ttlDecNW = 0, ttlDecGW = 0, ttlDecAmount = 0;
+            decimal ttlDecQty = 0, ttlDecCTN = 0, ttlDecNW = 0, ttlDecGW = 0, ttlDecAmount = 0, ttlActDecNW = 0, ttlActDecGW = 0;
             foreach (DataRow dr in this.DetailDatas)
             {
                 ttlDecQty += MyUtility.Convert.GetDecimal(dr["ShipModeSeqQty"]);
                 ttlDecCTN += MyUtility.Convert.GetDecimal(dr["CTNQty"]);
                 ttlDecNW += MyUtility.Convert.GetDecimal(dr["NetKg"]);
                 ttlDecGW += MyUtility.Convert.GetDecimal(dr["WeightKg"]);
+                ttlActDecNW += MyUtility.Convert.GetDecimal(dr["ActNetKg"]);
+                ttlActDecGW += MyUtility.Convert.GetDecimal(dr["ActWeightKg"]);
                 ttlDecAmount += MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["ShipModeSeqQty"]) * MyUtility.Convert.GetDecimal(dr["POPrice"]), 4);
             }
 
@@ -279,6 +328,8 @@ where id = '{this.CurrentMaintain["ID"]}'
             this.numDecCTN.Value = ttlDecCTN;
             this.numTtlDeclGW.Value = ttlDecGW;
             this.numTtlDeclNW.Value = ttlDecNW;
+            this.numTtlActDeclNW.Value = ttlActDecNW;
+            this.numTtlActDeclGW.Value = ttlActDecGW;
             this.numDecAmount.Value = ttlDecAmount;
         }
 
@@ -302,7 +353,6 @@ where id = '{this.CurrentMaintain["ID"]}'
             this.txtbuyer.ReadOnly = readOnly;
             this.txtshipmode.ReadOnly = readOnly;
             this.txtcustcd.ReadOnly = readOnly;
-            this.dateETD.ReadOnly = readOnly;
             this.txtForwarder.TextBox1.ReadOnly = isNewStatus ? false : readOnly;
             this.txtLoadingPort.ReadOnly = readOnly;
             this.btnBatchImport.Enabled = isNewStatus ? true : false;
@@ -313,11 +363,10 @@ where id = '{this.CurrentMaintain["ID"]}'
 
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ETD"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["custCDID"]) ||
+            if (MyUtility.Check.Empty(this.CurrentMaintain["custCDID"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["shipModeID"]))
             {
-                MyUtility.Msg.WarningBox("[ETD], [CustCD], [Shipmode] cannot be empty!");
+                MyUtility.Msg.WarningBox("[CustCD], [Shipmode] cannot be empty!");
                 return;
             }
 

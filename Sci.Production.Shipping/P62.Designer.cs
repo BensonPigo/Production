@@ -40,7 +40,6 @@
             this.labShipmode = new Sci.Win.UI.Label();
             this.labDeclaration = new Sci.Win.UI.Label();
             this.labForwarder = new Sci.Win.UI.Label();
-            this.labETD = new Sci.Win.UI.Label();
             this.labLoading = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.labDecNWGW = new Sci.Win.UI.Label();
@@ -56,7 +55,6 @@
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtDeclaration = new Sci.Win.UI.TextBox();
-            this.dateETD = new Sci.Win.UI.DateBox();
             this.txtForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.txtLoadingPort = new Sci.Win.UI.TextBox();
             this.numDecQty = new Sci.Win.UI.NumericBox();
@@ -64,6 +62,10 @@
             this.numDecAmount = new Sci.Win.UI.NumericBox();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnBatchImport = new Sci.Win.UI.Button();
+            this.label5 = new Sci.Win.UI.Label();
+            this.numTtlActDeclGW = new Sci.Win.UI.NumericBox();
+            this.numTtlActDeclNW = new Sci.Win.UI.NumericBox();
+            this.labDecActNWGW = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +82,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label5);
+            this.masterpanel.Controls.Add(this.numTtlActDeclGW);
+            this.masterpanel.Controls.Add(this.numTtlActDeclNW);
+            this.masterpanel.Controls.Add(this.labDecActNWGW);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.numDecAmount);
@@ -92,7 +98,6 @@
             this.masterpanel.Controls.Add(this.txtcustcd);
             this.masterpanel.Controls.Add(this.txtshipmode);
             this.masterpanel.Controls.Add(this.txtbuyer);
-            this.masterpanel.Controls.Add(this.dateETD);
             this.masterpanel.Controls.Add(this.comboShipper);
             this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.label4);
@@ -104,7 +109,6 @@
             this.masterpanel.Controls.Add(this.labDecQty);
             this.masterpanel.Controls.Add(this.labLoading);
             this.masterpanel.Controls.Add(this.labForwarder);
-            this.masterpanel.Controls.Add(this.labETD);
             this.masterpanel.Controls.Add(this.labDeclaration);
             this.masterpanel.Controls.Add(this.labDestination);
             this.masterpanel.Controls.Add(this.labCustCD);
@@ -116,7 +120,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.dateDeclarationDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 219);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 219);
             this.masterpanel.Controls.SetChildIndex(this.dateDeclarationDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -129,7 +133,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labCustCD, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDeclaration, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labETD, 0);
             this.masterpanel.Controls.SetChildIndex(this.labForwarder, 0);
             this.masterpanel.Controls.SetChildIndex(this.labLoading, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDecQty, 0);
@@ -141,7 +144,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShipper, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateETD, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbuyer, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtshipmode, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcustcd, 0);
@@ -154,11 +156,15 @@
             this.masterpanel.Controls.SetChildIndex(this.numDecAmount, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labDecActNWGW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTtlActDeclNW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTtlActDeclGW, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 219);
-            this.detailpanel.Size = new System.Drawing.Size(892, 130);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 231);
             // 
             // gridicon
             // 
@@ -166,7 +172,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 130);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 231);
             // 
             // detail2
             // 
@@ -179,6 +185,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1000, 488);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1000, 450);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 450);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -280,23 +299,15 @@
             // 
             // labForwarder
             // 
-            this.labForwarder.Location = new System.Drawing.Point(310, 93);
+            this.labForwarder.Location = new System.Drawing.Point(310, 65);
             this.labForwarder.Name = "labForwarder";
             this.labForwarder.Size = new System.Drawing.Size(107, 23);
             this.labForwarder.TabIndex = 64;
             this.labForwarder.Text = "Forwarder";
             // 
-            // labETD
-            // 
-            this.labETD.Location = new System.Drawing.Point(310, 65);
-            this.labETD.Name = "labETD";
-            this.labETD.Size = new System.Drawing.Size(107, 23);
-            this.labETD.TabIndex = 63;
-            this.labETD.Text = "ETD";
-            // 
             // labLoading
             // 
-            this.labLoading.Location = new System.Drawing.Point(310, 121);
+            this.labLoading.Location = new System.Drawing.Point(310, 93);
             this.labLoading.Name = "labLoading";
             this.labLoading.Size = new System.Drawing.Size(107, 23);
             this.labLoading.TabIndex = 65;
@@ -304,40 +315,40 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(596, 93);
+            this.label3.Location = new System.Drawing.Point(593, 119);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(166, 23);
+            this.label3.Size = new System.Drawing.Size(177, 23);
             this.label3.TabIndex = 69;
             this.label3.Text = "Declaration Amount(USD)";
             // 
             // labDecNWGW
             // 
-            this.labDecNWGW.Location = new System.Drawing.Point(596, 65);
+            this.labDecNWGW.Location = new System.Drawing.Point(593, 65);
             this.labDecNWGW.Name = "labDecNWGW";
-            this.labDecNWGW.Size = new System.Drawing.Size(166, 23);
+            this.labDecNWGW.Size = new System.Drawing.Size(177, 23);
             this.labDecNWGW.TabIndex = 68;
             this.labDecNWGW.Text = "Declaration N.W. / G.W.";
             // 
             // labDecCTN
             // 
-            this.labDecCTN.Location = new System.Drawing.Point(596, 38);
+            this.labDecCTN.Location = new System.Drawing.Point(593, 38);
             this.labDecCTN.Name = "labDecCTN";
-            this.labDecCTN.Size = new System.Drawing.Size(166, 23);
+            this.labDecCTN.Size = new System.Drawing.Size(177, 23);
             this.labDecCTN.TabIndex = 67;
             this.labDecCTN.Text = "Declaration CTN";
             // 
             // labDecQty
             // 
-            this.labDecQty.Location = new System.Drawing.Point(596, 11);
+            this.labDecQty.Location = new System.Drawing.Point(593, 11);
             this.labDecQty.Name = "labDecQty";
-            this.labDecQty.Size = new System.Drawing.Size(166, 23);
+            this.labDecQty.Size = new System.Drawing.Size(177, 23);
             this.labDecQty.TabIndex = 66;
             this.labDecQty.Text = "Declaration Qty";
             // 
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Location = new System.Drawing.Point(856, 65);
+            this.label4.Location = new System.Drawing.Point(864, 65);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(16, 23);
             this.label4.TabIndex = 72;
@@ -351,7 +362,7 @@
             this.numTtlDeclGW.DecimalPlaces = 3;
             this.numTtlDeclGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlDeclGW.IsSupportEditMode = false;
-            this.numTtlDeclGW.Location = new System.Drawing.Point(881, 65);
+            this.numTtlDeclGW.Location = new System.Drawing.Point(889, 65);
             this.numTtlDeclGW.Name = "numTtlDeclGW";
             this.numTtlDeclGW.NullValue = new decimal(new int[] {
             0,
@@ -373,7 +384,7 @@
             this.numTtlDeclNW.DecimalPlaces = 3;
             this.numTtlDeclNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlDeclNW.IsSupportEditMode = false;
-            this.numTtlDeclNW.Location = new System.Drawing.Point(765, 65);
+            this.numTtlDeclNW.Location = new System.Drawing.Point(773, 65);
             this.numTtlDeclNW.Name = "numTtlDeclNW";
             this.numTtlDeclNW.NullValue = new decimal(new int[] {
             0,
@@ -393,7 +404,7 @@
             // 
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(866, 11);
+            this.labelNotApprove.Location = new System.Drawing.Point(874, 11);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 73;
@@ -472,14 +483,6 @@
             this.txtDeclaration.Size = new System.Drawing.Size(114, 23);
             this.txtDeclaration.TabIndex = 6;
             // 
-            // dateETD
-            // 
-            this.dateETD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ETD", true));
-            this.dateETD.Location = new System.Drawing.Point(420, 65);
-            this.dateETD.Name = "dateETD";
-            this.dateETD.Size = new System.Drawing.Size(136, 23);
-            this.dateETD.TabIndex = 7;
-            // 
             // txtForwarder
             // 
             this.txtForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
@@ -488,7 +491,7 @@
             this.txtForwarder.IsMisc = false;
             this.txtForwarder.IsShipping = false;
             this.txtForwarder.IsSubcon = false;
-            this.txtForwarder.Location = new System.Drawing.Point(420, 94);
+            this.txtForwarder.Location = new System.Drawing.Point(420, 66);
             this.txtForwarder.Name = "txtForwarder";
             this.txtForwarder.Size = new System.Drawing.Size(170, 23);
             this.txtForwarder.TabIndex = 8;
@@ -499,7 +502,7 @@
             this.txtLoadingPort.BackColor = System.Drawing.Color.White;
             this.txtLoadingPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExportPort", true));
             this.txtLoadingPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLoadingPort.Location = new System.Drawing.Point(420, 122);
+            this.txtLoadingPort.Location = new System.Drawing.Point(420, 94);
             this.txtLoadingPort.Name = "txtLoadingPort";
             this.txtLoadingPort.Size = new System.Drawing.Size(114, 23);
             this.txtLoadingPort.TabIndex = 9;
@@ -512,7 +515,7 @@
             this.numDecQty.DecimalPlaces = 3;
             this.numDecQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDecQty.IsSupportEditMode = false;
-            this.numDecQty.Location = new System.Drawing.Point(765, 11);
+            this.numDecQty.Location = new System.Drawing.Point(773, 11);
             this.numDecQty.Name = "numDecQty";
             this.numDecQty.NullValue = new decimal(new int[] {
             0,
@@ -534,7 +537,7 @@
             this.numDecCTN.DecimalPlaces = 3;
             this.numDecCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDecCTN.IsSupportEditMode = false;
-            this.numDecCTN.Location = new System.Drawing.Point(765, 37);
+            this.numDecCTN.Location = new System.Drawing.Point(773, 37);
             this.numDecCTN.Name = "numDecCTN";
             this.numDecCTN.NullValue = new decimal(new int[] {
             0,
@@ -556,7 +559,7 @@
             this.numDecAmount.DecimalPlaces = 3;
             this.numDecAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDecAmount.IsSupportEditMode = false;
-            this.numDecAmount.Location = new System.Drawing.Point(765, 94);
+            this.numDecAmount.Location = new System.Drawing.Point(773, 120);
             this.numDecAmount.Name = "numDecAmount";
             this.numDecAmount.NullValue = new decimal(new int[] {
             0,
@@ -588,13 +591,76 @@
             // 
             this.btnBatchImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchImport.Location = new System.Drawing.Point(876, 124);
+            this.btnBatchImport.Location = new System.Drawing.Point(739, 173);
             this.btnBatchImport.Name = "btnBatchImport";
             this.btnBatchImport.Size = new System.Drawing.Size(116, 31);
             this.btnBatchImport.TabIndex = 87;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
             this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
+            // 
+            // label5
+            // 
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Location = new System.Drawing.Point(864, 92);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(16, 23);
+            this.label5.TabIndex = 91;
+            this.label5.Text = "/";
+            this.label5.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.label5.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // numTtlActDeclGW
+            // 
+            this.numTtlActDeclGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTtlActDeclGW.DecimalPlaces = 3;
+            this.numTtlActDeclGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTtlActDeclGW.IsSupportEditMode = false;
+            this.numTtlActDeclGW.Location = new System.Drawing.Point(889, 92);
+            this.numTtlActDeclGW.Name = "numTtlActDeclGW";
+            this.numTtlActDeclGW.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTtlActDeclGW.ReadOnly = true;
+            this.numTtlActDeclGW.Size = new System.Drawing.Size(90, 23);
+            this.numTtlActDeclGW.TabIndex = 90;
+            this.numTtlActDeclGW.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTtlActDeclNW
+            // 
+            this.numTtlActDeclNW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTtlActDeclNW.DecimalPlaces = 3;
+            this.numTtlActDeclNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTtlActDeclNW.IsSupportEditMode = false;
+            this.numTtlActDeclNW.Location = new System.Drawing.Point(773, 92);
+            this.numTtlActDeclNW.Name = "numTtlActDeclNW";
+            this.numTtlActDeclNW.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTtlActDeclNW.ReadOnly = true;
+            this.numTtlActDeclNW.Size = new System.Drawing.Size(90, 23);
+            this.numTtlActDeclNW.TabIndex = 89;
+            this.numTtlActDeclNW.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labDecActNWGW
+            // 
+            this.labDecActNWGW.Location = new System.Drawing.Point(593, 92);
+            this.labDecActNWGW.Name = "labDecActNWGW";
+            this.labDecActNWGW.Size = new System.Drawing.Size(177, 23);
+            this.labDecActNWGW.TabIndex = 88;
+            this.labDecActNWGW.Text = "Declaration Act N.W. / G.W.";
             // 
             // P62
             // 
@@ -649,7 +715,6 @@
         private Win.UI.Label labDecQty;
         private Win.UI.Label labLoading;
         private Win.UI.Label labForwarder;
-        private Win.UI.Label labETD;
         private Win.UI.Label labDeclaration;
         private Win.UI.Label labDestination;
         private Win.UI.Label labCustCD;
@@ -670,11 +735,14 @@
         private Win.UI.TextBox txtDeclaration;
         private Win.UI.TextBox txtLoadingPort;
         private Class.TxtsubconNoConfirm txtForwarder;
-        private Win.UI.DateBox dateETD;
         private Win.UI.NumericBox numDecAmount;
         private Win.UI.NumericBox numDecCTN;
         private Win.UI.NumericBox numDecQty;
         private Win.UI.EditBox editRemark;
         private Win.UI.Button btnBatchImport;
+        private Win.UI.Label label5;
+        private Win.UI.NumericBox numTtlActDeclGW;
+        private Win.UI.NumericBox numTtlActDeclNW;
+        private Win.UI.Label labDecActNWGW;
     }
 }

@@ -67,10 +67,12 @@ select [Shipper] = kd.Shipper
      , [Status] = kd.status 
      , [Inv#] = kdd.INVNo 
      , [PO] = o.CustPONo
+	 , [SP] = o.ID
      , [Style] = o.StyleID  
      , [Qty] = kdd.ShipModeSeqQty 
      , [CTN] = kdd.CTNQty 
-     , [FOB] = kdd.POPrice 
+     , [FOB] = kdd.POPrice
+	 , [Ttl FOB] = (kdd.ShipModeSeqQty * kdd.POPrice)
      , [Local Inv#] = kdd.LocalINVNO 
      , [Description] = kdd.Description 
      , [HS Code] = kdd.HSCode 
@@ -79,17 +81,26 @@ select [Shipper] = kd.Shipper
      , [CO Date] = kdd.CODate 
      , [Declaration#] = kd.DeclareNo 
      , [Declaration Date] = kd.CDate 
-     , [ETD] = kd.ETD 
+     , [ETD] = kdd.ETD 
      , [Customer CD] = kd.CustCDID 
      , [Destination] = kd.Dest 
      , [Shipmode] = kd.ShipModeID 
      , [Forwarder] = kd.Forwarder 
      , [Port of loading] = kd.ExportPort 
+	 , [Dest] = kd.Dest
+	 , [Continent] = c.Continent
      , [Export without declaration] = (case when g.NonDeclare = 1 then 'Y' else 'N' end) 
+	 , [NW] = kdd.NetKg
+	 , [GW] = kdd.WeightKg
+	 , [Act NW] = kdd.ActNetKg
+	 , [Act GW] = kdd.ActWeightKg
+	 , [Diff NW] = kdd.NetKg - kdd.ActNetKg
+	 , [Diff GW] = kdd.WeightKg - kdd.ActWeightKg
   from KHExportDeclaration kd
  inner join KHExportDeclaration_Detail kdd on kd.id=kdd.id
  inner join GMTBooking g on kdd.Invno=g.id
  inner join orders o on o.id=kdd.orderid
+ left join Country c on c.ID = kd.Dest
  where 1=1
 ";
             #region where

@@ -8,7 +8,6 @@
     [ShipModeID] VARCHAR (10)  CONSTRAINT [DF_KHExportDeclaration_ShipModeID] DEFAULT ('') NULL,
     [CustCDID]   VARCHAR (16)  CONSTRAINT [DF_KHExportDeclaration_CustCDID] DEFAULT ('') NULL,
     [Dest]       VARCHAR (2)   CONSTRAINT [DF_KHExportDeclaration_Dest] DEFAULT ('') NULL,
-    [ETD]        DATE          NULL,
     [Forwarder]  VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Forwarder] DEFAULT ('') NULL,
     [ExportPort] VARCHAR (20)  CONSTRAINT [DF_KHExportDeclaration_ExportPort] DEFAULT ('') NULL,
     [Remark]     VARCHAR (200) CONSTRAINT [DF_KHExportDeclaration_Remark] DEFAULT ('') NULL,
@@ -18,6 +17,8 @@
     [EditDate]   DATETIME      NULL,
     CONSTRAINT [PK_KHExportDeclaration] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -51,7 +52,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'船公司',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預定開航日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration', @level2type = N'COLUMN', @level2name = N'ETD';
+
 
 
 GO

@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[KHCustomsDescription] (
-    [ID]       VARCHAR (30)  NOT NULL,
+    [ID]       VARCHAR (50)  NOT NULL,
     [CDCUnit]  NVARCHAR (50) NOT NULL,
     [Junk]     BIT           CONSTRAINT [DF_KHCustomsDescription_Junk] DEFAULT ((0)) NOT NULL,
     [AddName]  VARCHAR (10)  CONSTRAINT [DF_KHCustomsDescription_AddName] DEFAULT ('') NULL,
@@ -8,6 +8,8 @@
     [EditDate] DATETIME      NULL,
     CONSTRAINT [PK_KHCustomsDescription] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO
