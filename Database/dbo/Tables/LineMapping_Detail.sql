@@ -20,7 +20,7 @@
     [IsPPA ] BIT NULL, 
     [ActCycle] NUMERIC(7, 2) NULL,  
     [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
-    [IsHide] BIT NOT NULL CONSTRAINT [DF_LineMapping_Detail_IsHide] DEFAULT ((0)), 
+    [IsHide] BIT NULL , 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

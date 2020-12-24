@@ -1008,7 +1008,7 @@ order by NO
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-                        worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
 
                         addct++;
                     }
@@ -1029,8 +1029,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U17", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
@@ -1147,7 +1147,7 @@ order by NO
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
-                        worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
                         addct++;
                     }
 
@@ -1167,8 +1167,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U17", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);
@@ -1271,7 +1271,7 @@ order by NO
                         {
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                             worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
-                            worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            // worksheet.get_Range(string.Format("T{0}:U{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
 
                             addct++;
                         }
@@ -1292,8 +1292,8 @@ order by NO
                 string endRow = (16 + (ttlLineRowCnt * 5) + addct).ToString();
                 worksheet.Names.Add("MachineINV1", worksheet.Range["AA17", "AA" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineINV2", worksheet.Range["AB17", "AB" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AD" + endRow], Type.Missing);
-                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U17", "V" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["AC19", "AE" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["U19", "V" + endRow], Type.Missing);
                 worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$X$17:$X${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$W$17:$W${endRow}))/2,0)", Type.Missing);
                 worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$X$17:$X${endRow})", Type.Missing);

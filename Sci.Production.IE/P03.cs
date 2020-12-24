@@ -107,7 +107,7 @@ from (
     select  ld.OriNO
 	    , ld.No
 	    , ld.IsPPA
-	    , [IsHide] = cast(iif(ld.IsHide = 1, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)
+        , [IsHide] = cast(iif(ld.IsHide is not null, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)	    
 	    , ld.MachineTypeID
 	    , ld.MasterPlusGroup	
         , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
@@ -808,9 +808,11 @@ where Junk = 0
 
                 if (columIndex == 1)
                 {
-                    DataTable dt = ((DataTable)this.detailgridbs.DataSource).Select("IsShow = 1").CopyToDataTable();
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
                     dt.DefaultView.Sort = "sortNO, No";
                     this.detailgridbs.DataSource = dt;
+
+                    this.IsShowTable();
                 }
             };
 
@@ -1223,8 +1225,8 @@ WHERE Ukey={item["Ukey"]}
         {
             object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null)");
             object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsHide = 0 or  IsHide is null)");
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsHide = 0 or  IsHide is null)");
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsHide = 0 or  IsHide is null)");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(GSD)", "(IsHide = 0 or  IsHide is null)");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(Cycle)", "(IsHide = 0 or  IsHide is null)");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
@@ -1844,27 +1846,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'"
 
         private void Distable()
         {
-            if (this.listControlBindingSource1.DataSource != null)
-            {
-                this.listControlBindingSource1.DataSource = null;
-            }
-
-            if (this.grid1.DataSource != null)
-            {
-                this.grid1.DataSource = null;
-            }
-
-            for (int i = 0; i < this.detailgrid.Rows.Count; i++)
-            {
-                DataRow row = this.detailgrid.GetDataRow(i);
-                if (!MyUtility.Convert.GetBool(row["IsShow"]))
-                {
-                    CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
-                    currencyManager.SuspendBinding();
-                    this.detailgrid.Rows[i].Visible = false;
-                    currencyManager.ResumeBinding();
-                }
-            }
+            this.IsShowTable();
 
             DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("No <> '' and IsShow = 1");
             if (drs.Length == 0)
@@ -1887,6 +1869,31 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'"
                 .ThenBy(x => x.SortB)
                 .ToList();
             this.grid1.DataSource = this.listControlBindingSource1;
+        }
+
+        private void IsShowTable()
+        {
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.listControlBindingSource1.DataSource = null;
+            }
+
+            if (this.grid1.DataSource != null)
+            {
+                this.grid1.DataSource = null;
+            }
+
+            for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+            {
+                DataRow row = this.detailgrid.GetDataRow(i);
+                if (!MyUtility.Convert.GetBool(row["IsShow"]))
+                {
+                    CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
+                    currencyManager.SuspendBinding();
+                    this.detailgrid.Rows[i].Visible = false;
+                    currencyManager.ResumeBinding();
+                }
+            }
         }
     }
 }
