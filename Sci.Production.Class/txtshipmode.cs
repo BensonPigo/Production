@@ -30,11 +30,11 @@ namespace Sci.Production.Class
                     string sqlCMD;
                     if (MyUtility.Check.Empty(this.useFunction))
                     {
-                        sqlCMD = "select ID='',UseFunction='' union all select ID,UseFunction from ShipMode WITH (NOLOCK)";
+                        sqlCMD = "select ID='',UseFunction='' union all select ID,UseFunction from ShipMode WITH (NOLOCK) where Junk = 0";
                     }
                     else
                     {
-                        sqlCMD = string.Format("select ID='',UseFunction='' union all select ID,UseFunction from ShipMode WITH (NOLOCK) where UseFunction like '%{0}%'", this.useFunction.Trim());
+                        sqlCMD = string.Format(@"select ID='',UseFunction='' union all select ID,UseFunction from ShipMode WITH (NOLOCK) where UseFunction like '%{0}%' and junk = 0", this.useFunction.Trim());
                     }
 
                     Ict.DualResult cbResult;
