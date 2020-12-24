@@ -616,6 +616,7 @@ inner join Orders o on p.id = o.id
 inner join Factory f on o.FtyGroup = f.id
 left join dbo.mdivisionpodetail m WITH (NOLOCK) on m.poid = p.id and m.seq1 = p.seq1 and m.seq2 = p.seq2
 LEFT JOIN Fabric WITH (NOLOCK) ON p.SCIRefNo=Fabric.SCIRefNo
+left join [dbo].[MtlType] mt WITH (NOLOCK) on mt.ID = Fabric.MtlTypeID
 inner join View_unitrate v on v.FROM_U = p.POUnit 
 	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
 OUTER APPLY(
