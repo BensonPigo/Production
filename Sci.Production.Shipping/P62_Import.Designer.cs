@@ -34,6 +34,14 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtSP2 = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtSP1 = new Sci.Win.UI.TextBox();
+            this.labSP = new Sci.Win.UI.Label();
+            this.txtInvNo2 = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtInvNo1 = new Sci.Win.UI.TextBox();
+            this.labInvno = new Sci.Win.UI.Label();
             this.dateETD = new Sci.Win.UI.DateRange();
             this.labETD = new Sci.Win.UI.Label();
             this.txtPo2 = new Sci.Win.UI.TextBox();
@@ -43,14 +51,6 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
-            this.txtInvNo2 = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtInvNo1 = new Sci.Win.UI.TextBox();
-            this.labInvno = new Sci.Win.UI.Label();
-            this.txtSP2 = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.txtSP1 = new Sci.Win.UI.TextBox();
-            this.labSP = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -66,7 +66,7 @@
             this.groupBox2.Location = new System.Drawing.Point(0, 457);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(973, 53);
-            this.groupBox2.TabIndex = 19;
+            this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             // 
             // btnCancel
@@ -117,6 +117,88 @@
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             // 
+            // txtSP2
+            // 
+            this.txtSP2.BackColor = System.Drawing.Color.White;
+            this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP2.Location = new System.Drawing.Point(296, 51);
+            this.txtSP2.MaxLength = 13;
+            this.txtSP2.Name = "txtSP2";
+            this.txtSP2.Size = new System.Drawing.Size(160, 23);
+            this.txtSP2.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Location = new System.Drawing.Point(272, 51);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(21, 23);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "～";
+            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            this.label3.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label3.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtSP1
+            // 
+            this.txtSP1.BackColor = System.Drawing.Color.White;
+            this.txtSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP1.Location = new System.Drawing.Point(109, 51);
+            this.txtSP1.MaxLength = 13;
+            this.txtSP1.Name = "txtSP1";
+            this.txtSP1.Size = new System.Drawing.Size(160, 23);
+            this.txtSP1.TabIndex = 4;
+            // 
+            // labSP
+            // 
+            this.labSP.Location = new System.Drawing.Point(25, 51);
+            this.labSP.Name = "labSP";
+            this.labSP.Size = new System.Drawing.Size(80, 23);
+            this.labSP.TabIndex = 10;
+            this.labSP.Text = "SP#";
+            // 
+            // txtInvNo2
+            // 
+            this.txtInvNo2.BackColor = System.Drawing.Color.White;
+            this.txtInvNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInvNo2.Location = new System.Drawing.Point(296, 22);
+            this.txtInvNo2.MaxLength = 25;
+            this.txtInvNo2.Name = "txtInvNo2";
+            this.txtInvNo2.Size = new System.Drawing.Size(160, 23);
+            this.txtInvNo2.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(272, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(21, 23);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "～";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtInvNo1
+            // 
+            this.txtInvNo1.BackColor = System.Drawing.Color.White;
+            this.txtInvNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtInvNo1.Location = new System.Drawing.Point(109, 22);
+            this.txtInvNo1.MaxLength = 25;
+            this.txtInvNo1.Name = "txtInvNo1";
+            this.txtInvNo1.Size = new System.Drawing.Size(160, 23);
+            this.txtInvNo1.TabIndex = 0;
+            // 
+            // labInvno
+            // 
+            this.labInvno.Location = new System.Drawing.Point(25, 22);
+            this.labInvno.Name = "labInvno";
+            this.labInvno.Size = new System.Drawing.Size(80, 23);
+            this.labInvno.TabIndex = 9;
+            this.labInvno.Text = "Invoice No.";
+            // 
             // dateETD
             // 
             // 
@@ -137,14 +219,14 @@
             this.dateETD.Location = new System.Drawing.Point(531, 22);
             this.dateETD.Name = "dateETD";
             this.dateETD.Size = new System.Drawing.Size(280, 23);
-            this.dateETD.TabIndex = 109;
+            this.dateETD.TabIndex = 3;
             // 
             // labETD
             // 
             this.labETD.Location = new System.Drawing.Point(477, 22);
             this.labETD.Name = "labETD";
             this.labETD.Size = new System.Drawing.Size(51, 23);
-            this.labETD.TabIndex = 108;
+            this.labETD.TabIndex = 13;
             this.labETD.Text = "ETD";
             // 
             // txtPo2
@@ -155,7 +237,7 @@
             this.txtPo2.MaxLength = 13;
             this.txtPo2.Name = "txtPo2";
             this.txtPo2.Size = new System.Drawing.Size(130, 23);
-            this.txtPo2.TabIndex = 107;
+            this.txtPo2.TabIndex = 7;
             // 
             // label9
             // 
@@ -163,7 +245,7 @@
             this.label9.Location = new System.Drawing.Point(661, 51);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(21, 23);
-            this.label9.TabIndex = 106;
+            this.label9.TabIndex = 0;
             this.label9.Text = "～";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label9.TextStyle.Color = System.Drawing.Color.Black;
@@ -178,14 +260,14 @@
             this.txtPo1.MaxLength = 13;
             this.txtPo1.Name = "txtPo1";
             this.txtPo1.Size = new System.Drawing.Size(130, 23);
-            this.txtPo1.TabIndex = 101;
+            this.txtPo1.TabIndex = 6;
             // 
             // labPo
             // 
             this.labPo.Location = new System.Drawing.Point(477, 51);
             this.labPo.Name = "labPo";
             this.labPo.Size = new System.Drawing.Size(51, 23);
-            this.labPo.TabIndex = 100;
+            this.labPo.TabIndex = 14;
             this.labPo.Text = "PO";
             // 
             // btnQuery
@@ -195,7 +277,7 @@
             this.btnQuery.Location = new System.Drawing.Point(856, 22);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(90, 30);
-            this.btnQuery.TabIndex = 1;
+            this.btnQuery.TabIndex = 8;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -222,90 +304,8 @@
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(973, 357);
-            this.grid1.TabIndex = 21;
+            this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // txtInvNo2
-            // 
-            this.txtInvNo2.BackColor = System.Drawing.Color.White;
-            this.txtInvNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvNo2.Location = new System.Drawing.Point(296, 22);
-            this.txtInvNo2.MaxLength = 25;
-            this.txtInvNo2.Name = "txtInvNo2";
-            this.txtInvNo2.Size = new System.Drawing.Size(160, 23);
-            this.txtInvNo2.TabIndex = 113;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(272, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(21, 23);
-            this.label1.TabIndex = 112;
-            this.label1.Text = "～";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // txtInvNo1
-            // 
-            this.txtInvNo1.BackColor = System.Drawing.Color.White;
-            this.txtInvNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInvNo1.Location = new System.Drawing.Point(109, 22);
-            this.txtInvNo1.MaxLength = 25;
-            this.txtInvNo1.Name = "txtInvNo1";
-            this.txtInvNo1.Size = new System.Drawing.Size(160, 23);
-            this.txtInvNo1.TabIndex = 111;
-            // 
-            // labInvno
-            // 
-            this.labInvno.Location = new System.Drawing.Point(25, 22);
-            this.labInvno.Name = "labInvno";
-            this.labInvno.Size = new System.Drawing.Size(80, 23);
-            this.labInvno.TabIndex = 110;
-            this.labInvno.Text = "Invoice No.";
-            // 
-            // txtSP2
-            // 
-            this.txtSP2.BackColor = System.Drawing.Color.White;
-            this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP2.Location = new System.Drawing.Point(260, 51);
-            this.txtSP2.MaxLength = 13;
-            this.txtSP2.Name = "txtSP2";
-            this.txtSP2.Size = new System.Drawing.Size(130, 23);
-            this.txtSP2.TabIndex = 117;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Location = new System.Drawing.Point(238, 51);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(21, 23);
-            this.label3.TabIndex = 116;
-            this.label3.Text = "～";
-            this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            this.label3.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label3.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // txtSP1
-            // 
-            this.txtSP1.BackColor = System.Drawing.Color.White;
-            this.txtSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP1.Location = new System.Drawing.Point(109, 51);
-            this.txtSP1.MaxLength = 13;
-            this.txtSP1.Name = "txtSP1";
-            this.txtSP1.Size = new System.Drawing.Size(130, 23);
-            this.txtSP1.TabIndex = 115;
-            // 
-            // labSP
-            // 
-            this.labSP.Location = new System.Drawing.Point(25, 51);
-            this.labSP.Name = "labSP";
-            this.labSP.Size = new System.Drawing.Size(80, 23);
-            this.labSP.TabIndex = 114;
-            this.labSP.Text = "SP#";
             // 
             // P62_Import
             // 
@@ -313,6 +313,7 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
+            this.DefaultControl = "txtInvNo1";
             this.Name = "P62_Import";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P62. Batch Import";
