@@ -48,20 +48,25 @@
             this.label2 = new Sci.Win.UI.Label();
             this.chkFOC = new Sci.Win.UI.CheckBox();
             this.ChkLocalOrder = new Sci.Win.UI.CheckBox();
+            this.lbReportType = new Sci.Win.UI.Label();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioByDimension = new Sci.Win.UI.RadioButton();
+            this.radioSummary = new Sci.Win.UI.RadioButton();
+            this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(414, 81);
+            this.print.Location = new System.Drawing.Point(435, 81);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(414, 9);
+            this.toexcel.Location = new System.Drawing.Point(435, 9);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(414, 45);
+            this.close.Location = new System.Drawing.Point(435, 45);
             // 
             // label7
             // 
@@ -264,9 +269,52 @@
             this.ChkLocalOrder.Text = "Exclude Local order";
             this.ChkLocalOrder.UseVisualStyleBackColor = true;
             // 
+            // lbReportType
+            // 
+            this.lbReportType.Location = new System.Drawing.Point(9, 212);
+            this.lbReportType.Name = "lbReportType";
+            this.lbReportType.Size = new System.Drawing.Size(97, 23);
+            this.lbReportType.TabIndex = 226;
+            this.lbReportType.Text = "Report Type";
+            // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.radioByDimension);
+            this.radioPanel1.Controls.Add(this.radioSummary);
+            this.radioPanel1.Location = new System.Drawing.Point(109, 212);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(130, 57);
+            this.radioPanel1.TabIndex = 227;
+            // 
+            // radioByDimension
+            // 
+            this.radioByDimension.AutoSize = true;
+            this.radioByDimension.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByDimension.Location = new System.Drawing.Point(0, 30);
+            this.radioByDimension.Name = "radioByDimension";
+            this.radioByDimension.Size = new System.Drawing.Size(112, 21);
+            this.radioByDimension.TabIndex = 12;
+            this.radioByDimension.Text = "By Dimension";
+            this.radioByDimension.UseVisualStyleBackColor = true;
+            // 
+            // radioSummary
+            // 
+            this.radioSummary.AutoSize = true;
+            this.radioSummary.Checked = true;
+            this.radioSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummary.Location = new System.Drawing.Point(3, 3);
+            this.radioSummary.Name = "radioSummary";
+            this.radioSummary.Size = new System.Drawing.Size(85, 21);
+            this.radioSummary.TabIndex = 11;
+            this.radioSummary.TabStop = true;
+            this.radioSummary.Text = "Summary";
+            this.radioSummary.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(506, 243);
+            this.ClientSize = new System.Drawing.Size(525, 337);
+            this.Controls.Add(this.radioPanel1);
+            this.Controls.Add(this.lbReportType);
             this.Controls.Add(this.ChkLocalOrder);
             this.Controls.Add(this.chkFOC);
             this.Controls.Add(this.comboFactory);
@@ -290,6 +338,9 @@
             this.Name = "R03";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R03. Packing List Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
             this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
@@ -313,6 +364,10 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.chkFOC, 0);
             this.Controls.SetChildIndex(this.ChkLocalOrder, 0);
+            this.Controls.SetChildIndex(this.lbReportType, 0);
+            this.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.radioPanel1.ResumeLayout(false);
+            this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -340,5 +395,9 @@
         private Win.UI.Label label2;
         private Win.UI.CheckBox chkFOC;
         private Win.UI.CheckBox ChkLocalOrder;
+        private Win.UI.Label lbReportType;
+        private Win.UI.RadioPanel radioPanel1;
+        private Win.UI.RadioButton radioByDimension;
+        private Win.UI.RadioButton radioSummary;
     }
 }
