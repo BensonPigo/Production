@@ -59,6 +59,7 @@ select  selected = 0
         , ftyinventoryukey = c.ukey 
         , location = dbo.Getlocation(c.ukey) 
         , balance = c.inqty-c.outqty + c.adjustqty 
+		, a.NetQty
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
 inner join Orders on c.poid = orders.id
@@ -135,7 +136,9 @@ Where a.id = '{0}'
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 3
                 .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) // 4
                 .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns) // 5
-               .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)); // 6
+                .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(40)) // 6
+                .Numeric("NetQty", header: "Net Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                ;
 
             this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;  // PCS/Stitch
         }
@@ -203,6 +206,19 @@ Where a.id = '{0}'
             }
 
             this.Close();
+        }
+
+        private void BtnCopyNetQty_Click(object sender, EventArgs e)
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+
+            foreach (DataRow dr in dt.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(o["Selected"]) == "1"))
+            {
+                dr["Qty"] = dr["NetQty"];
+                dr.EndEdit();
+            }
+
+            this.gridImport.DataSource = dt;
         }
     }
 }

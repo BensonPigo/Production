@@ -39,6 +39,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnCopyNetQty = new Sci.Win.UI.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -53,7 +54,7 @@
             this.btnCancel.Location = new System.Drawing.Point(912, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
@@ -65,7 +66,7 @@
             this.btnImport.Location = new System.Drawing.Point(816, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
-            this.btnImport.TabIndex = 0;
+            this.btnImport.TabIndex = 4;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
@@ -76,7 +77,7 @@
             this.btnFindNow.Location = new System.Drawing.Point(235, 16);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
-            this.btnFindNow.TabIndex = 5;
+            this.btnFindNow.TabIndex = 2;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
@@ -88,11 +89,10 @@
             this.txtSPNo.Location = new System.Drawing.Point(107, 19);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNo.TabIndex = 3;
+            this.txtSPNo.TabIndex = 1;
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(95, 23);
@@ -101,6 +101,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnCopyNetQty);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -151,9 +152,20 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 419);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // btnCopyNetQty
+            // 
+            this.btnCopyNetQty.Location = new System.Drawing.Point(12, 15);
+            this.btnCopyNetQty.Name = "btnCopyNetQty";
+            this.btnCopyNetQty.Size = new System.Drawing.Size(113, 30);
+            this.btnCopyNetQty.TabIndex = 3;
+            this.btnCopyNetQty.Text = "Copy Net Qty";
+            this.btnCopyNetQty.UseVisualStyleBackColor = true;
+            this.btnCopyNetQty.Click += new System.EventHandler(this.BtnCopyNetQty_Click);
             // 
             // P12_Import
             // 
@@ -163,6 +175,7 @@
             this.Controls.Add(this.groupBox2);
             this.DefaultControl = "txtSPNo";
             this.Name = "P12_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P12. Import Detail";
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -186,5 +199,6 @@
         private Win.UI.Panel panel1;
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Button btnCopyNetQty;
     }
 }
