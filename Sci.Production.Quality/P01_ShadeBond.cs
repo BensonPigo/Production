@@ -815,9 +815,6 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
                 this.ShowErr(result);
             }
 
-            DataTable dtFIR_Shadebone;
-            DBProxy.Current.Select(null, $"select * from FIR_Shadebone where id={this.maindr["ID"]}", out dtFIR_Shadebone);
-
             // 抓Invo,ETA 資料
             List<SqlParameter> par_Exp = new List<SqlParameter>
             {
@@ -877,6 +874,9 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             #endregion
 
             #region 表身資料
+
+            DataTable dtFIR_Shadebone;
+            DBProxy.Current.Select(null, $"select * from FIR_Shadebone where id={this.maindr["ID"]}", out dtFIR_Shadebone);
             List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Dyelot"].ToString()).Distinct().ToList();
             List<P01_ShadeBond_Data> data = new List<P01_ShadeBond_Data>();
 
