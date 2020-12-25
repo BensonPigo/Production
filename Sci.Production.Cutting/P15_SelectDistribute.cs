@@ -73,6 +73,7 @@ namespace Sci.Production.Cutting
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("RealbalanceQty", header: "Balance Qty", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("cutoutput", header: "Qty", width: Widths.AnsiChars(3), settings: cutoutput)
+                .Date("BuyerDelivery", header: "Buyer Dlv.", iseditingreadonly: true)
                 .Text("isEXCESS", header: "EXCESS", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 ;
 
