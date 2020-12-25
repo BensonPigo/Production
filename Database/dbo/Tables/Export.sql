@@ -20,7 +20,7 @@
     [Handle]              VARCHAR (10)    CONSTRAINT [DF_Export_Handle] DEFAULT ('') NOT NULL,
     [Posting]             BIT             CONSTRAINT [DF_Export_Posting] DEFAULT ((0)) NULL,
     [Payer]               VARCHAR (1)     CONSTRAINT [DF_Export_Payer] DEFAULT ('') NULL,
-    [CompanyID]           NUMERIC (1)     CONSTRAINT [DF_Export_CompanyID] DEFAULT ((0)) NULL,
+    [CompanyID]           NUMERIC (2)     CONSTRAINT [DF_Export_CompanyID] DEFAULT ((0)) NULL,
     [Confirm]             BIT             CONSTRAINT [DF_Export_Confirm] DEFAULT ((0)) NULL,
     [LastEdit]            DATETIME        NULL,
     [Remark]              NVARCHAR (MAX)  CONSTRAINT [DF_Export_Remark] DEFAULT ('') NULL,
