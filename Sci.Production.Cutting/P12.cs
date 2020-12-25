@@ -259,6 +259,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -348,6 +349,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -481,6 +483,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -570,6 +573,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -751,7 +755,7 @@ OPTION (RECOMPILE)"
                 Style = row1["Style"].ToString(),
                 MarkerNo = row1["MarkerNo"].ToString(),
                 Body_Cut = row1["Body_Cut"].ToString(),
-                SubCut = -1,
+                SubCutNo = MyUtility.Convert.GetInt(row1["SubCutNo"]),
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
                 Article = row1["Article"].ToString(),
@@ -949,7 +953,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 Style = dr["Style"].ToString(),
                 MarkerNo = dr["MarkerNo"].ToString(),
                 Body_Cut = dr["Body_Cut"].ToString(),
-                SubCut = -1,
+                SubCutNo = MyUtility.Convert.GetInt(dr["SubCutNo"]),
                 Parts = dr["Parts"].ToString(),
                 Color = dr["Color2"].ToString(),
                 Article = dr["Article"].ToString(),

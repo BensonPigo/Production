@@ -25,8 +25,12 @@
     [oldid]           VARCHAR (13)  NULL,
     [FabricPanelCode] VARCHAR (2)   NULL,
     [IsEXCESS]        BIT           DEFAULT ((0)) NOT NULL,
+    [ByToneGenerate]  BIT           DEFAULT ((0)) NOT NULL,
+    [SubCutNo]        INT           CONSTRAINT [DF_Bundle_SubCutNo] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -177,4 +181,24 @@ GO
 CREATE NONCLUSTERED INDEX [cuttingMB]
     ON [dbo].[Bundle]([MDivisionid] ASC)
     INCLUDE([ID], [Orderid], [CutRef]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [Testindex]
+    ON [dbo].[Bundle]([MDivisionid] ASC, [CutRef] ASC)
+    INCLUDE([ID], [POID], [Colorid], [Article], [PatternPanel], [Cutno], [Orderid], [Sewinglineid], [Item], [SewingCell], [AddDate], [FabricPanelCode]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [CutRef]
+    ON [dbo].[Bundle]([CutRef] ASC, [MDivisionid] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [BundleCdate]
+    ON [dbo].[Bundle]([Cdate] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'子裁次', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Bundle', @level2type = N'COLUMN', @level2name = N'SubCutNo';
 

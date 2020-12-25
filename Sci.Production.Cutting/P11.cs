@@ -2221,6 +2221,16 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     startno_bytone = startno;
                 }
 
+                string sqlcmd = $@"
+select isnull(max(b.SubCutNo), 0) + 1
+from Bundle b
+where b.CutRef='{artar["CutRef"]}'
+and b.PatternPanel  = '{artar["Fabriccombo"]}'
+and b.FabricPanelCode = '{artar["FabricPanelCode"]}'
+and b.Cutno = {artar["Cutno"]}
+";
+                int subCut = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+
                 #region Create Bundle
 
                 DataRow nBundle_dr = insert_Bundle.NewRow();
@@ -2231,13 +2241,13 @@ Insert Into Bundle
  , Article        , PatternPanel, Cutno      , cDate    , OrderID
  , SewingLineid   , Item        , SewingCell , Ratio    , Startno
  , Qty            , AllPart     , CutRef     , AddName  , AddDate
- , FabricPanelCode, IsEXCESS) 
+ , FabricPanelCode, IsEXCESS    , SubCutNo) 
 values
 ('{0}'            , '{1}'       , '{2}'      , '{3}'    , '{4}'
  , '{5}'          , '{6}'       , {7}        , GetDate(), '{8}'
  , '{9}'          , '{10}'      , '{11}'     , '{12}'   , '{13}'
  , {14}           , {15}        , '{16}'     , '{17}'   , GetDate()
- , '{18}'         , {19})",
+ , '{18}'         , {19}        , {20})",
                 id_list[idcount],
                 artar["POID"],
                 this.keyWord,
@@ -2257,7 +2267,8 @@ values
                 artar["Cutref"],
                 this.loginID,
                 artar["FabricPanelCode"],
-                artar["isEXCESS"].EqualString("Y") ? 1 : 0);
+                artar["isEXCESS"].EqualString("Y") ? 1 : 0,
+                subCut);
 
                 insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion

@@ -461,6 +461,16 @@ order by bundlegroup,bundleno";
             }
             #endregion
 
+            string sqlcmd = $@"
+select isnull(max(b.SubCutNo), 0) + 1
+from Bundle b
+where b.CutRef='{this.CurrentMaintain["CutRef"]}'
+and b.PatternPanel  = '{this.CurrentMaintain["PatternPanel"]}'
+and b.FabricPanelCode = '{this.CurrentMaintain["FabricPanelCode"]}'
+and b.Cutno = {this.CurrentMaintain["Cutno"]}
+";
+            this.CurrentMaintain["SubCutNo"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+
             // DataTable dt = (DataTable)detailgridbs.DataSource;
             return base.ClickSavePre();
         }

@@ -2433,6 +2433,9 @@ DROP TABLE #beforeTmp
             public string CutRef { get; set; }
 
             /// <inheritdoc/>
+            public int SubCutNo { get; set; }
+
+            /// <inheritdoc/>
             public string Tone { get; set; }
 
             /// <inheritdoc/>
@@ -2455,9 +2458,6 @@ DROP TABLE #beforeTmp
 
             /// <inheritdoc/>
             public string Body_Cut { get; set; }
-
-            /// <inheritdoc/>
-            public int SubCut { get; set; }
 
             /// <inheritdoc/>
             public string Parts { get; set; }
