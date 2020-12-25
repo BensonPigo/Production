@@ -164,6 +164,7 @@
     </Compile>
     <Compile Include="Shipping_B09.Designer.cs">
       <DependentUpon>Shipping_B09.cs</DependentUpon>
+    </Compile>
     <Compile Include="IE_B07.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -431,6 +432,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Shipping_B09.resx">
       <DependentUpon>Shipping_B09.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IE_B07.resx">
       <DependentUpon>IE_B07.cs</DependentUpon>
       <SubType>Designer</SubType>
