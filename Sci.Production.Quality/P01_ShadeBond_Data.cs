@@ -2,7 +2,6 @@
 {
     internal class P01_ShadeBond_Data
     {
-        public string Key { get; set; }
         public string Dyelot { get; set; }
 
         public string Roll { get; set; }
