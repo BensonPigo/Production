@@ -1846,6 +1846,16 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'"
 
         private void Distable()
         {
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.listControlBindingSource1.DataSource = null;
+            }
+
+            if (this.grid1.DataSource != null)
+            {
+                this.grid1.DataSource = null;
+            }
+
             this.IsShowTable();
 
             DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("No <> '' and IsShow = 1");
@@ -1873,16 +1883,6 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'"
 
         private void IsShowTable()
         {
-            if (this.listControlBindingSource1.DataSource != null)
-            {
-                this.listControlBindingSource1.DataSource = null;
-            }
-
-            if (this.grid1.DataSource != null)
-            {
-                this.grid1.DataSource = null;
-            }
-
             for (int i = 0; i < this.detailgrid.Rows.Count; i++)
             {
                 DataRow row = this.detailgrid.GetDataRow(i);
