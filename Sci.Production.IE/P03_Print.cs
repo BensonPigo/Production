@@ -190,7 +190,7 @@ select   a.GroupKey
         ,a.ActCycle
         ,a.IsPPa
         ,a.No
-        ,a.IsHide
+        ,[IsHide] = isnull(a.IsHide, 0)
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
         ,[IsShowinIEP03] = cast(isnull(show.IsShowinIEP03, 1) as bit)
 from LineMapping_Detail a 
