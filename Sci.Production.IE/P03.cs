@@ -9,6 +9,7 @@ using Ict;
 using Sci.Data;
 using System.Linq;
 using Sci.Production.Class;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -97,17 +98,63 @@ namespace Sci.Production.IE
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select  ld.*
+select *
+    , [sortNO] = case when ld.IsHide = 1 then 1 
+                      when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
+                      when left(ld.No, 1) = 'P' then 3
+                      else 4 end
+from (
+    select  ld.OriNO
+	    , ld.No
+	    , ld.IsPPA
+        , [IsHide] = cast(iif(ld.IsHide is not null, ld.IsHide ,iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))) as bit)	    
+	    , ld.MachineTypeID
+	    , ld.MasterPlusGroup	
         , [Description]= IIF( o.DescEN = '' OR  o.DescEN IS NULL , ld.OperationID,o.DescEN)
-        , e.Name as EmployeeName
+	    , ld.Annotation
+	    , ld.Template
+	    , ld.Attachment
+	    , ld.ThreadColor
+	    , ld.Notice
+	    , ld.EmployeeID
+	    , e.Name as EmployeeName
         , e.Skill as EmployeeSkill
-        , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
-        ,o.MasterPlusGroup
-from LineMapping_Detail ld WITH (NOLOCK) 
-left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
-left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
-where ld.ID = '{0}' 
-order by ld.No, ld.GroupKey", masterID);
+	    , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
+        , [IsGroupHeader] = cast(iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0) as bit)
+	    , [IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+        , [IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+	    , ld.ID
+	    , ld.GroupKey
+	    , ld.Ukey
+	    , ld.ActCycle
+	    , ld.TotalGSD
+	    , ld.TotalCycle
+	    , ld.GSD
+	    , ld.Cycle
+        , ld.OperationID
+        , ld.New
+    from LineMapping_Detail ld WITH (NOLOCK) 
+    left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
+    left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+    outer apply (
+	    select IsShowinIEP03 = atf.IsShowinIEP03
+		    , IsSewingline = atf.IsSewingline
+		    , IsDesignatedArea = m.IsDesignatedArea
+	    from Operation o2 WITH (NOLOCK)
+	    inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	    inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	    inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
+	    where o.ID = o2.ID
+    )show
+    where ld.ID = '{0}' 
+)ld
+order by case when ld.No = '' then 1
+	    when left(ld.No, 1) = 'P' then 2
+	    else 3
+	    end, 
+        ld.GroupKey",
+                masterID,
+                Env.User.Factory);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -173,6 +220,7 @@ order by ld.No, ld.GroupKey", masterID);
             DataGridViewGeneratorTextColumnSettings threadColor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings notice = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings hide = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
@@ -204,6 +252,9 @@ order by ld.No, ld.GroupKey", masterID);
                     }
 
                     this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
 
@@ -220,7 +271,7 @@ order by ld.No, ld.GroupKey", masterID);
                     return;
                 }
 
-                if (MyUtility.Convert.GetBool(dr["IsPPA"]))
+                if (MyUtility.Convert.GetBool(dr["IsHide"]))
                 {
                     ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
                 }
@@ -262,8 +313,10 @@ order by ld.No, ld.GroupKey", masterID);
                     dr.EndEdit();
                     this.ReclculateGridGSDCycleTime(MyUtility.Check.Empty(dr["No"]) ? string.Empty : dr["No"].ToString());
                     this.ComputeTaktTime();
-
                     this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
             #endregion
@@ -405,9 +458,17 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsAttachment = 1
+union all
+select ID, Description
+from SewingMachineAttachment WITH (NOLOCK) 
+where Junk = 0";
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Attachment"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -423,37 +484,95 @@ order by ld.No, ld.GroupKey", masterID);
 
             attachment.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode)
                 {
-                    this.CurrentDetailData["Attachment"] = e.FormattedValue;
-                    string sqlcmd = "select ID,Description from SewingMachineAttachment WITH (NOLOCK) where Junk = 0";
-                    DataTable dt;
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
-                    string[] getLocation = this.CurrentDetailData["Attachment"].ToString().Split(',').Distinct().ToArray();
-                    bool selectId = true;
-                    List<string> errAttachment = new List<string>();
-                    List<string> trueAttachment = new List<string>();
-                    foreach (string item in getLocation)
+                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
+                    string sqlcmd = @"
+select [Attachment] = STUFF((
+		        select concat(',' ,s.Data)
+		        from SplitString(o.MoldID, ';') s
+		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		        where m.IsAttachment = 1
+                and m.Junk = 0
+		        for xml path ('')) 
+	        ,1,1,'')
+	,[Template] = STUFF((
+		            select concat(',' ,s.Data)
+		            from SplitString(o.MoldID, ';') s
+		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		            where m.IsTemplate = 1
+                    and m.Junk = 0
+		            for xml path ('')) 
+	            ,1,1,'')
+from Operation o WITH (NOLOCK) 
+where o.ID = @OperationID";
+                    DataTable dtOperation;
+                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
+                    List<string> operationList = new List<string>();
+                    if (!result)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["id"].EqualString(item)) && !item.EqualString(string.Empty))
+                        this.CurrentDetailData["Attachment"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+
+                    if (dtOperation.Rows.Count > 0)
+                    {
+                        operationList = dtOperation.Rows[0]["Attachment"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+
+                        if (this.CurrentDetailData["Template"].Empty())
                         {
-                            selectId &= false;
-                            errAttachment.Add(item);
+                            this.CurrentDetailData["Template"] = dtOperation.Rows[0]["Template"].ToString();
                         }
-                        else if (!item.EqualString(string.Empty))
+
+                        if (e.FormattedValue.Empty())
                         {
-                            trueAttachment.Add(item);
+                            this.CurrentDetailData["Attachment"] = dtOperation.Rows[0]["Attachment"].ToString();
+
+                            return;
                         }
                     }
 
-                    if (!selectId)
+                    sqlcmd = @"
+select ID 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsAttachment = 1
+union all
+select ID
+from SewingMachineAttachment WITH (NOLOCK) 
+where Junk = 0";
+                    DataTable dtMold;
+                    result = DBProxy.Current.Select(null, sqlcmd, out dtMold);
+                    if (!result)
+                    {
+                        this.CurrentDetailData["Attachment"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+
+                    // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
+                    List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+
+                    // 不存在 operation
+                    var existsOperation = operationList.Except(getMold);
+                    if (existsOperation.Any() && operationList.Any())
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errAttachment.ToArray()) + "  Data not found !!", "Data not found");
+                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Except(existsOperation).ToList());
+                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  need include in Operation setting !!", "Data need include in setting");
+                        return;
                     }
 
-                    trueAttachment.Sort();
-                    this.CurrentDetailData["Attachment"] = string.Join(",", trueAttachment.ToArray());
+                    // 不存在 Mold
+                    var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
+                    if (existsMold.Any())
+                    {
+                        e.Cancel = true;
+                        this.CurrentDetailData["Attachment"] = string.Join(",", getMold.Where(x => existsMold.Where(y => !y.EqualString(x)).Any()).ToList());
+                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsMold.ToList()) + "  need include in Mold setting !!", "Data need include in setting");
+                        return;
+                    }
+
+                    this.CurrentDetailData["Attachment"] = string.Join(",", getMold.ToList());
                 }
             };
             #endregion
@@ -462,9 +581,18 @@ order by ld.No, ld.GroupKey", masterID);
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsTemplate = 1
+union all
+select ID, Description
+from SewingMachineTemplate WITH (NOLOCK) 
+where Junk = 0
+";
 
-                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,Description", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
+                    Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "ID,DescEN", "13,60,10", this.CurrentDetailData["Template"].ToString(), null, null, null)
                     {
                         Width = 666,
                     };
@@ -483,7 +611,17 @@ order by ld.No, ld.GroupKey", masterID);
                 if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
                     this.CurrentDetailData["Template"] = e.FormattedValue;
-                    string sqlcmd = "select ID,Description from SewingMachineTemplate WITH (NOLOCK) where Junk = 0";
+                    string sqlcmd = @"
+select ID,DescEN 
+from Mold WITH (NOLOCK) 
+where Junk = 0
+and IsTemplate = 1
+union all
+select ID, Description
+from SewingMachineTemplate WITH (NOLOCK) 
+where Junk = 0
+";
+
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = this.CurrentDetailData["Template"].ToString().Split(',').Distinct().ToArray();
@@ -514,34 +652,89 @@ order by ld.No, ld.GroupKey", masterID);
                 }
             };
             #endregion
-            ppa.CellValidating += (s, e) =>
+
+            hide.CellValidating += (s, e) =>
             {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!this.EditMode)
+                {
+                    dr["IsHide"] = dr["IsHide"];
+                    return;
+                }
+
                 if (this.EditMode)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    if ((bool)e.FormattedValue)
+                    /*
+                     * if (MyUtility.Convert.GetBool(dr["IsGroupHeader"]))
+                    {
+                        MyUtility.Msg.ErrorBox("This operation is [Group Header], cannot modify.");
+                        dr["IsHide"] = 1;
+                        return;
+                    }
+                    */
+
+                    /*
+                    if (MyUtility.Convert.GetBool(dr["IsSewingOperation"]))
+                    {
+                        MyUtility.Msg.ErrorBox("This Artwrok is sewing operation, cannot modify.");
+                        dr["IsHide"] = 1;
+                        return;
+                    }
+                    */
+
+                    if (MyUtility.Convert.GetBool(e.FormattedValue))
                     {
                         string noo = dr["No"].ToString(); // 紀錄要被刪除的No
                         dr["No"] = string.Empty;
-                        dr["isppa"] = 1;
+                        dr["IsPPA"] = 0;
+                        dr["IsHide"] = 1;
                         this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
                         this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
                         if (noo != string.Empty)
                         {
-                            this.ReclculateGridGSDCycleTime(noo); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
+                            this.ReclculateGridGSDCycleTime(noo); // 重算被刪除掉的No的TotalGSD & Total Cycle Time
                         }
                     }
                     else
                     {
-                        dr["isppa"] = 0;
+                        dr["IsHide"] = 0;
                         this.SumNoGSDCycleTime(dr["GroupKey"].ToString());
                         this.AssignNoGSDCycleTime(dr["GroupKey"].ToString());
                     }
 
                     this.ComputeTaktTime();
                     this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
                 }
             };
+
+            ppa.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (MyUtility.Convert.GetBool(e.FormattedValue))
+                    {
+                        dr["IsPPA"] = 1;
+                        dr["IsHide"] = 0;
+                        dr.EndEdit();
+                    }
+                    else
+                    {
+                        dr["IsPPA"] = 0;
+                        dr.EndEdit();
+                    }
+
+                    this.ComputeTaktTime();
+                    this.Distable();
+                    this.detailgrid.Focus();
+                    this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
+                    this.detailgrid.BeginEdit(true);
+                }
+            };
+
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
             notice.MaxLength = 600;
@@ -550,6 +743,7 @@ order by ld.No, ld.GroupKey", masterID);
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
             .CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
+            .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
             .Text("MachineTypeID", header: "ST/MC type", width: Widths.AnsiChars(10), settings: machine)
             .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -573,7 +767,6 @@ order by ld.No, ld.GroupKey", masterID);
             this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["EmployeeSkill"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
             this.detailgrid.RowPrePaint += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -598,6 +791,29 @@ order by ld.No, ld.GroupKey", masterID);
                     }
                 }
                 #endregion
+            };
+
+            // [No.] 特殊排序規則 [Hide]有打勾-> [No.][PPA][Hide]皆空白-> [No.]為P開頭-> [No.]為一般數字
+            int rowIndex = 0;
+            int columIndex = 0;
+            this.detailgrid.CellClick += (s, e) =>
+            {
+                rowIndex = e.RowIndex;
+                columIndex = e.ColumnIndex;
+            };
+
+            this.detailgrid.Sorted += (s, e) =>
+            {
+                this.Distable();
+
+                if (columIndex == 1)
+                {
+                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    dt.DefaultView.Sort = "sortNO, No";
+                    this.detailgridbs.DataSource = dt;
+
+                    this.IsShowTable();
+                }
             };
 
             Ict.Win.UI.DataGridViewNumericBoxColumn act;
@@ -778,6 +994,49 @@ order by ld.No, ld.GroupKey", masterID);
                 return false;
             }
 
+            var queryIsGroupHeader = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == false && x.Field<bool?>("IsGroupHeader") == true);
+            if (queryIsGroupHeader.Any())
+            {
+                string msg = "It must be selected if the operation is [Group Header]." + Environment.NewLine;
+                foreach (DataRow row in queryIsGroupHeader)
+                {
+                    msg += "[OriNo]: " + row["OriNo"].ToString() + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            var queryHideAndPPA = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == true && x.Field<bool?>("IsPPA") == true);
+            if (queryHideAndPPA.Any())
+            {
+                MyUtility.Msg.WarningBox("<PPA> and <Hide> cannot be selected at the same time.");
+                return false;
+            }
+
+            var queryIsHide = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == true && !x.Field<string>("No").Empty());
+            if (queryIsHide.Any())
+            {
+                string msg = "These operations cannot be [Hide] and have [No.] in the same time." + Environment.NewLine;
+                foreach (DataRow row in queryIsHide)
+                {
+                    msg += "[Operation]: " + row["Description"].ToString() + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            var queryIsPPA = this.DetailDatas
+                .Where(x => x.Field<bool?>("IsHide") == false
+                               && ((x.Field<bool?>("IsPPA") == true && (x.Field<string>("No").Empty() || !x.Field<string>("No").Substring(0, 1).Equals("P")))
+                                || (x.Field<bool?>("IsPPA") == false && !x.Field<string>("No").Empty() && x.Field<string>("No").Substring(0, 1).Equals("P"))));
+            if (queryIsPPA.Any())
+            {
+                MyUtility.Msg.WarningBox("The [No.] first word must be P if the [PPA] is checked.");
+                return false;
+            }
+
             this.ComputeTaktTime();
 
             // Vision為空的話就要填值
@@ -813,6 +1072,7 @@ order by ld.No, ld.GroupKey", masterID);
                     updCmd += $@"
 UPDATE LineMapping_Detail
 SET MasterPlusGroup = '{item["MasterPlusGroup"]}'
+    ,IsHide = '{item["IsHide"]}'
 WHERE Ukey={item["Ukey"]}
 
 ";
@@ -824,6 +1084,8 @@ WHERE Ukey={item["Ukey"]}
                     this.ShowErr(reusult);
                 }
             }
+
+            this.Distable();
         }
 
         /// <summary>
@@ -961,10 +1223,10 @@ WHERE Ukey={item["Ukey"]}
         // Compute Takt Time
         private void ComputeTaktTime()
         {
-            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsPPA = 0 or  IsPPA is null)");
-            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsPPA = 0 or  IsPPA is null)");
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsPPA = 0 or  IsPPA is null)");
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsPPA = 0 or  IsPPA is null)");
+            object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null)");
+            object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsHide = 0 or  IsHide is null)");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(GSD)", "(IsHide = 0 or  IsHide is null)");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(Cycle)", "(IsHide = 0 or  IsHide is null)");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
@@ -972,7 +1234,7 @@ WHERE Ukey={item["Ukey"]}
             var temptable = this.DetailDatas.CopyToDataTable();
             temptable.DefaultView.Sort = "No";
             string no = string.Empty;
-            foreach (DataRow dr in temptable.DefaultView.ToTable().Select("(IsPPA = 0 or  IsPPA is null)"))
+            foreach (DataRow dr in temptable.DefaultView.ToTable().Select("(IsHide = 0 or  IsHide is null)"))
             {
                 if (!MyUtility.Check.Empty(dr["No"]) && no != dr["No"].ToString())
                 {
@@ -1005,10 +1267,10 @@ WHERE Ukey={item["Ukey"]}
         // 重新計算Grid的Cycle Time
         private void ReclculateGridGSDCycleTime(string no)
         {
-            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("(IsPPA = 0 or  IsPPA is null)  and No = '{0}'", no));
-            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("(IsPPA = 0 or  IsPPA is null) and No = '{0}'", no));
+            object gSD = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(GSD)", string.Format("(IsHide = 0 or  IsHide is null)  and No = '{0}'", no));
+            object cycle = ((DataTable)this.detailgridbs.DataSource).Compute("Sum(Cycle)", string.Format("(IsHide = 0 or  IsHide is null) and No = '{0}'", no));
 
-            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("(IsPPA = 0 or  IsPPA is null) and No = '{0}'", no));
+            DataRow[] findRow = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("(IsHide = 0 or  IsHide is null) and No = '{0}'", no));
             if (findRow.Length > 0)
             {
                 foreach (DataRow dr in findRow)
@@ -1122,7 +1384,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             #region 檢查表身不可為空
-            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("(IsPPA = 0 or  IsPPA is null) and (No = '' or No is null)");
+            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("(IsHide = 0 or  IsHide is null) and (No = '' or No is null)");
             if (findrow.Length > 0)
             {
                 MyUtility.Msg.WarningBox("< No. > can't empty!!");
@@ -1231,11 +1493,29 @@ select ID = null
        , ld.Threadcolor
        , ld.ActCycle
        , ld.MasterPlusGroup
+		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))
+		,[IsGroupHeader] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0)
+		,[IsSewingOperation] = cast(iif(show.IsDesignatedArea = 1, 1, 0) as bit)
+        ,[IsShow] = isnull(show.IsShowinIEP03, 1)
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from Operation o2 WITH (NOLOCK)
+	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
+	where o.ID = o2.ID
+)show
 where ld.ID = {0} 
-order by ld.No", callNextForm.P03CopyLineMapping["ID"].ToString());
+order by case when ld.No = '' then 1
+			when left(ld.No, 1) = 'P' then 2
+			else 3
+			end, 
+        ld.GroupKey", callNextForm.P03CopyLineMapping["ID"].ToString());
                 DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out copyLineMapDetail);
                 if (!selectResult)
                 {
@@ -1313,19 +1593,10 @@ where t.StyleID = s.ID
                 return;
             }
 
-            P03CIPFinfo.Cutting = false;
-            P03CIPFinfo.Inspection = false;
-            P03CIPFinfo.Pressing = false;
-            P03CIPFinfo.Packing = false;
-            P03_CopyFromGSD_CIPF callNextForm = new P03_CopyFromGSD_CIPF();
-            callNextForm.ShowDialog(this);
-
             string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{timeStudy["ID"]}' ");
-            sqlCmd = string.Empty;
-            if (P03CIPFinfo.Cutting)
-            {
-                sqlCmd = $@"
-select 
+            sqlCmd = string.Format(
+                @"
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '0'
@@ -1348,12 +1619,23 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsGroupHeader] = 0
+	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+from [IETMS_Summary] i
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from ArtworkType_FTY atf WITH (NOLOCK)
+	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
+	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	where i.ArtworkTypeID = atf.ArtworkTypeID
+	and atf.FactoryID = '{2}'
+)show
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting'
 union all
-";
-            }
-
-            sqlCmd += $@"
 select ID = null
 	   , No = ''
 	   , OriNo = td.Seq
@@ -1363,8 +1645,18 @@ select ID = null
 	   , Cycle = td.SMV
 	   , TotalCycle = td.SMV
 	   , td.MachineTypeID
-       , Attachment = td.Mold
-       , Template --= null
+	   , [Attachment] = STUFF((
+					select concat(',' ,s.Data)
+					from SplitString(td.Mold, ',') s
+					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsTemplate = 1)) 
+					for xml path ('')) 
+				,1,1,'')
+	    , [Template] = STUFF((
+					select concat(',' ,s.Data)
+					from SplitString(td.Template, ',') s
+					where not exists (select 1 from Mold m WITH (NOLOCK) where s.Data = m.ID and (m.Junk = 1 or m.IsAttachment = 1)) 
+					for xml path ('')) 
+				,1,1,'')
 	   , td.OperationID
 	   , MoldID = td.Mold
 	   , GroupKey = 0
@@ -1374,17 +1666,27 @@ select ID = null
 	   , EmployeeName = ''
 	   , EmployeeSkill = ''
 	   , Efficiency = 100
-       , IsPPA  = iif(td.SMV > 0,0,1)
+       , IsPPA = iif(CHARINDEX('--', td.OperationID) > 0, 0, iif(td.SMV > 0, 0, 1))
        ,o.MasterPlusGroup
+	   ,[IsHide] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) as bit)
+	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
+	   ,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+       ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-where td.ID = {timeStudy["ID"]} ";
-
-            if (P03CIPFinfo.Inspection)
-            {
-                sqlCmd += $@"
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from Operation o2 WITH (NOLOCK)
+	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
+	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{2}'
+	where o.ID = o2.ID
+)show
+where td.ID = '{1}'
 union all
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '9970'
@@ -1407,15 +1709,24 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
-";
-            }
-
-            if (P03CIPFinfo.Pressing)
-            {
-                sqlCmd += $@"
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsGroupHeader] = 0
+	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+from [IETMS_Summary] i
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from ArtworkType_FTY atf WITH (NOLOCK)
+	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
+	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	where i.ArtworkTypeID = atf.ArtworkTypeID
+	and atf.FactoryID = '{2}'
+)show
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection'
 union all
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '9980'
@@ -1438,15 +1749,24 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
-";
-            }
-
-            if (P03CIPFinfo.Packing)
-            {
-                sqlCmd += $@"
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsGroupHeader] = 0
+	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+from [IETMS_Summary] i
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from ArtworkType_FTY atf WITH (NOLOCK)
+	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
+	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	where i.ArtworkTypeID = atf.ArtworkTypeID
+	and atf.FactoryID = '{2}'
+)show
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing'
 union all
-select 
+select distinct
 	ID = null
 	,No = ''
 	,OriNo = '9990'
@@ -1469,56 +1789,30 @@ select
 	,Efficiency = 100
 	,IsPPA = 0
     ,[MasterPlusGroup]=''
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
-";
-            }
+	,[IsHide] = cast(iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)) as bit)
+	,[IsGroupHeader] = 0
+	,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
+    ,[IsShow] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+from [IETMS_Summary] i
+outer apply (
+	select IsShowinIEP03 = atf.IsShowinIEP03
+		, IsSewingline = atf.IsSewingline
+		, IsDesignatedArea = m.IsDesignatedArea
+	from ArtworkType_FTY atf WITH (NOLOCK)
+	inner join ArtworkType at2 WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
+	inner join MachineType m WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
+	where i.ArtworkTypeID = atf.ArtworkTypeID
+	and atf.FactoryID = '{2}'
+)show
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'",
+                ietmsUKEY,
+                timeStudy["ID"],
+                Env.User.Factory);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query Fty GSD detail fail!!");
-                return;
-            }
-
-            string chkdata = string.Empty;
-            if (P03CIPFinfo.Cutting || P03CIPFinfo.Inspection || P03CIPFinfo.Pressing || P03CIPFinfo.Packing)
-            {
-                if (P03CIPFinfo.Cutting)
-                {
-                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00001'").Length == 0)
-                    {
-                        chkdata += "Cutting,";
-                    }
-                }
-
-                if (P03CIPFinfo.Inspection)
-                {
-                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00002'").Length == 0)
-                    {
-                        chkdata += "Inspection,";
-                    }
-                }
-
-                if (P03CIPFinfo.Packing)
-                {
-                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00003'").Length == 0)
-                    {
-                        chkdata += "Packing,";
-                    }
-                }
-
-                if (P03CIPFinfo.Pressing)
-                {
-                    if (timeStudy_Detail.Select("OperationID = 'PROCIPF00004'").Length == 0)
-                    {
-                        chkdata += "Pressing,";
-                    }
-                }
-            }
-
-            if (chkdata.Length > 0)
-            {
-                MyUtility.Msg.WarningBox($"CIPF no have {chkdata} data");
                 return;
             }
 
@@ -1532,8 +1826,8 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
 
-            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", "(IsPPA = 0 or  IsPPA is null)");
-            object maxSMV = timeStudy_Detail.Compute("max(GSD)", "(IsPPA = 0 or  IsPPA is null)");
+            object sumSMV = timeStudy_Detail.Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null)");
+            object maxSMV = timeStudy_Detail.Compute("max(GSD)", "(IsHide = 0 or  IsHide is null)");
 
             // 填入表頭資料
             this.CurrentMaintain["IdealOperators"] = timeStudy["NumberSewer"].ToString();
@@ -1562,18 +1856,44 @@ from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and Artwo
                 this.grid1.DataSource = null;
             }
 
-            DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("No <> ''");
+            this.IsShowTable();
+
+            DataRow[] drs = ((DataTable)this.detailgridbs.DataSource).Select("No <> '' and IsShow = 1");
             if (drs.Length == 0)
             {
                 return;
             }
 
-            DataTable copydt = drs.CopyToDataTable();
-            this.distdt = copydt.DefaultView.ToTable(true, new string[] { "No", "ActCycle", "TotalGSD", "TotalCycle", });
-
-            this.distdt.DefaultView.Sort = "No";
-            this.listControlBindingSource1.DataSource = this.distdt;
+            this.listControlBindingSource1.DataSource = drs
+                .Select(x => new
+                {
+                    No = x.Field<string>("No"),
+                    ActCycle = x.Field<decimal?>("ActCycle"),
+                    TotalGSD = x.Field<decimal?>("TotalGSD"),
+                    TotalCycle = x.Field<decimal?>("TotalCycle"),
+                    SortA = x.Field<string>("No").Substring(0, 1),
+                    SortB = x.Field<string>("No").Substring(1, x.Field<string>("No").Length - 1),
+                })
+                .Distinct()
+                .OrderByDescending(x => x.SortA)
+                .ThenBy(x => x.SortB)
+                .ToList();
             this.grid1.DataSource = this.listControlBindingSource1;
+        }
+
+        private void IsShowTable()
+        {
+            for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+            {
+                DataRow row = this.detailgrid.GetDataRow(i);
+                if (!MyUtility.Convert.GetBool(row["IsShow"]))
+                {
+                    CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
+                    currencyManager.SuspendBinding();
+                    this.detailgrid.Rows[i].Visible = false;
+                    currencyManager.ResumeBinding();
+                }
+            }
         }
     }
 }

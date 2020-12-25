@@ -8,6 +8,8 @@
     [AddDate]  DATETIME       NULL,
     [EditName] VARCHAR (10)   CONSTRAINT [DF_Mold_EditName] DEFAULT ('') NULL,
     [EditDate] DATETIME       NULL,
+    [IsAttachment] BIT CONSTRAINT [DF_Mold_IsAttachment] NOT NULL DEFAULT ((0)), 
+    [IsTemplate] BIT CONSTRAINT [DF_Mold_IsTemplate] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Mold] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -51,3 +53,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Editor', @l
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Edit time', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Mold', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為Attachment',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Mold',
+    @level2type = N'COLUMN',
+    @level2name = N'IsAttachment'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為Template',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Mold',
+    @level2type = N'COLUMN',
+    @level2name = N'IsTemplate'

@@ -30,6 +30,7 @@
         {
             this.labelLineMappingDisplay = new Sci.Win.UI.Label();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioU_Right = new Sci.Win.UI.RadioButton();
             this.radioZ = new Sci.Win.UI.RadioButton();
             this.radioU_Left = new Sci.Win.UI.RadioButton();
             this.labelOperationContentType = new Sci.Win.UI.Label();
@@ -40,7 +41,8 @@
             this.numpage = new Sci.Win.UI.NumericBox();
             this.comboLanguage = new Sci.Win.UI.ComboBox();
             this.labLanguage = new Sci.Win.UI.Label();
-            this.radioU_Right = new Sci.Win.UI.RadioButton();
+            this.chkpagePPA = new System.Windows.Forms.CheckBox();
+            this.txtPagePPA = new Sci.Win.UI.TextBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -85,6 +87,18 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(111, 87);
             this.radioPanel1.TabIndex = 0;
+            // 
+            // radioU_Right
+            // 
+            this.radioU_Right.AutoSize = true;
+            this.radioU_Right.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioU_Right.Location = new System.Drawing.Point(3, 31);
+            this.radioU_Right.Name = "radioU_Right";
+            this.radioU_Right.Size = new System.Drawing.Size(82, 21);
+            this.radioU_Right.TabIndex = 2;
+            this.radioU_Right.TabStop = true;
+            this.radioU_Right.Text = "U - Right";
+            this.radioU_Right.UseVisualStyleBackColor = true;
             // 
             // radioZ
             // 
@@ -165,7 +179,7 @@
             // 
             this.numpage.BackColor = System.Drawing.Color.White;
             this.numpage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numpage.Location = new System.Drawing.Point(181, 173);
+            this.numpage.Location = new System.Drawing.Point(239, 173);
             this.numpage.Minimum = new decimal(new int[] {
             1,
             0,
@@ -191,7 +205,7 @@
             this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboLanguage.FormattingEnabled = true;
             this.comboLanguage.IsSupportUnselect = true;
-            this.comboLanguage.Location = new System.Drawing.Point(181, 209);
+            this.comboLanguage.Location = new System.Drawing.Point(181, 243);
             this.comboLanguage.Name = "comboLanguage";
             this.comboLanguage.OldText = "";
             this.comboLanguage.Size = new System.Drawing.Size(121, 24);
@@ -199,27 +213,36 @@
             // 
             // labLanguage
             // 
-            this.labLanguage.Location = new System.Drawing.Point(13, 210);
+            this.labLanguage.Location = new System.Drawing.Point(13, 244);
             this.labLanguage.Name = "labLanguage";
             this.labLanguage.Size = new System.Drawing.Size(162, 23);
             this.labLanguage.TabIndex = 102;
             this.labLanguage.Text = "Language:";
             // 
-            // radioU_Right
+            // chkpagePPA
             // 
-            this.radioU_Right.AutoSize = true;
-            this.radioU_Right.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioU_Right.Location = new System.Drawing.Point(3, 31);
-            this.radioU_Right.Name = "radioU_Right";
-            this.radioU_Right.Size = new System.Drawing.Size(82, 21);
-            this.radioU_Right.TabIndex = 2;
-            this.radioU_Right.TabStop = true;
-            this.radioU_Right.Text = "U - Right";
-            this.radioU_Right.UseVisualStyleBackColor = true;
+            this.chkpagePPA.AutoSize = true;
+            this.chkpagePPA.Location = new System.Drawing.Point(16, 207);
+            this.chkpagePPA.Name = "chkpagePPA";
+            this.chkpagePPA.Size = new System.Drawing.Size(224, 21);
+            this.chkpagePPA.TabIndex = 103;
+            this.chkpagePPA.Text = "Change page 2 at No(For PPA)";
+            this.chkpagePPA.UseVisualStyleBackColor = true;
+            // 
+            // txtPagePPA
+            // 
+            this.txtPagePPA.BackColor = System.Drawing.Color.White;
+            this.txtPagePPA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPagePPA.Location = new System.Drawing.Point(239, 205);
+            this.txtPagePPA.Name = "txtPagePPA";
+            this.txtPagePPA.Size = new System.Drawing.Size(55, 23);
+            this.txtPagePPA.TabIndex = 104;
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(527, 273);
+            this.ClientSize = new System.Drawing.Size(527, 308);
+            this.Controls.Add(this.txtPagePPA);
+            this.Controls.Add(this.chkpagePPA);
             this.Controls.Add(this.labLanguage);
             this.Controls.Add(this.comboLanguage);
             this.Controls.Add(this.numpage);
@@ -246,6 +269,8 @@
             this.Controls.SetChildIndex(this.numpage, 0);
             this.Controls.SetChildIndex(this.comboLanguage, 0);
             this.Controls.SetChildIndex(this.labLanguage, 0);
+            this.Controls.SetChildIndex(this.chkpagePPA, 0);
+            this.Controls.SetChildIndex(this.txtPagePPA, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -270,5 +295,7 @@
         private Win.UI.ComboBox comboLanguage;
         private Win.UI.Label labLanguage;
         private Win.UI.RadioButton radioU_Right;
+        private System.Windows.Forms.CheckBox chkpagePPA;
+        private Win.UI.TextBox txtPagePPA;
     }
 }

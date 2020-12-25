@@ -59,6 +59,7 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\ChangeMemo_ContactWindow.sql" />
@@ -79,5 +80,9 @@
     <Build Include="dbo\Tables\OperationDesc.sql" />
     <Build Include="dbo\Tables\MeasurementTranslate.sql" />
     <Build Include="dbo\Tables\AccountNoSetting.sql" />
+    <Build Include="dbo\Tables\MachineTypeTPE.sql" />
+    <Build Include="dbo\Tables\ArtworkType_FTY.sql" />
+    <Build Include="dbo\Stored Procedures\TransExport_ProductionTPE.sql" />
+    <Build Include="dbo\Tables\MoldTPE.sql" />
   </ItemGroup>
 </Project>
