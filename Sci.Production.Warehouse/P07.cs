@@ -2338,8 +2338,8 @@ select
 	, a.seq1
 	, a.seq2
 	, a.UnitId
-	, Weight = iif(b.FabricType = 'F' and pll.GW is not null, pll.GW, a.WeightKg)
-	, ActualWeight = iif(b.FabricType = 'F' and pll.GW is not null, pll.GW, a.NetKg)
+	, Weight = iif(pll.GW is not null, pll.GW, a.WeightKg)
+	, ActualWeight = iif(pll.GW is not null, pll.GW, a.NetKg)
 	, stocktype = iif(c.category='M','I','B')
 	, b.POUnit 
 	, StockUnit = dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
@@ -2348,8 +2348,8 @@ select
 	, stockqty = round(x.qty * v.RateValue,2)
 	, shipqty = x.qty
 	, Actualqty = x.qty
-	, Roll = convert(varchar(8), iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.PackageNo, ''))
-	, Dyelot = convert(varchar(8), iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.BatchNo, ''))
+	, Roll = convert(varchar(8), isnull(pll.PackageNo, ''))
+	, Dyelot = convert(varchar(8), isnull(pll.BatchNo, ''))
 	, remark = ''
 	, location = ''
 	, b.Refno
@@ -2368,7 +2368,7 @@ inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on a.PoID= b.id
 inner join orders c WITH (NOLOCK) on c.id = a.poid
 inner join View_unitrate v on v.FROM_U = b.POUnit and v.TO_U=dbo.GetStockUnitBySPSeq (b.id, b.seq1, b.seq2)
 LEFT JOIN Fabric WITH (NOLOCK) ON b.SCIRefNo=Fabric.SCIRefNo
-left join POShippingList_Line pll WITH (NOLOCK) ON pll.Export_Detail_Ukey = a.Ukey
+left join POShippingList_Line pll WITH (NOLOCK) ON pll.Export_Detail_Ukey = a.Ukey and b.FabricType = 'F'
 outer apply(select qty = iif(b.FabricType = 'F' and pll.Export_Detail_Ukey is not null, pll.ShipQty + pll.FOC, a.Qty + a.Foc))x
 OUTER APPLY(
 	SELECT [Val] = STUFF((
