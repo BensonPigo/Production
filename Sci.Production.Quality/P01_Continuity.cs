@@ -53,6 +53,15 @@ namespace Sci.Production.Quality
             this.txtuserApprover.TextBox1.IsSupportEditMode = false;
             this.txtuserApprover.TextBox1.ReadOnly = true;
 
+            if (!MyUtility.Convert.GetBool(this.maindr["ContinuityEncode"]) && this.EditMode)
+            {
+                this.btnCopyFabricFromIns.Enabled = true;
+            }
+            else
+            {
+                this.btnCopyFabricFromIns.Enabled = false;
+            }
+
             string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
@@ -584,6 +593,15 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 this.btnApprove.Enabled = this.CanEdit && !this.EditMode && lCheck == 1 && !MyUtility.Check.Empty(this.maindr["Result"]) && !MyUtility.Check.Empty(this.maindr["Continuity"]);
             }
+
+            if (!MyUtility.Convert.GetBool(this.maindr["ContinuityEncode"]) && this.EditMode)
+            {
+                this.btnCopyFabricFromIns.Enabled = true;
+            }
+            else
+            {
+                this.btnCopyFabricFromIns.Enabled = false;
+            }
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
@@ -694,6 +712,54 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 MdiParent = this.MdiParent,
             };
             frm.Show();
+        }
+
+        private void BtnCopyFabricFromIns_Click(object sender, EventArgs e)
+        {
+            DataTable gridTb = (DataTable)this.gridbs.DataSource;
+            DataTable dt2 = gridTb.Clone();
+            if (this.Datas.Count > 0)
+            {
+                foreach (DataRow dr2 in this.Datas.CopyToDataTable().Rows)
+                {
+                    if (dr2.RowState != DataRowState.Deleted)
+                    {
+                        DataRow drAdd2 = dt2.NewRow();
+                        drAdd2["Roll"] = dr2["Roll"];
+                        drAdd2["Dyelot"] = dr2["Dyelot"];
+                        drAdd2["ID"] = this.maindr["id"];
+                        dt2.Rows.Add(drAdd2);
+                    }
+                }
+            }
+
+            string sqlcmd = $@"
+select * from FIR_Physical t
+where not exists(
+	select 1 from #tmp s
+	where t.ID = s.ID
+	and t.Roll = s.Roll and t.Dyelot = s.Dyelot
+)
+and t.id = '{this.maindr["id"]}'
+";
+            DataTable dt;
+            MyUtility.Tool.ProcessWithDatatable(dt2, null, sqlcmd, out dt);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        DataRow drAdd = gridTb.NewRow();
+                        drAdd["Roll"] = dr["Roll"];
+                        drAdd["Dyelot"] = dr["Dyelot"];
+                        drAdd["Inspdate"] = DateTime.Now.ToShortDateString();
+                        drAdd["Inspector"] = this.loginID;
+                        gridTb.Rows.Add(drAdd);
+                        dr.EndEdit();
+                    }
+                }
+            }
         }
     }
 }
