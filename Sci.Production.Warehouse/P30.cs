@@ -13,6 +13,9 @@ using System.Transactions;
 using System.Windows.Forms;
 using Sci.Production.Class;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.Automation;
+using System.Threading.Tasks;
+using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
@@ -601,21 +604,21 @@ drop table #tmp
 
         private void BtnCreate_Click(object sender, EventArgs e)
         {
-             if (MyUtility.Check.Empty(this.detail))
+            if (MyUtility.Check.Empty(this.detail))
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
                 return;
             }
 
-             DataRow[] findrow = this.detail.Select(@"selected = true and qty <> 0");
-             if (findrow.Length == 0)
+            DataRow[] findrow = this.detail.Select(@"selected = true and qty <> 0");
+            if (findrow.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first!!");
                 return;
             }
 
-             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
-             if (dResult == DialogResult.No)
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to create data?");
+            if (dResult == DialogResult.No)
             {
                 return;
             }
@@ -623,9 +626,9 @@ drop table #tmp
             /*
              * 依照 To POID 建立 P24
              */
-             var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
-             var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
-             if (MyUtility.Check.Empty(tmpId))
+            var listPoid = findrow.Select(row => row["ToPOID"]).Distinct().ToList();
+            var tmpId = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "PI", "SubTransfer", DateTime.Now, batchNumber: listPoid.Count);
+            if (MyUtility.Check.Empty(tmpId))
             {
                 MyUtility.Msg.WarningBox("Get document ID fail!!");
                 return;
@@ -634,14 +637,14 @@ drop table #tmp
             #region 準備 insert subtransfer & subtransfer_detail 語法與 DataTable dtMaster & dtDetail
 
             // insert 欄位順序必須與 dtMaster, dtDetail 一致
-             string insertMaster = @"
+            string insertMaster = @"
 insert into subtransfer
         (id      , type   , issuedate, mdivisionid, FactoryID
          , status, addname, adddate,  remark)
 select   id      , type   , issuedate, mdivisionid, FactoryID
          , status, addname, adddate,   remark
 from #tmp";
-             string insertDetail = @"
+            string insertDetail = @"
 insert into subtransfer_detail
 (ID        , FromFtyInventoryUkey, FromFactoryID, FromPOID  , FromSeq1
  , FromSeq2, FromRoll            , FromStockType, FromDyelot, ToFactoryID
@@ -653,39 +656,39 @@ from #tmp
 
 ";
 
-             DataTable dtMaster = new DataTable();
-             dtMaster.Columns.Add("Poid");
-             dtMaster.Columns.Add("id");
-             dtMaster.Columns.Add("type");
-             dtMaster.Columns.Add("issuedate");
-             dtMaster.Columns.Add("mdivisionid");
-             dtMaster.Columns.Add("FactoryID");
-             dtMaster.Columns.Add("status");
-             dtMaster.Columns.Add("addname");
-             dtMaster.Columns.Add("adddate");
-             dtMaster.Columns.Add("remark");
+            DataTable dtMaster = new DataTable();
+            dtMaster.Columns.Add("Poid");
+            dtMaster.Columns.Add("id");
+            dtMaster.Columns.Add("type");
+            dtMaster.Columns.Add("issuedate");
+            dtMaster.Columns.Add("mdivisionid");
+            dtMaster.Columns.Add("FactoryID");
+            dtMaster.Columns.Add("status");
+            dtMaster.Columns.Add("addname");
+            dtMaster.Columns.Add("adddate");
+            dtMaster.Columns.Add("remark");
 
-             DataTable dtDetail = new DataTable();
-             dtDetail.Columns.Add("ID");
-             dtDetail.Columns.Add("FromFtyInventoryUkey");
-             dtDetail.Columns.Add("FromFactoryID");
-             dtDetail.Columns.Add("FromPOID");
-             dtDetail.Columns.Add("FromSeq1");
-             dtDetail.Columns.Add("FromSeq2");
-             dtDetail.Columns.Add("FromRoll");
-             dtDetail.Columns.Add("FromStockType");
-             dtDetail.Columns.Add("FromDyelot");
-             dtDetail.Columns.Add("ToFactoryID");
-             dtDetail.Columns.Add("ToPOID");
-             dtDetail.Columns.Add("ToSeq1");
-             dtDetail.Columns.Add("ToSeq2");
-             dtDetail.Columns.Add("ToRoll");
-             dtDetail.Columns.Add("ToStockType");
-             dtDetail.Columns.Add("ToDyelot");
-             dtDetail.Columns.Add("Qty");
-             dtDetail.Columns.Add("ToLocation");
+            DataTable dtDetail = new DataTable();
+            dtDetail.Columns.Add("ID");
+            dtDetail.Columns.Add("FromFtyInventoryUkey");
+            dtDetail.Columns.Add("FromFactoryID");
+            dtDetail.Columns.Add("FromPOID");
+            dtDetail.Columns.Add("FromSeq1");
+            dtDetail.Columns.Add("FromSeq2");
+            dtDetail.Columns.Add("FromRoll");
+            dtDetail.Columns.Add("FromStockType");
+            dtDetail.Columns.Add("FromDyelot");
+            dtDetail.Columns.Add("ToFactoryID");
+            dtDetail.Columns.Add("ToPOID");
+            dtDetail.Columns.Add("ToSeq1");
+            dtDetail.Columns.Add("ToSeq2");
+            dtDetail.Columns.Add("ToRoll");
+            dtDetail.Columns.Add("ToStockType");
+            dtDetail.Columns.Add("ToDyelot");
+            dtDetail.Columns.Add("Qty");
+            dtDetail.Columns.Add("ToLocation");
 
-             for (int i = 0; i < listPoid.Count; i++)
+            for (int i = 0; i < listPoid.Count; i++)
             {
                 DataRow drNewMaster = dtMaster.NewRow();
                 drNewMaster["poid"] = listPoid[i].ToString();
@@ -701,7 +704,7 @@ from #tmp
                 dtMaster.Rows.Add(drNewMaster);
             }
 
-             foreach (DataRow item in findrow)
+            foreach (DataRow item in findrow)
             {
                 DataRow[] drGetID = dtMaster.AsEnumerable().Where(row => row["poid"].EqualString(item["ToPOID"])).ToArray();
                 DataRow drNewDetail = dtDetail.NewRow();
@@ -727,9 +730,9 @@ from #tmp
             }
             #endregion
 
-             TransactionScope transactionscope = new TransactionScope();
-             DualResult result;
-             using (transactionscope)
+            TransactionScope transactionscope = new TransactionScope();
+            DualResult result;
+            using (transactionscope)
             {
                 try
                 {
@@ -750,6 +753,7 @@ from #tmp
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+                    this.SentToGensong_AutoWHFabric(dtMaster);
                 }
                 catch (Exception ex)
                 {
@@ -759,12 +763,12 @@ from #tmp
                 }
             }
 
-             transactionscope = null;
+            transactionscope = null;
 
             #region confirm save成功的P24單子
-             List<string> success_list = new List<string>();
-             List<string> fail_list = new List<string>();
-             foreach (DataRow dr in dtMaster.Rows)
+            List<string> success_list = new List<string>();
+            List<string> fail_list = new List<string>();
+            foreach (DataRow dr in dtMaster.Rows)
             {
                 if (Prgs.P24confirm(dr["ID"].ToString()))
                 {
@@ -776,18 +780,213 @@ from #tmp
                 }
             }
 
-             string msg = string.Empty;
-             msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
-             msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
-             this.p30_msg.Show(msg);
+            #region New Barcode
+            DataTable dt = new DataTable();
+            string sqlcmd = string.Empty;
+            string upd_Fty_Barcode_V1 = string.Empty;
+            string upd_Fty_Barcode_V2 = string.Empty;
+
+            foreach (DataRow dr in dtMaster.Rows)
+            {
+                #region From
+                sqlcmd = $@"
+select f.Ukey,fb.TransactionID
+,[Barcode1] = f.Barcode
+,[Barcode2] = fb.Barcode
+,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[NewBarcode] = ''
+,[Poid] = i2.FromPOID
+,[Seq1] = i2.FromSeq1
+,[Seq2] = i2.FromSeq2
+,[Roll] = i2.FromRoll
+,[Dyelot] = i2.FromDyelot
+,[StockType] = i2.FromStockType
+from Production.dbo.SubTransfer_Detail i2
+inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.FromPOID
+    and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
+    and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
+    and f.StockType = i2.FromStockType
+left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.FromPoid and seq1=i2.FromSeq1 and seq2=i2.FromSeq2 
+	and FabricType='F'
+)
+and i2.id ='{dr["ID"]}'
+";
+                DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+                foreach (DataRow dr2 in dt.Rows)
+                {
+                    string strBarcode = MyUtility.Check.Empty(dr2["Barcode2"]) ? dr2["Barcode1"].ToString() : dr2["Barcode2"].ToString();
+
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr2["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                    {
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr2["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr2["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
+                    }
+                    else
+                    {
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr2["NewBarcode"] = strBarcode;
+                    }
+                }
+
+                var data_From_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                            select new
+                                            {
+                                                TransactionID = dr["ID"].ToString(),
+                                                poid = m.Field<string>("poid"),
+                                                seq1 = m.Field<string>("seq1"),
+                                                seq2 = m.Field<string>("seq2"),
+                                                stocktype = m.Field<string>("stocktype"),
+                                                roll = m.Field<string>("roll"),
+                                                dyelot = m.Field<string>("dyelot"),
+                                                Barcode = m.Field<string>("NewBarcode"),
+                                            }).ToList();
+
+                // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+                upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+                upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
+                DataTable resultFrom;
+                if (data_From_FtyBarcode.Count >= 1)
+                {
+                    // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultFrom, "#TmpSource")))
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultFrom, "#TmpSource")))
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+                }
+                #endregion
+
+                #region To
+                sqlcmd = $@"
+select f.Ukey,fb.TransactionID
+,[ToBarcode] = iif(isnull(f.Barcode,'') = '', isnull(fb.Barcode,''), isnull(f.Barcode,''))
+,[FromBarcode] = fromBarcode.Barcode
+,[ToBalanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[FromBalanceQty] = fromBarcode.BalanceQty
+,[NewBarcode] = ''
+,[Poid] = i2.ToPOID
+,[Seq1] = i2.ToSeq1
+,[Seq2] = i2.ToSeq2
+,[Roll] = i2.ToRoll
+,[Dyelot] = i2.ToDyelot
+,[StockType] = i2.ToStockType
+from Production.dbo.SubTransfer_Detail i2
+inner join Production.dbo.SubTransfer i on i2.Id=i.Id 
+left join FtyInventory f on f.POID = i2.ToPOID
+    and f.Seq1 = i2.ToSeq1 and f.Seq2 = i2.ToSeq2
+    and f.Roll = i2.ToRoll and f.Dyelot = i2.ToDyelot
+    and f.StockType = i2.ToStockType
+left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+outer apply(
+	select Barcode = iif(f2.Barcode = '' , fb2.Barcode,f2.Barcode)
+	,BalanceQty = f2.InQty-f2.OutQty+f2.AdjustQty
+	from FtyInventory f2
+	left join FtyInventory_Barcode fb2 on fb2.Ukey = f2.Ukey and fb2.TransactionID = i2.ID
+	where f2.POID = i2.FromPOID
+	and f2.Seq1 = i2.FromSeq1 and f2.Seq2 = i2.FromSeq2
+	and f2.Roll = i2.FromRoll and f2.Dyelot = i2.FromDyelot
+	and f2.StockType = i2.FromStockType
+)fromBarcode
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.ToPoid and seq1=i2.ToSeq1 and seq2=i2.ToSeq2 
+	and FabricType='F'
+)
+and i2.id ='{dr["ID"]}'
+";
+                DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+                foreach (DataRow dr2 in dt.Rows)
+                {
+                    string strBarcode = MyUtility.Check.Empty(dr2["ToBarcode"]) ? dr2["FromBarcode"].ToString() : dr2["ToBarcode"].ToString();
+
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr2["FromBalanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                    {
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr2["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr2["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
+                    }
+                    else
+                    {
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr2["NewBarcode"] = strBarcode;
+                    }
+                }
+
+                var data_To_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                          select new
+                                          {
+                                              TransactionID = dr["ID"].ToString(),
+                                              poid = m.Field<string>("poid"),
+                                              seq1 = m.Field<string>("seq1"),
+                                              seq2 = m.Field<string>("seq2"),
+                                              stocktype = m.Field<string>("stocktype"),
+                                              roll = m.Field<string>("roll"),
+                                              dyelot = m.Field<string>("dyelot"),
+                                              Barcode = m.Field<string>("NewBarcode"),
+                                          }).ToList();
+
+                // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+                upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, true);
+                upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
+                DataTable resultTo;
+                if (data_To_FtyBarcode.Count >= 1)
+                {
+                    // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultTo, "#TmpSource")))
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultTo, "#TmpSource")))
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+                }
+                #endregion
+            }
             #endregion
 
-             if (!this.master.Columns.Contains("TransID"))
+            string msg = string.Empty;
+            msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
+            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
+            this.p30_msg.Show(msg);
+            #endregion
+
+            if (!this.master.Columns.Contains("TransID"))
             {
                 this.master.Columns.Add("TransID", typeof(string));
             }
 
-             foreach (DataRow alldetailrows in this.detail.Rows)
+            foreach (DataRow alldetailrows in this.detail.Rows)
             {
                 if (alldetailrows["selected"].ToString().ToUpper() == "TRUE")
                 {
@@ -797,10 +996,17 @@ from #tmp
                 }
             }
 
+            // AutoWHAccessory WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMaster, true))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             // Create後Btn失效，需重新Qurey才能再使用。
-             this.btnCreate.Enabled = false;
-             this.gridRel.ValidateControl();
-             this.gridComplete.ValidateControl();
+            this.btnCreate.Enabled = false;
+            this.gridRel.ValidateControl();
+            this.gridComplete.ValidateControl();
         }
 
         private void BtnExcel_Click(object sender, EventArgs e)
@@ -843,6 +1049,16 @@ from #tmp
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(excelApp);
+        }
+
+        private void SentToGensong_AutoWHFabric(DataTable dtMaster)
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster, true))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
     }
 }

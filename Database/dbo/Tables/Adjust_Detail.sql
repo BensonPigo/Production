@@ -12,6 +12,7 @@
     [QtyAfter]         NUMERIC (11, 2) CONSTRAINT [DF_Adjust_Detail_QtyAfter] DEFAULT ((0)) NULL,
     [ReasonId]         VARCHAR (5)     CONSTRAINT [DF_Adjust_Detail_ReasonId] DEFAULT ('') NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CompleteTime] DATETIME NULL, 
     CONSTRAINT [PK_Adjust_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
