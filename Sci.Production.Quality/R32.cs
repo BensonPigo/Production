@@ -208,10 +208,6 @@ INTO #PackingList_Detail
 FROM PackingList_Detail pd 
 INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ 
 
-");
-                if (this.reportType == "Summary")
-                {
-                    sqlCmd.Append($@"
 SELECT  t.ID
         ,AuditDate
 		,BuyerDelivery
@@ -260,12 +256,10 @@ OUTER APPLY(
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
 		AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,','))
-		AND pd.CTNQty=1
 )InspectedPoQty   --計算所有階段的總成衣件數
 
 DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
 ");
-                }
 
                 #endregion
 
@@ -398,12 +392,11 @@ LEFT JOIN CFAInspectionRecord_Detail cd ON c.ID = cd.ID
 LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
 LEFT JOIN CfaArea ON CfaArea.ID = cd.CFAAreaID
 
-
+----找出CFAInspectionRecord_OrderSEQ所對應到的PackingList_Detail
 SELECT DISTINCT pd.*
 INTO #PackingList_Detail
 FROM PackingList_Detail pd 
 INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ 
-
 
 SELECT   t.ID
 		,CFAInspectionRecord_Detail_Key
@@ -458,7 +451,6 @@ OUTER APPLY(
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
 		AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,','))
-		AND pd.CTNQty=1
 )InspectedPoQty   --計算所有階段的總成衣件數
 Order by id
 
