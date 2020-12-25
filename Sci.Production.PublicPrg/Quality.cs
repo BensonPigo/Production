@@ -103,9 +103,9 @@ namespace Sci.Production.PublicPrg
         /// <returns>string[]</returns>
         public static string[] GetOverallResult_Status(DataRow maindr)
         {
-            string allResult = string.Empty;
             string status = "New";
 
+            string allResult;
             #region 新改的邏輯
 
             // 判斷Result是Pass的唯一狀況
@@ -173,6 +173,25 @@ namespace Sci.Production.PublicPrg
             return re_str;
         }
         #endregion
+
+        /// <summary>
+        /// defect 形式: 空白, A1, AA4
+        /// 最後一碼數字最大為 4 所以只會有 1 碼
+        /// default type = 0 排除最後一碼, 前面字串為 defect
+        /// type = 1 取最後一碼  point
+        /// </summary>
+        /// <inheritdoc/>
+        public static string SplitDefectNum(string defectcode, int type = 0)
+        {
+            if (type == 0)
+            {
+                return defectcode.Substring(0, defectcode.Length == 0 ? 0 : defectcode.Length - 1);
+            }
+            else
+            {
+                return defectcode.Substring(defectcode.Length == 0 ? 0 : defectcode.Length - 1);
+            }
+        }
 
         /// <summary>
         /// Double Click後將Result替換成相反結果(Pass<=>Fail)
@@ -408,8 +427,7 @@ from    Adidas_FGWT with (nolock)
 where 1 = 1 {sqlWhere}
 ";
 
-            DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(null, sqlGetDefaultFGWT, out dtResult);
+            DualResult result = DBProxy.Current.Select(null, sqlGetDefaultFGWT, out DataTable dtResult);
 
             if (!result)
             {

@@ -261,11 +261,13 @@ select
 		end
 from #tmp1 t
 outer apply(
-	select DefectRecord = SUBSTRING(x.Data,1,1), point = sum(cast(SUBSTRING(x.Data,2,1) as int))
-	from FIR_Physical_Defect
-	outer apply(select  * from SplitString(DefectRecord,'/'))x
-	where FIR_PhysicalDetailUKey = t.DetailUkey
-	group by SUBSTRING(x.Data,1,1)
+    select 
+	    DefectRecord = SUBSTRING(x.Data, 1, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data) - 1)),	
+        point = sum(cast(SUBSTRING(x.Data, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data)), 1) as int))
+    from FIR_Physical_Defect
+    outer apply(select  * from SplitString(DefectRecord,'/'))x
+    where FIR_PhysicalDetailUKey = t.DetailUkey
+    group by SUBSTRING(x.Data, 1, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data) - 1))
 )Defect
 
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
@@ -302,11 +304,13 @@ select
 		end
 from #tmp2 t
 outer apply(
-	select DefectRecord = SUBSTRING(x.Data,1,1), point = sum(cast(SUBSTRING(x.Data,2,1) as int))
-	from FIR_Physical_Defect
-	outer apply(select  * from SplitString(DefectRecord,'/'))x
-	where FIR_PhysicalDetailUKey = t.DetailUkey
-	group by SUBSTRING(x.Data,1,1)
+    select 
+	    DefectRecord = SUBSTRING(x.Data, 1, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data) - 1)),	
+        point = sum(cast(SUBSTRING(x.Data, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data)), 1) as int))
+    from FIR_Physical_Defect
+    outer apply(select  * from SplitString(DefectRecord,'/'))x
+    where FIR_PhysicalDetailUKey = t.DetailUkey
+    group by SUBSTRING(x.Data, 1, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data) - 1))
 )Defect
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null

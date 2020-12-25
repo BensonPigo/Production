@@ -330,8 +330,10 @@ cross apply(
 outer apply(
 	select Defect = fd.DescriptionEN, fd.ID, Point = sum(a.point)  
 	from (
-		select substring(data,1,1) as Defect,CONVERT(int, substring(data,2,5)) as Point 
-		from dbo.SplitString((select Defect from #spr WHERE {groupby_col} = gbs.{groupby_col}),'/') 
+		select
+	        Defect = SUBSTRING(x.Data, 1, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data) - 1)),	
+            Point = cast(SUBSTRING(x.Data, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data)), 1) as int)
+		from dbo.SplitString((select Defect from #spr WHERE {groupby_col} = gbs.{groupby_col}),'/') x
 	)A 
 	left join FabricDefect fd on id = a.Defect
 	group by fd.DescriptionEN,fd.ID
