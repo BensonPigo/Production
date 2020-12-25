@@ -676,7 +676,6 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.btnEncode.Enabled = this.CanEdit && !this.EditMode && this.maindr["Status"].ToString() != "Approved";
 
             this.btnToExcel.Enabled = !this.EditMode;
-            this.btnPrintFormatReport.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", this.loginID, "Pass1", "ID");
             string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
@@ -801,7 +800,7 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
             DualResult result;
             string btnName = ((Button)sender).Name;
 
-            // 抓表頭資料
+            #region 抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>
             {
                 new SqlParameter("@ID", Env.User.Factory),
@@ -816,6 +815,9 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
                 this.ShowErr(result);
             }
 
+            DataTable dtFIR_Shadebone;
+            DBProxy.Current.Select(null, $"select * from FIR_Shadebone where id={this.maindr["ID"]}", out dtFIR_Shadebone);
+
             // 抓Invo,ETA 資料
             List<SqlParameter> par_Exp = new List<SqlParameter>
             {
@@ -827,31 +829,10 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
                 this.ShowErr(result);
             }
 
-            // 變數區
             string title = dt_title.Rows.Count == 0 ? string.Empty : dt_title.Rows[0]["NameEN"].ToString();
             string suppid = this.txtsupplier.TextBox1.Text + " - " + this.txtsupplier.DisplayBox1.Text;
             string invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
-
-            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'"); // "Ref#" + this.displayRefno.Text + " , " + this.displaySCIRefno1.Text;
-
-            ReportDefinition report = new ReportDefinition();
-
-            // @變數
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", title));
-
-            DataTable dt = new DataTable();
-            DataRow dr;
-            dt.Columns.Add(new DataColumn("Poid", typeof(string)));
-            dt.Columns.Add(new DataColumn("FactoryID", typeof(string)));
-            dt.Columns.Add(new DataColumn("Style", typeof(string)));
-            dt.Columns.Add(new DataColumn("Color", typeof(string)));
-            dt.Columns.Add(new DataColumn("BrandID", typeof(string)));
-            dt.Columns.Add(new DataColumn("Supp", typeof(string)));
-            dt.Columns.Add(new DataColumn("Invo", typeof(string)));
-            dt.Columns.Add(new DataColumn("ETA", typeof(string)));
-            dt.Columns.Add(new DataColumn("Refno", typeof(string)));
-            dt.Columns.Add(new DataColumn("Packages", typeof(string)));
-            dt.Columns.Add(new DataColumn("Seq", typeof(string)));
+            string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'");
 
             int packages = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"
  select top 1 Packages
@@ -877,37 +858,46 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
 "));
             string colorName = MyUtility.GetValue.Lookup($"SELECT Name FROM Color WHERE ID = '{this.displayColor.Text}' AND BrandId  ='{brandID}' ");
 
-            dr = dt.NewRow();
-            dr["Poid"] = this.displaySP.Text;
-            dr["FactoryID"] = Env.User.Factory;
-            dr["Style"] = this.displayStyle.Text;
-            dr["Color"] = colorName;
-            dr["BrandID"] = brandID;
-            dr["Supp"] = suppid;
-            dr["Invo"] = invno;
-            dr["ETA"] = dt_Exp.Rows.Count == 0 ? string.Empty : DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString();
-            dr["Refno"] = MyUtility.GetValue.Lookup($"SELECT Refno FROM PO_Supp_Detail WHERE ID='{this.maindr["POID"]}' AND Seq1='{this.maindr["Seq1"]}' AND Seq2='{this.maindr["Seq2"]}'");
-            dr["Packages"] = packages.ToString();
-            dr["Seq"] = $"{this.maindr["Seq1"]} - {this.maindr["Seq2"]}";
-            dt.Rows.Add(dr);
+            ReportDefinition report = new ReportDefinition();
 
-            List<P01_ShadeBond_Data> data = dt.AsEnumerable()
-                .Select(row1 => new P01_ShadeBond_Data()
+            // 設定RDLC參數
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Title", title));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Poid", this.displaySP.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", Env.User.Factory));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Style", this.displayStyle.Text));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Color", colorName));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("BrandID", brandID));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supp", suppid));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invo", invno));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", dt_Exp.Rows.Count == 0 ? string.Empty : DateTime.Parse(dt_Exp.Rows[0]["ETA"].ToString()).ToString("yyyy-MM-dd").ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Refno", MyUtility.GetValue.Lookup($"SELECT Refno FROM PO_Supp_Detail WHERE ID='{this.maindr["POID"]}' AND Seq1='{this.maindr["Seq1"]}' AND Seq2='{this.maindr["Seq2"]}'")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Packages", packages.ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Seq", $"{this.maindr["Seq1"]} - {this.maindr["Seq2"]}"));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Dyelot", " "));
+            #endregion
+
+            #region 表身資料
+            List<string> dyelotCTn = dtFIR_Shadebone.AsEnumerable().Select(o => o["Dyelot"].ToString()).Distinct().ToList();
+            List<P01_ShadeBond_Data> data = new List<P01_ShadeBond_Data>();
+
+            foreach (var dyelot in dyelotCTn)
+            {
+                List<DataRow> sameDyelot = dtFIR_Shadebone.AsEnumerable().Where(o => o["Dyelot"].ToString() == dyelot).ToList();
+
+                foreach (var sameData in sameDyelot)
                 {
-                    POID = row1["Poid"].ToString().Trim(),
-                    FactoryID = row1["FactoryID"].ToString().Trim(),
-                    Style = row1["Style"].ToString().Trim(),
-                    Color = row1["Color"].ToString().Trim(),
-                    BrandID = row1["BrandID"].ToString().Trim(),
-                    Supp = row1["Supp"].ToString().Trim(),
-                    Invo = row1["Invo"].ToString().Trim(),
-                    ETA = row1["ETA"].ToString() == string.Empty ? string.Empty : DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim(),
-                    Refno = row1["Refno"].ToString().Trim(),
-                    Packages = row1["Packages"].ToString().Trim(),
-                    Seq = row1["Seq"].ToString().Trim(),
-                }).ToList();
+                    P01_ShadeBond_Data r = new P01_ShadeBond_Data
+                    {
+                        Dyelot = MyUtility.Convert.GetString(sameData["Dyelot"]),
+                        Roll = MyUtility.Convert.GetString(sameData["Roll"]),
+                        TicketYds = MyUtility.Convert.GetString(sameData["TicketYds"]),
+                    };
+                    data.Add(r);
+                }
+            }
 
             report.ReportDataSource = data;
+            #endregion
 
             Type reportResourceNamespace = typeof(P01_ShadeBond_Data);
             Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
@@ -984,5 +974,18 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
                     .Count().ToString();
             }
         }
+    }
+
+    public class Rdlc_Eight
+    {
+        public int key { get; set; }
+
+        public int page { get; set; }
+
+        public string dyelot { get; set; }
+
+        public string roll { get; set; }
+
+        public float ticketYds { get; set; }
     }
 }

@@ -60,7 +60,6 @@
             this.displayResult = new Sci.Win.UI.DisplayBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
-            this.btnPrintFormatReport = new System.Windows.Forms.Button();
             this.txtuserApprover = new Sci.Production.Class.Txtuser();
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.txtShadeboneInspector = new Sci.Win.UI.TextBox();
@@ -82,7 +81,6 @@
             this.btmcont.Controls.Add(this.btnPrintFormatReport8);
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.btnInspectedallpass);
-            this.btmcont.Controls.Add(this.btnPrintFormatReport);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(1008, 40);
@@ -92,7 +90,6 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
-            this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport, 0);
             this.btmcont.Controls.SetChildIndex(this.btnInspectedallpass, 0);
             this.btmcont.Controls.SetChildIndex(this.button1, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport8, 0);
@@ -427,17 +424,6 @@
             this.dateArriveWHDate.Size = new System.Drawing.Size(150, 23);
             this.dateArriveWHDate.TabIndex = 138;
             // 
-            // btnPrintFormatReport
-            // 
-            this.btnPrintFormatReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnPrintFormatReport.Location = new System.Drawing.Point(431, 5);
-            this.btnPrintFormatReport.Name = "btnPrintFormatReport";
-            this.btnPrintFormatReport.Size = new System.Drawing.Size(141, 30);
-            this.btnPrintFormatReport.TabIndex = 129;
-            this.btnPrintFormatReport.Text = "Print Format Report(4 Slot)";
-            this.btnPrintFormatReport.UseVisualStyleBackColor = true;
-            this.btnPrintFormatReport.Click += new System.EventHandler(this.BtnPrintFormatReport_Click);
-            // 
             // txtuserApprover
             // 
             this.txtuserApprover.DisplayBox1Binding = "";
@@ -679,7 +665,6 @@
         private Win.UI.DisplayBox displayResult;
         private Win.UI.DateBox dateLastInspectionDate;
         private Win.UI.DateBox dateArriveWHDate;
-        private System.Windows.Forms.Button btnPrintFormatReport;
         private Win.UI.TextBox txtShadeboneInspector;
         private Win.UI.Label labinspector;
         private Win.UI.Button btnInspectedallpass;
