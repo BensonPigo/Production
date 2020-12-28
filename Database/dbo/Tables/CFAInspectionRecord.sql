@@ -9,7 +9,6 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[Team] [varchar](1) NOT NULL,
 	[Shift] [varchar](1) NOT NULL,
 	[Stage] [varchar](10) NOT NULL,
-	[Carton] [varchar](500) NOT NULL,
 	[InspectQty] [numeric](7, 0) NOT NULL,
 	[DefectQty] [numeric](7, 0) NOT NULL,
 	[ClogReceivedPercentage] [numeric](3, 0) NOT NULL,
@@ -21,6 +20,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[AddDate] [datetime] NULL,
 	[EditName] [varchar](10) NOT NULL,
 	[EditDate] [datetime] NULL,
+	FirstInspection Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_FirstInspection] DEFAULT 0,
 	IsCombinePO Bit NOT NULL CONSTRAINT [DF_CFAInspectionRecord_IsCombinePO] DEFAULT 0,
 	CONSTRAINT [PK_CFAInspectionRecord] PRIMARY KEY CLUSTERED 
 	(
@@ -49,7 +49,7 @@ GO
 ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Stage]
 GO
 
-ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [Carton]
+
 GO
 
 ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ((0)) FOR [InspectQty]
@@ -80,3 +80,6 @@ ALTER TABLE [dbo].[CFAInspectionRecord] ADD  DEFAULT ('') FOR [EditName]
 GO
 
 
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'該單據所有的紙箱是否是第一次檢驗 Stagger', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CFAInspectionRecord', @level2type = N'COLUMN', @level2name = N'FirstInspection';
+GO

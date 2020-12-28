@@ -16,13 +16,15 @@ namespace Sci.Production.Quality
         private string CFAInspectionRecordID;
 
         private DataTable MasterCFAInspectionRecord_OrderSEQ;
+        private DataRow MasterCFAInspectionRecord;
 
         /// <inheritdoc/>
-        public P32_CombinePO(bool canedit, string cFAInspectionRecordID, DataTable cFAInspectionRecord_OrderSEQ)
+        public P32_CombinePO(bool canedit, string cFAInspectionRecordID, DataTable cFAInspectionRecord_OrderSEQ, DataRow cFAInspectionRecord)
         {
             this.InitializeComponent();
             this.CFAInspectionRecordID = cFAInspectionRecordID;
             this.MasterCFAInspectionRecord_OrderSEQ = cFAInspectionRecord_OrderSEQ;
+            this.MasterCFAInspectionRecord = cFAInspectionRecord;
         }
 
         /// <inheritdoc/>
@@ -33,7 +35,9 @@ namespace Sci.Production.Quality
 
             DataGridViewGeneratorTextColumnSettings col_OrderID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Carton = new DataGridViewGeneratorTextColumnSettings();
 
+            #region col_OrderID
             col_OrderID.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
@@ -41,7 +45,8 @@ namespace Sci.Production.Quality
                     DataRow selectedRow = this.grid.GetDataRow(e.RowIndex);
                     string orderID = e.FormattedValue.ToString();
                     string seq = MyUtility.Convert.GetString(selectedRow["Seq"]);
-
+                    string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
+                    string where = string.Empty;
                     if (MyUtility.Check.Empty(orderID))
                     {
                         return;
@@ -52,6 +57,16 @@ namespace Sci.Production.Quality
                         new SqlParameter("@ID", orderID),
                     };
 
+                    if (stage.ToUpper() == "3RD PARTY")
+                    {
+                        where = $@"AND EXISTS(
+    SELECT 1
+    FROM Order_QtyShip oq WITH(NOLOCK)
+    WHERE oq.ID = o.ID AND oq.CFAIs3rdInspect = 1
+)
+";
+                    }
+
                     #region OrderID檢查
                     bool exists = MyUtility.Check.Seek(
                         $@"
@@ -59,7 +74,9 @@ SELECT 1
 FROM Orders o
 WHERE o.ID=@ID 
 AND o.Finished = 0
-AND o.Category IN('B', 'S', 'G')",
+AND o.Category IN('B', 'S', 'G')
+{where}
+",
                         paras);
                     if (!exists)
                     {
@@ -159,7 +176,9 @@ WHERE ID = @ID
                     this.OpenWindow(e.RowIndex);
                 }
             };
+            #endregion
 
+            #region col_Seq
             col_Seq.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
@@ -217,15 +236,334 @@ WHERE ID = @ID AND Seq = @Seq
                     this.OpenWindow(e.RowIndex);
                 }
             };
+            #endregion
+
+            #region col_Carton
+            col_Carton.CellValidating += (s, e) =>
+            {
+                string currentCarton = e.FormattedValue.ToString();
+                DataRow selectedRow = this.grid.GetDataRow(e.RowIndex);
+
+                if (this.EditMode && currentCarton.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
+                {
+                    string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
+
+                    if (stage.ToUpper() != "3RD PARTY")
+                    {
+                        selectedRow["Carton"] = string.Empty;
+                        selectedRow.EndEdit();
+                        return;
+                    }
+
+                    string orderID = MyUtility.Convert.GetString(selectedRow["OrderID"]);
+                    string seq = MyUtility.Convert.GetString(selectedRow["seq"]);
+
+                    // SP Seq都不為空才驗證
+                    if (MyUtility.Check.Empty(orderID) || MyUtility.Check.Empty(seq))
+                    {
+                        return;
+                    }
+
+                    // Sample單直接給空白
+                    bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
+                    if (isSample)
+                    {
+                        selectedRow["Carton"] = string.Empty;
+                        selectedRow.EndEdit();
+                        return;
+                    }
+
+                    List<string> cartons = currentCarton.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
+                    List<string> errorCartons = new List<string>();
+
+                    foreach (var carton in cartons)
+                    {
+                        DataTable dt;
+                        string sqlCmd = $@"
+SELECT * 
+FROM PackingList_Detail pd
+WHERE OrderID = @OrderID
+AND OrderShipmodeSeq = @Seq
+AND CTNStartNo = @CTNStartNo
+AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = '')
+
+";
+                        if (this.MasterCFAInspectionRecord["Stage"].ToString() == "Final" || this.MasterCFAInspectionRecord["Stage"].ToString().ToLower() == "3rd party")
+                        {
+                            sqlCmd = $@"
+SELECT * 
+FROM PackingList_Detail pd
+WHERE OrderID = @OrderID
+AND OrderShipmodeSeq = @Seq
+AND CTNStartNo = @CTNStartNo
+
+";
+                        }
+
+                        List<SqlParameter> paras = new List<SqlParameter>();
+                        paras.Add(new SqlParameter("@OrderID", orderID));
+                        paras.Add(new SqlParameter("@Seq", seq));
+                        paras.Add(new SqlParameter("@CTNStartNo", carton));
+                        paras.Add(new SqlParameter("@ID", this.CFAInspectionRecordID));
+
+                        DualResult r = DBProxy.Current.Select(null, sqlCmd, paras, out dt);
+                        if (!r)
+                        {
+                            this.ShowErr(r);
+                        }
+                        else
+                        {
+                            if (dt.Rows.Count == 0)
+                            {
+                                errorCartons.Add(carton);
+                            }
+                        }
+                    }
+
+                    if (errorCartons.Count > 0)
+                    {
+                        MyUtility.Msg.WarningBox($"CTN# NOT Found : " + errorCartons.JoinToString(","));
+                        selectedRow["Carton"] = string.Empty;
+                    }
+                    else
+                    {
+                        selectedRow["Carton"] = cartons.JoinToString(",");
+                    }
+                }
+
+                if (!currentCarton.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
+                {
+                    selectedRow["Carton"] = string.Empty;
+                }
+
+                selectedRow.EndEdit();
+            };
+
+            col_Carton.CellMouseClick += (s, e) =>
+            {
+                // 第二筆資料才開始允許開窗
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    this.OpenCartonWindow(e.RowIndex);
+                }
+            };
+
+            col_Carton.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    this.OpenCartonWindow(e.RowIndex);
+                }
+            };
+            #endregion
 
             this.grid.DataSource = this.MasterCFAInspectionRecord_OrderSEQ.Copy();
             this.grid.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_OrderID)
             .Text("Seq", header: "SEQ", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: col_Seq)
+            .Text("Carton", header: "Inspected Carton", width: Widths.AnsiChars(50), iseditingreadonly: false, settings: col_Carton)
             ;
 
             this.EditModeToggle();
+        }
+
+        private void OpenCartonWindow(int rowIndex)
+        {
+            DataRow topRow = this.grid.GetDataRow(0);
+            DataRow currentRow = this.grid.GetDataRow(rowIndex);
+
+            string orderID = MyUtility.Convert.GetString(currentRow["OrderID"]);
+            string seq = MyUtility.Convert.GetString(currentRow["seq"]);
+            string currentCarton = MyUtility.Convert.GetString(currentRow["Carton"]);
+            string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
+
+            if (stage.ToUpper() != "3RD PARTY")
+            {
+                return;
+            }
+
+            // SP Seq都不為空才驗證
+            if (MyUtility.Check.Empty(orderID) || MyUtility.Check.Empty(seq))
+            {
+                return;
+            }
+
+            bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{orderID}' "));
+            if (isSample)
+            {
+                return;
+            }
+
+            List<SqlParameter> paras = new List<SqlParameter>();
+            paras.Add(new SqlParameter("@OrderID", orderID));
+            paras.Add(new SqlParameter("@Seq", seq));
+
+            #region SQL
+            string sqlCmd = $@"
+
+----記錄哪些箱號有混尺碼
+SELECT ID,OrderID,OrderShipmodeSeq,CTNStartNo
+		,[ArticleCount]=COUNT(DISTINCT Article)
+		,[SizeCodeCount]=COUNT(DISTINCT SizeCode)
+INTO #MixCTNStartNo
+FROM PackingList_Detail pd
+WHERE OrderID = @OrderID
+AND OrderShipmodeSeq = @Seq
+AND (pd.StaggeredCFAInspectionRecordID = '{this.CFAInspectionRecordID}' OR pd.StaggeredCFAInspectionRecordID = '')
+GROUP BY ID,OrderID,OrderShipmodeSeq,CTNStartNo
+HAVING COUNT(DISTINCT Article) > 1 OR COUNT(DISTINCT SizeCode) > 1
+
+
+SELECT * FROM (
+    ----不是混尺碼的正常做
+	SELECT [CTN#]=CTNStartNo
+		,Article 
+		,[Size]=SizeCode 
+		,[Qty]=SUM(ShipQty) 
+	FROM PackingList_Detail pd
+	WHERE pd.OrderID= @OrderID
+	AND OrderShipmodeSeq =  @Seq
+	AND (pd.StaggeredCFAInspectionRecordID = '{this.CFAInspectionRecordID}' OR pd.StaggeredCFAInspectionRecordID = '')
+	AND NOT EXISTS(
+		SELECT  *  
+		FROM #MixCTNStartNo t 
+		WHERE t.ID = pd.ID AND t.OrderID = pd.OrderID 
+		AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq AND t.CTNStartNo=pd.CTNStartNo
+	)
+	GROUP BY CTNStartNo,Article ,SizeCode
+	UNION
+    ----混尺碼分開處理
+	SELECt [CTN#]=t.CTNStartNo
+		,[Article]=MixArticle.Val 
+		,[Size]=MixSizeCode.Val
+		,[Qty]=ShipQty.Val
+	FROM #MixCTNStartNo t
+	OUTER APPLY(
+		SELECT  [Val]=  STUFF((
+			SELECT DISTINCT ','+Article  
+			FROM PackingList_Detail pd
+			WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+			AND (pd.StaggeredCFAInspectionRecordID = '{this.CFAInspectionRecordID}' OR pd.StaggeredCFAInspectionRecordID = '')
+		FOR XML PATH(''))
+		,1,1,'')
+	)MixArticle
+	OUTER APPLY(
+		SELECT  [Val]=  STUFF((
+			SELECT DISTINCT ','+SizeCode  
+			FROM PackingList_Detail pd
+			WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+			AND (pd.StaggeredCFAInspectionRecordID = '{this.CFAInspectionRecordID}' OR pd.StaggeredCFAInspectionRecordID = '')
+		FOR XML PATH(''))
+		,1,1,'')
+	)MixSizeCode
+	OUTER APPLY(
+		SELECT  [Val]=SUM(pd.ShipQty)
+		FROM PackingList_Detail pd
+		WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+		    AND (pd.StaggeredCFAInspectionRecordID = '{this.CFAInspectionRecordID}' OR pd.StaggeredCFAInspectionRecordID = '')
+	)ShipQty
+) a
+ORDER BY Cast([CTN#] as int)
+
+
+DROP TABLE #MixCTNStartNo 
+
+";
+
+            if (this.MasterCFAInspectionRecord["Stage"].ToString() == "Final" || this.MasterCFAInspectionRecord["Stage"].ToString().ToLower() == "3rd party")
+            {
+                sqlCmd = $@"
+
+----記錄哪些箱號有混尺碼
+SELECT ID,OrderID,OrderShipmodeSeq,CTNStartNo
+		,[ArticleCount]=COUNT(DISTINCT Article)
+		,[SizeCodeCount]=COUNT(DISTINCT SizeCode)
+INTO #MixCTNStartNo
+FROM PackingList_Detail pd
+WHERE OrderID = @OrderID
+AND OrderShipmodeSeq = @Seq
+GROUP BY ID,OrderID,OrderShipmodeSeq,CTNStartNo
+HAVING COUNT(DISTINCT Article) > 1 OR COUNT(DISTINCT SizeCode) > 1
+
+
+SELECT * FROM (
+    ----不是混尺碼的正常做
+	SELECT [CTN#]=CTNStartNo
+		,Article 
+		,[Size]=SizeCode 
+		,[Qty]=SUM(ShipQty) 
+	FROM PackingList_Detail pd
+	WHERE pd.OrderID= @OrderID
+	AND OrderShipmodeSeq =  @Seq
+	AND NOT EXISTS(
+		SELECT  *  
+		FROM #MixCTNStartNo t 
+		WHERE t.ID = pd.ID AND t.OrderID = pd.OrderID 
+		AND t.OrderShipmodeSeq=pd.OrderShipmodeSeq AND t.CTNStartNo=pd.CTNStartNo
+	)
+	GROUP BY CTNStartNo,Article ,SizeCode
+	UNION
+    ----混尺碼分開處理
+	SELECt [CTN#]=t.CTNStartNo
+		,[Article]=MixArticle.Val 
+		,[Size]=MixSizeCode.Val
+		,[Qty]=ShipQty.Val
+	FROM #MixCTNStartNo t
+	OUTER APPLY(
+		SELECT  [Val]=  STUFF((
+			SELECT DISTINCT ','+Article  
+			FROM PackingList_Detail pd
+			WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+		FOR XML PATH(''))
+		,1,1,'')
+	)MixArticle
+	OUTER APPLY(
+		SELECT  [Val]=  STUFF((
+			SELECT DISTINCT ','+SizeCode  
+			FROM PackingList_Detail pd
+			WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+		FOR XML PATH(''))
+		,1,1,'')
+	)MixSizeCode
+	OUTER APPLY(
+		SELECT  [Val]=SUM(pd.ShipQty)
+		FROM PackingList_Detail pd
+		WHERE pd.ID = t.ID 
+			AND pd.OrderID = t.OrderID 
+			AND pd.CTNStartNo = t.CTNStartNo
+	)ShipQty
+) a
+ORDER BY Cast([CTN#] as int)
+
+
+DROP TABLE #MixCTNStartNo 
+
+";
+            }
+
+            #endregion
+
+            DataTable dt;
+            DBProxy.Current.Select(null, sqlCmd, paras, out dt);
+            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(dt, "CTN#,Article,Size,Qty", "CTN#,Article,Size,Qty", "3,15,20,5", currentCarton, null, null, null);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                currentRow["Carton"] = item.GetSelectedString();
+            }
+
+            currentRow.EndEdit();
         }
 
         private void OpenWindow(int rowIndex)
@@ -233,6 +571,18 @@ WHERE ID = @ID AND Seq = @Seq
             DataRow topRow = this.grid.GetDataRow(0);
             DataRow currentRow = this.grid.GetDataRow(rowIndex);
             string orderID = MyUtility.Convert.GetString(topRow["OrderID"]);
+            string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
+            string where = string.Empty;
+
+            if (stage.ToUpper() != "3RD PARTY")
+            {
+                where = "AND oq.CFAIs3rdInspect = 0";
+            }
+            else
+            {
+                where = "AND oq.CFAIs3rdInspect = 1";
+            }
+
             DataTable dt;
             string cmd = $@"
 SELECT [OrderID]=o.ID ,oq.Seq
@@ -246,6 +596,7 @@ EXISTS
 	WHERE ID='{orderID}'
 	AND Ftygroup =o.Ftygroup AND SeasonID =o.SeasonID AND BrandID =o.BrandID  AND StyleID =o.StyleID
 )
+{where}
 ";
             DBProxy.Current.Select(null, cmd, out dt);
 
@@ -334,6 +685,14 @@ EXISTS
                             MyUtility.Convert.GetString(o["OrderID"]) == currentOrderID &&
                             MyUtility.Convert.GetString(o["Seq"]) == currentSeq).Any())
                     {
+                        // 只有3RD PARTY 可以存入Carton
+                        string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
+
+                        if (stage.ToUpper() != "3RD PARTY")
+                        {
+                            dr["Carton"] = string.Empty;
+                        }
+
                         this.MasterCFAInspectionRecord_OrderSEQ.ImportRow(dr);
                     }
                 }

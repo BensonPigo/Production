@@ -79,29 +79,29 @@ SELECT * FROM (
 	FROM PackingList_Detail pd
     OUTER APPLY (
 		SELECT Data from dbo.SplitString((
-			SELECT TOP 1 Carton 
+			SELECT TOP 1 CfAd2.Carton 
 			FROM CFAInspectionRecord cfa2 
 			INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
 			WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 			AND Status='Confirmed' AND Result='Pass'  AND (
-				   Carton = pd.CTNStartNo 
-				OR Carton LIKE pd.CTNStartNo +',%' 
-				OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
-				OR Carton LIKE '%,'+pd.CTNStartNo
+				   CfAd2.Carton = pd.CTNStartNo 
+				OR CfAd2.Carton LIKE pd.CTNStartNo +',%' 
+				OR CfAd2.Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				OR CfAd2.Carton LIKE '%,'+pd.CTNStartNo
 			)
 		),',') WHERE Data=pd.CTNStartNo
     )ResultPass
     OUTER APPLY (
 		SELECT Data from dbo.SplitString((
-			SELECT TOP 1 Carton 
+			SELECT TOP 1 CfAd2.Carton 
 			FROM CFAInspectionRecord cfa2 
 			INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
 			WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 			AND Status='Confirmed' AND Result='Fail'  AND (
-				   Carton = pd.CTNStartNo 
-				OR Carton LIKE pd.CTNStartNo +',%' 
-				OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
-				OR Carton LIKE '%,'+pd.CTNStartNo
+				   CfAd2.Carton = pd.CTNStartNo 
+				OR CfAd2.Carton LIKE pd.CTNStartNo +',%' 
+				OR CfAd2.Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				OR CfAd2.Carton LIKE '%,'+pd.CTNStartNo
 			)
 		),',') WHERE Data=pd.CTNStartNo
     )ResultFail
@@ -110,7 +110,7 @@ SELECT * FROM (
 		FROM CFAInspectionRecord cfa2
 		INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
 		WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq AND cfa2.Status='Confirmed' 
-		AND (cfa2.Carton Like pd.CTNStartNo+',%' OR cfa2.Carton Like '%,'+pd.CTNStartNo+',%' OR cfa2. Carton Like'%,'+pd.CTNStartNo OR cfa2.Carton = pd.CTNStartNo )
+		AND (CfAd2.Carton Like pd.CTNStartNo+',%' OR CfAd2.Carton Like '%,'+pd.CTNStartNo+',%' OR CfAd2. Carton Like'%,'+pd.CTNStartNo OR CfAd2.Carton = pd.CTNStartNo )
 	)InsCtn
 	WHERE pd.OrderID= '{this._OrderID}'
 	AND pd.OrderShipmodeSeq = '{this._OrderShipmodeSeq}'
@@ -168,33 +168,33 @@ SELECT * FROM (
 
 		SELECT   [Result]=IIF(ResultPass.Data IS NOT NULL , 'Pass',IIF(ResultFail.Data IS NOT NULL ,'Fail',''))
 		FROM PackingList_Detail pd
-		LEFT JOIN CFAInspectionRecord  CFA  ON CFA.Carton = pd.CTNStartNo AND CFA.Status='Confirmed'
-		LEFT JOIN CFAInspectionRecord_OrderSEQ CfAd ON CFA.ID = CfAd.ID AND CfAd.OrderID = pd.OrderID AND CfAd.Seq = pd.OrderShipmodeSeq 
+		LEFT JOIN CFAInspectionRecord_OrderSEQ CfAd ON CfAd.OrderID = pd.OrderID AND CfAd.Seq = pd.OrderShipmodeSeq AND CfAd.Carton = pd.CTNStartNo 
+		LEFT JOIN CFAInspectionRecord  CFA  ON  CFA.ID = CfAd.ID AND  CFA.Status='Confirmed'
 		OUTER APPLY (
 			SELECT Data from dbo.SplitString((
-				SELECT TOP 1 Carton 
+				SELECT TOP 1 CfAd2.Carton 
 				FROM CFAInspectionRecord cfa2 
 				INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
 				WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 				AND Status='Confirmed' AND Result='Pass' AND (
-				                                            Carton = pd.CTNStartNo 
-				                                            OR Carton LIKE pd.CTNStartNo +',%' 
-				                                            OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
-				                                            OR Carton LIKE '%,'+pd.CTNStartNo
+				                                            CfAd2.Carton = pd.CTNStartNo 
+				                                            OR CfAd2.Carton LIKE pd.CTNStartNo +',%' 
+				                                            OR CfAd2.Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				                                            OR CfAd2.Carton LIKE '%,'+pd.CTNStartNo
 			                                            )
 			),',') WHERE Data=pd.CTNStartNo
 		)ResultPass
 		OUTER APPLY (
 			SELECT Data from dbo.SplitString((
-				SELECT TOP 1 Carton 
+				SELECT TOP 1 CfAd2.Carton 
 				FROM CFAInspectionRecord cfa2 
 				INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
 				WHERE CfAd2.OrderID=pd.OrderID AND CfAd2.Seq=pd.OrderShipmodeSeq 
 				AND Status='Confirmed' AND Result='Fail'  AND (
-				                                            Carton = pd.CTNStartNo 
-				                                            OR Carton LIKE pd.CTNStartNo +',%' 
-				                                            OR Carton LIKE '%,'+ pd.CTNStartNo +',%' 
-				                                            OR Carton LIKE '%,'+pd.CTNStartNo
+				                                            CfAd2.Carton = pd.CTNStartNo 
+				                                            OR CfAd2.Carton LIKE pd.CTNStartNo +',%' 
+				                                            OR CfAd2.Carton LIKE '%,'+ pd.CTNStartNo +',%' 
+				                                            OR CfAd2.Carton LIKE '%,'+pd.CTNStartNo
 			                                            )
 			),',') WHERE Data=pd.CTNStartNo
 		)ResultFail
@@ -208,7 +208,7 @@ SELECT * FROM (
 		INNER JOIN CFAInspectionRecord_OrderSEQ CfAd2 ON cfa2.ID = CfAd2.ID
 		WHERE CfAd2.OrderID=t.OrderID AND CfAd2.Seq=t.OrderShipmodeSeq 
 		AND cfa2.Status='Confirmed' 
-		AND (cfa2.Carton Like t.CTNStartNo+',%' OR cfa2.Carton Like '%,'+t.CTNStartNo+',%' OR cfa2. Carton Like'%,'+t.CTNStartNo OR cfa2.Carton = t.CTNStartNo )
+		AND (CfAd2.Carton Like t.CTNStartNo+',%' OR CfAd2.Carton Like '%,'+t.CTNStartNo+',%' OR CfAd2. Carton Like'%,'+t.CTNStartNo OR CfAd2.Carton = t.CTNStartNo )
 	)InsCtn
 ) a
 ORDER BY Cast(CTNStartNo as int)

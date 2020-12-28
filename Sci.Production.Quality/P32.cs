@@ -23,6 +23,7 @@ namespace Sci.Production.Quality
         private bool IsSapmle = false;
         private string topOrderID = string.Empty;
         private string topSeq = string.Empty;
+        private string topCarton = string.Empty;
         private DataTable CFAInspectionRecord_OrderSEQ;
 
         /// <inheritdoc/>
@@ -134,6 +135,20 @@ namespace Sci.Production.Quality
 
             bool isSample = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"SELECT  IIF(Category='S','True','False') FROM Orders WHERE ID = '{this.topOrderID}' "));
             this.IsSapmle = isSample;
+
+            #region txtInspectedCarton
+            this.txtInspectedCarton.Text = string.Empty;
+            this.topCarton = string.Empty;
+
+            // 不是CombinePO才需要帶出這個值
+            if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
+            {
+                string carton = MyUtility.GetValue.Lookup($@"SELECT TOP 1 Carton FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]}' ");
+                this.txtInspectedCarton.Text = carton;
+                this.topCarton = carton;
+            }
+
+            #endregion
 
             #region -- Grid欄位設定 --
             this.gridSpSeq.DataSource = null;
@@ -357,6 +372,7 @@ namespace Sci.Production.Quality
             this.Helper.Controls.Grid.Generator(this.gridSpSeq)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seq", header: "SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
+            .Text("Carton", header: "Inspected Carton", width: Widths.AnsiChars(25), iseditingreadonly: true)
             ;
 
             #region 可編輯欄位變色
@@ -411,7 +427,7 @@ WHERE a.ID ='{masterID}'
                 this.CurrentMaintain["Result"] = string.Empty;
                 this.CurrentMaintain["Team"] = string.Empty;
                 this.CurrentMaintain["IsCombinePO"] = false;
-                this.disInsCtn.Value = 0;
+                //this.disInsCtn.Value = 0;
 
                 this.ComboStage_Change(this.CurrentMaintain["Stage"].ToString());
 
@@ -467,6 +483,24 @@ WHERE a.ID ='{masterID}'
             }
 
             return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickCopy()
+        {
+            this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["AuditDate"] = DateTime.Now;
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
+            this.CurrentMaintain["CFA"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["FirstInspection"] = false;
+            return base.ClickCopy();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickCopyBefore()
+        {
+            return base.ClickCopyBefore();
         }
 
         /// <inheritdoc/>
@@ -671,6 +705,7 @@ WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")}
         {
             try
             {
+                // 檢查：AuditDate、Stage、Result、Team
                 if (MyUtility.Check.Empty(this.CurrentMaintain["CFA"]) ||
                     this.CFAInspectionRecord_OrderSEQ.Rows.Count == 0 ||
                     MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]) ||
@@ -682,13 +717,14 @@ WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")}
                     return false;
                 }
 
+                // 檢查：Line、Shift
                 if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Shift"])))
                 {
                     MyUtility.Msg.WarningBox("Line、Shift can't be empty!!");
                     return false;
                 }
 
-                // Defect Code、Area Code、No. of Defects不得為空，並跳出警告視窗
+                // 檢查：Defect Code、Area Code、No. of Defects
                 bool anyEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted).Where(o => MyUtility.Check.Empty(o["GarmentDefectCodeID"]) || MyUtility.Check.Empty(o["CFAAreaID"]) || MyUtility.Check.Empty(o["Qty"])).Any();
 
                 if (anyEmpty)
@@ -697,6 +733,7 @@ WHERE  {tmpOrder_QtyShip.JoinToString(" OR ")}
                     return false;
                 }
 
+                // 檢查：是否與登入者工廠不同
                 bool sameFactory = MyUtility.Check.Seek($@"
 SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.Factory}'
 ");
@@ -707,7 +744,74 @@ SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.
                     return false;
                 }
 
-                List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
+                #region 檢查紙箱
+
+                List<string> cartons = this.topCarton.Split(',').ToList();
+
+                // Final、3rd party 且 IsCombinePO的話，檢查Sample單，不能輸入 Inspected Carton
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]) && (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party"))
+                {
+                    if (this.IsSapmle && !MyUtility.Check.Empty(this.topCarton))
+                    {
+                        MyUtility.Msg.WarningBox("Can not input Inspected Carton!!");
+                        return false;
+                    }
+                }
+
+                // 檢查：[首次檢驗] 與 [非首次檢驗]
+                if (this.CurrentMaintain["Stage"].ToString() == "Staggered")
+                {
+                    foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                    {
+                        string cFAInspectionRecordID = this.IsDetailInserting ? string.Empty : this.CurrentMaintain["ID"].ToString();
+
+                        string orderid = MyUtility.Convert.GetString(dr["OrderID"]);
+                        string seq = MyUtility.Convert.GetString(dr["Seq"]);
+                        List<string> carontList = MyUtility.Convert.GetString(dr["Carton"]).Split(',').ToList();
+
+                        string sqlcmd = $@"
+SELECT FirstStaggeredCFAInspectionRecordID ,CTNStartNo
+FROM PackingList_Detail pd WITH(NOLOCK)
+WHERE OrderID = '{orderid}'
+AND OrderShipmodeSeq = '{seq}'
+AND CTNStartNo IN ('{carontList.JoinToString("','")}')
+";
+                        DataTable t;
+                        DualResult r = DBProxy.Current.Select(null, sqlcmd, out t);
+
+                        // FirstStaggeredCFAInspectionRecordID不為空，且不是當前的ID，因此不是第一次檢驗
+                        List<string> notFirst = t.AsEnumerable()
+                            .Where(o => !MyUtility.Check.Empty(o["FirstStaggeredCFAInspectionRecordID"]) && MyUtility.Convert.GetString(o["FirstStaggeredCFAInspectionRecordID"]) != cFAInspectionRecordID)
+                            .Select(o => MyUtility.Convert.GetString(o["CTNStartNo"])).Distinct().ToList();
+
+                        // FirstStaggeredCFAInspectionRecordID為空，或紀錄是當前的ID，是第一次檢驗
+                        List<string> isFirst = t.AsEnumerable()
+                            .Where(o => MyUtility.Check.Empty(o["FirstStaggeredCFAInspectionRecordID"]) || MyUtility.Convert.GetString(o["FirstStaggeredCFAInspectionRecordID"]) == cFAInspectionRecordID)
+                            .Select(o => MyUtility.Convert.GetString(o["CTNStartNo"])).Distinct().ToList();
+
+                        // [首次檢驗] 與 [非首次檢驗]的紙箱都有
+                        if (notFirst.Count > 0 && isFirst.Count > 0)
+                        {
+                            MyUtility.Msg.WarningBox($@"Cannot combine carton of [1st time inspect] and [not 1st time inspect] in the same record.
+[1st time] : {isFirst.JoinToString(",")}
+[not 1st time] : {notFirst.JoinToString(",")}");
+
+                            return false;
+                        }
+
+                        // 全部紙箱皆為 [首次檢驗]
+                        if (carontList.Count == isFirst.Count)
+                        {
+                            this.CurrentMaintain["FirstInspection"] = true;
+                        }
+
+                        // 全部紙箱皆為 [非首次檢驗]
+                        if (carontList.Count == notFirst.Count)
+                        {
+                            this.CurrentMaintain["FirstInspection"] = false;
+                        }
+                    }
+                }
 
                 if (cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 &&
                     (this.CurrentMaintain["Stage"].ToString() == "Staggered" ||
@@ -739,19 +843,23 @@ AND StaggeredCFAInspectionRecordID <> ''
                         return false;
                     }
                 }
+                #endregion
 
+                // 檢查：Defects數量不大於檢驗數量
                 if (MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]) > MyUtility.Convert.GetInt(this.CurrentMaintain["InspectQty"]))
                 {
                     MyUtility.Msg.WarningBox("Defects Qty can't more than Inspect Qty!!");
                     return false;
                 }
 
+                // 檢查：檢驗數量不得大於訂單數量
                 if (MyUtility.Convert.GetInt(this.CurrentMaintain["InspectQty"]) > MyUtility.Convert.GetInt(this.disOrderQty.Value))
                 {
                     MyUtility.Msg.WarningBox("Inspect Qty can't more than Order Qty!!");
                     return false;
                 }
 
+                // 檢查：過去是否有Pass或Release的紀錄
                 if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
                 {
                     List<string> tmpOrder_QtyShip = new List<string>();
@@ -778,6 +886,7 @@ AND (a.Result='Pass' OR a.Result='Fail but release')
                     }
                 }
 
+                // 檢查：3rd party
                 if (this.CurrentMaintain["Stage"].ToString() == "3rd party")
                 {
                     cmd = $@"
@@ -818,6 +927,8 @@ FROM PackingList_Detail pd WITH(NOLOCK)
 WHERE {tmp.JoinToString(Environment.NewLine + "OR ")}
 "));
                 #endregion
+
+                // 產生CFAInspectionRecord.ID
                 if (this.IsDetailInserting)
                 {
                     string tempId = MyUtility.GetValue.GetID(Sci.Env.User.Factory + "CI", "CFAInspectionRecord", DateTime.Now);
@@ -843,7 +954,7 @@ WHERE {tmp.JoinToString(Environment.NewLine + "OR ")}
         protected override DualResult ClickSavePost()
         {
             // 只有Inspection stage為Staggered且Inspection result = Pass ，才需要將檢驗的箱號回寫PackingList_Detail.StaggeredCFAInspectionRecordID
-            List<string> cartons = this.CurrentMaintain["Carton"].ToString().Split(',').ToList();
+            List<string> cartons = this.topCarton.Split(',').ToList();
             string cmd = string.Empty;
             string cmd_CFAInspectionRecord_OrderSEQ = string.Empty;
 
@@ -854,13 +965,20 @@ WHERE {tmp.JoinToString(Environment.NewLine + "OR ")}
             }
 
             #region 更新PackingList_Detail
+
+            // 清空
             cmd = $@"
 UPDATE PackingList_Detail
 SET StaggeredCFAInspectionRecordID = ''
 WHERE StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 ;
+UPDATE PackingList_Detail
+SET FirstStaggeredCFAInspectionRecordID  = ''
+WHERE FirstStaggeredCFAInspectionRecordID  = '{this.CurrentMaintain["ID"]}'
+;
 ";
 
+            // 寫入StaggeredCFAInspectionRecordID
             if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && this.CurrentMaintain["Result"].ToString() == "Pass")
             {
                 cmd += $@"
@@ -893,14 +1011,29 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 ;
 ";
             }
+
+            // FirstStaggeredCFAInspectionRecordID
+            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && MyUtility.Convert.GetBool(this.CurrentMaintain["FirstInspection"]))
+            {
+                cmd += $@"
+UPDATE PackingList_Detail
+SET FirstStaggeredCFAInspectionRecordID  = '{this.CurrentMaintain["ID"]}'
+WHERE OrderID = '{this.topOrderID}'
+    AND OrderShipmodeSeq ='{this.topSeq}' 
+    AND CTNStartNo IN ('{cartons.JoinToString("','")}')
+    AND FirstStaggeredCFAInspectionRecordID  = ''
+";
+            }
             #endregion
 
             #region 更新CFAInspectionRecord_OrderSEQ
             int count = 1;
             string tempTable = string.Empty;
+
+            // 組合temp table
             foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
             {
-                string tmp = $"SELECT [ID]='{MyUtility.Convert.GetString(dr["ID"])}', [OrderID]='{MyUtility.Convert.GetString(dr["OrderID"])}', [Seq]='{MyUtility.Convert.GetString(dr["Seq"])}'";
+                string tmp = $"SELECT [ID]='{MyUtility.Convert.GetString(dr["ID"])}', [OrderID]='{MyUtility.Convert.GetString(dr["OrderID"])}', [Seq]='{MyUtility.Convert.GetString(dr["Seq"])}' , [Carton]='{MyUtility.Convert.GetString(dr["Carton"])}'";
 
                 tempTable += tmp + Environment.NewLine;
 
@@ -922,15 +1055,15 @@ AND StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}'
 
 DELETE t
 FROM CFAInspectionRecord_OrderSEQ t
-LEFT JOIN #source s ON t.ID = s.ID  AND t.OrderID = s.OrderID AND t.Seq = s.Seq  
-WHERE t.ID='{this.CurrentMaintain["ID"]}' AND ( s.ID IS NULL OR s.OrderID IS NULL OR s.Seq IS NULL )
+LEFT JOIN #source s ON t.ID = s.ID  AND t.OrderID = s.OrderID AND t.Seq = s.Seq AND t.Carton = s.Carton  
+WHERE t.ID='{this.CurrentMaintain["ID"]}' AND ( s.ID IS NULL OR s.OrderID IS NULL OR s.Seq IS NULL OR s.Carton IS NULL )
 
-INSERT CFAInspectionRecord_OrderSEQ   (ID, OrderID, Seq)
-SELECT ID, OrderID, Seq 
+INSERT CFAInspectionRecord_OrderSEQ   (ID, OrderID, Seq, Carton)
+SELECT ID, OrderID, Seq, Carton
 FROM #source s
 WHERE NOT EXISTS(
-SELECT 1 FROM CFAInspectionRecord_OrderSEQ t 
-WHERE t.ID = s.ID AND t.OrderID = s.OrderID AND t.Seq = s.Seq 
+    SELECT 1 FROM CFAInspectionRecord_OrderSEQ t 
+    WHERE t.ID = s.ID AND t.OrderID = s.OrderID AND t.Seq = s.Seq AND t.Carton = s.Carton 
 )
 
 ";
@@ -961,6 +1094,52 @@ WHERE t.ID = s.ID AND t.OrderID = s.OrderID AND t.Seq = s.Seq
                 return false;
             }
 
+            #region 檢查是否還有其他Staggered記錄（排除當下這個ID）
+            if (this.CurrentMaintain["Stage"].ToString() == "Staggered" && MyUtility.Convert.GetBool(this.CurrentMaintain["FirstInspection"]))
+            {
+                List<string> hasOtherInspect = new List<string>();
+                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                {
+                    string orderid = MyUtility.Convert.GetString(dr["OrderID"]);
+                    string seq = MyUtility.Convert.GetString(dr["Seq"]);
+                    string cartons = MyUtility.Convert.GetString(dr["Carton"]);
+
+                    List<string> cartonList = cartons.Split(',').ToList();
+
+                    foreach (var carton in cartonList)
+                    {
+                        string cmd = $@"
+SELECT DISTINCT a.ID
+FROM CFAInspectionRecord a
+INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+WHERE a.Stage='Staggered'
+AND a.ID != '{this.CurrentMaintain["ID"]}'
+AND b.OrderID='{orderid}' 
+AND b.SEQ='{seq}'
+AND (
+		b.Carton = '{carton}'
+	OR b.Carton LIKE  '{carton}' +',%' 
+	OR b.Carton LIKE '%,'+  '{carton}' +',%' 
+	OR b.Carton LIKE '%,'+  '{carton}'
+)
+";
+                        bool hasOther = MyUtility.Check.Seek(cmd);
+                        if (hasOther)
+                        {
+                            hasOtherInspect.Add($"SP#：{orderid}、Seq：{seq}、Carton：{carton}");
+                        }
+                    }
+                }
+
+                if (hasOtherInspect.Count > 0)
+                {
+                    string msg = "Cannot delete 1st time inspection record, due to 2nd time inspection record exists."+ Environment.NewLine + hasOtherInspect.JoinToString(Environment.NewLine);
+                    MyUtility.Msg.WarningBox(msg);
+                    return false;
+                }
+            }
+            #endregion
+
             return base.ClickDeleteBefore();
         }
 
@@ -969,6 +1148,7 @@ WHERE t.ID = s.ID AND t.OrderID = s.OrderID AND t.Seq = s.Seq
         {
             string updateCmd = $@"
 UPDATE PackingList_Detail SET StaggeredCFAInspectionRecordID = '' WHERE StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}' 
+UPDATE PackingList_Detail SET FirstStaggeredCFAInspectionRecordID = '' WHERE FirstStaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}' 
 ;
 DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]}' 
 ";
@@ -1061,7 +1241,8 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
 
                     this.CurrentMaintain["Stage"] = string.Empty;
                     this.CurrentMaintain["Result"] = string.Empty;
-                    this.CurrentMaintain["Carton"] = string.Empty;
+                    this.txtInspectedCarton.Text = string.Empty;
+                    this.topCarton = string.Empty;
                 }
 
                 // 開始計算檢驗次數
@@ -1335,12 +1516,12 @@ DROP TABLE #MixCTNStartNo
 
                 DataTable dt;
                 DBProxy.Current.Select(null, sqlCmd, paras, out dt);
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(dt, "CTN#,Article,Size,Qty", "CTN#,Article,Size,Qty", "3,15,20,5", this.CurrentMaintain["Carton"].ToString(), null, null, null);
+                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(dt, "CTN#,Article,Size,Qty", "CTN#,Article,Size,Qty", "3,15,20,5", this.topCarton, null, null, null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.OK)
                 {
                     this.txtInspectedCarton.Text = item.GetSelectedString();
-                    this.CurrentMaintain["Carton"] = item.GetSelectedString();
+                    this.topCarton = item.GetSelectedString();
                 }
             }
         }
@@ -1351,7 +1532,8 @@ DROP TABLE #MixCTNStartNo
             {
                 if (this.IsSapmle)
                 {
-                    this.CurrentMaintain["Carton"] = string.Empty;
+                    this.topCarton = string.Empty;
+                    this.txtInspectedCarton.Text = string.Empty;
                     return;
                 }
 
@@ -1405,17 +1587,30 @@ AND CTNStartNo = @CTNStartNo
                 if (errorCartons.Count > 0)
                 {
                     MyUtility.Msg.WarningBox($"CTN# NOT Found : " + errorCartons.JoinToString(","));
-                    this.CurrentMaintain["Carton"] = string.Empty;
+
+                    this.topCarton = string.Empty;
+                    this.txtInspectedCarton.Text = string.Empty;
                 }
                 else
                 {
-                    this.CurrentMaintain["Carton"] = cartons.JoinToString(",");
+                    this.topCarton = cartons.JoinToString(",");
+                    this.txtInspectedCarton.Text = cartons.JoinToString(",");
                 }
             }
 
             if (!this.txtInspectedCarton.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
-                this.CurrentMaintain["Carton"] = string.Empty;
+                this.topCarton = string.Empty;
+                this.txtInspectedCarton.Text = string.Empty;
+            }
+
+            // 更新右邊視窗裡面的Carton欄位
+            var currentOrderSEQ = this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OrderID"]) == this.topOrderID
+            && MyUtility.Convert.GetString(o["Seq"]) == this.topSeq);
+
+            if (currentOrderSEQ.Any())
+            {
+                currentOrderSEQ.FirstOrDefault()["Carton"] = this.topCarton;
             }
         }
 
@@ -1433,7 +1628,14 @@ AND CTNStartNo = @CTNStartNo
 
             if (this._oldStage != stage)
             {
-                this.CurrentMaintain["Carton"] = string.Empty;
+                this.topCarton = string.Empty;
+                this.txtInspectedCarton.Text = string.Empty;
+                this.CurrentMaintain["FirstInspection"] = false;
+
+                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                {
+                    dr["Carton"] = string.Empty;
+                }
             }
 
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
@@ -1508,6 +1710,15 @@ AND CFAIs3rdInspect = 1
             // Final的時候Inspection result才能有Fail but release
             if (stage == "Final")
             {
+                // Final + IsCombinePO = 1，不允許輸入Carton
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
+                {
+                    foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                    {
+                        dr["Carton"] = string.Empty;
+                    }
+                }
+
                 this.Reset_comboResult(true);
             }
             else
@@ -1665,7 +1876,7 @@ SELECT STUFF(
         private void CalInsepectionCtn(bool isClickNew, bool isCombinePO)
         {
             string cmd = string.Empty;
-
+            /*
             // 必須條件
             if (MyUtility.Check.Empty(this.topOrderID) || MyUtility.Check.Empty(this.topSeq) || MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) || MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]))
             {
@@ -1685,7 +1896,7 @@ SELECT STUFF(
                 this.disInsCtn.Value = null;
                 return;
             }
-
+            */
             List<string> tmp = new List<string>();
             foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
             {
@@ -1697,18 +1908,18 @@ SELECT STUFF(
                 tmp.Add("1=0");
             }
 
-            cmd = $@"
-SELECT COUNT(1) + 1
-FROM CFAInspectionRecord a
-INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-WHERE ( {tmp.JoinToString(" OR ")} )
-AND Status = 'Confirmed'
-AND Stage='{this.CurrentMaintain["Stage"]}'
-AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
-AND a.ID  != '{this.CurrentMaintain["ID"]}'
-";
+//            cmd = $@"
+//SELECT COUNT(1) + 1
+//FROM CFAInspectionRecord a
+//INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+//WHERE ( {tmp.JoinToString(" OR ")} )
+//AND Status = 'Confirmed'
+//AND Stage='{this.CurrentMaintain["Stage"]}'
+//AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
+//AND a.ID  != '{this.CurrentMaintain["ID"]}'
+//";
 
-            this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
+//            this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
         }
 
         private void ChkIsCombinePO_CheckedChanged(object sender, EventArgs e)
@@ -1726,7 +1937,8 @@ AND a.ID  != '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
                 {
                     // 清空
-                    this.CurrentMaintain["Carton"] = string.Empty;
+                    this.topCarton = string.Empty;
+                    this.txtInspectedCarton.Text = string.Empty;
 
                     this.txtSpSeq.TextBoxSP.ReadOnly = true;
                     this.txtSpSeq.TextBoxSeq.ReadOnly = true;
@@ -1762,7 +1974,7 @@ AND a.ID  != '{this.CurrentMaintain["ID"]}'
         private void BtnSettingSpSeq_Click(object sender, EventArgs e)
         {
             bool canEdit = Prgs.GetAuthority(Sci.Env.User.UserID, "P32. CFA Inspection Record ", "CanEdit");
-            P32_CombinePO form = new P32_CombinePO(canEdit, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.CFAInspectionRecord_OrderSEQ);
+            P32_CombinePO form = new P32_CombinePO(canEdit, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.CFAInspectionRecord_OrderSEQ, this.CurrentMaintain);
             form.ShowDialog();
 
             if (this.CFAInspectionRecord_OrderSEQ.Rows.Count > 0)
@@ -1775,9 +1987,8 @@ AND a.ID  != '{this.CurrentMaintain["ID"]}'
 
                 this.AutoInsertBySP(this.topOrderID, this.topSeq);
 
-                this.CurrentMaintain["Stage"] = string.Empty;
-                this.CurrentMaintain["Result"] = string.Empty;
-                this.CurrentMaintain["Carton"] = string.Empty;
+                this.txtInspectedCarton.Text = string.Empty;
+                this.topCarton = string.Empty;
             }
         }
     }

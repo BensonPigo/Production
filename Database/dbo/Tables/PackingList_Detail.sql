@@ -63,6 +63,7 @@
     [MDFailQty] INT NOT NULL DEFAULT (0), 
     [CFASelectInspDate] DATE NULL, 
     [StaggeredCFAInspectionRecordID] VARCHAR(13) NOT NULL DEFAULT (''), 
+	FirstStaggeredCFAInspectionRecordID Varchar(500) NOT NULL CONSTRAINT [DF_PackingList_Detail_FirstStaggeredCFAInspectionRecordID] DEFAULT '',
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -238,3 +239,9 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingList_Detail',
     @level2type = N'COLUMN',
     @level2name = N'MDFailQty'
+
+GO
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'此次檢驗的紙箱箱號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail ', @level2type = N'COLUMN', @level2name = N'FirstStaggeredCFAInspectionRecordID';
+
+GO
