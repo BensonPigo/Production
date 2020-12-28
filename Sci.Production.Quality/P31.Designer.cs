@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.CoverPanel = new Sci.Win.UI.Panel();
             this.tabControl = new Sci.Win.UI.TabControl();
             this.tab_QtyBreakdown = new System.Windows.Forms.TabPage();
@@ -89,8 +89,6 @@
             this.disSeason = new Sci.Win.UI.DisplayBox();
             this.label22 = new Sci.Win.UI.Label();
             this.disArticle = new Sci.Win.UI.DisplayBox();
-            this.disFinalCtn = new Sci.Win.UI.DisplayBox();
-            this.dis3rdPartyCtn = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -116,8 +114,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dis3rdPartyCtn);
-            this.masterpanel.Controls.Add(this.disFinalCtn);
             this.masterpanel.Controls.Add(this.disArticle);
             this.masterpanel.Controls.Add(this.label22);
             this.masterpanel.Controls.Add(this.disSeason);
@@ -220,8 +216,6 @@
             this.masterpanel.Controls.SetChildIndex(this.disSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.label22, 0);
             this.masterpanel.Controls.SetChildIndex(this.disArticle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.disFinalCtn, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dis3rdPartyCtn, 0);
             // 
             // detailpanel
             // 
@@ -265,7 +259,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 668);
+            this.browse.Size = new System.Drawing.Size(951, 668);
             // 
             // tabs
             // 
@@ -316,14 +310,14 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(3, 3);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -358,20 +352,20 @@
             this.gridCartonSummary.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCartonSummary.Location = new System.Drawing.Point(3, 3);
             this.gridCartonSummary.Name = "gridCartonSummary";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCartonSummary.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridCartonSummary.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridCartonSummary.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCartonSummary.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCartonSummary.RowTemplate.Height = 24;
             this.gridCartonSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCartonSummary.ShowCellToolTips = false;
-            this.gridCartonSummary.Size = new System.Drawing.Size(986, 230);
+            this.gridCartonSummary.Size = new System.Drawing.Size(937, 230);
             this.gridCartonSummary.TabIndex = 0;
             // 
             // label2
@@ -516,7 +510,7 @@
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(172, 23);
             this.label19.TabIndex = 18;
-            this.label19.Text = "3rd party result & No";
+            this.label19.Text = "3rd party result";
             // 
             // label20
             // 
@@ -524,7 +518,7 @@
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(171, 23);
             this.label20.TabIndex = 17;
-            this.label20.Text = "Final inspection result & No";
+            this.label20.Text = "Final inspection result";
             // 
             // label21
             // 
@@ -829,24 +823,6 @@
             this.disArticle.Size = new System.Drawing.Size(800, 23);
             this.disArticle.TabIndex = 50;
             // 
-            // disFinalCtn
-            // 
-            this.disFinalCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disFinalCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disFinalCtn.Location = new System.Drawing.Point(894, 151);
-            this.disFinalCtn.Name = "disFinalCtn";
-            this.disFinalCtn.Size = new System.Drawing.Size(33, 23);
-            this.disFinalCtn.TabIndex = 51;
-            // 
-            // dis3rdPartyCtn
-            // 
-            this.dis3rdPartyCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dis3rdPartyCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dis3rdPartyCtn.Location = new System.Drawing.Point(894, 180);
-            this.dis3rdPartyCtn.Name = "dis3rdPartyCtn";
-            this.dis3rdPartyCtn.Size = new System.Drawing.Size(33, 23);
-            this.dis3rdPartyCtn.TabIndex = 52;
-            // 
             // P31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -956,7 +932,5 @@
         private Win.UI.Label label22;
         private Win.UI.DisplayBox disSeason;
         private Win.UI.Label label1;
-        private Win.UI.DisplayBox dis3rdPartyCtn;
-        private Win.UI.DisplayBox disFinalCtn;
     }
 }

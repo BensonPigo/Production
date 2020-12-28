@@ -44,7 +44,7 @@ SELECt AuditDate
 		,InspectQty		
 		,DefectQty		
 		,Result
-		,[InspectedCarton]=Carton
+		,[InspectedCarton]=b.Carton
 		,Remark			
 		,Status			
 		,AddDate			
