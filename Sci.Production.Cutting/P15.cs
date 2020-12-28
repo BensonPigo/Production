@@ -1898,7 +1898,7 @@ order by ArticleGroup";
                 Qty = MyUtility.Convert.GetInt(s["Qty"]),
                 Dup = -1, // 紀錄是否完全一樣的組別 Ukey, Article, Size, 左下資料
                 StyleUkey = MyUtility.Convert.GetLong(s["StyleUkey"]),
-                SubCut = 0,
+                SubCut = string.Empty,
             }).ToList();
             var asList = this.ArticleSizeTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new ArticleSize
             {
@@ -1982,15 +1982,7 @@ order by ArticleGroup";
             foreach (var item in selList)
             {
                 DataRow dr = this.CutRefTb.Select($"Ukey = {item.Ukey}").First();
-                string sqlcmd = $@"
-select isnull(max(b.SubCutNo), 0) + 1
-from Bundle b
-where b.CutRef='{dr["CutRef"]}'
-and b.PatternPanel  = '{dr["FabricCombo"]}'
-and b.FabricPanelCode = '{dr["FabricPanelCode"]}'
-and b.Cutno = {dr["Cutno"]}
-";
-                item.SubCut = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+                item.SubCut = Prgs.GetSubCutNo(dr["CutRef"].ToString(), dr["Fabriccombo"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutno"].ToString());
             }
 
             // 準備 Bundle.[StartNo], Bundle_Detail.[BundleGroup], 在同一個 POID 下,依序編碼
@@ -2149,7 +2141,7 @@ values
     ,'{drCut["FabricPanelCode"]}'
     ,'{isEXCESS}'
     ,'{byToneGenerate}'
-    ,{first.SubCut});
+    ,'{first.SubCut}');
 ");
 
                 // Bundle_Detail_allpart

@@ -754,8 +754,7 @@ OPTION (RECOMPILE)"
                 SP = row1["SP"].ToString(),
                 Style = row1["Style"].ToString(),
                 MarkerNo = row1["MarkerNo"].ToString(),
-                Body_Cut = row1["Body_Cut"].ToString(),
-                SubCutNo = MyUtility.Convert.GetInt(row1["SubCutNo"]),
+                Body_Cut = row1["Body_Cut"].ToString() + (MyUtility.Check.Empty(row1["SubCutNo"]) ? string.Empty : $"-{row1["SubCutNo"]}"),
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
                 Article = row1["Article"].ToString(),
@@ -778,8 +777,6 @@ OPTION (RECOMPILE)"
                 GroupCombCut = 0,
                 BundleID = row1["BundleID"].ToString(),
             }).ToList();
-            P10_Print.SubCutno(data);
-
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
@@ -952,8 +949,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 SP = dr["SP"].ToString(),
                 Style = dr["Style"].ToString(),
                 MarkerNo = dr["MarkerNo"].ToString(),
-                Body_Cut = dr["Body_Cut"].ToString(),
-                SubCutNo = MyUtility.Convert.GetInt(dr["SubCutNo"]),
+                Body_Cut = dr["Body_Cut"].ToString() + (MyUtility.Check.Empty(dr["SubCutNo"]) ? string.Empty : $"-{dr["SubCutNo"]}"),
                 Parts = dr["Parts"].ToString(),
                 Color = dr["Color2"].ToString(),
                 Article = dr["Article"].ToString(),
@@ -978,8 +974,6 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 BundleID = dr["BundleID"].ToString(),
                 BundleNo = dr["Bundle"].ToString(),
             }).ToList();
-            P10_Print.SubCutno(data);
-
             if (data.Count > 0)
             {
                 P12_Print p = new P12_Print(data);

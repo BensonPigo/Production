@@ -26,9 +26,11 @@
     [FabricPanelCode] VARCHAR (2)   NULL,
     [IsEXCESS]        BIT           DEFAULT ((0)) NOT NULL,
     [ByToneGenerate]  BIT           DEFAULT ((0)) NOT NULL,
-    [SubCutNo]        INT           CONSTRAINT [DF_Bundle_SubCutNo] DEFAULT ((0)) NOT NULL,
+    [SubCutNo]        VARCHAR (2)   CONSTRAINT [DF_Bundle_SubCutNo] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

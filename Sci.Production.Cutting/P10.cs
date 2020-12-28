@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -460,18 +461,6 @@ order by bundlegroup,bundleno";
                 }
             }
             #endregion
-
-            string sqlcmd = $@"
-select isnull(max(b.SubCutNo), 0) + 1
-from Bundle b
-where b.CutRef='{this.CurrentMaintain["CutRef"]}'
-and b.PatternPanel  = '{this.CurrentMaintain["PatternPanel"]}'
-and b.FabricPanelCode = '{this.CurrentMaintain["FabricPanelCode"]}'
-and b.Cutno = {this.CurrentMaintain["Cutno"]}
-";
-            this.CurrentMaintain["SubCutNo"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
-
-            // DataTable dt = (DataTable)detailgridbs.DataSource;
             return base.ClickSavePre();
         }
 
@@ -722,6 +711,7 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
             this.displayStyle.Text = string.Empty;
             this.displayPrintDate.Text = string.Empty;
             this.CurrentMaintain["Cutno"] = 0;
+            this.CurrentMaintain["subCutno"] = string.Empty;
             this.CurrentMaintain["sewinglineid"] = string.Empty;
             this.CurrentMaintain["OrderID"] = string.Empty;
             this.CurrentMaintain["POID"] = string.Empty;
@@ -848,6 +838,7 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
                 }
 
                 this.GetFabricKind();
+                this.CurrentMaintain["SubCutNo"] = Prgs.GetSubCutNo(newvalue, cutdr["Fabriccombo"].ToString(), cutdr["FabricPanelCode"].ToString(), cutdr["Cutno"].ToString());
                 this.CurrentMaintain.EndEdit();
             }
 

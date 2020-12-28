@@ -54,7 +54,7 @@ namespace Sci.Production.Cutting
             public int BuundleGroup { get; set; }
 
             /// <inheritdoc/>
-            public int SubCut { get; set; }
+            public string SubCut { get; set; }
 
             /// <inheritdoc/>
             public long StyleUkey { get; set; }

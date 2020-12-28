@@ -353,8 +353,7 @@ order by x.[Bundle]");
                     SP = row1["SP"].ToString(),
                     Style = row1["Style"].ToString(),
                     MarkerNo = row1["MarkerNo"].ToString(),
-                    Body_Cut = row1["Body_Cut"].ToString(),
-                    SubCutNo = MyUtility.Convert.GetInt(row1["SubCutNo"]),
+                    Body_Cut = row1["Body_Cut"].ToString() + (MyUtility.Check.Empty(row1["SubCutNo"]) ? string.Empty : $"-{row1["SubCutNo"]}"),
                     Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
                     Article = row1["Article"].ToString(),
@@ -374,7 +373,6 @@ order by x.[Bundle]");
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
                     BundleID = row1["BundleID"].ToString(),
                 }).ToList();
-                SubCutno(data);
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
@@ -476,8 +474,7 @@ order by x.[Bundle]");
                         SP = dr["SP"].ToString(),
                         Style = dr["Style"].ToString(),
                         MarkerNo = dr["MarkerNo"].ToString(),
-                        Body_Cut = dr["Body_Cut"].ToString(),
-                        SubCutNo = MyUtility.Convert.GetInt(dr["SubCutNo"]),
+                        Body_Cut = dr["Body_Cut"].ToString() + (MyUtility.Check.Empty(dr["SubCutNo"]) ? string.Empty : $"-{dr["SubCutNo"]}"),
                         Parts = dr["Parts"].ToString(),
                         Color = dr["Color"].ToString(),
                         Article = dr["Article"].ToString(),
@@ -499,7 +496,6 @@ order by x.[Bundle]");
                         BundleID = dr["BundleID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
                     }).ToList();
-                    SubCutno(data);
 
                     this.ShowWaitMessage("Process Print!");
                     DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(data, 0, rfCardErase);
@@ -684,15 +680,6 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                 i++;
             });
-        }
-
-        /// <inheritdoc/>
-        internal static void SubCutno(List<P10_PrintData> data)
-        {
-            foreach (var item in data)
-            {
-                item.Body_Cut += item.SubCutNo == 0 ? string.Empty : "-" + MyUtility.Excel.ConvertNumericToExcelColumn(item.SubCutNo);
-            }
         }
 
         /// <inheritdoc/>
