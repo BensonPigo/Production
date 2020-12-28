@@ -493,6 +493,7 @@ WHERE a.ID ='{masterID}'
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             this.CurrentMaintain["CFA"] = Sci.Env.User.UserID;
+            this.CurrentMaintain["FirstInspection"] = false;
             return base.ClickCopy();
         }
 
@@ -1628,6 +1629,7 @@ AND CTNStartNo = @CTNStartNo
             {
                 this.topCarton = string.Empty;
                 this.txtInspectedCarton.Text = string.Empty;
+                this.CurrentMaintain["FirstInspection"] = false;
             }
 
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
@@ -1645,10 +1647,16 @@ AND CTNStartNo = @CTNStartNo
                 this.txtInspectedCarton.IsSupportEditMode = false;
                 this.txtInspectedCarton.ReadOnly = true;
 
+                this.CurrentMaintain["FirstInspection"] = false;
                 this.CurrentMaintain["Shift"] = string.Empty;
                 this.txtshift.Text = string.Empty;
                 this.txtshift.IsSupportEditMode = false;
                 this.txtshift.ReadOnly = true;
+
+                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                {
+                    dr["Carton"] = string.Empty;
+                }
             }
             else
             {
