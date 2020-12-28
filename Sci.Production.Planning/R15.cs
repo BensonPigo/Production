@@ -57,7 +57,7 @@ namespace Sci.Production.Planning
             this.dateBuyerDelivery.Value1 = DateTime.Now;
             this.dateBuyerDelivery.Value2 = DateTime.Now.AddDays(30);
             DataTable dt;
-            DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size'", out dt);
+            DBProxy.Current.Select(null, "select sby = 'SP#' union all select sby = 'Acticle / Size' union all select sby = 'By SP# , Line'", out dt);
             MyUtility.Tool.SetupCombox(this.comboBox1, 1, dt);
             this.comboBox1.SelectedIndex = 0;
             this.ReportType = "SP#";
@@ -147,7 +147,15 @@ namespace Sci.Production.Planning
             }
             else
             {
-                sqlCmd = this.SummaryByActicleSize(out cmds);
+                if (this.sbyindex == 1)
+                {
+                    sqlCmd = this.SummaryByActicleSize(false, out cmds);
+                }
+                else
+                {
+                    sqlCmd = this.SummaryByActicleSize(true, out cmds);
+                    sqlCmd.Append(this.SummaryBySPLine());
+                }
             }
 
             DBProxy.Current.DefaultTimeout = 2700;
@@ -201,7 +209,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 88 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, this.printData.Columns.Count - this.dtArtworkType.Rows.Count + i + 1] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -257,7 +265,7 @@ namespace Sci.Production.Planning
                     #endregion
                 }
             }
-            else
+            else if (this.sbyindex == 1)
             {
                 if (this.isArtwork)
                 {
@@ -268,7 +276,7 @@ namespace Sci.Production.Planning
                     // 列印動態欄位的表頭
                     for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
                     {
-                        objSheets.Cells[1, 89 + i] = this.dtArtworkType.Rows[i]["id"].ToString();
+                        objSheets.Cells[1, this.printData.Columns.Count - this.dtArtworkType.Rows.Count + i + 1] = this.dtArtworkType.Rows[i]["id"].ToString();
                     }
 
                     // 首列資料篩選
@@ -322,7 +330,40 @@ namespace Sci.Production.Planning
                     #endregion
                 }
             }
+            else
+            {
+                string filename = "Planning_R15_WIP_bySPLine";
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"{filename}.xltx");
+                MyUtility.Excel.CopyToXls(this.printData, string.Empty, $"{filename}.xltx", 1, false, null, objApp);
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                if (this.isArtwork)
+                {
+                    // 列印動態欄位的表頭
+                    for (int i = 0; i < this.dtArtworkType.Rows.Count; i++)
+                    {
+                        objSheets.Cells[1, this.printData.Columns.Count - this.dtArtworkType.Rows.Count + i + 1] = this.dtArtworkType.Rows[i]["id"].ToString();
+                    }
+                }
 
+                Microsoft.Office.Interop.Excel.Range firstRow = (Microsoft.Office.Interop.Excel.Range)objSheets.Rows[1];
+                firstRow.AutoFilter(1, Type.Missing, Microsoft.Office.Interop.Excel.XlAutoFilterOperator.xlAnd, Type.Missing, true);
+                objApp.Cells.EntireColumn.AutoFit();  // 自動欄寬
+                // 客製化欄位，記得設定this.IsSupportCopy = true
+                this.CreateCustomizedExcel(ref objSheets);
+                #region Save & Show Excel
+                string strExcelName = Class.MicrosoftFile.GetName(filename);
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(objSheets);
+                Marshal.ReleaseComObject(firstRow);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
+            }
             return true;
         }
 
@@ -1001,14 +1042,13 @@ outer apply(
             return sqlCmd;
         }
 
-        private StringBuilder SummaryByActicleSize(out IList<System.Data.SqlClient.SqlParameter> cmds)
+        private StringBuilder SummaryByActicleSize(bool byline, out IList<System.Data.SqlClient.SqlParameter> cmds)
         {
             StringBuilder sqlCmd = new StringBuilder();
             cmds = new List<System.Data.SqlClient.SqlParameter>();
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             #region select orders 需要欄位
             sqlCmd.Append(string.Format($@"
-
 select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate           , O.CFMDate       , OrderID = O.ID    
 	   , O.Dest            , O.StyleID    , O.SeasonID        , O.ProjectID         , O.Customize1    , O.BuyMonth
 	   , O.CustPONo        , O.BrandID    , O.CustCDID        , O.ProgramID         , O.CdCodeID      , O.CPU
@@ -1490,11 +1530,16 @@ select t.MDivisionID
                 sqlCmd.Append(string.Format(@",{0} ", this.artworktypes.ToString().Substring(0, this.artworktypes.ToString().Length - 1)));
             }
 
-            sqlCmd.Append(string.Format(@" 
+            string tmpbyline = byline ? @"
+    ,t.FOCQty
+    ,AlloQty =(select sum(sdd.AlloQty) from SewingSchedule_Detail sdd where sdd.OrderID  = t.OrderID and sdd.Article =t.Article and sdd.SizeCode = t.SizeCode)
+into #lasttmp" : string.Empty;
+            sqlCmd.Append($@"
+{tmpbyline}
 from #cte t 
 left join #cte2 on #cte2.OrderID = t.OrderID and #cte2.Article = t.Article and #cte2.SizeCode = t.SizeCode
 left join Country with (Nolock) on Country.id= t.Dest
-left join View_SewingInfoArticleSize vsis on t.OrderID = vsis.OrderID and t.Article = vsis.Article and t.SizeCode = vsis.SizeCode"));
+left join View_SewingInfoArticleSize vsis on t.OrderID = vsis.OrderID and t.Article = vsis.Article and t.SizeCode = vsis.SizeCode");
             if (this.isArtwork)
             {
                 sqlCmd.Append(string.Format(@"  left join #tmscost_pvt on #tmscost_pvt.orderid = t.orderid "));
@@ -1540,7 +1585,7 @@ outer apply(select v = case when HT.InQtyBySet is null or HT.InQtyBySet >= t.Qty
 outer apply(select v = case when HT.OutQtyBySet is null or HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o
 outer apply(
 	select SewingLineID =stuff((
-		  select distinct concat(',',ssd.SewingLineID)
+		  select distinct concat('/',ssd.SewingLineID)
 		  from [SewingSchedule] ss WITH (NOLOCK) 
 		  inner join SewingSchedule_Detail ssd  WITH (NOLOCK) on ssd.id = ss.id
 		  where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
@@ -1682,6 +1727,255 @@ outer apply(
             }
             #endregion
 
+            return sqlCmd;
+        }
+
+        private StringBuilder SummaryBySPLine()
+        {
+            StringBuilder ars = new StringBuilder();
+            if (this.isArtwork)
+            {
+                foreach (DataRow dr in this.dtArtworkType.Rows)
+                {
+                    ars.Append($",[{dr["id"]}]=sum([{dr["id"]}])");
+                }
+            }
+
+            StringBuilder sqlCmd = new StringBuilder();
+            sqlCmd.Append($@"
+
+select
+    t.MDivisionID
+    , t.FactoryID
+    , t.SewingLineID
+    , t.OrdersBuyerDelivery
+    , t.SciDelivery
+    , Inline = min(t.Inline)
+    , Offline = max(t.Offline)
+    , t.val
+    , t.BrandID
+    , t.OrderID
+    , t.POID
+    , t.Cancelled
+    , t.Dest
+    , t.StyleID
+    , t.OrderTypeID
+    , t.ShipModeList
+    , t.[PartialShipping]
+    , t.[OrderNo]
+    , t.CustPONo
+    , t.CustCDID
+    , t.ProgramID
+    , t.CdCodeID
+    , t.KPILETA
+    , t.LETA
+    , t.MTLETA
+    , t.SewETA
+    , t.PackETA
+    , t.CPU
+    , [TTL CPU] = t.CPU * SUM(t.Qty)
+    , [CPU Closed] = t.CPU  * sum(t.sewing_output)
+    , [CPU bal] = t.CPU * (SUM(t.Qty) + t.FOCQty - sum(t.sewing_output) )
+    , article_list = al2.article_list
+    , Qty = SUM(t.Qty)
+    , AlloQty = sum(t.AlloQty)
+    , st2.StandardOutput
+    , oriArtwork = oann.oriArtwork
+    , AddedArtwork = aann.AddedArtwork
+    , Artwork.Artwork
+    , t.SubProcessDest
+    , EstimatedCutDate = MIN(t.EstimatedCutDate)
+    , first_cut_date = MIN(t.first_cut_date)
+    , cut_qty = SUM(cut_qty)
+    , [RFID Cut Qty] = SUM([RFID Cut Qty])
+    , [RFID SewingLine In Qty] = SUM([RFID SewingLine In Qty])
+    , [RFID Loading Qty] = SUM([RFID Loading Qty])
+    , [RFID Emb Farm In Qty] = SUM([RFID Emb Farm In Qty])
+    , [RFID Emb Farm Out Qty] = SUM([RFID Emb Farm Out Qty])
+    , [RFID Bond Farm In Qty] = SUM([RFID Bond Farm In Qty])
+    , [RFID Bond Farm Out Qty] = SUM([RFID Bond Farm Out Qty])
+    , [RFID Print Farm In Qty] = SUM([RFID Print Farm In Qty])
+    , [RFID Print Farm Out Qty] = SUM([RFID Print Farm Out Qty])
+    , [RFID AT Farm In Qty] = SUM([RFID AT Farm In Qty])
+    , [RFID AT Farm Out Qty] = SUM([RFID AT Farm Out Qty])
+    , [RFID Pad Print Farm In Qty] = SUM([RFID Pad Print Farm In Qty])
+    , [RFID Pad Print Farm Out Qty] = SUM([RFID Pad Print Farm Out Qty])
+    , [RFID Emboss Farm In Qty] = SUM([RFID Emboss Farm In Qty])
+    , [RFID Emboss Farm Out Qty] = SUM([RFID Emboss Farm Out Qty])
+    , [RFID HT Farm In Qty] = SUM([RFID HT Farm In Qty])
+    , [RFID HT Farm Out Qty] = SUM([RFID HT Farm Out Qty])
+    , ss.SubProcessStatus
+    , EMBROIDERY_qty = SUM(t.EMBROIDERY_qty)
+    , BONDING_qty = SUM(t.BONDING_qty)
+    , PRINTING_qty = SUM(t.PRINTING_qty)
+    , sewing_output = SUM(t.sewing_output)
+    , [Balance] = SUM(t.Qty) + t.FOCQty - sum(t.sewing_output) 
+    , firstSewingDate = MIN(firstSewingDate)
+    , [Last Sewn Date] = MAX([Last Sewn Date])
+    , AVG_QAQTY = AVG(AVG_QAQTY)
+    , [Est_offline] = DATEADD(DAY
+                                , iif(isnull(AVG(AVG_QAQTY), 0) = 0, 0
+                                                                    , ceiling(SUM(t.Qty) + t.FOCQty - sum(t.sewing_output)  / (AVG(AVG_QAQTY)*1.0)))
+                                , MIN(firstSewingDate)) 
+    , [Scanned_Qty] = SUM(t.[Scanned_Qty])
+    -- 以下來源 即by OrderID
+    , t.[pack_rate]
+    , t.TotalCTN
+    , t.FtyCtn
+    , t.ClogCTN
+    , t.CFACTN
+    , InspDate
+    , InspResult
+    , [CFA Name]
+    , ActPulloutDate
+    , FtyKPI
+    , KPIChangeReason
+    , PlanDate
+    , SMR
+    , Handle
+    , [PO SMR]
+    , [PO Handle]
+    , [MC Handle]
+    , DoxType
+    , [SpecMark]
+    , GFR
+    , SampleReason
+    , [TMS]
+    {ars}
+from #lasttmp t
+outer apply(
+	select article_list = stuff((
+		select concat(',' , article)
+		from (
+			select distinct t2.Article 
+			from #lasttmp t2 
+			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+		) t 
+		for xml path('')
+	),1,1,'')
+)al2
+outer apply(
+	select StandardOutput = stuff((
+		select concat(',' , Data)
+		from (
+			select distinct s.Data
+			from #lasttmp t2 
+			outer apply(select * from SplitString(t2.StandardOutput ,','))s
+			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+		) t 
+		for xml path('')
+	),1,1,'')
+)st2
+outer apply(
+	select oriArtwork = stuff((
+			select concat('+' , Data)
+			from (
+				select distinct s.Data
+				from #lasttmp t2 
+				outer apply(select * from SplitString(t2.oriArtwork ,'+'))s
+				where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+			) t 
+			for xml path('')
+		),1,1,'')
+)oann
+outer apply(
+	select AddedArtwork = stuff((
+			select concat('+' , Data)
+			from (
+				select distinct s.Data
+				from #lasttmp t2 
+				outer apply(select * from SplitString(t2.AddedArtwork ,'+'))s
+				where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+			) t 
+			for xml path('')
+		),1,1,'')
+)aann
+outer apply(
+	select Artwork = stuff((
+			select concat('+' , Data)
+			from (
+				select distinct s.Data
+				from #lasttmp t2 
+				outer apply(select * from SplitString(t2.Artwork ,'+'))s
+				where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+			) t 
+			for xml path('')
+		),1,1,'')
+)Artwork
+outer apply(
+	select SubProcessStatus = IIF(
+		exists(
+			select 1
+			from #lasttmp t2 
+			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+			and SubProcessStatus is null
+		)
+		or not exists(
+			select 1
+			from #lasttmp t2 
+			where t2.OrderID = t.OrderID and t2.SewingLineID = t.SewingLineID
+		),
+		null , 'Y')
+)ss
+
+group by 
+t.MDivisionID
+, t.FactoryID
+, t.SewingLineID
+, t.OrdersBuyerDelivery
+, t.SciDelivery
+, t.val
+, t.BrandID
+, t.OrderID
+, t.POID
+, t.Cancelled
+, t.Dest
+, t.StyleID
+, t.OrderTypeID
+, t.ShipModeList
+, t.[PartialShipping]
+, t.[OrderNo]
+, t.CustPONo
+, t.CustCDID
+, t.ProgramID
+, t.CdCodeID
+, t.KPILETA
+, t.LETA
+, t.MTLETA
+, t.SewETA
+, t.PackETA
+, t.CPU
+, t.FOCQty 
+, al2.article_list
+, st2.StandardOutput
+, oann.oriArtwork
+, aann.AddedArtwork
+, Artwork.Artwork
+, t.SubProcessDest
+, ss.SubProcessStatus
+, t.[pack_rate]
+, t.TotalCTN
+, t.FtyCtn
+, t.ClogCTN
+, t.CFACTN
+, t.InspDate
+, InspResult
+, [CFA Name]
+, ActPulloutDate
+, FtyKPI
+, KPIChangeReason
+, PlanDate
+, SMR
+, Handle
+, [PO SMR]
+, [PO Handle]
+, [MC Handle]
+, DoxType
+, [SpecMark]
+, GFR
+, SampleReason
+, [TMS]
+");
             return sqlCmd;
         }
 

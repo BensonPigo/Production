@@ -2561,6 +2561,8 @@
     <Build Include="dbo\Functions\CheckOrder_CalculateMtlUsage.sql" />
     <Build Include="dbo\Tables\Consignee.sql" />
     <Build Include="dbo\Tables\Consignee_Detail.sql" />
+    <Build Include="dbo\Tables\ArtworkType_FTY.sql" />
+    <Build Include="dbo\Tables\FtyInventory_Barcode.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

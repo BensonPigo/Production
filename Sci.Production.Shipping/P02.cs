@@ -18,9 +18,7 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.Shipping
 {
-    /// <summary>
-    /// P02
-    /// </summary>
+    /// <inheritdoc/>
     public partial class P02 : Win.Tems.Input2
     {
         // 宣告Context Menu Item
@@ -48,10 +46,7 @@ namespace Sci.Production.Shipping
             set => this.carrierID = value;
         }
 
-        /// <summary>
-        /// P02
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -623,12 +618,17 @@ FROM(
 			,[CategoryNameFromDD]=dp.Description
             ,pl.PulloutID
             ,pl.Type
+            ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,
+							p.SuppColor,
+							dbo.GetColorMultipleID(o.BrandID,p.ColorID))
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID
 	    left join Express_CTNData ec WITH (NOLOCK) on ed.ID = ec.ID and ed.CTNNo = ec.CTNNo
         left join DropDownList dp ON dp.Type='Pms_Sort_HC_DHL_Cate' AND ed.Category = dp.ID
 		left join PackingList pl WITH (NOLOCK) on ed.PackingListID = pl.ID
+		left join Orders o WITH (NOLOCK) on o.ID = ed.OrderID
+        left join fabric f WITH (NOLOCK) on f.SCIRefno = p.SCIRefno
 	    where ed.ID = '{0}'
     )ed
     outer apply(
@@ -687,6 +687,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8))
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15))
+                .Text("ColorID", header: "Color", width: Widths.AnsiChars(12))
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(15))
                 .Text("CTNNo", header: "C/No.", width: Widths.AnsiChars(5))
                 .Numeric("NW", header: "N.W.", width: Widths.AnsiChars(10), decimal_places: 3)

@@ -44,6 +44,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(976, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtDescription);
@@ -53,6 +57,11 @@
             this.detailcont.Controls.Add(this.labelStockType);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.checkJunk);
+            this.detailcont.Size = new System.Drawing.Size(976, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(976, 38);
             // 
             // browse
             // 
@@ -108,6 +117,7 @@
             this.txtCode.Name = "txtCode";
             this.txtCode.Size = new System.Drawing.Size(78, 23);
             this.txtCode.TabIndex = 7;
+            this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCode_Validating);
             // 
             // comboStockType
             // 

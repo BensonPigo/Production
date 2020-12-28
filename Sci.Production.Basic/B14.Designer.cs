@@ -60,6 +60,13 @@
             this.labelPostSewingDays = new Sci.Win.UI.Label();
             this.numericPostSewingDays = new Sci.Win.UI.NumericBox();
             this.checkIsPrintToCMP = new Sci.Win.UI.CheckBox();
+            this.txtCentralizedmulitFactorySewingline = new Sci.Production.Class.TxtCentralizedmulitFactory();
+            this.txtCentralizedmulitFactoryIEP03 = new Sci.Production.Class.TxtCentralizedmulitFactory();
+            this.chkIsSewingline = new Sci.Win.UI.CheckBox();
+            this.chkIsShowinIEP03 = new Sci.Win.UI.CheckBox();
+            this.chkIsShowinIEP01 = new Sci.Win.UI.CheckBox();
+            this.lbFactory1 = new Sci.Win.UI.Label();
+            this.lbFactory2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -74,6 +81,13 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.lbFactory2);
+            this.detailcont.Controls.Add(this.lbFactory1);
+            this.detailcont.Controls.Add(this.txtCentralizedmulitFactorySewingline);
+            this.detailcont.Controls.Add(this.txtCentralizedmulitFactoryIEP03);
+            this.detailcont.Controls.Add(this.chkIsSewingline);
+            this.detailcont.Controls.Add(this.chkIsShowinIEP03);
+            this.detailcont.Controls.Add(this.chkIsShowinIEP01);
             this.detailcont.Controls.Add(this.checkIsPrintToCMP);
             this.detailcont.Controls.Add(this.numericPostSewingDays);
             this.detailcont.Controls.Add(this.labelPostSewingDays);
@@ -496,6 +510,87 @@
             this.checkIsPrintToCMP.Text = "是否在CMP Report列印 (IsPrintToCMP)";
             this.checkIsPrintToCMP.UseVisualStyleBackColor = true;
             // 
+            // txtCentralizedmulitFactorySewingline
+            // 
+            this.txtCentralizedmulitFactorySewingline.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCentralizedmulitFactorySewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCentralizedmulitFactorySewingline.IsSupportEditMode = false;
+            this.txtCentralizedmulitFactorySewingline.Location = new System.Drawing.Point(424, 323);
+            this.txtCentralizedmulitFactorySewingline.MObjectName = null;
+            this.txtCentralizedmulitFactorySewingline.Name = "txtCentralizedmulitFactorySewingline";
+            this.txtCentralizedmulitFactorySewingline.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.txtCentralizedmulitFactorySewingline.ReadOnly = true;
+            this.txtCentralizedmulitFactorySewingline.Size = new System.Drawing.Size(263, 23);
+            this.txtCentralizedmulitFactorySewingline.TabIndex = 34;
+            // 
+            // txtCentralizedmulitFactoryIEP03
+            // 
+            this.txtCentralizedmulitFactoryIEP03.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCentralizedmulitFactoryIEP03.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCentralizedmulitFactoryIEP03.IsSupportEditMode = false;
+            this.txtCentralizedmulitFactoryIEP03.Location = new System.Drawing.Point(424, 271);
+            this.txtCentralizedmulitFactoryIEP03.MObjectName = null;
+            this.txtCentralizedmulitFactoryIEP03.Name = "txtCentralizedmulitFactoryIEP03";
+            this.txtCentralizedmulitFactoryIEP03.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.txtCentralizedmulitFactoryIEP03.ReadOnly = true;
+            this.txtCentralizedmulitFactoryIEP03.Size = new System.Drawing.Size(263, 23);
+            this.txtCentralizedmulitFactoryIEP03.TabIndex = 33;
+            // 
+            // chkIsSewingline
+            // 
+            this.chkIsSewingline.AutoSize = true;
+            this.chkIsSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsSewingline.IsSupportEditMode = false;
+            this.chkIsSewingline.Location = new System.Drawing.Point(364, 300);
+            this.chkIsSewingline.Name = "chkIsSewingline";
+            this.chkIsSewingline.ReadOnly = true;
+            this.chkIsSewingline.Size = new System.Drawing.Size(260, 21);
+            this.chkIsSewingline.TabIndex = 32;
+            this.chkIsSewingline.Text = "是否在Sewing Line(Is in Sewing Line)";
+            this.chkIsSewingline.UseVisualStyleBackColor = true;
+            // 
+            // chkIsShowinIEP03
+            // 
+            this.chkIsShowinIEP03.AutoSize = true;
+            this.chkIsShowinIEP03.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsShowinIEP03.IsSupportEditMode = false;
+            this.chkIsShowinIEP03.Location = new System.Drawing.Point(364, 244);
+            this.chkIsShowinIEP03.Name = "chkIsShowinIEP03";
+            this.chkIsShowinIEP03.ReadOnly = true;
+            this.chkIsShowinIEP03.Size = new System.Drawing.Size(245, 21);
+            this.chkIsShowinIEP03.TabIndex = 31;
+            this.chkIsShowinIEP03.Text = "是否加入IE P03(Add into IE P03)";
+            this.chkIsShowinIEP03.UseVisualStyleBackColor = true;
+            // 
+            // chkIsShowinIEP01
+            // 
+            this.chkIsShowinIEP01.AutoSize = true;
+            this.chkIsShowinIEP01.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsShowinIEP01.IsSupportEditMode = false;
+            this.chkIsShowinIEP01.Location = new System.Drawing.Point(364, 217);
+            this.chkIsShowinIEP01.Name = "chkIsShowinIEP01";
+            this.chkIsShowinIEP01.ReadOnly = true;
+            this.chkIsShowinIEP01.Size = new System.Drawing.Size(245, 21);
+            this.chkIsShowinIEP01.TabIndex = 30;
+            this.chkIsShowinIEP01.Text = "是否加入IE P01(Add into IE P01)";
+            this.chkIsShowinIEP01.UseVisualStyleBackColor = true;
+            // 
+            // lbFactory1
+            // 
+            this.lbFactory1.Location = new System.Drawing.Point(365, 271);
+            this.lbFactory1.Name = "lbFactory1";
+            this.lbFactory1.Size = new System.Drawing.Size(56, 23);
+            this.lbFactory1.TabIndex = 35;
+            this.lbFactory1.Text = "Factory";
+            // 
+            // lbFactory2
+            // 
+            this.lbFactory2.Location = new System.Drawing.Point(365, 322);
+            this.lbFactory2.Name = "lbFactory2";
+            this.lbFactory2.Size = new System.Drawing.Size(56, 23);
+            this.lbFactory2.TabIndex = 36;
+            this.lbFactory2.Text = "Factory";
+            // 
             // B14
             // 
             this.ClientSize = new System.Drawing.Size(840, 552);
@@ -558,5 +653,12 @@
         private Win.UI.NumericBox numericPostSewingDays;
         private Win.UI.Label labelPostSewingDays;
         private Win.UI.CheckBox checkIsPrintToCMP;
+        private Class.TxtCentralizedmulitFactory txtCentralizedmulitFactorySewingline;
+        private Class.TxtCentralizedmulitFactory txtCentralizedmulitFactoryIEP03;
+        private Win.UI.CheckBox chkIsSewingline;
+        private Win.UI.CheckBox chkIsShowinIEP03;
+        private Win.UI.CheckBox chkIsShowinIEP01;
+        private Win.UI.Label lbFactory2;
+        private Win.UI.Label lbFactory1;
     }
 }

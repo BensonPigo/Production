@@ -282,7 +282,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
                 transactionscope.Complete();
             }
 
-            this.SentToGensong_AutoWHFabric();
+            this.SentToGensong_AutoWHFabric(true);
             MyUtility.Msg.InfoBox("Successfully");
             #endregion
         }
@@ -337,17 +337,17 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
                 transactionscope.Complete();
             }
 
-            this.SentToGensong_AutoWHFabric();
+            this.SentToGensong_AutoWHFabric(false);
             MyUtility.Msg.WarningBox("Successfully");
         }
 
-        private void SentToGensong_AutoWHFabric()
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
-                Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail))
+                Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

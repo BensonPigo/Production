@@ -74,7 +74,10 @@ namespace Sci.Production.Warehouse
                 @"
 select  0 as selected 
         , '' id
-		, [ExportID] = Export.ExportID
+		, [ExportID] = Stuff((select distinct concat(',', rd.id)
+				from Receiving_Detail rd WITH (NOLOCK)
+				where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
+				FOR XML PATH('')),1,1,'')
         , FI.PoId
         , FI.Seq1
         , FI.Seq2
@@ -98,17 +101,6 @@ FROM FtyInventory FI
 LEFT JOIN Orders O ON O.ID = FI.POID
 LEFT JOIN Factory F ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
-outer apply(
-	select ExportID = Stuff((
-		select concat(',',id)
-		from (
-				select 	distinct id
-				from dbo.Export_Detail d
-				where d.PoID=fi.POID and d.Seq1=fi.Seq1 and d.Seq2=fi.Seq2
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-)Export
 Where FI.lock = 0 
 and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and FI.inqty - FI.outqty + FI.adjustqty > 0 
@@ -134,7 +126,11 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
 
             if (!MyUtility.Check.Empty(this.txtWKno.Text))
             {
-                sbSQLCmd.Append($" AND ExportID like '%{this.txtWKno.Text}%'");
+                sbSQLCmd.Append($@" 
+AND exists (select 1 
+            from Receiving_Detail rd WITH (NOLOCK)
+			where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
+            and rd.ID like '%{this.txtWKno.Text}%' )");
             }
 
             if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")

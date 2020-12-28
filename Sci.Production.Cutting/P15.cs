@@ -896,6 +896,7 @@ Select
 	, startno = 0
 	, o.StyleUkey
 	, w.MDivisionId
+    , o.BuyerDelivery
 into #tmp
 from workorder w WITH (NOLOCK) 
 inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey

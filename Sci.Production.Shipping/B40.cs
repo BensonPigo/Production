@@ -1,30 +1,37 @@
-﻿using System;
+﻿using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
-using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
-    /// <summary>
-    /// B40
-    /// </summary>
+    /// <inheritdoc/>
     public partial class B40 : Win.Tems.Input1
     {
         private string editName;
         private DateTime? editDate;
 
-        /// <summary>
-        /// B40
-        /// </summary>
-        /// <param name="menuitem">menuitem</param>
+        /// <inheritdoc/>
         public B40(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboType, 2, 1, "F,Fabric,A,Accessory");
             this.labelDescription2.Text = "Description\r\n(Detail)";
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+            string sqlcmd = $@"
+select top 1 HsCode
+from Fabric_HsCode h
+where h.SCIRefno = '{this.CurrentMaintain["SCIRefno"]}'
+order by h.Year desc, h.ukey desc";
+            this.displayT2HSCode.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }
 
         /// <inheritdoc/>
@@ -109,13 +116,12 @@ order by NLCode",
             }
             else
             {
-                DataRow nLCodeDate;
                 if (MyUtility.Check.Seek(
                     string.Format(
                         @"select NLCode,HSCode,UnitID
 from VNContract_Detail WITH (NOLOCK) 
 where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.txtNLCode.Text), out nLCodeDate))
+and NLCode = '{0}'", this.txtNLCode.Text), out DataRow nLCodeDate))
                 {
                     this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
                     this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];

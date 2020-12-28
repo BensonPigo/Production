@@ -214,6 +214,7 @@ where {0}", this.masterID);
         {
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(this.comboContainerType, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");
+            this.txtPulloutPort1.CountryID = this.txtCountryDestination.TextBox1;
         }
 
         /// <inheritdoc/>
@@ -478,7 +479,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                     // Confirm後, 仍可以按[Edit] 編輯[No Export Charge]欄位
                     this.txtpaytermarPaymentTerm.TextBox1.ReadOnly = true;
                     this.txtShiptermShipmentTerm.ReadOnly = true;
-
+                    this.txtPulloutPort1.TextBox1.ReadOnly = true;
                     this.dateInvDate.ReadOnly = true;
                     this.dateFCRDate.ReadOnly = true;
                     this.txtCustCD.ReadOnly = true;
@@ -725,6 +726,11 @@ order by fwd.WhseNo",
                 return false;
             }
             #endregion
+
+            if (!this.DischargePortIDCheck())
+            {
+                return false;
+            }
 
             // 表身GMTBooking.ShipModeID 不存在Order_QtyShip 就return
             if (!this.CheckShipMode())
@@ -2185,6 +2191,62 @@ Offline Order: S/O#
                 return true;
             }
             #endregion
+        }
+
+        private bool DischargePortIDCheck()
+        {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"]))
+            {
+                return true;
+            }
+
+            // 1. 檢查對應到 PortByBrandShipmode 可得到 DischargePortID 與 Brand
+            string sqlcmd = $@"
+select 1
+from PortByBrandShipmode
+where PulloutPortID  = '{this.CurrentMaintain["DischargePortID"]}'
+and BrandID =  '{this.CurrentMaintain["BrandID"]}'";
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox("Brand not match to Port Discharge .");
+                return false;
+            }
+
+            // 2. 檢查 GMTBooking.Dest = PulloutPort.CountryID
+            sqlcmd = $@"
+SELECT SeaPort,AirPort
+FROM PulloutPort p 
+WHERE p.Junk = 0 
+and  p.id = '{this.CurrentMaintain["DischargePortID"]}'
+and p.CountryID = '{this.CurrentMaintain["Dest"]}'
+and Junk = 0
+";
+            if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            {
+                MyUtility.Msg.WarningBox("Destination not match to country of Port Discharge .");
+                return false;
+            }
+
+            // 3.shipmode 是 Sea PulloutPort 必須設定 SeaPort = 1. S-A/C, S-A/P PulloutPort 必須設定 SeaPort = 1 or AirPort = 1
+            string shipModeID = MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]);
+            if (shipModeID == "SEA")
+            {
+                if (!MyUtility.Convert.GetBool(dr["SeaPort"]))
+                {
+                    MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
+                    return false;
+                }
+            }
+            else if (shipModeID == "S-A/C" || shipModeID == "S-A/P")
+            {
+                if (!MyUtility.Convert.GetBool(dr["SeaPort"]) && !MyUtility.Convert.GetBool(dr["AirPort"]))
+                {
+                    MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

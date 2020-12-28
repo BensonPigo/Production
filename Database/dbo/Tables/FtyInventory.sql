@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[FtyInventory] (
-    [Ukey]                  BIGINT          IDENTITY (1, 1) NOT NULL,
+    [Ukey]                  BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [MDivisionPoDetailUkey] BIGINT          NULL,
     [POID]                  VARCHAR (13)    CONSTRAINT [DF_FtyInventory_POID] DEFAULT ('') NOT NULL,
     [Seq1]                  VARCHAR (3)     CONSTRAINT [DF_FtyInventory_Seq1] DEFAULT ('') NOT NULL,
@@ -14,9 +14,11 @@
     [LockDate]              DATETIME        NULL,
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
-	[Barcode]               VARCHAR (13)    DEFAULT ('') NOT NULL,
+    [Barcode] VARCHAR(16) NULL DEFAULT (''), 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -105,8 +107,10 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 
 GO
 CREATE NONCLUSTERED INDEX [MdID_POSeq]
-    ON [dbo].[FtyInventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [StockType] ASC, [Roll] ASC)
+    ON [dbo].[FtyInventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [StockType] ASC)
     INCLUDE([Ukey]);
+
+
 
 
 

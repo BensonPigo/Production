@@ -30,6 +30,10 @@ namespace Sci.Production.Class
         public DisplayBox DisplayBox1 { get; private set; }
 
         /// <inheritdoc/>
+        [Description("篩選CountryID")]
+        public object CountryID { get; set; }
+
+        /// <inheritdoc/>
         [Bindable(true)]
         public string TextBox1Binding
         {
@@ -48,25 +52,26 @@ namespace Sci.Production.Class
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
             this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id");
-
-            // this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
         }
 
         /// <inheritdoc/>
         private void TextBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
-            string sql = @"
+            string wherecountry = this.CountryID == null ? string.Empty : $" and p.CountryID = @CountryID";
+            List<SqlParameter> parameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@CountryID", ((Win.UI.TextBox)this.CountryID).Text),
+            };
+            string sql = $@"
 SELECT p.ID,P.Name,p.CountryID,[Country Name]=c.NameEN 
     ,[AirPort]=IIF(p.AirPort=1,'Y','') 
     ,[SeaPort]=IIF(p.SeaPort=1,'Y','') 
 FROM PulloutPort p 
 INNER JOIN Country c ON p.CountryID = c.ID 
 WHERE p.Junk = 0 
+{wherecountry}
 ORDER BY p.ID";
-
-            DataTable source;
-            DBProxy.Current.Select("Production", sql, out source);
-
+            DBProxy.Current.Select("Production", sql, parameters, out DataTable source);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,Name,CountryID,Country Name,AirPort,SeaPort", "20,25,10,20,5,5", this.TextBox1.Text)
             {
                 Size = new System.Drawing.Size(950, 666),
@@ -89,13 +94,16 @@ ORDER BY p.ID";
         /// <inheritdoc/>
         private void TextBox1_Validating(object sender, CancelEventArgs e)
         {
+            string wherecountry = this.CountryID == null ? string.Empty : $" and CountryID = @CountryID";
             string nPulloutPort = this.TextBox1.Text;
-
             if (!string.IsNullOrWhiteSpace(nPulloutPort) && nPulloutPort != this.TextBox1.OldValue)
             {
-                string cmd = $"SELECT Name FROM PulloutPort WHERE ID=@ID AND Junk=0";
-
-                List<SqlParameter> parameters = new List<SqlParameter>() { new SqlParameter("@ID", nPulloutPort) };
+                string cmd = $"SELECT Name FROM PulloutPort WHERE ID=@ID AND Junk=0 {wherecountry}";
+                List<SqlParameter> parameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@ID", nPulloutPort),
+                    new SqlParameter("@CountryID", ((Win.UI.TextBox)this.CountryID).Text),
+                };
 
                 if (!MyUtility.Check.Seek(cmd, parameters, "Production"))
                 {
