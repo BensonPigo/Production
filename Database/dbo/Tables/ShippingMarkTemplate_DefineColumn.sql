@@ -2,6 +2,7 @@
 	ID varchar(60)		NOT NULL ,
 	FromPMS bit			NOT NULL CONSTRAINT [DF_ShippingMarkTemplate_DefineColumn_FromPMS] DEFAULT(0),
 	[Desc] varchar(200) NOT NULL CONSTRAINT [DF_ShippingMarkTemplate_DefineColumn_Desc] DEFAULT(''),
+	ChkEmpty Bit NOT NULL CONSTRAINT [DF_ShippingMarkTemplate_DefineColumn_ChkEmpty] DEFAULT 0 ,
 	CONSTRAINT [PK_ShippingMarkTemplate_DefineColumn] PRIMARY KEY CLUSTERED 
 (
 	ID ASC

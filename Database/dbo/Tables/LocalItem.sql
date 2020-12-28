@@ -36,6 +36,7 @@
     [ArtTkt ] VARCHAR(20) NULL DEFAULT (''), 
     [IsCarton] BIT NULL DEFAULT ((0)), 
     [UnPack] BIT NOT NULL DEFAULT 0, 
+	CartonType Varchar (6) NOT NULL CONSTRAINT [DF_LocalItem_CartonType]  DEFAULT(''),
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
 
@@ -173,4 +174,8 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'UnPack';
 	
+GO
+	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客人定義紙箱的規格，工廠看到 Carton Type 便會知道是哪種規格的紙箱。'
+	, @level0type = N'SCHEMA', @level0name = N'dbo'
+	, @level1type = N'TABLE', @level1name = N'LocalItem';
 GO

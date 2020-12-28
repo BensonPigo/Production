@@ -70,6 +70,7 @@ select a.ID
        , a.CombineBalance
 	   , a.RefNoForBalance
        , [DescriptionforBalance] = c2.Description
+       ,[PrepackQty] = IIF ( a.PrepackQty = 0 ,NULL, a.PrepackQty )
 from PackingGuide_Detail a WITH (NOLOCK) 
 left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
 left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
@@ -192,6 +193,7 @@ order by e.Seq, f.Seq", masterID);
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out this.col_qtyperctn)
                 .Numeric("ShipQty", header: "ShipQty").Get(out this.col_shipqty)
+                .Numeric("PrepackQty", header: "Prepack Qty/pcs/pack", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
@@ -1257,12 +1259,24 @@ where o.ID = '{0}'
                 if (this.comboPackingMethod.SelectedValue == null || string.IsNullOrEmpty(this.comboPackingMethod.SelectedValue.ToString()))
                 {
                     sqlCmd = string.Format(
-                        @"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
-	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
-       [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
+                        @"
+select '' as ID
+, '' as RefNo
+, '' as Description
+, oqd.Article
+, voc.ColorID as Color
+, oqd.SizeCode
+, oqd.Qty as ShipQty
+, o.CTNQty as QtyPerCTN
+, os.Seq
+, sw.NW as NW1
+, sw.NNW as NNW1
+, sw2.NW as NW2
+, sw2.NNW as NNW2
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW
+, isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW
+, [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
@@ -1285,12 +1299,23 @@ order by oa.Seq,os.Seq",
                     }
 
                     sqlCmd = string.Format(
-                        @"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
-	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW,
-       [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
+                        @"
+select '' as ID
+, '' as RefNo
+, '' as Description
+, oqd.Article
+, voc.ColorID as Color
+, oqd.SizeCode
+, oqd.Qty as ShipQty
+, oqc.Qty as QtyPerCTN
+, os.Seq,sw.NW as NW1
+, sw.NNW as NNW1
+, sw2.NW as NW2
+, sw2.NNW as NNW2
+, isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW
+, isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW
+, isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW
+, [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left Join Order_QtyCTN oqc WITH (NOLOCK) on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
@@ -1307,12 +1332,23 @@ order by oa.Seq,os.Seq",
                 else
                 {
                     sqlCmd = string.Format(
-                        @"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
-	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
-       [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
+                        @"
+select '' as ID, '' as RefNo
+, '' as Description
+, oqd.Article
+, voc.ColorID as Color
+, oqd.SizeCode
+, oqd.Qty as ShipQty
+, o.CTNQty as QtyPerCTN
+, os.Seq
+, sw.NW as NW1
+, sw.NNW as NNW1
+, sw2.NW as NW2
+, sw2.NNW as NNW2
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW
+, isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW
+, [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
