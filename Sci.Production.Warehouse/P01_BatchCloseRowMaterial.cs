@@ -306,15 +306,51 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 DataTable dtMain = new DataTable();
                 dtMain.Columns.Add("ID", typeof(string));
                 dtMain.Columns.Add("Type", typeof(string));
+                dtMain.Columns.Add("Status", typeof(string));
                 foreach (DataRow dr in dr2)
                 {
                     DataRow row = dtMain.NewRow();
                     row["ID"] = dr["Poid"].ToString();
                     row["Type"] = "D";
+                    row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
                 }
 
-                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain))
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, true))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            // this.QueryData();
+            #endregion
+
+            #region Sent W/H Accessory to Gensong
+
+            // WHClose
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
+                DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
+                Task.Run(() => new Gensong_AutoWHAccessory().SentWHCloseToGensongAutoWHAccessory(dtMaster))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            // SubTransfer_Detail
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = new DataTable();
+                dtMain.Columns.Add("ID", typeof(string));
+                dtMain.Columns.Add("Type", typeof(string));
+                dtMain.Columns.Add("Status", typeof(string));
+                foreach (DataRow dr in dr2)
+                {
+                    DataRow row = dtMain.NewRow();
+                    row["ID"] = dr["Poid"].ToString();
+                    row["Type"] = "D";
+                    row["Status"] = "Confirmed";
+                    dtMain.Rows.Add(row);
+                }
+
+                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain, true))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

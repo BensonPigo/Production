@@ -7,10 +7,11 @@
     [ErrorCode]     VARCHAR (3)    CONSTRAINT [DF_AutomationReceivedMsg_ErrorCode] DEFAULT ('') NOT NULL,
     [ErrorMsg]      VARCHAR (1000) CONSTRAINT [DF_AutomationReceivedMsg_ErrorMsg] DEFAULT ('') NOT NULL,
     [JSON]          VARCHAR (MAX)  CONSTRAINT [DF_AutomationReceivedMsg_JSON] DEFAULT ('') NOT NULL,
-    [ReSented]      BIT            CONSTRAINT [DF_AutomationReceivedMsg_ReSented] DEFAULT ((0)) NOT NULL,
     [AddName]       VARCHAR (10)   CONSTRAINT [DF_AutomationReceivedMsg_AddName] DEFAULT ('') NOT NULL,
     [AddDate]       DATETIME       NULL,
     [Success]       BIT            CONSTRAINT [DF_AutomationReceivedMsg_Success] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_AutomationReceivedMsg] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 

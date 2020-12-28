@@ -2,6 +2,7 @@
 using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -152,6 +154,7 @@ Reason can’t be empty!!",
             if (dts.Length < 1)
             {
                 MyUtility.Msg.InfoBox("Confirmed Successful.");
+                this.SentToGensong_AutoWH_ACC(true);
                 return;
             }
             else
@@ -354,6 +357,8 @@ update Adjust set Status ='New' where id = '{0}'
                 return;
             }
             #endregion
+
+            this.SentToGensong_AutoWH_ACC(false);
         }
 
         /// <inheritdoc/>
@@ -659,6 +664,20 @@ where ad.Id='{0}'
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
+        }
+
+        /// <summary>
+        ///  AutoWH ACC WebAPI for Gensong
+        /// </summary>
+        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMain, isConfirmed))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
     }
 }
