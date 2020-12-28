@@ -32,11 +32,10 @@ select	f.POID,
         {0}
 from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
-inner join Receiving_Detail b with (nolock) on a.id = b.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
 left join Orders o with (nolock) on o.ID = f.POID
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
-left join {1} i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot
+{1}
 {3}
 where 1 = 1
 {2}
@@ -56,11 +55,10 @@ select	f.POID,
         {0}
 from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
-inner join TransferIn_Detail b with (nolock) on b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
 left join Orders o with (nolock) on o.ID = f.POID
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
-left join {1} i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot
+{1}
 {3}
 where 1 = 1
 {2}
@@ -75,37 +73,85 @@ where 1 = 1
             this.comboInspectionResult.SelectedIndex = 0;
         }
 
-        private string AddNonInspectionWhere(string srcWhere, string inspectionType)
+        private string AddInspectionWhere(string srcWhere, string inspectionType)
         {
             string returnResult = srcWhere;
 
-            if (this.comboInspectionResult.Text != "Not yet inspected")
+            if (this.dateInspectionDate.HasValue)
             {
-                return returnResult;
+                if (this.radioWKSeq.Checked)
+                {
+                    switch (inspectionType)
+                    {
+                        case "Physical":
+                            returnResult += $"and f.PhysicalDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                            break;
+                        case "Weight":
+                            returnResult += $"and f.WeightDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                            break;
+                        case "ShadeBond":
+                            returnResult += $"and f.ShadeboneDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                            break;
+                        case "Continuity":
+                            returnResult += $"and f.ContinuityDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                            break;
+                        case "Odor":
+                            returnResult += $"and f.OdorDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    returnResult += $"and i.InspDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                }
             }
 
-            switch (inspectionType)
+            switch (this.comboInspectionResult.Text)
             {
-                case "Physical":
-                    returnResult += $@" and f.Nonphysical = 0";
+                case "Pass":
+                    returnResult += $"and f.{inspectionType} = 'Pass'" + Environment.NewLine;
                     break;
-                case "Weight":
-                    returnResult += $@" and f.nonWeight = 0";
+                case "Fail":
+                    returnResult += $"and f.{inspectionType} = 'Fail'" + Environment.NewLine;
                     break;
-                case "Shade Band":
-                    returnResult += $@" and f.nonShadebond = 0";
+                case "Pass/Fail":
+                    returnResult += $"and f.{inspectionType} in ('Pass', 'Fail')" + Environment.NewLine;
                     break;
-                case "Continuity":
-                    returnResult += $@" and f.nonContinuity = 0";
-                    break;
-                case "Odor":
-                    returnResult += $@" and f.nonOdor = 0";
+                case "Not yet inspected":
+                    returnResult += $"and f.Non{inspectionType} = 0  and (f.{inspectionType} = '' or f.{inspectionType} is null)" + Environment.NewLine;
                     break;
                 default:
                     break;
             }
 
             return returnResult;
+        }
+
+        private string AddJoinByReportType(string fromType, string inspectionTypeTable)
+        {
+            if (this.radioWKSeq.Checked)
+            {
+                return string.Empty;
+            }
+
+            string joinString = string.Empty;
+
+            if (fromType == "TransferIn")
+            {
+                joinString = $@"
+inner join TransferIn_Detail b with (nolock) on a.id = b.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot";
+            }
+            else
+            {
+                joinString = $@"
+inner join Receiving_Detail b with (nolock) on b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot";
+            }
+
+            return joinString;
         }
 
         /// <inheritdoc/>
@@ -154,32 +200,8 @@ where 1 = 1
 
             if (this.dateInspectionDate.HasValue)
             {
-                where1 += $"and i.InspDate between @InsDate1 and @InsDate2" + Environment.NewLine;
-                where2 += $"and i.InspDate between @InsDate1 and @InsDate2" + Environment.NewLine;
                 this.parameters.Add(new SqlParameter("@InsDate1", this.dateInspectionDate.Value1));
                 this.parameters.Add(new SqlParameter("@InsDate2", this.dateInspectionDate.Value2));
-            }
-
-            switch (this.comboInspectionResult.Text)
-            {
-                case "Pass":
-                    where1 += $"and i.Result = 'Pass'" + Environment.NewLine;
-                    where2 += $"and i.Result = 'Pass'" + Environment.NewLine;
-                    break;
-                case "Fail":
-                    where1 += $"and i.Result = 'Fail'" + Environment.NewLine;
-                    where2 += $"and i.Result = 'Fail'" + Environment.NewLine;
-                    break;
-                case "Pass/Fail":
-                    where1 += $"and i.Result in ('Pass', 'Fail')" + Environment.NewLine;
-                    where2 += $"and i.Result in ('Pass', 'Fail')" + Environment.NewLine;
-                    break;
-                case "Not yet inspected":
-                    where1 += $"and (i.Result = '' or i.Result is null)" + Environment.NewLine;
-                    where2 += $"and (i.Result = '' or i.Result is null)" + Environment.NewLine;
-                    break;
-                default:
-                    break;
             }
 
             #region Physical
@@ -188,13 +210,20 @@ where 1 = 1
                 string joinPhysical = @"
 left join pass1 p1 with (nolock) on p1.id = f.PhysicalInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
-left join pass1 p3 with (nolock) on p3.id = i.Inspector
+
 ";
                 string colPhysical = @"
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
+f.Physical,
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
-f.ApproveDate,
+f.ApproveDate";
+                if (this.radioRollDyelot.Checked)
+                {
+                    joinPhysical += @"
+left join pass1 p3 with (nolock) on p3.id = i.Inspector
+";
+                    colPhysical += @",
 b.Roll,
 b.Dyelot,
 i.TicketYds,
@@ -213,11 +242,13 @@ i.Remark,
 i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name)
 ";
+                }
+
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colPhysical, "FIR_Physical", this.AddNonInspectionWhere(where1, "Physical"), joinPhysical)}
+{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical)}
 union all
-{string.Format(this.baseTransferInSql, colPhysical, "FIR_Physical", this.AddNonInspectionWhere(where2, "Physical"), joinPhysical)}
-order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
+{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical)}
+order by POID, Seq, ExportId, ReceivingID
 ";
             }
             #endregion
@@ -228,14 +259,21 @@ order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
                 string joinWeight = @"
 left join pass1 p1 with (nolock) on p1.id = f.WeightInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
-left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
 
                 string colWeight = @"
 [NonWeight] = iif(f.NonWeight = 1, 'Y', ''),
+f.Weight,
 [WeightInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
-f.ApproveDate,
+f.ApproveDate
+";
+                if (this.radioRollDyelot.Checked)
+                {
+                    joinWeight += @"
+left join pass1 p3 with (nolock) on p3.id = i.Inspector
+";
+                    colWeight += @",
 b.Roll,
 b.Dyelot,
 i.WeightM2,
@@ -246,11 +284,13 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
+                }
+
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colWeight, "FIR_Weight", this.AddNonInspectionWhere(where1, "Weight"), joinWeight)}
+{string.Format(this.baseReceivingSql, colWeight, this.AddJoinByReportType("Receiving", "FIR_Weight"), this.AddInspectionWhere(where1, "Weight"), joinWeight)}
 union all
-{string.Format(this.baseTransferInSql, colWeight, "FIR_Weight", this.AddNonInspectionWhere(where2, "Weight"), joinWeight)}
-order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
+{string.Format(this.baseTransferInSql, colWeight, this.AddJoinByReportType("TransferIn", "FIR_Weight"), this.AddInspectionWhere(where2, "Weight"), joinWeight)}
+order by POID, Seq, ExportId, ReceivingID
 ";
             }
             #endregion
@@ -258,17 +298,24 @@ order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
             #region Shade Band
             if (this.comboInspection.Text == "Shade Band" || this.comboInspection.Text == "All")
             {
-                string joinShadeBand = @"
+                string joinShadeBond = @"
 left join pass1 p1 with (nolock) on p1.id = f.ShadeboneInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
-left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
 
-                string colShadeBand = @"
+                string colShadeBond = @"
 [NonShadeBond] = iif(f.NonShadeBond = 1, 'Y', ''),
+f.Shadebond,
 [ShadeboneInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
-f.ApproveDate,
+f.ApproveDate
+";
+                if (this.radioRollDyelot.Checked)
+                {
+                    joinShadeBond += @"
+left join pass1 p3 with (nolock) on p3.id = i.Inspector
+";
+                    colShadeBond += @",
 b.Roll,
 b.Dyelot,
 i.TicketYds,
@@ -279,11 +326,13 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
+                }
+
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colShadeBand, "FIR_Shadebone", this.AddNonInspectionWhere(where1, "Shade Band"), joinShadeBand)}
+{string.Format(this.baseReceivingSql, colShadeBond, this.AddJoinByReportType("Receiving", "FIR_Shadebone"), this.AddInspectionWhere(where1, "ShadeBond"), joinShadeBond)}
 union all
-{string.Format(this.baseTransferInSql, colShadeBand, "FIR_Shadebone", this.AddNonInspectionWhere(where2, "Shade Band"), joinShadeBand)}
-order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
+{string.Format(this.baseTransferInSql, colShadeBond, this.AddJoinByReportType("TransferIn", "FIR_Shadebone"), this.AddInspectionWhere(where2, "ShadeBond"), joinShadeBond)}
+order by POID, Seq, ExportId, ReceivingID
 ";
             }
             #endregion
@@ -294,14 +343,21 @@ order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
                 string joinContinuity = @"
 left join pass1 p1 with (nolock) on p1.id = f.ContinuityInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
-left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
 
                 string colContinuity = @"
 [NonContinuity] = iif(f.NonContinuity = 1, 'Y', ''),
+f.Continuity,
 [ContinuityInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
-f.ApproveDate,
+f.ApproveDate
+";
+                if (this.radioRollDyelot.Checked)
+                {
+                    joinContinuity += @"
+left join pass1 p3 with (nolock) on p3.id = i.Inspector
+";
+                    colContinuity += @",
 b.Roll,
 b.Dyelot,
 i.TicketYds,
@@ -311,11 +367,13 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
+                }
+
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colContinuity, "FIR_Continuity", this.AddNonInspectionWhere(where1, "Continuity"), joinContinuity)}
+{string.Format(this.baseReceivingSql, colContinuity, this.AddJoinByReportType("Receiving", "FIR_Continuity"), this.AddInspectionWhere(where1, "Continuity"), joinContinuity)}
 union all
-{string.Format(this.baseTransferInSql, colContinuity, "FIR_Continuity", this.AddNonInspectionWhere(where2, "Continuity"), joinContinuity)}
-order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
+{string.Format(this.baseTransferInSql, colContinuity, this.AddJoinByReportType("TransferIn", "FIR_Continuity"), this.AddInspectionWhere(where2, "Continuity"), joinContinuity)}
+order by POID, Seq, ExportId, ReceivingID
 ";
             }
             #endregion
@@ -326,14 +384,21 @@ order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
                 string joinOdor = @"
 left join pass1 p1 with (nolock) on p1.id = f.OdorInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
-left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
 
                 string colOdor = @"
 [NonOdor] = iif(f.NonOdor = 1, 'Y', ''),
+f.Odor,
 [OdorInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
-f.ApproveDate,
+f.ApproveDate
+";
+                if (this.radioRollDyelot.Checked)
+                {
+                    joinOdor += @"
+left join pass1 p3 with (nolock) on p3.id = i.Inspector
+";
+                    colOdor += @",
 b.Roll,
 b.Dyelot,
 i.Result,
@@ -341,11 +406,13 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
+                }
+
                 this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colOdor, "FIR_Odor", this.AddNonInspectionWhere(where1, "Odor"), joinOdor)}
+{string.Format(this.baseReceivingSql, colOdor, this.AddJoinByReportType("Receiving", "FIR_Odor"), this.AddInspectionWhere(where1, "Odor"), joinOdor)}
 union all
-{string.Format(this.baseTransferInSql, colOdor, "FIR_Odor", this.AddNonInspectionWhere(where2, "Odor"), joinOdor)}
-order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
+{string.Format(this.baseTransferInSql, colOdor, this.AddJoinByReportType("TransferIn", "FIR_Odor"), this.AddInspectionWhere(where2, "Odor"), joinOdor)}
+order by POID, Seq, ExportId, ReceivingID
 ";
             }
             #endregion
@@ -440,38 +507,44 @@ order by POID, Seq, ExportId, ReceivingID, Roll, Dyelot
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
+
             this.ShowWaitMessage("Starting EXCEL...");
+
+            string reportType = this.radioWKSeq.Checked ? "WKSeq" : "RollDyelot";
+            string reportTitle = this.radioWKSeq.Checked ? " By WK, Seq" : " By Roll, Dyelot";
+
             if (this.comboInspection.Text == "All")
             {
-                this.CreateExcel("Quality_R12_Physical.xltx", "R12 Fabric Physical Inspection List", this.PrintData[0]);
-                this.CreateExcel("Quality_R12_Weight.xltx", "R12 Fabric Weight Test List", this.PrintData[1]);
-                this.CreateExcel("Quality_R12_ShadeBand.xltx", "R12 Fabric Shade Band Test List", this.PrintData[2]);
-                this.CreateExcel("Quality_R12_Continuity.xltx", "R12 Fabric Continuilty Test List", this.PrintData[3]);
-                this.CreateExcel("Quality_R12_Odor.xltx", "R12 Fabric Odor Test List", this.PrintData[4]);
+                this.CreateExcel($"Quality_R12_Physical{reportType}.xltx", $"R12 Fabric Physical Inspection List{reportTitle}", this.PrintData[0]);
+                this.CreateExcel($"Quality_R12_Weight{reportType}.xltx", $"R12 Fabric Weight Test List{reportTitle}", this.PrintData[1]);
+                this.CreateExcel($"Quality_R12_ShadeBond{reportType}.xltx", $"R12 Fabric Shade Band Test List{reportTitle}", this.PrintData[2]);
+                this.CreateExcel($"Quality_R12_Continuity{reportType}.xltx", $"R12 Fabric Continuilty Test List{reportTitle}", this.PrintData[3]);
+                this.CreateExcel($"Quality_R12_Odor{reportType}.xltx", $"R12 Fabric Odor Test List{reportTitle}", this.PrintData[4]);
             }
             else
             {
                 switch (this.comboInspection.Text)
                 {
                     case "Physical":
-                        this.CreateExcel("Quality_R12_Physical.xltx", "R12 Fabric Physical Inspection List", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_Physical{reportType}.xltx", $"R12 Fabric Physical Inspection List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Weight":
-                        this.CreateExcel("Quality_R12_Weight.xltx", "R12 Fabric Weight Test List", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_Weight{reportType}.xltx", $"R12 Fabric Weight Test List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Shade Band":
-                        this.CreateExcel("Quality_R12_ShadeBand.xltx", "R12 Fabric Shade Band Test List", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_ShadeBond{reportType}.xltx", $"R12 Fabric Shade Band Test List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Continuity":
-                        this.CreateExcel("Quality_R12_Continuity.xltx", "R12 Fabric Continuilty Test List", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_Continuity{reportType}.xltx", $"R12 Fabric Continuilty Test List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Odor":
-                        this.CreateExcel("Quality_R12_Odor.xltx", "R12 Fabric Odor Test List", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_Odor{reportType}.xltx", $"R12 Fabric Odor Test List{reportTitle}", this.PrintData[0]);
                         break;
                     default:
                         break;
                 }
             }
+
             this.HideWaitMessage();
             return true;
         }

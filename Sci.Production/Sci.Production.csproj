@@ -896,19 +896,34 @@
     <None Include="XLT\Quality_R10.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R12_Continuity.xltx">
+    <None Include="XLT\Quality_R12_ContinuityWKSeq.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R12_Odor.xltx">
+    <None Include="XLT\Quality_R12_ContinuityRollDyelot.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R12_Physical.xltx">
+    <None Include="XLT\Quality_R12_OdorWKSeq.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R12_ShadeBand.xltx">
+    <None Include="XLT\Quality_R12_OdorRollDyelot.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_R12_Weight.xltx">
+    <None Include="XLT\Quality_R12_PhysicalWKSeq.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R12_PhysicalRollDyelot.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R12_ShadeBondWKSeq.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R12_ShadeBondRollDyelot.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R12_WeightWKSeq.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Quality_R12_WeightRollDyelot.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Quality_R20_AllData.xltx">

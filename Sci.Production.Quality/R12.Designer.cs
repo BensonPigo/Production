@@ -45,6 +45,8 @@
             this.label7 = new Sci.Win.UI.Label();
             this.comboInspection = new Sci.Win.UI.ComboBox();
             this.comboInspectionResult = new Sci.Win.UI.ComboBox();
+            this.radioWKSeq = new Sci.Win.UI.RadioButton();
+            this.radioRollDyelot = new Sci.Win.UI.RadioButton();
             this.SuspendLayout();
             // 
             // print
@@ -276,9 +278,35 @@
             this.comboInspectionResult.Size = new System.Drawing.Size(121, 24);
             this.comboInspectionResult.TabIndex = 151;
             // 
+            // radioWKSeq
+            // 
+            this.radioWKSeq.AutoSize = true;
+            this.radioWKSeq.Checked = true;
+            this.radioWKSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioWKSeq.Location = new System.Drawing.Point(18, 197);
+            this.radioWKSeq.Name = "radioWKSeq";
+            this.radioWKSeq.Size = new System.Drawing.Size(109, 21);
+            this.radioWKSeq.TabIndex = 152;
+            this.radioWKSeq.TabStop = true;
+            this.radioWKSeq.Text = "By WK#, Seq";
+            this.radioWKSeq.UseVisualStyleBackColor = true;
+            // 
+            // radioRollDyelot
+            // 
+            this.radioRollDyelot.AutoSize = true;
+            this.radioRollDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioRollDyelot.Location = new System.Drawing.Point(18, 224);
+            this.radioRollDyelot.Name = "radioRollDyelot";
+            this.radioRollDyelot.Size = new System.Drawing.Size(118, 21);
+            this.radioRollDyelot.TabIndex = 153;
+            this.radioRollDyelot.Text = "By Roll, Dyelot";
+            this.radioRollDyelot.UseVisualStyleBackColor = true;
+            // 
             // R12
             // 
-            this.ClientSize = new System.Drawing.Size(559, 212);
+            this.ClientSize = new System.Drawing.Size(559, 286);
+            this.Controls.Add(this.radioRollDyelot);
+            this.Controls.Add(this.radioWKSeq);
             this.Controls.Add(this.comboInspectionResult);
             this.Controls.Add(this.comboInspection);
             this.Controls.Add(this.label7);
@@ -322,6 +350,8 @@
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.comboInspection, 0);
             this.Controls.SetChildIndex(this.comboInspectionResult, 0);
+            this.Controls.SetChildIndex(this.radioWKSeq, 0);
+            this.Controls.SetChildIndex(this.radioRollDyelot, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -345,5 +375,7 @@
         private Win.UI.Label label7;
         private Win.UI.ComboBox comboInspection;
         private Win.UI.ComboBox comboInspectionResult;
+        private Win.UI.RadioButton radioWKSeq;
+        private Win.UI.RadioButton radioRollDyelot;
     }
 }
