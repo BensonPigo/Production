@@ -1630,6 +1630,11 @@ AND CTNStartNo = @CTNStartNo
                 this.topCarton = string.Empty;
                 this.txtInspectedCarton.Text = string.Empty;
                 this.CurrentMaintain["FirstInspection"] = false;
+
+                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
+                {
+                    dr["Carton"] = string.Empty;
+                }
             }
 
             // 只有選擇Staggered時Inspected Carton、Shift才可以欄位才可以編輯，選到其他Stage時請一併清除這些欄位資料。
@@ -1652,11 +1657,6 @@ AND CTNStartNo = @CTNStartNo
                 this.txtshift.Text = string.Empty;
                 this.txtshift.IsSupportEditMode = false;
                 this.txtshift.ReadOnly = true;
-
-                foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
-                {
-                    dr["Carton"] = string.Empty;
-                }
             }
             else
             {
