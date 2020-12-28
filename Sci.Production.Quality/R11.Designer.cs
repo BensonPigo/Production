@@ -46,31 +46,31 @@
             // print
             // 
             this.print.Enabled = false;
-            this.print.Location = new System.Drawing.Point(400, 106);
+            this.print.Location = new System.Drawing.Point(425, 106);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(400, 12);
+            this.toexcel.Location = new System.Drawing.Point(425, 12);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(400, 48);
+            this.close.Location = new System.Drawing.Point(425, 48);
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(357, 142);
+            this.buttonCustomized.Location = new System.Drawing.Point(355, 106);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(383, 178);
+            this.checkUseCustomized.Location = new System.Drawing.Point(378, 112);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(380, 205);
+            this.txtVersion.Location = new System.Drawing.Point(381, 110);
             // 
             // dateArriveWHDate
             // 
@@ -96,7 +96,7 @@
             // label10
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.Location = new System.Drawing.Point(388, 81);
+            this.label10.Location = new System.Drawing.Point(413, 81);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(92, 22);
             this.label10.TabIndex = 97;
@@ -204,7 +204,7 @@
             // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(543, 153);
+            this.ClientSize = new System.Drawing.Size(517, 164);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtRefno1);
             this.Controls.Add(this.txtRefno2);
