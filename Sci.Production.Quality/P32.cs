@@ -1148,6 +1148,7 @@ AND (
         {
             string updateCmd = $@"
 UPDATE PackingList_Detail SET StaggeredCFAInspectionRecordID = '' WHERE StaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}' 
+UPDATE PackingList_Detail SET FirstStaggeredCFAInspectionRecordID = '' WHERE FirstStaggeredCFAInspectionRecordID = '{this.CurrentMaintain["ID"]}' 
 ;
 DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]}' 
 ";
@@ -1652,7 +1653,6 @@ AND CTNStartNo = @CTNStartNo
                 this.txtInspectedCarton.IsSupportEditMode = false;
                 this.txtInspectedCarton.ReadOnly = true;
 
-                this.CurrentMaintain["FirstInspection"] = false;
                 this.CurrentMaintain["Shift"] = string.Empty;
                 this.txtshift.Text = string.Empty;
                 this.txtshift.IsSupportEditMode = false;
