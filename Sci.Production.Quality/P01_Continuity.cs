@@ -754,7 +754,10 @@ and t.id = '{this.maindr["id"]}'
                         drAdd["Roll"] = dr["Roll"];
                         drAdd["Dyelot"] = dr["Dyelot"];
                         drAdd["Inspdate"] = DateTime.Now.ToShortDateString();
+                        drAdd["Ticketyds"] = MyUtility.Convert.GetDecimal(dr["Ticketyds"]);
                         drAdd["Inspector"] = this.loginID;
+                        drAdd["Scale"] = string.Empty;
+                        drAdd["Result"] = string.Empty;
                         gridTb.Rows.Add(drAdd);
                         dr.EndEdit();
                     }
