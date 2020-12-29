@@ -23,7 +23,9 @@ namespace Sci.Production.Quality
             string[] defect = defect_str.Split(new char[] { '/' });
             this.def_num = n_column;
             this.def_dr = data_dr;
-            DBProxy.Current.Select(null, "Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) ", out this.defRecord);
+            string where = edit ? "where junk = 0" : string.Empty;
+            string sqlcmd = $"Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) {where}";
+            DBProxy.Current.Select(null, sqlcmd, out this.defRecord);
             string defid;
             int point;
             if (!MyUtility.Check.Empty(defect_str))
