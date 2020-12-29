@@ -514,9 +514,9 @@ order by POID, Seq, ExportId, ReceivingID
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.PrintData[0].Rows.Count);
+            this.SetCount(this.PrintData.Sum(s => s.Rows.Count));
 
-            if (this.PrintData[0].Rows.Count == 0)
+            if (!this.PrintData.Where(s => s.Rows.Count > 0).Any())
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
