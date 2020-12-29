@@ -109,7 +109,8 @@ select
 	FP.TicketYds,
 	RD.ID,
 	FP.DetailUkey,
-	FP.ActualYds
+	FP.ActualYds,
+    o.FactoryID
 into #tmp1
 from FIR F
 Inner join Receiving R on F.ReceivingID=R.Id
@@ -156,7 +157,8 @@ select
 	FP.TicketYds,
 	TD.ID,
 	FP.DetailUkey,
-	FP.ActualYds
+	FP.ActualYds,
+    o.FactoryID
 into #tmp2
 from FIR F
 Inner join TransferIn T on F.ReceivingID=T.Id
@@ -192,6 +194,7 @@ select
 	t.Description,
 	ShippedQty = SUM(t.ShipQty * isnull(t.Rate,1)),
 	ArrivedQty = SUM(t.StockQty),
+    t.FactoryID,
 	t.POID,
 	WK = t.ExportId,
     t.SEQ,
@@ -202,7 +205,7 @@ select
 	t.Physical
 from #tmp1 t
 Group by t.Brandid,t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight,
-t.ConstructionID,t.Description,t.POID,t.ExportId,t.SEQ,t.Dyelot,t.Physical,ID
+t.ConstructionID,t.Description,t.FactoryID,t.POID,t.ExportId,t.SEQ,t.Dyelot,t.Physical,ID
 
 union all
 select
@@ -218,6 +221,7 @@ select
 	t.Description,
 	ShippedQty = SUM(t.Qty),
 	ArrivedQty = SUM(t.Qty),
+    t.FactoryID,
 	t.POID,
     WK = '',
     t.SEQ,
@@ -228,7 +232,7 @@ select
 	t.Physical
 from #tmp2 t
 Group by t.Brandid,t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight,
-t.ConstructionID,t.Description,t.POID,t.SEQ,t.Dyelot,t.Physical,ID
+t.ConstructionID,t.Description,t.FactoryID,t.POID,t.SEQ,t.Dyelot,t.Physical,ID
 
 --Defect_detail 分頁
 select
