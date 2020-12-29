@@ -304,7 +304,7 @@ WHERE   StockType='{0}'
 
             this.FtyBarcodeData(true);
             this.SentToGensong_AutoWHFabric(true);
-            this.SentToGensong_AutoWH_ACC(true);
+            this.SentToVstrong_AutoWH_ACC(true);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -559,7 +559,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC(false);
+            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
@@ -575,14 +575,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
         }
 
         /// <summary>
-        ///  AutoWH ACC WebAPI for Gensong
+        ///  AutoWH ACC WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain, isConfirmed))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

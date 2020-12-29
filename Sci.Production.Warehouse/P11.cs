@@ -1184,7 +1184,7 @@ where id = '{1}'", Env.User.UserID,
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC(true);
+            this.SentToVstrong_AutoWH_ACC(true);
         }
 
         /// <inheritdoc/>
@@ -1374,7 +1374,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC(false);
+            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         private void BtnBOA_Click(object sender, EventArgs e)
@@ -2112,12 +2112,12 @@ where  o.id ='{this.CurrentMaintain["orderid"]}'
         }
 
         /// <summary>
-        ///  AutoWH ACC WebAPI for Gensong
+        ///  AutoWH ACC WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
-            // AutoWHACC WebAPI for Gensong
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtDetail = new DataTable();
                 string sqlGetData = string.Empty;
@@ -2169,7 +2169,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Gensong_AutoWHAccessory().SentIssue_DetailToGensongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

@@ -472,7 +472,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             if (result)
             {
                 MyUtility.Msg.InfoBox("Confirmed successful");
-                this.SentToGensong_AutoWH_ACC(true);
+                this.SentToVstrong_AutoWH_ACC(true);
             }
             else
             {
@@ -665,7 +665,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             if (result)
             {
                 MyUtility.Msg.InfoBox("UnConfirmed successful");
-                this.SentToGensong_AutoWH_ACC(false);
+                this.SentToVstrong_AutoWH_ACC(false);
             }
             else
             {
@@ -762,15 +762,15 @@ Where a.id = '{0}'
         }
 
         /// <summary>
-        ///  AutoWH ACC WebAPI for Gensong
+        ///  AutoWH ACC WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            // AutoWHFabric WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHAccessory().SentAdjust_DetailToGensongAutoWHAccessory(dtMain, isConfirmed))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
