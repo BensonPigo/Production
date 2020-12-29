@@ -462,7 +462,7 @@ having f.balanceQty - sum(d.Qty) < 0
             // 要在confirmed 後才能取得當前Balance
             this.FtyBarcodeData(true);
             this.SentToGensong_AutoWHFabric(true);
-            this.SentToGensong_AutoWH_ACC(true);
+            this.SentToVstrong_AutoWH_ACC(true);
         }
 
         /// <inheritdoc/>
@@ -687,7 +687,7 @@ having f.balanceQty + sum(d.Qty) < 0
             // 要在unconfirmed 後才能取得當前Balance
             this.FtyBarcodeData(false);
             this.SentToGensong_AutoWHFabric(false);
-            this.SentToGensong_AutoWH_ACC(false);
+            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         // 寫明細撈出的sql command
@@ -824,12 +824,12 @@ Where a.id = '{0}'", masterID);
         }
 
         /// <summary>
-        ///  AutoWH ACC WebAPI for Gensong
+        ///  AutoWH ACC WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
-            // AutoWHACC WebAPI for Gensong
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtDetail = new DataTable();
                 string sqlGetData = string.Empty;
@@ -881,7 +881,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Gensong_AutoWHAccessory().SentIssue_DetailToGensongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
