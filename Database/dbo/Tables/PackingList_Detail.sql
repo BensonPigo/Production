@@ -63,6 +63,7 @@
     [MDFailQty] INT NOT NULL DEFAULT (0), 
     [CFASelectInspDate] DATE NULL, 
     [StaggeredCFAInspectionRecordID] VARCHAR(13) NOT NULL DEFAULT (''), 
+	PrePackQty int NOT NULL CONSTRAINT [DF_PackingList_Detail_PrePackQty]  DEFAULT(0),
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -238,3 +239,15 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingList_Detail',
     @level2type = N'COLUMN',
     @level2name = N'MDFailQty'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'混尺碼裝箱各色組尺寸 1 個塑膠袋裝入的件數',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'PackingList_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'PrePackQty'
+;
+GO

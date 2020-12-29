@@ -30,3 +30,14 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'資料來�
 ;
 GO
 
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'轉圖檔 / HTML 時，是否要判斷該欄位為空值不允許匯出檔案',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'ShippingMarkTemplate_DefineColumn',
+	@level2type = N'COLUMN',
+	@level2name = N'ChkEmpty'
+;
+GO
+

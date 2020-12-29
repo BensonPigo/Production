@@ -780,6 +780,29 @@ order by os.Seq",
                     }
                 }
             };
+
+            DataGridViewGeneratorNumericColumnSettings col_PrepackQtyShow = new DataGridViewGeneratorNumericColumnSettings();
+
+            col_PrepackQtyShow.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    int? prepackQty = MyUtility.Convert.GetInt(e.FormattedValue);
+                    dr["PrepackQty"] = prepackQty.HasValue ? prepackQty.Value : 0;
+
+                    if (prepackQty.HasValue && prepackQty > 0)
+                    {
+                        dr["PrepackQtyShow"] = prepackQty;
+                    }
+                    else
+                    {
+                        dr["PrepackQtyShow"] = DBNull.Value;
+                    }
+
+                    dr.EndEdit();
+                }
+            };
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -800,6 +823,7 @@ order by os.Seq",
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: this.size).Get(out this.col_size)
                 .Numeric("QtyPerCTN", header: "PC/Ctn").Get(out this.col_qtyperctn)
                 .Numeric("ShipQty", header: "Qty").Get(out this.col_shipqty)
+                .Numeric("PrepackQtyShow", header: $"Prepack Qty{Environment.NewLine}pcs{Environment.NewLine}pack", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_PrepackQtyShow)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_nw)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_gw)
