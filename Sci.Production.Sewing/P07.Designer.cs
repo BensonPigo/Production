@@ -172,7 +172,7 @@
             this.Controls.Add(this.lbReceiveDate);
             this.Name = "P07";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P07.Query for Dry Room Scan";
+            this.Text = "P07. Query For Dry Room Receive Carton Record";
             this.Controls.SetChildIndex(this.lbReceiveDate, 0);
             this.Controls.SetChildIndex(this.lbPackID, 0);
             this.Controls.SetChildIndex(this.lbSP, 0);

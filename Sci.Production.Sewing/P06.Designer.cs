@@ -241,7 +241,7 @@
             this.Controls.Add(this.btnSave);
             this.Name = "P06";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P06. Dry Room Scan";
+            this.Text = "P06. Dry Room Receive Carton Input";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridReceive, 0);
