@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            this.lbTransferDate = new Sci.Win.UI.Label();
+            this.lbPackID = new Sci.Win.UI.Label();
+            this.lbSP = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.txtsp = new Sci.Win.UI.TextBox();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -45,29 +45,35 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // lbTransferDate
             // 
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Transfer Date";
+            this.lbTransferDate.Location = new System.Drawing.Point(9, 9);
+            this.lbTransferDate.Name = "lbTransferDate";
+            this.lbTransferDate.Size = new System.Drawing.Size(93, 23);
+            this.lbTransferDate.TabIndex = 1;
+            this.lbTransferDate.Text = "Transfer Date";
+            this.lbTransferDate.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbTransferDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label2
+            // lbPackID
             // 
-            this.label2.Location = new System.Drawing.Point(9, 46);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Pack ID";
+            this.lbPackID.Location = new System.Drawing.Point(9, 46);
+            this.lbPackID.Name = "lbPackID";
+            this.lbPackID.Size = new System.Drawing.Size(93, 23);
+            this.lbPackID.TabIndex = 2;
+            this.lbPackID.Text = "Pack ID";
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label3
+            // lbSP
             // 
-            this.label3.Location = new System.Drawing.Point(390, 46);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "SP#";
+            this.lbSP.Location = new System.Drawing.Point(390, 46);
+            this.lbSP.Name = "lbSP";
+            this.lbSP.Size = new System.Drawing.Size(75, 23);
+            this.lbSP.TabIndex = 3;
+            this.lbSP.Text = "SP#";
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtPackID
             // 
@@ -187,14 +193,15 @@
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.txtsp);
             this.Controls.Add(this.txtPackID);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lbSP);
+            this.Controls.Add(this.lbPackID);
+            this.Controls.Add(this.lbTransferDate);
             this.Name = "P13";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P13.Query For Dry Room Transfer Record";
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.lbTransferDate, 0);
+            this.Controls.SetChildIndex(this.lbPackID, 0);
+            this.Controls.SetChildIndex(this.lbSP, 0);
             this.Controls.SetChildIndex(this.txtPackID, 0);
             this.Controls.SetChildIndex(this.txtsp, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
@@ -211,9 +218,9 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
+        private Win.UI.Label lbTransferDate;
+        private Win.UI.Label lbPackID;
+        private Win.UI.Label lbSP;
         private Win.UI.TextBox txtPackID;
         private Win.UI.TextBox txtsp;
         private Win.UI.Button btnQuery;

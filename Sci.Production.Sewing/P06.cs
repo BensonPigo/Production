@@ -79,6 +79,14 @@ where	1 = 0";
 
         private void BtnFind_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtPackID.Text) &&
+                MyUtility.Check.Empty(this.txtSP.Text) &&
+                MyUtility.Check.Empty(this.txtPO.Text))
+            {
+                MyUtility.Msg.WarningBox("Please fill <SP#>, <PO#> or <Pack ID>");
+                return;
+            }
+
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@M", Env.User.Keyword));
 

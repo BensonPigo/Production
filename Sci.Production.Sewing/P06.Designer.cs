@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.lbSP = new Sci.Win.UI.Label();
+            this.lbPO = new Sci.Win.UI.Label();
+            this.lbPackID = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
@@ -49,29 +49,35 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // lbSP
             // 
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "SP#";
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbSP.Location = new System.Drawing.Point(12, 9);
+            this.lbSP.Name = "lbSP";
+            this.lbSP.Size = new System.Drawing.Size(75, 23);
+            this.lbSP.TabIndex = 1;
+            this.lbSP.Text = "SP#";
+            this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label2
+            // lbPO
             // 
-            this.label2.Location = new System.Drawing.Point(204, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "PO#";
+            this.lbPO.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbPO.Location = new System.Drawing.Point(204, 9);
+            this.lbPO.Name = "lbPO";
+            this.lbPO.Size = new System.Drawing.Size(75, 23);
+            this.lbPO.TabIndex = 2;
+            this.lbPO.Text = "PO#";
+            this.lbPO.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label3
+            // lbPackID
             // 
-            this.label3.Location = new System.Drawing.Point(396, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Pack ID";
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbPackID.Location = new System.Drawing.Point(396, 9);
+            this.lbPackID.Name = "lbPackID";
+            this.lbPackID.Size = new System.Drawing.Size(75, 23);
+            this.lbPackID.TabIndex = 3;
+            this.lbPackID.Text = "Pack ID";
+            this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label4
             // 
@@ -179,14 +185,14 @@
             this.gridReceive.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceive.Location = new System.Drawing.Point(0, 134);
             this.gridReceive.Name = "gridReceive";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceive.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceive.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridReceive.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceive.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceive.RowTemplate.Height = 24;
@@ -211,12 +217,12 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.lbPackID);
             this.panel1.Controls.Add(this.txtSP);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.lbSP);
             this.panel1.Controls.Add(this.btnFind);
             this.panel1.Controls.Add(this.txtPO);
-            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.lbPO);
             this.panel1.Controls.Add(this.txtPackID);
             this.panel1.Location = new System.Drawing.Point(5, 4);
             this.panel1.Name = "panel1";
@@ -234,6 +240,7 @@
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Name = "P06";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P06. Dry Room Scan";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
@@ -251,9 +258,9 @@
 
         #endregion
 
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
+        private Win.UI.Label lbSP;
+        private Win.UI.Label lbPO;
+        private Win.UI.Label lbPackID;
         private Win.UI.Label label4;
         private Win.UI.Button btnFind;
         private Win.UI.Button btnImportFromBarcode;

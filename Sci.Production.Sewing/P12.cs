@@ -10,14 +10,19 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P12 : Sci.Win.Tems.QueryForm
     {
+        private DataTable dtTransfer = new DataTable();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P12"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P12(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -25,6 +30,7 @@ namespace Sci.Production.Sewing
             this.EditMode = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -86,10 +92,17 @@ where	1 = 0";
             this.gridTransfer.DataSource = this.dtTransfer;
         }
 
-        DataTable dtTransfer = new DataTable();
-
         private void BtnFind_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.dateRangeReceive.TextBox1.Value) &&
+                MyUtility.Check.Empty(this.txtPO.Text) &&
+                MyUtility.Check.Empty(this.txtPackID.Text) &&
+                MyUtility.Check.Empty(this.txtSP.Text))
+            {
+                MyUtility.Msg.WarningBox("Please fill <SP#>, <Receive Date>, <PO#> or <Pack ID>");
+                return;
+            }
+
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@M", Env.User.Keyword));
 
@@ -179,7 +192,7 @@ where	pd.CTNStartNo != '' and
 
             PackDataResult packDataResult = new PackDataResult();
             packDataResult = this.GetPackData(this.txtScanBarcode.Text);
-            if (packDataResult.result == true)
+            if (packDataResult.Result == true)
             {
                 if (this.dtTransfer.AsEnumerable().Any(s => s["ID"].Equals(packDataResult.Dr["ID"]) && s["CTNStartNo"].Equals(packDataResult.Dr["CTNStartNo"])))
                 {
@@ -195,7 +208,7 @@ where	pd.CTNStartNo != '' and
             }
             else
             {
-                MyUtility.Msg.WarningBox(packDataResult.errMsg);
+                MyUtility.Msg.WarningBox(packDataResult.ErrMsg);
             }
 
             this.txtScanBarcode.Text = string.Empty;
@@ -205,8 +218,10 @@ where	pd.CTNStartNo != '' and
         private class PackDataResult
         {
             public DataRow Dr;
-            public bool result;
-            public string errMsg;
+
+            public bool Result;
+
+            public string ErrMsg;
         }
 
         private PackDataResult GetPackData(string PackNo, bool fromCustCTN = false)
@@ -269,27 +284,27 @@ where	pd.CTNStartNo != '' and
 		p.Type in ('B','L') ";
 
             bool checkBarcode = MyUtility.Check.Seek(chkSql, out packDataResult.Dr);
-            packDataResult.result = false;
+            packDataResult.Result = false;
             if (checkBarcode == false)
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> does not exist!";
+                packDataResult.ErrMsg = $"<CNT#:{PackNo}> does not exist!";
                 return packDataResult;
             }
 
             if (MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
+                packDataResult.ErrMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
                 this.txtScanBarcode.Focus();
                 return packDataResult;
             }
 
             if (packDataResult.Dr["Status"].Equals("Confirmed") || packDataResult.Dr["Status"].Equals("Locked"))
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> Already pullout!";
+                packDataResult.ErrMsg = $"<CNT#:{PackNo}> Already pullout!";
                 return packDataResult;
             }
 
-            packDataResult.result = true;
+            packDataResult.Result = true;
             return packDataResult;
         }
 
@@ -338,7 +353,7 @@ where	pd.CTNStartNo != '' and
 
                             // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
                             packDataResult = this.GetPackData(packNo, false);
-                            if (packDataResult.result == true)
+                            if (packDataResult.Result == true)
                             {
                                 tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
                                 continue;
@@ -346,7 +361,7 @@ where	pd.CTNStartNo != '' and
 
                             // 檢查PackingList_Detail.CustCTN
                             packDataResult = this.GetPackData(packNo, true);
-                            if (packDataResult.result == true)
+                            if (packDataResult.Result == true)
                             {
                                 tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
                                 continue;
@@ -385,9 +400,9 @@ where	pd.CTNStartNo != '' and
             foreach (var item in checkData)
             {
                 packDataResult = this.GetPackData(item["ID"].ToString() + item["CTNStartNo"].ToString());
-                if (packDataResult.result == false)
+                if (packDataResult.Result == false)
                 {
-                    MyUtility.Msg.WarningBox(packDataResult.errMsg);
+                    MyUtility.Msg.WarningBox(packDataResult.ErrMsg);
                     this.HideWaitMessage();
                     return;
                 }

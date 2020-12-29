@@ -2,17 +2,18 @@
 using Ict.Win;
 using Sci.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
+    /// <inheritdoc/>
     public partial class P13 : Sci.Win.Tems.QueryForm
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="P13"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public P13(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -29,6 +30,7 @@ namespace Sci.Production.Sewing
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -55,6 +57,14 @@ namespace Sci.Production.Sewing
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.DataSource = null;
+
+            if (MyUtility.Check.Empty(this.dateTransfer.TextBox1.Value) &&
+                MyUtility.Check.Empty(this.txtPackID.Text) &&
+                MyUtility.Check.Empty(this.txtsp.Text))
+            {
+                MyUtility.Msg.WarningBox("Please fill <SP#>, <Transfer Date> or <Pack ID>");
+                return;
+            }
 
             string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty, transferTo = string.Empty;
             string sqlwhere = string.Empty;
