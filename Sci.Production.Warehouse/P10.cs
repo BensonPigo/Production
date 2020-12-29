@@ -1224,7 +1224,7 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
 
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
-            new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+            new P13_FabricSticker(this.CurrentMaintain["ID"], "Issue_Detail").ShowDialog();
         }
     }
 }

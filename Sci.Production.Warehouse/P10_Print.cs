@@ -370,7 +370,7 @@ where t.id= @ID";
 
             if (this.radioFabricSticker.Checked)
             {
-                new P13_FabricSticker(this.drPrint["ID"]).ShowDialog();
+                new P13_FabricSticker(this.drPrint["ID"], "Issue_Detail").ShowDialog();
             }
 
             if (this.radioRelaxationSticker.Checked)
