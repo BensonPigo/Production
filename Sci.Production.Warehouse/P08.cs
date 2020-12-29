@@ -659,7 +659,7 @@ drop table #tmp2
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC(true);
+            this.SentToVstrong_AutoWH_ACC(true);
         }
 
         // Unconfirm
@@ -851,7 +851,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.StockQty <
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToGensong_AutoWH_ACC(false);
+            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         // 寫明細撈出的sql command
@@ -933,12 +933,12 @@ Where a.id = '{0}' ", masterID);
         }
 
         /// <summary>
-        ///  AutoWH Acc WebAPI for Gensong
+        ///  AutoWH Acc WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
             DataTable dtDetail = new DataTable();
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 string sqlGetData = string.Empty;
                 sqlGetData = $@"
@@ -987,7 +987,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Gensong_AutoWHAccessory().SentReceive_DetailToGensongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_DetailToVstrongAutoWHAccessory(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

@@ -12,28 +12,28 @@ using static Sci.Production.Automation.UtilityAutomation;
 namespace Sci.Production.Automation
 {
     /// <inheritdoc/>
-    public class Gensong_AutoWHAccessory
+    public class Vstrong_AutoWHAccessory
     {
-        private static readonly string GensongSuppID = "3A0196";
+        private static readonly string VstrongSuppID = "3A0196";
         private static readonly string moduleName = "AutoWHAccessory";
         private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
         /// <inheritdoc/>
-        public static bool IsGensong_AutoWHAccessoryEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
+        public static bool IsVstrong_AutoWHAccessoryEnable => IsModuleAutomationEnable(VstrongSuppID, moduleName);
 
         /// <summary>
         /// Receive_Detail
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        public void SentReceive_DetailToGensongAutoWHAccessory(DataTable dtDetail)
+        public void SentReceive_DetailToVstrongAutoWHAccessory(DataTable dtDetail)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentReceiving_DetailToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentReceiving_DetailToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -63,24 +63,24 @@ namespace Sci.Production.Automation
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Receiving_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Receiving_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// Issue_Detail To Gensong
+        /// Issue_Detail To Vstrong
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        public void SentIssue_DetailToGensongAutoWHAccessory(DataTable dtDetail)
+        public void SentIssue_DetailToVstrongAutoWHAccessory(DataTable dtDetail)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentIssue_DetailToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentIssue_DetailToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -105,25 +105,25 @@ namespace Sci.Production.Automation
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Issue_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Issue_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// RemoveC_Detail To Gensong
+        /// RemoveC_Detail To Vstrong
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
         /// <param name="isConfirmed"> confirmed</param>
-        public void SentRemoveC_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        public void SentRemoveC_DetailToVstrongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentRemoveC_DetailToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentRemoveC_DetailToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -187,25 +187,25 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("RemoveC_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("RemoveC_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// SubTransfer To Gensong
+        /// SubTransfer To Vstrong
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
         /// <param name="isConfirmed">bool</param>
-        public void SentSubTransfer_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        public void SentSubTransfer_DetailToVstrongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentSubTransfer_DetailToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentSubTransfer_DetailToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -293,24 +293,24 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("SubTransfer_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// WHClose To Gensong
+        /// WHClose To Vstrong
         /// </summary>
         /// <param name="dtMaster">Master DataSource</param>
-        public void SentWHCloseToGensongAutoWHAccessory(DataTable dtMaster)
+        public void SentWHCloseToVstrongAutoWHAccessory(DataTable dtMaster)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName))
             {
                 return;
             }
 
-            string apiThread = "SentWHCloseToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentWHCloseToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -323,24 +323,24 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("WHClose", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// ReturnReceipt To Gensong
+        /// ReturnReceipt To Vstrong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
         /// <param name="isConfirmed">bool</param>
-        public void SentReturnReceiptToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        public void SentReturnReceiptToVstrongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentReturnReceiptToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentReturnReceiptToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -401,24 +401,24 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("ReturnReceipt_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// BorrowBack to Gensong
+        /// BorrowBack to Vstrong
         /// </summary>
         /// <param name="dtDetail">DataTable</param>
         /// <param name="isConfirmed">bool</param>
-        public void SentBorrowBackToGensongAutoWHAccessory(DataTable dtDetail, bool isConfirmed)
+        public void SentBorrowBackToVstrongAutoWHAccessory(DataTable dtDetail, bool isConfirmed)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentBorrowBackToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentBorrowBackToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -497,24 +497,24 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("BorrowBack_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// LocationTrans To Gensong
+        /// LocationTrans To Vstrong
         /// </summary>
         /// <param name="dtMaster">dtMaster</param>
         /// <param name="isConfirmed">bool</param>
-        public void SentLocationTransToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        public void SentLocationTransToVstrongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentLocationTransToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentLocationTransToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -582,24 +582,24 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("LocationTrans_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("LocationTrans_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
-        /// Adjust_Detail To Gensong
+        /// Adjust_Detail To Vstrong
         /// </summary>
         /// <param name="dtMaster">Detail DataSource</param>
         /// <param name="isConfirmed">bool</param>
-        public void SentAdjust_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        public void SentAdjust_DetailToVstrongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
         {
-            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentAdjust_DetailToGensong";
-            string suppAPIThread = "Api/GensongAutoWHAccessory/SentDataByApiTag";
+            string apiThread = "SentAdjust_DetailToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
 
@@ -666,12 +666,12 @@ and exists(
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                 });
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Adjust_Detail", bodyObject));
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Adjust_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
-        private object CreateGensongStructure(string tableName, object structureID)
+        private object CreateVstrongStructure(string tableName, object structureID)
         {
             Dictionary<string, object> resultObj = new Dictionary<string, object>
             {

@@ -607,10 +607,10 @@ from #tmp";
             }
             #endregion
 
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            // AutoWHFabric WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                Task.Run(() => new Gensong_AutoWHAccessory().SentRemoveC_DetailToGensongAutoWHAccessory(dtMaster, true))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_DetailToVstrongAutoWHAccessory(dtMaster, true))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

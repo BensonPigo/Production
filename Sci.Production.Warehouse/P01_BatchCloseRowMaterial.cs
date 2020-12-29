@@ -326,16 +326,16 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
             #region Sent W/H Accessory to Gensong
 
             // WHClose
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtFilter = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).CopyToDataTable();
                 DataTable dtMaster = dtFilter.DefaultView.ToTable(true, "POID", "WhseClose");
-                Task.Run(() => new Gensong_AutoWHAccessory().SentWHCloseToGensongAutoWHAccessory(dtMaster))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMaster))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             // SubTransfer_Detail
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtMain = new DataTable();
                 dtMain.Columns.Add("ID", typeof(string));
@@ -350,7 +350,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     dtMain.Rows.Add(row);
                 }
 
-                Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain, true))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMain, true))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

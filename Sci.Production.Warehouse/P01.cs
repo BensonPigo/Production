@@ -590,18 +590,18 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 }
                 #endregion
 
-                #region Sent W/H Accessory to Gensong
+                #region Sent W/H Accessory to Vstrong
 
                 // WHClose
-                if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                 {
                     DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                    Task.Run(() => new Gensong_AutoWHAccessory().SentWHCloseToGensongAutoWHAccessory(dtMain))
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMain))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
 
                 // SubTransfer_Detail
-                if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                 {
                     DataTable dtMain = new DataTable();
                     dtMain.Columns.Add("ID", typeof(string));
@@ -612,7 +612,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
-                    Task.Run(() => new Gensong_AutoWHAccessory().SentSubTransfer_DetailToGensongAutoWHAccessory(dtMain, true))
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMain, true))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
 

@@ -86,7 +86,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Gensong_AutoWHAccessory.cs" />
+    <Compile Include="Vstrong_AutoWHAccessory.cs" />
     <Compile Include="Gensong_AutoWHFabric.cs" />
     <Compile Include="Gensong_FinishingProcesses.cs" />
     <Compile Include="Sunrise_FinishingProcesses.cs" />

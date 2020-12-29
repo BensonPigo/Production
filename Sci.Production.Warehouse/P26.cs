@@ -364,7 +364,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
             }
 
             this.SentToGensong_AutoWHFabric();
-            this.SentToGensong_AutoWH_ACC(true);
+            this.SentToVstrong_AutoWH_ACC(true);
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -427,14 +427,14 @@ Where a.id = '{0}' ", masterID);
         }
 
         /// <summary>
-        ///  AutoWH ACC WebAPI for Gensong
+        ///  AutoWH ACC WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHAccessory().SentLocationTransToGensongAutoWHAccessory(dtMain, isConfirmed))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentLocationTransToVstrongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

@@ -1402,7 +1402,7 @@ when matched then
 
             // AutoWHFabric WebAPI for Gensong
             this.SentToGensong_AutoWHFabric(true);
-            this.SentToGensong_AutoWH_ACC(true);
+            this.SentToVstrong_AutoWH_ACC(true);
         }
 
         // Unconfirm
@@ -1696,7 +1696,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             // AutoWHFabric WebAPI for Gensong
             this.SentToGensong_AutoWHFabric(false);
-            this.SentToGensong_AutoWH_ACC(false);
+            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         /// <summary>
@@ -1766,12 +1766,12 @@ and t.id = '{this.CurrentMaintain["id"]}'
         }
 
         /// <summary>
-        ///  AutoWH Acc WebAPI for Gensong
+        ///  AutoWH Acc WebAPI for Vstrong
         /// </summary>
-        private void SentToGensong_AutoWH_ACC(bool isConfirmed)
+        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
         {
             DataTable dtDetail = new DataTable();
-            if (Gensong_AutoWHAccessory.IsGensong_AutoWHAccessoryEnable)
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 string sqlGetData = string.Empty;
                 sqlGetData = $@"
@@ -1820,7 +1820,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Gensong_AutoWHAccessory().SentReceive_DetailToGensongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_DetailToVstrongAutoWHAccessory(dtDetail))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
