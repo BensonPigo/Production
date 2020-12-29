@@ -28,15 +28,15 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
-            this.txtcountry.TextBox1.Text = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM PulloutPort WHERE ID='{this.CurrentMaintain["PulloutPortID"]}'");
+            this.txtcountry.TextBox1.Text = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM PulloutPort WHERE ID='{this.CurrentMaintain["PulloutPortID"]}'", "ProductionTPE");
 
             bool canEdit = Prgs.GetAuthority(Env.User.UserID, "Shipping B07. Port of Discharge", "CanEdit");
 
             this.btnImport.Enabled = canEdit && !this.EditMode;
 
-            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'"));
+            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'", "ProductionTPE"));
 
-            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'"));
+            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'", "ProductionTPE"));
             base.OnDetailEntered();
         }
 
@@ -182,7 +182,7 @@ namespace Sci.Production.Centralized
                 #region 驗證是否存在
 
                 bool isBrandExists = MyUtility.Check.Seek("SELECT 1 FROM Brand WHERE ID=@Brand", parameters, "Production");
-                bool isPortExists = MyUtility.Check.Seek("SELECT 1 FROM PulloutPort WHERE ID=@Port_Code ", parameters, "Production");
+                bool isPortExists = MyUtility.Check.Seek("SELECT 1 FROM PulloutPort WHERE ID=@Port_Code ", parameters, "ProductionTPE");
                 bool isCountryExists = MyUtility.Check.Seek("SELECT 1 FROM Country WHERE ID=@Country", parameters, "Production");
                 bool isContinentExists = MyUtility.Check.Seek("SELECT 1 FROM DropDownList WHERE Type='Continent' AND ID = @Continent", parameters, "Production");
 
@@ -318,7 +318,7 @@ when not matched by target then
 
         private void TxtPulloutPortID_Leave(object sender, EventArgs e)
         {
-            this.CurrentMaintain["CountryID"] = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM PulloutPort WHERE ID='{this.CurrentMaintain["PulloutPortID"]}'");
+            this.CurrentMaintain["CountryID"] = MyUtility.GetValue.Lookup($@"SELECT CountryID FROM PulloutPort WHERE ID='{this.CurrentMaintain["PulloutPortID"]}'", "ProductionTPE");
             this.txtcountry.TextBox1.Text = MyUtility.Convert.GetString(this.CurrentMaintain["CountryID"]);
 
             this.CurrentMaintain["ContinentID"] = MyUtility.GetValue.Lookup($@"select c.Continent from Country c INNER JOIN DropDownList d ON d.Type = 'Continent' and d.ID = c.Continent where c.id='{this.txtcountry.TextBox1.Text}' ");
@@ -327,9 +327,9 @@ when not matched by target then
             this.CurrentMaintain["ContinentName"] = MyUtility.GetValue.Lookup($@"select d.Name from Country c INNER JOIN DropDownList d ON d.Type = 'Continent' and d.ID = c.Continent where c.id='{this.txtcountry.TextBox1.Text}' ");
             this.displayContinent.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ContinentName"]);
 
-            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'"));
+            this.chkIsAirPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select AirPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'", "ProductionTPE"));
 
-            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'"));
+            this.chkIsSeaPort.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SeaPort from PulloutPort where id='{this.CurrentMaintain["PulloutPortID"]}'", "ProductionTPE"));
         }
     }
 

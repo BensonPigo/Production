@@ -39,11 +39,11 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.btnImport = new Sci.Win.UI.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.txtPulloutPortID = new Sci.Production.Class.TxtPulloutPort();
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtBrand = new Sci.Production.Class.Txtbrand();
-            this.btnImport = new Sci.Win.UI.Button();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -198,8 +198,25 @@
             this.label1.TabIndex = 16;
             this.label1.Text = "Brand";
             // 
+            // btnImport
+            // 
+            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImport.Location = new System.Drawing.Point(824, 3);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(146, 30);
+            this.btnImport.TabIndex = 2;
+            this.btnImport.Text = "Import from Excel";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
+            // 
             // txtPulloutPortID
             // 
+            this.txtPulloutPortID.ConnectionName = "ProductionTPE";
+            this.txtPulloutPortID.CountryID = null;
             this.txtPulloutPortID.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PulloutPortID", true));
             this.txtPulloutPortID.DisplayBox1Binding = "";
             this.txtPulloutPortID.Location = new System.Drawing.Point(145, 80);
@@ -227,21 +244,6 @@
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(66, 23);
             this.txtBrand.TabIndex = 21;
-            // 
-            // btnImport
-            // 
-            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(824, 3);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(146, 30);
-            this.btnImport.TabIndex = 2;
-            this.btnImport.Text = "Import from Excel";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
-            // 
-            // openFileDialog
-            // 
-            this.openFileDialog.FileName = "openFileDialog1";
             // 
             // Shipping_B07
             // 
