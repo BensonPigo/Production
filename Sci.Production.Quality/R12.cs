@@ -212,9 +212,13 @@ left join pass1 p1 with (nolock) on p1.id = f.PhysicalInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 
 ";
-                string colPhysical = @"
+
+                string colPhysicalWKSeqOnly = this.radioWKSeq.Checked ? "f.TotalInspYds," : string.Empty;
+
+                string colPhysical = $@"
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
+{colPhysicalWKSeqOnly}
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate";
