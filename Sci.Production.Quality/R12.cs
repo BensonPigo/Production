@@ -90,7 +90,7 @@ where 1 = 1
                             returnResult += $"and f.WeightDate between @InsDate1 and @InsDate2" + Environment.NewLine;
                             break;
                         case "ShadeBond":
-                            returnResult += $"and f.ShadeboneDate between @InsDate1 and @InsDate2" + Environment.NewLine;
+                            returnResult += $"and f.ShadeBondDate between @InsDate1 and @InsDate2" + Environment.NewLine;
                             break;
                         case "Continuity":
                             returnResult += $"and f.ContinuityDate between @InsDate1 and @InsDate2" + Environment.NewLine;
@@ -214,12 +214,14 @@ left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
 
                 string colPhysicalWKSeqOnly = this.radioWKSeq.Checked ? "f.TotalInspYds," : string.Empty;
+                string colPhysicalDateWKSeqOnly = this.radioWKSeq.Checked ? "f.PhysicalDate," : string.Empty;
 
                 string colPhysical = $@"
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
 {colPhysicalWKSeqOnly}
 [PhysicalInspector] = Concat(p1.ID, '-', p1.Name),
+{colPhysicalDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate";
                 if (this.radioRollDyelot.Checked)
@@ -264,11 +266,13 @@ order by POID, Seq, ExportId, ReceivingID
 left join pass1 p1 with (nolock) on p1.id = f.WeightInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
+                string colWeightDateWKSeqOnly = this.radioWKSeq.Checked ? "f.WeightDate," : string.Empty;
 
-                string colWeight = @"
+                string colWeight = $@"
 [NonWeight] = iif(f.NonWeight = 1, 'Y', ''),
 f.Weight,
 [WeightInspector] = Concat(p1.ID, '-', p1.Name),
+{colWeightDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
@@ -306,11 +310,13 @@ order by POID, Seq, ExportId, ReceivingID
 left join pass1 p1 with (nolock) on p1.id = f.ShadeboneInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
+                string colShadeBondDateWKSeqOnly = this.radioWKSeq.Checked ? "f.ShadebondDate," : string.Empty;
 
-                string colShadeBond = @"
+                string colShadeBond = $@"
 [NonShadeBond] = iif(f.NonShadeBond = 1, 'Y', ''),
 f.Shadebond,
 [ShadeboneInspector] = Concat(p1.ID, '-', p1.Name),
+{colShadeBondDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
@@ -348,11 +354,13 @@ order by POID, Seq, ExportId, ReceivingID
 left join pass1 p1 with (nolock) on p1.id = f.ContinuityInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
+                string colContinuityDateWKSeqOnly = this.radioWKSeq.Checked ? "f.ContinuityDate," : string.Empty;
 
-                string colContinuity = @"
+                string colContinuity = $@"
 [NonContinuity] = iif(f.NonContinuity = 1, 'Y', ''),
 f.Continuity,
 [ContinuityInspector] = Concat(p1.ID, '-', p1.Name),
+{colContinuityDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
@@ -389,11 +397,13 @@ order by POID, Seq, ExportId, ReceivingID
 left join pass1 p1 with (nolock) on p1.id = f.OdorInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
+                string colOdorDateWKSeqOnly = this.radioWKSeq.Checked ? "f.OdorDate," : string.Empty;
 
-                string colOdor = @"
+                string colOdor = $@"
 [NonOdor] = iif(f.NonOdor = 1, 'Y', ''),
 f.Odor,
 [OdorInspector] = Concat(p1.ID, '-', p1.Name),
+{colOdorDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
