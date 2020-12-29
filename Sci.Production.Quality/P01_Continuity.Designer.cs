@@ -67,6 +67,7 @@
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.txtContinuityInspector = new Sci.Win.UI.TextBox();
             this.labinspector = new Sci.Win.UI.Label();
+            this.btnCopyFabricFromIns = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -331,7 +332,7 @@
             // 
             // btnApprove
             // 
-            this.btnApprove.Location = new System.Drawing.Point(781, 126);
+            this.btnApprove.Location = new System.Drawing.Point(877, 92);
             this.btnApprove.Name = "btnApprove";
             this.btnApprove.Size = new System.Drawing.Size(90, 30);
             this.btnApprove.TabIndex = 127;
@@ -409,9 +410,9 @@
             this.textID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.textID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.textID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textID.Location = new System.Drawing.Point(985, 131);
+            this.textID.Location = new System.Drawing.Point(1002, 131);
             this.textID.Name = "textID";
-            this.textID.Size = new System.Drawing.Size(78, 21);
+            this.textID.Size = new System.Drawing.Size(33, 21);
             this.textID.TabIndex = 134;
             this.textID.Visible = false;
             // 
@@ -470,9 +471,20 @@
             this.labinspector.TabIndex = 227;
             this.labinspector.Text = "Continuity Inspector";
             // 
+            // btnCopyFabricFromIns
+            // 
+            this.btnCopyFabricFromIns.Location = new System.Drawing.Point(781, 127);
+            this.btnCopyFabricFromIns.Name = "btnCopyFabricFromIns";
+            this.btnCopyFabricFromIns.Size = new System.Drawing.Size(220, 30);
+            this.btnCopyFabricFromIns.TabIndex = 229;
+            this.btnCopyFabricFromIns.Text = "Copy fabric from Physical Insp.";
+            this.btnCopyFabricFromIns.UseVisualStyleBackColor = true;
+            this.btnCopyFabricFromIns.Click += new System.EventHandler(this.BtnCopyFabricFromIns_Click);
+            // 
             // P01_Continuity
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.Controls.Add(this.btnCopyFabricFromIns);
             this.Controls.Add(this.txtContinuityInspector);
             this.Controls.Add(this.labinspector);
             this.Controls.Add(this.dateLastInspectionDate);
@@ -515,6 +527,7 @@
             this.GridUniqueKey = "Roll,Dyelot";
             this.KeyField1 = "ID";
             this.Name = "P01_Continuity";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Continuity";
             this.WorkAlias = "Fir_Continuity";
             this.Controls.SetChildIndex(this.labelSP, 0);
@@ -556,6 +569,7 @@
             this.Controls.SetChildIndex(this.dateLastInspectionDate, 0);
             this.Controls.SetChildIndex(this.labinspector, 0);
             this.Controls.SetChildIndex(this.txtContinuityInspector, 0);
+            this.Controls.SetChildIndex(this.btnCopyFabricFromIns, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -605,5 +619,6 @@
         private Win.UI.Button btnPrintFormatReport;
         private Win.UI.TextBox txtContinuityInspector;
         private Win.UI.Label labinspector;
+        private Win.UI.Button btnCopyFabricFromIns;
     }
 }
