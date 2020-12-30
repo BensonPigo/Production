@@ -1260,24 +1260,7 @@ where o.ID = '{0}'
                 {
                     sqlCmd = $@"
 ----計算最大公因數
-DECLARE @minQty as decimal = (select MIN(Qty) from Order_QtyShip_Detail q where ID = '{orderID}' )
-
-WHILE 1 <= @minQty
-BEGIN
-	IF EXISTS(
-		SELECT *
-		FROM Order_QtyShip_Detail
-		WHERE ID = '{orderID}'
-			  AND Qty % @minQty != 0
-	)
-	BEGIN
-		SET @minQty = @minQty - 1 
-	END
-	ELSE
-	BEGIN
-		BREAK;
-	END
-END
+DECLARE @minQty as decimal = (select CTNQty from Orders q where ID = '{orderID}' )
 
 select '' as ID
 , '' as RefNo
@@ -1298,7 +1281,7 @@ select '' as ID
 , [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
 , [PrepackQty] = IIF(o.CtnType != 2 
                         ,0
-                        ,CAST( (oqd.qty / @minQty  ) as int)
+                        ,CAST( (o.CTNQty / @minQty  ) as int)
                     )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
@@ -1323,13 +1306,13 @@ order by oa.Seq,os.Seq
 
                     sqlCmd = $@"
 ----計算最大公因數
-DECLARE @minQty as decimal = (select MIN(Qty) from Order_QtyShip_Detail q where ID = '{orderID}' )
+DECLARE @minQty as decimal = (select MIN(Qty) from Order_QtyCTN q where ID = '{orderID}' )
 
 WHILE 1 <= @minQty
 BEGIN
 	IF EXISTS(
 		SELECT *
-		FROM Order_QtyShip_Detail
+		FROM Order_QtyCTN
 		WHERE ID = '{orderID}'
 			  AND Qty % @minQty != 0
 	)
@@ -1360,7 +1343,7 @@ select '' as ID
 , [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
 , [PrepackQty] = IIF(o.CtnType != 2 
                         ,0
-                        ,CAST( (oqd.qty / @minQty  ) as int)
+                        ,CAST( (oqc.qty / @minQty  ) as int)
                     )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
@@ -1378,24 +1361,7 @@ order by oa.Seq,os.Seq
                 {
                     sqlCmd = $@"
 ----計算最大公因數
-DECLARE @minQty as decimal = (select MIN(Qty) from Order_QtyShip_Detail q where ID = '{orderID}' )
-
-WHILE 1 <= @minQty
-BEGIN
-	IF EXISTS(
-		SELECT 1
-		FROM Order_QtyShip_Detail
-		WHERE ID = '{orderID}'
-			  AND Qty % @minQty != 0
-	)
-	BEGIN
-		SET @minQty = @minQty - 1 
-	END
-	ELSE
-	BEGIN
-		BREAK;
-	END
-END
+DECLARE @minQty as decimal = (select CTNQty from Orders q where ID = '{orderID}' )
 
 select '' as ID, '' as RefNo
 , '' as Description
@@ -1415,7 +1381,7 @@ select '' as ID, '' as RefNo
 , [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
 , [PrepackQty] = IIF(o.CtnType != 2 
                         ,0
-                        ,CAST( (oqd.qty / @minQty  ) as int)
+                        ,CAST( (o.CTNQty / @minQty  ) as int)
                     )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
