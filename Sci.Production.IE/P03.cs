@@ -994,7 +994,7 @@ where Junk = 0
                 return false;
             }
 
-            var queryIsGroupHeader = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == false && x.Field<bool?>("IsGroupHeader") == true);
+            var queryIsGroupHeader = this.DetailDatas.Where(x => x.Field<bool?>("IsShow") == true && x.Field<bool?>("IsHide") == false && x.Field<bool?>("IsGroupHeader") == true);
             if (queryIsGroupHeader.Any())
             {
                 string msg = "It must be selected if the operation is [Group Header]." + Environment.NewLine;
@@ -1007,14 +1007,14 @@ where Junk = 0
                 return false;
             }
 
-            var queryHideAndPPA = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == true && x.Field<bool?>("IsPPA") == true);
+            var queryHideAndPPA = this.DetailDatas.Where(x => x.Field<bool?>("IsShow") == true && x.Field<bool?>("IsHide") == true && x.Field<bool?>("IsPPA") == true);
             if (queryHideAndPPA.Any())
             {
                 MyUtility.Msg.WarningBox("<PPA> and <Hide> cannot be selected at the same time.");
                 return false;
             }
 
-            var queryIsHide = this.DetailDatas.Where(x => x.Field<bool?>("IsHide") == true && !x.Field<string>("No").Empty());
+            var queryIsHide = this.DetailDatas.Where(x => x.Field<bool?>("IsShow") == true && x.Field<bool?>("IsHide") == true && !x.Field<string>("No").Empty());
             if (queryIsHide.Any())
             {
                 string msg = "These operations cannot be [Hide] and have [No.] in the same time." + Environment.NewLine;
@@ -1028,7 +1028,7 @@ where Junk = 0
             }
 
             var queryIsPPA = this.DetailDatas
-                .Where(x => x.Field<bool?>("IsHide") == false
+                .Where(x => x.Field<bool?>("IsShow") == true && x.Field<bool?>("IsHide") == false
                                && ((x.Field<bool?>("IsPPA") == true && (x.Field<string>("No").Empty() || !x.Field<string>("No").Substring(0, 1).Equals("P")))
                                 || (x.Field<bool?>("IsPPA") == false && !x.Field<string>("No").Empty() && x.Field<string>("No").Substring(0, 1).Equals("P"))));
             if (queryIsPPA.Any())
