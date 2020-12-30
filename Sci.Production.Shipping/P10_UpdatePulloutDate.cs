@@ -231,7 +231,11 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 }
                 else
                 {
-                    // 拆成單筆 PackingListNo 轉出
+                    string listID = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).JoinToString(",");
+                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID, string.Empty))
+                               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+
+                    // 因為會傳圖片，拆成單筆 PackingListNo 轉出，避免一次傳出的容量過大超過api大小限制
                     foreach (DataRow dr in dt.Rows)
                     {
                         #region ISP20201607 資料交換 - Gensong
