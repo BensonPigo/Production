@@ -72,6 +72,7 @@ and TimeStudy_Detail.ID = {0}",
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+
         {
             this.custcdID = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style WITH (NOLOCK) where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", MyUtility.Convert.GetString(this.masterData["StyleID"]), MyUtility.Convert.GetString(this.masterData["SeasonID"]), MyUtility.Convert.GetString(this.masterData["BrandID"])));
             this.machineID = MyUtility.GetValue.Lookup(string.Format(
@@ -100,6 +101,7 @@ select
 	Annotation = null,	
 	DescEN = null
 	,[MasterPlusGroup]=''
+    ,[Template] = ''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
 union all
 select 
@@ -117,18 +119,27 @@ select
 	Annotation = 	null,
 	DescEN = '**Cutting'
 	,[MasterPlusGroup]=''
+    ,[Template] = ''
 from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
 union all
 ";
             sqlCmd += string.Format(
                 @"
-select td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,td.SMV,td.PcsPerHour,td.Sewer,
-td.Annotation
-,DescEN = case when '{3}' = 'cn' then isnull(od.DescCHS,o.DescEN)
-               when '{3}' = 'vn' then isnull(od.DescVI,o.DescEN)
-               when '{3}' = 'kh' then isnull(od.DescKH,o.DescEN)
- else o.DescEN end
-,o.MasterPlusGroup
+select td.Seq
+    , td.OperationID
+    , td.MachineTypeID
+    , td.Mold
+    , td.Frequency
+    , td.SMV
+    , td.PcsPerHour
+    , td.Sewer
+    , td.Annotation
+    , [DescEN] = case when '{3}' = 'cn' then isnull(od.DescCHS,o.DescEN)
+                   when '{3}' = 'vn' then isnull(od.DescVI,o.DescEN)
+                   when '{3}' = 'kh' then isnull(od.DescKH,o.DescEN)
+     else o.DescEN end
+    , o.MasterPlusGroup
+    , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join OperationDesc od on o.ID = od.ID
@@ -157,6 +168,7 @@ select
 	Annotation = null,	
 	DescEN = null
 	,[MasterPlusGroup]=''
+    ,[Template] = ''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID <> 'Cutting'
 union all
 select
@@ -174,6 +186,7 @@ select
 	Annotation = null,
 	DescEN = '**Inspection'
 	,[MasterPlusGroup]=''
+    ,[Template] = ''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
 union all
 select 
@@ -191,6 +204,7 @@ select
 	Annotation = null,
 	DescEN = '**Pressing'
 	,[MasterPlusGroup]=''
+    ,[Template] = ''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
 union all
 select 	
@@ -208,6 +222,7 @@ select
 	Annotation = null,
 	DescEN =  '**Packing'
 	,[MasterPlusGroup]=''
+    ,[Template] = ''
 from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
 order by seq
 ";
@@ -235,7 +250,6 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
             return Ict.Result.True;
         }
-
         /// <summary>
         /// 產生Excel
         /// </summary>
@@ -306,13 +320,13 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.masterData["StyleID"]);
             worksheet.Cells[3, 5] = MyUtility.Convert.GetString(this.masterData["SeasonID"]);
             worksheet.Cells[3, 7] = this.custcdID;
-            worksheet.Cells[3, 11] = Convert.ToDateTime(DateTime.Today).ToString("d");
-            worksheet.Cells[4, 13] = MyUtility.Convert.GetString(this.efficiency) + "%";
+            worksheet.Cells[3, 12] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[4, 14] = MyUtility.Convert.GetString(this.efficiency) + "%";
             worksheet.Columns[3].ColumnWidth = 18.4;
 
             // 填內容值
             int intRowsStart = 5;
-            object[,] objArray = new object[1, 13];
+            object[,] objArray = new object[1, 14];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = intRowsStart - 4;
@@ -321,15 +335,16 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 objArray[0, 3] = dr["MachineTypeID"];
                 objArray[0, 4] = dr["MasterPlusGroup"];
                 objArray[0, 5] = dr["Mold"];
-                objArray[0, 6] = dr["DescEN"];
-                objArray[0, 7] = dr["Annotation"];
-                objArray[0, 8] = dr["Frequency"];
-                objArray[0, 9] = dr["SMV"];
-                objArray[0, 10] = dr["PcsPerHour"];
-                objArray[0, 11] = dr["Sewer"];
-                objArray[0, 12] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
+                objArray[0, 6] = dr["Template"];
+                objArray[0, 7] = dr["DescEN"];
+                objArray[0, 8] = dr["Annotation"];
+                objArray[0, 9] = dr["Frequency"];
+                objArray[0, 10] = dr["SMV"];
+                objArray[0, 11] = dr["PcsPerHour"];
+                objArray[0, 12] = dr["Sewer"];
+                objArray[0, 13] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
 
-                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -337,8 +352,8 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Range[string.Format("A{0}:B{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[string.Format("A{0}:B{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
             worksheet.Cells[intRowsStart, 1] = "Machine:";
-            worksheet.Range[string.Format("C{0}:M{0}", intRowsStart)].Merge(Type.Missing);
-            worksheet.Range[string.Format("C{0}:M{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+            worksheet.Range[string.Format("C{0}:N{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("C{0}:N{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
 
             // 避免machineID為空所產生的錯誤
             if (this.machineID.Length > 2)
@@ -346,8 +361,8 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 worksheet.Cells[intRowsStart, 3] = this.machineID.Substring(0, this.machineID.Length - 2);
             }
 
-            worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
-            worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+            worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
+            worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
 
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
@@ -356,7 +371,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(this.masterData["TotalSewingTime"]);
             worksheet.Cells[intRowsStart, 5] = "Sec.";
             worksheet.Cells[intRowsStart, 7] = "Prepared by:";
-            worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:N{0}", intRowsStart)].Merge(Type.Missing);
             string cipfrow = string.Empty;
             if (this.chkCutting.Checked || this.chkInspection.Checked || this.chkPacking.Checked || this.chkPressing.Checked)
             {
@@ -404,7 +419,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 worksheet.Cells[intRowsStart, 1] = $"Total Time/Pc(Include {chk}):";
                 worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["TotalSewingTime"]) + ttl);
                 worksheet.Cells[intRowsStart, 5] = "Sec.";
-                worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
+                worksheet.Range[string.Format("H{0}:N{0}", intRowsStart)].Merge(Type.Missing);
                 cipfrow = $"A{intRowsStart}";
             }
 
@@ -426,7 +441,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(this.masterData["NumberSewer"]);
             worksheet.Cells[intRowsStart, 5] = "Sewer";
             worksheet.Cells[intRowsStart, 7] = "Approved by:";
-            worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:N{0}", intRowsStart)].Merge(Type.Missing);
 
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
@@ -467,7 +482,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
             worksheet.Cells[intRowsStart, 5] = "Pcs";
             worksheet.Cells[intRowsStart, 7] = "Noted by:";
-            worksheet.Range[string.Format("H{0}:M{0}", intRowsStart)].Merge(Type.Missing);
+            worksheet.Range[string.Format("H{0}:N{0}", intRowsStart)].Merge(Type.Missing);
 
             excel.Cells.EntireRow.AutoFit();
             if (!MyUtility.Check.Empty(cipfrow))
