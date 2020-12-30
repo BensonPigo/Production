@@ -1008,7 +1008,7 @@ Where a.id = '{0}'", masterID);
 
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
-            new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+            new P13_FabricSticker(this.CurrentMaintain["ID"], "Issue_Detail").ShowDialog();
         }
 
         private void TxtwhseReason_Validated(object sender, EventArgs e)

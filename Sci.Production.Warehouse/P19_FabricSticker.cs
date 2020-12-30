@@ -12,11 +12,19 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <summary>
+    /// P19_FabricSticker
+    /// </summary>
     public partial class P19_FabricSticker : Win.Subs.Base
     {
         private object strSubTransferID;
         private string remark;
 
+        /// <summary>
+        /// P19_FabricSticker
+        /// </summary>
+        /// <param name="strSubTransferID">strSubTransferID</param>
+        /// <param name="remark">remark</param>
         public P19_FabricSticker(object strSubTransferID, string remark)
         {
             this.InitializeComponent();
@@ -39,7 +47,10 @@ namespace Sci.Production.Warehouse
                 .Text("Color", header: "Color", iseditingreadonly: true)
                 .Text("Roll", header: "Roll", iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
-                .Text("Qty", header: "Qty", iseditingreadonly: true)
+                .Numeric("Qty", header: "Qty", iseditingreadonly: true)
+                .Numeric("StockQty", header: "Stock Qty", iseditingreadonly: true)
+                .Text("StockType", header: "Stock Type", iseditingreadonly: true)
+                .Text("FtyLocation", header: "Location", iseditingreadonly: true)
                 ;
 
             for (int i = 0; i < this.grid1.Columns.Count; i++)
@@ -54,22 +65,38 @@ namespace Sci.Production.Warehouse
 
             string strQuerySql = @"
 select Sel = 0
-       , RowNo = Row_Number() over (order by trsd.POID, trsd.Seq1, trsd.Seq2)
-       , SPNo = trsd.POID
-	   , Seq = Concat (trsd.Seq1, '-', trsd.Seq2)
-	   , Refno = psd.Refno
-	   , Color = psd.ColorID
-	   , Roll = trsd.Roll
-	   , Dyelot = trsd.Dyelot
-	   , ToFactory = trs.ToMDivisionId      
-	   , StockUnit = psd.StockUnit
-	   , location = dbo.Getlocation(trsd.FtyInventoryUkey)
-	   , Qty = trsd.Qty
+        , RowNo = Row_Number() over (order by trsd.POID, trsd.Seq1, trsd.Seq2)
+        , SPNo = trsd.POID
+	    , Seq = Concat (trsd.Seq1, '-', trsd.Seq2)
+	    , Refno = psd.Refno
+	    , Color = psd.ColorID
+	    , Roll = trsd.Roll
+	    , Dyelot = trsd.Dyelot
+	    , ToFactory = trs.ToMDivisionId      
+	    , StockUnit = psd.StockUnit
+	    , location = dbo.Getlocation(trsd.FtyInventoryUkey)
+	    , Qty = trsd.Qty
+        , [StockQty] = (isnull(fi.InQty, 0)  - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0))
+        , [StockType] = case    when trsd.StockType = 'I' then 'Inventory'
+                                when trsd.StockType = 'B' then 'Bulk'
+                                else trsd.StockType end
+        , [FtyLocation] = FtyLocation.val
 from TransferOut_Detail trsd
 left join TransferOut trs on trs.Id=trsd.ID
 left join Po_Supp_Detail psd on trsd.POID = psd.ID
 								and trsd.Seq1 = psd.SEQ1
 								and trsd.Seq2 = psd.SEQ2
+left join FtyInventory fi with (nolock) on  fi.POID = trsd.POID and 
+                                            fi.Seq1 = trsd.Seq1 and 
+                                            fi.Seq2 = trsd.Seq2 and 
+                                            fi.Roll = trsd.Roll and
+                                            fi.Dyelot = trsd.Dyelot and
+                                            fi.StockType = trsd.StockType
+outer apply(
+            SELECT [val] =  Stuff((select concat( ',', fid.MtlLocationID) 
+                                    from FtyInventory_Detail fid with (nolock) 
+                                    where fid.Ukey = fi.Ukey
+                                    FOR XML PATH('')),1,1,'') ) FtyLocation
 where trsd.ID = @ID
 order by RowNo";
 
