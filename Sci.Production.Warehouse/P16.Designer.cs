@@ -55,6 +55,7 @@
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
             this.lblDept = new Sci.Win.UI.Label();
             this.displayDept = new Sci.Win.UI.DisplayBox();
+            this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.displayDept);
             this.masterpanel.Controls.Add(this.lblDept);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
@@ -125,6 +127,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayDept, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             // 
             // detailpanel
             // 
@@ -134,7 +137,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(881, 144);
+            this.gridicon.Location = new System.Drawing.Point(881, 149);
             this.gridicon.TabIndex = 10;
             // 
             // refresh
@@ -241,7 +244,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(771, 144);
+            this.btnImport.Location = new System.Drawing.Point(771, 149);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 9;
@@ -265,13 +268,13 @@
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
             this.lineShape1.X2 = 975;
-            this.lineShape1.Y1 = 137;
-            this.lineShape1.Y2 = 137;
+            this.lineShape1.Y1 = 145;
+            this.lineShape1.Y2 = 145;
             // 
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(279, 144);
+            this.btnFind.Location = new System.Drawing.Point(279, 149);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 7;
@@ -284,14 +287,14 @@
             this.textBox1.BackColor = System.Drawing.Color.White;
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(128, 148);
+            this.textBox1.Location = new System.Drawing.Point(128, 153);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(145, 23);
             this.textBox1.TabIndex = 6;
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(16, 148);
+            this.label5.Location = new System.Drawing.Point(16, 153);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 23);
             this.label5.TabIndex = 58;
@@ -300,7 +303,7 @@
             // btnClearQtyIsEmpty
             // 
             this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 149);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 8;
@@ -341,7 +344,7 @@
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAccumulatedQty.Location = new System.Drawing.Point(665, 78);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
-            this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
+            this.btnAccumulatedQty.Size = new System.Drawing.Size(167, 31);
             this.btnAccumulatedQty.TabIndex = 5;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
@@ -426,6 +429,7 @@
             // txtLocalSupp1
             // 
             this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.IsFactory = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(765, 45);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(230, 23);
@@ -448,6 +452,16 @@
             this.displayDept.Name = "displayDept";
             this.displayDept.Size = new System.Drawing.Size(114, 23);
             this.displayDept.TabIndex = 81;
+            // 
+            // btnPrintFabricSticker
+            // 
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(665, 111);
+            this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
+            this.btnPrintFabricSticker.Size = new System.Drawing.Size(167, 30);
+            this.btnPrintFabricSticker.TabIndex = 82;
+            this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
+            this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
+            this.btnPrintFabricSticker.Click += new System.EventHandler(this.BtnPrintFabricSticker_Click);
             // 
             // P16
             // 
@@ -524,5 +538,6 @@
         private Class.TxtLocalSupp txtLocalSupp1;
         private Win.UI.DisplayBox displayDept;
         private Win.UI.Label lblDept;
+        private Win.UI.Button btnPrintFabricSticker;
     }
 }
