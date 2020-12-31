@@ -10,7 +10,8 @@
     [NNW]       NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_NNW] DEFAULT ((0)) NULL,
     [GW]        NUMERIC (7, 3) CONSTRAINT [DF_PackingGuide_Detail_GW] DEFAULT ((0)) NULL,
     [RefNoForBalance] VARCHAR(21) NOT NULL DEFAULT (''), 
-    [CombineBalance] BIT CONSTRAINT [DF_PackingGuide_Detail_CombineBalance] DEFAULT ((0)) Not NULL, 
+    [CombineBalance] BIT CONSTRAINT [DF_PackingGuide_Detail_CombineBalance] DEFAULT ((0)) Not NULL,
+	PrePackQty int NOT NULL CONSTRAINT [DF_PackingGuide_Detail _PrePackQty]  DEFAULT(0), 
     CONSTRAINT [PK_PackingGuide_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Article] ASC, [SizeCode] ASC)
 );
 
@@ -79,3 +80,14 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingGuide_Detail',
     @level2type = N'COLUMN',
     @level2name = N'CombineBalance'
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+	@value = N'混尺碼裝箱各色組尺寸 1 個塑膠袋裝入的件數',
+	@level0type = N'SCHEMA',
+	@level0name = N'dbo',
+	@level1type = N'TABLE',
+	@level1name = N'PackingGuide_Detail',
+	@level2type = N'COLUMN',
+	@level2name = N'PrePackQty'
+GO

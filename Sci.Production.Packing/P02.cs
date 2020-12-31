@@ -70,6 +70,7 @@ select a.ID
        , a.CombineBalance
 	   , a.RefNoForBalance
        , [DescriptionforBalance] = c2.Description
+       ,[PrepackQty] = IIF ( a.PrepackQty = 0 ,NULL, a.PrepackQty )
 from PackingGuide_Detail a WITH (NOLOCK) 
 left join PackingGuide b WITH (NOLOCK) on a.Id = b.Id
 left join LocalItem c WITH (NOLOCK) on a.RefNo = c.RefNo
@@ -192,6 +193,7 @@ order by e.Seq, f.Seq", masterID);
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out this.col_qtyperctn)
                 .Numeric("ShipQty", header: "ShipQty").Get(out this.col_shipqty)
+                .Numeric("PrepackQty", header: $"Prepack Qty{Environment.NewLine}pcs/pack", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
@@ -491,7 +493,7 @@ where o.ID = @orderid";
                    this.comboPackingMethod.SelectedValue.ToString().EqualString("2"))
             {
                 List<string> listRefNo = ((DataTable)this.detailgridbs.DataSource)
-                         .AsEnumerable()
+                         .AsEnumerable().Where(o => o.RowState != DataRowState.Deleted)
                          .GroupBy(x => x.Field<string>("RefNoForBalance"))
                          .Select(x => x.Key).ToList();
                 if (listRefNo.Count() > 1)
@@ -1256,13 +1258,31 @@ where o.ID = '{0}'
                 string sqlCmd;
                 if (this.comboPackingMethod.SelectedValue == null || string.IsNullOrEmpty(this.comboPackingMethod.SelectedValue.ToString()))
                 {
-                    sqlCmd = string.Format(
-                        @"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
-	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
-       [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
+                    sqlCmd = $@"
+----計算最大公因數
+DECLARE @minQty as decimal = (select CTNQty from Orders q where ID = '{orderID}' )
+
+select '' as ID
+, '' as RefNo
+, '' as Description
+, oqd.Article
+, voc.ColorID as Color
+, oqd.SizeCode
+, oqd.Qty as ShipQty
+, o.CTNQty as QtyPerCTN
+, os.Seq
+, sw.NW as NW1
+, sw.NNW as NNW1
+, sw2.NW as NW2
+, sw2.NNW as NNW2
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW
+, isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW
+, [Balance] = iif(isnull(o.CTNQty, 0) = 0, 0, oqd.Qty % o.CTNQty)
+, [PrepackQty] = IIF(o.CtnType != 2 
+                        ,0
+                        ,CAST( (o.CTNQty / @minQty  ) as int)
+                    )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
@@ -1270,10 +1290,10 @@ left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw
 left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
-where oqd.ID = '{0}' and oqd.Seq = '{1}'
-order by oa.Seq,os.Seq",
-                        orderID,
-                        seq);
+where oqd.ID = '{orderID}' and oqd.Seq = '{seq}'
+order by oa.Seq,os.Seq
+
+";
                 }
                 else if (this.comboPackingMethod.SelectedValue.ToString() == "2")
                 {
@@ -1284,13 +1304,47 @@ order by oa.Seq,os.Seq",
                         return;
                     }
 
-                    sqlCmd = string.Format(
-                        @"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, oqc.Qty as QtyPerCTN, os.Seq,
-	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW,
-       [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
+                    sqlCmd = $@"
+----計算最大公因數
+DECLARE @minQty as decimal = (select MIN(Qty) from Order_QtyCTN q where ID = '{orderID}' )
+
+WHILE 1 <= @minQty
+BEGIN
+	IF EXISTS(
+		SELECT *
+		FROM Order_QtyCTN
+		WHERE ID = '{orderID}'
+			  AND Qty % @minQty != 0
+	)
+	BEGIN
+		SET @minQty = @minQty - 1 
+	END
+	ELSE
+	BEGIN
+		BREAK;
+	END
+END
+
+select '' as ID
+, '' as RefNo
+, '' as Description
+, oqd.Article
+, voc.ColorID as Color
+, oqd.SizeCode
+, oqd.Qty as ShipQty
+, oqc.Qty as QtyPerCTN
+, os.Seq,sw.NW as NW1
+, sw.NNW as NNW1
+, sw2.NW as NW2
+, sw2.NNW as NNW2
+, isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as NW
+, isnull(sw.NW, isnull(sw2.NW, 0))*oqc.Qty as GW
+, isnull(sw.NNW, isnull(sw2.NNW, 0))*oqc.Qty as NNW
+, [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
+, [PrepackQty] = IIF(o.CtnType != 2 
+                        ,0
+                        ,CAST( (oqc.qty / @minQty  ) as int)
+                    )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left Join Order_QtyCTN oqc WITH (NOLOCK) on oqc.id = oqd.Id and oqc.Article = oqd.Article and oqc.SizeCode = oqd.SizeCode
@@ -1299,20 +1353,36 @@ left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw
 left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
-where oqd.ID = '{0}' and oqd.Seq = '{1}'
-order by oa.Seq,os.Seq",
-                        orderID,
-                        seq);
+where oqd.ID = '{orderID}' and oqd.Seq = '{seq}'
+order by oa.Seq,os.Seq
+";
                 }
                 else
                 {
-                    sqlCmd = string.Format(
-                        @"select '' as ID, '' as RefNo, '' as Description, oqd.Article, voc.ColorID as Color, oqd.SizeCode, oqd.Qty as ShipQty, o.CTNQty as QtyPerCTN, os.Seq,
-	   sw.NW as NW1, sw.NNW as NNW1, sw2.NW as NW2, sw2.NNW as NNW2,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW,
-	   isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW,
-	   isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW,
-       [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
+                    sqlCmd = $@"
+----計算最大公因數
+DECLARE @minQty as decimal = (select CTNQty from Orders q where ID = '{orderID}' )
+
+select '' as ID, '' as RefNo
+, '' as Description
+, oqd.Article
+, voc.ColorID as Color
+, oqd.SizeCode
+, oqd.Qty as ShipQty
+, o.CTNQty as QtyPerCTN
+, os.Seq
+, sw.NW as NW1
+, sw.NNW as NNW1
+, sw2.NW as NW2
+, sw2.NNW as NNW2
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as NW
+, isnull(sw.NW, isnull(sw2.NW, 0))*o.CTNQty as GW
+, isnull(sw.NNW, isnull(sw2.NNW, 0))*o.CTNQty as NNW
+, [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
+, [PrepackQty] = IIF(o.CtnType != 2 
+                        ,0
+                        ,CAST( (o.CTNQty / @minQty  ) as int)
+                    )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
 left join View_OrderFAColor voc on voc.id = oqd.Id and voc.Article = oqd.Article
@@ -1320,10 +1390,10 @@ left join Style_WeightData sw WITH (NOLOCK) on sw.StyleUkey = o.StyleUkey and sw
 left join Style_WeightData sw2 WITH (NOLOCK) on sw2.StyleUkey = o.StyleUkey and sw2.Article = '----' and sw2.SizeCode = oqd.SizeCode
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = oqd.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.id = oqd.Id and oa.Article = oqd.Article
-where oqd.ID = '{0}' and oqd.Seq = '{1}'
-order by oa.Seq,os.Seq",
-                        orderID,
-                        seq);
+where oqd.ID = '{orderID}' and oqd.Seq = '{seq}'
+order by oa.Seq,os.Seq
+
+";
                 }
 
                 DataTable selectedData;
@@ -1411,9 +1481,10 @@ SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
 		@dest VARCHAR(2),
-		@custcdid VARCHAR(16)
+		@custcdid VARCHAR(16),
+        @CtnType VARCHAR(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID ,@CtnType = CtnType FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -1434,7 +1505,8 @@ DECLARE @tempPackingList TABLE (
    SizeSeq INT,
    BarCode  varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --建立tmpe table存放餘箱資料
@@ -1454,7 +1526,8 @@ DECLARE @tempRemainder TABLE (
    SizeSeq INT,
    BarCode varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --將PackingGuide_Detail中的Article撈出來
@@ -1476,7 +1549,8 @@ DECLARE @refno VARCHAR(21),
 		@APPBookingVW NUMERIC(20,2),
 		@APPEstAmtVW NUMERIC(20,2),
 		@APPBookingVW_Balance NUMERIC(20,2),
-		@APPEstAmtVW_Balance NUMERIC(20,2)
+		@APPEstAmtVW_Balance NUMERIC(20,2),
+		@PrepackQty INT
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1494,7 +1568,7 @@ DECLARE @currentqty INT, --目前數量
 		@_i INT --計算迴圈用
 
 Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
-
+DECLARE @tmpPrepackQty as int
 SET @recordctnno = @ctnstartno
 SET @remaindercount = 0
 SET @minctn = 0
@@ -1516,6 +1590,7 @@ BEGIN
 			, l.BookingVW, l.APPEstAmtVW
 			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
 			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
+            , a.PrepackQty
 		FROM PackingGuide_Detail a WITH (NOLOCK) 
 		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
@@ -1542,7 +1617,7 @@ BEGIN
 		ORDER BY c.Seq
 
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance ,@PrepackQty
 	SET @firstsize = @sizecode
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -1552,8 +1627,8 @@ BEGIN
 				SET @_i = 0
 				WHILE (@_i < @minctn)
 				BEGIN
-					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW)
-						VALUES (@refno, 1, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw-@nw, @nnw, @nw/@qtyperctn, @ctnno, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW)
+					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty)
+						VALUES (@refno, 1, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw-@nw, @nnw, @nw/@qtyperctn, @ctnno, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW ,@PrepackQty)
 					SET @_i = @_i + 1
 					SET @ctnno = @ctnno + 1
 				END
@@ -1564,21 +1639,21 @@ BEGIN
 				SET @_i = 0
 				WHILE (@_i < @minctn)
 				BEGIN
-					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW)
-						VALUES (@refno, 0, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, 0, @nnw, @nw/@qtyperctn, @ctnno, @seq,@BarCode, 0, 0)
+					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty)
+						VALUES (@refno, 0, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, 0, @nnw, @nw/@qtyperctn, @ctnno, @seq,@BarCode, 0, 0, @PrepackQty)
 					SET @_i = @_i + 1
 					SET @ctnno = @ctnno + 1
 				END
 			END
 
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance,@PrepackQty
 	END
 	CLOSE cursor_packingguide
 	
 	--整理餘箱資料
 	SET @firstsize = ''
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
@@ -1601,19 +1676,26 @@ BEGIN
 						SET @GwBalance = null
 					END
 
+                /*若 CtnType != 2 [尾箱] 為混碼包裝的話，PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                SET @tmpPrepackQty = @PrepackQty;
+
+                IF @CtnType != 2
+                BEGIN
+                    SET @tmpPrepackQty = @currentqty
+                END
 
 				IF @firstsize = @sizecode
 					BEGIN
-						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
+						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, @APPBookingVW_Balance, @APPEstAmtVW_Balance ,@tmpPrepackQty)
 					END
 				ELSE
 					BEGIN
-						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, 0, 0)
+						INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @remaindercount, @seq,@BarCode, 0, 0 , @tmpPrepackQty)
 					END
 			END
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @BarCode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty
 	END
 	CLOSE cursor_packingguide
 	DEALLOCATE cursor_packingguide
@@ -1633,10 +1715,10 @@ DECLARE @ctnqty INT, --Carton數
 
 --將Remainder資料整理進@tempPackingList
 DECLARE cursor_tempremainder CURSOR FOR
-	SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW FROM @tempRemainder ORDER BY Seq
+	SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty FROM @tempRemainder ORDER BY Seq
 
 OPEN cursor_tempremainder
-FETCH NEXT FROM cursor_tempremainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_tempremainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	IF @ctnqty = 1
@@ -1644,10 +1726,10 @@ BEGIN
 			SET @ctnno = @ctnno + 1
 		END
 
-	INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW)
-		VALUES (@refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @ctnno, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW)
+	INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty)
+		VALUES (@refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @ctnno, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty)
 	
-	FETCH NEXT FROM cursor_tempremainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_tempremainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 END
 CLOSE cursor_tempremainder
 DEALLOCATE cursor_tempremainder
@@ -1731,18 +1813,18 @@ DECLARE @cartonsatrtno VARCHAR(6)
 SET @seqcount = 0
 
 DECLARE cursor_temppackinglist CURSOR FOR
-	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,BarCode, APPBookingVW, APPEstAmtVW FROM @tempPackingList ORDER BY CtnNo,SizeSeq
+	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,BarCode, APPBookingVW, APPEstAmtVW, PrepackQty FROM @tempPackingList ORDER BY CtnNo,SizeSeq
 OPEN cursor_temppackinglist
-FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	SET @seqcount = @seqcount + 1
 	SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
-	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode, APPBookingVW, APPEstAmtVW)
-		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW)
+	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode, APPBookingVW, APPEstAmtVW ,PrepackQty)
+		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW ,@PrepackQty)
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 END
 CLOSE cursor_temppackinglist
 DEALLOCATE cursor_temppackinglist
@@ -1776,9 +1858,10 @@ SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
 		@dest VARCHAR(2),
-		@custcdid VARCHAR(16)
+		@custcdid VARCHAR(16),
+        @Ctntype varchar(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID, @Ctntype = Ctntype  FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -1797,7 +1880,8 @@ DECLARE @tempPackingList TABLE (
    NWPerPcs NUMERIC(5,3),
    BarCode  varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --建立tmpe table存放餘箱資料
@@ -1816,7 +1900,8 @@ DECLARE @tempRemainder TABLE (
    NWPerPcs NUMERIC(5,3),
    BarCode varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --將PackingGuide_Detail資料存放至Cursor
@@ -1825,6 +1910,7 @@ DECLARE cursor_packguide CURSOR FOR
 			, l.BookingVW, l.APPEstAmtVW
 			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
 			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
+            , a.PrepackQty
 	FROM PackingGuide_Detail a WITH (NOLOCK) 
 	LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	LEFT JOIN Order_Article c WITH (NOLOCK) ON c.Id = @orderid AND a.Article = c.Article
@@ -1866,7 +1952,8 @@ DECLARE @refno VARCHAR(21),
 		@APPBookingVW NUMERIC(20,2),
 		@APPEstAmtVW NUMERIC(20,2),
 		@APPBookingVW_Balance NUMERIC(20,2),
-		@APPEstAmtVW_Balance NUMERIC(20,2)
+		@APPEstAmtVW_Balance NUMERIC(20,2),
+        @PrepackQty int
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -1883,7 +1970,7 @@ DECLARE @currentqty INT, --目前數量
 		@multiple NUMERIC(9,3)  --倍數 (要裝箱數量 / 可以裝箱數量)
 
 Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
-
+DECLARE @tmpPrepackQty as int
 SET @ctnno = @ctnstartno
 SET @seqcount = 0
 SET @remaindercount = 0
@@ -1895,7 +1982,7 @@ SET @ttlnnw = 0
 --開始run cursor
 OPEN cursor_packguide
 --將第一筆資料填入變數
-FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance ,@PrepackQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	IF @qtyperctn > 0
@@ -1919,9 +2006,16 @@ BEGIN
 						SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
 						SELECT @realctnno = CONVERT(VARCHAR,@ctnno)
 
+                        /*若 CtnType != 2 [尾箱] 為混碼包裝的話  PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                        SET @tmpPrepackQty = @PrepackQty
+                        IF @Ctntype != 2
+                        BEGIN
+                            SET @tmpPrepackQty = @newQtyperCtn
+                        END
+
 						-- GW => 原GW + 多出的件數 * 每一件 NWPerPcs
-						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW, GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)), @nnw * @multiple, (@nw * @multiple) / @newQtyperCtn, @seq,@BarCode,@APPBookingVW,@APPEstAmtVW)
+						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW, GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW ,PrepackQty)
+							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)), @nnw * @multiple, (@nw * @multiple) / @newQtyperCtn, @seq,@BarCode,@APPBookingVW,@APPEstAmtVW ,@tmpPrepackQty)
 						SET @ctnno = @ctnno + 1
 						SET @ttlnw = @ttlnw + (@nw * @multiple)
 						SET @ttlgw = @ttlgw + (@gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)))
@@ -1931,17 +2025,25 @@ BEGIN
 				ELSE
 					BEGIN
 						SET @remaindercount = @remaindercount + 1
+
+                        /*若 CtnType != 2 [尾箱] 為混碼包裝的話  PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                        SET @tmpPrepackQty = @PrepackQty
+                        IF @Ctntype != 2
+                        BEGIN
+                            SET @tmpPrepackQty = @currentqty
+                        END
+
 						IF ISNULL(@RefNoForBalance,'') = ''
 						BEGIN
-							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode,@APPBookingVW,@APPEstAmtVW)
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW,PrepackQty)
+								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode,@APPBookingVW,@APPEstAmtVW,@tmpPrepackQty)
 						END
 						ELSE
 						BEGIN
 							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
 							-- 有設定尾箱的料號
-							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW,PrepackQty)
+								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@BarCode, @APPBookingVW_Balance, @APPEstAmtVW_Balance,@tmpPrepackQty)
 						END
 					END
 
@@ -1950,7 +2052,7 @@ BEGIN
 		END
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+	FETCH NEXT FROM cursor_packguide INTO @refno, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@BarCode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance ,@PrepackQty
 END
 
 --關閉cursor與參數的關聯
@@ -1961,20 +2063,20 @@ DEALLOCATE cursor_packguide
 --將餘箱資料寫入@tempPackingList
 --將@tempRemainder資料存放至Cursor
 DECLARE cursor_temRemainder CURSOR FOR
-	SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,BarCode,APPBookingVW,APPEstAmtVW FROM @tempRemainder ORDER BY Seq
+	SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,BarCode,APPBookingVW,APPEstAmtVW,PrepackQty FROM @tempRemainder ORDER BY Seq
 --宣告變數: 記錄程式中的資料
 DECLARE @ctnqty INT, --Carton數
 		@nwperpcs NUMERIC(5,3) --每件淨重
 
 OPEN cursor_temRemainder
-FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	SET @seqcount = @seqcount + 1
 	SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
 	SELECT @realctnno = CONVERT(VARCHAR,@ctnno)
-	INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-		VALUES (@refno, @realctnno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW)
+	INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW,PrepackQty)
+		VALUES (@refno, @realctnno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW,@PrepackQty)
 	SET @ctnno = @ctnno + 1
 	SET @ttlnw = @ttlnw + @nw
 	SET @ttlgw = @ttlgw + @gw
@@ -1982,7 +2084,7 @@ BEGIN
 	SET @ttlshipqty = @ttlshipqty + @qtyperctn
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 END
 
 CLOSE cursor_temRemainder
@@ -2037,16 +2139,16 @@ ELSE
 DECLARE @cartonsatrtno VARCHAR(6)
 
 DECLARE cursor_temPackingList CURSOR FOR
-	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW FROM @tempPackingList ORDER BY Seq
+	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW,PrepackQty FROM @tempPackingList ORDER BY Seq
 OPEN cursor_temPackingList
-FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW)
-		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW)	
+	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode,APPBookingVW,APPEstAmtVW,PrepackQty)
+		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW,@PrepackQty)	
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@BarCode, @APPBookingVW, @APPEstAmtVW,@PrepackQty
 END
 CLOSE cursor_temPackingList
 DEALLOCATE cursor_temPackingList
@@ -2086,9 +2188,10 @@ SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
 		@dest VARCHAR(2),
-		@custcdid VARCHAR(16)
+		@custcdid VARCHAR(16),
+        @Ctntype varchar(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID, @Ctntype = Ctntype FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -2111,7 +2214,8 @@ DECLARE @tempPackingList TABLE (
    ArticleSeq INT,
    BarCode  varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty  int
 )
 
 --建立tmpe table存放餘箱資料
@@ -2131,7 +2235,8 @@ DECLARE @tempRemainder TABLE (
    SizeSeq INT,
    BarCode varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --將PackingGuide_Detail中的Article撈出來
@@ -2153,7 +2258,8 @@ DECLARE @refno VARCHAR(21),
 		@APPBookingVW NUMERIC(20,2),
 		@APPEstAmtVW NUMERIC(20,2),
 		@APPBookingVW_Balance NUMERIC(20,2),
-		@APPEstAmtVW_Balance NUMERIC(20,2)
+		@APPEstAmtVW_Balance NUMERIC(20,2),
+        @PrepackQty  int
 
 
 --宣告變數: 記錄程式中的資料
@@ -2173,7 +2279,7 @@ DECLARE @currentqty INT, --目前數量
 		@_i INT --計算迴圈用
 
 Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
-
+DECLARE @tmpPrepackQty as int
 DECLARE @articlecnt INT
 DECLARE @lastctn varchar(2)
 SET @recordctnno = @ctnstartno
@@ -2200,6 +2306,7 @@ BEGIN
             , l.BookingVW, l.APPEstAmtVW
 			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
 			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
+            , a.PrepackQty 
 		FROM PackingGuide_Detail a WITH (NOLOCK) 
 		LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 		LEFT JOIN Order_SizeCode c WITH (NOLOCK) ON c.Id = b.POID AND a.SizeCode = c.SizeCode
@@ -2226,7 +2333,7 @@ BEGIN
 		ORDER BY c.Seq
 
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance ,@PrepackQty 
 	SET @firstsize = @sizecode
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2236,8 +2343,8 @@ BEGIN
 				SET @_i = 0
 				WHILE (@_i < @minctn)
 				BEGIN
-					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW)
-						VALUES (@refno, 1, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw-@nw, @nnw, @nw/@qtyperctn, @ctnno, @seq,@lastctn,@articleSeq,@Barcode, @APPBookingVW, @APPEstAmtVW)
+					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+						VALUES (@refno, 1, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw-@nw, @nnw, @nw/@qtyperctn, @ctnno, @seq,@lastctn,@articleSeq,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty)
 					SET @_i = @_i + 1
 					SET @ctnno = @ctnno + 1
 				END
@@ -2248,14 +2355,14 @@ BEGIN
 				SET @_i = 0
 				WHILE (@_i < @minctn)
 				BEGIN
-					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW)
-						VALUES (@refno, 0, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, 0, @nnw, @nw/@qtyperctn, @ctnno, @seq,@lastctn,@articleSeq,@Barcode, 0, 0)
+					INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+						VALUES (@refno, 0, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, 0, @nnw, @nw/@qtyperctn, @ctnno, @seq,@lastctn,@articleSeq,@Barcode, 0, 0, @PrepackQty)
 					SET @_i = @_i + 1
 					SET @ctnno = @ctnno + 1
 				END
 			END
 
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty 
 	END
 	CLOSE cursor_packingguide
 	
@@ -2263,7 +2370,7 @@ BEGIN
 	SELECT @ctnno = isnull(MAX(CtnNo),0) FROM @tempPackingList where Article = @article
 	SET @firstsize = ''
 	OPEN cursor_packingguide
-	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+	FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @currentqty = @shipqty - (@qtyperctn * @minctn)
@@ -2290,16 +2397,31 @@ BEGIN
 					BEGIN
 						SET @ctnno = @ctnno + 1
 
-						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
+                        /*若 CtnType != 2 [尾箱] 為混碼包裝的話,PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                        SET @tmpPrepackQty = @PrepackQty
+                        IF @Ctntype != 2
+                        BEGIN
+                            SET @tmpPrepackQty = @currentqty
+                        END
+
+						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ISNULL(@GwBalance,@gw-@nw), (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty)
 					END
 				ELSE
 					BEGIN
-						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW)
-							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, 0, 0)
+
+                        /*若 CtnType != 2 [尾箱] 為混碼包裝的話,PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                        SET @tmpPrepackQty = @PrepackQty
+                        IF @Ctntype != 2
+                        BEGIN
+                            SET @tmpPrepackQty = @currentqty
+                        END
+
+						INSERT INTO @tempPackingList (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,CtnNo,SizeSeq,LastCntNo,ArticleSeq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+							VALUES (ISNULL(@RefNoForBalance,@refno), 0, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, 0, (@nnw/@qtyperctn)*@currentqty, @nw/@qtyperctn, @ctnno, @seq, @lastctn, @articleSeq, @Barcode, 0, 0, @PrepackQty)
 					END
 			END
-		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+		FETCH NEXT FROM cursor_packingguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @seq, @Barcode, @RefNoForBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty
 	END
 	CLOSE cursor_packingguide
 	DEALLOCATE cursor_packingguide
@@ -2394,19 +2516,19 @@ DECLARE @cartonsatrtno VARCHAR(6)
 SET @seqcount = 0
 
 DECLARE cursor_temppackinglist CURSOR FOR
-	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Barcode, APPBookingVW, APPEstAmtVW FROM @tempPackingList ORDER BY ArticleSeq,CtnNo,SizeSeq
+	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty FROM @tempPackingList ORDER BY ArticleSeq,CtnNo,SizeSeq
 
 OPEN cursor_temppackinglist
-FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@Barcode, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	SET @seqcount = @seqcount + 1
 	SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
-	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW)
-		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq, @Barcode, @APPBookingVW, @APPEstAmtVW)	
+	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq, @Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty)	
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @Barcode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_temppackinglist INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty
 END
 CLOSE cursor_temppackinglist
 DEALLOCATE cursor_temppackinglist
@@ -2442,9 +2564,10 @@ SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @
 --宣告變數: Orders相關的參數
 DECLARE @brandid VARCHAR(8),
 		@dest VARCHAR(2),
-		@custcdid VARCHAR(16)
+		@custcdid VARCHAR(16),
+        @Ctntype varchar(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID ,@Ctntype = Ctntype FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -2463,7 +2586,8 @@ DECLARE @tempPackingList TABLE (
    NWPerPcs NUMERIC(5,3),
    BarCode  varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --建立tmpe table存放餘箱資料
@@ -2482,7 +2606,8 @@ DECLARE @tempRemainder TABLE (
    NWPerPcs NUMERIC(5,3),
    BarCode varchar(30),
    APPBookingVW NUMERIC(20,2),
-   APPEstAmtVW NUMERIC(20,2)
+   APPEstAmtVW NUMERIC(20,2),
+   PrepackQty int
 )
 
 --先開article的cursor
@@ -2509,7 +2634,8 @@ DECLARE @refno VARCHAR(21),
 		@APPBookingVW NUMERIC(20,2),
 		@APPEstAmtVW NUMERIC(20,2),
 		@APPBookingVW_Balance NUMERIC(20,2),
-		@APPEstAmtVW_Balance NUMERIC(20,2)
+		@APPEstAmtVW_Balance NUMERIC(20,2),
+        @PrepackQty int
 
 --宣告變數: 記錄程式中的資料
 DECLARE @currentqty INT, --目前數量
@@ -2529,6 +2655,7 @@ Declare @GwBalance NUMERIC(7,3) -- 尾箱重新撈取GW
 
 DECLARE @lastctn varchar(2)
 DECLARE @articlecnt INT
+DECLARE @tmpPrepackQty as int
 SET @seqcount = 0
 SET @remaindercount = 0
 SET @ttlshipqty = 0
@@ -2550,6 +2677,7 @@ BEGIN
 			, l.BookingVW, l.APPEstAmtVW
 			, [BookingVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.BookingVW else lb.BookingVW end
 			, [APPEstAmtVW_Balance] = case when ISNULL(a.RefNoForBalance,'') = '' then l.APPEstAmtVW else lb.APPEstAmtVW end
+            ,a.PrepackQty
 	    FROM PackingGuide_Detail a WITH (NOLOCK) 
 	    LEFT JOIN Orders b WITH (NOLOCK) ON b.ID = @orderid
 	    LEFT JOIN Order_SizeCode d WITH (NOLOCK) ON d.Id = b.POID AND a.SizeCode = d.SizeCode
@@ -2576,7 +2704,7 @@ BEGIN
 
 	OPEN cursor_packguide
 	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+	FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @qtyperctn > 0
@@ -2600,8 +2728,8 @@ BEGIN
 						SET @multiple = (@newQtyperCtn * 1.0 / @qtyperctn)
 
                         -- GW => 原GW + 多出的件數 * 每一件 NWPerPcs
-						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW)
-							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)), @nnw * @multiple, (@nw * @multiple)/@newQtyperCtn, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW)
+						INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+							VALUES (@refno, @realctnno, 1, @article, @color, @sizecode, @newQtyperCtn, @newQtyperCtn, @nw * @multiple, @gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)), @nnw * @multiple, (@nw * @multiple)/@newQtyperCtn, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty)
 						SET @ctnno = @ctnno + 1
 						SET @ttlnw = @ttlnw + (@nw * @multiple)
 						SET @ttlgw = @ttlgw + (@gw + ((@newQtyperCtn - @qtyperctn) * ((@nw * @multiple) / @newQtyperCtn)))
@@ -2613,15 +2741,31 @@ BEGIN
 						SET @remaindercount = @remaindercount + 1
 						IF ISNULL(@RefNoForBalance,'') = ''
 						BEGIN
-							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW)
-								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode, @APPBookingVW, @APPEstAmtVW)
+
+                        /*若 CtnType != 2 [尾箱] 為混碼包裝的話,PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                        SET @tmpPrepackQty = @PrepackQty
+                        IF @Ctntype != 2
+                        BEGIN
+                            SET @tmpPrepackQty = @currentqty
+                        END
+
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW,PrepackQty)
+								VALUES (@refno, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+(@gw-@nw), (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode, @APPBookingVW, @APPEstAmtVW,@tmpPrepackQty)
 						END
 						ELSE
 						BEGIN
 							SELECT @GwBalance = CtnWeight FROM LocalItem WHERE RefNo = @RefNoForBalance
+
+                            /*若 CtnType != 2 [尾箱] 為混碼包裝的話,PrepackQty 請填入各 Aritcle, SizeCode 的 ShipQty*/
+                            SET @tmpPrepackQty  = @PrepackQty
+                            IF @Ctntype != 2
+                            BEGIN
+                                SET @tmpPrepackQty = @currentqty
+                            END
+
 							-- 有設定尾箱的料號
-							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode, APPBookingVW, APPEstAmtVW)
-								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode, @APPBookingVW_Balance, @APPEstAmtVW_Balance)
+							INSERT INTO @tempRemainder (RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,BarCode, APPBookingVW, APPEstAmtVW,PrepackQty)
+								VALUES (@RefNoForBalance, 1, @article, @color, @sizecode, @currentqty, @currentqty, (@nw/@qtyperctn)*@currentqty, ((@nw/@qtyperctn)*@currentqty)+@GwBalance, (@nnw/@qtyperctn)*@currentqty, (@nw/@qtyperctn), @remaindercount,@Barcode, @APPBookingVW_Balance, @APPEstAmtVW_Balance,@PrepackQty)
 						END
 					END
 	
@@ -2629,7 +2773,7 @@ BEGIN
 			END
 		END
 		--將下一筆資料填入變數
-		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance
+		FETCH NEXT FROM cursor_packguide INTO @refno, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw,@Barcode, @RefNoForBalance, @CombineBalance, @APPBookingVW, @APPEstAmtVW, @APPBookingVW_Balance, @APPEstAmtVW_Balance, @PrepackQty
 	END
 	--關閉cursor與參數的關聯
 	CLOSE cursor_packguide
@@ -2639,20 +2783,20 @@ BEGIN
 	--將餘箱資料寫入@tempPackingList
 	--將@tempRemainder資料存放至Cursor
 	DECLARE cursor_temRemainder CURSOR FOR
-		SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Barcode, APPBookingVW, APPEstAmtVW FROM @tempRemainder ORDER BY Seq
+		SELECT RefNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Barcode, APPBookingVW, APPEstAmtVW,PrepackQty FROM @tempRemainder ORDER BY Seq
 	--宣告變數: 記錄程式中的資料
 	DECLARE @ctnqty INT, --Carton數
 			@nwperpcs NUMERIC(5,3) --每件淨重
 	
 	OPEN cursor_temRemainder
-	FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@Barcode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @seqcount = @seqcount + 1
 		SELECT @seq = REPLICATE('0', 6 - LEN(CONVERT(VARCHAR,@seqcount))) + CONVERT(VARCHAR,@seqcount)
 		SELECT @realctnno = CONVERT(VARCHAR,@ctnno) + @lastctn
-		INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW)
-			VALUES (@refno, @realctnno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw, @nnw, @nwperpcs, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW)
+		INSERT INTO @tempPackingList (RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode, APPBookingVW, APPEstAmtVW, PrepackQty)
+			VALUES (@refno, @realctnno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @qtyperctn, @nw, @gw, @nnw, @nwperpcs, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty)
 		SET @ctnno = @ctnno + 1
 		SET @ttlnw = @ttlnw + @nw
 		SET @ttlgw = @ttlgw + @gw
@@ -2660,7 +2804,7 @@ BEGIN
 		SET @ttlshipqty = @ttlshipqty + @qtyperctn
 	
 		--將下一筆資料填入變數
-		FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @Barcode, @APPBookingVW, @APPEstAmtVW
+		FETCH NEXT FROM cursor_temRemainder INTO @refno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty 
 	END
 	CLOSE cursor_temRemainder
 	DEALLOCATE cursor_temRemainder
@@ -2721,16 +2865,16 @@ ELSE
 DECLARE @cartonsatrtno VARCHAR(6)
 
 DECLARE cursor_temPackingList CURSOR FOR
-	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode,APPBookingVW,APPEstAmtVW FROM @tempPackingList ORDER BY Seq
+	SELECT RefNo,CTNStartNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode,APPBookingVW,APPEstAmtVW, PrepackQty  FROM @tempPackingList ORDER BY Seq
 OPEN cursor_temPackingList
-FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq, @Barcode, @APPBookingVW, @APPEstAmtVW
+FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq, @Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode,APPBookingVW,APPEstAmtVW)
-		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW)	
+	INSERT INTO PackingList_Detail(ID,OrderID,OrderShipmodeSeq,RefNo,CTNStartNo,CTNEndNo,CTNQty,Article,Color,SizeCode,QtyPerCTN,ShipQty,NW,GW,NNW,NWPerPcs,Seq,Barcode,APPBookingVW,APPEstAmtVW, PrepackQty)
+		VALUES (@id, @orderid, @ordershipmodeseq, @refno, @cartonsatrtno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty)	
 
 	--將下一筆資料填入變數
-	FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW
+	FETCH NEXT FROM cursor_temPackingList INTO @refno, @cartonsatrtno, @ctnqty, @article, @color, @sizecode, @qtyperctn, @shipqty, @nw, @gw, @nnw, @nwperpcs, @seq,@Barcode, @APPBookingVW, @APPEstAmtVW, @PrepackQty 
 END
 CLOSE cursor_temPackingList
 DEALLOCATE cursor_temPackingList
