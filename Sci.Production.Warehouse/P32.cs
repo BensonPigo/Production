@@ -1187,9 +1187,10 @@ else
 
             #region From
             sqlcmd = $@"
-select f.Ukey,fb.TransactionID
+select i2.ID
 ,[Barcode1] = f.Barcode
 ,[Barcode2] = fb.Barcode
+,[OriBarcode] = fbOri.Barcode
 ,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
 ,[NewBarcode] = ''
 ,[Poid] = i2.FromPOID
@@ -1204,7 +1205,17 @@ inner join FtyInventory f on f.POID = i2.FromPOID
     and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
     and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
     and f.StockType = i2.FromStockType
-left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+)fb
+outer apply(
+	select *
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = '{this.CurrentMaintain["ID"]}'
+)fbOri
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1218,23 +1229,30 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
             foreach (DataRow dr in dt.Rows)
             {
                 string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
-
-                // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                if (isConfirmed)
                 {
-                    if (strBarcode.Contains("-"))
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
                     {
-                        dr["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
                     }
                     else
                     {
-                        dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = dr["Barcode1"];
                     }
                 }
                 else
                 {
-                    // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                    dr["NewBarcode"] = strBarcode;
+                    // unConfirmed 要用自己的紀錄給補回
+                    dr["NewBarcode"] = dr["OriBarcode"];
                 }
             }
 
@@ -1275,9 +1293,11 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
             #region To
 
             sqlcmd = $@"
-select f.Ukey,fb.TransactionID
-,[ToBarcode] = iif(isnull(f.Barcode,'') = '', isnull(fb.Barcode,''), isnull(f.Barcode,''))
-,[FromBarcode] = fromBarcode.Barcode
+select f.Ukey
+,[ToBarcode] = isnull(f.Barcode,'')
+,[ToBarcode2] = isnull(Tofb.Barcode,'')
+,[FromBarcode] = isnull(fromBarcode.Barcode,'')
+,[FromBarcode2] = isnull(Fromfb.Barcode,'')
 ,[ToBalanceQty] = f.InQty-f.OutQty+f.AdjustQty
 ,[FromBalanceQty] = fromBarcode.BalanceQty
 ,[NewBarcode] = ''
@@ -1293,18 +1313,27 @@ left join FtyInventory f on f.POID = i2.ToPOID
     and f.Seq1 = i2.ToSeq1 and f.Seq2 = i2.ToSeq2
     and f.Roll = i2.ToRoll and f.Dyelot = i2.ToDyelot
     and f.StockType = i2.ToStockType
-left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
-and fb.TransactionID = i2.ID
+
 outer apply(
-	select Barcode = iif(f2.Barcode = '' , fb2.Barcode,f2.Barcode)
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+)Tofb
+outer apply(
+	select f2.Barcode 
 	,BalanceQty = f2.InQty-f2.OutQty+f2.AdjustQty
-	from FtyInventory f2
-	left join FtyInventory_Barcode fb2 on fb2.Ukey = f2.Ukey and fb2.TransactionID = i2.ID
+	,f2.Ukey
+	from FtyInventory f2	
 	where f2.POID = i2.FromPOID
 	and f2.Seq1 = i2.FromSeq1 and f2.Seq2 = i2.FromSeq2
 	and f2.Roll = i2.FromRoll and f2.Dyelot = i2.FromDyelot
 	and f2.StockType = i2.FromStockType
 )fromBarcode
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = fromBarcode.Ukey
+)Fromfb
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1317,24 +1346,50 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
 
             foreach (DataRow dr in dt.Rows)
             {
-                string strBarcode = MyUtility.Check.Empty(dr["ToBarcode"]) ? dr["FromBarcode"].ToString() : dr["ToBarcode"].ToString();
-
-                // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                if (!MyUtility.Check.Empty(dr["FromBalanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                string strBarcode = string.Empty;
+                if (!MyUtility.Check.Empty(dr["ToBarcode"]) || !MyUtility.Check.Empty(dr["ToBarcode2"]))
                 {
-                    if (strBarcode.Contains("-"))
+                    strBarcode = MyUtility.Check.Empty(dr["ToBarcode2"]) ? dr["ToBarcode"].ToString() : dr["ToBarcode2"].ToString();
+
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["ToBalanceQty"]))
                     {
-                        dr["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
                     }
                     else
                     {
-                        dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = dr["ToBarcode"];
                     }
                 }
                 else
                 {
-                    // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                    dr["NewBarcode"] = strBarcode;
+                    strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
+
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["FromBalanceQty"]))
+                    {
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
+                    }
+                    else
+                    {
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = strBarcode;
+                    }
                 }
             }
 

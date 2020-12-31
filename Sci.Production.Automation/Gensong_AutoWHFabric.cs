@@ -724,6 +724,93 @@ and exists(
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        /// <summary>
+        /// Adjust_Detail To Gensong
+        /// </summary>
+        /// <param name="dtMaster">Detail DataSource</param>
+        /// <param name="isConfirmed">bool</param>
+        public void SentAdjust_DetailToGensongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentAdjust_DetailToGensong";
+            string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            string sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Ukey] = i2.ukey
+,[StockType] = i2.StockType
+,[QtyBefore] = i2.QtyBefore
+,[Barcode] = f.Barcode
+,[QtyAfter] = i2.QtyAfter
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
+,CmdTime = GetDate()
+from Production.dbo.Adjust_Detail i2
+inner join #tmp i on i.Id = i2.Id
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+left join PO_Supp_Detail po3 on po3.ID = i2.POID
+	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where 1=1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+
+";
+            DataTable dt = new DataTable();
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dt.AsEnumerable()
+                .Select(dr => new
+                {
+                    Id = dr["id"].ToString(),
+                    PoId = dr["PoId"].ToString(),
+                    Seq1 = dr["Seq1"].ToString(),
+                    Seq2 = dr["Seq2"].ToString(),
+                    StockType = dr["StockType"].ToString(),
+                    QtyBefore = (decimal)dr["QtyBefore"],
+                    QtyAfter = (decimal)dr["QtyAfter"],
+                    Barcode = dr["Barcode"].ToString(),
+                    Ukey = (long)dr["Ukey"],
+                    Status = dr["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Adjust_Detail", bodyObject));
+
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
         private object CreateGensongStructure(string tableName, object structureID)
         {
             Dictionary<string, object> resultObj = new Dictionary<string, object>

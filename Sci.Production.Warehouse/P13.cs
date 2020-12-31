@@ -822,50 +822,68 @@ and i.id = '{this.CurrentMaintain["ID"]}'
             DualResult result;
             DataTable dt = new DataTable();
             string sqlcmd = $@"
-select f.Ukey,fb.TransactionID
-,[Barcode1] = f.Barcode
+select
+[Barcode1] = f.Barcode
 ,[Barcode2] = fb.Barcode
+,[OriBarcode] = fbOri.Barcode
 ,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
 ,[NewBarcode] = ''
 ,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id 
 inner join FtyInventory f on f.POID = i2.POID
-    and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
-    and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
-    and f.StockType = i2.StockType
-left join FtyInventory_Barcode fb on f.Ukey = fb.Ukey
-and fb.TransactionID = i2.Id
-where i.Type =  'D'
+and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
+and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+and f.StockType = i2.StockType
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+)fb
+outer apply(
+	select *
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = '{this.CurrentMaintain["ID"]}'
+)fbOri
+where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='F'
 )
-and i2.id ='{this.CurrentMaintain["ID"]}'
+and i2.id = '{this.CurrentMaintain["ID"]}'
+
 ";
             DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
 
             foreach (DataRow dr in dt.Rows)
             {
                 string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
-
-                // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                if (isConfirmed)
                 {
-                    if (strBarcode.Contains("-"))
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
                     {
-                        dr["NewBarcode"] = strBarcode.Substring(0, 13) + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
                     }
                     else
                     {
-                        dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = dr["Barcode1"];
                     }
                 }
                 else
                 {
-                    // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                    dr["NewBarcode"] = strBarcode;
+                    // unConfirmed 要用自己的紀錄給補回
+                    dr["NewBarcode"] = dr["OriBarcode"];
                 }
             }
 
