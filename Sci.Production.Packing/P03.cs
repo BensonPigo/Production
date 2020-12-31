@@ -823,7 +823,7 @@ order by os.Seq",
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: this.size).Get(out this.col_size)
                 .Numeric("QtyPerCTN", header: "PC/Ctn").Get(out this.col_qtyperctn)
                 .Numeric("ShipQty", header: "Qty").Get(out this.col_shipqty)
-                .Numeric("PrepackQtyShow", header: $"Prepack Qty{Environment.NewLine}pcs{Environment.NewLine}pack", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_PrepackQtyShow)
+                .Numeric("PrepackQtyShow", header: $"Prepack Qty{Environment.NewLine}pcs/pack", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_PrepackQtyShow)
                 .Numeric("BalanceQty", header: "Bal. Qty", iseditingreadonly: true)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_nw)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0).Get(out this.col_gw)

@@ -193,7 +193,7 @@ order by e.Seq, f.Seq", masterID);
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("QtyPerCTN", header: "Qty/Ctn").Get(out this.col_qtyperctn)
                 .Numeric("ShipQty", header: "ShipQty").Get(out this.col_shipqty)
-                .Numeric("PrepackQty", header: $"Prepack Qty{Environment.NewLine}pcs{Environment.NewLine}pack", width: Widths.AnsiChars(8), iseditingreadonly: false)
+                .Numeric("PrepackQty", header: $"Prepack Qty{Environment.NewLine}pcs/pack", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("NW", header: "N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("GW", header: "G.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
                 .Numeric("NNW", header: "N.N.W./Ctn", integer_places: 3, decimal_places: 3, maximum: 999.999M, minimum: 0)
