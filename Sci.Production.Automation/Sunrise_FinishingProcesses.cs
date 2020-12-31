@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -36,11 +37,19 @@ namespace Sci.Production.Automation
 
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
 
-            var structureID = listID.Split(',').Select(s => new { ID = s });
+            string[] structureID = listID.Split(',');
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure(tableName, structureID));
+            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 10.0));
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            for (int i = 0; i < sendApiCount; i++)
+            {
+                int skipCount = i * 10;
+                var packIDs = structureID.Skip(skipCount).Take(10).Select(s => new { ID = s });
+
+                string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure(tableName, packIDs));
+
+                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            }
         }
 
         /// <summary>
