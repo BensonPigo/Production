@@ -1485,7 +1485,7 @@ select ID = null
 	   , ld.GroupKey
 	   , ld.New
 	   , ld.EmployeeID
-	   , Description = o.DescEN
+	   , [Description] = IIF(o.DescEN = '' OR o.DescEN IS NULL, ld.OperationID, o.DescEN)
 	   , EmployeeName = e.Name
 	   , EmployeeSkill = e.Skill
 	   , Efficiency = iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100)
