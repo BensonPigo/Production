@@ -34,6 +34,14 @@ namespace Sci.Production.Class
         public object CountryID { get; set; }
 
         /// <inheritdoc/>
+        [Description("篩選BrandID")]
+        public object BrandID { get; set; }
+
+        /// <inheritdoc/>
+        [Description("ShipModeID")]
+        public object ShipModeID { get; set; }
+
+        /// <inheritdoc/>
         [Description("設定 DB ConnectionName")]
         public string ConnectionName { get; set; }
 
@@ -58,25 +66,47 @@ namespace Sci.Production.Class
             this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id");
         }
 
-
         /// <inheritdoc/>
         private void TextBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string conName = this.ConnectionName ?? "Production";
-            string wherecountry = this.CountryID == null ? string.Empty : $" and p.CountryID = @CountryID";
-            List<SqlParameter> parameters = new List<SqlParameter>()
-            {
-                new SqlParameter("@CountryID", this.CountryID is null ? string.Empty : ((Win.UI.TextBox)this.CountryID).Text),
-            };
             string sql = $@"
 SELECT p.ID,P.Name,p.CountryID,[Country Name]=c.NameEN 
     ,[AirPort]=IIF(p.AirPort=1,'Y','') 
     ,[SeaPort]=IIF(p.SeaPort=1,'Y','') 
 FROM PulloutPort p 
 INNER JOIN {(conName == "ProductionTPE" ? "Trade.." : string.Empty)}Country c ON p.CountryID = c.ID 
+INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.Junk = 0 
-{wherecountry}
-ORDER BY p.ID";
+";
+
+            List<SqlParameter> parameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@CountryID", this.CountryID is null ? string.Empty : ((Win.UI.TextBox)this.CountryID).Text),
+                new SqlParameter("@BrandID", this.BrandID is null ? string.Empty : ((Win.UI.TextBox)this.BrandID).Text),
+                new SqlParameter("@ShipModeID", this.ShipModeID is null ? string.Empty : ((Win.UI.TextBox)this.ShipModeID).Text),
+            };
+
+            if (!MyUtility.Check.Empty(this.CountryID))
+            {
+                sql += $@" and p.CountryID = @CountryID";
+            }
+
+            if (!MyUtility.Check.Empty(this.BrandID))
+            {
+                sql += $@" and pbs.BrandID = @BrandID";
+            }
+
+            if (this.ShipModeID.ToString() == "SEA")
+            {
+                sql += $@" and p.SeaPort = 1";
+            }
+            else if (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P")
+            {
+                sql += $@" and (p.SeaPort = 1 or p.AirPort = 1)";
+            }
+
+            sql += " ORDER BY p.ID";
 
             DBProxy.Current.Select(conName, sql, parameters, out DataTable source);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,Name,CountryID,Country Name,AirPort,SeaPort", "20,25,10,20,5,5", this.TextBox1.Text)

@@ -1325,11 +1325,14 @@
             // 
             // txtPulloutPort1
             // 
+            this.txtPulloutPort1.BrandID = null;
+            this.txtPulloutPort1.ConnectionName = null;
             this.txtPulloutPort1.CountryID = "";
             this.txtPulloutPort1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "DischargePortID", true));
             this.txtPulloutPort1.DisplayBox1Binding = "";
             this.txtPulloutPort1.Location = new System.Drawing.Point(102, 246);
             this.txtPulloutPort1.Name = "txtPulloutPort1";
+            this.txtPulloutPort1.ShipModeID = null;
             this.txtPulloutPort1.Size = new System.Drawing.Size(199, 22);
             this.txtPulloutPort1.TabIndex = 92;
             this.txtPulloutPort1.TextBox1Binding = "";
