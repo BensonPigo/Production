@@ -12,14 +12,23 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <summary>
+    /// P13_FabricSticker
+    /// </summary>
     public partial class P13_FabricSticker : Win.Subs.Base
     {
         private object strSubTransferID;
+        private string fromTable;
 
-        public P13_FabricSticker(object strSubTransferID)
+        /// <summary>
+        /// P13_FabricSticker
+        /// </summary>
+        /// <param name="strSubTransferID">strSubTransferID</param>
+        public P13_FabricSticker(object strSubTransferID, string fromTable)
         {
             this.InitializeComponent();
             this.strSubTransferID = strSubTransferID;
+            this.fromTable = fromTable;
         }
 
         /// <inheritdoc/>
@@ -37,7 +46,9 @@ namespace Sci.Production.Warehouse
                 .Text("Color", header: "Color", iseditingreadonly: true)
                 .Text("Roll", header: "Roll", iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
-                .Text("Qty", header: "Issue Qty", iseditingreadonly: true)
+                .Numeric("Qty", header: "Issue Qty", iseditingreadonly: true)
+                .Numeric("StockQty", header: "Stock Qty", iseditingreadonly: true)
+                .Text("BulkLocation", header: "Bulk Location", iseditingreadonly: true)
                 ;
 
             for (int i = 0; i < this.grid1.Columns.Count; i++)
@@ -49,41 +60,55 @@ namespace Sci.Production.Warehouse
             #region Set Grid Datas
             List<SqlParameter> listSqlParameters = new List<SqlParameter>();
             listSqlParameters.Add(new SqlParameter("@ID", this.strSubTransferID));
-            string sqlcmd = @"
+
+            string gridSql = $@"
 select Sel = 0
-       , RowNo = Row_Number() over (order by isd.POID, isd.Seq1, isd.Seq2)
-       , SPNo = isd.POID
-	   , Seq = Concat (isd.Seq1, '-', isd.Seq2)
-	   , Refno = isnull (psd.Refno, '')
-	   , Color = case when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is not null 
-							THEN iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor) 
-					  when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is null 
-							THEN psd.SuppColor
-				 else  isnull (psd.ColorID, '') end
-	   , Roll = isd.Roll
-	   , Roll = isd.Roll
-	   , Dyelot = isd.Dyelot
-	   , Qty = isd.Qty
-	   , Style = o.StyleID
-       , StockUnit = psd.StockUnit
-	   , Location = isnull(dbo.Getlocation(isd.FtyInventoryUkey),'')
-from Issue_Detail isd
-left join Orders o on o.ID=isd.POID
-left join Po_Supp_Detail psd on isd.POID = psd.ID
+        , RowNo = Row_Number() over (order by isd.POID, isd.Seq1, isd.Seq2)
+        , SPNo = isd.POID
+	    , Seq = Concat (isd.Seq1, '-', isd.Seq2)
+	    , Refno = isnull (psd.Refno, '')
+	    , Color = case when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is not null 
+		    					THEN iif(ISNULL(ThreadColor.SuppColor,'') = '', '', ThreadColor.SuppColor) 
+		    			  when f.MtlTypeID = 'SP THREAD' and ThreadColor.SuppColor is null 
+		    					THEN psd.SuppColor
+		    		 else  isnull (psd.ColorID, '') end
+	    , Roll = isd.Roll
+	    , Dyelot = isd.Dyelot
+	    , Qty = isd.Qty
+	    , Style = o.StyleID
+        , StockUnit = psd.StockUnit
+	    , Location = isnull(dbo.Getlocation(isd.FtyInventoryUkey),'')
+        , [StockQty] = (isnull(fi.InQty, 0)  - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0))
+        , [BulkLocation] = BulkLocation.val
+from {this.fromTable} isd with (nolock)
+left join Orders o with (nolock) on o.ID=isd.POID
+left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
 								and isd.Seq1 = psd.SEQ1
 								and isd.Seq2 = psd.SEQ2
-left join Fabric f on psd.SCIRefno = f.SCIRefno
+left join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
 left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and psd.ColorID = c.ID 
+left join FtyInventory fi with (nolock) on  fi.POID = isd.POID and 
+                                            fi.Seq1 = isd.Seq1 and 
+                                            fi.Seq2 = isd.Seq2 and 
+                                            fi.Roll = isd.Roll and
+                                            fi.Dyelot = isd.Dyelot and
+                                            fi.StockType = isd.StockType
 outer apply(
 			SELECT DISTINCT pp.SuppColor
 			FROM po_supp_detail pp
 			WHERE pp.ID = psd.StockPOID AND pp.Seq1 = psd.StockSeq1 AND pp.Seq2 = psd.StockSeq2
-		)
-ThreadColor
+		) ThreadColor
+outer apply(
+            SELECT [val] =  Stuff((select concat( ',', fid.MtlLocationID) 
+                                    from FtyInventory_Detail fid with (nolock) 
+                                    where fid.Ukey = fi.Ukey
+                                    FOR XML PATH('')),1,1,'') 
+            ) BulkLocation
 where isd.ID = @ID
 order by RowNo";
+
             DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, listSqlParameters, out dtResult);
+            DualResult result = DBProxy.Current.Select(string.Empty, gridSql, listSqlParameters, out dtResult);
             this.listControlBindingSource.DataSource = dtResult;
 
             if (result == false)

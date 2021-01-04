@@ -119,6 +119,9 @@
     <Compile Include="InchTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="LinkLabelRFCardEraseBeforePrinting.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MergeRowGrid.cs">
       <SubType>Component</SubType>
     </Compile>

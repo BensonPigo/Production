@@ -291,11 +291,16 @@ WHERE Type='Pms_LocalItem_UnPack'
             {
                 this.chkIsCarton.Enabled = true;
                 this.dropDownUnpack.ReadOnly = false;
+                this.txtCartonType.ReadOnly = false;
+                this.txtCartonType.IsSupportEditMode = true;
             }
             else
             {
                 this.chkIsCarton.Enabled = false;
                 this.dropDownUnpack.ReadOnly = true;
+                this.txtCartonType.ReadOnly = true;
+                this.txtCartonType.IsSupportEditMode = false;
+                this.CurrentMaintain["CartonType"] = string.Empty;
             }
 
             this.dropDownUnpack.SelectedValue = 0;
@@ -383,11 +388,24 @@ WHERE Type='Pms_LocalItem_UnPack'
             {
                 this.btnSetCardboardPads.Visible = true;
                 this.chkIsCarton.Enabled = true;
+
+                if (this.EditMode)
+                {
+                    this.txtCartonType.ReadOnly = false;
+                    this.txtCartonType.IsSupportEditMode = true;
+                }
+                else
+                {
+                    this.txtCartonType.ReadOnly = true;
+                    this.txtCartonType.IsSupportEditMode = false;
+                }
             }
             else
             {
                 this.btnSetCardboardPads.Visible = false;
                 this.chkIsCarton.Enabled = false;
+                this.txtCartonType.ReadOnly = true;
+                this.txtCartonType.IsSupportEditMode = false;
             }
         }
 

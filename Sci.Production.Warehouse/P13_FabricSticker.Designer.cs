@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.btnPrint = new Sci.Win.UI.Button();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnPrint = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -59,13 +59,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(544, 326);
+            this.grid1.Size = new System.Drawing.Size(636, 326);
             this.grid1.TabIndex = 1;
             // 
             // btnPrint
             // 
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrint.Location = new System.Drawing.Point(455, 336);
+            this.btnPrint.Location = new System.Drawing.Point(547, 336);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(80, 30);
             this.btnPrint.TabIndex = 2;
@@ -75,10 +75,11 @@
             // 
             // P13_FabricSticker
             // 
-            this.ClientSize = new System.Drawing.Size(547, 370);
+            this.ClientSize = new System.Drawing.Size(639, 370);
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.grid1);
             this.Name = "P13_FabricSticker";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Print Fabric Sticker";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).EndInit();

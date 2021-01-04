@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -460,8 +461,6 @@ order by bundlegroup,bundleno";
                 }
             }
             #endregion
-
-            // DataTable dt = (DataTable)detailgridbs.DataSource;
             return base.ClickSavePre();
         }
 
@@ -713,6 +712,7 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
             this.displayStyle.Text = string.Empty;
             this.displayPrintDate.Text = string.Empty;
             this.CurrentMaintain["Cutno"] = 0;
+            this.CurrentMaintain["subCutno"] = string.Empty;
             this.CurrentMaintain["sewinglineid"] = string.Empty;
             this.CurrentMaintain["OrderID"] = string.Empty;
             this.CurrentMaintain["POID"] = string.Empty;
@@ -839,6 +839,7 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
                 }
 
                 this.GetFabricKind();
+                this.CurrentMaintain["SubCutNo"] = Prgs.GetSubCutNo(newvalue, cutdr["Fabriccombo"].ToString(), cutdr["FabricPanelCode"].ToString(), cutdr["Cutno"].ToString());
                 this.CurrentMaintain.EndEdit();
             }
 
@@ -1073,9 +1074,6 @@ where b.poid = '{poid}'
             p.ShowDialog();
             string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.displayPrintDate.Text = dtn;
-            string sqlcmd = $@"update Bundle set PrintDate = '{dtn}' where ID = '{this.CurrentMaintain["ID"]}';
-                  update Bundle_Detail set PrintDate = '{dtn}' where ID = '{this.CurrentMaintain["ID"]}';";
-            DBProxy.Current.Execute(null, sqlcmd);
             string topID = this.CurrentMaintain["ID"].ToString();
             this.ReloadDatas();
             int newDataIdx = this.gridbs.Find("ID", topID);

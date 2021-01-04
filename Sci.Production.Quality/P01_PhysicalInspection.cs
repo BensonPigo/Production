@@ -256,7 +256,7 @@ namespace Sci.Production.Quality
 
             #region 依dbo.PointRate 來判斷新的PointRate計算公式
             DataRow drPoint;
-            string pointRateID = MyUtility.Check.Seek($@"select * from PointRate where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["id"].ToString() : "1";
+            string pointRateID = MyUtility.Check.Seek($@"select * from QABrandSetting where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["PointRateOption"].ToString() : "1";
 
             this.CurrentData["PointRate"] = (pointRateID == "2") ?
                 ((double_ActualYds == 0 || actualWidth == 0) ? 0 : Math.Round((sumPoint * 3600) / (double_ActualYds * actualWidth), 2)) :

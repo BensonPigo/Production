@@ -148,6 +148,7 @@
     <Compile Include="ConvertToPDF.cs" />
     <Compile Include="Exts.cs" />
     <Compile Include="Logistic.cs" />
+    <Compile Include="MessageBoxEX.cs" />
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Thread.cs" />

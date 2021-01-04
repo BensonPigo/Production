@@ -13,6 +13,35 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         /// <summary>
+        /// 取得最新 SubCutNo
+        /// </summary>
+        /// <param name="cutRef">cutRef</param>
+        /// <param name="patternPanel">patternPanel</param>
+        /// <param name="fabricPanelCode">fabricPanelCode</param>
+        /// <param name="cutno">cutno</param>
+        /// <returns>SubCutNo</returns>
+        public static string GetSubCutNo(string cutRef, string patternPanel, string fabricPanelCode, string cutno)
+        {
+            string sqlcmd = $@"
+select top 1 b.SubCutNo
+from Bundle b
+where b.CutRef='{cutRef}'
+and b.PatternPanel  = '{patternPanel}'
+and b.FabricPanelCode = '{fabricPanelCode}'
+and b.Cutno = '{cutno}'
+order by len(SubCutNo) desc, SubCutNo desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drc))
+            {
+                return MyUtility.Excel.ConvertNumericToExcelColumn(Prgs.ExcelColumnNameToNumber(drc["SubCutNo"].ToString()) + 1);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// 馬克長的格式轉換(轉換成 99Y99-9/9+9" 這種格式)
         /// </summary>
         /// <inheritdoc />
@@ -2416,6 +2445,246 @@ DROP TABLE #beforeTmp
             /// StdQty
             /// </summary>
             public int StdQty { get; set; }
+        }
+
+        /// <summary>
+        /// P10 Print Data
+        /// </summary>
+        public class P10_PrintData
+        {
+            /// <inheritdoc/>
+            public string Group_right { get; set; }
+
+            /// <inheritdoc/>
+            public string Group_left { get; set; }
+
+            /// <inheritdoc/>
+            public string CutRef { get; set; }
+
+            /// <inheritdoc/>
+            public string Tone { get; set; }
+
+            /// <inheritdoc/>
+            public string Line { get; set; }
+
+            /// <inheritdoc/>
+            public string Cell { get; set; }
+
+            /// <inheritdoc/>
+            public string POID { get; set; }
+
+            /// <inheritdoc/>
+            public string SP { get; set; }
+
+            /// <inheritdoc/>
+            public string Style { get; set; }
+
+            /// <inheritdoc/>
+            public string MarkerNo { get; set; }
+
+            /// <inheritdoc/>
+            public string Body_Cut { get; set; }
+
+            /// <inheritdoc/>
+            public string Parts { get; set; }
+
+            /// <inheritdoc/>
+            public string Color { get; set; }
+
+            /// <inheritdoc/>
+            public string Article { get; set; }
+
+            /// <inheritdoc/>
+            public string Size { get; set; }
+
+            /// <inheritdoc/>
+            public string SizeSpec { get; set; }
+
+            /// <inheritdoc/>
+            public string Desc { get; set; }
+
+            /// <inheritdoc/>
+            public string Artwork { get; set; }
+
+            /// <inheritdoc/>
+            public string Quantity { get; set; }
+
+            /// <inheritdoc/>
+            public string Barcode { get; set; }
+
+            /// <inheritdoc/>
+            public string Season { get; set; }
+
+            /// <inheritdoc/>
+            public string Brand { get; set; }
+
+            /// <inheritdoc/>
+            public string Item { get; set; }
+
+            /// <inheritdoc/>
+            public string EXCESS1 { get; set; }
+
+            /// <inheritdoc/>
+            public string NoBundleCardAfterSubprocess1 { get; set; }
+
+            /// <inheritdoc/>
+            public string Replacement1 { get; set; }
+
+            /// <inheritdoc/>
+            public string Group_right2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Group_left2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Line2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Cell2 { get; set; }
+
+            /// <inheritdoc/>
+            public string SP2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Style2 { get; set; }
+
+            /// <inheritdoc/>
+            public string MarkerNo2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Body_Cut2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Parts2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Color2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Size2 { get; set; }
+
+            /// <inheritdoc/>
+            public string SizeSpec2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Desc2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Artwork2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Quantity2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Barcode2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Season2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Brand2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Item2 { get; set; }
+
+            /// <inheritdoc/>
+            public string EXCESS2 { get; set; }
+
+            /// <inheritdoc/>
+            public string NoBundleCardAfterSubprocess2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Replacement2 { get; set; }
+
+            /// <inheritdoc/>
+            public string Group_right3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Group_left3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Line3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Cell3 { get; set; }
+
+            /// <inheritdoc/>
+            public string SP3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Style3 { get; set; }
+
+            /// <inheritdoc/>
+            public string MarkerNo3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Body_Cut3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Parts3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Color3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Size3 { get; set; }
+
+            /// <inheritdoc/>
+            public string SizeSpec3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Desc3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Artwork3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Quantity3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Barcode3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Season3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Brand3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Item3 { get; set; }
+
+            /// <inheritdoc/>
+            public string EXCESS3 { get; set; }
+
+            /// <inheritdoc/>
+            public string NoBundleCardAfterSubprocess3 { get; set; }
+
+            /// <inheritdoc/>
+            public string Replacement3 { get; set; }
+
+            /// <inheritdoc/>
+            public string ShipCode { get; set; }
+
+            /// <inheritdoc/>
+            public string FabricPanelCode { get; set; }
+
+            /// <inheritdoc/>
+            public string Comb { get; set; }
+
+            /// <inheritdoc/>
+            public string Cut { get; set; }
+
+            /// <inheritdoc/>
+            public int GroupCombCut { get; set; }
+
+            /// <inheritdoc/>
+            public string No { get; set; }
+
+            /// <inheritdoc/>
+            public string BundleID { get; set; }
+
+            /// <inheritdoc/>
+            public string BundleNo { get; set; }
         }
         #endregion
         #endregion

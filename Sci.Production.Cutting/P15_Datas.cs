@@ -22,6 +22,9 @@ namespace Sci.Production.Cutting
             public int Iden { get; set; }
 
             /// <inheritdoc/>
+            public int PrintGroup { get; set; }
+
+            /// <inheritdoc/>
             public int Tone { get; set; }
 
             /// <inheritdoc/>
@@ -50,10 +53,8 @@ namespace Sci.Production.Cutting
             /// <inheritdoc/>
             public int BuundleGroup { get; set; }
 
-            /// <summary>
-            /// P15 Create 準備寫入資料過程, 紀錄當前這筆已處理過
-            /// </summary>
-            public bool Ran { get; set; }
+            /// <inheritdoc/>
+            public string SubCut { get; set; }
 
             /// <inheritdoc/>
             public long StyleUkey { get; set; }

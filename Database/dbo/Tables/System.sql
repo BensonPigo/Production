@@ -287,3 +287,12 @@ Go
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Card Erase Before Printing', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'RFCardEraseBeforePrinting';
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'RF Card Erase Before Printing',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'RFCardEraseBeforePrinting'

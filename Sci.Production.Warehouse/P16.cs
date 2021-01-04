@@ -275,6 +275,15 @@ namespace Sci.Production.Warehouse
 
             #endregion Status Label
 
+            if (this.CurrentMaintain["status"].ToString() == "Confirmed")
+            {
+                this.btnPrintFabricSticker.Enabled = true;
+            }
+            else
+            {
+                this.btnPrintFabricSticker.Enabled = false;
+            }
+
             // Lack.ApvDate
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", this.CurrentMaintain["requestid"]))))
             {
@@ -1146,6 +1155,11 @@ where a.id= @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
+        {
+            new P13_FabricSticker(this.CurrentMaintain["ID"], "Issuelack_Detail").ShowDialog();
         }
     }
 }

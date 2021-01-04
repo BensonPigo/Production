@@ -81,6 +81,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.dispFabricKind = new Sci.Win.UI.DisplayBox();
             this.btnSPs = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -97,6 +99,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.btnSPs);
             this.masterpanel.Controls.Add(this.dispFabricKind);
             this.masterpanel.Controls.Add(this.label1);
@@ -148,7 +152,7 @@
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(991, 224);
+            this.masterpanel.Size = new System.Drawing.Size(1114, 224);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -201,11 +205,13 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dispFabricKind, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSPs, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 224);
-            this.detailpanel.Size = new System.Drawing.Size(991, 240);
+            this.detailpanel.Size = new System.Drawing.Size(1114, 240);
             // 
             // gridicon
             // 
@@ -218,7 +224,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(991, 240);
+            this.detailgridcont.Size = new System.Drawing.Size(1114, 240);
             // 
             // detail2
             // 
@@ -234,17 +240,17 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(991, 502);
+            this.detail.Size = new System.Drawing.Size(1114, 502);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(991, 464);
+            this.detailcont.Size = new System.Drawing.Size(1114, 464);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnGarmentList);
             this.detailbtm.Location = new System.Drawing.Point(0, 464);
-            this.detailbtm.Size = new System.Drawing.Size(991, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1114, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -254,11 +260,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(991, 502);
+            this.browse.Size = new System.Drawing.Size(1114, 502);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(999, 531);
+            this.tabs.Size = new System.Drawing.Size(1122, 531);
             // 
             // createby
             // 
@@ -316,7 +322,7 @@
             // 
             // labelFabricCombo
             // 
-            this.labelFabricCombo.Location = new System.Drawing.Point(236, 81);
+            this.labelFabricCombo.Location = new System.Drawing.Point(441, 81);
             this.labelFabricCombo.Name = "labelFabricCombo";
             this.labelFabricCombo.Size = new System.Drawing.Size(95, 23);
             this.labelFabricCombo.TabIndex = 5;
@@ -428,7 +434,7 @@
             // 
             // labelPrintDate
             // 
-            this.labelPrintDate.Location = new System.Drawing.Point(661, 81);
+            this.labelPrintDate.Location = new System.Drawing.Point(892, 13);
             this.labelPrintDate.Name = "labelPrintDate";
             this.labelPrintDate.Size = new System.Drawing.Size(75, 23);
             this.labelPrintDate.TabIndex = 20;
@@ -436,7 +442,7 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Location = new System.Drawing.Point(661, 115);
+            this.labelEstCutDate.Location = new System.Drawing.Point(892, 47);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(106, 23);
             this.labelEstCutDate.TabIndex = 21;
@@ -556,7 +562,7 @@
             this.displayPrintDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPrintDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "printdate", true));
             this.displayPrintDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPrintDate.Location = new System.Drawing.Point(739, 81);
+            this.displayPrintDate.Location = new System.Drawing.Point(970, 13);
             this.displayPrintDate.Name = "displayPrintDate";
             this.displayPrintDate.Size = new System.Drawing.Size(133, 23);
             this.displayPrintDate.TabIndex = 11;
@@ -565,7 +571,7 @@
             // 
             this.displayEstCutDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayEstCutDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayEstCutDate.Location = new System.Drawing.Point(770, 115);
+            this.displayEstCutDate.Location = new System.Drawing.Point(1001, 47);
             this.displayEstCutDate.Name = "displayEstCutDate";
             this.displayEstCutDate.Size = new System.Drawing.Size(84, 23);
             this.displayEstCutDate.TabIndex = 15;
@@ -672,7 +678,7 @@
             this.txtFabricCombo.BackColor = System.Drawing.Color.White;
             this.txtFabricCombo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PatternPanel", true));
             this.txtFabricCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFabricCombo.Location = new System.Drawing.Point(334, 81);
+            this.txtFabricCombo.Location = new System.Drawing.Point(539, 81);
             this.txtFabricCombo.Name = "txtFabricCombo";
             this.txtFabricCombo.Size = new System.Drawing.Size(53, 23);
             this.txtFabricCombo.TabIndex = 9;
@@ -756,7 +762,7 @@
             // 
             // labelFabPanelCode
             // 
-            this.labelFabPanelCode.Location = new System.Drawing.Point(441, 81);
+            this.labelFabPanelCode.Location = new System.Drawing.Point(661, 81);
             this.labelFabPanelCode.Name = "labelFabPanelCode";
             this.labelFabPanelCode.Size = new System.Drawing.Size(110, 23);
             this.labelFabPanelCode.TabIndex = 48;
@@ -767,7 +773,7 @@
             this.txtFabricPanelCode.BackColor = System.Drawing.Color.White;
             this.txtFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FabricPanelCode", true));
             this.txtFabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFabricPanelCode.Location = new System.Drawing.Point(554, 81);
+            this.txtFabricPanelCode.Location = new System.Drawing.Point(774, 81);
             this.txtFabricPanelCode.Name = "txtFabricPanelCode";
             this.txtFabricPanelCode.Size = new System.Drawing.Size(53, 23);
             this.txtFabricPanelCode.TabIndex = 10;
@@ -787,7 +793,7 @@
             // btnBatchDelete
             // 
             this.btnBatchDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBatchDelete.Location = new System.Drawing.Point(876, 3);
+            this.btnBatchDelete.Location = new System.Drawing.Point(999, 3);
             this.btnBatchDelete.Name = "btnBatchDelete";
             this.btnBatchDelete.Size = new System.Drawing.Size(116, 30);
             this.btnBatchDelete.TabIndex = 24;
@@ -823,9 +829,27 @@
             this.btnSPs.UseVisualStyleBackColor = true;
             this.btnSPs.Click += new System.EventHandler(this.BtnSPs_Click);
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(236, 81);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 53;
+            this.label2.Text = "SubCut#";
+            // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubCutno", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(314, 81);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(53, 23);
+            this.displayBox1.TabIndex = 54;
+            // 
             // P10
             // 
-            this.ClientSize = new System.Drawing.Size(999, 564);
+            this.ClientSize = new System.Drawing.Size(1122, 564);
             this.Controls.Add(this.btnBatchDelete);
             this.DefaultControl = "txtCutRef";
             this.DefaultControlForEdit = "txtCutRef";
@@ -916,5 +940,7 @@
         private Win.UI.DisplayBox dispFabricKind;
         private Win.UI.Label label1;
         private Win.UI.Button btnSPs;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label label2;
     }
 }

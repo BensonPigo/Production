@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class P42 : Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
+        /// <inheritdoc/>
         public P42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -119,27 +121,27 @@ namespace Sci.Production.Warehouse
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), settings: ts1, iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
-                 .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("fstSewinline", header: "1st. Sewing" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Text("cutType", header: "Type of Cutting", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
-                 .Text("cutwidth", header: "Cut Width", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
-                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Date("TapeInline", header: "Inline", width: Widths.AnsiChars(10), settings: ts2)
-                  .Date("TapeOffline", header: "Offline", width: Widths.AnsiChars(10), settings: ts3)
-                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                  .Date("fstSCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Date("fstBuyerDlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                  .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                  .Text("color", header: "Color Desc", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                  ;
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
+                .Text("EachConsApv", header: "Each Cons.", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                .Text("ETA", header: "Mtl. ETA", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                .Text("fstSewinline", header: "1st. Sewing" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                .Text("cutType", header: "Type of Cutting", width: Widths.AnsiChars(13), settings: ts1, iseditingreadonly: true)
+                .Text("cutwidth", header: "Cut Width", width: Widths.AnsiChars(10), settings: ts1, iseditingreadonly: true)
+                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Date("TapeInline", header: "Inline", width: Widths.AnsiChars(10), settings: ts2)
+                .Date("TapeOffline", header: "Offline", width: Widths.AnsiChars(10), settings: ts3)
+                .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Date("fstSCIdlv", header: "SCI Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("fstBuyerDlv", header: "Buyer Dlv.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("color", header: "Color Desc", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                ;
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            DataTable dtData;
             string sewinline_b, sewinline_e, sciDelivery_b, sciDelivery_e, buyerdlv_b, buyerdlv_e;
             sewinline_b = null;
             sewinline_e = null;
@@ -147,9 +149,6 @@ namespace Sci.Production.Warehouse
             sciDelivery_e = null;
             buyerdlv_b = null;
             buyerdlv_e = null;
-            bool eachchk, mtletachk;
-            eachchk = this.checkEmptyEachCons.Checked;
-            mtletachk = this.checkEmptyMtlETA.Checked;
 
             if (this.dateSewingInline.Value1 != null)
             {
@@ -212,6 +211,7 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.F
 	,min(a.SciDelivery) FstSCIdlv
 	,min(a.BuyerDelivery) FstBuyerDlv
 	,(select color.Name from color WITH (NOLOCK) where color.id = b.ColorID and color.BrandId = a.brandid ) as color
+    ,a.StyleID
 from orders a WITH (NOLOCK) inner join Po_supp_detail b WITH (NOLOCK) on a.poid = b.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 outer apply( select value =  iif(b.stockunit = '',dbo.GetStockUnitBySPSeq( b.id,B.SEQ1,B.SEQ2),b.stockunit) ) stockunit
@@ -233,34 +233,11 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
                 sqlcmd += string.Format(@" and a.BuyerDelivery between '{0}' and '{1}'", buyerdlv_b, buyerdlv_e);
             }
 
-            sqlcmd += "GROUP BY c.MdivisionId,b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit, stockunit.value";
+            sqlcmd += "GROUP BY c.MdivisionId,b.FactoryID,c.POID,a.EachConsApv,B.Special,B.Qty,B.SizeSpec,B.Refno,B.SEQ1,B.SEQ2,c.TapeInline,c.TapeOffline,B.ID,B.ColorID,b.SCIRefno,a.brandid,b.POUnit, stockunit.value,a.StyleID";
 
-// 20161215 CheckBox 選項用 checkBoxs_Status() 取代
-//            if (eachchk && mtletachk) sqlcmd += @" having EachConsApv is not null and (SELECT MAX(FinalETA) FROM
-// (SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail
-// WHERE PO_Supp_Detail.ID = B.ID
-// AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID
-// UNION ALL
-// SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-// WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-// AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
-// ) tmp) is not null";
-//            else
-//            {
-//                if (eachchk) sqlcmd += " having EachConsApv is not null";
-//                if (mtletachk) sqlcmd += @" having (SELECT MAX(FinalETA) FROM
-// (SELECT PO_SUPP_DETAIL.FinalETA FROM PO_Supp_Detail
-// WHERE PO_Supp_Detail.ID = B.ID
-// AND PO_Supp_Detail.SCIRefno = B.SCIRefno AND PO_Supp_Detail.ColorID = b.ColorID
-// UNION ALL
-// SELECT B1.FinalETA FROM PO_Supp_Detail a1, PO_Supp_Detail b1
-// WHERE a1.ID = B.ID AND a1.SCIRefno = B.SCIRefno AND a1.ColorID = b.ColorID
-// AND a1.StockPOID = b1.ID and a1.Stockseq1 = b1.SEQ1 and a1.Stockseq2 = b1.SEQ2
-// ) tmp) is not null";
-//            }
             sqlcmd += @" ORDER BY b.FactoryID,c.POID";
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlcmd, out dtData))
+            if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtData))
             {
                 if (dtData.Rows.Count == 0)
                 {
@@ -283,7 +260,6 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            DualResult result;
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
@@ -352,9 +328,10 @@ AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Env.User.Ke
                     item["mdivisionid"]);
             }
 
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
+                this.ShowErr(result);
                 return;
             }
             else

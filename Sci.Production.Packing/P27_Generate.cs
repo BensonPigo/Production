@@ -359,7 +359,6 @@ WHERE td.TemplateName <> ''
 
             if (success)
             {
-
                 #region ISP20201690 資料交換 - Sunrise
                 foreach (var packingListID in tList.Select(o => o.PackingListID).Distinct())
                 {
@@ -368,11 +367,9 @@ WHERE td.TemplateName <> ''
                 }
                 #endregion
 
-
                 #region ISP20201607 資料交換 - Gensong
                 foreach (var packingListID in tList.Select(o => o.PackingListID).Distinct())
                 {
-                    //string packingListID = tList.Select(o => o.PackingListID).Distinct().JoinToString(",");
                     Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListID, string.Empty))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
@@ -428,7 +425,7 @@ WHERE td.TemplateName <> ''
                         DataTable dt;
                         string cmd = $@"
 SELECt * 
-FROM dbo.[Get_ShippingMarkTemplate_DefineColumn]('{sameTemplateData.PackingListID}' ,'{sameTemplateData.OrderID}' ,'{sameTemplateData.SCICtnNo}' ,'{sameTemplateData.CTNStartNo}' ,'{sameTemplateData.Refno}' )
+FROM dbo.[Get_ShippingMarkTemplate_DefineColumn]('{sameTemplateData.PackingListID}' ,'{sameTemplateData.OrderID}' ,'{sameTemplateData.CTNStartNo}' ,'{sameTemplateData.Refno}' )
 WHERE ID IN ('{templateFields.JoinToString("','")}')
 ";
                         DBProxy.Current.Select(null, cmd, out dt);
@@ -440,14 +437,15 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                             {
                                 ColumnName = MyUtility.Convert.GetString(dr["ID"]),
                                 Value = MyUtility.Convert.GetString(dr["Value"]),
+                                ChkEmpty = MyUtility.Convert.GetBool(dr["ChkEmpty"]),
                             };
                             sameTemplateData.DefineColumns.Add(col);
                         }
                     }
                 }
 
-                // 取得欄位沒資料的Packing List ID
-                var hasEmptyDatas = p27_Templates.Where(o => o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value)).Any()).Select(o => o.PackingListID).Distinct().ToList();
+                // 取得ChkEmpty = true且沒資料的欄位，是哪些Packing List ID
+                var hasEmptyDatas = p27_Templates.Where(o => o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value) && x.ChkEmpty).Any()).Select(o => o.PackingListID).Distinct().ToList();
 
                 if (hasEmptyDatas.Any())
                 {
@@ -662,5 +660,8 @@ INSERT INTO ShippingMarkStamp_Detail
 
         /// <inheritdoc/>
         public string Value { get; set; }
+
+        /// <inheritdoc/>
+        public bool ChkEmpty { get; set; }
     }
 }
