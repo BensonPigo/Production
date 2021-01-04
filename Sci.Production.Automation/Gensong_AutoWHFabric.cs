@@ -179,12 +179,12 @@ left join FtyInventory FI on sd.fromPoid = fi.poid
     and sd.fromStocktype = fi.stocktype
 outer apply(
 	select listValue = Stuff((
-			select concat(',',FromLocation)
+			select concat(',',MtlLocationID)
 			from (
 					select 	distinct
-						l.FromLocation
-					from dbo.LocationTrans_detail l
-					where l.FtyInventoryUkey = fi.Ukey
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					where fd.Ukey = fi.Ukey
 				) s
 			for xml path ('')
 		) , 1, 1, '')
@@ -215,11 +215,13 @@ and exists(
 	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
 		and ml.StockType=sd.FromStockType
 	where ml.IsWMS = 1
+
 	union all
-	select 1 from MtlLocation ml 
-	where ml.ID = sd.ToLocation
+
+    select 1 from MtlLocation ml 
+	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
 	and ml.StockType=sd.ToStockType
-	and ml.IsWMS = 1
+	where ml.IsWMS = 1
 )
 
 ";
@@ -497,11 +499,13 @@ and exists(
 	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
 		and ml.StockType=sd.FromStockType
 	where ml.IsWMS = 1
+
 	union all
-	select 1 from MtlLocation ml 
-	where ml.ID = sd.ToLocation
+
+    select 1 from MtlLocation ml 
+	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
 	and ml.StockType=sd.ToStockType
-	and ml.IsWMS = 1
+	where ml.IsWMS = 1
 )
 ";
             DataTable dt = new DataTable();
@@ -678,15 +682,15 @@ and exists(
     and psd.SEQ2 = lt2.Seq2 and psd.FabricType='F'
 )
 and exists(
-	select 1
+    select 1
 	from MtlLocation ml
-	where ml.ID = lt2.ToLocation
-	and ml.IsWMS =1 
+    inner join dbo.SplitString(lt2.ToLocation,',') sp on sp.Data = ml.ID
+	where  ml.IsWMS =1 
 	union all
-	select 1
+    select 1
 	from MtlLocation ml
-	where ml.ID = lt2.FromLocation
-	and ml.IsWMS =1 
+    inner join dbo.SplitString(lt2.FromLocation,',') sp on sp.Data = ml.ID
+	where  ml.IsWMS =1 
 )
 ";
             DataTable dt = new DataTable();
