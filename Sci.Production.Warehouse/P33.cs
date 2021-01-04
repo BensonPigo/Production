@@ -977,6 +977,18 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                         {
                             row = rtn.Rows[0];
 
+                            // 當兩筆資料以上時，增加判斷SCIRefno、Refno、Color
+                            if (rtn.Rows.Count > 1)
+                            {
+                                var queryRow = rtn.AsEnumerable().Where(x => x.Field<string>("SCIRefno").EqualString(this.CurrentDetailData["SCIRefno"]) &&
+                                                              x.Field<string>("Refno").EqualString(this.CurrentDetailData["Refno"]) &&
+                                                              x.Field<string>("ColorID").EqualString(this.CurrentDetailData["ColorID"]));
+                                if (queryRow.Any())
+                                {
+                                    row = queryRow.FirstOrDefault();
+                                }
+                            }
+
                             if (MyUtility.Check.Empty(colorID))
                             {
                                 // CurrentDetailData["SCIRefno"] = row["SCIRefno"];
@@ -1628,6 +1640,19 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                         else
                         {
                             row = rtn.Rows[0];
+
+                            // 當兩筆資料以上時，增加判斷SCIRefno、Refno、Color
+                            if (rtn.Rows.Count > 1)
+                            {
+                                var queryRow = rtn.AsEnumerable().Where(x => x.Field<string>("SCIRefno").EqualString(this.CurrentDetailData["SCIRefno"]) &&
+                                                              x.Field<string>("Refno").EqualString(this.CurrentDetailData["Refno"]) &&
+                                                              x.Field<string>("ColorID").EqualString(this.CurrentDetailData["ColorID"]));
+                                if (queryRow.Any())
+                                {
+                                    row = queryRow.FirstOrDefault();
+                                }
+
+                            }
 
                             if (MyUtility.Check.Empty(refno))
                             {
@@ -2832,7 +2857,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
 		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		WHERE b.ID='20060321PP'
+		WHERE b.ID='{pOID}'
 		AND tcd.Article IN (
 			select DISTINCT a.Article
 			from dbo.order_qty a WITH (NOLOCK) 
@@ -2856,7 +2881,7 @@ and [IS].Poid='{pOID}' AND [IS].SCIRefno='{sCIRefno}' AND [IS].ColorID='{colorID
 		Inner Join dbo.Style as s On s.Ukey = b.StyleUkey
 		Inner Join dbo.Style_ThreadColorCombo as tc On tc.StyleUkey = s.Ukey
 		Inner Join dbo.Style_ThreadColorCombo_Detail as tcd On tcd.Style_ThreadColorComboUkey = tc.Ukey
-		WHERE b.ID='20060321PP'
+		WHERE b.ID='{pOID}'
 		AND tcd.Article IN (
 			select DISTINCT a.Article
 			from dbo.order_qty a WITH (NOLOCK) 
