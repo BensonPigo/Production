@@ -66,6 +66,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 231);
             this.detailbtm.Size = new System.Drawing.Size(712, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(712, 269);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(720, 298);
@@ -74,7 +78,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioOption1);
             this.radioPanel1.Controls.Add(this.radioOption2);
-            this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PointRateOption", true));
             this.radioPanel1.Location = new System.Drawing.Point(173, 70);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;
@@ -145,7 +149,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 23);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Option";
+            this.label2.Text = "Point Rate";
             // 
             // label1
             // 
@@ -177,8 +181,9 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B10";
-            this.Text = "B10. Point Rate Option";
-            this.WorkAlias = "PointRate";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
+            this.Text = "B10. Brand";
+            this.WorkAlias = "QABrandSetting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);

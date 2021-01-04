@@ -6,10 +6,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class B10 : Win.Tems.Input1
     {
         private readonly Hashtable ht = new Hashtable();
 
+        /// <inheritdoc/>
         public B10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -21,34 +23,24 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.txtbrand.Text))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("<Brand> cannot be empty! ");
                 this.txtbrand.Focus();
                 return false;
             }
 
-            // DataRow dr;
-            if (MyUtility.Check.Seek(string.Format("select * from PointRate where brandid='{0}'", this.txtbrand.Text)) && !this.txtbrand.ReadOnly)
+            if (this.IsDetailInserting)
             {
-                MyUtility.Msg.WarningBox(string.Format("<Brand : {0}> existed, change other one please!", this.txtbrand.Text));
-                this.txtbrand.Focus();
-                return false;
+                if (MyUtility.Check.Seek($"select * from QABrandSetting where brandid='{this.CurrentMaintain["BrandID"]}'"))
+                {
+                    MyUtility.Msg.WarningBox($"<Brand : {this.CurrentMaintain["BrandID"]}> existed, change other one please!");
+                    this.txtbrand.Focus();
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
-        }
-
-        /// <inheritdoc/>
-        protected override Ict.DualResult ClickSave()
-        {
-            DataRow dr;
-            if (MyUtility.Check.Seek(string.Format("select * from PointRate where brandid='{0}'", this.txtbrand.Text), out dr))
-            {
-                DBProxy.Current.Execute(null, string.Format(@"update PointRate set ID='{0}' where BrandID='{1}'", this.radioOption1.Checked ? "1" : "2", this.txtbrand.Text));
-            }
-
-            return base.ClickSave();
         }
 
         /// <inheritdoc/>
@@ -66,8 +58,6 @@ namespace Sci.Production.Quality
                 this.txtFormula.Text = string.Empty;
                 return;
             }
-
-            this.txtFormula.Text = this.CurrentMaintain["ID"].ToString() == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
 
             if (this.EditMode)
             {
