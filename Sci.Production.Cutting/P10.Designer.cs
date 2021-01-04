@@ -835,7 +835,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 53;
-            this.label2.Text = "Cut#";
+            this.label2.Text = "SubCut#";
             // 
             // displayBox1
             // 
