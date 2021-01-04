@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkBoxOnlyNotYetCompleted = new Sci.Win.UI.CheckBox();
             this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
             this.label2 = new Sci.Win.UI.Label();
             this.txtComb = new Sci.Win.UI.TextBox();
@@ -76,19 +77,16 @@
             this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
-            this.Layout1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.Layout2 = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBoxOnlyNotYetCompleted);
             this.panel1.Controls.Add(this.txtSpreadingNo1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtComb);
@@ -128,6 +126,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 131);
             this.panel1.TabIndex = 0;
+            // 
+            // checkBoxOnlyNotYetCompleted
+            // 
+            this.checkBoxOnlyNotYetCompleted.AutoSize = true;
+            this.checkBoxOnlyNotYetCompleted.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxOnlyNotYetCompleted.Location = new System.Drawing.Point(576, 105);
+            this.checkBoxOnlyNotYetCompleted.Name = "checkBoxOnlyNotYetCompleted";
+            this.checkBoxOnlyNotYetCompleted.Size = new System.Drawing.Size(325, 21);
+            this.checkBoxOnlyNotYetCompleted.TabIndex = 108;
+            this.checkBoxOnlyNotYetCompleted.Text = "Only Show RF Card Not Yet Printed Completed.";
+            this.checkBoxOnlyNotYetCompleted.UseVisualStyleBackColor = true;
+            this.checkBoxOnlyNotYetCompleted.CheckedChanged += new System.EventHandler(this.CheckBoxOnlyCompleted_CheckedChanged);
             // 
             // txtSpreadingNo1
             // 
@@ -543,14 +553,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -559,28 +569,6 @@
             this.grid1.Size = new System.Drawing.Size(1008, 379);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Layout1,
-            this.Layout2});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(122, 48);
-            // 
-            // Layout1
-            // 
-            this.Layout1.Name = "Layout1";
-            this.Layout1.Size = new System.Drawing.Size(121, 22);
-            this.Layout1.Text = "Layout1";
-            this.Layout1.Click += new System.EventHandler(this.Layout1_Click);
-            // 
-            // Layout2
-            // 
-            this.Layout2.Name = "Layout2";
-            this.Layout2.Size = new System.Drawing.Size(121, 22);
-            this.Layout2.Text = "Layout2";
-            this.Layout2.Click += new System.EventHandler(this.Layout2_Click);
             // 
             // P12
             // 
@@ -603,7 +591,6 @@
             this.panel3.PerformLayout();
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -655,9 +642,7 @@
         private System.Windows.Forms.CheckBox checkChangepagebyCut;
         private Win.UI.Label label2;
         private Class.TxtSpreadingNo txtSpreadingNo1;
-        private Win.UI.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem Layout1;
-        private System.Windows.Forms.ToolStripMenuItem Layout2;
         private Win.UI.Button btnBundleCardRF;
+        private Win.UI.CheckBox checkBoxOnlyNotYetCompleted;
     }
 }

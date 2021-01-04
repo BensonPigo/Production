@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
@@ -51,7 +52,8 @@ namespace Sci.Production.Cutting
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("selected", header: "Sel", width: Widths.AnsiChars(4), iseditable: true, trueValue: true, falseValue: false)
-                .DateTime("PrintDate", header: "Print Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .DateTime("PrintDate", header: "Print Date\r\n(Bundle Card)", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .DateTime("RFPrintDate", header: "Print Date\r\n(RF Card)", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Date("CreateDate", header: "Create Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Bundle", header: "Bundle#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -288,6 +290,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -376,6 +379,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -508,6 +512,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -596,6 +601,7 @@ select
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
+    , a.RFPrintDate
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -685,7 +691,7 @@ OPTION (RECOMPILE)"
 
         private void BtnBundleCard_Click(object sender, EventArgs e)
         {
-            this.contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+            this.PrintBarcode();
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
@@ -714,20 +720,16 @@ OPTION (RECOMPILE)"
             this.Close();
         }
 
-        private void Layout1_Click(object sender, EventArgs e)
-        {
-            this.PrintBarcode(1);
-        }
-
-        private void Layout2_Click(object sender, EventArgs e)
-        {
-            this.PrintBarcode(2);
-        }
-
-        private void PrintBarcode(int layout)
+        private void PrintBarcode()
         {
             this.grid1.ValidateControl();
-            DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
+            if (this.dtt == null)
+            {
+                return;
+            }
+
+            // DefaultView 是依據使用者排序列印
+            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
             if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
@@ -740,6 +742,7 @@ OPTION (RECOMPILE)"
             {
                 Group_right = row1["Group"].ToString(),
                 Group_left = row1["left"].ToString(),
+                CutRef = string.Empty,
                 Tone = MyUtility.Convert.GetString(row1["Tone"]),
                 Line = row1["Line"].ToString(),
                 Cell = row1["Cell"].ToString(),
@@ -748,6 +751,7 @@ OPTION (RECOMPILE)"
                 Style = row1["Style"].ToString(),
                 MarkerNo = row1["MarkerNo"].ToString(),
                 Body_Cut = row1["Body_Cut"].ToString(),
+                SubCut = -1,
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
                 Article = row1["Article"].ToString(),
@@ -769,6 +773,7 @@ OPTION (RECOMPILE)"
                 Cut = MyUtility.Convert.GetString(row1["cut"]),
                 GroupCombCut = 0,
             }).ToList();
+            P10_Print.SubCutno(data);
 
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -830,14 +835,14 @@ OPTION (RECOMPILE)"
                     {
                         var writedata = data.Skip((s - 1) * 9).Take(9).ToList();
                         Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
-                        P10_Print.ProcessPrint(writedata, worksheet, layout, allNoDatas);
+                        P10_Print.ProcessPrint(writedata, worksheet, allNoDatas);
                         pp++;
                     }
                 });
             }
             else
             {
-                P10_Print.RunPagePrint(data, excelApp, layout);
+                P10_Print.RunPagePrint(data, excelApp);
             }
 
             // 有按才更新列印日期printdate。
@@ -895,60 +900,121 @@ where bd.BundleNo = '{dr["Bundle"]}'
 
         private void BtnBundleCardRF_Click(object sender, EventArgs e)
         {
-            var bundleIDs = this.dtt.AsEnumerable()
-                .Where(x => x["selected"].ToBool())
-                .GroupBy(x => new
-                {
-                    BundleID = x["BundleID"],
-                    BundleNO = x["Bundle"],
-                })
-                .Select(x => new
-                {
-                    x.Key.BundleID,
-                    x.Key.BundleNO,
-                })
-                .ToList();
-
-            if (bundleIDs.Count == 0)
+            if (this.dtt == null || this.dtt.Rows.Count == 0)
             {
                 this.grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
-            string sqlWhere = "and bd.BundleNO = @bundleNO";
-            string sqlCmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, sqlWhere);
-            foreach (var item in bundleIDs)
+            DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
+            if (dtSelect.Rows.Count == 0)
             {
-                List<SqlParameter> pars = new List<SqlParameter>
-                {
-                    new SqlParameter("@ID", item.BundleID),
-                    new SqlParameter("@bundleNO", item.BundleNO),
-                };
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
 
-                DataTable dt = new DataTable();
-                DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, pars, out dt);
-                if (!this.result)
+            DataTable allNoDatas = null;
+            dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
+            {
+                POID = dr["POID"].ToString(),
+                FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                Article = dr["Article"].ToString(),
+                Size = dr["Size"].ToString(),
+            })
+            .Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+            {
+                if (allNoDatas == null)
                 {
-                    MyUtility.Msg.ErrorBox(this.result.ToString());
-                    return;
+                    allNoDatas = P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
                 }
-
-                try
+                else
                 {
-                    result = Prg.BundleRFCard.BundleRFCardPrint(dt);
-                    if (!result)
-                    {
-                        MyUtility.Msg.ErrorBox(result.ToString());
-                        return;
-                    }
-
-                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
+                    allNoDatas.Merge(P10_Print.GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
                 }
-                catch (Exception ex)
+            });
+
+            List<P10_PrintData> data = dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
+            {
+                Group_right = dr["Group"].ToString(),
+                Group_left = dr["left"].ToString(),
+                CutRef = string.Empty,
+                Tone = dr["Tone"].ToString(),
+                Line = dr["Line"].ToString(),
+                Cell = dr["Cell"].ToString(),
+                POID = dr["POID"].ToString(),
+                SP = dr["SP"].ToString(),
+                Style = dr["Style"].ToString(),
+                MarkerNo = dr["MarkerNo"].ToString(),
+                Body_Cut = dr["Body_Cut"].ToString(),
+                SubCut = -1,
+                Parts = dr["Parts"].ToString(),
+                Color = dr["Color2"].ToString(),
+                Article = dr["Article"].ToString(),
+                Size = dr["Size"].ToString(),
+                SizeSpec = dr["SizeSpec"].ToString(),
+                Desc = dr["Patterncode"].ToString() + dr["Description"].ToString(),
+                Artwork = dr["SubProcess"].ToString(),
+                Quantity = dr["Qty"].ToString(),
+                Barcode = dr["Bundle"].ToString(),
+                Season = dr["Seasonid"].ToString(),
+                Brand = dr["brand"].ToString(),
+                Item = dr["item"].ToString(),
+                EXCESS1 = MyUtility.Convert.GetBool(dr["IsEXCESS"]) ? "EXCESS" : string.Empty,
+                NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(dr["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "X",
+                Replacement1 = string.Empty,
+                ShipCode = dr["ShipCode"].ToString(),
+                FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                Comb = dr["Comb"].ToString(),
+                Cut = dr["cut"].ToString(),
+                GroupCombCut = 0,
+                No = P10_Print.GetNo(dr["Bundle"].ToString(), allNoDatas),
+                BundleID = dr["BundleID"].ToString(),
+                BundleNo = dr["Bundle"].ToString(),
+            }).ToList();
+            P10_Print.SubCutno(data);
+
+            if (data.Count > 0)
+            {
+                P12_Print p = new P12_Print(data);
+                p.ShowDialog();
+                this.Query();
+                this.Grid_Filter();
+            }
+        }
+
+        private void CheckBoxOnlyCompleted_CheckedChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            string filter = string.Empty;
+            if (this.grid1.RowCount > 0)
+            {
+                switch (this.checkBoxOnlyNotYetCompleted.Checked)
                 {
-                    MyUtility.Msg.ErrorBox(ex.ToString());
-                    return;
+                    case true:
+                        if (MyUtility.Check.Empty(this.grid1))
+                        {
+                            break;
+                        }
+
+                        filter = $@" RFPrintDate is null";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case false:
+                        if (MyUtility.Check.Empty(this.grid1))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
                 }
             }
         }

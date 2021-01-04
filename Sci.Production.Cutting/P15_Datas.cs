@@ -22,6 +22,9 @@ namespace Sci.Production.Cutting
             public int Iden { get; set; }
 
             /// <inheritdoc/>
+            public int PrintGroup { get; set; }
+
+            /// <inheritdoc/>
             public int Tone { get; set; }
 
             /// <inheritdoc/>

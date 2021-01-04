@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
@@ -25,10 +26,8 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.CurrentDataRow = row;
             this.toexcel.Enabled = false;
-            MyUtility.Tool.SetupCombox(this.comboLayout, 2, 1, "0,Layout1,1,Layout2");
-            this.chkRFPrint.Visible = false;
-            this.chkRFRraser.Visible = false;
             this.comboBoxSetting.DataSource = Enum.GetValues(typeof(Prg.BundleRFCard.BundleType));
+            this.linkLabelRFCardEraseBeforePrinting1.SetText();
         }
 
         /// <inheritdoc/>
@@ -43,7 +42,8 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            if (this.radioBundleCard.Checked == true)
+            this.result = new DualResult(true);
+            if (this.radioBundleCard.Checked || this.radioBundleCardRF.Checked)
             {
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
@@ -101,6 +101,9 @@ from (
         ,SeasonID = concat(c.SeasonID,' ' + c.dest)
         ,brand = c.brandid
         ,brand.ShipCode
+        , a.RFPrintDate
+        , [BundleID] = b.ID
+        , a.BundleNo
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -311,21 +314,6 @@ order by x.[Bundle]");
                 }
                 #endregion
             }
-            else if (this.radioBundleCardRF.Checked)
-            {
-                DataRow row = this.CurrentDataRow;
-                string id = row["ID"].ToString();
-                List<SqlParameter> pars = new List<SqlParameter>
-                {
-                    new SqlParameter("@ID", id),
-                };
-                string scmd = Prg.BundleRFCard.BundelRFSQLCmd(this.checkExtendAllParts.Checked, string.Empty);
-                this.result = DBProxy.Current.Select(string.Empty, scmd, pars, out this.dt);
-                if (!this.result)
-                {
-                    return this.result;
-                }
-            }
 
             return this.result;
         }
@@ -334,6 +322,7 @@ order by x.[Bundle]");
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ExcelProcess();
+            this.WritePrintDate();
             return true;
         }
 
@@ -355,6 +344,7 @@ order by x.[Bundle]");
                 {
                     Group_right = row1["Group_right"].ToString(),
                     Group_left = row1["Group_left"].ToString(),
+                    CutRef = string.Empty,
                     Tone = MyUtility.Convert.GetString(row1["Tone"]),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
@@ -363,6 +353,7 @@ order by x.[Bundle]");
                     Style = row1["Style"].ToString(),
                     MarkerNo = row1["MarkerNo"].ToString(),
                     Body_Cut = row1["Body_Cut"].ToString(),
+                    SubCut = -1,
                     Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
                     Article = row1["Article"].ToString(),
@@ -381,12 +372,12 @@ order by x.[Bundle]");
                     ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
                 }).ToList();
+                SubCutno(data);
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                int layout = this.comboLayout.SelectedValue.ToString() == "0" ? 1 : 2;
-                RunPagePrint(data, excelApp, layout);
+                RunPagePrint(data, excelApp);
                 this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
@@ -401,10 +392,12 @@ order by x.[Bundle]");
                 excelApp.Quit();
                 Marshal.ReleaseComObject(excelApp);
                 File.Delete(excelName);
+                this.WritePrintDate();
             }
             else if (this.radioBundleChecklist.Checked)
             {
                 this.ExcelProcess(true);
+                this.WritePrintDate();
             }
             else if (this.radioBundleCardRF.Checked)
             {
@@ -415,42 +408,130 @@ order by x.[Bundle]");
                     return false;
                 }
 
-                if (!this.chkRFPrint.Checked && !this.chkRFRraser.Checked)
+                try
                 {
-                    MyUtility.Msg.ErrorBox("Print, Eraser must choose one.");
-                    return false;
-                }
-                else if (!this.chkRFPrint.Checked && this.chkRFRraser.Checked)
-                {
-                    // 放在Stacker的所有卡片擦除
-                    DualResult result = Prg.BundleRFCard.BundleRFErase();
+                    bool rfCardErase = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select RFCardEraseBeforePrinting from [System]"));
+                    DataTable dataTable = this.dt;
+                    var query = this.dt.AsEnumerable()
+                                  .GroupBy(x => x.Field<DateTime?>("RFPrintDate").HasValue ?
+                                                  "Y" : string.Empty)
+                                  .Select(x => new
+                                  {
+                                      RFPrintDate = x.Key,
+                                      Count = x.Count(),
+                                  })
+                                  .ToList();
+                    if (query.Any() && query.Count > 1)
+                    {
+                        DialogResult confirmResult = Prg.MessageBoxEX.Show(
+                                     "The last printing has not yet completed, do you want to continue printing?",
+                                     "Continue Printing?",
+                                     MessageBoxButtons.YesNoCancel,
+                                     new string[] { "Continue", "Restart Printing", "Cancel" });
+                        if (confirmResult.EqualString("Yes"))
+                        {
+                            dataTable = this.dt.AsEnumerable().Where(x => !x.Field<DateTime?>("RFPrintDate").HasValue).CopyToDataTable();
+                        }
+                        else if (confirmResult.EqualString("No"))
+                        {
+                            dataTable = this.dt;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    DataTable allNoDatas = null;
+                    dataTable.AsEnumerable().Select(dr => new P10_PrintData()
+                    {
+                        POID = dr["POID"].ToString(),
+                        FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                        Article = dr["Article"].ToString(),
+                        Size = dr["Size"].ToString(),
+                    })
+                    .Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+                    {
+                        if (allNoDatas == null)
+                        {
+                            allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                        }
+                        else
+                        {
+                            allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                        }
+                    });
+
+                    List<P10_PrintData> data = dataTable.AsEnumerable().Select(dr => new P10_PrintData()
+                    {
+                        Group_right = dr["Group_right"].ToString(),
+                        Group_left = dr["Group_left"].ToString(),
+                        CutRef = string.Empty,
+                        Tone = dr["Tone"].ToString(),
+                        Line = dr["Line"].ToString(),
+                        Cell = dr["Cell"].ToString(),
+                        POID = dr["POID"].ToString(),
+                        SP = dr["SP"].ToString(),
+                        Style = dr["Style"].ToString(),
+                        MarkerNo = dr["MarkerNo"].ToString(),
+                        Body_Cut = dr["Body_Cut"].ToString(),
+                        SubCut = -1,
+                        Parts = dr["Parts"].ToString(),
+                        Color = dr["Color"].ToString(),
+                        Article = dr["Article"].ToString(),
+                        Size = dr["Size"].ToString(),
+                        SizeSpec = MyUtility.Check.Empty(dr["SizeSpec"].ToString()) ? string.Empty : "(" + dr["SizeSpec"].ToString() + ")",
+                        Desc = dr["Desc"].ToString(),
+                        Artwork = dr["Artwork"].ToString(),
+                        Quantity = dr["Quantity"].ToString(),
+                        Barcode = dr["Barcode"].ToString(),
+                        Season = dr["Seasonid"].ToString(),
+                        Brand = dr["brand"].ToString(),
+                        Item = dr["item"].ToString(),
+                        EXCESS1 = MyUtility.Convert.GetBool(dr["isEXCESS"]) ? "EXCESS" : string.Empty,
+                        NoBundleCardAfterSubprocess1 = dr["NoBundleCardAfterSubprocess"].ToString().Empty() ? string.Empty : "X",
+                        Replacement1 = string.Empty,
+                        ShipCode = dr["ShipCode"].ToString(),
+                        FabricPanelCode = dr["FabricPanelCode"].ToString(),
+                        No = GetNo(dr["Barcode"].ToString(), allNoDatas),
+                        BundleID = dr["BundleID"].ToString(),
+                        BundleNo = dr["BundleNo"].ToString(),
+                    }).ToList();
+                    SubCutno(data);
+
+                    this.ShowWaitMessage("Process Print!");
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(data, 0, rfCardErase);
                     if (!result)
                     {
+                        this.HideWaitMessage();
                         MyUtility.Msg.ErrorBox(result.ToString());
                         return false;
                     }
 
-                    MyUtility.Msg.InfoBox("Erase success, Please check result in Bin Box.");
+                    this.HideWaitMessage();
+                    MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        DualResult result = Prg.BundleRFCard.BundleRFCardPrint(this.dt, this.chkRFRraser.Checked);
-                        if (!result)
-                        {
-                            MyUtility.Msg.ErrorBox(result.ToString());
-                            return false;
-                        }
-
-                        MyUtility.Msg.InfoBox("Printed success, Please check result in Bin Box.");
-                    }
-                    catch (Exception ex)
-                    {
-                        MyUtility.Msg.ErrorBox(ex.ToString());
-                        return false;
-                    }
+                    MyUtility.Msg.ErrorBox(ex.ToString());
+                    return false;
                 }
+            }
+            else if (this.radioBundleErase.Checked)
+            {
+                this.ShowWaitMessage("Process Erase!");
+
+                // 放在Stacker的所有卡片擦除
+                DualResult result = Prg.BundleRFCard.BundleRFErase();
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox(result.ToString());
+                    this.HideWaitMessage();
+                    return false;
+                }
+
+                this.HideWaitMessage();
+                MyUtility.Msg.InfoBox("Erase success, Please check result in Bin Box.");
             }
 
             return true;
@@ -520,7 +601,7 @@ order by x.[Bundle]");
         }
 
         /// <inheritdoc/>
-        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int layout)
+        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp)
         {
             // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
             int page = ((data.Count - 1) / 9) + 1;
@@ -551,12 +632,12 @@ order by x.[Bundle]");
             {
                 var writedata = data.Skip((pi - 1) * 9).Take(9).ToList();
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
-                ProcessPrint(writedata, worksheet, layout, allNoDatas);
+                ProcessPrint(writedata, worksheet, allNoDatas);
             }
         }
 
         /// <inheritdoc/>
-        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, int layout, DataTable allNoDatas)
+        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, DataTable allNoDatas)
         {
             int i = 0;
             int col_ref = 0;
@@ -564,36 +645,20 @@ order by x.[Bundle]");
 
             data.ForEach(r =>
             {
+                // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
                 string no = GetNo(r.Barcode, allNoDatas);
                 string contian;
-                if (layout == 1)
-                {
-                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
+                contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
 SP#:{r.SP}
 Style#: {r.Style}
-Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     Tone: {r.Tone}
+Cut#: {r.Body_Cut}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}
-Desc: {r.Desc}
-Sub Process: {r.Artwork}
-Qty: {r.Quantity}     No: {no}";
-                }
-                else
-                {
-                    contian = $@"Grp: {r.Group_right}  Line#: {r.Line}   {r.Group_left}  Cut/L:
-SP#:{r.SP}
-Style#: {r.Style}
 Sea: {r.Season}     Brand: {r.ShipCode}
-Marker#: {r.MarkerNo}
-Cut#: {r.Body_Cut}     Tone: {r.Tone}
-Color: {r.Color}
-Size: {r.Size}     Part: {r.Parts}
-Desc: {r.Desc}
+MK#: {r.MarkerNo}     Cut/L:
 Sub Process: {r.Artwork}
-Qty: {r.Quantity}     Item: {r.Item}";
-                }
+Desc: {r.Desc}
+Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                 row_ref = i / 3;
                 row_ref = (row_ref * 5) - (row_ref / 3);
@@ -620,6 +685,21 @@ Qty: {r.Quantity}     Item: {r.Item}";
         }
 
         /// <inheritdoc/>
+        internal static void SubCutno(List<P10_PrintData> data)
+        {
+            // 處理時排序不能變
+            foreach (var item in data)
+            {
+                item.SubCut = data.Where(w => w.CutRef == item.CutRef && w.Body_Cut == item.Body_Cut).Max(m => m.SubCut) + 1;
+            }
+
+            foreach (var item in data)
+            {
+                item.Body_Cut += item.SubCut == 0 ? string.Empty : "-" + item.SubCut.ToString();
+            }
+        }
+
+        /// <inheritdoc/>
         public static string GetNo(string bundleNo, DataTable dt = null, string poid = null, string fabricPanelCode = null, string article = null, string size = null)
         {
             if (dt == null)
@@ -642,6 +722,39 @@ Qty: {r.Quantity}     Item: {r.Item}";
         public static DataTable GetNoDatas(string poid, string fabricPanelCode, string article, string size)
         {
             string sqlcmd = $@"
+SELECT 1
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+and bd.PrintGroup is null";
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                sqlcmd = $@"
+SELECT bd.id, bd.PrintGroup, DR = DENSE_RANK() over(order by  bd.id, bd.PrintGroup), bd.BundleNo, bd.Qty, bd.Patterncode
+into #tmp
+FROM BUNDLE_DETAIL bd with(nolock)
+INNER JOIN BUNDLE B with(nolock) ON B.ID = bd.ID
+WHERE  B.POID ='{poid}' And B.FabricPanelCode='{fabricPanelCode}' And B.Article = '{article}' AND bd.SizeCode='{size}'
+ORDER BY bd.id,bd.PrintGroup
+
+select
+	x.BundleNo,
+	No = CONCAT(x.startno, '~',  x.startno + Qty - 1)
+	,x.Id, x.DR, x.Patterncode	
+from(
+	select t.BundleNo, t.Qty,
+		startno = 1+isnull((select SUM(qty) from(select qty = min(qty) from #tmp where DR < t.DR group by DR)x), 0)
+		,t.Id,t.DR,t.Patterncode
+	from #tmp t
+)x
+order by BundleNo
+
+drop table #tmp
+";
+            }
+            else
+            {
+                sqlcmd = $@"
 SELECT bd.id, bd.BundleGroup, bd.BundleNo,bd.Patterncode, bd.Qty, IsPair
 into #beforetmp
 FROM BUNDLE_DETAIL bd with(nolock)
@@ -695,6 +808,8 @@ from #tmp6
 
 drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 ";
+            }
+
             DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             return dt;
         }
@@ -748,28 +863,34 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             this.RadioButtionChangeStatus();
         }
 
+        private void RadioBundleErase_CheckedChanged(object sender, EventArgs e)
+        {
+            this.RadioButtionChangeStatus();
+        }
+
         private void RadioButtionChangeStatus()
         {
-            this.comboLayout.Visible = true;
             this.toexcel.Enabled = true;
             this.print.Enabled = true;
-            this.chkRFPrint.Visible = false;
-            this.chkRFRraser.Visible = false;
             if (this.radioBundleCard.Checked)
             {
                 this.toexcel.Enabled = false;
             }
             else if (this.radioBundleChecklist.Checked)
             {
-                this.comboLayout.Visible = false;
             }
-            else if (this.radioBundleCardRF.Checked)
+            else if (this.radioBundleCardRF.Checked || this.radioBundleErase.Checked)
             {
-                this.chkRFPrint.Visible = true;
-                this.chkRFRraser.Visible = true;
                 this.toexcel.Enabled = false;
-                this.comboLayout.Visible = false;
             }
+        }
+
+        private void WritePrintDate()
+        {
+            string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            string sqlcmd = $@"update Bundle set PrintDate = '{dtn}' where ID = '{this.CurrentDataRow["ID"]}';
+                  update Bundle_Detail set PrintDate = '{dtn}' where ID = '{this.CurrentDataRow["ID"]}';";
+            DBProxy.Current.Execute(null, sqlcmd);
         }
     }
 }

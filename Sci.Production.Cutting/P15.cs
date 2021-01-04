@@ -169,7 +169,7 @@ namespace Sci.Production.Cutting
                 }
 
                 DataRow dr = this.gridQty.GetDataRow(e.RowIndex);
-                dr["Tone"] = MyUtility.Check.Empty(e.FormattedValue) ? 0 : Convert.ToInt32(e.FormattedValue.ToString()[0]);
+                dr["Tone"] = this.LetterToNumber(e.FormattedValue.ToString());
                 dr["ToneChar"] = e.FormattedValue;
                 dr.EndEdit();
             };
@@ -1560,6 +1560,8 @@ order by ArticleGroup";
                 qty_newRow["iden"] = ++m;
                 qty_newRow["Ukey"] = this.gridCutRef.CurrentDataRow["Ukey"];
                 qty_newRow["Tone"] = tmpqtyTb.Rows.Count >= i && !MyUtility.Check.Empty(tmpqtyTb.Rows[i - 1]["Tone"]) ? tmpqtyTb.Rows[i - 1]["Tone"] : this.tone;
+                qty_newRow["ToneChar"] = MyUtility.Excel.ConvertNumericToExcelColumn(MyUtility.Convert.GetInt(qty_newRow["Tone"]));
+
                 qty_newRow["StyleUkey"] = this.gridCutRef.CurrentDataRow["StyleUkey"];
                 this.qtyTb.Rows.Add(qty_newRow);
             }
@@ -1888,6 +1890,7 @@ order by ArticleGroup";
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
                 No = MyUtility.Convert.GetInt(s["No"]),
                 Iden = MyUtility.Convert.GetInt(s["iden"]),
+                PrintGroup = -1,
                 Tone = MyUtility.Convert.GetInt(s["tone"]),
                 ToneChar = MyUtility.Convert.GetString(s["ToneChar"]),
                 POID = MyUtility.Convert.GetString(s["POID"]),
@@ -1951,7 +1954,7 @@ order by ArticleGroup";
             }).ToList();
             var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey) && !w.Qty.Empty()).ToList(); // 要寫入的中上表
             var idenList = selList.Select(s => s.Iden).ToList();
-            var selASList = asList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden)).ToList();
+            var selASList = asList.Where(w => ukeyList.Contains(w.Ukey) && idenList.Contains(w.Iden) && w.Qty > 0).ToList();
             var selpatternList = patternList.Where(w => ukeyList.Contains(w.Ukey) && w.Parts > 0).ToList(); // 要寫入的左下表
             var selallPartList = allPartList.Where(w => ukeyList.Contains(w.Ukey)).ToList(); // 要寫入的右下表
 
@@ -2025,6 +2028,21 @@ where b.POID = '{poid}'
                     beforeTone = f.Tone;
                 });
             });
+
+            // Print Group 編碼
+            int printGroup = 1;
+            var beforeitem = selList.FirstOrDefault();
+            foreach (var item in selList.OrderBy(o => o.Ukey).ThenBy(o => o.Dup).ThenBy(o => o.Tone))
+            {
+                // 不是建立在同一張 Bundle 則再從 1 開始
+                if (!(beforeitem.Ukey == item.Ukey && beforeitem.Dup == item.Dup))
+                {
+                    printGroup = 1;
+                }
+
+                item.PrintGroup = printGroup++;
+                beforeitem = item;
+            }
 
             // 總建單數.
             int num_Bundle = selList.Select(s => s.Dup).Distinct().Count();
@@ -2128,6 +2146,7 @@ Values('{bundleID}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart
 
                 // 合併, 只有 bundle, Bundle_Detail_allpart 合併. 其它的資料表有幾組就按實寫入. 排序 Tone 和上方準備 BuundleGroup 排序一樣
                 int bct = 1;
+                int allPartPrintGroup = 0;
                 foreach (var selitem in seldupList.OrderBy(o => o.Tone))
                 {
                     // Bundle_Detail_Qty
@@ -2138,10 +2157,17 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                     foreach (var pattern in selpatternList.Where(w => w.Ukey == selitem.Ukey))
                     {
                         // 若 tone 相同 寫入 Bundle_Detail 時 ALLPARTS 合為一筆寫入, 若有合併的 ALLPARTS, BundleNo 順序要在最後面
-                        // Tone > 0 使用者有設定, 同 Tone 有兩筆以上, 此次 ALLPARTS 不是合併的最後一 筆, 則跳過
+                        // Tone > 0 使用者有設定, 同 Tone 有兩筆以上, 此次 ALLPARTS 不是合併的最後一筆則跳過
+                        // 合併 ALLPARTS 的 PrintGroup 取第一組
+                        int printGroup_x = selitem.PrintGroup;
                         int sct = seldupList.Where(w => selitem.Tone > 0 && w.Tone == selitem.Tone).Count();
                         if (pattern.PatternCode.Equals("ALLPARTS") && sct > 1 && bct < sct)
                         {
+                            if (allPartPrintGroup == 0)
+                            {
+                                allPartPrintGroup = selitem.PrintGroup;
+                            }
+
                             bct++;
                             continue;
                         }
@@ -2149,6 +2175,13 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                         if (pattern.PatternCode.Equals("ALLPARTS"))
                         {
                             bct = 1;
+                            if (allPartPrintGroup == 0)
+                            {
+                                allPartPrintGroup = selitem.PrintGroup;
+                            }
+
+                            printGroup_x = allPartPrintGroup;
+                            allPartPrintGroup = 0;
                         }
 
                         string bundleNo = bundleno_list[bundlenoCount];
@@ -2163,7 +2196,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                         var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
                         int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
                         insertSql.Append($@"
-Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone)
+Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone, PrintGroup)
 Values
     ('{bundleID}'
     ,'{bundleNo}'
@@ -2176,7 +2209,8 @@ Values
     ,0,0 -- Farmin, Farmout
     ,'{pattern.Ispair}'
     ,'{pattern.Location}'
-    ,'{selitem.ToneChar}');
+    ,'{selitem.ToneChar}'
+    ,{printGroup_x});
 ");
 
                         // Bundle_Detail_Art 將 Art 以+號拆開寫入, 且ALLPARTS 不寫入
@@ -2421,7 +2455,7 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             // 要建立的單 左下表 至少一筆 Parts 數量大於0
             foreach (var ukey in ukeyList)
             {
-                if (!selpatternList.Where(w => w.Ukey == ukey && w.Parts != 0).Any())
+                if (!selpatternList.Where(w => w.Ukey == ukey && w.Parts > 0).Any())
                 {
                     MyUtility.Msg.WarningBox("Bundle Card info cannot be empty.");
                     return false;
@@ -2444,6 +2478,26 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             }
 
             return true;
+        }
+
+        private int LetterToNumber(string columnName)
+        {
+            if (string.IsNullOrEmpty(columnName))
+            {
+                return 0;
+            }
+
+            columnName = columnName.ToUpperInvariant();
+
+            int sum = 0;
+
+            for (int i = 0; i < columnName.Length; i++)
+            {
+                sum *= 26;
+                sum += columnName[i] - 'A' + 1;
+            }
+
+            return sum;
         }
 
         private List<string> GetNotMain(DataRow dr, DataRow[] drs)

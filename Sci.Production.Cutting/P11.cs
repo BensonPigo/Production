@@ -2211,6 +2211,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             int bundlenoCount_Record = 0;
             foreach (DataRow artar in artAy)
             {
+                int printGroup = 1;
                 int startno = 1;
                 int startno_bytone = 1;
                 DataRow[] startnoAry = spStartnoTb.Select(string.Format("POID='{0}'", artar["POID"]));
@@ -2311,6 +2312,7 @@ values
                         bundleDetail_pre["ID"] = id_list[idcount];
                         bundleDetail_pre["Bundleno"] = string.Empty; // bundleno_list[bundlenocount];
                         bundleDetail_pre["BundleGroup"] = startno;
+                        bundleDetail_pre["PrintGroup"] = printGroup;
                         bundleDetail_pre["PatternCode"] = rowPat["PatternCode"];
                         bundleDetail_pre["PatternDesc"] = rowPat["PatternDesc"].ToString().Replace("'", "''");
                         bundleDetail_pre["SizeCode"] = artar["SizeCode"];
@@ -2381,6 +2383,7 @@ values
                     }
 
                     startno++;
+                    printGroup++;
                     if (autono == 0)
                     {
                         startnoAry[0]["Startno"] = Convert.ToInt16(startnoAry[0]["Startno"]) + 1; // 續編Startno才需要
@@ -2392,9 +2395,10 @@ values
                 #region by tone 重新處理 Bundle_Detail, Bundle_Detail_art.  1.< Bundlegroup此圈重鞭馬, by sp重紀錄最大值 >,  2.< Bundle數量會改變, 影響全部 >
                 int new_startno = 0; // 紀錄重新處理後bundlegroup最大值
                 decimal tone = MyUtility.Convert.GetDecimal(artar["byTone"]);
+                decimal noofbundle = MyUtility.Convert.GetDecimal(artar["qty"]);
 
                 // byTone, 即 Bundlegroup 分幾個
-                if (tone > 0)
+                if (tone > 0 && noofbundle > 1)
                 {
                     DataTable dtDetail = tmpBundle_Detail.Clone();
                     DataTable dtAllPart = tmpBundle_Detail.Clone();
@@ -2404,12 +2408,12 @@ values
                     int a = tmpBundle_Detail.Select("PatternCode = 'AllParts'").Length;
                     if (na > 0)
                     {
-                        dtDetail = tmpBundle_Detail.Select("PatternCode <> 'AllParts'").CopyToDataTable();
+                        dtDetail = tmpBundle_Detail.Select("PatternCode <> 'AllParts'").OrderBy(o => o["Ukey1"]).CopyToDataTable();
                     }
 
                     if (a > 0)
                     {
-                        dtAllPart = tmpBundle_Detail.Select("PatternCode = 'AllParts'").CopyToDataTable();
+                        dtAllPart = tmpBundle_Detail.Select("PatternCode = 'AllParts'").OrderBy(o => o["Ukey1"]).CopyToDataTable();
                     }
 
                     tmpBundle_Detail.Clear();
@@ -2425,6 +2429,7 @@ values
                             foreach (DataRow item in dtCopy.Rows)
                             {
                                 item["bundlegroup"] = startno_bytone + i; // 重設bundlegroup
+                                item["PrintGroup"] = MyUtility.Convert.GetInt(item["PrintGroup"]) + (i * noofbundle);
                                 item["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                                 new_startno = startno_bytone + i;
 
@@ -2462,17 +2467,42 @@ values
                     {
                         int ttlAllPartQty = dtAllPart.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
                             .Sum(s => MyUtility.Convert.GetInt(s["Qty"]));
+                        int allpartPrintGroup = dtAllPart.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["PrintGroup"]));
                         DataRow row = dtAllPart.Rows[0];
                         for (int i = 0; i < tone; i++)
                         {
                             row["BundleGroup"] = startno_bytone + i;
+                            row["PrintGroup"] = (allpartPrintGroup * (i + 1)) - (noofbundle - 1);
                             row["Tone"] = MyUtility.Excel.ConvertNumericToExcelColumn(i + 1);
                             new_startno = startno_bytone + i;
                             int notAllpart = patternAry.Rows.Count - 1;
                             notAllpart = notAllpart == 0 ? 1 : notAllpart;
-                            row["Qty"] = ttlAllPartQty / tone;
-
                             dtAllPart2.ImportRow(row);
+                        }
+
+                        // 重分每一筆拆的Qty
+                        if (na > 0)
+                        {
+                            var da = dtAllPart2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).
+                                OrderBy(o => MyUtility.Convert.GetInt(o["PrintGroup"])).ToList();
+                            int beforei = da.Count();
+                            int upallqty = 0;
+                            for (int i = da.Count() - 1; i >= 0; i--)
+                            {
+                                int qty = tmpBundle_Detail.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted &&
+                                   MyUtility.Convert.GetInt(w["PrintGroup"]) >= MyUtility.Convert.GetInt(da[i]["PrintGroup"])).
+                                   Sum(s => MyUtility.Convert.GetInt(s["Qty"])) / patternAry.Select($"patternCode <> 'Allparts'").Count();
+                                da[i]["qty"] = qty - upallqty;
+                                upallqty = qty;
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < dtAllPart2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Count() / tone; i++)
+                            {
+                                DataRow[] drD = dtAllPart2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).OrderBy(o => o["BundleGroup"]).ToArray();
+                                Prgs.AverageNumeric(drD, "Qty", ttlAllPartQty, true);
+                            }
                         }
 
                         DataRow[] drA = dtAllPart2.AsEnumerable().ToArray();
@@ -2516,9 +2546,9 @@ values
                     nBundleDetail_dr["Insert"] = string.Format(
                         @"Insert into Bundle_Detail
                             (ID,Bundleno,BundleGroup,PatternCode,
-                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,isPair ,Location,Tone) Values
+                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,isPair ,Location,Tone,PrintGroup) Values
                             ('{0}','{1}',{2},'{3}',
-                            '{4}','{5}',{6},{7},0,0,'{8}','{9}','{10}')",
+                            '{4}','{5}',{6},{7},0,0,'{8}','{9}','{10}','{11}')",
                         item["ID"],
                         item["Bundleno"],
                         item["BundleGroup"],
@@ -2529,7 +2559,8 @@ values
                         item["Parts"],
                         MyUtility.Convert.GetBool(item["isPair"]) ? 1 : 0,
                         item["Location"],
-                        item["Tone"]);
+                        item["Tone"],
+                        item["PrintGroup"]);
                     insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
 
                     DataRow drBundleNo = insert_BundleNo.NewRow();
