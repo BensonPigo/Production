@@ -259,6 +259,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -348,6 +349,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -481,6 +483,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -570,6 +573,7 @@ select
     , a.BundleNo [Bundle]
     , b.CutRef [CutRef]
     , b.POID [POID]
+    , b.SubCutNo
 	, SP=dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID for XML RAW))
     , a.BundleGroup [Group]
     , a.Tone
@@ -742,7 +746,7 @@ OPTION (RECOMPILE)"
             {
                 Group_right = row1["Group"].ToString(),
                 Group_left = row1["left"].ToString(),
-                CutRef = string.Empty,
+                CutRef = row1["CutRef"].ToString(),
                 Tone = MyUtility.Convert.GetString(row1["Tone"]),
                 Line = row1["Line"].ToString(),
                 Cell = row1["Cell"].ToString(),
@@ -750,8 +754,7 @@ OPTION (RECOMPILE)"
                 SP = row1["SP"].ToString(),
                 Style = row1["Style"].ToString(),
                 MarkerNo = row1["MarkerNo"].ToString(),
-                Body_Cut = row1["Body_Cut"].ToString(),
-                SubCut = -1,
+                Body_Cut = row1["Body_Cut"].ToString() + (MyUtility.Check.Empty(row1["SubCutNo"]) ? string.Empty : $"-{row1["SubCutNo"]}"),
                 Parts = row1["Parts"].ToString(),
                 Color = row1["Color2"].ToString(),
                 Article = row1["Article"].ToString(),
@@ -772,9 +775,8 @@ OPTION (RECOMPILE)"
                 Comb = MyUtility.Convert.GetString(row1["Comb"]),
                 Cut = MyUtility.Convert.GetString(row1["cut"]),
                 GroupCombCut = 0,
+                BundleID = row1["BundleID"].ToString(),
             }).ToList();
-            P10_Print.SubCutno(data);
-
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
@@ -939,7 +941,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
             {
                 Group_right = dr["Group"].ToString(),
                 Group_left = dr["left"].ToString(),
-                CutRef = string.Empty,
+                CutRef = dr["CutRef"].ToString(),
                 Tone = dr["Tone"].ToString(),
                 Line = dr["Line"].ToString(),
                 Cell = dr["Cell"].ToString(),
@@ -947,8 +949,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 SP = dr["SP"].ToString(),
                 Style = dr["Style"].ToString(),
                 MarkerNo = dr["MarkerNo"].ToString(),
-                Body_Cut = dr["Body_Cut"].ToString(),
-                SubCut = -1,
+                Body_Cut = dr["Body_Cut"].ToString() + (MyUtility.Check.Empty(dr["SubCutNo"]) ? string.Empty : $"-{dr["SubCutNo"]}"),
                 Parts = dr["Parts"].ToString(),
                 Color = dr["Color2"].ToString(),
                 Article = dr["Article"].ToString(),
@@ -973,8 +974,6 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 BundleID = dr["BundleID"].ToString(),
                 BundleNo = dr["Bundle"].ToString(),
             }).ToList();
-            P10_Print.SubCutno(data);
-
             if (data.Count > 0)
             {
                 P12_Print p = new P12_Print(data);

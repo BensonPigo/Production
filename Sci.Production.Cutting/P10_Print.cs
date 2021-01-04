@@ -104,6 +104,7 @@ from (
         , a.RFPrintDate
         , [BundleID] = b.ID
         , a.BundleNo
+        , b.SubCutNo
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -344,7 +345,7 @@ order by x.[Bundle]");
                 {
                     Group_right = row1["Group_right"].ToString(),
                     Group_left = row1["Group_left"].ToString(),
-                    CutRef = string.Empty,
+                    CutRef = this.CurrentDataRow["CutRef"].ToString(),
                     Tone = MyUtility.Convert.GetString(row1["Tone"]),
                     Line = row1["Line"].ToString(),
                     Cell = row1["Cell"].ToString(),
@@ -352,8 +353,7 @@ order by x.[Bundle]");
                     SP = row1["SP"].ToString(),
                     Style = row1["Style"].ToString(),
                     MarkerNo = row1["MarkerNo"].ToString(),
-                    Body_Cut = row1["Body_Cut"].ToString(),
-                    SubCut = -1,
+                    Body_Cut = row1["Body_Cut"].ToString() + (MyUtility.Check.Empty(row1["SubCutNo"]) ? string.Empty : $"-{row1["SubCutNo"]}"),
                     Parts = row1["Parts"].ToString(),
                     Color = row1["Color"].ToString(),
                     Article = row1["Article"].ToString(),
@@ -371,8 +371,8 @@ order by x.[Bundle]");
                     Replacement1 = string.Empty,
                     ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
+                    BundleID = row1["BundleID"].ToString(),
                 }).ToList();
-                SubCutno(data);
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
@@ -466,7 +466,7 @@ order by x.[Bundle]");
                     {
                         Group_right = dr["Group_right"].ToString(),
                         Group_left = dr["Group_left"].ToString(),
-                        CutRef = string.Empty,
+                        CutRef = this.CurrentDataRow["CutRef"].ToString(),
                         Tone = dr["Tone"].ToString(),
                         Line = dr["Line"].ToString(),
                         Cell = dr["Cell"].ToString(),
@@ -474,8 +474,7 @@ order by x.[Bundle]");
                         SP = dr["SP"].ToString(),
                         Style = dr["Style"].ToString(),
                         MarkerNo = dr["MarkerNo"].ToString(),
-                        Body_Cut = dr["Body_Cut"].ToString(),
-                        SubCut = -1,
+                        Body_Cut = dr["Body_Cut"].ToString() + (MyUtility.Check.Empty(dr["SubCutNo"]) ? string.Empty : $"-{dr["SubCutNo"]}"),
                         Parts = dr["Parts"].ToString(),
                         Color = dr["Color"].ToString(),
                         Article = dr["Article"].ToString(),
@@ -497,7 +496,6 @@ order by x.[Bundle]");
                         BundleID = dr["BundleID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
                     }).ToList();
-                    SubCutno(data);
 
                     this.ShowWaitMessage("Process Print!");
                     DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(data, 0, rfCardErase);
@@ -682,21 +680,6 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                 i++;
             });
-        }
-
-        /// <inheritdoc/>
-        internal static void SubCutno(List<P10_PrintData> data)
-        {
-            // 處理時排序不能變
-            foreach (var item in data)
-            {
-                item.SubCut = data.Where(w => w.CutRef == item.CutRef && w.Body_Cut == item.Body_Cut).Max(m => m.SubCut) + 1;
-            }
-
-            foreach (var item in data)
-            {
-                item.Body_Cut += item.SubCut == 0 ? string.Empty : "-" + item.SubCut.ToString();
-            }
         }
 
         /// <inheritdoc/>

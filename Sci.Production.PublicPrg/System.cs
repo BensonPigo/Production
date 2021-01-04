@@ -15,6 +15,31 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+        /// <summary>
+        /// 將 ExcelColumnName 轉 int
+        /// </summary>
+        /// <param name="columnName">A~</param>
+        /// <returns>1~</returns>
+        public static int ExcelColumnNameToNumber(string columnName)
+        {
+            if (string.IsNullOrEmpty(columnName))
+            {
+                return 0;
+            }
+
+            columnName = columnName.ToUpperInvariant();
+
+            int sum = 0;
+
+            for (int i = 0; i < columnName.Length; i++)
+            {
+                sum *= 26;
+                sum += columnName[i] - 'A' + 1;
+            }
+
+            return sum;
+        }
+
         /// <inheritdoc/>
         public static bool CheckFloat(string svalue, int dp1, int dp2)
         {

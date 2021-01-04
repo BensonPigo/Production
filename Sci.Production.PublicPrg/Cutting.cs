@@ -13,6 +13,35 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         /// <summary>
+        /// 取得最新 SubCutNo
+        /// </summary>
+        /// <param name="cutRef">cutRef</param>
+        /// <param name="patternPanel">patternPanel</param>
+        /// <param name="fabricPanelCode">fabricPanelCode</param>
+        /// <param name="cutno">cutno</param>
+        /// <returns>SubCutNo</returns>
+        public static string GetSubCutNo(string cutRef, string patternPanel, string fabricPanelCode, string cutno)
+        {
+            string sqlcmd = $@"
+select top 1 b.SubCutNo
+from Bundle b
+where b.CutRef='{cutRef}'
+and b.PatternPanel  = '{patternPanel}'
+and b.FabricPanelCode = '{fabricPanelCode}'
+and b.Cutno = '{cutno}'
+order by len(SubCutNo) desc, SubCutNo desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drc))
+            {
+                return MyUtility.Excel.ConvertNumericToExcelColumn(Prgs.ExcelColumnNameToNumber(drc["SubCutNo"].ToString()) + 1);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// 馬克長的格式轉換(轉換成 99Y99-9/9+9" 這種格式)
         /// </summary>
         /// <inheritdoc />
@@ -2455,9 +2484,6 @@ DROP TABLE #beforeTmp
 
             /// <inheritdoc/>
             public string Body_Cut { get; set; }
-
-            /// <inheritdoc/>
-            public int SubCut { get; set; }
 
             /// <inheritdoc/>
             public string Parts { get; set; }
