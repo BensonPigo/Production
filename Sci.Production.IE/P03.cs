@@ -1485,7 +1485,7 @@ select ID = null
 	   , ld.GroupKey
 	   , ld.New
 	   , ld.EmployeeID
-	   , Description = o.DescEN
+	   , [Description] = IIF(o.DescEN = '' OR o.DescEN IS NULL, ld.OperationID, o.DescEN)
 	   , EmployeeName = e.Name
 	   , EmployeeSkill = e.Skill
 	   , Efficiency = iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100)
@@ -1507,7 +1507,7 @@ outer apply (
 	from Operation o2 WITH (NOLOCK)
 	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
 	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
-	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID
+	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
 	where o.ID = o2.ID
 )show
 where ld.ID = {0} 
@@ -1515,7 +1515,9 @@ order by case when ld.No = '' then 1
 			when left(ld.No, 1) = 'P' then 2
 			else 3
 			end, 
-        ld.GroupKey", callNextForm.P03CopyLineMapping["ID"].ToString());
+        ld.GroupKey",
+                    callNextForm.P03CopyLineMapping["ID"].ToString(),
+                    Env.User.Factory);
                 DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out copyLineMapDetail);
                 if (!selectResult)
                 {
