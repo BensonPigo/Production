@@ -193,6 +193,7 @@ select   a.GroupKey
         ,[IsHide] = isnull(a.IsHide, 0)
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
         ,[IsShowinIEP03] = cast(isnull(show.IsShowinIEP03, 1) as bit)
+        ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join OperationDesc od on o.ID = od.ID
@@ -1064,7 +1065,8 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1091,7 +1093,8 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1202,7 +1205,8 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                    .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1229,7 +1233,8 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                    .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1330,7 +1335,8 @@ order by NO
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                    .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
@@ -1354,7 +1360,8 @@ order by NO
                         nocolumn = 17;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
                         worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
-                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"));
+                        DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}' and IsHide = 0 and IsPPa = {1}", MyUtility.Convert.GetString(nodr["No"]), isSheet3 ? "1" : "0"))
+                                    .OrderBy(x => x.Field<string>("OtherBy")).ThenBy(x => x.Field<int>("GroupKey")).ToArray();
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
