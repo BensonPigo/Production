@@ -253,9 +253,9 @@ and exists(
 	where ml.IsWMS = 1
 	union all
 	select 1 from MtlLocation ml 
-	where ml.ID = sd.ToLocation
-    and ml.StockType=sd.ToStockType
-	and ml.IsWMS = 1
+	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
+	and ml.StockType=sd.ToStockType
+	where ml.IsWMS = 1
 )
 
 ";
@@ -460,13 +460,14 @@ and exists(
 	select 1
 	from MtlLocation ml 
 	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
-		and ml.StockType=sd.FromStockType
+		and ml.StockType=bb2.FromStockType
 	where ml.IsWMS = 1
-	union all
-	select 1 from MtlLocation ml 
-	where ml.ID = sd.ToLocation
-	    and ml.StockType=sd.ToStockType
-	    and ml.IsWMS = 1
+union all
+	select 1 
+    from MtlLocation ml 
+    inner join dbo.SplitString(bb2.ToLocation,',') sp on sp.Data = ml.ID 
+	    and ml.StockType = bb2.FromStockType
+	where ml.IsWMS = 1
 )
 ";
             DataTable dt = new DataTable();
@@ -544,13 +545,15 @@ and exists(
 and exists(
 	select 1
 	from MtlLocation ml
-	where ml.ID = lt2.ToLocation
-	and ml.IsWMS =1 
+    inner join dbo.SplitString(lt2.ToLocation,',') sp on sp.Data = ml.ID
+	where  ml.IsWMS =1 
+
 	union all
-	select 1
+
+    select 1
 	from MtlLocation ml
-	where ml.ID = lt2.FromLocation
-	and ml.IsWMS =1 
+    inner join dbo.SplitString(lt2.FromLocation,',') sp on sp.Data = ml.ID
+	where  ml.IsWMS =1 
 )
 ";
             DataTable dt = new DataTable();
