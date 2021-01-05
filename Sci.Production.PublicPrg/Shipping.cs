@@ -70,7 +70,7 @@ where ID = '{0}'", expressID);
                 sqlFA = $@"
 Declare @UsageQty numeric(12,4) = @inputUsageQty
 select  top 1
-        NLCode ,
+        [NLCode] = f.NLCode2 ,
         [StockUnit] = StockUnit.val,
         [SCIRefno] = f.SCIRefno,
         [FabricBrandID] = f.BrandID,
@@ -91,14 +91,14 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = St
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M') M2UnitRate
  where f.Refno = @Refno and f.Type = 'F' {whereSciRefno} {whereNLCode} and f.UsageUnit = @usageUnit
-order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
+order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode2,f.EditDate desc
 ";
             }
             else if (fabricType == "A")
             {
                 sqlFA = $@"
 Declare @UsageQty numeric(12,4) = @inputUsageQty
-select  NLCode ,
+select  [NLCode] = f.NLCode2 ,
         [StockUnit] = StockUnit.val,
         [SCIRefno] = f.SCIRefno,
         [FabricBrandID] = f.BrandID,
@@ -119,14 +119,14 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = St
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = StockUnit.val and UnitTo = 'M') M2UnitRate
  where f.Refno = @Refno and f.Type = 'A' {whereSciRefno} {whereNLCode} and f.UsageUnit = @usageUnit
-order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode,f.EditDate desc
+order by iif(f.BrandID = @BrandID,0,1 ),f.NLCode2,f.EditDate desc
 ";
             }
             else if (fabricType == "L")
             {
                 sqlGetNLCode = $@"
 Declare @UsageQty numeric(12,4) = @inputUsageQty
-select  li.NLCode,
+select  [NLCode] = li.NLCode2,
         [StockUnit] = li.UnitID,
         [SCIRefno] = @Refno,
         [FabricBrandID] = '',
@@ -148,7 +148,7 @@ where Ltrim(li.Refno) = @Refno";
             {
                 sqlGetNLCode = $@"
 Declare @UsageQty numeric(12,4) = @inputUsageQty
-select  Misc.NLCode,
+select  [NLCode] = Misc.NLCode2,
         [StockUnit] = Misc.UsageUnit,
         [SCIRefno] = @Refno,
         [FabricBrandID] = '',
@@ -476,7 +476,7 @@ select  t.StyleID
         , f.SCIRefno
         , f.Refno
         , f.BrandID
-        , f.NLCode
+        , [NLCode] = f.NLCode2
         , f.HSCode
         , f.CustomsUnit
         , f.Width,f.Type
@@ -570,7 +570,7 @@ select  t.*
         , sc.ColorID
         , f.UsageUnit
         , HSCode = isnull (f.HSCode, '')
-        , NLCode = isnull (f.NLCode, '')
+        , NLCode = isnull (f.NLCode2, '')
         , CustomsUnit = isnull (f.CustomsUnit, '')
         , f.PcsWidth
         , f.PcsLength
@@ -678,7 +678,7 @@ select  t.*
         , ld.Qty
         , ld.UnitId
         , li.MeterToCone
-        , li.NLCode
+        , [NLCode] = li.NLCode2
         , li.HSCode
         , CustomsUnit = isnull (li.CustomsUnit, '')
         , li.PcsWidth
@@ -817,7 +817,7 @@ select  t.*
         , f.Refno
         , Qty=rd.StockQty
         , UnitId=rd.stockunit
-        , f.NLCode
+        , [NLCode] = f.NLCode2
         , f.HSCode
         , CustomsUnit = isnull (f.CustomsUnit, '')
         , f.PcsWidth
@@ -963,7 +963,7 @@ from #tmpAllStyle
 select 	s.StyleUkey,
 		std.SCIRefNo,
 		f.Refno,
-		f.NLCode,
+		[NLCode] = f.NLCode2,
 		f.HSCode,
 		f.CustomsUnit,
 		f.Description,
@@ -1008,7 +1008,7 @@ outer apply(select RateValue,Rate  from  View_Unitrate where FROM_U = f.UsageUni
 group by s.StyleUkey,
 		std.SCIRefNo,
 		f.Refno,
-		f.NLCode,
+		f.NLCode2,
 		f.HSCode,
 		f.CustomsUnit,
 		f.Description,

@@ -569,7 +569,7 @@ and v.IsSubconIn = 0", out necessaryItem);
                 newrow["Qty"] = dr["GMTQty"];
                 newrow["StyleUKey"] = dr["StyleUKey"];
                 newrow["CPU"] = dr["StyleCPU"];
-                newrow["Consumption"] = (MyUtility.Check.Empty(lackNLCode) ? string.Empty : ("Lacking Customs Code:" + lackNLCode.Substring(0, lackNLCode.Length - 1) + ". ")) + (findData.Length > 0 ? "Appear empty Customs Code." : string.Empty);
+                newrow["Consumption"] = (MyUtility.Check.Empty(lackNLCode) ? string.Empty : ("Lacking Customs Code:" + lackNLCode.Substring(0, lackNLCode.Length - 1) + ". ")) + (findData.Length > 0 ? "Appear empty Customs Code(2021)." : string.Empty);
 
                 gridData.Rows.Add(newrow);
             }

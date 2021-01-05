@@ -39,6 +39,8 @@ order by h.Year desc, h.ukey desc";
         {
             this.editName = MyUtility.Convert.GetString(this.CurrentMaintain["EditName"]);
             this.editDate = MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]);
+            this.txtNLCode.MainDataRow = this.CurrentMaintain;
+            this.txtNLCode2.MainDataRow = this.CurrentMaintain;
             return base.ClickEditBefore();
         }
 
@@ -76,67 +78,6 @@ order by h.Year desc, h.ukey desc";
             }
 
             return DBProxy.Current.Execute(null, updateCmd);
-        }
-
-        // NL Code
-        private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                @"
-select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-order by NLCode",
-                "5,11,8",
-                this.Text,
-                false,
-                ",",
-                headercaptions: "Customs Code, HSCode, Unit");
-
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            IList<DataRow> selectedData = item.GetSelecteds();
-            this.CurrentMaintain["NLCode"] = item.GetSelectedString();
-            this.CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
-            this.CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
-        }
-
-        // NL Code
-        private void TxtNLCode_Validating(object sender, CancelEventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.txtNLCode.Text))
-            {
-                this.CurrentMaintain["NLCode"] = string.Empty;
-                this.CurrentMaintain["HSCode"] = string.Empty;
-                this.CurrentMaintain["CustomsUnit"] = string.Empty;
-            }
-            else
-            {
-                if (MyUtility.Check.Seek(
-                    string.Format(
-                        @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.txtNLCode.Text), out DataRow nLCodeDate))
-                {
-                    this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
-                    this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
-                    this.CurrentMaintain["CustomsUnit"] = nLCodeDate["UnitID"];
-                }
-                else
-                {
-                    this.CurrentMaintain["NLCode"] = string.Empty;
-                    this.CurrentMaintain["HSCode"] = string.Empty;
-                    this.CurrentMaintain["CustomsUnit"] = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
-                    return;
-                }
-            }
         }
     }
 }

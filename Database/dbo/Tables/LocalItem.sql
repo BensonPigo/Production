@@ -37,6 +37,7 @@
     [IsCarton] BIT NULL DEFAULT ((0)), 
     [UnPack] BIT NOT NULL DEFAULT 0, 
 	CartonType Varchar (6) NOT NULL CONSTRAINT [DF_LocalItem_CartonType]  DEFAULT(''),
+	[NLCode2] VARCHAR(9) CONSTRAINT [DF_LocalItem_NLCode2] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_LocalItem] PRIMARY KEY CLUSTERED ([RefNo] ASC)
 );
 
