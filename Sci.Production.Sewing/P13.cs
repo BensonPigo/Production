@@ -18,16 +18,6 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-
-            string selectCommand = string.Format("select ID = '',IDName = '' union all select ID,  rtrim(ID)+'- '+rtrim(Name)  as IDName from DropDownList WITH (NOLOCK) where Type = '{0}' ", "Pms_DRYTransferTo");
-            Ict.DualResult returnResult;
-            DataTable dropDownListTable = new DataTable();
-            if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
-            {
-                this.txtdropdownlist1.DataSource = dropDownListTable;
-                this.txtdropdownlist1.DisplayMember = "IDName";
-                this.txtdropdownlist1.ValueMember = "ID";
-            }
         }
 
         /// <inheritdoc/>
@@ -36,7 +26,6 @@ namespace Sci.Production.Sewing
             base.OnFormLoaded();
 
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("TransferTo", header: "Transfer To", width: Widths.Auto(), iseditingreadonly: true)
             .Text("TransferDate", header: "Transfer Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: true)
@@ -73,12 +62,6 @@ namespace Sci.Production.Sewing
                 dateTransfer1 = this.dateTransfer.Value1.Value.ToShortDateString();
                 dateTransfer2 = this.dateTransfer.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss");
                 sqlwhere += $@" and dr.TransferDate between @TransferDate1 and @TransferDate2 ";
-            }
-
-            if (!MyUtility.Check.Empty(this.txtdropdownlist1.Text))
-            {
-                transferTo = MyUtility.Convert.GetString(this.txtdropdownlist1.SelectedValue);
-                sqlwhere += $@" and dr.TransferTo = @TransferTo";
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))

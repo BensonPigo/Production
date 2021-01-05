@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lbSP = new Sci.Win.UI.Label();
             this.lbPO = new Sci.Win.UI.Label();
@@ -45,9 +44,6 @@
             this.dateRangeReceive = new Sci.Win.UI.DateRange();
             this.lbReceiveDate = new Sci.Win.UI.Label();
             this.gridTransfer = new Sci.Win.UI.Grid();
-            this.label6 = new Sci.Win.UI.Label();
-            this.comboTransferTo = new Sci.Production.Class.ComboDropDownList(this.components);
-            this.btnUpdateAll = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.gridTransfer)).BeginInit();
@@ -57,32 +53,32 @@
             // 
             // lbSP
             // 
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbSP.Location = new System.Drawing.Point(4, 12);
             this.lbSP.Name = "lbSP";
             this.lbSP.Size = new System.Drawing.Size(93, 23);
             this.lbSP.TabIndex = 1;
             this.lbSP.Text = "SP#";
-            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbPO
             // 
+            this.lbPO.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPO.Location = new System.Drawing.Point(214, 12);
             this.lbPO.Name = "lbPO";
             this.lbPO.Size = new System.Drawing.Size(75, 23);
             this.lbPO.TabIndex = 2;
             this.lbPO.Text = "PO#";
-            this.lbPO.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPO.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbPackID
             // 
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPackID.Location = new System.Drawing.Point(406, 12);
             this.lbPackID.Name = "lbPackID";
             this.lbPackID.Size = new System.Drawing.Size(75, 23);
             this.lbPackID.TabIndex = 3;
             this.lbPackID.Text = "Pack ID";
-            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label4
@@ -197,12 +193,12 @@
             // 
             // lbReceiveDate
             // 
+            this.lbReceiveDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbReceiveDate.Location = new System.Drawing.Point(4, 39);
             this.lbReceiveDate.Name = "lbReceiveDate";
             this.lbReceiveDate.Size = new System.Drawing.Size(93, 23);
             this.lbReceiveDate.TabIndex = 6;
             this.lbReceiveDate.Text = "Receive Date";
-            this.lbReceiveDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbReceiveDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // gridTransfer
@@ -240,38 +236,6 @@
             this.gridTransfer.TabIndex = 14;
             this.gridTransfer.TabStop = false;
             // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(9, 140);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(93, 23);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Transfer To";
-            // 
-            // comboTransferTo
-            // 
-            this.comboTransferTo.BackColor = System.Drawing.Color.White;
-            this.comboTransferTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTransferTo.FormattingEnabled = true;
-            this.comboTransferTo.IsSupportUnselect = true;
-            this.comboTransferTo.Location = new System.Drawing.Point(105, 139);
-            this.comboTransferTo.Name = "comboTransferTo";
-            this.comboTransferTo.OldText = "";
-            this.comboTransferTo.Size = new System.Drawing.Size(121, 24);
-            this.comboTransferTo.TabIndex = 5;
-            this.comboTransferTo.Type = "Pms_DRYTransferTo";
-            // 
-            // btnUpdateAll
-            // 
-            this.btnUpdateAll.Location = new System.Drawing.Point(232, 136);
-            this.btnUpdateAll.Name = "btnUpdateAll";
-            this.btnUpdateAll.Size = new System.Drawing.Size(176, 30);
-            this.btnUpdateAll.TabIndex = 7;
-            this.btnUpdateAll.TabStop = false;
-            this.btnUpdateAll.Text = "Update All Transfer To";
-            this.btnUpdateAll.UseVisualStyleBackColor = true;
-            this.btnUpdateAll.Click += new System.EventHandler(this.BtnUpdateAll_Click);
-            // 
             // panel7
             // 
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -307,9 +271,6 @@
             this.ClientSize = new System.Drawing.Size(777, 463);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel7);
-            this.Controls.Add(this.btnUpdateAll);
-            this.Controls.Add(this.comboTransferTo);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.gridTransfer);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
@@ -321,9 +282,6 @@
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridTransfer, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
-            this.Controls.SetChildIndex(this.comboTransferTo, 0);
-            this.Controls.SetChildIndex(this.btnUpdateAll, 0);
             this.Controls.SetChildIndex(this.panel7, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridTransfer)).EndInit();
@@ -352,9 +310,6 @@
         private Win.UI.Grid gridTransfer;
         private Win.UI.DateRange dateRangeReceive;
         private Win.UI.Label lbReceiveDate;
-        private Win.UI.Label label6;
-        private Class.ComboDropDownList comboTransferTo;
-        private Win.UI.Button btnUpdateAll;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Panel panel1;
     }

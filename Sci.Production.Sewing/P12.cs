@@ -34,7 +34,6 @@ namespace Sci.Production.Sewing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            Ict.Win.UI.DataGridViewComboBoxColumn cbb_TransferTo;
             this.gridTransfer.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridTransfer)
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(15), iseditable: true, trueValue: 1, falseValue: 0)
@@ -47,16 +46,7 @@ namespace Sci.Production.Sewing
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .ComboBox("TransferTo", header: "Transfer to", width: Widths.AnsiChars(11)).Get(out cbb_TransferTo)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true);
-
-            DataTable cbSrc;
-            DBProxy.Current.Select(null, "select ID,Name from DropDownList where type = 'Pms_DRYTransferTo'", out cbSrc);
-            cbb_TransferTo.DataSource = cbSrc;
-            cbb_TransferTo.ValueMember = "ID";
-            cbb_TransferTo.DisplayMember = "Name";
-
-            this.gridTransfer.Columns["TransferTo"].DefaultCellStyle.BackColor = Color.Pink;
 
             foreach (DataGridViewColumn col in this.gridTransfer.Columns)
             {
@@ -406,13 +396,6 @@ where	pd.CTNStartNo != '' and
                     this.HideWaitMessage();
                     return;
                 }
-
-                if (MyUtility.Check.Empty(item["TransferTo"]))
-                {
-                    MyUtility.Msg.WarningBox($"Msg: <{item["ID"].ToString() + item["CTNStartNo"].ToString()}> Must Key-in Transfer to!!");
-                    this.HideWaitMessage();
-                    return;
-                }
             }
 
             // save data
@@ -443,16 +426,6 @@ insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNSt
 
             MyUtility.Msg.InfoBox("Save successfully");
             this.HideWaitMessage();
-        }
-
-        private void BtnUpdateAll_Click(object sender, EventArgs e)
-        {
-            var selectDr = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
-            foreach (DataRow item in selectDr)
-            {
-                item["TransferTo"] = this.comboTransferTo.SelectedValue;
-            }
-
         }
     }
 }

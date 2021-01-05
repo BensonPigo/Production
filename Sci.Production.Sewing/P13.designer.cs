@@ -38,41 +38,39 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label4 = new Sci.Win.UI.Label();
             this.dateTransfer = new Sci.Win.UI.DateRange();
-            this.txtdropdownlist1 = new Sci.Production.Class.Txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // lbTransferDate
             // 
+            this.lbTransferDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbTransferDate.Location = new System.Drawing.Point(9, 9);
             this.lbTransferDate.Name = "lbTransferDate";
             this.lbTransferDate.Size = new System.Drawing.Size(93, 23);
             this.lbTransferDate.TabIndex = 1;
             this.lbTransferDate.Text = "Transfer Date";
-            this.lbTransferDate.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbTransferDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbPackID
             // 
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPackID.Location = new System.Drawing.Point(9, 46);
             this.lbPackID.Name = "lbPackID";
             this.lbPackID.Size = new System.Drawing.Size(93, 23);
             this.lbPackID.TabIndex = 2;
             this.lbPackID.Text = "Pack ID";
-            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbSP
             // 
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbSP.Location = new System.Drawing.Point(390, 46);
             this.lbSP.Name = "lbSP";
             this.lbSP.Size = new System.Drawing.Size(75, 23);
             this.lbSP.TabIndex = 3;
             this.lbSP.Text = "SP#";
-            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtPackID
@@ -139,14 +137,6 @@
             this.grid1.Size = new System.Drawing.Size(748, 296);
             this.grid1.TabIndex = 8;
             // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(390, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Transfer To";
-            // 
             // dateTransfer
             // 
             // 
@@ -169,26 +159,10 @@
             this.dateTransfer.Size = new System.Drawing.Size(280, 23);
             this.dateTransfer.TabIndex = 10;
             // 
-            // txtdropdownlist1
-            // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlist1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(468, 9);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.OldText = "";
-            this.txtdropdownlist1.Size = new System.Drawing.Size(210, 24);
-            this.txtdropdownlist1.TabIndex = 2;
-            this.txtdropdownlist1.Type = "Pms_DRYTransferTo";
-            // 
             // P13
             // 
             this.ClientSize = new System.Drawing.Size(772, 383);
-            this.Controls.Add(this.txtdropdownlist1);
             this.Controls.Add(this.dateTransfer);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.txtsp);
@@ -206,9 +180,7 @@
             this.Controls.SetChildIndex(this.txtsp, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.dateTransfer, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -226,8 +198,6 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Label label4;
         private Win.UI.DateRange dateTransfer;
-        private Class.Txtdropdownlist txtdropdownlist1;
     }
 }
