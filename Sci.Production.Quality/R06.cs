@@ -331,8 +331,8 @@ outer apply(
 	select Defect = fd.DescriptionEN, fd.ID, Point = sum(a.point)  
 	from (
 		select
-	        Defect = SUBSTRING(x.Data, 1, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data) - 1)),	
-            Point = cast(SUBSTRING(x.Data, IIF(isnull(x.Data, '') = '', 1, LEN(x.Data)), 1) as int)
+	        Defect = dbo.SplitDefectNum(x.Data,0),	
+            Point = cast(dbo.SplitDefectNum(x.Data,1) as int)
 		from dbo.SplitString((select Defect from #spr WHERE {groupby_col} = gbs.{groupby_col}),'/') x
 	)A 
 	left join FabricDefect fd on id = a.Defect

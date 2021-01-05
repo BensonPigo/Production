@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Sci.Production.PublicPrg
@@ -177,19 +178,19 @@ namespace Sci.Production.PublicPrg
         /// <summary>
         /// defect 形式: 空白, A1, AA4
         /// 最後一碼數字最大為 4 所以只會有 1 碼
-        /// default type = 0 排除最後一碼, 前面字串為 defect
-        /// type = 1 取最後一碼  point
+        /// default type = 0 排除數字, 取 defectID
+        /// type = 1 排除字母取 point
         /// </summary>
         /// <inheritdoc/>
         public static string SplitDefectNum(string defectcode, int type = 0)
         {
             if (type == 0)
             {
-                return defectcode.Substring(0, defectcode.Length == 0 ? 0 : defectcode.Length - 1);
+                return Regex.Replace(defectcode, @"[\d]", string.Empty);
             }
             else
             {
-                return defectcode.Substring(defectcode.Length == 0 ? 0 : defectcode.Length - 1);
+                return Regex.Replace(defectcode, @"[A-Za-z]", string.Empty);
             }
         }
 
