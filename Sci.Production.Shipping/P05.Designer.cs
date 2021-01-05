@@ -1384,6 +1384,7 @@
             this.txtShipmodeShippingMode.Size = new System.Drawing.Size(100, 24);
             this.txtShipmodeShippingMode.TabIndex = 11;
             this.txtShipmodeShippingMode.UseFunction = "ORDER";
+            this.txtShipmodeShippingMode.SelectedValueChanged += new System.EventHandler(this.TxtShipmodeShippingMode_SelectedValueChanged);
             // 
             // txtpaytermarPaymentTerm
             // 

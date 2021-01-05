@@ -215,12 +215,14 @@
             // 
             // txtPulloutPortID
             // 
+            this.txtPulloutPortID.BrandID = null;
             this.txtPulloutPortID.ConnectionName = "ProductionTPE";
             this.txtPulloutPortID.CountryID = null;
             this.txtPulloutPortID.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "PulloutPortID", true));
             this.txtPulloutPortID.DisplayBox1Binding = "";
             this.txtPulloutPortID.Location = new System.Drawing.Point(145, 80);
             this.txtPulloutPortID.Name = "txtPulloutPortID";
+            this.txtPulloutPortID.ShipModeID = null;
             this.txtPulloutPortID.Size = new System.Drawing.Size(386, 22);
             this.txtPulloutPortID.TabIndex = 26;
             this.txtPulloutPortID.TextBox1Binding = "";
@@ -257,7 +259,7 @@
             this.IsSupportPrint = false;
             this.Name = "Shipping_B07";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "Shipping_B07";
+            this.Text = "Shipping_B07. Port of Discharge";
             this.WorkAlias = "PortByBrandShipmode";
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);

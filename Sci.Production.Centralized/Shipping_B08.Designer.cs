@@ -41,6 +41,7 @@
             this.labName = new Sci.Win.UI.Label();
             this.txtInternationalCode = new Sci.Win.UI.TextBox();
             this.txtPort = new Sci.Win.UI.TextBox();
+            this.btnImportfromExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,7 +52,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(684, 395);
+            this.detail.Size = new System.Drawing.Size(723, 395);
             // 
             // detailcont
             // 
@@ -68,11 +69,11 @@
             this.detailcont.Controls.Add(this.txtcountry);
             this.detailcont.Controls.Add(this.labCountry);
             this.detailcont.Controls.Add(this.labPort);
-            this.detailcont.Size = new System.Drawing.Size(684, 357);
+            this.detailcont.Size = new System.Drawing.Size(723, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(684, 38);
+            this.detailbtm.Size = new System.Drawing.Size(723, 38);
             // 
             // browse
             // 
@@ -80,7 +81,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(692, 424);
+            this.tabs.Size = new System.Drawing.Size(731, 424);
             // 
             // txtcountry
             // 
@@ -140,7 +141,7 @@
             this.chkAirPort.AutoSize = true;
             this.chkAirPort.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AirPort", true));
             this.chkAirPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAirPort.Location = new System.Drawing.Point(400, 60);
+            this.chkAirPort.Location = new System.Drawing.Point(366, 60);
             this.chkAirPort.Name = "chkAirPort";
             this.chkAirPort.Size = new System.Drawing.Size(74, 21);
             this.chkAirPort.TabIndex = 36;
@@ -152,7 +153,7 @@
             this.chkSeaPort.AutoSize = true;
             this.chkSeaPort.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeaPort", true));
             this.chkSeaPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSeaPort.Location = new System.Drawing.Point(400, 33);
+            this.chkSeaPort.Location = new System.Drawing.Point(366, 33);
             this.chkSeaPort.Name = "chkSeaPort";
             this.chkSeaPort.Size = new System.Drawing.Size(82, 21);
             this.chkSeaPort.TabIndex = 35;
@@ -164,7 +165,7 @@
             this.chkJunk.AutoSize = true;
             this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkJunk.Location = new System.Drawing.Point(488, 33);
+            this.chkJunk.Location = new System.Drawing.Point(454, 33);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.Size = new System.Drawing.Size(57, 21);
             this.chkJunk.TabIndex = 34;
@@ -211,18 +212,33 @@
             this.txtPort.Size = new System.Drawing.Size(190, 23);
             this.txtPort.TabIndex = 40;
             // 
+            // btnImportfromExcel
+            // 
+            this.btnImportfromExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportfromExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportfromExcel.Location = new System.Drawing.Point(559, 4);
+            this.btnImportfromExcel.Name = "btnImportfromExcel";
+            this.btnImportfromExcel.Size = new System.Drawing.Size(152, 29);
+            this.btnImportfromExcel.TabIndex = 41;
+            this.btnImportfromExcel.Text = "Import from Excel";
+            this.btnImportfromExcel.UseVisualStyleBackColor = true;
+            this.btnImportfromExcel.Click += new System.EventHandler(this.BtnImportfromExcel_Click);
+            // 
             // Shipping_B08
             // 
-            this.ClientSize = new System.Drawing.Size(692, 457);
+            this.ClientSize = new System.Drawing.Size(731, 457);
             this.ConnectionName = "ProductionTPE";
+            this.Controls.Add(this.btnImportfromExcel);
             this.IsDeleteOnBrowse = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "Shipping_B08";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "Shipping_B08";
+            this.Text = "Shipping_B08. Port";
             this.WorkAlias = "PulloutPort";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnImportfromExcel, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -250,5 +266,6 @@
         private Win.UI.Label labName;
         private Win.UI.TextBox txtInternationalCode;
         private Win.UI.TextBox txtPort;
+        private Win.UI.Button btnImportfromExcel;
     }
 }

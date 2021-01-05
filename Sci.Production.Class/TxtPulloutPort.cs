@@ -80,21 +80,14 @@ INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.Junk = 0 
 ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>()
+            if (this.CountryID != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this.CountryID).Text))
             {
-                new SqlParameter("@CountryID", this.CountryID is null ? string.Empty : ((Win.UI.TextBox)this.CountryID).Text),
-                new SqlParameter("@BrandID", this.BrandID is null ? string.Empty : ((Win.UI.TextBox)this.BrandID).Text),
-                new SqlParameter("@ShipModeID", this.ShipModeID is null ? string.Empty : ((Win.UI.TextBox)this.ShipModeID).Text),
-            };
-
-            if (!MyUtility.Check.Empty(this.CountryID))
-            {
-                sql += $@" and p.CountryID = @CountryID";
+                sql += $@" and p.CountryID = '{((Win.UI.TextBox)this.CountryID).Text}'";
             }
 
-            if (!MyUtility.Check.Empty(this.BrandID))
+            if (this.BrandID != null && !MyUtility.Check.Empty(this.BrandID))
             {
-                sql += $@" and pbs.BrandID = @BrandID";
+                sql += $@" and pbs.BrandID = '{this.BrandID}'";
             }
 
             if (this.ShipModeID.ToString() == "SEA")
@@ -108,7 +101,7 @@ WHERE p.Junk = 0
 
             sql += " ORDER BY p.ID";
 
-            DBProxy.Current.Select(conName, sql, parameters, out DataTable source);
+            DBProxy.Current.Select(conName, sql,  out DataTable source);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,Name,CountryID,Country Name,AirPort,SeaPort", "20,25,10,20,5,5", this.TextBox1.Text)
             {
                 Size = new System.Drawing.Size(950, 666),
@@ -136,14 +129,32 @@ WHERE p.Junk = 0
             string nPulloutPort = this.TextBox1.Text;
             if (!string.IsNullOrWhiteSpace(nPulloutPort) && nPulloutPort != this.TextBox1.OldValue)
             {
-                string cmd = $"SELECT Name FROM PulloutPort WHERE ID=@ID AND Junk=0 {wherecountry}";
-                List<SqlParameter> parameters = new List<SqlParameter>()
+                string cmd = $@"
+SELECT p.Name FROM PulloutPort p
+INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
+WHERE p.ID = '{nPulloutPort}' AND p.Junk=0 ";
+                if (this.CountryID != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this.CountryID).Text))
                 {
-                    new SqlParameter("@ID", nPulloutPort),
-                    new SqlParameter("@CountryID",  this.CountryID is null ? string.Empty : ((Win.UI.TextBox)this.CountryID).Text),
-                };
+                    cmd += $@" and p.CountryID = '{((Win.UI.TextBox)this.CountryID).Text}'";
+                }
 
-                if (!MyUtility.Check.Seek(cmd, parameters, conName))
+                if (this.BrandID != null && !MyUtility.Check.Empty(this.BrandID))
+                {
+                    cmd += $@" and pbs.BrandID = '{this.BrandID}'";
+                }
+
+                if (this.ShipModeID.ToString() == "SEA")
+                {
+                    cmd += $@" and p.SeaPort = 1";
+                }
+                else if (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P")
+                {
+                    cmd += $@" and (p.SeaPort = 1 or p.AirPort = 1)";
+                }
+
+                cmd += " ORDER BY p.ID";
+
+                if (!MyUtility.Check.Seek(cmd, conName))
                 {
                     this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
