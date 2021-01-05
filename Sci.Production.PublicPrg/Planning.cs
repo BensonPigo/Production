@@ -424,10 +424,10 @@ OUTER APPLY(
 select bdo.Orderid,bdo.BundleNo,bunD.Patterncode,bunD.Sizecode,bunD.IsPair,bun.PatternPanel,bun.Article, bun.AddDate
 into #QtyBySetPerCutpart5{subprocessIDtmp}
 from(select st4.Orderid from #QtyBySetPerCutpart4{subprocessIDtmp} st4 group by st4.Orderid) x
+inner join Orders o WITH (NOLOCK) ON x.Orderid = o.id
 inner join Bundle_Detail_Order bdo on bdo.Orderid = x.Orderid
 inner join Bundle_Detail bunD WITH (NOLOCK) on bunD.BundleNo = bdo.BundleNo
-inner join Bundle bun WITH (NOLOCK) on bun.id = bunD.id
-inner join Orders o WITH (NOLOCK) ON x.Orderid = o.id and bun.MDivisionid=o.MDivisionID 
+inner join Bundle bun WITH (NOLOCK) on bun.id = bunD.id and bun.MDivisionid=o.MDivisionID 
 
 --#BundleInOutDetail... 在 WebApi 有使用到, 變更時注意
 select st4.*, [IsPair]=ISNULL(TopIsPair.IsPair,0)
