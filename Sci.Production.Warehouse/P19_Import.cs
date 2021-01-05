@@ -74,8 +74,9 @@ namespace Sci.Production.Warehouse
                 @"
 select  0 as selected 
         , '' id
-		, [ExportID] = Stuff((select distinct concat(',', rd.id)
-				from Receiving_Detail rd WITH (NOLOCK)
+		, [ExportID] = Stuff((select distinct concat(',', r.InvNo)				
+                from Receiving r WITH (NOLOCK)
+                inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
 				where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
 				FOR XML PATH('')),1,1,'')
         , FI.PoId
@@ -128,9 +129,10 @@ and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
             {
                 sbSQLCmd.Append($@" 
 AND exists (select 1 
-            from Receiving_Detail rd WITH (NOLOCK)
+            from Receiving r WITH (NOLOCK)
+            inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
 			where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
-            and rd.ID like '%{this.txtWKno.Text}%' )");
+            and r.InvNo like '%{this.txtWKno.Text}%' )");
             }
 
             if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")

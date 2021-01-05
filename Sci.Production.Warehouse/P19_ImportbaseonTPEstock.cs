@@ -166,9 +166,10 @@ group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory,
 
 
 select  selected = cast(0 as bit)
-		, [WK] = Stuff((select distinct concat(',', rd.id)
-				from Receiving_Detail rd WITH (NOLOCK)
-				where rd.PoId = fi.POID and rd.Seq1 = fi.SEQ1 and rd.Seq2 = fi.SEQ2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+		, [WK] = Stuff((select distinct concat(',', r.InvNo)
+				from Receiving r WITH (NOLOCK)
+                inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
+                where rd.PoId = fi.POID and rd.Seq1 = fi.SEQ1 and rd.Seq2 = fi.SEQ2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
 				FOR XML PATH('')),1,1,'') 
 		, MDivisionID = @MDivisionID
         , '' id
