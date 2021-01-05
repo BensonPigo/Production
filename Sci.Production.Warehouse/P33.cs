@@ -740,10 +740,10 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
             {
                 if (!this.EditMode)
                 {
-                    return; 
+                    return;
                 }
 
-                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["Refno"].ToString().Trim()) != 0)
+                if (string.Compare(e.FormattedValue.ToString().Trim(), this.CurrentDetailData["Refno"].ToString().Trim()) != 0)
                 {
                     if (this.Is_IssueBreakDownEmpty())
                     {
@@ -1412,7 +1412,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     return;
                 }
 
-                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["ColorID"].ToString().Trim()) != 0)
+                if (string.Compare(e.FormattedValue.ToString().Trim(), this.CurrentDetailData["ColorID"].ToString().Trim()) != 0)
                 {
                     if (this.Is_IssueBreakDownEmpty())
                     {
