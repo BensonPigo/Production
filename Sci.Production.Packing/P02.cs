@@ -3193,9 +3193,9 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             foreach (DataGridViewRow item in this.detailgrid.Rows)
             {
                 // 判斷selected欄位
-                if (MyUtility.Convert.GetBool(item.Cells[0].Value))
+                if (MyUtility.Convert.GetBool(item.Cells["selected"].Value))
                 {
-                    item.Cells[1].Value = this.txtCartonRef.Text; // Refno欄位
+                    item.Cells["RefNo"].Value = this.txtCartonRef.Text; // Refno欄位
                 }
             }
         }
@@ -3206,9 +3206,9 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             foreach (DataGridViewRow item in this.detailgrid.Rows)
             {
                 // 判斷selected欄位
-                if (MyUtility.Convert.GetBool(item.Cells[0].Value))
+                if (MyUtility.Convert.GetBool(item.Cells["selected"].Value))
                 {
-                    item.Cells[13].Value = this.txtCartonRefBalance.Text; // RefNoForBalance欄位
+                    item.Cells["RefNoForBalance"].Value = this.txtCartonRefBalance.Text; // RefNoForBalance欄位
                 }
             }
         }
