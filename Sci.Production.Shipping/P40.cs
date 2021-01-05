@@ -363,7 +363,7 @@ order by TRY_CONVERT(int, SUBSTRING(vdd.NLCode, 3, LEN(vdd.NLCode))), vdd.NLCode
                 string fabricType = MyUtility.Convert.GetString(dr["FabricType"]);
                 if (fabricType.EqualString("A") || fabricType.EqualString("F"))
                 {
-                    if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode = '{dr["NLcode"]}'"))
+                    if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode2 = '{dr["NLcode"]}'"))
                     {
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
@@ -371,7 +371,7 @@ order by TRY_CONVERT(int, SUBSTRING(vdd.NLCode, 3, LEN(vdd.NLCode))), vdd.NLCode
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where ltrim(Refno) = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode = '{dr["NLcode"]}'"))
+                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where ltrim(Refno) = '{dr["Refno"].ToString().Replace("'", "''")}' and NLCode2 = '{dr["NLcode"]}'"))
                     {
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
@@ -541,7 +541,7 @@ when not matched by source and t.id in(select id from #tmps) then
                 if (type.EqualString("A") || type.EqualString("F"))
                 {
                     string sql = $@"
-select f.HSCode,f.CustomsUnit,f.NLCode
+select f.HSCode,f.CustomsUnit,[NLCode] = f.NLCode2
 from brand b with(nolock)
 outer apply(
 	select top 1 f1.* 
@@ -584,7 +584,7 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                 }
                 else if (type.EqualString("L"))
                 {
-                    string sql = $@"select li.HSCode,li.NLCode,li.CustomsUnit,li.NLCode from LocalItem li where ltrim(li.RefNo) = '{dr["RefNo"].ToString().Replace("'", "''")}' ";
+                    string sql = $@"select li.HSCode,[NLCode] = li.NLCode2,li.CustomsUnit from LocalItem li where ltrim(li.RefNo) = '{dr["RefNo"].ToString().Replace("'", "''")}' ";
                     DataRow row;
                     if (MyUtility.Check.Seek(sql, out row))
                     {
@@ -952,7 +952,7 @@ select e.ID
 	   , Type = ed.MtlTypeID
 	   , li.Description
 	   , DescDetail = ''
-	   , NLCode = isnull(li.NLCode,'')
+	   , NLCode = isnull(li.NLCode2,'')
 	   , HSCode = isnull(li.HSCode,'')
 	   , CustomsUnit = isnull(li.CustomsUnit,'')
 	   , PcsLength = isnull(li.PcsLength,0.0) 
@@ -1000,7 +1000,7 @@ select e.ID
 	   , Type = isnull(f.Type, '') 
 	   , Description = isnull(f.Description, '') 
 	   , DescDetail = isnull(f.DescDetail, '') 
-	   , NLCode = isnull(f.NLCode, '') 
+	   , NLCode = isnull(f.NLCode2, '') 
 	   , HSCode = isnull(f.HSCode, '') 
 	   , CustomsUnit = isnull(f.CustomsUnit, '') 
 	   , PcsLength = isnull(f.PcsLength, 0.0) 
@@ -1049,7 +1049,7 @@ select e.ID
 	   , Type = isnull(f.Type, '') 
 	   , Description = isnull(f.Description, '') 
 	   , DescDetail = isnull(f.DescDetail, '') 
-	   , NLCode = isnull(f.NLCode, '') 
+	   , NLCode = isnull(f.NLCode2, '') 
 	   , HSCode = isnull(f.HSCode, '') 
 	   , CustomsUnit = isnull(f.CustomsUnit, '') 
 	   , PcsLength = isnull(f.PcsLength, 0.0) 
@@ -1206,7 +1206,7 @@ with ExportDetail as (
 	   											      / li.MeterToCone
 									       , ed.Price * (select Rate 
 									   				     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.AddDate)))
-	       , NLCode = isnull(li.NLCode, '') 
+	       , NLCode = isnull(li.NLCode2, '') 
 	       , HSCode = isnull(li.HSCode, '')
 	       , CustomsUnit = isnull(li.CustomsUnit, '')
 	       , PcsLength = isnull(li.PcsLength, 0.0) 
@@ -1261,7 +1261,7 @@ with ExportDetail as (
 	       , Type = isnull(f.Type, '')
 	       , Price = ed.Price * (select Rate 
 	   						     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.AddDate))
-	       , NLCode = isnull(f.NLCode,'')
+	       , NLCode = isnull(f.NLCode2,'')
 	       , HSCode = isnull(f.HSCode,'') 
 	       , CustomsUnit = isnull(f.CustomsUnit,'') 
 	       , PcsLength = isnull(f.PcsLength, 0.0)
@@ -1317,7 +1317,7 @@ with ExportDetail as (
 	       , Type = isnull(f.Type,'')
 	       , Price = ed.Price * (select Rate 
 	   						     from dbo.GetCurrencyRate('20', ed.CurrencyID, 'USD', e.CloseDate)) 
-	       , NLCode = isnull(f.NLCode, '') 
+	       , NLCode = isnull(f.NLCode2, '') 
 	       , HSCode = isnull(f.HSCode, '') 
 	       , CustomsUnit = isnull(f.CustomsUnit, '') 
 	       , PcsLength = isnull(f.PcsLength, 0.0) 
