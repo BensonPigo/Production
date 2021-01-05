@@ -51,11 +51,13 @@
             this.txtunit_fty = new Sci.Production.Class.Txtunit_fty();
             this.dispType = new Sci.Win.UI.DisplayBox();
             this.editDescription = new Sci.Win.UI.EditBox();
-            this.txtCustomerCode = new Sci.Win.UI.TextBox();
             this.dispHSCode = new Sci.Win.UI.DisplayBox();
             this.dispCustomerUnit = new Sci.Win.UI.DisplayBox();
             this.numericBoxMiscRate = new Sci.Win.UI.NumericBox();
             this.labMiscRate = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtNLCode2 = new Sci.Production.Class.TxtNLCode();
+            this.txtCustomerCode = new Sci.Production.Class.TxtNLCode();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -70,11 +72,13 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtCustomerCode);
+            this.detailcont.Controls.Add(this.txtNLCode2);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.numericBoxMiscRate);
             this.detailcont.Controls.Add(this.labMiscRate);
             this.detailcont.Controls.Add(this.dispCustomerUnit);
             this.detailcont.Controls.Add(this.dispHSCode);
-            this.detailcont.Controls.Add(this.txtCustomerCode);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.dispType);
             this.detailcont.Controls.Add(this.txtunit_fty);
@@ -134,6 +138,9 @@
             this.txtSubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Suppid", true));
             this.txtSubconSupplier.DisplayBox1Binding = "";
             this.txtSubconSupplier.IsIncludeJunk = false;
+            this.txtSubconSupplier.IsMisc = false;
+            this.txtSubconSupplier.IsShipping = false;
+            this.txtSubconSupplier.IsSubcon = false;
             this.txtSubconSupplier.Location = new System.Drawing.Point(434, 62);
             this.txtSubconSupplier.Name = "txtSubconSupplier";
             this.txtSubconSupplier.Size = new System.Drawing.Size(170, 23);
@@ -273,49 +280,49 @@
             // 
             // labCustomsUnit
             // 
-            this.labCustomsUnit.Location = new System.Drawing.Point(44, 221);
+            this.labCustomsUnit.Location = new System.Drawing.Point(19, 253);
             this.labCustomsUnit.Name = "labCustomsUnit";
-            this.labCustomsUnit.Size = new System.Drawing.Size(109, 23);
+            this.labCustomsUnit.Size = new System.Drawing.Size(134, 23);
             this.labCustomsUnit.TabIndex = 45;
             this.labCustomsUnit.Text = "Customs Unit";
             // 
             // labHSCode
             // 
-            this.labHSCode.Location = new System.Drawing.Point(44, 189);
+            this.labHSCode.Location = new System.Drawing.Point(19, 221);
             this.labHSCode.Name = "labHSCode";
-            this.labHSCode.Size = new System.Drawing.Size(109, 23);
+            this.labHSCode.Size = new System.Drawing.Size(134, 23);
             this.labHSCode.TabIndex = 44;
             this.labHSCode.Text = "HS Code";
             // 
             // labCustomsCode
             // 
-            this.labCustomsCode.Location = new System.Drawing.Point(44, 157);
+            this.labCustomsCode.Location = new System.Drawing.Point(19, 157);
             this.labCustomsCode.Name = "labCustomsCode";
-            this.labCustomsCode.Size = new System.Drawing.Size(109, 23);
+            this.labCustomsCode.Size = new System.Drawing.Size(134, 23);
             this.labCustomsCode.TabIndex = 43;
             this.labCustomsCode.Text = "Customs Code";
             // 
             // labUsageUnit
             // 
-            this.labUsageUnit.Location = new System.Drawing.Point(44, 94);
+            this.labUsageUnit.Location = new System.Drawing.Point(19, 94);
             this.labUsageUnit.Name = "labUsageUnit";
-            this.labUsageUnit.Size = new System.Drawing.Size(109, 23);
+            this.labUsageUnit.Size = new System.Drawing.Size(134, 23);
             this.labUsageUnit.TabIndex = 41;
             this.labUsageUnit.Text = "Usage Unit";
             // 
             // labModel
             // 
-            this.labModel.Location = new System.Drawing.Point(44, 62);
+            this.labModel.Location = new System.Drawing.Point(19, 62);
             this.labModel.Name = "labModel";
-            this.labModel.Size = new System.Drawing.Size(109, 23);
+            this.labModel.Size = new System.Drawing.Size(134, 23);
             this.labModel.TabIndex = 39;
             this.labModel.Text = "Model";
             // 
             // labMisc
             // 
-            this.labMisc.Location = new System.Drawing.Point(44, 30);
+            this.labMisc.Location = new System.Drawing.Point(19, 30);
             this.labMisc.Name = "labMisc";
-            this.labMisc.Size = new System.Drawing.Size(109, 23);
+            this.labMisc.Size = new System.Drawing.Size(134, 23);
             this.labMisc.TabIndex = 35;
             this.labMisc.Text = "Misc ID";
             // 
@@ -378,24 +385,12 @@
             this.editDescription.Size = new System.Drawing.Size(241, 57);
             this.editDescription.TabIndex = 65;
             // 
-            // txtCustomerCode
-            // 
-            this.txtCustomerCode.BackColor = System.Drawing.Color.White;
-            this.txtCustomerCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
-            this.txtCustomerCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustomerCode.Location = new System.Drawing.Point(157, 157);
-            this.txtCustomerCode.Name = "txtCustomerCode";
-            this.txtCustomerCode.Size = new System.Drawing.Size(100, 23);
-            this.txtCustomerCode.TabIndex = 2;
-            this.txtCustomerCode.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCustomerCode_PopUp);
-            this.txtCustomerCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCustomerCode_Validating);
-            // 
             // dispHSCode
             // 
             this.dispHSCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispHSCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HSCode", true));
             this.dispHSCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispHSCode.Location = new System.Drawing.Point(157, 189);
+            this.dispHSCode.Location = new System.Drawing.Point(157, 221);
             this.dispHSCode.Name = "dispHSCode";
             this.dispHSCode.Size = new System.Drawing.Size(100, 23);
             this.dispHSCode.TabIndex = 67;
@@ -405,7 +400,7 @@
             this.dispCustomerUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.dispCustomerUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CustomsUnit", true));
             this.dispCustomerUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.dispCustomerUnit.Location = new System.Drawing.Point(157, 221);
+            this.dispCustomerUnit.Location = new System.Drawing.Point(157, 253);
             this.dispCustomerUnit.Name = "dispCustomerUnit";
             this.dispCustomerUnit.Size = new System.Drawing.Size(149, 23);
             this.dispCustomerUnit.TabIndex = 68;
@@ -433,11 +428,39 @@
             // 
             // labMiscRate
             // 
-            this.labMiscRate.Location = new System.Drawing.Point(44, 125);
+            this.labMiscRate.Location = new System.Drawing.Point(19, 125);
             this.labMiscRate.Name = "labMiscRate";
-            this.labMiscRate.Size = new System.Drawing.Size(109, 23);
+            this.labMiscRate.Size = new System.Drawing.Size(134, 23);
             this.labMiscRate.TabIndex = 70;
             this.labMiscRate.Text = "Misc Rate";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(19, 189);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(134, 23);
+            this.label1.TabIndex = 71;
+            this.label1.Text = "Customs Code(2021)";
+            // 
+            // txtNLCode2
+            // 
+            this.txtNLCode2.BackColor = System.Drawing.Color.White;
+            this.txtNLCode2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode2", true));
+            this.txtNLCode2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNLCode2.Location = new System.Drawing.Point(157, 189);
+            this.txtNLCode2.Name = "txtNLCode2";
+            this.txtNLCode2.Size = new System.Drawing.Size(100, 23);
+            this.txtNLCode2.TabIndex = 72;
+            // 
+            // txtCustomerCode
+            // 
+            this.txtCustomerCode.BackColor = System.Drawing.Color.White;
+            this.txtCustomerCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "NLCode", true));
+            this.txtCustomerCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustomerCode.Location = new System.Drawing.Point(157, 157);
+            this.txtCustomerCode.Name = "txtCustomerCode";
+            this.txtCustomerCode.Size = new System.Drawing.Size(100, 23);
+            this.txtCustomerCode.TabIndex = 73;
             // 
             // B49
             // 
@@ -491,10 +514,12 @@
         private Win.UI.DisplayBox dispType;
         private Class.Txtunit_fty txtunit_fty;
         private Win.UI.EditBox editDescription;
-        private Win.UI.TextBox txtCustomerCode;
         private Win.UI.DisplayBox dispCustomerUnit;
         private Win.UI.DisplayBox dispHSCode;
         private Win.UI.NumericBox numericBoxMiscRate;
         private Win.UI.Label labMiscRate;
+        private Win.UI.Label label1;
+        private Class.TxtNLCode txtCustomerCode;
+        private Class.TxtNLCode txtNLCode2;
     }
 }

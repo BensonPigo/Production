@@ -30,69 +30,12 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
         }
 
-        private void TxtCustomerCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
         {
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(
-                @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-order by NLCode",
-                "5,11,8",
-                this.Text,
-                false,
-                ",",
-                headercaptions: "Customs Code, HSCode, Unit");
-
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            IList<DataRow> selectedData = item.GetSelecteds();
-            this.CurrentMaintain["NLCode"] = item.GetSelectedString();
-            this.CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
-            this.CurrentMaintain["CustomsUnit"] = selectedData[0]["UnitID"];
-            this.CurrentMaintain.EndEdit();
-        }
-
-        private void TxtCustomerCode_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.EditMode && this.txtCustomerCode.OldValue != this.txtCustomerCode.Text)
-            {
-                if (MyUtility.Check.Empty(this.txtCustomerCode.Text))
-                {
-                    this.CurrentMaintain["NLCode"] = string.Empty;
-                    this.CurrentMaintain["HSCode"] = string.Empty;
-                    this.CurrentMaintain["CustomsUnit"] = string.Empty;
-                }
-                else
-                {
-                    DataRow nLCodeDate;
-                    if (MyUtility.Check.Seek(
-                        string.Format(
-                            @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.txtCustomerCode.Text), out nLCodeDate))
-                    {
-                        this.CurrentMaintain["NLCode"] = this.txtCustomerCode.Text;
-                        this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
-                        this.CurrentMaintain["CustomsUnit"] = nLCodeDate["UnitID"];
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["NLCode"] = string.Empty;
-                        this.CurrentMaintain["HSCode"] = string.Empty;
-                        this.CurrentMaintain["CustomsUnit"] = string.Empty;
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
-                        return;
-                    }
-                }
-
-                this.CurrentMaintain.EndEdit();
-            }
+            this.txtCustomerCode.MainDataRow = this.CurrentMaintain;
+            this.txtNLCode2.MainDataRow = this.CurrentMaintain;
+            return base.ClickEditBefore();
         }
 
         /// <inheritdoc/>
@@ -113,6 +56,7 @@ and NLCode = '{0}'", this.txtCustomerCode.Text), out nLCodeDate))
 update Misc
 set UsageUnit = '{this.CurrentMaintain["UsageUnit"]}'
 ,NLCode  = '{this.CurrentMaintain["NLCode"]}'
+,NLCode2  = '{this.CurrentMaintain["NLCode2"]}'
 ,CustomsUnit = '{this.CurrentMaintain["CustomsUnit"]}'
 ,HSCode = '{this.CurrentMaintain["HSCode"]}'
 ,PcsLength = '{pcslength}'

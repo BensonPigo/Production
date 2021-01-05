@@ -40,6 +40,8 @@
             this.numericBox2 = new Sci.Win.UI.NumericBox();
             this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displayNLCode2 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,6 +56,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayNLCode2);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.numericBox3);
             this.detailcont.Controls.Add(this.numericBox2);
@@ -228,6 +232,24 @@
             this.label3.TabIndex = 13;
             this.label3.Text = "~";
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(223, 14);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(141, 23);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Customs Code(2021)";
+            // 
+            // displayNLCode2
+            // 
+            this.displayNLCode2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayNLCode2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NLCode2", true));
+            this.displayNLCode2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayNLCode2.Location = new System.Drawing.Point(367, 14);
+            this.displayNLCode2.Name = "displayNLCode2";
+            this.displayNLCode2.Size = new System.Drawing.Size(122, 23);
+            this.displayNLCode2.TabIndex = 15;
+            // 
             // B44
             // 
             this.ClientSize = new System.Drawing.Size(837, 389);
@@ -235,6 +257,7 @@
             this.DefaultControlForEdit = "txtNLCode";
             this.DefaultOrder = "NLCode";
             this.Name = "B44";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B44. Customs Code Description";
             this.UniqueExpress = "NLCode";
             this.WorkAlias = "VNNLCodeDesc";
@@ -265,5 +288,7 @@
         private Win.UI.NumericBox numericBox3;
         private Win.UI.NumericBox numericBox2;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayNLCode2;
+        private Win.UI.Label label2;
     }
 }

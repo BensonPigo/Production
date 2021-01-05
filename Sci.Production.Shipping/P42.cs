@@ -407,7 +407,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                 string fabricType = MyUtility.Convert.GetString(dr["fabricType"]);
                 if (fabricType.EqualString("A") || fabricType.EqualString("F"))
                 {
-                    string sqlchk = $@"select 1 from Fabric with(nolock) where refno = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
+                    string sqlchk = $@"select 1 from Fabric with(nolock) where refno = '{dr["refno"]}' and nlcode2 = '{dr["nlcode"]}'";
                     if (!MyUtility.Check.Seek(sqlchk))
                     {
                         MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
@@ -416,7 +416,7 @@ order by TRY_CONVERT(int, SUBSTRING(vd.NLCode, 3, LEN(vd.NLCode))), vd.NLCode", 
                 }
                 else if (fabricType.EqualString("L"))
                 {
-                    string sqlchk = $@"select 1 from LocalItem with(nolock) where ltrim(refno) = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
+                    string sqlchk = $@"select 1 from LocalItem with(nolock) where ltrim(refno) = '{dr["refno"]}' and nlcode2 = '{dr["nlcode"]}'";
                     if (!MyUtility.Check.Seek(sqlchk))
                     {
                         MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
@@ -651,7 +651,7 @@ order by vaqd.NLCode
 select
 	psd.Refno,
 	FabricType=f1.type,
-	f1.NLCode,
+	[NLCode] = f1.NLCode2,
 	f1.BrandId,
 	f1.HSCode,
 	UnitID=f1.CustomsUnit,
@@ -675,7 +675,7 @@ outer apply (
     select v = isnull (f.UsageUnit, f1.SCIRefno)
 ) FabricUsage
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
-group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit,FabricUsage.v
+group by psd.Refno,f1.type,f1.NLCode2,f1.BrandId,f1.HSCode,f1.CustomsUnit,FabricUsage.v
 
 select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end, t.UsageUnit
 from #tmp t
@@ -714,7 +714,7 @@ drop table #tmp
                 sqlcmd = $@"
 select
 	ald.Refno,
-	li.NLCode,
+	[NLCode] = li.NLCode2,
 	BrandId=o.BrandID,
 	li.HSCode,
 	UnitID=li.CustomsUnit,
@@ -725,7 +725,7 @@ inner join AdjustLocal_Detail ald with(nolock)on ald.id = al.id
 left join LocalItem li with(nolock)on ltrim(li.RefNo) = ald.Refno
 left join orders o with(nolock) on o.id = ald.POID
 where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
-group by ald.Refno,li.NLCode,o.BrandID,li.HSCode,li.CustomsUnit
+group by ald.Refno,li.NLCode2,o.BrandID,li.HSCode,li.CustomsUnit
 
 select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty,UsageUnit=''
 from #tmp t
@@ -753,8 +753,8 @@ drop table #tmp
 select
 	fed.refno,
 	fed.FabricType,
-	NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.NLCode
-			    when fed.FabricType = '' then li.NLCode
+	NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.NLCode2
+			    when fed.FabricType = '' then li.NLCode2
 				end,
 	f1.BrandID,
 	HSCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.HSCode
@@ -858,15 +858,15 @@ drop table #tmp
             string nlCode = string.Empty;
             if (fabricType.EqualString("A") || fabricType.EqualString("F"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode from Fabric with(nolock) where refno = '{refno}' and Type='{fabricType}' and usageUnit = '{usageUnit}' ");
+                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode2 from Fabric with(nolock) where refno = '{refno}' and Type='{fabricType}' and usageUnit = '{usageUnit}' ");
             }
             else if (fabricType.EqualString("L"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode from LocalItem with(nolock) where ltrim(refno) = '{refno}'");
+                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode2 from LocalItem with(nolock) where ltrim(refno) = '{refno}'");
             }
             else if (fabricType.EqualString("Misc"))
             {
-                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode from SciMachine_Misc with(nolock) where ltrim(ID) = '{refno}'");
+                nlCode = MyUtility.GetValue.Lookup($"select top 1 NLCode2 from SciMachine_Misc with(nolock) where ltrim(ID) = '{refno}'");
             }
 
             StringBuilder errNLCode = new StringBuilder();

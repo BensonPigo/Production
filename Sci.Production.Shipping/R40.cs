@@ -84,7 +84,6 @@ namespace Sci.Production.Shipping
             this.nlcode = this.txtNLCode.Text;
             this.liguidationonly = this.checkLiquidationDataOnly.Checked;
             this.strGenerateDate = ((DateTime)this.dateGenerate.Value).ToString("yyyy/MM/dd");
-
             #region import Ecus Qty
             DialogResult importResult = DialogResult.Cancel;
 
@@ -168,7 +167,7 @@ namespace Sci.Production.Shipping
                 whereftys = "and o.FactoryID in ('" + string.Join("','", this.FactoryList) + "')";
             }
             #endregion
-
+            string dynamicNLCode = this.radioReportByNLCode.Checked ? "NLCode" : "NLCode2";
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
             /*
@@ -504,7 +503,7 @@ select  *
 into #tmpOnRoadMaterial
 from (
 	select  [HSCode] = f.HSCode
-	        , [NLCode] = f.NLCode
+	        , [NLCode] = f.{dynamicNLCode}
             , [WK] = e.ID
 	        , [PoID] = ed.PoID
             , o.StyleID
@@ -559,7 +558,7 @@ from (
 	
 	select distinct
 	        [HSCode] = isnull(isnull(f.HSCode,li.HSCode),'')
-	        , [NLCode] = isnull(isnull(f.NLCode,li.NLCode),'')
+	        , [NLCode] = isnull(isnull(f.{dynamicNLCode},li.{dynamicNLCode}),'')
             , [WK] = fe.ID
 	        , [POID] = fed.PoID
             , o.StyleID
@@ -577,12 +576,12 @@ from (
 		                ,isnull(li.PcsLength,0)
 		                ,isnull(li.PcsKg,0)
 		                ,isnull(IIF(isnull(li.CustomsUnit, '') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
-			                (select RateValue from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) 
+			                (select RateValue from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
+			                (select RateValue from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) 
 			                and TO_U = isnull (li.CustomsUnit,''))),1)
 		                ,isnull(IIF(isnull(li.CustomsUnit, '') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
-			                (select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = isnull(f.CustomsUnit,''))),'')
+			                (select Rate from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = 'M'),
+			                (select Rate from dbo.View_Unitrate with (nolock) where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = isnull(f.CustomsUnit,''))),'')
 	                    ,isnull(li.Refno,'')))
 	        , [CustomsUnit] = isnull(isnull(f.CustomsUnit,li.CustomsUnit),'')
 	        , [OnRaodQty] = isnull(UnitRateQty.qty,0)
@@ -642,7 +641,7 @@ select *
 into #tmpWHQty1
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = o.POID
             , o.StyleID
             , o.FactoryID
@@ -709,7 +708,7 @@ from (
             , [Customs Unit]
     from(
         select  [HSCode] = isnull(li.HSCode,'') 
-	            , [NLCode] = isnull(li.NLCode,'') 
+	            , [NLCode] = isnull(li.{dynamicNLCode},'') 
 	            , [POID] = o.POID
                 , o.StyleID
                 , o.FactoryID
@@ -810,7 +809,7 @@ select *
 into #tmpWHQty2
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = o.POID
             , o.StyleID
             , o.FactoryID
@@ -1056,7 +1055,7 @@ from (
             , [Customs Unit]
     from(
         select  [HSCode] = isnull(li.HSCode,'') 
-	            , [NLCode] = isnull(li.NLCode,'') 
+	            , [NLCode] = isnull(li.{dynamicNLCode},'') 
 	            , [POID] = o.POID
                 , o.StyleID
                 , o.FactoryID
@@ -1276,7 +1275,7 @@ from (
 	select  ttt.TransactionID
             ,ttt.TransactionName
             , [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
             , t.FactoryID
             , [Seq] = ttt.Seq1 + ' ' + ttt.Seq2
 	        , [ID] = t.ID
@@ -1290,11 +1289,11 @@ from (
 		                ,isnull(f.PcsLength,0)
 		                ,isnull(f.PcsKg,0)
 		                ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-			                (select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			                ,(select RateValue from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
+			                (select RateValue from dbo.View_Unitrate  with (nolock) where FROM_U = psd.StockUnit and TO_U = 'M')
+			                ,(select RateValue from dbo.View_Unitrate with (nolock) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),1)
 		                ,isnull(IIF(isnull(f.CustomsUnit,'') = 'M2',
-			                (select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
-			                ,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
+			                (select Rate from dbo.View_Unitrate with (nolock) where FROM_U = psd.StockUnit and TO_U = 'M')
+			                ,(select Rate from dbo.View_Unitrate with (nolock) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                             ,default)
             , f.Refno
             , [MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
@@ -1323,7 +1322,7 @@ from (
 	select  ttl.TransactionID
             ,ttl.TransactionName
             , [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
+	        , [NLCode] = isnull(li.{dynamicNLCode},'')
             , t.FactoryID
             , [Seq] = ''
 	        , [ID] = t.ID
@@ -1884,7 +1883,7 @@ select *
 into #tmpScrapQty1
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = ft.POID
             , o.StyleID
             , o.FactoryID
@@ -1929,7 +1928,7 @@ from (
     union all
 	
     select  [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
+	        , [NLCode] = isnull(li.{dynamicNLCode},'')
 	        , [POID] = l.OrderID
             , o.StyleID
             , o.FactoryID
@@ -1971,7 +1970,7 @@ select *
 into #tmpScrapQty2
 from (
 	select  [HSCode] = isnull(f.HSCode,'')
-	        , [NLCode] = isnull(f.NLCode,'')
+	        , [NLCode] = isnull(f.{dynamicNLCode},'')
 	        , [POID] = ft.POID
             , o.StyleID
             , o.FactoryID
@@ -2068,7 +2067,7 @@ from (
     union all
 	
     select  [HSCode] = isnull(li.HSCode,'')
-	        , [NLCode] = isnull(li.NLCode,'')
+	        , [NLCode] = isnull(li.{dynamicNLCode},'')
 	        , [POID] = l.OrderID
             , o.StyleID
             , o.FactoryID
