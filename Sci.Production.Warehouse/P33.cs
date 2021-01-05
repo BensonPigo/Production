@@ -1280,6 +1280,7 @@ AND psd.FabricType ='A'
 and psd.ColorID <> ''
 AND psd.Refno='{refno}'
 AND psd.ColorID='{colorID}'
+AND psd.SCIRefno='{sCIRefno}'
 
 SELECT    SCIRefno 
         , Refno
