@@ -1026,10 +1026,9 @@ Where a.id = '{0}'", masterID);
             sqlcmd = $@"
 select i2.ID
 ,[Barcode1] = f.Barcode
-,[Barcode2] = fb.Barcode
 ,[OriBarcode] = fbOri.Barcode
 ,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
-,[NewBarcode] = ''
+,[NewBarcode] = iif(f.Barcode ='',fbOri.Barcode,f.Barcode)
 ,[Poid] = i2.FromPOID
 ,[Seq1] = i2.FromSeq1
 ,[Seq2] = i2.FromSeq2
@@ -1042,11 +1041,6 @@ inner join FtyInventory f on f.POID = i2.FromPOID
     and f.Seq1 = i2.FromSeq1 and f.Seq2 = i2.FromSeq2
     and f.Roll = i2.FromRoll and f.Dyelot = i2.FromDyelot
     and f.StockType = i2.FromStockType
-outer apply(
-	select Barcode = MAX(Barcode)
-	from FtyInventory_Barcode t
-	where t.Ukey = f.Ukey
-)fb
 outer apply(
 	select *
 	from FtyInventory_Barcode t
@@ -1062,37 +1056,6 @@ and exists(
 and i2.id ='{this.CurrentMaintain["ID"]}'
 ";
             DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
-                if (isConfirmed)
-                {
-                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
-                    {
-                        if (strBarcode.Contains("-"))
-                        {
-                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
-                        }
-                        else
-                        {
-                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
-                        }
-                    }
-                    else
-                    {
-                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                        dr["NewBarcode"] = dr["Barcode1"];
-                    }
-                }
-                else
-                {
-                    // unConfirmed 要用自己的紀錄給補回
-                    dr["NewBarcode"] = dr["OriBarcode"];
-                }
-            }
-
             var data_From_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                         select new
                                         {
@@ -1184,30 +1147,16 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
             foreach (DataRow dr in dt.Rows)
             {
                 string strBarcode = string.Empty;
+
+                // 目標有自己的Barcode, 則Ftyinventory跟記錄都是用自己的
                 if (!MyUtility.Check.Empty(dr["ToBarcode"]) || !MyUtility.Check.Empty(dr["ToBarcode2"]))
                 {
                     strBarcode = MyUtility.Check.Empty(dr["ToBarcode2"]) ? dr["ToBarcode"].ToString() : dr["ToBarcode2"].ToString();
-
-                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                    if (!MyUtility.Check.Empty(dr["ToBalanceQty"]))
-                    {
-                        if (strBarcode.Contains("-"))
-                        {
-                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
-                        }
-                        else
-                        {
-                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
-                        }
-                    }
-                    else
-                    {
-                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                        dr["NewBarcode"] = dr["ToBarcode"];
-                    }
+                    dr["NewBarcode"] = strBarcode;
                 }
                 else
                 {
+                    // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
                     strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
 
                     // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....

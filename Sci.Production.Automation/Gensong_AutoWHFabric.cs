@@ -497,14 +497,14 @@ and exists(
 	select 1
 	from MtlLocation ml 
 	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
-		and ml.StockType=sd.FromStockType
+		and ml.StockType=bb2.FromStockType
 	where ml.IsWMS = 1
 
 	union all
 
     select 1 from MtlLocation ml 
-	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
-	and ml.StockType=sd.ToStockType
+	inner join dbo.SplitString(bb2.ToLocation,',') sp on sp.Data = ml.ID
+	and ml.StockType=bb2.ToStockType
 	where ml.IsWMS = 1
 )
 ";
