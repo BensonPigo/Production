@@ -1225,8 +1225,8 @@ WHERE Ukey={item["Ukey"]}
         {
             object sumGSD = ((DataTable)this.detailgridbs.DataSource).Compute("sum(GSD)", "(IsHide = 0 or  IsHide is null)");
             object sumCycle = ((DataTable)this.detailgridbs.DataSource).Compute("sum(Cycle)", "(IsHide = 0 or  IsHide is null)");
-            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(GSD)", "(IsHide = 0 or  IsHide is null)");
-            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(Cycle)", "(IsHide = 0 or  IsHide is null)");
+            object maxHighGSD = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalGSD)", "(IsHide = 0 or  IsHide is null)");
+            object maxHighCycle = ((DataTable)this.detailgridbs.DataSource).Compute("max(TotalCycle)", "(IsHide = 0 or  IsHide is null)");
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
@@ -1497,6 +1497,13 @@ select ID = null
 		,[IsGroupHeader] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0)
 		,[IsSewingOperation] = cast(iif(show.IsDesignatedArea = 1, 1, 0) as bit)
         ,[IsShow] = isnull(show.IsShowinIEP03, 1)
+	    , [sortNO] = case when iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) = 1 then 1 
+                          when ld.No = '' 
+                            and iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) = 0 
+                            and ld.IsPPA = 0 
+                          then 2
+                          when left(ld.No, 1) = 'P' then 3
+                          else 4 end
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -1598,6 +1605,12 @@ where t.StyleID = s.ID
             string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{timeStudy["ID"]}' ");
             sqlCmd = string.Format(
                 @"
+select *
+	, [sortNO] = case when ld.IsHide = 1 then 1 
+                      when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
+                      when left(ld.No, 1) = 'P' then 3
+                      else 4 end
+from (
 select distinct
 	ID = null
 	,No = ''
@@ -1806,7 +1819,8 @@ outer apply (
 	where i.ArtworkTypeID = atf.ArtworkTypeID
 	and atf.FactoryID = '{2}'
 )show
-where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'",
+where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
+)ld",
                 ietmsUKEY,
                 timeStudy["ID"],
                 Env.User.Factory);
