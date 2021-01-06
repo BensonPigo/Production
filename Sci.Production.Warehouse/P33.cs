@@ -732,6 +732,8 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     #endregion
 
                     this.CurrentDetailData.EndEdit();
+                    this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
+                    finalSubDt.Clear();
                 }
             };
             refnoSet.CellValidating += (s, e) =>
@@ -741,7 +743,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     return;
                 }
 
-                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["Refno"].ToString()) != 0)
+                if (string.Compare(e.FormattedValue.ToString().Trim(), this.CurrentDetailData["Refno"].ToString().Trim()) != 0)
                 {
                     if (this.Is_IssueBreakDownEmpty())
                     {
@@ -1022,6 +1024,8 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                             }
 
                             this.CurrentDetailData.EndEdit();
+                            this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
+                            finalSubDt.Clear();
                         }
                     }
                 }
@@ -1397,6 +1401,8 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     #endregion
 
                     this.CurrentDetailData.EndEdit();
+                    this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
+                    finalSubDt.Clear();
                 }
             };
             colorSet.CellValidating += (s, e) =>
@@ -1406,7 +1412,7 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                     return;
                 }
 
-                if (string.Compare(e.FormattedValue.ToString(), this.CurrentDetailData["ColorID"].ToString()) != 0)
+                if (string.Compare(e.FormattedValue.ToString().Trim(), this.CurrentDetailData["ColorID"].ToString().Trim()) != 0)
                 {
                     if (this.Is_IssueBreakDownEmpty())
                     {
@@ -1687,6 +1693,9 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                             }
 
                             this.CurrentDetailData.EndEdit();
+
+                            this.GetSubDetailDatas(this.CurrentDetailData, out DataTable finalSubDt);
+                            finalSubDt.Clear();
                         }
                     }
                 }
