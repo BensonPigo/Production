@@ -533,14 +533,18 @@ Please check to continue process.");
                 }
             }
 
-            if (this.comboCategory.SelectedValue.ToString() == "HTML")
+            if (this.comboCategory.SelectedValue != null)
             {
-                this.detailgrid.Columns["IsSSCC"].Visible = false;
-            }
 
-            if (this.comboCategory.SelectedValue.ToString() == "PIC")
-            {
-                this.detailgrid.Columns["IsSSCC"].Visible = true;
+                if (this.comboCategory.SelectedValue.ToString() == "HTML")
+                {
+                    this.detailgrid.Columns["IsSSCC"].Visible = false;
+                }
+
+                if (this.comboCategory.SelectedValue.ToString() == "PIC")
+                {
+                    this.detailgrid.Columns["IsSSCC"].Visible = true;
+                }
             }
         }
     }
