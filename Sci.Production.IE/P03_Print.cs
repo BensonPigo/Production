@@ -227,7 +227,7 @@ where a.ID = {0}
 ",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
                 this.strLanguage,
-                Env.User.Factory);
+                MyUtility.Convert.GetString(this.masterData["FactoryID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.machineTypeDT);
             if (!result)
             {
