@@ -467,6 +467,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
             transactionscope.Dispose();
             transactionscope = null;
             this.SentToVstrong_AutoWH_ACC(true);
+            this.SentToGensong_AutoWHFabric(true);
         }
 
         /// <inheritdoc/>
@@ -658,6 +659,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
             transactionscope.Dispose();
             transactionscope = null;
             this.SentToVstrong_AutoWH_ACC(true);
+            this.SentToGensong_AutoWHFabric(true);
         }
 
         // 寫明細撈出的sql command
@@ -737,6 +739,17 @@ Where a.id = '{0}' ", masterID);
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+        }
+
+        private void SentToGensong_AutoWHFabric(bool isConfirmed)
+        {
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Gensong_AutoWHFabric().SentAdjust_DetailToGensongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

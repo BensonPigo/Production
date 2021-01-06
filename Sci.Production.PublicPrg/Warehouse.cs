@@ -667,22 +667,15 @@ alter table #TmpSource alter column Dyelot varchar(15)
 alter table #TmpSource alter column Barcode varchar(16)
 
 update t
-set t.Barcode = ftyBarcode.value
+set t.Barcode = s.Barcode
 from FtyInventory t
-outer apply(
-	select value = min(Barcode)
-	from FtyInventory_Barcode fb
-	where fb.Ukey = t.Ukey
-)ftyBarcode
-where exists(
-    select 1 from #TmpSource s
-    where t.POID = s.poid
+inner join #TmpSource s on t.POID = s.poid
     and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
     and t.StockType = s.stocktype 
     and t.Roll = s.roll 
     and t.Dyelot = s.Dyelot
-)
-and ftyBarcode.value != ''
+and t.Barcode = ''
+
 ";
 
                     #endregion
@@ -3232,6 +3225,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             {
                 throw new Exception(result.ToString());
             }
+
+            // 固定最大長度13, 雖然結構是開16, 但長度要留3
+            columnTypeLength = 13;
 
             if (result = DBProxy.Current.Select(connectionName, sqlCmd, out dtID))
             {
