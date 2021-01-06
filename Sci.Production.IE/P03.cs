@@ -96,6 +96,7 @@ namespace Sci.Production.IE
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
+            string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
 select *
@@ -154,7 +155,7 @@ order by case when ld.No = '' then 1
 	    end, 
         ld.GroupKey",
                 masterID,
-                Env.User.Factory);
+                factoryID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -1524,7 +1525,7 @@ order by case when ld.No = '' then 1
 			end, 
         ld.GroupKey",
                     callNextForm.P03CopyLineMapping["ID"].ToString(),
-                    Env.User.Factory);
+                    callNextForm.P03CopyLineMapping["FactoryID"].ToString());
                 DualResult selectResult = DBProxy.Current.Select(null, sqlCmd, out copyLineMapDetail);
                 if (!selectResult)
                 {
@@ -1576,6 +1577,12 @@ order by case when ld.No = '' then 1
         // Copy from GSD
         private void BtnCopyFromGSD_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+            {
+                this.ShowInfo("<Factory> cannot be empty.");
+                return;
+            }
+
             // 刪除現有表身資料
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -1823,7 +1830,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
 )ld",
                 ietmsUKEY,
                 timeStudy["ID"],
-                Env.User.Factory);
+                this.CurrentMaintain["FactoryID"]);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
