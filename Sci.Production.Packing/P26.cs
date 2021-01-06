@@ -3,6 +3,7 @@ using Ict.Win;
 using org.apache.pdfbox.pdmodel;
 using org.apache.pdfbox.util;
 using Sci.Data;
+using Sci.Production.Automation;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using System;
@@ -16,6 +17,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -2146,6 +2148,28 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                             this.ConfirmMsg.Add(r);
                         }
                     }
+
+                    // 有實際執行SQL的PackingListID，才需要進行API資料交換
+                    List<string> listPackingID = match.UpdateModels.Select(o => o.PackingListID).ToList();
+
+                    #region ISP20200757 資料交換 - Sunrise
+
+                    if (listPackingID.Count > 0)
+                    {
+                        Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listPackingID.Distinct().JoinToString(","), string.Empty))
+                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+                    #endregion
+
+                    #region ISP20201607 資料交換 - Gensong
+
+                    // 不透過Call API的方式，自己組合，傳送API
+                    if (listPackingID.Count > 0)
+                    {
+                        Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(listPackingID.Distinct().JoinToString(","), string.Empty))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+                    #endregion
                 }
 
                 this.ShowConfirmMsg();
@@ -2179,7 +2203,6 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                     dr.EndEdit();
                 }
-
             }
             catch (Exception ex)
             {
