@@ -2150,7 +2150,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     }
 
                     // 有實際執行SQL的PackingListID，才需要進行API資料交換
-                    List<string> listPackingID = match.UpdateModels.Select(o => o.PackingListID).ToList();
+                    List<string> listPackingID = match.UpdateModels.Select(o => o.PackingListID).Distinct().ToList();
 
                     #region ISP20200757 資料交換 - Sunrise
 
@@ -2166,8 +2166,11 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     // 不透過Call API的方式，自己組合，傳送API
                     if (listPackingID.Count > 0)
                     {
-                        Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(listPackingID.Distinct().JoinToString(","), string.Empty))
-                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                        foreach (var packing in listPackingID)
+                        {
+                            Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packing, string.Empty))
+                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                        }
                     }
                     #endregion
                 }
