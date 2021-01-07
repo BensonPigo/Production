@@ -52,18 +52,19 @@ namespace Sci.Production.Class
         {
             if (!Env.DesignTime)
             {
-                string unionAllItem = this.addAllItem ? "select [ID] = 'ALL', [Name] = 'ALL' union all" : string.Empty;
+                string unionAllItem = this.addAllItem ? "select [ID] = 'ALL', [Name] = 'ALL' , [Seq] = 0 union all" : string.Empty;
                 string selectCommand = $@"
-select ID
-       , Name = rtrim(Name)
-into #tmp
-from DropDownList WITH (NOLOCK) 
-where Type = '{this.Type}' 
+select *
+from (
+    {unionAllItem}
+    select  ID
+            , Name = rtrim(Name)
+            , Seq
+    from DropDownList WITH (NOLOCK) 
+    where Type = '{this.Type}' 
+    ) a
 order by Seq
 
-{unionAllItem}
-select ID, Name
-from #tmp
 ";
 
                 DualResult returnResult;
