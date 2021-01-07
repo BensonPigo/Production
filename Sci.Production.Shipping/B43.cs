@@ -356,6 +356,12 @@ AND vf.VNContractID = '{this.CurrentMaintain["ID"]}'
                 newRow["Price"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "N");
                 newRow["LocalPurchase"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C")) ? 0 : 1;
                 newRow["NecessaryItem"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "C")) ? 0 : 1;
+
+                if (MyUtility.Check.Empty(newRow["NLCode"]))
+                {
+                    break;
+                }
+
                 if (MyUtility.Check.Seek(MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C")), "Unit", "ID"))
                 {
                     newRow["WrongUnit"] = 0;
