@@ -275,7 +275,7 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
             objSheets.get_Range("M:M").ColumnWidth = 8;
             objSheets.get_Range("N:N").ColumnWidth = 9;
             objSheets.get_Range("O:S").ColumnWidth = 8;
-            objSheets.get_Range("T:Z").ColumnWidth = 8;
+            objSheets.get_Range("T:AB").ColumnWidth = 8;
             objSheets.get_Range("G:G").ColumnWidth = 10;
             objSheets.get_Range("V:V").ColumnWidth = 10;
             objSheets.get_Range("T:T").ColumnWidth = 10;
