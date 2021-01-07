@@ -287,7 +287,6 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 this.FBDate_Ori = null;
             }
 
-            this.txtPulloutPort1.CountryID = this.txtCountryDestination.TextBox1;
             this.txtPulloutPort1.BrandID = this.txtbrand.Text;
             this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
 

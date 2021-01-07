@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Centralized
 {
@@ -74,17 +75,27 @@ namespace Sci.Production.Centralized
 
         private void BtnImportfromExcel_Click(object sender, EventArgs e)
         {
-            string excelFile = MyUtility.File.GetFile("Excel files|*.xls;*.xlsx");
-            if (MyUtility.Check.Empty(excelFile))
+            this.portByBrandShipmodeList = new List<PortByBrandShipmode>();
+            this.openFileDialog.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
-            if (excel == null)
-            {
-                return;
-            }
+            string fileName = this.openFileDialog.SafeFileName;
+            string fullFileName = this.openFileDialog.FileName;
+
+            Excel.Application excel = new Excel.Application();
+            excel.Workbooks.Open(MyUtility.Convert.GetString(fullFileName));
+            Excel.Worksheet worksheet = excel.Sheets[1];
+
+            excel.Visible = false;
+
+
+            #region 確認是否有缺少必要欄位
+
 
             DataTable excelDataTable;
             DualResult result;
@@ -95,6 +106,64 @@ namespace Sci.Production.Centralized
 
             excel.Visible = false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            int intColumnsCount = worksheet.UsedRange.Columns.Count;
+
+            // 必要欄位
+            List<string> mustColumn = new List<string>() { "Country", "Port Name", "Port Code", "Air Port", "Sea Port", "International Code" };
+
+            // 紀錄必要欄位橫向的欄位位置
+            int idx_Brand = 0;
+            int idx_Continent = 0;
+            int idx_Country = 0;
+            int idx_Port_Code = 0;
+            int idx_Air_Port = 0;
+            int idx_Sea_Port = 0;
+
+            for (int x = 1; x <= intColumnsCount; x++)
+            {
+                var colName = worksheet.Cells[1, x].Value;
+
+                switch (colName)
+                {
+                    case "Brand":
+                        idx_Brand = x;
+                        mustColumn.Remove("Brand");
+                        break;
+                    case "Continent":
+                        idx_Continent = x;
+                        mustColumn.Remove("Continent");
+                        break;
+                    case "Country":
+                        idx_Country = x;
+                        mustColumn.Remove("Country");
+                        break;
+                    case "Port Code":
+                        idx_Port_Code = x;
+                        mustColumn.Remove("Port Code");
+                        break;
+                    case "Air Port":
+                        idx_Air_Port = x;
+                        mustColumn.Remove("Air Port");
+                        break;
+                    case "Sea Port":
+                        idx_Sea_Port = x;
+                        mustColumn.Remove("Sea Port");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (mustColumn.Count > 0)
+            {
+                string msg = $"Could not found column <{mustColumn.JoinToString(",")}> .";
+                this.ShowErr(msg);
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                return;
+            }
+            #endregion
+
             int intRowsCount = worksheet.UsedRange.Rows.Count;
             int intRowsStart = 2;
             int intRowsRead = intRowsStart - 1;

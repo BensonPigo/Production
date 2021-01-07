@@ -80,9 +80,9 @@ INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.Junk = 0 
 ";
 
-            if (this.CountryID != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this.CountryID).Text))
+            if (this.CountryID != null && !MyUtility.Check.Empty(this.CountryID))
             {
-                sql += $@" and p.CountryID = '{((Win.UI.TextBox)this.CountryID).Text}'";
+                sql += $@" and p.CountryID = '{this.CountryID}'";
             }
 
             if (this.BrandID != null && !MyUtility.Check.Empty(this.BrandID))
@@ -90,11 +90,11 @@ WHERE p.Junk = 0
                 sql += $@" and pbs.BrandID = '{this.BrandID}'";
             }
 
-            if (this.ShipModeID.ToString() == "SEA")
+            if (this.ShipModeID != null && this.ShipModeID.ToString() == "SEA")
             {
                 sql += $@" and p.SeaPort = 1";
             }
-            else if (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P")
+            else if (this.ShipModeID != null && (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P"))
             {
                 sql += $@" and (p.SeaPort = 1 or p.AirPort = 1)";
             }
@@ -133,9 +133,9 @@ WHERE p.Junk = 0
 SELECT p.Name FROM PulloutPort p
 INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.ID = '{nPulloutPort}' AND p.Junk=0 ";
-                if (this.CountryID != null && !MyUtility.Check.Empty(((Win.UI.TextBox)this.CountryID).Text))
+                if (this.CountryID != null && !MyUtility.Check.Empty(this.CountryID))
                 {
-                    cmd += $@" and p.CountryID = '{((Win.UI.TextBox)this.CountryID).Text}'";
+                    cmd += $@" and p.CountryID = '{this.CountryID}'";
                 }
 
                 if (this.BrandID != null && !MyUtility.Check.Empty(this.BrandID))
@@ -143,11 +143,11 @@ WHERE p.ID = '{nPulloutPort}' AND p.Junk=0 ";
                     cmd += $@" and pbs.BrandID = '{this.BrandID}'";
                 }
 
-                if (this.ShipModeID.ToString() == "SEA")
+                if (this.ShipModeID != null && this.ShipModeID.ToString() == "SEA")
                 {
                     cmd += $@" and p.SeaPort = 1";
                 }
-                else if (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P")
+                else if (this.ShipModeID != null && (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P"))
                 {
                     cmd += $@" and (p.SeaPort = 1 or p.AirPort = 1)";
                 }
