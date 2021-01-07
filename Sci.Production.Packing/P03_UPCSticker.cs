@@ -78,9 +78,11 @@ WHERE O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Arti
 
 select  distinct PD.ID
 from    Orders o
-LEFT JOIN PackingList_Detail PD ON PD.OrderID = O.ID 
-,#tmp
-WHERE O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Article and pd.SizeCode=#tmp.SizeCode
+LEFT JOIN PackingList_Detail PD ON PD.OrderID = O.ID
+LEFT JOIN PackingList P ON P.ID = PD.ID
+left join Pullout pu on P.PulloutID = pu.ID
+WHERE   exists(select 1 from #tmp where O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Article and pd.SizeCode=#tmp.SizeCode) and
+        isnull (pu.Status, '') not in ('Confirmed', 'Locked')
 
 ";
             DataTable udt;
