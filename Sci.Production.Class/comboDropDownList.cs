@@ -11,6 +11,24 @@ namespace Sci.Production.Class
     public partial class ComboDropDownList : Win.UI.ComboBox
     {
         private string type;
+        private bool addAllItem = false;
+
+        /// <summary>
+        /// 是否有All的選項
+        /// </summary>
+        public bool AddAllItem
+        {
+            get
+            {
+                return this.addAllItem;
+            }
+
+            set
+            {
+                this.addAllItem = value;
+                this.SetSource();
+            }
+        }
 
         /// <summary>
         /// Type
@@ -26,23 +44,35 @@ namespace Sci.Production.Class
             set
             {
                 this.type = value;
-                if (!Env.DesignTime)
-                {
-                    string selectCommand = string.Format(
-                        @"
+                this.SetSource();
+            }
+        }
+
+        private void SetSource()
+        {
+            if (!Env.DesignTime)
+            {
+                string unionAllItem = this.addAllItem ? "select [ID] = 'ALL', [Name] = 'ALL' union all" : string.Empty;
+                string selectCommand = $@"
 select ID
        , Name = rtrim(Name)
+into #tmp
 from DropDownList WITH (NOLOCK) 
-where Type = '{0}' 
-order by Seq", this.Type);
-                    DualResult returnResult;
-                    DataTable dropDownListTable = new DataTable();
-                    if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
-                    {
-                        this.DataSource = dropDownListTable;
-                        this.DisplayMember = "Name";
-                        this.ValueMember = "ID";
-                    }
+where Type = '{this.Type}' 
+order by Seq
+
+{unionAllItem}
+select ID, Name
+from #tmp
+";
+
+                DualResult returnResult;
+                DataTable dropDownListTable = new DataTable();
+                if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
+                {
+                    this.DataSource = dropDownListTable;
+                    this.DisplayMember = "Name";
+                    this.ValueMember = "ID";
                 }
             }
         }
