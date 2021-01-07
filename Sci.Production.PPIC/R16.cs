@@ -221,8 +221,8 @@ select main.KPICode
 	,[PackingQty] = isnull(pd.PackingQty,0)
 	,[ClogReceivedCarton] = isnull(pd.ClogReceivedCarton,0)
 	,[ClogReceivedQty]=IIF(main.PartialShipment='Y' ,'NA' ,CAST( ISNULL( pd.ClogReceivedQty,0)  as varchar))
-	--,[LastCMPOutputDate]=LastCMPOutputDate.Value
-    --,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
+	,[LastCMPOutputDate]=LastCMPOutputDate.Value
+    ,[CMPQty]=IIF(PartialShipment='Y' ,'NA', CAST(ISNULL( CMPQty.Value,0)  as varchar))
 	,ins.LastDQSOutputDate
 	,[DQSQty]=IIF(main.PartialShipment='Y' , 'NA' , CAST( ISNULL( ins.DQSQty,0)  as varchar))
 	,[OST Packing Qty]=IIF(main.PartialShipment='Y' , 'NA' , CAST(( ISNULL(main.OrderQty,0) -  ISNULL(pd.PackingQty,0)) as varchar))
@@ -275,9 +275,10 @@ DROP TABLE #tmpOrderMain,#tmpPackingList_Detail,#tmpInspection,#tmpInspection_St
             objSheets.get_Range("M:M").ColumnWidth = 8;
             objSheets.get_Range("N:N").ColumnWidth = 9;
             objSheets.get_Range("O:S").ColumnWidth = 8;
-            objSheets.get_Range("V:Z").ColumnWidth = 8;
+            objSheets.get_Range("T:AB").ColumnWidth = 8;
             objSheets.get_Range("G:G").ColumnWidth = 10;
             objSheets.get_Range("V:V").ColumnWidth = 10;
+            objSheets.get_Range("T:T").ColumnWidth = 10;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("PPIC_R16");
