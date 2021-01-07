@@ -42,6 +42,7 @@
             this.txtInternationalCode = new Sci.Win.UI.TextBox();
             this.txtPort = new Sci.Win.UI.TextBox();
             this.btnImportfromExcel = new Sci.Win.UI.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,10 +50,6 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(723, 395);
             // 
             // detailcont
             // 
@@ -69,15 +66,10 @@
             this.detailcont.Controls.Add(this.txtcountry);
             this.detailcont.Controls.Add(this.labCountry);
             this.detailcont.Controls.Add(this.labPort);
-            this.detailcont.Size = new System.Drawing.Size(723, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(723, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(684, 395);
+            this.browse.Size = new System.Drawing.Size(723, 395);
             // 
             // tabs
             // 
@@ -224,6 +216,10 @@
             this.btnImportfromExcel.UseVisualStyleBackColor = true;
             this.btnImportfromExcel.Click += new System.EventHandler(this.BtnImportfromExcel_Click);
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
+            // 
             // Shipping_B08
             // 
             this.ClientSize = new System.Drawing.Size(731, 457);
@@ -267,5 +263,6 @@
         private Win.UI.TextBox txtInternationalCode;
         private Win.UI.TextBox txtPort;
         private Win.UI.Button btnImportfromExcel;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }

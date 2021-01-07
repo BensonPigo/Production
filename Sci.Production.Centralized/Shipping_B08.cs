@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -15,6 +17,8 @@ namespace Sci.Production.Centralized
     /// <inheritdoc/>
     public partial class Shipping_B08 : Sci.Win.Tems.Input1
     {
+        private List<PulloutPort> PulloutPortList;
+
         /// <inheritdoc/>
         public Shipping_B08(ToolStripMenuItem menuitem)
         {
@@ -75,7 +79,7 @@ namespace Sci.Production.Centralized
 
         private void BtnImportfromExcel_Click(object sender, EventArgs e)
         {
-            this.portByBrandShipmodeList = new List<PortByBrandShipmode>();
+            this.PulloutPortList = new List<PulloutPort>();
             this.openFileDialog.Filter = "Excel files (*.xlsx;*.xls)|*.xlsx;*.xls";
 
             // 開窗且有選擇檔案
@@ -84,40 +88,26 @@ namespace Sci.Production.Centralized
                 return;
             }
 
-            string fileName = this.openFileDialog.SafeFileName;
             string fullFileName = this.openFileDialog.FileName;
-
             Excel.Application excel = new Excel.Application();
             excel.Workbooks.Open(MyUtility.Convert.GetString(fullFileName));
             Excel.Worksheet worksheet = excel.Sheets[1];
-
+            this.ShowWaitMessage("Starting Import EXCEL...");
             excel.Visible = false;
-
 
             #region 確認是否有缺少必要欄位
-
-
-            DataTable excelDataTable;
-            DualResult result;
-            string sqlCmd = @"select id, name ,CountryID,AirPort,SeaPort,InternationalCode from PulloutPort where 1=0";
-            result = DBProxy.Current.Select("ProductionTPE", sqlCmd, out excelDataTable);
-
-            this.ShowWaitMessage("Starting Import EXCEL...");
-
-            excel.Visible = false;
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             int intColumnsCount = worksheet.UsedRange.Columns.Count;
 
             // 必要欄位
-            List<string> mustColumn = new List<string>() { "Country", "Port Name", "Port Code", "Air Port", "Sea Port", "International Code" };
+            List<string> mustColumn = new List<string>() { "Port Code", "Port Name", "Country", "Air Port", "Sea Port" };
 
             // 紀錄必要欄位橫向的欄位位置
-            int idx_Brand = 0;
-            int idx_Continent = 0;
-            int idx_Country = 0;
             int idx_Port_Code = 0;
+            int idx_Port_Name = 0;
+            int idx_Country = 0;
             int idx_Air_Port = 0;
             int idx_Sea_Port = 0;
+            int idx_International_Code = 0;
 
             for (int x = 1; x <= intColumnsCount; x++)
             {
@@ -125,21 +115,17 @@ namespace Sci.Production.Centralized
 
                 switch (colName)
                 {
-                    case "Brand":
-                        idx_Brand = x;
-                        mustColumn.Remove("Brand");
+                    case "Port Code":
+                        idx_Port_Code = x;
+                        mustColumn.Remove("Port Code");
                         break;
-                    case "Continent":
-                        idx_Continent = x;
-                        mustColumn.Remove("Continent");
+                    case "Port Name":
+                        idx_Port_Name = x;
+                        mustColumn.Remove("Port Name");
                         break;
                     case "Country":
                         idx_Country = x;
                         mustColumn.Remove("Country");
-                        break;
-                    case "Port Code":
-                        idx_Port_Code = x;
-                        mustColumn.Remove("Port Code");
                         break;
                     case "Air Port":
                         idx_Air_Port = x;
@@ -148,6 +134,9 @@ namespace Sci.Production.Centralized
                     case "Sea Port":
                         idx_Sea_Port = x;
                         mustColumn.Remove("Sea Port");
+                        break;
+                    case "International Code":
+                        idx_International_Code = x;
                         break;
                     default:
                         break;
@@ -160,75 +149,158 @@ namespace Sci.Production.Centralized
                 this.ShowErr(msg);
                 excel.Quit();
                 Marshal.ReleaseComObject(excel);
+                this.HideWaitMessage();
                 return;
             }
             #endregion
 
             int intRowsCount = worksheet.UsedRange.Rows.Count;
-            int intRowsStart = 2;
-            int intRowsRead = intRowsStart - 1;
 
-            Microsoft.Office.Interop.Excel.Range range;
-            object[,] objCellArray;
-            int AirPort = 0;
-            int SeaPort = 0;
+            // 正在讀取的行數，由於第一行是Header，因此起始值為2
+            int intRowsReading = 2;
+            List<string> notExistsCountry = new List<string>();
+            List<string> existsID = new List<string>();
 
-            while (intRowsRead < intRowsCount)
+            while (intRowsReading < intRowsCount)
             {
-                intRowsRead++;
-                range = worksheet.Range[string.Format("A{0}:F{0}", intRowsRead)];
-                objCellArray = range.Value;
-                DataRow newRow = excelDataTable.NewRow();
-                newRow["id"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
-                newRow["name"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
-                newRow["CountryID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
+                // Port_Code
+                var pPort_Code = MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Port_Code].Value);
 
-                if ((MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C").ToString() == "Y") ||
-                    (MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C").ToString() == "T"))
+                // Port_Name
+                var pPort_Name = worksheet.Cells[intRowsReading, idx_Port_Name].Value;
+
+                // International_Code
+                var pInternational_Code = string.Empty;
+                if (idx_International_Code != 0)
                 {
-                    AirPort = 1;
+                    pInternational_Code = worksheet.Cells[intRowsReading, idx_International_Code].Value;
+                }
+
+                // Country
+                var pCountry = worksheet.Cells[intRowsReading, idx_Country].Value;
+
+                // Air_Port
+                bool pAir_Port = true;
+                if ((MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Air_Port].Value) == "T") ||
+                    (MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Air_Port].Value) == "Y"))
+                {
+                    pAir_Port = true;
                 }
                 else
                 {
-                    AirPort = 0;
+                    pAir_Port = false;
                 }
 
-                if ((MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C").ToString() == "Y") ||
-                    (MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C").ToString() == "T"))
+                // Sea_Port
+                bool pSea_Port = true;
+                if ((MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Sea_Port].Value) == "T") ||
+                    (MyUtility.Convert.GetString(worksheet.Cells[intRowsReading, idx_Sea_Port].Value) == "Y"))
                 {
-                    SeaPort = 1;
+                    pSea_Port = true;
                 }
                 else
                 {
-                    SeaPort = 0;
+                    pSea_Port = false;
                 }
 
-                newRow["AirPort"] = AirPort;
-                newRow["SeaPort"] = SeaPort;
-                newRow["InternationalCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
-                excelDataTable.Rows.Add(newRow);
+                // brand, continent, Country, Port 若有空的直接跳過，不進DB驗證
+                if (pPort_Name == null || pPort_Code == null || pCountry == null ||
+                    MyUtility.Check.Empty(pPort_Name) || MyUtility.Check.Empty(pPort_Code) || MyUtility.Check.Empty(pCountry))
+                {
+                    intRowsReading++;
+                    continue;
+                }
+
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Country", pCountry),
+                };
+
+                #region 驗證是否存在
+
+                // 檢查Country 在Trade是否存在
+                bool isCountryExists = MyUtility.Check.Seek("SELECT 1 FROM Country WHERE ID=@Country", parameters, "Trade");
+
+                if (!isCountryExists)
+                {
+                    notExistsCountry.Add(pCountry);
+                }
+
+                // 檢查ID 是否重複
+                var isExistsID = from data in this.PulloutPortList
+                           where data.PortCode == pPort_Code
+                           select data;
+
+                if (isExistsID.Any())
+                {
+                    existsID.Add(pPort_Code);
+                }
+                #endregion
+
+                if (isCountryExists && !isExistsID.Any())
+                {
+                    this.PulloutPortList.Add(new PulloutPort()
+                    {
+                        PortCode = pPort_Code,
+                        PortName = pPort_Name,
+                        Country = pCountry,
+                        AirPort = pAir_Port,
+                        SeaPort = pSea_Port,
+                        InternationalCode = pInternational_Code,
+                    });
+                }
+
+                intRowsReading++;
             }
 
-            excel.Workbooks.Close();
             excel.Quit();
-            excel = null;
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(excel);
 
             this.HideWaitMessage();
 
+            string errorMsg = string.Empty;
+            if (notExistsCountry.Count > 0)
+            {
+                errorMsg += "Below data Could not found" + Environment.NewLine;
+                errorMsg += "Country : " + notExistsCountry.JoinToString(",") + Environment.NewLine;
+            }
+
+            if (existsID.Count > 0)
+            {
+                errorMsg += "Cannot duplicate import [Port Code]" + Environment.NewLine;
+                errorMsg += "Port Code : " + existsID.JoinToString(",") + Environment.NewLine;
+            }
+
             // 匯入到DB
+            this.MergeDB(this.PulloutPortList);
+
+            if (notExistsCountry.Count > 0)
+            {
+                this.ShowErr(errorMsg);
+            }
+        }
+
+        private void MergeDB(List<PulloutPort> pulloutPortList)
+        {
+            string tmpTable = string.Empty;
+
+            if (pulloutPortList == null || pulloutPortList.Count == 0)
+            {
+                this.ShowErr("No Data Import");
+                return;
+            }
+
             string sqlUpdate = $@"
 merge ProductionTPE.dbo.PulloutPort as t
-using (
-	select t1.* from #tmp t1
-	inner join Trade.dbo.Country c on t1.CountryID = c.id
-) as s
-on Ltrim(s.id) = t.id
+using #tmp as s
+on Ltrim(s.PortCode) = t.id
 when matched then update set
-	t.name = s.name,
-	t.CountryID = s.CountryID,
+	t.name = s.PortName,
+	t.CountryID = upper(s.Country),
 	t.AirPort = s.AirPort,
 	t.SeaPort = s.SeaPort,	
-	t.InternationalCode = iif(s.InternationalCode='',s.id,s.InternationalCode), -- excel [International]是空的.. 就填入ID
+	t.InternationalCode = iif(s.InternationalCode='',upper(s.PortCode),upper(s.InternationalCode)), -- excel [International]是空的.. 就填入ID
 	t.EditDate = GetDate(),
 	t.EditName = '{Sci.Env.User.UserID}'
 when not matched by target then
@@ -243,12 +315,12 @@ when not matched by target then
 	   ,AddName
       )
 	values (  
-	   Ltrim(s.[ID])
-	   ,s.name
-	   ,s.CountryID
+	   upper(Ltrim(s.PortCode))
+	   ,s.PortName
+	   ,upper(s.Country)
 	   ,s.AirPort
 	   ,s.SeaPort
-	   ,iif(s.InternationalCode='',s.id,s.InternationalCode)
+	   , iif(s.InternationalCode='', upper(s.PortCode), upper(s.InternationalCode))
 	   ,GetDate()
 	   ,'{Sci.Env.User.UserID}'
 	   );
@@ -257,10 +329,10 @@ when not matched by target then
             SqlConnection sqlConn = null;
             DBProxy.Current.OpenConnection("ProductionTPE", out sqlConn);
             DataTable dtresult;
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(excelDataTable, string.Empty, sqlUpdate, out dtresult, conn: sqlConn)))
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithObject(pulloutPortList, string.Empty, sqlUpdate, out dtresult, conn: sqlConn)))
             {
                 this.ShowErr(result);
-                return;
             }
             else
             {
@@ -268,5 +340,28 @@ when not matched by target then
                 this.ReloadDatas();
             }
         }
+    }
+
+    /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
+    public class PulloutPort
+    {
+        /// <inheritdoc/>
+        public string PortCode { get; set; }
+
+        /// <inheritdoc/>
+        public string PortName { get; set; }
+
+        /// <inheritdoc/>
+        public string Country { get; set; }
+
+        /// <inheritdoc/>
+        public bool AirPort { get; set; }
+
+        /// <inheritdoc/>
+        public bool SeaPort { get; set; }
+
+        /// <inheritdoc/>
+        public string InternationalCode { get; set; }
     }
 }
