@@ -12,7 +12,7 @@
     [PrintDate]   DATETIME       NULL,
     [IsPair]      BIT            NULL,
     [Location]    VARCHAR (1)    DEFAULT ('') NOT NULL,
-    [RFUID]       VARCHAR (20)   CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT ('') NOT NULL,
+    [RFUID]       VARCHAR (10)   CONSTRAINT [DF_Bundle_Detail_RFUID] DEFAULT ('') NOT NULL,
     [RFPrintDate] DATETIME       NULL,
     [Tone]        VARCHAR (1)    CONSTRAINT [DF_Bundle_Detail_Tone] DEFAULT ('') NOT NULL,
     [PrintGroup]  TINYINT        NULL,

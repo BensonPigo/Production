@@ -32,7 +32,7 @@ namespace Sci.Production.Prg
             /// <summary>
             /// 2. Get UID
             /// </summary>
-            F30 = 2,
+            F31 = 2,
 
             /// <summary>
             /// 3. Set Print Data
@@ -341,7 +341,7 @@ from
                             throw new Exception(string.Join("Card Get From Stacker Error :", Environment.NewLine, result.ToString()));
                         }
 
-                        // F30
+                        // F31
                         string cardUID = string.Empty;
                         result = CardRFUiD(bundleRFCard);
                         if (result)
@@ -484,7 +484,7 @@ from
                             }
                         }
 
-                        // F30
+                        // F31
                         string cardUID = string.Empty;
                         result = CardRFUiD(bundleRFCard);
                         if (result)
@@ -796,7 +796,7 @@ from
                     case BundleType.C31:
                         result = CardFromStacker(bundleRFCard);
                         break;
-                    case BundleType.F30:
+                    case BundleType.F31:
                         result = CardRFUiD(bundleRFCard);
 
                         MyUtility.Msg.InfoBox("BundleID" + dr["BundleID"].ToString() + ",BundleNo" + dr["BundleNo"].ToString() + ",RFUiD" + result.Description);
@@ -943,7 +943,9 @@ from
         }
 
         /// <summary>
-        /// [F30] RF card detect in antenna area.
+        /// [F31] RF card detect in antenna area.
+        /// 讀取出 16進位的byte 轉 ASCII = 10進位
+        /// * [F30] 為16進位的byte 轉 ASCII = 16進位
         /// </summary>
         /// <returns>DualResult</returns>
         private static DualResult CardRFUiD(BundleRFCardUSB bundleRFCard)
@@ -957,25 +959,30 @@ from
             string result_data = string.Empty;
             uint recLen = 0;
 
-            // F30
+            // F31
             gbacmd[0] = 0x46;
             gbacmd[1] = 0x33;
-            gbacmd[2] = 0x30;
+            gbacmd[2] = 0x31;
 
             res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
             errcode = string.Format("0x{0:x4}", res);
 
             if (rDat[0] == 0x00)
             {
+                var rrDat = new byte[1000];
                 recLen = (uint)(rLen[1] << 8);
                 recLen |= rLen[0];
-                for (int i = 0; i <= recLen - 1; i++)
+                Array.Copy(rDat, 1, rrDat, 0, recLen);
+
+                result_data = Encoding.Default.GetString(rrDat);
+
+                if (int.TryParse(result_data, out int tryPraseResult))
                 {
-                    result_data += Convert.ToInt32(rDat[i]);
+                    result_data = tryPraseResult.ToString();
                 }
 
                 // Card UID
-                result = new DualResult(true, result_data.Right(16));
+                result = new DualResult(true, result_data);
             }
             else
             {
