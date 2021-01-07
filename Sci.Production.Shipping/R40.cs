@@ -410,7 +410,7 @@ where v.VNContractID = @contract
         WIP 確認尚未關倉的訂單 &&
 		關倉日期比 GenerateDate 晚，代表當天還沒有關倉
 */
-select  v.CustomSP
+select  [CustomSP] = CustomSP.val
         , sdd.OrderID
         , [StyleID] = t.OriStyleID
 		, sdd.ComboType
@@ -421,11 +421,11 @@ select  v.CustomSP
 into #tmpSewingOutput_WHNotClose
 from #tmpOrderList t
 inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.id
-inner join #tmpCustomSP v on t.StyleID = v.StyleID
-					         and t.BrandID = v.BrandID
-					         and t.Category = v.Category
-					         and sdd.SizeCode = v.SizeCode
-					         and sdd.Article = v.Article
+outer apply (select top 1 [val] = v.CustomSP from  #tmpCustomSP v where t.StyleID = v.StyleID
+					                                            and t.BrandID = v.BrandID
+					                                            and t.Category = v.Category
+					                                            and sdd.SizeCode = v.SizeCode
+					                                            and sdd.Article = v.Article) CustomSP
 where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
         and not exists (
             select 1
@@ -438,7 +438,7 @@ where   (t.WhseClose is null or t.WhseClose >= @GenerateDate)
 			where sdd.ID= s.ID
 			and s.OutputDate <= @GenerateDate
         )
-group by sdd.OrderID, t.OriStyleID, sdd.ComboType, sdd.Article, sdd.SizeCode, t.FactoryID, v.CustomSP
+group by sdd.OrderID, t.OriStyleID, sdd.ComboType, sdd.Article, sdd.SizeCode, t.FactoryID, CustomSP.val
 
 
 
