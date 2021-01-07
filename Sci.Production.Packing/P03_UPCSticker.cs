@@ -1,9 +1,11 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using System;
 using System.Data;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace Sci.Production.Packing
 {
@@ -73,6 +75,13 @@ FROM Orders o
 LEFT JOIN PackingList_Detail PD ON PD.OrderID = O.ID 
 ,#tmp
 WHERE O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Article and pd.SizeCode=#tmp.SizeCode
+
+select  distinct PD.ID
+from    Orders o
+LEFT JOIN PackingList_Detail PD ON PD.OrderID = O.ID 
+,#tmp
+WHERE O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Article and pd.SizeCode=#tmp.SizeCode
+
 ";
             DataTable udt;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dt, string.Empty, updateSqlCmd, out udt);
@@ -82,6 +91,26 @@ WHERE O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Arti
             }
             else
             {
+                if (udt.Rows.Count > 0)
+                {
+                    string listID = udt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ID"])).JoinToString(",");
+                    Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID, string.Empty))
+                               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+
+                    // 因為會傳圖片，拆成單筆 PackingListNo 轉出，避免一次傳出的容量過大超過api大小限制
+                    foreach (DataRow dr in udt.Rows)
+                    {
+                        #region ISP20201607 資料交換 - Gensong
+                        if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+                        {
+                            // 不透過Call API的方式，自己組合，傳送API
+                            Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["ID"]), string.Empty))
+                                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                        }
+                        #endregion
+                    }
+                }
+
                 MyUtility.Msg.InfoBox("Update success!");
                 this.Close();
             }
