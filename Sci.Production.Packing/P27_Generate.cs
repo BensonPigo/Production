@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -86,7 +87,6 @@ SET ShippingMarkTemplatePath='I:\MIS\Personal\Benson\TFORMer Test\ShippingMarkTe
 
         private void Query()
         {
-            DataTable dt;
             List<SqlParameter> parameters = new List<SqlParameter>();
             string where = string.Empty;
             string where_include = string.Empty;
@@ -182,7 +182,7 @@ DROP TABLE #base
 ";
             #endregion
 
-            DualResult r = DBProxy.Current.Select(null, cmd, parameters, out dt);
+            DualResult r = DBProxy.Current.Select(null, cmd, parameters, out DataTable dt);
 
             if (!r)
             {
@@ -258,6 +258,9 @@ SELECT DISTINCT
     ,pd.SCICtnNo
     ,[ShippingMarkCombinationUkey] = ISNULL(c.StampCombinationUkey,comb.Ukey)
     ,p.CTNQty
+    ,[AlreadyGenerateStampFile]=IIF(EXISTS(SELECT 1 FROM ShippingMarkStamp stmp 
+										    INNER JOIN ShippingMarkStamp_Detail stmpD ON stmp.PackingListID= stmpD.PackingListID
+										    WHERE stmp.PackingListID = p.ID) ,1 ,0)
 INTO #base
 FROM PackingList p
 INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
@@ -279,7 +282,8 @@ SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkStamp和ShippingMar
     ,b.RefNo
     ,b.CTNStartNo
     ,td.TemplateName
-	
+	,b.AlreadyGenerateStampFile
+
 	----對應ShippingMarkStamp_Detail
     ,b.SCICtnNo
 	,b.ShippingMarkCombinationUkey
@@ -304,17 +308,21 @@ WHERE td.TemplateName <> ''
             #endregion
 
             DualResult r = DBProxy.Current.Select(null, cmd, out DataTable dt);
-
             if (!r)
             {
                 this.ShowErr(r);
                 return;
             }
 
+            // 取得按下Generate前才變動[完成箱數]的 PackingListID
+            var changeCompleteCtnList = this.GetchangeCompleteCtnList(dt);
+            dt.AcceptChanges();
+
+            string templatePath = MyUtility.GetValue.Lookup("SELECT ShippingMarkTemplatePath FROM System");
+
             // 組合出物件方便使用
             foreach (DataRow dr in dt.Rows)
             {
-                string templatePath = MyUtility.GetValue.Lookup("SELECT ShippingMarkTemplatePath FROM System");
                 P27_Template obj = new P27_Template()
                 {
                     PackingListID = MyUtility.Convert.GetString(dr["PackingListID"]),
@@ -332,6 +340,8 @@ WHERE td.TemplateName <> ''
                     FromRight = MyUtility.Convert.GetDouble(dr["FromRight"]),
                     Width = MyUtility.Convert.GetInt(dr["Width"]),
                     Length = MyUtility.Convert.GetInt(dr["Length"]),
+                    AlreadyGenerateStampFile = MyUtility.Convert.GetInt(dr["AlreadyGenerateStampFile"]),
+                    Fail = 0,
 
                     DefineColumns = new List<DefineColumn>(),
                 };
@@ -340,27 +350,32 @@ WHERE td.TemplateName <> ''
             }
 
             // 取得要替換的欄位的值
-            List<P27_Template> nList = this.GetTemplateFieldValue(tList);
-            if (MyUtility.Check.Empty(nList))
+            List<P27_Template> nList = this.GetTemplateFieldValue(tList).Where(w => w.Fail == 0).ToList();
+            if (nList == null)
             {
                 return;
             }
 
             // 轉出HTML檔
-            List<P27_Template> bList = this.TransferFile(nList);
+            List<P27_Template> bList = this.TransferFile(nList).Where(w => w.Fail == 0).ToList();
 
             // 全部轉檔成功才UPDATE DB
-            if (MyUtility.Check.Empty(bList))
+            if (bList == null)
             {
                 return;
             }
 
-            bool success = this.UpdateDatabese(bList);
+            bool success = false;
+            if (bList.Any())
+            {
+                success = this.UpdateDatabese(bList);
+            }
 
+            var successPackingList = tList.Where(w => w.Fail == 0).Select(o => new { o.PackingListID, o.AlreadyGenerateStampFile }).Distinct().ToList();
             if (success)
             {
                 #region ISP20201690 資料交換 - Sunrise
-                foreach (var packingListID in tList.Select(o => o.PackingListID).Distinct())
+                foreach (var packingListID in successPackingList.Select(o => o.PackingListID).Distinct())
                 {
                     Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(packingListID, string.Empty))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
@@ -368,16 +383,100 @@ WHERE td.TemplateName <> ''
                 #endregion
 
                 #region ISP20201607 資料交換 - Gensong
-                foreach (var packingListID in tList.Select(o => o.PackingListID).Distinct())
+                foreach (var packingListID in successPackingList.Select(o => o.PackingListID).Distinct())
                 {
                     Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListID, string.Empty))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                 }
                 #endregion
-
-                MyUtility.Msg.InfoBox("Success!!");
-                this.Query();
             }
+            else
+            {
+                bList.ForEach(f => f.Fail = 1);
+            }
+
+            DataTable msgDt = new DataTable();
+            msgDt.Columns.Add("PackingListID", typeof(string));
+            msgDt.Columns.Add("Message", typeof(string));
+
+            // 1.Update sucess    [成功] : PL 在這一次匯入中成功上傳圖檔
+            // 2.Overwrite success[成功] : PL 已上傳過圖檔，這一次匯入成功覆寫
+            foreach (var item in successPackingList)
+            {
+                DataRow nr = msgDt.NewRow();
+                nr["PackingListID"] = item.PackingListID;
+                nr["Message"] = item.AlreadyGenerateStampFile == 1 ? "Overwrite success" : "Update sucess";
+                msgDt.Rows.Add(nr);
+            }
+
+            // Stamp basic setting not yet complete !
+            // 按下 Query 之後才被改變→再按 Generate
+            // [失敗] : PL 貼標基本設定尚未完成，無法匯入圖檔
+            // 1. CustCD 找不到噴碼標籤組合
+            // 2. 紙箱 + 標籤組合在 Packing B03 尚未設定
+            // 3. Packing B03 表身的每一個 Mark Type 選擇的 Mark Size 尚未在 ShippingMarkType_Detail 上傳範本檔
+            foreach (var packingListID in changeCompleteCtnList)
+            {
+                DataRow nr = msgDt.NewRow();
+                nr["PackingListID"] = packingListID;
+                nr["Message"] = "Stamp basic setting not yet complete !";
+                msgDt.Rows.Add(nr);
+            }
+
+            var fList = tList.Where(w => w.Fail == 1).Select(o => o.PackingListID).Distinct().ToList();
+            foreach (var packingListID in fList)
+            {
+                DataRow nr = msgDt.NewRow();
+                nr["PackingListID"] = packingListID;
+                List<string> msgs = new List<string>();
+
+                // Template Path not found. 4.[失敗] : 範本檔找不到
+                var et = tList.Where(w => packingListID.Contains(w.PackingListID) && w.ErrTemplateFile).ToList();
+                if (et.Any())
+                {
+                    msgs.Add("Template Path not found.");
+                    msgs.Add(et.Select(s => s.Refno).Distinct().ToList().JoinToString(","));
+                }
+
+                // Shipping mark information not maintained in PMS yet. 5.[失敗] : 範本檔中使用的資訊未在 PMS 中維護
+                var em = tList.Where(w => packingListID.Contains(w.PackingListID) && w.ErrMarkinfo).ToList();
+                if (em.Any())
+                {
+                    msgs.Add("Shipping mark information not maintained in PMS yet.");
+                    msgs.Add(em.Select(s => s.CTNStartNo).Distinct().ToList().JoinToString(","));
+                }
+
+                nr["Message"] = msgs.JoinToString(Environment.NewLine);
+                msgDt.Rows.Add(nr);
+            }
+
+            var m = MyUtility.Msg.ShowMsgGrid(msgDt, msg: "Please check below message.", caption: "Result");
+            m.grid1.Columns[0].Width = 140;
+            m.grid1.Columns[1].Width = 400;
+
+            // MyUtility.Msg.InfoBox("Success!!");
+            this.Query();
+        }
+
+        private List<string> GetchangeCompleteCtnList(DataTable dt)
+        {
+            var changeCompleteCtnList = new List<string>();
+            var byIDCompleteCtn = dt.AsEnumerable().GroupBy(g => g["PackingListID"].ToString())
+                .Select(s => new { ID = s.Key, ct = s.Count() }).ToList();
+            foreach (var item in byIDCompleteCtn)
+            {
+                DataRow[] drs = ((DataTable)this.grid.DataSource).Select($"ID = '{item.ID}' and CompleteCtn <> {item.ct}");
+                if (drs.Length > 0)
+                {
+                    foreach (DataRow dr in drs)
+                    {
+                        changeCompleteCtnList.Add(dr["ID"].ToString());
+                        dt.Select($"PackingListID = '{dr["ID"]}'").Delete();
+                    }
+                }
+            }
+
+            return changeCompleteCtnList;
         }
 
         // 取得範本欄位對應DB的值
@@ -395,8 +494,15 @@ WHERE td.TemplateName <> ''
 
                     if (!System.IO.File.Exists(templatePath))
                     {
-                        MyUtility.Msg.WarningBox("Template Path not found!!");
-                        return null;
+                        foreach (var item in sameTemplateDatas)
+                        {
+                            item.ErrTemplateFile = true;
+                            item.Fail = 1;
+                        }
+
+                        // MyUtility.Msg.WarningBox("Template Path not found!!");
+                        // 找不到範本，跳下一個範本
+                        continue;
                     }
 
                     // 開啟範本
@@ -422,13 +528,12 @@ WHERE td.TemplateName <> ''
                     // 以每一箱的資訊，取得這一箱標籤範本所設定的欄位，及其對應的值
                     foreach (P27_Template sameTemplateData in sameTemplateDatas)
                     {
-                        DataTable dt;
                         string cmd = $@"
 SELECt * 
 FROM dbo.[Get_ShippingMarkTemplate_DefineColumn]('{sameTemplateData.PackingListID}' ,'{sameTemplateData.OrderID}' ,'{sameTemplateData.CTNStartNo}' ,'{sameTemplateData.Refno}' )
 WHERE ID IN ('{templateFields.JoinToString("','")}')
 ";
-                        DBProxy.Current.Select(null, cmd, out dt);
+                        DBProxy.Current.Select(null, cmd, out DataTable dt);
                         List<DefineColumn> defineColumns = new List<DefineColumn>();
 
                         foreach (DataRow dr in dt.Rows)
@@ -445,17 +550,30 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                 }
 
                 // 取得ChkEmpty = true且沒資料的欄位，是哪些Packing List ID
-                var hasEmptyDatas = p27_Templates.Where(o => o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value) && x.ChkEmpty).Any()).Select(o => o.PackingListID).Distinct().ToList();
+                var hasEmptyDatas = p27_Templates
+                    .Where(o => o.Fail == 0 && o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value) && x.ChkEmpty).Any())
+                    .ToList();
 
                 if (hasEmptyDatas.Any())
                 {
-                    MyUtility.Msg.WarningBox("Please check below packing list shipping mark information in PMS." + Environment.NewLine + hasEmptyDatas.JoinToString(Environment.NewLine));
-                    return null;
+                    foreach (var item in hasEmptyDatas)
+                    {
+                        item.ErrMarkinfo = true;
+                        item.Fail = 1;
+                    }
+
+                    // MyUtility.Msg.WarningBox("Please check below packing list shipping mark information in PMS." + Environment.NewLine + hasEmptyDatas.JoinToString(Environment.NewLine));
+                    // return null;
                 }
-                else
+
+                // PackingListID 只要有一箱被標記失敗，則此PackingListID全部標記失敗，不做轉出動作
+                foreach (var item in p27_Templates
+                    .Where(w2 => p27_Templates.Where(w => w.Fail == 1).Select(s => s.PackingListID).Contains(w2.PackingListID)))
                 {
-                    return p27_Templates;
+                    item.Fail = 1;
                 }
+
+                return p27_Templates;
             }
             catch (Exception ex)
             {
@@ -570,8 +688,8 @@ INSERT INTO ShippingMarkStamp_Detail
                 r = DBProxy.Current.Execute(null, headInsert);
                 if (!r)
                 {
-                    this.ShowErr(r);
                     transactionScope.Dispose();
+                    this.ShowErr(r);
                     return false;
                 }
 
@@ -579,8 +697,8 @@ INSERT INTO ShippingMarkStamp_Detail
 
                 if (!r)
                 {
-                    this.ShowErr(r);
                     transactionScope.Dispose();
+                    this.ShowErr(r);
                     return false;
                 }
 
@@ -646,6 +764,18 @@ INSERT INTO ShippingMarkStamp_Detail
 
         /// <inheritdoc/>
         public string TemplatePath { get; set; }
+
+        /// <inheritdoc/>
+        public int AlreadyGenerateStampFile { get; set; }
+
+        /// <inheritdoc/>
+        public int Fail { get; set; }
+
+        /// <inheritdoc/>
+        public bool ErrTemplateFile { get; set; }
+
+        /// <inheritdoc/>
+        public bool ErrMarkinfo { get; set; }
 
         /// <inheritdoc/>
         public List<DefineColumn> DefineColumns { get; set; }
