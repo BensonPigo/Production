@@ -34,6 +34,14 @@ namespace Sci.Production.Class
         public object CountryID { get; set; }
 
         /// <inheritdoc/>
+        [Description("篩選BrandID")]
+        public object BrandID { get; set; }
+
+        /// <inheritdoc/>
+        [Description("ShipModeID")]
+        public object ShipModeID { get; set; }
+
+        /// <inheritdoc/>
         [Description("設定 DB ConnectionName")]
         public string ConnectionName { get; set; }
 
@@ -55,30 +63,46 @@ namespace Sci.Production.Class
 
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
-            this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id");
+            string conName = this.ConnectionName ?? "Production";
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id", conName);
         }
-
 
         /// <inheritdoc/>
         private void TextBox1_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
             string conName = this.ConnectionName ?? "Production";
-            string wherecountry = this.CountryID == null ? string.Empty : $" and p.CountryID = @CountryID";
-            List<SqlParameter> parameters = new List<SqlParameter>()
-            {
-                new SqlParameter("@CountryID", this.CountryID is null ? string.Empty : ((Win.UI.TextBox)this.CountryID).Text),
-            };
             string sql = $@"
 SELECT p.ID,P.Name,p.CountryID,[Country Name]=c.NameEN 
     ,[AirPort]=IIF(p.AirPort=1,'Y','') 
     ,[SeaPort]=IIF(p.SeaPort=1,'Y','') 
 FROM PulloutPort p 
 INNER JOIN {(conName == "ProductionTPE" ? "Trade.." : string.Empty)}Country c ON p.CountryID = c.ID 
+LEFT JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.Junk = 0 
-{wherecountry}
-ORDER BY p.ID";
+";
 
-            DBProxy.Current.Select(conName, sql, parameters, out DataTable source);
+            if (this.CountryID != null && !MyUtility.Check.Empty(this.CountryID))
+            {
+                sql += $@" and p.CountryID = '{this.CountryID}'";
+            }
+
+            if (this.BrandID != null && !MyUtility.Check.Empty(this.BrandID))
+            {
+                sql += $@" and pbs.BrandID = '{this.BrandID}'";
+            }
+
+            if (this.ShipModeID != null && this.ShipModeID.ToString() == "SEA")
+            {
+                sql += $@" and p.SeaPort = 1";
+            }
+            else if (this.ShipModeID != null && (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P"))
+            {
+                sql += $@" and (p.SeaPort = 1 or p.AirPort = 1)";
+            }
+
+            sql += " ORDER BY p.ID";
+
+            DBProxy.Current.Select(conName, sql,  out DataTable source);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(source, "ID,Name,CountryID,Country Name,AirPort,SeaPort", "20,25,10,20,5,5", this.TextBox1.Text)
             {
                 Size = new System.Drawing.Size(950, 666),
@@ -106,14 +130,32 @@ ORDER BY p.ID";
             string nPulloutPort = this.TextBox1.Text;
             if (!string.IsNullOrWhiteSpace(nPulloutPort) && nPulloutPort != this.TextBox1.OldValue)
             {
-                string cmd = $"SELECT Name FROM PulloutPort WHERE ID=@ID AND Junk=0 {wherecountry}";
-                List<SqlParameter> parameters = new List<SqlParameter>()
+                string cmd = $@"
+SELECT p.Name FROM PulloutPort p
+LEFT JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
+WHERE p.ID = '{nPulloutPort}' AND p.Junk=0 ";
+                if (this.CountryID != null && !MyUtility.Check.Empty(this.CountryID))
                 {
-                    new SqlParameter("@ID", nPulloutPort),
-                    new SqlParameter("@CountryID",  this.CountryID is null ? string.Empty : ((Win.UI.TextBox)this.CountryID).Text),
-                };
+                    cmd += $@" and p.CountryID = '{this.CountryID}'";
+                }
 
-                if (!MyUtility.Check.Seek(cmd, parameters, conName))
+                if (this.BrandID != null && !MyUtility.Check.Empty(this.BrandID))
+                {
+                    cmd += $@" and pbs.BrandID = '{this.BrandID}'";
+                }
+
+                if (this.ShipModeID != null && this.ShipModeID.ToString() == "SEA")
+                {
+                    cmd += $@" and p.SeaPort = 1";
+                }
+                else if (this.ShipModeID != null && (this.ShipModeID.ToString() == "S-A/C" || this.ShipModeID.ToString() == "S-A/P"))
+                {
+                    cmd += $@" and (p.SeaPort = 1 or p.AirPort = 1)";
+                }
+
+                cmd += " ORDER BY p.ID";
+
+                if (!MyUtility.Check.Seek(cmd, conName))
                 {
                     this.TextBox1.Text = string.Empty;
                     e.Cancel = true;
