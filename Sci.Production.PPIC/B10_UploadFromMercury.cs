@@ -216,7 +216,7 @@ namespace Sci.Production.PPIC
                         if (dr.Length > 0)
                         {
                             // pO_Item 要比對 CustPONo "-" 後的兩碼
-                            sqlcmd = $"SELECT ID FROM Orders WHERE {c.ColumnName} = '{pO_Number}' and SUBSTRING(CustPONo, CHARINDEX('-', CustPONo) + 1, 10) = '{pO_Item}'";
+                            sqlcmd = $"SELECT ID FROM Orders WHERE {c.ColumnName} = '{pO_Number}' and IIF(CustPONo not like '%-%','',SUBSTRING(CustPONo, CHARINDEX('-', CustPONo) + 1, 10) ) = '{pO_Item}'";
                             break;
                         }
                     }
