@@ -1,0 +1,23 @@
+﻿CREATE TABLE [dbo].[P_DQSDefect_Summary] (
+    [FirstInspectDate]   DATE           NULL,
+    [FactoryID]          VARCHAR (8)    NULL,
+    [BrandID]            VARCHAR (8)    NULL,
+    [StyleID]            VARCHAR (15)   NULL,
+    [POID]               VARCHAR (30)   NULL,
+    [SPNO]               VARCHAR (13)   NULL,
+    [Article]            VARCHAR (8)    NULL,
+    [SizeCode]           VARCHAR (8)    NULL,
+    [Destination]        VARCHAR (30)   NULL,
+    [CDCode]             VARCHAR (6)    NULL,
+    [ProductionFamilyID] VARCHAR (20)   NULL,
+    [Team]               VARCHAR (10)   NULL,
+    [QCName]             VARCHAR (10)   NULL,
+    [Shift]              VARCHAR (5)    NULL,
+    [Line]               VARCHAR (5)    NULL,
+    [Cell]               VARCHAR (2)    NULL,
+    [InspectQty]         INT            NULL,
+    [RejectQty]          INT            NULL,
+    [WFT]                DECIMAL (6, 3) NULL,
+    [RFT]                DECIMAL (6, 3) NULL
+);
+

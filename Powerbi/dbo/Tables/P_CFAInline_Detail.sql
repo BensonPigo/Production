@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[P_CFAInline_Detail] (
+    [Action]          VARCHAR (254)  NULL,
+    [Area]            VARCHAR (60)   NULL,
+    [AuditDate]       DATE           NULL,
+    [BrandID]         VARCHAR (8)    NULL,
+    [BuyerDelivery]   DATE           NULL,
+    [CfaName]         VARCHAR (45)   NULL,
+    [DefectDesc]      NVARCHAR (100) NULL,
+    [DefectQty]       INT            NULL,
+    [Destination]     VARCHAR (30)   NULL,
+    [FactoryID]       VARCHAR (8)    NULL,
+    [GarmentOutput]   DECIMAL (5, 2) NULL,
+    [InspectionStage] VARCHAR (30)   NULL,
+    [Line]            VARCHAR (2)    NULL,
+    [NumberDefect]    NUMERIC (5)    NULL,
+    [OrderQty]        INT            NULL,
+    [POID]            VARCHAR (30)   NULL,
+    [Remark]          NVARCHAR (254) NULL,
+    [Result]          VARCHAR (4)    NULL,
+    [InspectQty]      NUMERIC (7)    NULL,
+    [Shift]           VARCHAR (15)   NULL,
+    [SPNO]            VARCHAR (13)   NULL,
+    [SQR]             NUMERIC (7, 3) NULL,
+    [StyleID]         VARCHAR (15)   NULL,
+    [Team]            VARCHAR (10)   NULL,
+    [VASSHAS]         VARCHAR (1)    NULL
+);
+
