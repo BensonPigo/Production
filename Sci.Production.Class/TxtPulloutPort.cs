@@ -63,7 +63,8 @@ namespace Sci.Production.Class
 
         private void TextBox1_TextChanged(object sender, EventArgs e)
         {
-            this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id");
+            string conName = this.ConnectionName ?? "Production";
+            this.DisplayBox1.Text = MyUtility.GetValue.Lookup("Name", this.TextBox1.Text.ToString(), "PulloutPort", "Id", conName);
         }
 
         /// <inheritdoc/>
@@ -76,7 +77,7 @@ SELECT p.ID,P.Name,p.CountryID,[Country Name]=c.NameEN
     ,[SeaPort]=IIF(p.SeaPort=1,'Y','') 
 FROM PulloutPort p 
 INNER JOIN {(conName == "ProductionTPE" ? "Trade.." : string.Empty)}Country c ON p.CountryID = c.ID 
-INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
+LEFT JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.Junk = 0 
 ";
 
@@ -131,7 +132,7 @@ WHERE p.Junk = 0
             {
                 string cmd = $@"
 SELECT p.Name FROM PulloutPort p
-INNER JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
+LEFT JOIN PortByBrandShipmode pbs on pbs.PulloutPortID = p.ID
 WHERE p.ID = '{nPulloutPort}' AND p.Junk=0 ";
                 if (this.CountryID != null && !MyUtility.Check.Empty(this.CountryID))
                 {
