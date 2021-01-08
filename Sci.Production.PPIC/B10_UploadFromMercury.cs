@@ -215,7 +215,8 @@ namespace Sci.Production.PPIC
                         DataRow[] dr = dt.Select($"{c.ColumnName} = 'TRADING PO'");
                         if (dr.Length > 0)
                         {
-                            sqlcmd = $"SELECT ID FROM Orders WHERE {c.ColumnName} = '{pO_Number}'";
+                            // pO_Item 要比對 CustPONo "-" 後的兩碼
+                            sqlcmd = $"SELECT ID FROM Orders WHERE {c.ColumnName} = '{pO_Number}' and SUBSTRING(CustPONo, CHARINDEX('-', CustPONo) + 1, 10) = '{pO_Item}'";
                             break;
                         }
                     }
