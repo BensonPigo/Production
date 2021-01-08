@@ -115,6 +115,15 @@
     <Build Include="dbo\Functions\P_GetPoPriceByArticleSize.sql" />
     <Build Include="dbo\Functions\GetSuppPaymentTerm.sql" />
     <Build Include="dbo\Tables\ForecastLoadingBI_Summary_Buyer.sql" />
+    <Build Include="dbo\Tables\P_TransRegion_Test.sql" />
+    <Build Include="dbo\Tables\P_LoadingProductionOutput.sql" />
+    <Build Include="dbo\Tables\P_DQSDefect_Summary.sql" />
+    <Build Include="dbo\Tables\P_DQSDefect_Detail.sql" />
+    <Build Include="dbo\Tables\P_CFAInspectionRecord_Detail.sql" />
+    <Build Include="dbo\Tables\P_CFAInline_Detail.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportQAInspection.sql" />
+    <Build Include="dbo\Stored Procedures\P_ImportLoadingProductionOutput.sql" />
+    <Build Include="dbo\Functions\SplitString.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

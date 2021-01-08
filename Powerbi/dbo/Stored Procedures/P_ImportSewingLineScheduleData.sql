@@ -25,16 +25,11 @@ SELECT * into #Final FROM OPENQUERY(['+@LinkServerName+'], ''exec production.dbo
 '')
 where SewingDay between '''+@SDate+'''  and '''+@EDate+'''
 
-MERGE INTO P_SewingLineSchedule t --要被insert/update/delete的表
-USING #Final s --被參考的表
-   ON t.APSNo=s.APSNo  
-   AND t.SewingDay=s.SewingDay 
-   AND t.MDivisionID = s.MDivisionID 
-   AND t.FactoryID = s.FactoryID
-   --and t.ScheduleEfficiency = s.ScheduleEfficiency
-   --and t.AlloQty = s.AlloQty
-WHEN MATCHED THEN
-	UPDATE SET
+BEGIN TRY
+Begin tran
+
+update t
+SET
 	t.APSNo =  s.APSNo,
 	t.SewingLineID =  s.SewingLineID,
 	t.SewingDay =  s.SewingDay,
@@ -86,119 +81,63 @@ WHEN MATCHED THEN
 	t.Orig_WorkHourPerDay =  s.Orig_WorkHourPerDay,
 	t.New_SwitchTime =  s.New_SwitchTime,
 	t.FirststCuttingOutputDate =  s.FirststCuttingOutputDate
+from P_SewingLineSchedule t
+inner join #Final s on t.APSNo=s.APSNo  
+   AND t.SewingDay=s.SewingDay 
+   AND t.MDivisionID = s.MDivisionID 
+   AND t.FactoryID = s.FactoryID
 
-WHEN NOT MATCHED BY TARGET THEN
-	INSERT(
-	[APSNo]
-      ,[SewingLineID]
-      ,[SewingDay]
-      ,[SewingStartTime]
-      ,[SewingEndTime]
-      ,[MDivisionID]
-      ,[FactoryID]
-      ,[PO]
-      ,[POCount]
-      ,[SP]
-      ,[SPCount]
-      ,[EarliestSCIdelivery]
-      ,[LatestSCIdelivery]
-      ,[EarliestBuyerdelivery]
-      ,[LatestBuyerdelivery]
-      ,[Category]
-      ,[Colorway]
-      ,[ColorwayCount]
-      ,[CDCode]
-      ,[ProductionFamilyID]
-      ,[Style]
-      ,[StyleCount]
-      ,[OrderQty]
-      ,[AlloQty]
-      ,[StardardOutputPerDay]
-      ,[CPU]
-      ,[WorkHourPerDay]
-      ,[StardardOutputPerHour]
-      ,[Efficienycy]
-      ,[ScheduleEfficiency]
-      ,[LineEfficiency]
-      ,[LearningCurve]
-      ,[SewingInline]
-      ,[SewingOffline]
-      ,[PFRemark]
-      ,[MTLComplete]
-      ,[KPILETA]
-      ,[MTLETA]
-      ,[ArtworkType]
-      ,[InspectionDate]
-      ,[Remarks]
-      ,[CuttingOutput]
-      ,[SewingOutput]
-      ,[ScannedQty]
-      ,[ClogQty]
-      ,[Sewer]
-      ,[SewingCPU]
-      ,[BrandID]
-      ,[Orig_WorkHourPerDay]
-      ,[New_SwitchTime]
-      ,[FirststCuttingOutputDate]
-	)
-	VALUES(
-	s.APSNo,
-	s.SewingLineID,
-	s.SewingDay,
-	s.SewingStartTime,
-	s.SewingEndTime,
-	s.MDivisionID,
-	s.FactoryID,
-	s.PO,
-	s.POCount,
-	s.SP,
-	s.SPCount,
-	s.EarliestSCIdelivery,
-	s.LatestSCIdelivery,
-	s.EarliestBuyerdelivery,
-	s.LatestBuyerdelivery,
-	s.Category,
-	s.Colorway,
-	s.ColorwayCount,
-	s.CDCode,
-	s.ProductionFamilyID,
-	s.Style,
-	s.StyleCount,
-	s.OrderQty,
-	s.AlloQty,
-	s.StardardOutputPerDay,
-	s.CPU,
-	s.New_WorkHourPerDay,
-	s.StardardOutputPerHour,
-	s.Efficienycy,
-	s.ScheduleEfficiency,
-	s.LineEfficiency,
-	s.LearningCurve,
-	s.SewingInline,
-	s.SewingOffline,
-	s.PFRemark,
-	s.MTLComplete,
-	s.KPILETA,
-	s.MTLETA,
-	s.ArtworkType,
-	s.InspectionDate,
-	s.Remarks,
-	s.CuttingOutput,
-	s.SewingOutput,
-	s.ScannedQty,
-	s.ClogQty,
-	s.Sewer,
-	s.SewingCPU,
-	s.BrandID,
-	s.Orig_WorkHourPerDay,
-	s.New_SwitchTime,
-	s.FirststCuttingOutputDate	
-	)
-WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+'''
-	and t.MDivisionID in (select distinct MDivisionID from #Final ) THEN
-DELETE ;
+insert into P_SewingLineSchedule
+   ([APSNo]
+      ,[SewingLineID] ,[SewingDay] ,[SewingStartTime] ,[SewingEndTime] ,[MDivisionID] ,[FactoryID]
+      ,[PO] ,[POCount] ,[SP] ,[SPCount] ,[EarliestSCIdelivery] ,[LatestSCIdelivery]
+      ,[EarliestBuyerdelivery] ,[LatestBuyerdelivery] ,[Category] ,[Colorway] ,[ColorwayCount] ,[CDCode]
+      ,[ProductionFamilyID]  ,[Style] ,[StyleCount] ,[OrderQty] ,[AlloQty] ,[StardardOutputPerDay]
+      ,[CPU] ,[WorkHourPerDay] ,[StardardOutputPerHour] ,[Efficienycy] ,[ScheduleEfficiency] ,[LineEfficiency]
+      ,[LearningCurve] ,[SewingInline] ,[SewingOffline] ,[PFRemark] ,[MTLComplete] ,[KPILETA]
+      ,[MTLETA] ,[ArtworkType] ,[InspectionDate] ,[Remarks]  ,[CuttingOutput],[SewingOutput]
+      ,[ScannedQty] ,[ClogQty] ,[Sewer] ,[SewingCPU],[BrandID],[Orig_WorkHourPerDay],[New_SwitchTime],[FirststCuttingOutputDate])
+select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,	s.MDivisionID,
+	s.FactoryID,	s.PO,	s.POCount,	s.SP,	s.SPCount,	s.EarliestSCIdelivery,	s.LatestSCIdelivery,	s.EarliestBuyerdelivery,
+	s.LatestBuyerdelivery,	s.Category,	s.Colorway,	s.ColorwayCount,	s.CDCode,	s.ProductionFamilyID,	s.Style,	s.StyleCount,
+	s.OrderQty,	s.AlloQty,	s.StardardOutputPerDay,	s.CPU,	s.New_WorkHourPerDay,	s.StardardOutputPerHour,	s.Efficienycy,	s.ScheduleEfficiency,
+	s.LineEfficiency,	s.LearningCurve,	s.SewingInline,	s.SewingOffline,	s.PFRemark,	s.MTLComplete,	s.KPILETA,	s.MTLETA,
+	s.ArtworkType,	s.InspectionDate,	s.Remarks,	s.CuttingOutput,	s.SewingOutput,	s.ScannedQty,	s.ClogQty,
+	s.Sewer,	s.SewingCPU,	s.BrandID,	s.Orig_WorkHourPerDay,	s.New_SwitchTime,	s.FirststCuttingOutputDate	
+from #Final s
+where not exists(
+	select 1 from P_SewingLineSchedule t 
+	where t.APSNo=s.APSNo  
+	AND t.SewingDay=s.SewingDay AND t.MDivisionID = s.MDivisionID 
+	AND t.FactoryID = s.FactoryID
+)
+
+
+delete t
+from P_SewingLineSchedule t
+left join #Final s on t.APSNo=s.APSNo  
+	AND t.SewingDay=s.SewingDay AND t.MDivisionID = s.MDivisionID AND t.FactoryID = s.FactoryID
+where s.apsno is null
+AND T.SewingDay between '''+@SDate+''' and '''+@EDate+'''
+and t.MDivisionID in (select distinct MDivisionID from #Final )
 
 drop table #Final
+
+Commit tran
+
+END TRY
+BEGIN CATCH
+	RollBack Tran
+	declare @ErrMsg varchar(1000) = ''Err# : '' + ltrim(str(ERROR_NUMBER())) + 
+				CHAR(10)+''Error Severity:''+ltrim(str(ERROR_SEVERITY()  )) +
+				CHAR(10)+''Error State:'' + ltrim(str(ERROR_STATE() ))  +
+				CHAR(10)+''Error Proc:'' + isNull(ERROR_PROCEDURE(),'''')  +
+				CHAR(10)+''Error Line:''+ltrim(str(ERROR_LINE()  )) +
+				CHAR(10)+''Error Msg:''+ ERROR_MESSAGE() ;
+    
+    RaisError( @ErrMsg ,16,-1)
+
+END CATCH
 
 '
 

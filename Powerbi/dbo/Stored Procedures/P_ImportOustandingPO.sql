@@ -11,8 +11,6 @@ begin
 	drop procedure P_ImportOustandingPO;
 end
 go
-
-
 CREATE PROCEDURE [dbo].[P_ImportOustandingPO]
 
 @StartDate Date,
@@ -252,8 +250,11 @@ left join #Final s on t.FactoryID = s.FactoryID
 	AND t.seq = s.seq 
 where T.BuyerDelivery between '''+@SDate+'''  and '''+@EDate+''' 
 	and t.FactoryID in (select distinct FactoryID from #Final ) 
-	and s.id IS NULL
-	and ((s.OrderQty > s.PackingQty) OR (s.PackingCarton - s.ClogReceivedCarton <> 0 ))
+	and s.ID IS NULL
+	--and ((s.OrderQty > s.PackingQty) OR (s.PackingCarton - s.ClogReceivedCarton <> 0 ))
+/*ISP20201515
+*刪除BI資料, 不須判是Outstanding才能刪除
+*/
 
 	drop table #final
 

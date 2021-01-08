@@ -42,9 +42,11 @@
     [Diff]                    INT             CONSTRAINT [DF__P_SewingDa__Diff__6F556E19] DEFAULT ((0)) NULL,
     [Rate]                    NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDa__Rate__70499252] DEFAULT ((0)) NULL,
     [SewingReasonDesc]        NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Sewin__7231DAC4] DEFAULT ('') NULL,
-    [SciDelivery] DATE NULL, 
+    [SciDelivery]             DATE            NULL,
     CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [MDivisionID] ASC)
 );
+
+
 
 
 GO
@@ -232,3 +234,8 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'P_SewingDailyOutput',
     @level2type = N'COLUMN',
     @level2name = N'SciDelivery'
+GO
+CREATE NONCLUSTERED INDEX [Index_of_P_ImportEfficiencyBI]
+    ON [dbo].[P_SewingDailyOutput]([OutputDate] ASC)
+    INCLUDE([MDivisionID], [FactoryID], [ComboType], [SewingLineID], [Shift], [Team], [OrderID]);
+
