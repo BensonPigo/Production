@@ -2347,7 +2347,7 @@ select  a.id
         ,o.OrderTypeID
 		,b.ExportId
 		, [ContainerType]= Container.Val
-        ,Barcode = isnull(Barcode.value,'')
+        ,Barcode = isnull(ft.barcode,'')
 		,a.CombineBarcode
         ,a.Unoriginal 
         ,a.EncodeSeq
@@ -2366,6 +2366,12 @@ left join Receiving_Detail cmb on  a.Id = cmb.Id
 									and a.CombineBarcode = cmb.CombineBarcode
 									and cmb.CombineBarcode is not null
 									and ISNULL(cmb.Unoriginal,0) = 0
+left join FtyInventory ft on ft.POID = a.PoId
+                            and ft.Seq1 = a.Seq1 
+                            and ft.Seq2 = a.Seq2
+                            and ft.StockType = a.StockType 
+                            and ft.Roll =a.Roll 
+                            and ft.Dyelot = a.Dyelot
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
@@ -2392,14 +2398,6 @@ outer apply(
 	and t.CombineBarcode=a.CombineBarcode
 	and t.CombineBarcode is not null
 )ttlQty
-outer apply(
-	select value = ft.barcode
-	from FtyInventory ft
-	where ft.POID = a.PoId
-	and ft.Seq1 = a.Seq1 and ft.Seq2 = a.Seq2
-	and ft.StockType = a.StockType 
-	and ft.Roll =a.Roll and ft.Dyelot = a.Dyelot
-)Barcode
 Where a.id = '{0}'
 order by a.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, a.POID, a.Seq1, a.Seq2, a.Roll, a.Dyelot
 ", masterID);
