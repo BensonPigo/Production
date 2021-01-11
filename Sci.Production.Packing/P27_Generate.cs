@@ -396,7 +396,8 @@ WHERE td.TemplateName <> ''
             }
 
             DataTable msgDt = new DataTable();
-            msgDt.Columns.Add("PackingListID", typeof(string));
+            msgDt.Columns.Add("Packing No", typeof(string));
+            msgDt.Columns.Add("Result", typeof(string));
             msgDt.Columns.Add("Message", typeof(string));
 
             // 1.Update sucess    [成功] : PL 在這一次匯入中成功上傳圖檔
@@ -404,7 +405,8 @@ WHERE td.TemplateName <> ''
             foreach (var item in successPackingList)
             {
                 DataRow nr = msgDt.NewRow();
-                nr["PackingListID"] = item.PackingListID;
+                nr["Packing No"] = item.PackingListID;
+                nr["Result"] = "Success";
                 nr["Message"] = item.AlreadyGenerateStampFile == 1 ? "Overwrite success" : "Update sucess";
                 msgDt.Rows.Add(nr);
             }
@@ -418,7 +420,8 @@ WHERE td.TemplateName <> ''
             foreach (var packingListID in changeCompleteCtnList)
             {
                 DataRow nr = msgDt.NewRow();
-                nr["PackingListID"] = packingListID;
+                nr["Packing No"] = packingListID;
+                nr["Result"] = "Fail";
                 nr["Message"] = "Stamp basic setting not yet complete !";
                 msgDt.Rows.Add(nr);
             }
@@ -427,7 +430,7 @@ WHERE td.TemplateName <> ''
             foreach (var packingListID in fList)
             {
                 DataRow nr = msgDt.NewRow();
-                nr["PackingListID"] = packingListID;
+                nr["Packing No"] = packingListID;
                 List<string> msgs = new List<string>();
 
                 // Template Path not found. 4.[失敗] : 範本檔找不到
@@ -446,13 +449,15 @@ WHERE td.TemplateName <> ''
                     msgs.Add(em.Select(s => s.CTNStartNo).Distinct().ToList().JoinToString(","));
                 }
 
+                nr["Result"] = "Fail";
                 nr["Message"] = msgs.JoinToString(Environment.NewLine);
                 msgDt.Rows.Add(nr);
             }
 
             var m = MyUtility.Msg.ShowMsgGrid(msgDt, msg: "Please check below message.", caption: "Result");
             m.grid1.Columns[0].Width = 140;
-            m.grid1.Columns[1].Width = 400;
+            m.grid1.Columns[1].Width = 100;
+            m.grid1.Columns[2].Width = 400;
 
             // MyUtility.Msg.InfoBox("Success!!");
             this.Query();
