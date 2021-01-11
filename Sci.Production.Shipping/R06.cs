@@ -26,6 +26,8 @@ namespace Sci.Production.Shipping
         private string rateType;
         private int orderby;
         private DataTable printData;
+        private string subType;
+        private string shareExpense;
 
         /// <summary>
         /// R06
@@ -70,6 +72,8 @@ namespace Sci.Production.Shipping
             this.supplier = this.txtSubconSupplier.TextBox1.Text;
             this.orderby = this.comboOrderby.SelectedIndex;
             this.rateType = this.comboRateType.SelectedValue.ToString();
+            this.subType = this.comboSubType.SelectedValue.ToString();
+            this.shareExpense = this.comboShareExpense.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -88,10 +92,10 @@ namespace Sci.Production.Shipping
 		s.CDate,
 		s.[ApvDate],
 		s.[MDivisionID],
-		s.[CurrencyID],
-		[Amount] = s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate)),
+		[CurrencyID_ShippingAP] = s.[CurrencyID],
+		[Amount_ShippingAP] = s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID, 'USD', s.CDate)),
 		s.[BLNo],
-		s.[Remark],
+		[Remark_ShippingAP] = s.[Remark],
 		s.[InvNo],
 		ExportINV =  Stuff((select distinct iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   
                             from ShareExpense she WITH (NOLOCK) 
@@ -111,6 +115,7 @@ namespace Sci.Production.Shipping
 		sd.[Remark],
 		sd.AccountID,
 		an.Name
+into #tmp
 from ShippingAP s WITH (NOLOCK)
 inner join ShippingAP_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
 left join ShipExpense se WITH (NOLOCK) ON sd.ShipExpenseID = se.ID
@@ -137,7 +142,7 @@ where s.Status = 'Approved'");
 		,[APDate]=s.CDate
 		,s.[ApvDate]
 		,s.[MDivisionID]
-		,s.[CurrencyID]
+		,[CurrencyID_ShippingAP] = s.[CurrencyID]
 		,[APAmt]=s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,s.[BLNo]
 		,s.[Remark]
@@ -154,6 +159,7 @@ where s.Status = 'Approved'");
 		,[Amount]= ISNULL(sh.Amount , ShippingAP_Deatai.Amount) * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,[AccountID]= ISNULL(sh.AccountID , ShippingAP_Deatai.AccountID)
 		,[AccountName]= ISNULL(an.Name, ShippingAP_Deatai.AccountName)
+into #tmp
 from ShippingAP s WITH (NOLOCK)
 left join ShareExpense sh WITH (NOLOCK) ON s.ID = sh.ShippingAPID
                                            and sh.Junk != 1
@@ -192,7 +198,7 @@ select
 		,[APDate]=s.CDate
 		,s.[ApvDate]
 		,s.[MDivisionID]
-		,s.[CurrencyID]
+		,[CurrencyID_ShippingAP] = s.[CurrencyID]
 		,[APAmt]=s.[Amount] * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
 		,s.[BLNo]
 		,s.[Remark]
@@ -210,6 +216,7 @@ select
 		,[ShipQty] = isnull(PackingList_Detail.ShipQty,0)
 		,[NW] = isnull(sp.NW,0)
 		,[shipMode] = p.ShipModeID
+into #tmp
 from ShippingAP s WITH (NOLOCK)
 left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
 left join ShareExpense_APP sp WITH (NOLOCK) on s.ID = sp.ShippingAPID
@@ -261,6 +268,7 @@ select s.Type
         ,ExportInv= iif( isnull(x1.InvNo,'') <>'' and isnull(x2.WKNo,'') <>'', x1.InvNo +'/'+x2.WKNo ,concat(x1.InvNo,x2.WKNo))
 		,[Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		,s.SisFtyAPID
+into #tmp
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 outer apply(
@@ -343,6 +351,11 @@ where s.Status = 'Approved'");
                 sqlCmd.Append(string.Format(" and s.LocalSuppID = '{0}'", this.supplier));
             }
 
+            if (this.subType != "ALL")
+            {
+                sqlCmd.Append(string.Format(" and s.SubType = {0}", this.subType));
+            }
+
             if (this.orderby == 0)
             {
                 sqlCmd.Append(" order by s.MDivisionID,s.ID");
@@ -352,7 +365,23 @@ where s.Status = 'Approved'");
                 sqlCmd.Append(" order by s.BLNo,s.ID");
             }
 
+            sqlCmd.Append(@"
+select * from #tmp where 1 = 1");
+
+            switch (this.shareExpense)
+            {
+                case "0":
+                    sqlCmd.Append(" and isnull(ExportInv, '') = '' ");
+                    break;
+                case "1":
+                    sqlCmd.Append(" and isnull(ExportInv, '') <> '' ");
+                    break;
+                default:
+                    break;
+            }
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());

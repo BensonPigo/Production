@@ -1,6 +1,13 @@
-﻿CREATE PROCEDURE [dbo].[P_DeleteEfficiencyBI]
+﻿
+
+
+
+CREATE PROCEDURE [dbo].[P_DeleteEfficiencyBI]
+(
 	 @OutputDate date
+)
 AS
+
 BEGIN
 
 	delete from P_SewingDailyOutput 

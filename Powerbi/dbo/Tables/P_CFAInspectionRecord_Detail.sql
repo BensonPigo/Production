@@ -1,0 +1,38 @@
+﻿CREATE TABLE [dbo].[P_CFAInspectionRecord_Detail] (
+    [Action]                 NVARCHAR (300) NULL,
+    [AreaCodeDesc]           VARCHAR (60)   NULL,
+    [AuditDate]              DATE           NULL,
+    [BrandID]                VARCHAR (8)    NULL,
+    [BuyerDelivery]          DATE           NULL,
+    [CfaName]                VARCHAR (45)   NULL,
+    [ClogReceivedPercentage] NUMERIC (3)    NULL,
+    [DefectDesc]             NVARCHAR (100) NULL,
+    [DefectQty]              INT            NULL,
+    [Destination]            VARCHAR (2)    NULL,
+    [FactoryID]              VARCHAR (8)    NULL,
+    [Carton]                 VARCHAR (500)  NULL,
+    [InspectedCtn]           INT            NULL,
+    [InspectedPoQty]         INT            NULL,
+    [InspectionStage]        VARCHAR (30)   NULL,
+    [SewingLineID]           VARCHAR (100)  NULL,
+    [Mdivisionid]            VARCHAR (8)    NULL,
+    [NoOfDefect]             INT            NULL,
+    [OrderQty]               INT            NULL,
+    [PONO]                   VARCHAR (30)   NULL,
+    [Remark]                 NVARCHAR (500) NULL,
+    [Result]                 VARCHAR (16)   NULL,
+    [SampleLot]              INT            NULL,
+    [Seq]                    VARCHAR (2)    NULL,
+    [Shift]                  VARCHAR (1)    NULL,
+    [SPNO]                   VARCHAR (13)   NULL,
+    [SQR]                    NUMERIC (7, 3) NULL,
+    [Status]                 VARCHAR (17)   NULL,
+    [StyleID]                VARCHAR (15)   NULL,
+    [Team]                   VARCHAR (1)    NULL,
+    [TtlCTN]                 INT            NULL,
+    [VasShas]                VARCHAR (1)    NULL,
+    [1st_Inspection]         BIT            NULL
+);
+
+
+

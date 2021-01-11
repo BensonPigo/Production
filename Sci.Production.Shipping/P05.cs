@@ -214,7 +214,6 @@ where {0}", this.masterID);
         {
             base.OnFormLoaded();
             MyUtility.Tool.SetupCombox(this.comboContainerType, 1, 1, ",CY-CY,CFS-CY,CFS-CFS");
-            this.txtPulloutPort1.CountryID = this.txtCountryDestination.TextBox1;
         }
 
         /// <inheritdoc/>
@@ -287,6 +286,9 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
             {
                 this.FBDate_Ori = null;
             }
+
+            this.txtPulloutPort1.BrandID = this.txtbrand.Text;
+            this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
 
             this.ControlColor();
         }
@@ -1092,6 +1094,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (this.EditMode && this.txtbrand.OldValue != this.txtbrand.Text)
             {
                 this.GetPaytermAP();
+                this.txtPulloutPort1.BrandID = this.txtbrand.Text;
             }
         }
 
@@ -2213,40 +2216,49 @@ and BrandID =  '{this.CurrentMaintain["BrandID"]}'";
             }
 
             // 2. 檢查 GMTBooking.Dest = PulloutPort.CountryID
-            sqlcmd = $@"
-SELECT SeaPort,AirPort
-FROM PulloutPort p 
-WHERE p.Junk = 0 
-and  p.id = '{this.CurrentMaintain["DischargePortID"]}'
-and p.CountryID = '{this.CurrentMaintain["Dest"]}'
-and Junk = 0
-";
-            if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
-            {
-                MyUtility.Msg.WarningBox("Destination not match to country of Port Discharge .");
-                return false;
-            }
+//            sqlcmd = $@"
+//SELECT SeaPort,AirPort
+//FROM PulloutPort p 
+//WHERE p.Junk = 0 
+//and  p.id = '{this.CurrentMaintain["DischargePortID"]}'
+//and p.CountryID = '{this.CurrentMaintain["Dest"]}'
+//and Junk = 0
+//";
 
-            // 3.shipmode 是 Sea PulloutPort 必須設定 SeaPort = 1. S-A/C, S-A/P PulloutPort 必須設定 SeaPort = 1 or AirPort = 1
-            string shipModeID = MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]);
-            if (shipModeID == "SEA")
-            {
-                if (!MyUtility.Convert.GetBool(dr["SeaPort"]))
-                {
-                    MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
-                    return false;
-                }
-            }
-            else if (shipModeID == "S-A/C" || shipModeID == "S-A/P")
-            {
-                if (!MyUtility.Convert.GetBool(dr["SeaPort"]) && !MyUtility.Convert.GetBool(dr["AirPort"]))
-                {
-                    MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
-                    return false;
-                }
-            }
+            //if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            //{
+            //    MyUtility.Msg.WarningBox("Destination not match to country of Port Discharge .");
+            //    return false;
+            //}
+
+            //if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            //{
+            //    // 3.shipmode 是 Sea PulloutPort 必須設定 SeaPort = 1. S-A/C, S-A/P PulloutPort 必須設定 SeaPort = 1 or AirPort = 1
+            //    string shipModeID = MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]);
+            //    if (shipModeID == "SEA")
+            //    {
+            //        if (!MyUtility.Convert.GetBool(dr["SeaPort"]))
+            //        {
+            //            MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
+            //            return false;
+            //        }
+            //    }
+            //    else if (shipModeID == "S-A/C" || shipModeID == "S-A/P")
+            //    {
+            //        if (!MyUtility.Convert.GetBool(dr["SeaPort"]) && !MyUtility.Convert.GetBool(dr["AirPort"]))
+            //        {
+            //            MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
+            //            return false;
+            //        }
+            //    }
+            //}
 
             return true;
+        }
+
+        private void TxtShipmodeShippingMode_SelectedValueChanged(object sender, EventArgs e)
+        {
+            this.txtPulloutPort1.ShipModeID = this.txtShipmodeShippingMode.SelectedValue;
         }
     }
 }

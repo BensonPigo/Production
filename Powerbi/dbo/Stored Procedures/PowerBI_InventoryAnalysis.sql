@@ -12,46 +12,48 @@ Begin
 		Drop Table PBIReportData.dbo.InventoryAnalysis;
 	End;
 	Create Table PBIReportData.dbo.InventoryAnalysis
-		(RowNo			 BigInt,
-		 MrTeam			 VarChar(5),
-		 Brand			 VarChar(8),
-		 Stlye			 VarChar(15),
-		 Season			 VarChar(10),
-		 SeasonYear		 VarChar(7),
-		 POID			 VarChar(13),
-		 Seq1			 VarChar(3),
-		 Seq2			 VarChar(2),
-		 InvReason		 VarChar(5),
-		 InvReasonCNM	 NVarChar(Max),
-		 InvReasonENM	 NVarChar(Max),
-		 Program		 VarChar(12),
-		 Project		 VarChar(30),
-		 Price			 Numeric(16, 4),
-		 IsFoc			 VarChar(15),
-		 Qty			 Numeric(10, 2),
-		 ChargeStatus	 VarChar(1),
-		 ChargeStatusNM	 VarChar(20),
-		 Amount			 Numeric(16, 2),
-		 Amount_WithouFOC Numeric(16, 2),
-		 FOBCharge		 Numeric(16, 2),
-		 Supplier		 VarChar(60),
-		 Currency		 VarChar(3),
-		 ToCurrency		 VarChar(3),
-		 MtlDesc		 NVarChar(Max),
-		 ETD			 Date,
-		 RefNo			 VarChar(20),
-		 SCIRefNo		 VarChar(30),
-		 MaterialType	 VarChar(20),
-		 Color			 NVarChar(Max),
-		 SizeSpec		 VarChar(15),
-		 SizeUnit		 VarChar(8),
-		 Deadline		 VarChar(10),
-		 OrderSMR		 NVarChar(70),
-		 OrderHandle	 NVarChar(70),
-		 POSMR			 NVarChar(70),
-		 POHandle		 NVarChar(70),
-		 POSMRNM		 NVarChar(50),
-		 OrderSMRNM		 NVarChar(50)
+		(RowNo				BigInt,
+		 MrTeam				VarChar(5),
+		 Brand				VarChar(8),
+		 Stlye				VarChar(15),
+		 Season				VarChar(10),
+		 SeasonYear			VarChar(7),
+		 POID				VarChar(13),
+		 Seq1				VarChar(3),
+		 Seq2				VarChar(2),
+		 InvReason			VarChar(5),
+		 InvReasonCNM		NVarChar(Max),
+		 InvReasonENM		NVarChar(Max),
+		 Program			VarChar(12),
+		 Project			VarChar(30),
+		 Price				Numeric(16, 4),
+		 IsFoc				VarChar(15),
+		 Qty				Numeric(10, 2),
+		 ChargeStatus		VarChar(1),
+		 ChargeStatusNM		VarChar(20),
+		 Amount				Numeric(16, 2),
+		 Amount_WithouFOC	Numeric(16, 2),
+		 FOBCharge			Numeric(16, 2),
+		 SuppGroup			VarChar(60),
+		 Supplier			VarChar(60),
+		 Currency			VarChar(3),
+		 ToCurrency			VarChar(3),
+		 MtlDesc			NVarChar(Max),
+		 ETD				Date,
+		 RefNo				VarChar(20),
+		 SCIRefNo			VarChar(30),
+		 FabricType			VarChar(20),
+		 MaterialType		VarChar(20),
+		 Color				NVarChar(Max),
+		 SizeSpec			VarChar(15),
+		 SizeUnit			VarChar(8),
+		 Deadline			VarChar(10),
+		 OrderSMR			NVarChar(70),
+		 OrderHandle		NVarChar(70),
+		 POSMR				NVarChar(70),
+		 POHandle			NVarChar(70),
+		 POSMRNM			NVarChar(50),
+		 OrderSMRNM			NVarChar(50)
 		)
 	;
 
@@ -96,6 +98,7 @@ Begin
 					 , Amount			= i.Amount
 					 , Amount_WithouFOC	= i.Amount_WithouFOC
 					 , FOBCharge		= 0
+					 , SuppGroup		= sg.ID + ''''-'''' + sg.AbbEN
 					 , Supplier			= s.ID + ''''-'''' + s.AbbEN
 					 , Currency			= s.CurrencyID
 					 , ToCurrency		= '''''+@ToCurrencyID+'''''
@@ -103,6 +106,7 @@ Begin
 					 , ETD				= ship.ETD
 					 , RefNo			= po3.RefNo
 					 , SCIRefNo			= po3.SCIRefNo
+					 , FabricType		= ft.Name
 					 , MaterialType		= f.MtltypeId
 					 , Color			= Concat(po3.ColorID,'''' '''', c.Name)
 					 , SizeSpec			= po3.SizeSpec
@@ -153,31 +157,33 @@ Begin
 						 Inner Join Trade.dbo.Orders as do on ds.OrderID = do.ID
 						 Outer Apply (Select * From Trade.dbo.GetCurrencyRate('''''+@ExchangeType+''''', d.CurrencyID, '''''+@ToCurrencyID+''''', do.cfmdate)) as r
 						 Where d.Status = ''''CONFIRMED''''
+						   And Exists (Select 1 From Trade.dbo.Inventory as i Where i.POID = ds.InventoryPOID And i.Seq1 = ds.InventorySeq1 And i.Seq2 = ds.InventorySeq2 Having Sum(i.Qty) > 0)
 						 Group by ds.InventoryPOID, ds.inventoryseq1, ds.inventoryseq2
 					   ) as i
 				 Inner Join Trade.dbo.Orders as o
 					On o.ID = i.POID
-				 Inner Join Trade.dbo.PO as po
-					On po.ID = i.POID
-				 Inner Join Trade.dbo.PO_Supp as po2
-					On po2.ID = i.POID And po2.Seq1 = i.Seq1
-				 Inner Join Trade.dbo.PO_Supp_Detail as po3
-					On po3.ID = i.POID And po3.Seq1 = i.Seq1 And po3.Seq2 = i.Seq2
 				 Inner Join Trade.dbo.Brand as b
 					On b.ID = o.BrandID
 				 Inner Join Trade.dbo.Season as ss
 					On ss.BrandID = o.BrandID And ss.ID = o.SeasonID
 				 Inner Join Trade.dbo.SeasonSCI as sss
 					On sss.ID = ss.SeasonSCIID
+				 Inner Join Trade.dbo.PO as po
+					On po.ID = i.POID
+				 Inner Join Trade.dbo.PO_Supp as po2
+					On po2.ID = i.POID And po2.Seq1 = i.Seq1
+				 Inner Join Trade.dbo.PO_Supp_Detail as po3
+					On po3.ID = i.POID And po3.Seq1 = i.Seq1 And po3.Seq2 = i.Seq2
 				  Left Join Trade.dbo.Supp as s On s.ID = po2.SuppID
+				  Left Join Trade.dbo.Supp as sg On sg.ID = s.SuppGroupFabric
 				  Left Join Trade.dbo.Color as c On c.BrandId = o.BrandID And c.ID = po3.ColorID
 				  Left Join Trade.dbo.Fabric as f On f.SCIRefno = po3.SCIRefNo
 				  Left Join Trade.dbo.GetName as OrderSMR On OrderSMR.ID = o.SMR
 				  Left Join Trade.dbo.GetName as OrderHandle On OrderHandle.ID = o.MRHandle
 				  Left Join Trade.dbo.GetName as POSMR On POSMR.ID = po.POSMR
 				  Left Join Trade.dbo.GetName as POHandle On POHandle.ID = po.POHandle
-				  Left Join Trade.dbo.InvtransReason as ir
-					On ir.ID = i.ReasonID
+				  Left Join Trade.dbo.InvtransReason as ir On ir.ID = i.ReasonID
+				  Left Join Trade.dbo.DropDownList as ft On ft.Type = ''''FabricType'''' And ft.ID = po3.FabricType
 				 Outer Apply (Select ETD = Convert(VarChar(10), Ship.ETD, 111) From Trade.dbo.GetShip_Detail_MinETA(i.POID, i.seq1, i.seq2, ''''G'''') as ship) as ship
 				 Outer Apply (Select DescDetail From Trade.dbo.GetDescMtl_ByPoDetail(i.POID, i.seq1, i.seq2) as mtlDesc) as mtlDesc
 				 Order by b.MrTeam, o.BrandID, ss.SeasonSCIID, i.POID, i.SEQ1, i.SEQ2

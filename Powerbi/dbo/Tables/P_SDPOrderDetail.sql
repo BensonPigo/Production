@@ -21,7 +21,7 @@
     [ReasonName]         NVARCHAR (500) DEFAULT ('') NOT NULL,
     [SewLastDate]        DATE           NULL,
     [CTNLastReceiveDate] DATETIME       NULL,
-    [ReasonRemark]       NVARCHAR (MAX)  DEFAULT ('') NOT NULL,
+    [ReasonRemark]       NVARCHAR (60)  DEFAULT ('') NOT NULL,
     [MR]                 VARCHAR (100)  DEFAULT ('') NOT NULL,
     [SMR]                VARCHAR (100)  DEFAULT ('') NOT NULL,
     [POHandle]           VARCHAR (100)  DEFAULT ('') NULL,
@@ -33,7 +33,9 @@
     [Order_QtyShipCount] VARCHAR (1)    DEFAULT ('') NOT NULL,
     [Alias]              VARCHAR (30)   DEFAULT ('') NOT NULL,
     [OutstandingReason]  VARCHAR (5)    DEFAULT ('') NOT NULL,
-    [OutstandingRemark]  NVARCHAR (MAX)  DEFAULT ('') NOT NULL,
+    [OutstandingRemark]  NVARCHAR (60)  DEFAULT ('') NOT NULL,
     [OSTClogCarton]      INT            DEFAULT ((0)) NOT NULL
 );
+
+
 
