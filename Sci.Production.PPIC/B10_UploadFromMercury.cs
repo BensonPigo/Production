@@ -206,6 +206,27 @@ namespace Sci.Production.PPIC
 
                 string custPONO = pO_Number + "-" + pO_Item;
                 string sp = MyUtility.GetValue.Lookup($"SELECT ID FROM Orders WHERE CustPONo = '{custPONO}' ");
+                if (MyUtility.Check.Empty(sp))
+                {
+                    string sqlcmd = string.Empty;
+                    DBProxy.Current.Select(null, "select Customize1,Customize2,Customize3 from Brand where ID = 'Nike'", out DataTable dt);
+                    foreach (DataColumn c in dt.Columns)
+                    {
+                        DataRow[] dr = dt.Select($"{c.ColumnName} = 'TRADING PO'");
+                        if (dr.Length > 0)
+                        {
+                            // pO_Item 要比對 CustPONo "-" 後的兩碼
+                            sqlcmd = $"SELECT ID FROM Orders WHERE {c.ColumnName} = '{pO_Number}' and IIF(CustPONo not like '%-%','',SUBSTRING(CustPONo, CHARINDEX('-', CustPONo) + 1, 10) ) = '{pO_Item}'";
+                            break;
+                        }
+                    }
+
+                    if (!MyUtility.Check.Empty(sqlcmd))
+                    {
+                        sp = MyUtility.GetValue.Lookup(sqlcmd);
+                    }
+                }
+
                 nRow["ID"] = sp;
 
                 if (MyUtility.Check.Empty(sp))
