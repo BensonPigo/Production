@@ -91,5 +91,12 @@ namespace Sci.Production.Quality
         {
             this.txtFormula.Text = this.radioPanel1.Value == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
         }
+
+        private void BtnMoistureStandardList_Click(object sender, EventArgs e)
+        {
+            var frm = new B10_MoistureStandardList();
+            frm.BrandID = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]);
+            frm.ShowDialog();
+        }
     }
 }

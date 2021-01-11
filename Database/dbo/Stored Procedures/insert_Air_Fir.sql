@@ -1,5 +1,6 @@
 ﻿
 
+
 CREATE PROCEDURE [dbo].[insert_Air_Fir]
 (
 	@ID varchar(13),
@@ -29,7 +30,8 @@ select
 [KPILETA] = d.KPILETA,
 [Category]=d.Category,
 [WhseArrival] = e.WhseArrival,
-[fabricType]=b.FabricType
+[fabricType]=b.FabricType,
+FirNonMoisture = IIF(exists(select 1 from Brand_QAMoistureStandardList where brandid = b.BrandId),0 ,1)
 into #tempTableAll
 from Receiving_Detail a
 inner join PO_Supp_Detail b on a.PoId=b.ID and a.Seq1=b.SEQ1 and a.Seq2=b.SEQ2
@@ -74,8 +76,7 @@ select distinct InspDeadLine,PoId,SEQ1,SEQ2 into #InspDeadLine from (
 		and (datediff(day,convert(date,DATEADD(day,-21, [MinSciDelivery])),CONVERT(date,[WhseArrival])))>= 1
 		)a
 		where a.fabricType=@fabricType	
-
-
+		
 --Fir
 
 	declare @tempFir table(id bigint,deID bigint )	
@@ -100,7 +101,8 @@ using (
 			a.Category,
 			a.WhseArrival ,
 			a.fabricType ,
-			b.InspDeadLine
+			b.InspDeadLine,
+			FirNonMoisture
 			from #tempTableAll a
 			left join #InspDeadLine b on a.PoId = b.PoId and a.Seq1 =b.Seq1 and a.Seq2 = b.Seq2
 			where fabricType='F' 
@@ -120,7 +122,8 @@ using (
 			a.Category,
 			a.WhseArrival ,
 			a.fabricType,
-			b.InspDeadLine
+			b.InspDeadLine,
+			FirNonMoisture
  ) as s
 on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
 when matched then
@@ -133,8 +136,8 @@ when matched then
  t.AddName=s.AddName,
  t.AddDate=s.AddDate
  when not matched by target then
- insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate)
+ insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[NonMoisture],[AddName],[AddDate])
+ values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,FirNonMoisture,s.AddName,AddDate)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID

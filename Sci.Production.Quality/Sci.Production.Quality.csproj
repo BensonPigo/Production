@@ -118,6 +118,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="B10_MoistureStandardList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10_MoistureStandardList.Designer.cs">
+      <DependentUpon>B10_MoistureStandardList.cs</DependentUpon>
+    </Compile>
     <Compile Include="B16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -237,6 +243,12 @@
     </Compile>
     <Compile Include="B22.Designer.cs">
       <DependentUpon>B22.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_Moisture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Moisture.Designer.cs">
+      <DependentUpon>P01_Moisture.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_Odor.cs">
       <SubType>Form</SubType>
@@ -729,6 +741,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="B10_MoistureStandardList.resx">
+      <DependentUpon>B10_MoistureStandardList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B16.resx">
       <DependentUpon>B16.cs</DependentUpon>
     </EmbeddedResource>
@@ -791,6 +806,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_Moisture.resx">
+      <DependentUpon>P01_Moisture.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_Odor.resx">
       <DependentUpon>P01_Odor.cs</DependentUpon>

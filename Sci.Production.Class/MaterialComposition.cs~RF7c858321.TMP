@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+using Ict;
+using Sci.Data;
+
+namespace Sci.Production.Class
+{
+    /// <inheritdoc/>
+    public partial class MaterialComposition : UserControl
+    {
+        /// <inheritdoc/>
+        public string BrandID { get; set; }
+
+        /// <inheritdoc/>
+        public DataRow dr { get; set; }
+
+        /// <inheritdoc/>
+        public MaterialComposition()
+        {
+            this.InitializeComponent();
+            this.SetMaterialCompositionDatas();
+        }
+
+        private void SetMaterialCompositionDatas()
+        {
+            string cmd = $@"select * from Brand_QAMoistureStandardList where BrandID = '{this.BrandID}'";
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return;
+            }
+
+            var m_grp = dt.AsEnumerable().Select(s => s["MaterialCompositionGrp"].ToString()).Distinct().ToArray();
+
+            Dictionary<string, string> comboBoxRowSource = new Dictionary<string, string>();
+            comboBoxRowSource.Add(string.Empty, string.Empty);
+            foreach (var item in m_grp)
+            {
+                comboBoxRowSource.Add(item, item);
+            }
+
+            this.cbmMaterialCompositionGrp.DataSource = new BindingSource(comboBoxRowSource, null);
+            this.cbmMaterialCompositionGrp.ValueMember = "Key";
+            this.cbmMaterialCompositionGrp.DisplayMember = "Value";
+            this.cbmMaterialCompositionGrp.SelectedIndex = 0;
+        }
+
+        private void CbmMaterialCompositionGrp_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
