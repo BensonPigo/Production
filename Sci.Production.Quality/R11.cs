@@ -265,11 +265,13 @@ select
 		end
 from #tmp1 t
 outer apply(
-	select DefectRecord = SUBSTRING(x.Data,1,1), point = sum(cast(SUBSTRING(x.Data,2,1) as int))
-	from FIR_Physical_Defect
-	outer apply(select  * from SplitString(DefectRecord,'/'))x
-	where FIR_PhysicalDetailUKey = t.DetailUkey
-	group by SUBSTRING(x.Data,1,1)
+    select
+	    DefectRecord = dbo.SplitDefectNum(x.Data,0),	
+        point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
+    from FIR_Physical_Defect
+    outer apply(select  * from SplitString(DefectRecord,'/'))x
+    where FIR_PhysicalDetailUKey = t.DetailUkey
+    group by dbo.SplitDefectNum(x.Data,0)
 )Defect
 
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
@@ -306,11 +308,13 @@ select
 		end
 from #tmp2 t
 outer apply(
-	select DefectRecord = SUBSTRING(x.Data,1,1), point = sum(cast(SUBSTRING(x.Data,2,1) as int))
-	from FIR_Physical_Defect
-	outer apply(select  * from SplitString(DefectRecord,'/'))x
-	where FIR_PhysicalDetailUKey = t.DetailUkey
-	group by SUBSTRING(x.Data,1,1)
+    select 
+	    DefectRecord = dbo.SplitDefectNum(x.Data,0),
+        point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
+    from FIR_Physical_Defect
+    outer apply(select  * from SplitString(DefectRecord,'/'))x
+    where FIR_PhysicalDetailUKey = t.DetailUkey
+    group by dbo.SplitDefectNum(x.Data,0)
 )Defect
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
