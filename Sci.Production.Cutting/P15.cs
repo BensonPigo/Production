@@ -1560,8 +1560,7 @@ order by ArticleGroup";
                 qty_newRow["iden"] = ++m;
                 qty_newRow["Ukey"] = this.gridCutRef.CurrentDataRow["Ukey"];
                 qty_newRow["Tone"] = tmpqtyTb.Rows.Count >= i && !MyUtility.Check.Empty(tmpqtyTb.Rows[i - 1]["Tone"]) ? tmpqtyTb.Rows[i - 1]["Tone"] : this.tone;
-                qty_newRow["ToneChar"] = MyUtility.Convert.GetInt(qty_newRow["Tone"]) == 0 ? "" : MyUtility.Excel.ConvertNumericToExcelColumn(MyUtility.Convert.GetInt(qty_newRow["Tone"]));
-
+                qty_newRow["ToneChar"] = MyUtility.Convert.GetInt(qty_newRow["Tone"]) == 0 ? string.Empty : MyUtility.Excel.ConvertNumericToExcelColumn(MyUtility.Convert.GetInt(qty_newRow["Tone"]));
                 qty_newRow["StyleUkey"] = this.gridCutRef.CurrentDataRow["StyleUkey"];
                 this.qtyTb.Rows.Add(qty_newRow);
             }
