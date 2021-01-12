@@ -208,23 +208,43 @@ WHERE 1=1
         {
             StringBuilder builder = new StringBuilder();
             List<SqlParameter> parameters = new List<SqlParameter>();
+            string tmpTable = string.Empty;
 
-            int index = 0;
+            int count = 1;
             foreach (DataRow item in selecteds)
             {
-                builder.Append($@"
-UPDATE Orders
-SET CAB=@CAB{index} ,FinalDest=@FinalDest{index} ,Customer_PO=@Customer_PO{index} ,AFS_STOCK_CATEGORY=@AFS_STOCK_CATEGORY{index}
-WHERE ID='{item["ID"]}'
-");
-                parameters.Add(new SqlParameter($"@CAB{index}", MyUtility.Convert.GetString(item["CAB"])));
-                parameters.Add(new SqlParameter($"@FinalDest{index}", MyUtility.Convert.GetString(item["FinalDest"])));
-                parameters.Add(new SqlParameter($"@Customer_PO{index}", MyUtility.Convert.GetString(item["Customer_PO"])));
-                parameters.Add(new SqlParameter($"@AFS_STOCK_CATEGORY{index}", MyUtility.Convert.GetString(item["AFS_STOCK_CATEGORY"])));
-                index++;
+                string tmp = $"SELECT [ID]='{item["ID"]}',[CAB]='{item["CAB"]}',[FinalDest]='{item["FinalDest"]}',Customer_PO='{item["Customer_PO"]}',[AFS_STOCK_CATEGORY]='{item["AFS_STOCK_CATEGORY"]}'";
+
+                tmpTable += tmp + Environment.NewLine;
+
+                if (count == 1)
+                {
+                    tmpTable += "INTO #source" + Environment.NewLine;
+                }
+
+                if (selecteds.Length > count)
+                {
+                    tmpTable += "UNION" + Environment.NewLine;
+                }
+
+                count++;
             }
 
-            DualResult r = DBProxy.Current.Execute(null, builder.ToString(), parameters);
+            builder.Append($@"
+{tmpTable}
+
+UPDATE o
+SET  o.CAB = s.CAB
+    ,o.FinalDest = s.FinalDest
+    ,o.Customer_PO = s.Customer_PO
+    ,o.AFS_STOCK_CATEGORY = s.AFS_STOCK_CATEGORY
+FROM #source s
+INNER JOIN Orders o ON s.ID = o.ID
+
+DROP TABLE #source
+");
+
+            DualResult r = DBProxy.Current.Execute(null, builder.ToString());
 
             if (!r)
             {
