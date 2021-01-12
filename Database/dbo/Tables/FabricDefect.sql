@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[FabricDefect] (
-    [ID]            VARCHAR (1)   CONSTRAINT [DF_FabricDefect_ID] DEFAULT ('') NOT NULL,
+    [ID]            VARCHAR (2)   CONSTRAINT [DF_FabricDefect_ID] DEFAULT ('') NOT NULL,
     [Type]          VARCHAR (20)  CONSTRAINT [DF_FabricDefect_Type] DEFAULT ('') NULL,
     [DescriptionEN] VARCHAR (60)  CONSTRAINT [DF_FabricDefect_DescriptionEN] DEFAULT ('') NULL,
     [Junk]          BIT           CONSTRAINT [DF_FabricDefect_Junk] DEFAULT ((0)) NULL,
@@ -10,6 +10,8 @@
     [LocalDesc]     NVARCHAR (60) CONSTRAINT [DF_FabricDefect_LocalDesc] DEFAULT ('') NULL,
     CONSTRAINT [PK_FabricDefect] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

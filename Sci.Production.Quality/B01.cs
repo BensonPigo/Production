@@ -15,6 +15,9 @@ namespace Sci.Production.Quality
         {
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
+            this.checkJunk.ReadOnly = true;
+            this.txttype.ReadOnly = true;
+            this.editDescription.ReadOnly = true;
         }
 
         /// <inheritdoc/>

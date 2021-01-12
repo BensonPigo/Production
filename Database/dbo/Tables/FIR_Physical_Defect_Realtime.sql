@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[FIR_Physical_Defect_Realtime] (
     [FIR_PhysicalDetailUkey] BIGINT         CONSTRAINT [DF_FIR_Physical_Defect_Realtime_FIR_PhysicalDetailUkey] DEFAULT ((0)) NULL,
     [Yards]                  NUMERIC (9, 3) CONSTRAINT [DF_FIR_Physical_Defect_Realtime_Yards] DEFAULT ((0)) NULL,
-    [FabricdefectID]         VARCHAR (1)    CONSTRAINT [DF_FIR_Physical_Defect_Realtime_FabricdefectID] DEFAULT ('') NULL,
+    [FabricdefectID]         VARCHAR (2)    CONSTRAINT [DF_FIR_Physical_Defect_Realtime_FabricdefectID] DEFAULT ('') NULL,
     [AddDate]                DATETIME       NULL,
     [Id]                     BIGINT         IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_FIR_Physical_Defect_Realtime] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO

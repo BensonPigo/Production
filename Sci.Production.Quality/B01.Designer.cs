@@ -35,6 +35,8 @@
             this.editDescription = new Sci.Win.UI.EditBox();
             this.labeltype = new Sci.Win.UI.Label();
             this.txttype = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.editBox1 = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,6 +51,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.txttype);
@@ -85,7 +89,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(73, 46);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(80, 23);
@@ -94,7 +97,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(73, 110);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(80, 23);
@@ -136,7 +138,6 @@
             // 
             // labeltype
             // 
-            this.labeltype.Lines = 0;
             this.labeltype.Location = new System.Drawing.Point(73, 78);
             this.labeltype.Name = "labeltype";
             this.labeltype.Size = new System.Drawing.Size(80, 23);
@@ -153,6 +154,25 @@
             this.txttype.Size = new System.Drawing.Size(100, 23);
             this.txttype.TabIndex = 6;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(70, 166);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(80, 23);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Local Desc.";
+            // 
+            // editBox1
+            // 
+            this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDesc", true));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox1.Location = new System.Drawing.Point(156, 166);
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.Size = new System.Drawing.Size(292, 50);
+            this.editBox1.TabIndex = 8;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(837, 457);
@@ -162,8 +182,10 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportLocate = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B01. Defect Code For Fabric Inspection";
             this.WorkAlias = "FabricDefect";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -188,5 +210,7 @@
         private Win.UI.EditBox editDescription;
         private Win.UI.TextBox txttype;
         private Win.UI.Label labeltype;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.Label label1;
     }
 }

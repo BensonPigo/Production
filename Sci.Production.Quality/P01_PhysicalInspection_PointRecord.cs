@@ -1,11 +1,13 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Data;
-using Sci.Data;
 
 namespace Sci.Production.Quality
 {
+    /// <inheritdoc/>
     public partial class P01_PhysicalInspection_PointRecord : Win.Subs.Base
     {
         private readonly DataTable defRecord;
@@ -13,6 +15,7 @@ namespace Sci.Production.Quality
         private readonly DataRow def_dr;
         private readonly Ict.Win.UI.DataGridViewNumericBoxColumn col_Points;
 
+        /// <inheritdoc/>
         public P01_PhysicalInspection_PointRecord(DataRow data_dr, string n_column, bool edit)
         {
             this.InitializeComponent();
@@ -20,7 +23,9 @@ namespace Sci.Production.Quality
             string[] defect = defect_str.Split(new char[] { '/' });
             this.def_num = n_column;
             this.def_dr = data_dr;
-            DBProxy.Current.Select(null, "Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) ", out this.defRecord);
+            string where = edit ? "where junk = 0" : string.Empty;
+            string sqlcmd = $"Select ID,Type,DescriptionEN,0 as points From FabricDefect WITH (NOLOCK) {where}";
+            DBProxy.Current.Select(null, sqlcmd, out this.defRecord);
             string defid;
             int point;
             if (!MyUtility.Check.Empty(defect_str))
@@ -34,8 +39,8 @@ namespace Sci.Production.Quality
                     }
 
                     // 第一碼為ID,第二碼為Points
-                    defid = dr.Substring(0, 1);
-                    point = MyUtility.Convert.GetInt(dr.Substring(1));
+                    defid = Prgs.SplitDefectNum(dr);
+                    point = MyUtility.Convert.GetInt(Prgs.SplitDefectNum(dr, 1));
                     DataRow[] ary = this.defRecord.Select(string.Format("ID = '{0}'", defid));
                     if (ary.Length > 0)
                     {
