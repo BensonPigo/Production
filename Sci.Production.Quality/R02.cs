@@ -216,6 +216,7 @@ select A.POID
 	,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
 	,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
 	,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
+    ,Inspector2 = (select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id) 
 	,a.Remark
 	,[OvenEncode] = iif(AIRL.NonOven =1 and AIRL.NonWash =1, 'Y', '')
     ,AIRL.Result
