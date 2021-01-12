@@ -16,9 +16,10 @@ BEGIN
 	DECLARE @Continuity AS VARCHAR(5);
 	DECLARE @ShadeBond AS VARCHAR(5);
 	DECLARE @Odor AS VARCHAR(5);
+	DECLARE @Moisture AS VARCHAR(5);
 
 	IF EXISTS(SELECT * FROM DBO.FIR F WITH (NOLOCK)
-				WHERE F.ID = @FirID AND (F.Nonphysical = 1 AND F.nonWeight = 1 AND F.nonContinuity = 1 AND F.nonShadebond = 1 And nonOdor = 1)
+				WHERE F.ID = @FirID AND (F.Nonphysical = 1 AND F.nonWeight = 1 AND F.nonContinuity = 1 AND F.nonShadebond = 1 And nonOdor = 1 and NonMoisture = 1)
 									AND (F.PhysicalEncode = 0 AND F.WeightEncode = 0 AND F.ContinuityEncode = 0 AND F.ShadebondEncode = 0 AND F.OdorEncode = 0))
 		RETURN 'Pass';
 
@@ -27,7 +28,9 @@ BEGIN
 									AND (F.WeightEncode = 1 OR F.nonWeight = 1 )
 									AND (F.ContinuityEncode = 1 OR F.nonContinuity = 1 )
 									AND (F.ShadebondEncode = 1 OR F.nonShadebond = 1)
-									AND (F.OdorEncode = 1 OR F.nonOdor = 1)))
+									AND (F.OdorEncode = 1 OR F.nonOdor = 1)
+									AND (F.Moisture <> '' OR F.NonMoisture = 1)									
+									))
 	BEGIN
 	
 		SELECT @Physical = F.Physical
@@ -35,6 +38,7 @@ BEGIN
 				,@Continuity = F.Continuity
 				,@ShadeBond = F.ShadeBond 
 				,@Odor = F.Odor				
+				,@Moisture = F.Moisture
 				FROM DBO.FIR F WITH (NOLOCK) WHERE F.ID = @FirID;
 
 				IF @Physical = 'Fail'	return	'Fail';
@@ -42,6 +46,8 @@ BEGIN
 				IF @Continuity = 'Fail' return	'Fail';
 				IF @ShadeBond = 'Fail'return	'Fail';
 				IF @Odor = 'Fail'return	'Fail';
+				IF @Moisture = ''return	'';
+				IF @Moisture = 'Fail'return	'Fail';
 
 				return 'Pass';
 	
