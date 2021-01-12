@@ -1224,7 +1224,7 @@ and not exists
                 excel.Cells[19 + (i * 8) + addline, 3] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
 
                 // 指定欄位轉型
-                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[14 + (i * 8) + addline, 3];
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 8) + addline, 3];
                 worksheet.get_Range(cell, cell).NumberFormat = "0.00";
 
                 excel.Cells[19 + (i * 8) + addline, 4] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
