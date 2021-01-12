@@ -69,6 +69,15 @@ namespace Sci.Production.Quality
                 this.txtbrand.ReadOnly = true;
             }
 
+            if (MyUtility.Check.Seek($"select * from Brand_QAMoistureStandardList where brandid='{this.CurrentMaintain["BrandID"]}'"))
+            {
+                this.btnMoistureStandardList.ForeColor = System.Drawing.Color.Blue;
+            }
+            else
+            {
+                this.btnMoistureStandardList.ForeColor = System.Drawing.Color.Black;
+            }
+
             base.OnDetailEntered();
         }
 
@@ -90,6 +99,12 @@ namespace Sci.Production.Quality
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
             this.txtFormula.Text = this.radioPanel1.Value == "1" ? this.ht["Formula1"].ToString() : this.ht["Formula2"].ToString();
+        }
+
+        private void BtnMoistureStandardList_Click(object sender, EventArgs e)
+        {
+            var frm = new B10_MoistureStandardList(MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
+            frm.ShowDialog();
         }
     }
 }

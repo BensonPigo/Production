@@ -37,6 +37,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.btnMoistureStandardList = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,6 +53,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnMoistureStandardList);
             this.detailcont.Controls.Add(this.radioPanel1);
             this.detailcont.Controls.Add(this.txtFormula);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -171,6 +173,16 @@
             this.txtbrand.Size = new System.Drawing.Size(119, 23);
             this.txtbrand.TabIndex = 0;
             // 
+            // btnMoistureStandardList
+            // 
+            this.btnMoistureStandardList.Location = new System.Drawing.Point(510, 35);
+            this.btnMoistureStandardList.Name = "btnMoistureStandardList";
+            this.btnMoistureStandardList.Size = new System.Drawing.Size(194, 30);
+            this.btnMoistureStandardList.TabIndex = 9;
+            this.btnMoistureStandardList.Text = "Moisture Standard List";
+            this.btnMoistureStandardList.UseVisualStyleBackColor = true;
+            this.btnMoistureStandardList.Click += new System.EventHandler(this.BtnMoistureStandardList_Click);
+            // 
             // B10
             // 
             this.ClientSize = new System.Drawing.Size(720, 331);
@@ -210,5 +222,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Class.Txtbrand txtbrand;
+        private Win.UI.Button btnMoistureStandardList;
     }
 }
