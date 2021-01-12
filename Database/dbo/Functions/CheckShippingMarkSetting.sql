@@ -97,8 +97,8 @@ BEGIN
 	INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
 	LEFT JOIN ShippingMarkType t ON t.Ukey = pictD.ShippingMarkTypeUkey
 	LEFT JOIN ShippingMarkType_Detail td ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
-	WHERE td.TemplateName = '' 
-		AND t.FromTemplate = 1
+	WHERE t.FromTemplate = 1 
+		AND (td.TemplateName = ''  OR td.TemplateName  IS NULL)	
 		AND pict.Category='PIC' 
 		AND pict.BrandID = @BrandID
 		AND pict.CTNRefno = @CtnRefno 

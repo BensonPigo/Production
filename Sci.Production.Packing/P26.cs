@@ -1337,7 +1337,7 @@ AND comb.Category='PIC'
 AND EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
 
 ----寫入ShippingMarkPic 表頭
-SELECT t.PackingListID
+SELECT DISTINCT t.PackingListID
     ,[AddName]='{Sci.Env.User.UserID}'
     ,[AddDate]=GETDATE()
 INTO #tmp_Pic{ii}
@@ -1443,13 +1443,23 @@ AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq
 		and qq.Ukey != pd.Ukey) > 0
 
 ----先找該PackingList的CustCD
-SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey_MixPack 
-,	(
+SELECT DISTINCT [StickerCombinationUkey]= IIF(  (IIF(EXISTS (SELECT 1 FROM #MixCTN0 t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0)) = 0
+,(ISNULL(c.StickerCombinationUkey,	
+	(
 	SELECT Ukey 
 	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = (IIF( EXISTS (SELECT 1 FROM #MixCTN{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
+	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 0   
 	)
-),[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCTN{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
+))
+,(ISNULL(c.StickerCombinationUkey_MixPack,	
+	(
+	SELECT Ukey 
+	FROM ShippingMarkCombination
+	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 1
+	)
+))
+)
+,[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCTN{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
 ,p.BrandID,pd.RefNo,[PackingListID]=p.ID ,pd.SCICtnNo
 INTO #tmp_Combination_D{i}
 FROM PackingList p 
@@ -1520,7 +1530,7 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                 this.finalSql += cmd;
                 idxx++;
             }
-            
+
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
                 try
@@ -1561,7 +1571,6 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                     return false;
                 }
             }
-            
 
             // 轉出圖片檔，以及寫入Packing P24 的Image
             try
@@ -1651,7 +1660,7 @@ FROM Orders
 WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
 
 SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmpp{i}
+INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
@@ -1682,13 +1691,13 @@ ORDER BY CONVERT ( int ,pd.CTNStartNo)
 UPDATE pd
 SET pd.CustCTN='{model.CustCTN}'
 FROM PackingList_Detail pd
-INNER JOIN #tmpp{i} t ON t.Ukey=pd.Ukey
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
 UPDATE PackingList
 SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
 WHERE ID ='{model.PackingListID}'
 
-DROP TABLE #tmpOrders{i},#tmpp{i}
+DROP TABLE #tmpOrders{i},#tmp{i}
 ";
                     #endregion
                 }
@@ -1704,7 +1713,7 @@ FROM Orders
 WHERE CustPONo='{model.CustPONO}' AND StyleID='{model.StyleID}'
 
 SELECT TOP 1 pd.ID, pd.Ukey ,pd.CTNStartNo ,o.BrandID ,pd.RefNo
-INTO #tmpp{i}
+INTO #tmp{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
@@ -1735,13 +1744,13 @@ ORDER BY CONVERT ( int ,pd.CTNStartNo)
 UPDATE pd
 SET pd.CustCTN='{model.CustCTN}'
 FROM PackingList_Detail pd
-INNER JOIN #tmpp{i} t ON t.Ukey=pd.Ukey
+INNER JOIN #tmp{i} t ON t.Ukey=pd.Ukey
 
 UPDATE PackingList
 SET EditDate=GETDATE(),EditName='{Sci.Env.User.UserID}'
 WHERE ID ='{model.PackingListID}'
 
-DROP TABLE #tmpOrders{i},#tmpp{i}
+DROP TABLE #tmpOrders{i},#tmp{i}
 ";
                     #endregion
                     fileNames.Add(model.FileName);
@@ -2078,6 +2087,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 this.finalSql = string.Empty;
                 this.finalSqlParameter = new List<SqlParameter>();
                 this.imageIdx = 0;
+                Result p24Result = new Result();
 
                 // 同一次上傳中不可選擇相同的 P/L
                 if (this.MatchList.Select(o => o.SelectedPackingID).Distinct().Count() != this.MatchList.Select(o => o.SelectedPackingID).Count())
@@ -2138,27 +2148,30 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                     bool p24 = true;
                     bool p03 = true;
-                    bool p24_Gen = true;
 
                     match.UpdateModels.RemoveAll(o => o.PackingListID != match.SelectedPackingID);
 
                     p24 = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
-                    p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
 
-                    using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+                    // P24成功再更新 P03
+                    if (p24)
                     {
-                        try
+                        p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
+                    }
+
+                    if (!p24 || !p03)
+                    {
+                        failFileSeqs.Add(match.FileSeq);
+                    }
+
+                    if (p24 && p03)
+                    {
+                        #region Call P24 產生HTML檔
+
+                        using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
                         {
-                            /*DualResult result = DBProxy.Current.Execute(null, this.finalSql, this.finalSqlParameter);
-                            if (!result)
+                            try
                             {
-                                this.ShowErr(result);
-                                p24 = false;
-                                p03 = false;
-                                transactionscope.Dispose();
-                            }
-                            else
-                            {*/
                                 DataRow[] selecteds = new DataRow[match.UpdateModels.Select(o => o.PackingListID).Distinct().Count()];
 
                                 int qq = 0;
@@ -2173,34 +2186,28 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                                 }
 
                                 P24_Generate p24_Generate = new P24_Generate();
-                                p24_Generate.Generate(selecteds, "P26");
+                                p24_Generate.Generate(selecteds, ref p24Result, "P26");
 
                                 transactionscope.Complete();
-                            //}
+                            }
+                            catch (Exception ex)
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr(ex);
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            p24_Gen = false;
-                            transactionscope.Dispose();
-                            this.ShowErr(ex);
-                        }
+                        #endregion
 
-                    }
-
-                    if (!p24 || !p03)
-                    {
-                        failFileSeqs.Add(match.FileSeq);
-                    }
-                    else
-                    {
                         bool stickerAlreadyExisted = this.MatchList.Where(o => o.FileSeq == match.FileSeq).FirstOrDefault().StickerAlreadyExisted;
+
+                        string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
 
                         if (stickerAlreadyExisted)
                         {
                             Result r = new Result()
                             {
                                 FileSeq = match.FileSeq,
-                                ResultMsg = "Overwrite success",
+                                ResultMsg = "Overwrite success. " + Environment.NewLine + stampMsg,
                             };
                             this.ConfirmMsg.Add(r);
                         }
@@ -2209,7 +2216,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                             Result r = new Result()
                             {
                                 FileSeq = match.FileSeq,
-                                ResultMsg = "Upload success",
+                                ResultMsg = "Upload success. " + Environment.NewLine + stampMsg,
                             };
                             this.ConfirmMsg.Add(r);
                         }
@@ -3003,13 +3010,13 @@ AND sd.Seq = (
             this.imageIdx++;
             this.finalSqlParameter.AddRange(para);
 
-            //DualResult result = DBProxy.Current.Execute(null, cmd, para);
+            DualResult result = DBProxy.Current.Execute(null, cmd, para);
 
-            //if (!result)
-            //{
-            //    this.ShowErr(result);
-            //    throw result.GetException();
-            //}
+            if (!result)
+            {
+                this.ShowErr(result);
+                throw result.GetException();
+            }
         }
 
         private enum UploadType

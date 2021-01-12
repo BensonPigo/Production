@@ -138,12 +138,32 @@ AND IIF(EXISTS(SELECT 1 FROM ShippingMarkPic pic
 
             #region SQL
             string cmd = $@"
+--找出哪個箱子種類包含混尺碼
+SELECT [PackingListID]=pd.ID ,pd.SCICtnNo
+INTO #Mix
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+{where}
+AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
+		where qq.ID = p.ID 
+		AND qq.OrderID = pd.OrderID 
+		AND qq.CTNStartNo = pd.CTNStartNo
+		AND qq.Article = pd.Article 
+		AND qq.SizeCode <> pd.SizeCode 
+		and qq.Ukey != pd.Ukey) > 0
+
+--找出貼標種類
 SELECT DISTINCT
  p.ID
 ,p.BrandID
 ,pd.CTNStartNo
 ,pd.RefNo
-,[ShippingMarkCombinationUkey] = ISNULL(c.StickerCombinationUkey,comb.Ukey)
+,[ShippingMarkCombinationUkey] = IIF( IsMixed.Val = 0 
+	,ISNULL(c.StickerCombinationUkey,comb.Ukey )
+	,ISNULL(c.StickerCombinationUkey_MixPack ,comb.Ukey)
+)
 ,p.CTNQty
 INTO #base
 FROM PackingList p
@@ -152,9 +172,20 @@ INNER JOIN Orders o ON o.ID = pd.OrderID
 INNER JOIN CustCD c ON c.ID = p.CustCDID
 LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
 OUTER APPLY(
+	SELECT [Val] = IIF( 
+		EXISTS(
+				SELECT 1 FROM #Mix pp 
+				WHERE pd.ID = pp.PackingListID AND pd.SCICtnNo = pp.SCICtnNo 
+		)
+		,1
+		,0
+	)
+	
+)IsMixed
+OUTER APPLY(
 	SELECT *
 	FROM ShippingMarkCombination s
-	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1
+	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1 AND IsMixPack = IsMixed.Val
 )comb
 WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 {where}
@@ -200,7 +231,7 @@ WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 
 ORDER BY p.ID
 
-DROP TABLE #base
+DROP TABLE #base,#Mix
 ";
             #endregion
 
@@ -244,7 +275,9 @@ DROP TABLE #base
             }
 
             this.ShowWaitMessage("Processing...");
-            this.Generate(selecteds);
+
+            Sci.Production.Packing.P26.Result t = new P26.Result();
+            this.Generate(selecteds, ref t, string.Empty);
             this.ShowResult();
 
             this.HideWaitMessage();
@@ -263,12 +296,33 @@ DROP TABLE #base
 
             #region SQL
             string cmd = $@"
+
+--找出哪個箱子種類包含混尺碼
+SELECT [PackingListID]=pd.ID ,pd.SCICtnNo
+INTO #Mix
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+AND  p.ID  IN ('{packingListIDs.JoinToString("','")}')
+AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
+		where qq.ID = p.ID 
+		AND qq.OrderID = pd.OrderID 
+		AND qq.CTNStartNo = pd.CTNStartNo
+		AND qq.Article = pd.Article 
+		AND qq.SizeCode <> pd.SizeCode 
+		and qq.Ukey != pd.Ukey) > 0
+
+----找出貼標種類
 SELECT DISTINCT
  p.ID
 ,p.BrandID
 ,pd.CTNStartNo
 ,pd.RefNo
-,[ShippingMarkCombinationUkey] = ISNULL(c.StickerCombinationUkey,comb.Ukey)
+,[ShippingMarkCombinationUkey] = IIF( IsMixed.Val = 0 
+	,ISNULL(c.StickerCombinationUkey,comb.Ukey )
+	,ISNULL(c.StickerCombinationUkey_MixPack ,comb.Ukey)
+)
 ,p.CTNQty
 INTO #base
 FROM PackingList p WITH(NOLOCK)
@@ -277,9 +331,20 @@ INNER JOIN Orders o WITH(NOLOCK) ON o.ID = pd.OrderID
 INNER JOIN CustCD c WITH(NOLOCK) ON c.ID = p.CustCDID
 LEFT JOIN Pullout pu WITH(NOLOCK) ON p.PulloutID = pu.ID
 OUTER APPLY(
+	SELECT [Val] = IIF( 
+		EXISTS(
+				SELECT 1 FROM #Mix pp 
+				WHERE pd.ID = pp.PackingListID AND pd.SCICtnNo = pp.SCICtnNo 
+		)
+		,1
+		,0
+	)
+	
+)IsMixed
+OUTER APPLY(
 	SELECT *
-	FROM ShippingMarkCombination s WITH(NOLOCK)
-	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1
+	FROM ShippingMarkCombination s
+	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1 AND IsMixPack = IsMixed.Val
 )comb
 WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
@@ -299,7 +364,7 @@ WHERE
 OR pict.ShippingMarkCombinationUkey IS NULL ----Combination 沒有設定
 OR t.Ukey  IS NULL  ----MarkType 沒有設定
 
-DROP TABLE #base
+DROP TABLE #base, #Mix
 ";
 
             DualResult r = DBProxy.Current.Select(null, cmd, out dtrBasicSetting);
@@ -397,7 +462,7 @@ AND p.ID IN ('{packingListIDs.JoinToString("','")}')
         }
 
         /// <inheritdoc/>
-        public void Generate(DataRow[] selecteds, string callFrom = "")
+        public void Generate(DataRow[] selecteds, ref Sci.Production.Packing.P26.Result p26Result, string callFrom = "")
         {
             if (callFrom == "P26")
             {
@@ -419,6 +484,23 @@ AND p.ID IN ('{packingListIDs.JoinToString("','")}')
             // 取得每一箱的資訊、以及對應的範本名稱
             #region SQL
             string cmd = $@"
+--找出哪個箱子種類包含混尺碼
+SELECT [PackingListID]=pd.ID ,pd.SCICtnNo
+INTO #Mix
+FROM PackingList p 
+INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
+INNER JOIN Orders o ON o.ID = pd.OrderID
+WHERE p.Type ='B' 
+AND  p.ID IN ('{packingListIDs.JoinToString("','")}')
+AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq 
+		where qq.ID = p.ID 
+		AND qq.OrderID = pd.OrderID 
+		AND qq.CTNStartNo = pd.CTNStartNo
+		AND qq.Article = pd.Article 
+		AND qq.SizeCode <> pd.SizeCode 
+		and qq.Ukey != pd.Ukey) > 0
+
+----找出貼標種類
 SELECT DISTINCT
      p.ID
     ,p.BrandID
@@ -426,7 +508,10 @@ SELECT DISTINCT
     ,pd.CTNStartNo
     ,pd.RefNo
     ,pd.SCICtnNo
-    ,[ShippingMarkCombinationUkey] = ISNULL(c.StickerCombinationUkey,comb.Ukey)
+    ,[ShippingMarkCombinationUkey] = IIF( IsMixed.Val = 0 
+	    ,ISNULL(c.StickerCombinationUkey,comb.Ukey )
+	    ,ISNULL(c.StickerCombinationUkey_MixPack ,comb.Ukey)
+     )
     ,p.CTNQty
 INTO #base
 FROM PackingList p WITH(NOLOCK)
@@ -435,9 +520,20 @@ INNER JOIN Orders o WITH(NOLOCK) ON o.ID = pd.OrderID
 INNER JOIN CustCD c WITH(NOLOCK) ON c.ID = p.CustCDID
 LEFT JOIN Pullout pu WITH(NOLOCK) ON p.PulloutID = pu.ID
 OUTER APPLY(
+	SELECT [Val] = IIF( 
+		EXISTS(
+				SELECT 1 FROM #Mix pp 
+				WHERE pd.ID = pp.PackingListID AND pd.SCICtnNo = pp.SCICtnNo 
+		)
+		,1
+		,0
+	)
+	
+)IsMixed
+OUTER APPLY(
 	SELECT *
-	FROM ShippingMarkCombination s WITH(NOLOCK)
-	WHERE s.BrandID=p.BrandID AND s.Category='HTML' AND IsDefault = 1
+	FROM ShippingMarkCombination s
+	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1 AND IsMixPack = IsMixed.Val
 )comb
 WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
@@ -471,7 +567,7 @@ INNER JOIN ShippingMarkType_Detail td WITH(NOLOCK) ON t.Ukey = td.ShippingMarkTy
 INNER JOIN StickerSize st WITH(NOLOCK) ON st.ID = pictD.StickerSizeID
 WHERE td.TemplateName <> ''
 
-DROP TABLE #base
+DROP TABLE #base, #Mix
 ";
             #endregion
 
@@ -480,6 +576,12 @@ DROP TABLE #base
             if (!r)
             {
                 this.ShowErr(r);
+                return;
+            }
+
+            // 在這邊Return，表示沒有需要轉出HTML，因此不需要提示訊息
+            if (dt.Rows.Count == 0)
+            {
                 return;
             }
 
@@ -517,7 +619,18 @@ DROP TABLE #base
             {
                 if (callFrom == "P26")
                 {
-                    this.ShowResult();
+                    foreach (var item in this.P24_GenerateResults)
+                    {
+                        if (!item.IsSuccess)
+                        {
+                            string tmp;
+                            if (item.InformationError != null && item.InformationError.Any())
+                            {
+                                tmp = "Shipping mark information not maintained in PMS yet : " + item.InformationError.Distinct().OrderBy(o => o).JoinToString(",");
+                                p26Result.ResultMsg = tmp;
+                            }
+                        }
+                    }
                 }
 
                 return;
@@ -529,11 +642,6 @@ DROP TABLE #base
             // 全部轉檔成功才UPDATE DB
             if (MyUtility.Check.Empty(bList))
             {
-                if (callFrom == "P26")
-                {
-                    this.ShowResult();
-                }
-
                 return;
             }
 
@@ -557,8 +665,11 @@ DROP TABLE #base
                 }
                 #endregion
 
-                MyUtility.Msg.InfoBox("Success!!");
-                this.Query();
+                if (callFrom == string.Empty)
+                {
+                    MyUtility.Msg.InfoBox("Success!!");
+                    this.Query();
+                }
             }
         }
 
@@ -763,24 +874,16 @@ END
             }
 
             // 表身
+            // 透過P26先寫入圖片再產生HTML，因此不可以刪掉表身
+            // if (callFrom != "P26")
+            // {
+            //     bodyInsert += $@"DELETE FROM ShippingMarkPic_Detail WHERE ShippingMarkPicUkey In (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID IN ('{string.Join("','", p24_Templates.Select(o => o.PackingListID).Distinct().ToList())}') ) ;";
+            // }
+
             foreach (P24_Template p24_Template in p24_Templates)
             {
-                // 透過P26先寫入圖片再產生HTML，因此不可以刪掉表身
-                if (callFrom == "P26")
+                /*if (callFrom != "P26")
                 {
-                    bodyInsert += $@"
-UPDATE ShippingMarkPic_Detail
-SET FilePath = '{p24_Template.FilePath}'
-    ,FileName = '{p24_Template.FileName}'
-    ,dPI = {dPI}
-WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
-AND SCICtnNo = '{p24_Template.SCICtnNo}'
-;
-";
-                }
-                else
-                {
-                    bodyInsert += $@"DELETE FROM ShippingMarkPic_Detail WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') ;";
                     bodyInsert += $@"
 
 INSERT INTO ShippingMarkPic_Detail
@@ -802,6 +905,44 @@ INSERT INTO ShippingMarkPic_Detail
 ;
 ";
                 }
+                else
+                {*/
+                    bodyInsert += $@"
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+)
+BEGIN
+    UPDATE ShippingMarkPic_Detail
+    SET FilePath = '{p24_Template.FilePath}'
+        ,FileName = '{p24_Template.FileName}'
+        ,dPI = {dPI}
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+END
+ELSE
+BEGIN
+    INSERT INTO ShippingMarkPic_Detail
+               (ShippingMarkPicUkey, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
+         VALUES
+               ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+               ,'{p24_Template.SCICtnNo}'
+               ,{p24_Template.ShippingMarkCombinationUkey}
+               ,{p24_Template.ShippingMarkTypeUkey}
+               ,'{p24_Template.FilePath}'
+               ,'{p24_Template.FileName}'
+               ,'{p24_Template.Side}'
+               ,{p24_Template.Seq}
+               ,{p24_Template.FromRight}
+               ,{p24_Template.FromBottom}
+               ,{p24_Template.Width}
+               ,{p24_Template.Length}
+               ,{dPI} )
+END
+;
+";
+                //}
             }
 
             using (TransactionScope transactionScope = new TransactionScope())

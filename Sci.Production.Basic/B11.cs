@@ -189,7 +189,7 @@ AND ID = '{item.GetSelectedString()}'
         {
             string newStickerCombMix = this.txtStickerCombMix.Text;
 
-            if (this.oldStickerComb != newStickerCombMix)
+            if (this.oldStickerCombMix != newStickerCombMix)
             {
                 if (MyUtility.Check.Empty(newStickerCombMix))
                 {
