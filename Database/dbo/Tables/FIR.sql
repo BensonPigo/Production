@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[FIR] (
+﻿CREATE TABLE [dbo].[FIR] (
     [ID]                           BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
     [POID]                         VARCHAR (13)    CONSTRAINT [DF_FIR_POID] DEFAULT ('') NOT NULL,
     [SEQ1]                         VARCHAR (3)     CONSTRAINT [DF_FIR_SEQ] DEFAULT ('') NOT NULL,
@@ -54,12 +54,14 @@ CREATE TABLE [dbo].[FIR] (
     [MaterialCompositionGrp]       VARCHAR (50)    CONSTRAINT [DF_FIR_MaterialCompositionGrp] DEFAULT ('') NOT NULL,
     [MaterialCompositionItem]      VARCHAR (100)   CONSTRAINT [DF_FIR_MaterialCompositionItem] DEFAULT ('') NOT NULL,
     [MoistureStandardDesc]         NVARCHAR (10)   CONSTRAINT [DF_FIR_MoistureStandardDesc] DEFAULT ('') NOT NULL,
-    [MoistureStandard1]            NUMERIC (3, 1)  CONSTRAINT [DF_FIR_MoistureStandard1] DEFAULT ((0)) NOT NULL,
+    [MoistureStandard1]            NUMERIC (4, 1)  CONSTRAINT [DF_FIR_MoistureStandard1] DEFAULT ((0)) NOT NULL,
     [MoistureStandard1_Comparison] TINYINT         CONSTRAINT [DF_FIR_MoistureStandard1_Comparison] DEFAULT ((0)) NOT NULL,
-    [MoistureStandard2]            NUMERIC (3, 1)  CONSTRAINT [DF_FIR_MoistureStandard2] DEFAULT ((0)) NOT NULL,
+    [MoistureStandard2]            NUMERIC (4, 1)  CONSTRAINT [DF_FIR_MoistureStandard2] DEFAULT ((0)) NOT NULL,
     [MoistureStandard2_Comparison] TINYINT         CONSTRAINT [DF_FIR_MoistureStandard2_Comparison] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 

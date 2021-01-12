@@ -2,7 +2,7 @@
     [ID]          BIGINT         NOT NULL,
     [Roll]        VARCHAR (8)    NOT NULL,
     [Dyelot]      VARCHAR (8)    NOT NULL,
-    [ActMoisture] NUMERIC (3, 1) NULL,
+    [ActMoisture] NUMERIC (4, 1) NULL,
     [InspDate]    DATE           NULL,
     [Inspector]   VARCHAR (10)   CONSTRAINT [DF_FIR_Moisture_Inspector] DEFAULT ('') NOT NULL,
     [Result]      VARCHAR (5)    CONSTRAINT [DF_FIR_Moisture_Result] DEFAULT ('') NOT NULL,

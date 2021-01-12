@@ -20,8 +20,9 @@ namespace Sci.Production.Quality
         public string BrandID { get; set; }
 
         /// <inheritdoc/>
-        public B10_MoistureStandardList()
+        public B10_MoistureStandardList(string brandID)
         {
+            this.BrandID = brandID;
             this.InitializeComponent();
             this.Text = $"QA B10. Moisture Standard List ({this.BrandID})";
         }

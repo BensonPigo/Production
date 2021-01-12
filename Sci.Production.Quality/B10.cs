@@ -69,6 +69,15 @@ namespace Sci.Production.Quality
                 this.txtbrand.ReadOnly = true;
             }
 
+            if (MyUtility.Check.Seek($"select * from Brand_QAMoistureStandardList where brandid='{this.CurrentMaintain["BrandID"]}'"))
+            {
+                this.btnMoistureStandardList.ForeColor = System.Drawing.Color.Blue;
+            }
+            else
+            {
+                this.btnMoistureStandardList.ForeColor = System.Drawing.Color.Black;
+            }
+
             base.OnDetailEntered();
         }
 
@@ -94,8 +103,7 @@ namespace Sci.Production.Quality
 
         private void BtnMoistureStandardList_Click(object sender, EventArgs e)
         {
-            var frm = new B10_MoistureStandardList();
-            frm.BrandID = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]);
+            var frm = new B10_MoistureStandardList(MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
             frm.ShowDialog();
         }
     }

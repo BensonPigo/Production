@@ -229,7 +229,7 @@ namespace Sci.Production.Quality
                .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                ;
             this.grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.MistyRose;
-            this.grid.Columns["ActMoisture"].DefaultCellStyle.ForeColor = Color.Red;
+            this.grid.Columns["ActMoisture"].DefaultCellStyle.BackColor = Color.MistyRose;
 
             this.grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;

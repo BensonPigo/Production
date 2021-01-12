@@ -3,9 +3,9 @@
     [MaterialCompositionGrp]       VARCHAR (50)   NOT NULL,
     [MaterialCompositionItem]      VARCHAR (100)  NOT NULL,
     [MoistureStandardDesc]         NVARCHAR (10)  CONSTRAINT [DF_QAMoistureStandardList_MoistureStandardDesc] DEFAULT ('') NOT NULL,
-    [MoistureStandard1]            NUMERIC (3, 1) CONSTRAINT [DF_QAMoistureStandardList_MoistureStandard1] DEFAULT ((0)) NOT NULL,
+    [MoistureStandard1]            NUMERIC (4, 1) CONSTRAINT [DF_QAMoistureStandardList_MoistureStandard1] DEFAULT ((0)) NOT NULL,
     [MoistureStandard1_Comparison] TINYINT        CONSTRAINT [DF_QAMoistureStandardList_MoistureStandard1_Comparison] DEFAULT ((0)) NOT NULL,
-    [MoistureStandard2]            NUMERIC (3, 1) CONSTRAINT [DF_QAMoistureStandardList_MoistureStandard2] DEFAULT ((0)) NOT NULL,
+    [MoistureStandard2]            NUMERIC (4, 1) CONSTRAINT [DF_QAMoistureStandardList_MoistureStandard2] DEFAULT ((0)) NOT NULL,
     [MoistureStandard2_Comparison] TINYINT        CONSTRAINT [DF_QAMoistureStandardList_MoistureStandard2_Comparison] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_QAMoistureStandardList] PRIMARY KEY CLUSTERED ([BrandID] ASC, [MaterialCompositionGrp] ASC, [MaterialCompositionItem] ASC)
 );
