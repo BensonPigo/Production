@@ -89,6 +89,26 @@ BEGIN
 	if (@CheckBasicSetting = @BasicSettingNotYet)
 		return @BasicSettingNotYet
 
+	/*
+		04 確認TForMer 的範本是否都有上傳(僅檢查FromTemplate=1)
+	*/
+	SELECT @CheckBasicSetting = iif (count(*) > 0, @BasicSettingNotYet, @BasicSettingAlready)
+	FROM ShippingMarkPicture pict
+	INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
+	LEFT JOIN ShippingMarkType t ON t.Ukey = pictD.ShippingMarkTypeUkey
+	LEFT JOIN ShippingMarkType_Detail td ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
+	WHERE td.TemplateName = '' 
+		AND t.FromTemplate = 1
+		AND pict.Category='PIC' 
+		AND pict.BrandID = @BrandID
+		AND pict.CTNRefno = @CtnRefno 
+		AND pict.ShippingMarkCombinationUkey = @ShippingMarkCombinationUkey
+		
+		
+	---- 若範本沒有上傳則回傳 0
+	if (@CheckBasicSetting = @BasicSettingNotYet)
+		return @BasicSettingNotYet
+
 	-- 以上都成功代表基本檔皆已完成
 	RETURN @Finished;
 END

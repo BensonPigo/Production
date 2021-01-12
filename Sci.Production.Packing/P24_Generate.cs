@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -24,6 +25,7 @@ namespace Sci.Production.Packing
         private DateTime? SCIDelivery_s;
         private DateTime? SCIDelivery_e;
         private List<P24_GenerateResult> P24_GenerateResults;
+
         /// <inheritdoc/>
         public P24_Generate()
         {
@@ -141,7 +143,7 @@ SELECT DISTINCT
 ,p.BrandID
 ,pd.CTNStartNo
 ,pd.RefNo
-,[ShippingMarkCombinationUkey] = ISNULL(c.StampCombinationUkey,comb.Ukey)
+,[ShippingMarkCombinationUkey] = ISNULL(c.StickerCombinationUkey,comb.Ukey)
 ,p.CTNQty
 INTO #base
 FROM PackingList p
@@ -152,11 +154,10 @@ LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
 OUTER APPLY(
 	SELECT *
 	FROM ShippingMarkCombination s
-	WHERE s.BrandID=p.BrandID AND s.Category='HTML' AND IsDefault = 1
+	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1
 )comb
 WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 {where}
-
 
 SELECT DISTINCT
      [Selected] = IIF(CompleteCtn.Val >= p.CTNQty AND CtnInClog.Val = 0 ,1 ,0) /* 預設勾選No Sticker Basic Setting = False 且 Ctn In Clog = False */
@@ -173,17 +174,20 @@ INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
 LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
 OUTER APPLY(
+	----檢查的邏輯順序：Packing B03 > B06 > B05 > B05 Detail 的TemplateName
 	SELECT [Val]=COUNT(b.CTNStartNo)
 	FROM  #base b
 	INNER JOIN  ShippingMarkPicture pict ON pict.BrandID = b.BrandID 
-							AND pict.Category='HTML' 
+							AND pict.Category='PIC' 
 							AND pict.CTNRefno = b.RefNo 
 							AND pict.ShippingMarkCombinationUkey = b.ShippingMarkCombinationUkey
 
 	INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
 	INNER JOIN ShippingMarkType t ON t.Ukey = pictD.ShippingMarkTypeUkey
-	INNER JOIN ShippingMarkType_Detail td ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
-	WHERE td.TemplateName <> '' AND b.ID = p.ID
+	LEFT JOIN ShippingMarkType_Detail td ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
+	WHERE b.ID = p.ID
+	AND t.FromTemplate = 1
+	AND td.TemplateName <> ''
 )CompleteCtn
 OUTER APPLY(
 	SELECT [Val] = COUNT(Ukey)
@@ -241,106 +245,174 @@ DROP TABLE #base
 
             this.ShowWaitMessage("Processing...");
             this.Generate(selecteds);
+            this.ShowResult();
+
             this.HideWaitMessage();
         }
 
-        private void CheckBasicSettingClog(DataRow[] selecteds)
+        /// <summary>
+        /// 基本設定 和 Clog檢查
+        /// </summary>
+        /// <param name="selecteds">selecteds</param>
+        /// <returns>ss</returns>
+        public DataRow[] CheckBasicSettingClog(DataRow[] selecteds)
         {
             List<string> packingListIDs = selecteds.Select(o => MyUtility.Convert.GetString(o["ID"])).Distinct().ToList();
-            DataTable dt;
+            DataTable dtrBasicSetting;
+            DataTable ctnDt;
 
+            #region SQL
             string cmd = $@"
 SELECT DISTINCT
  p.ID
 ,p.BrandID
 ,pd.CTNStartNo
 ,pd.RefNo
-,[ShippingMarkCombinationUkey] = ISNULL(c.StampCombinationUkey,comb.Ukey)
+,[ShippingMarkCombinationUkey] = ISNULL(c.StickerCombinationUkey,comb.Ukey)
 ,p.CTNQty
 INTO #base
-FROM PackingList p
-INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-INNER JOIN CustCD c ON c.ID = p.CustCDID
-LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
+FROM PackingList p WITH(NOLOCK)
+INNER JOIN PackingList_Detail pd WITH(NOLOCK) ON p.ID = pd.ID
+INNER JOIN Orders o WITH(NOLOCK) ON o.ID = pd.OrderID
+INNER JOIN CustCD c WITH(NOLOCK) ON c.ID = p.CustCDID
+LEFT JOIN Pullout pu WITH(NOLOCK) ON p.PulloutID = pu.ID
 OUTER APPLY(
 	SELECT *
-	FROM ShippingMarkCombination s
-	WHERE s.BrandID=p.BrandID AND s.Category='HTML' AND IsDefault = 1
+	FROM ShippingMarkCombination s WITH(NOLOCK)
+	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1
 )comb
 WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
 
-SELECT DISTINCT
-     [Selected] = IIF(CompleteCtn.Val >= p.CTNQty AND CtnInClog.Val = 0 ,1 ,0) /* 預設勾選No Sticker Basic Setting = False 且 Ctn In Clog = False */
-    ,p.ID
-    ,p.BrandID
-    ,p.CTNQty
-    ,[NoStickerBasicSetting] = CAST( IIF(CompleteCtn.Val < p.CTNQty , 1, 0) as bit)
-    ,[StickerAlreadyExisted] = CAST( IIF(EXISTS(SELECT 1 FROM ShippingMarkPic pic 
-										    INNER JOIN ShippingMarkPic_Detail picD ON pic.Ukey= picD.ShippingMarkPicUkey
-										    WHERE pic.PackingListID = p.ID) ,1 ,0)  as bit)
-	,[CtnInClog] = CAST( IIF(CtnInClog.Val > 0 , 1 ,0)  as bit)
-FROM PackingList p
-INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
-OUTER APPLY(
-	SELECT [Val]=COUNT(b.CTNStartNo)
-	FROM  #base b
-	INNER JOIN  ShippingMarkPicture pict ON pict.BrandID = b.BrandID 
-							AND pict.Category='HTML' 
-							AND pict.CTNRefno = b.RefNo 
-							AND pict.ShippingMarkCombinationUkey = b.ShippingMarkCombinationUkey
+SELECT b.*
+FROM  #base b
+LEFT JOIN  ShippingMarkPicture pict WITH(NOLOCK) ON pict.BrandID = b.BrandID 
+						AND pict.Category='PIC' 
+						AND pict.CTNRefno = b.RefNo 
+						AND pict.ShippingMarkCombinationUkey = b.ShippingMarkCombinationUkey
 
-	INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
-	INNER JOIN ShippingMarkType t ON t.Ukey = pictD.ShippingMarkTypeUkey
-	INNER JOIN ShippingMarkType_Detail td ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
-	WHERE td.TemplateName <> '' AND b.ID = p.ID
-)CompleteCtn
-OUTER APPLY(
-	SELECT [Val] = COUNT(Ukey)
-	FROM PackingList_Detail pdd
-	WHERE pdd.ID = pd.ID AND pdd.ReceiveDate IS NOT NULL 
-)CtnInClog
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
-AND p.ID IN ('{packingListIDs.JoinToString("','")}')
-
-ORDER BY p.ID
+LEFT JOIN ShippingMarkPicture_Detail pictD WITH(NOLOCK) ON pict.Ukey = pictD.ShippingMarkPictureUkey
+LEFT JOIN ShippingMarkType t WITH(NOLOCK) ON t.Ukey = pictD.ShippingMarkTypeUkey
+LEFT JOIN ShippingMarkType_Detail td WITH(NOLOCK) ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
+WHERE 
+(t.FromTemplate= 1  AND (td.TemplateName = '' OR td.TemplateName IS NULL)  )----沒有上傳範本
+OR pict.ShippingMarkCombinationUkey IS NULL ----Combination 沒有設定
+OR t.Ukey  IS NULL  ----MarkType 沒有設定
 
 DROP TABLE #base
 ";
 
-            DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+            DualResult r = DBProxy.Current.Select(null, cmd, out dtrBasicSetting);
 
             if (!r)
             {
                 this.ShowErr(r);
                 this.grid.DataSource = null;
-                return;
+                return null;
             }
 
+            cmd = $@"
+SELECT DISTINCT
+	 p.ID
+    ,p.BrandID
+    ,p.CTNQty
+	,pd.CTNStartNo
+	,pd.ReceiveDate
+FROM PackingList p WITH(NOLOCK)
+INNER JOIN PackingList_Detail pd WITH(NOLOCK) ON p.ID = pd.ID
+INNER JOIN Orders o WITH(NOLOCK) ON o.ID = pd.OrderID
+LEFT JOIN Pullout pu WITH(NOLOCK) ON p.PulloutID = pu.ID
+WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+AND p.ID IN ('{packingListIDs.JoinToString("','")}')
+--AND pd.ReceiveDate IS NOT NULL
+
+";
+            r = DBProxy.Current.Select(null, cmd, out ctnDt);
+
+            if (!r)
+            {
+                this.ShowErr(r);
+                this.grid.DataSource = null;
+                return null;
+            }
+
+            #endregion
+
             // 基本檔缺少
-            var noStickerBasicSetting = dt.AsEnumerable().Where(o => MyUtility.Convert.GetBool(o["NoStickerBasicSetting"])).Select(o => MyUtility.Convert.GetString(o["ID"])).ToList();
+            var noStickerBasicSetting = dtrBasicSetting.AsEnumerable()
+                .Select(o => MyUtility.Convert.GetString(o["ID"])).Distinct().ToList();
 
             // 至少有一個紙箱在成品倉
-            var ctnInClog = dt.AsEnumerable().Where(o => MyUtility.Convert.GetBool(o["CtnInClog"])).Select(o => MyUtility.Convert.GetString(o["ID"])).ToList();
+            var ctnInClog = ctnDt.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["ReceiveDate"])).ToList();
+            var paskings = ctnInClog.Select(o => MyUtility.Convert.GetString(o["ID"])).Distinct();
 
-            //做到這裡
+            // 基本檔缺少的Packing不要進行後續動作，並記錄料號(Refno)
             foreach (var packingListID in noStickerBasicSetting)
             {
                 this.P24_GenerateResults.Add(new P24_GenerateResult()
                 {
                     PackingListID = packingListID,
                     IsSuccess = false,
-                    Message = "3.	Sticker basic setting not yet complete",
+                    BasicSettingError = dtrBasicSetting.AsEnumerable()
+                        .Where(o => MyUtility.Convert.GetString(o["ID"]) == packingListID)
+                        .Select(o => MyUtility.Convert.GetString(o["Refno"])).Distinct().ToList(),
+                    Message = "Sticker basic setting not yet complete",
                 });
-                selecteds.Where(o=> MyUtility.Convert.GetString(o["ID"]) == packingListID).
+
+                selecteds = selecteds.Where(o => MyUtility.Convert.GetString(o["ID"]) != packingListID).ToArray();
             }
+
+            // 有紙箱在成品倉的Packing不要進行後續動作，並找出箱子號CTNStartNo
+            foreach (var packingListID in paskings)
+            {
+                var generateResults = this.P24_GenerateResults.Where(o => o.PackingListID == packingListID);
+
+                // 需檢查該Packing ID是否已經存在
+                if (!generateResults.Any())
+                {
+                    this.P24_GenerateResults.Add(new P24_GenerateResult()
+                    {
+                        PackingListID = packingListID,
+                        CtnError = ctnInClog.AsEnumerable()
+                            .Where(o => MyUtility.Convert.GetString(o["ID"]) == packingListID)
+                            .Select(o => MyUtility.Convert.GetString(o["CTNStartNo"])).Distinct().ToList(),
+                        IsSuccess = false,
+                        Message = "Carton already in Clog",
+                    });
+                }
+                else
+                {
+                    var data = generateResults.FirstOrDefault();
+                    List<string> ctnError = ctnInClog.AsEnumerable()
+                            .Where(o => MyUtility.Convert.GetString(o["ID"]) == packingListID)
+                            .Select(o => MyUtility.Convert.GetString(o["CTNStartNo"])).Distinct().ToList();
+
+                    data.CtnError = ctnError;
+                }
+
+                selecteds = selecteds.Where(o => MyUtility.Convert.GetString(o["ID"]) != packingListID).ToArray();
+            }
+
+            return selecteds;
         }
 
-        private void Generate(DataRow[] selecteds)
+        /// <inheritdoc/>
+        public void Generate(DataRow[] selecteds, string callFrom = "")
         {
+            if (callFrom == "P26")
+            {
+                this.P24_GenerateResults = new List<P24_GenerateResult>();
+            }
+
+            // 第一階段檢查
+            selecteds = this.CheckBasicSettingClog(selecteds);
+
+            if (selecteds == null)
+            {
+                this.ShowResult();
+                return;
+            }
+
             List<string> packingListIDs = selecteds.Select(o => MyUtility.Convert.GetString(o["ID"])).Distinct().ToList();
             List<P24_Template> tList = new List<P24_Template>();
 
@@ -354,31 +426,31 @@ SELECT DISTINCT
     ,pd.CTNStartNo
     ,pd.RefNo
     ,pd.SCICtnNo
-    ,[ShippingMarkCombinationUkey] = ISNULL(c.StampCombinationUkey,comb.Ukey)
+    ,[ShippingMarkCombinationUkey] = ISNULL(c.StickerCombinationUkey,comb.Ukey)
     ,p.CTNQty
 INTO #base
-FROM PackingList p
-INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
-INNER JOIN Orders o ON o.ID = pd.OrderID
-INNER JOIN CustCD c ON c.ID = p.CustCDID
-LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
+FROM PackingList p WITH(NOLOCK)
+INNER JOIN PackingList_Detail pd WITH(NOLOCK) ON p.ID = pd.ID
+INNER JOIN Orders o WITH(NOLOCK) ON o.ID = pd.OrderID
+INNER JOIN CustCD c WITH(NOLOCK) ON c.ID = p.CustCDID
+LEFT JOIN Pullout pu WITH(NOLOCK) ON p.PulloutID = pu.ID
 OUTER APPLY(
 	SELECT *
-	FROM ShippingMarkCombination s
+	FROM ShippingMarkCombination s WITH(NOLOCK)
 	WHERE s.BrandID=p.BrandID AND s.Category='HTML' AND IsDefault = 1
 )comb
 WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
 
 
-SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkStamp和ShippingMarkStamp_Detail的 [PackingListID]
+SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkPic和的 [PackingListID]
     ,b.BrandID
     ,b.OrderID
     ,b.RefNo
     ,b.CTNStartNo
     ,td.TemplateName
 	
-	----對應ShippingMarkStamp_Detail
+	----對應ShippingMarkPic_Detail
     ,b.SCICtnNo
 	,b.ShippingMarkCombinationUkey
 	,[ShippingMarkTypeUkey]=t.Ukey
@@ -389,15 +461,17 @@ SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkStamp和ShippingMar
 	,st.Width
 	,st.Length
 FROM  #base b
-INNER JOIN  ShippingMarkPicture pict ON pict.BrandID = b.BrandID 
-						AND pict.Category='HTML' 
+INNER JOIN  ShippingMarkPicture pict WITH(NOLOCK) ON pict.BrandID = b.BrandID 
+						AND pict.Category='PIC' 
 						AND pict.CTNRefno = b.RefNo 
 						AND pict.ShippingMarkCombinationUkey = b.ShippingMarkCombinationUkey
-INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPictureUkey
-INNER JOIN ShippingMarkType t ON t.Ukey = pictD.ShippingMarkTypeUkey
-INNER JOIN ShippingMarkType_Detail td ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
-INNER JOIN StickerSize st ON st.ID = pictD.StickerSizeID
+INNER JOIN ShippingMarkPicture_Detail pictD WITH(NOLOCK) ON pict.Ukey = pictD.ShippingMarkPictureUkey
+INNER JOIN ShippingMarkType t WITH(NOLOCK) ON t.Ukey = pictD.ShippingMarkTypeUkey
+INNER JOIN ShippingMarkType_Detail td WITH(NOLOCK) ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
+INNER JOIN StickerSize st WITH(NOLOCK) ON st.ID = pictD.StickerSizeID
 WHERE td.TemplateName <> ''
+
+DROP TABLE #base
 ";
             #endregion
 
@@ -439,8 +513,13 @@ WHERE td.TemplateName <> ''
 
             // 取得要替換的欄位的值
             List<P24_Template> nList = this.GetTemplateFieldValue(tList);
-            if (MyUtility.Check.Empty(nList))
+            if (MyUtility.Check.Empty(nList) || nList.Count == 0)
             {
+                if (callFrom == "P26")
+                {
+                    this.ShowResult();
+                }
+
                 return;
             }
 
@@ -450,10 +529,15 @@ WHERE td.TemplateName <> ''
             // 全部轉檔成功才UPDATE DB
             if (MyUtility.Check.Empty(bList))
             {
+                if (callFrom == "P26")
+                {
+                    this.ShowResult();
+                }
+
                 return;
             }
 
-            bool success = this.UpdateDatabese(bList);
+            bool success = this.UpdateDatabese(bList, callFrom);
 
             if (success)
             {
@@ -485,6 +569,7 @@ WHERE td.TemplateName <> ''
             {
                 // DISTINCT 出有多少種範本，避免開啟太多次
                 List<string> templatePaths = p24_Templates.Select(o => o.TemplatePath).Distinct().ToList();
+                List<string> deletePacking = new List<string>();
 
                 foreach (var templatePath in templatePaths)
                 {
@@ -538,22 +623,43 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                                 ChkEmpty = MyUtility.Convert.GetBool(dr["ChkEmpty"]),
                             };
                             sameTemplateData.DefineColumns.Add(col);
+
+                            // 範本檔中使用的資訊若有空則記錄下來
+                            if (MyUtility.Convert.GetBool(dr["ChkEmpty"]) && MyUtility.Check.Empty(dr["Value"]))
+                            {
+                                var generateResults = this.P24_GenerateResults.Where(o => o.PackingListID == sameTemplateData.PackingListID);
+                                if (!generateResults.Any())
+                                {
+                                    // 有問題的Packing裝起來，等一下要刪掉，以避免進行後續動作
+                                    deletePacking.Add(sameTemplateData.PackingListID);
+
+                                    // 若該Packing是第一次加入，則初始化FailItem
+                                    List<string> informationError = new List<string>() { sameTemplateData.CTNStartNo };
+                                    this.P24_GenerateResults.Add(new P24_GenerateResult()
+                                    {
+                                        PackingListID = sameTemplateData.PackingListID,
+                                        InformationError = informationError,
+                                        IsSuccess = false,
+                                        Message = "Shipping mark information not maintained in PMS yet.",
+                                    });
+                                }
+                                else
+                                {
+                                    var data = generateResults.FirstOrDefault();
+
+                                    // 若該Packing是第一次加入，則找出現有的fileItem，加入箱號即可
+                                    List<string> informationError = data.InformationError;
+                                    informationError.Add(sameTemplateData.CTNStartNo);
+                                    data.InformationError = informationError;
+                                }
+                            }
                         }
                     }
                 }
 
-                // 取得ChkEmpty = true且沒資料的欄位，是哪些Packing List ID
-                var hasEmptyDatas = p24_Templates.Where(o => o.DefineColumns.Where(x => MyUtility.Check.Empty(x.Value) && x.ChkEmpty).Any()).Select(o => o.PackingListID).Distinct().ToList();
+                p24_Templates = p24_Templates.Where(o => !deletePacking.Where(x => x == o.PackingListID).Any()).ToList();
 
-                if (hasEmptyDatas.Any())
-                {
-                    MyUtility.Msg.WarningBox("Please check below packing list shipping mark information in PMS." + Environment.NewLine + hasEmptyDatas.JoinToString(Environment.NewLine));
-                    return null;
-                }
-                else
-                {
-                    return p24_Templates;
-                }
+                return p24_Templates;
             }
             catch (Exception ex)
             {
@@ -610,8 +716,8 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
             return p24_Templates;
         }
 
-        // DB寫入Packing P27資料
-        private bool UpdateDatabese(List<P24_Template> p24_Templates)
+        // DB寫入Packing P24資料
+        private bool UpdateDatabese(List<P24_Template> p24_Templates, string callFrom)
         {
             string headInsert = string.Empty;
             string bodyInsert = string.Empty;
@@ -625,10 +731,10 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
 
                 if (p24Existsed)
                 {
-                    this.P24_GenerateResults.Add(new P24_GenerateResult() 
+                    this.P24_GenerateResults.Add(new P24_GenerateResult()
                     {
                         PackingListID = packingListID,
-                        Message = "Upload success",
+                        Message = "Overwrite success",
                     });
                 }
                 else
@@ -636,7 +742,7 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                     this.P24_GenerateResults.Add(new P24_GenerateResult()
                     {
                         PackingListID = packingListID,
-                        Message = "Overwrite success",
+                        Message = "Upload success",
                     });
                 }
 
@@ -657,34 +763,56 @@ END
             }
 
             // 表身
-            foreach (P24_Template p27_Template in p24_Templates)
+            foreach (P24_Template p24_Template in p24_Templates)
             {
-                bodyInsert += $@"DELETE FROM ShippingMarkStamp_Detail WHERE PackingListID = '{p27_Template.PackingListID}' AND SCICtnNo ='{p27_Template.SCICtnNo}' AND ShippingMarkTypeUkey={p27_Template.ShippingMarkTypeUkey} ;";
-                bodyInsert += $@"
+                // 透過P26先寫入圖片再產生HTML，因此不可以刪掉表身
+                if (callFrom == "P26")
+                {
+                    bodyInsert += $@"
+UPDATE ShippingMarkPic_Detail
+SET FilePath = '{p24_Template.FilePath}'
+    ,FileName = '{p24_Template.FileName}'
+    ,dPI = {dPI}
+WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+AND SCICtnNo = '{p24_Template.SCICtnNo}'
+;
+";
+                }
+                else
+                {
+                    bodyInsert += $@"DELETE FROM ShippingMarkPic_Detail WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') ;";
+                    bodyInsert += $@"
 
-INSERT INTO ShippingMarkStamp_Detail
-           (PackingListID ,SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
+INSERT INTO ShippingMarkPic_Detail
+           (ShippingMarkPicUkey, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
      VALUES
-           ('{p27_Template.PackingListID}'
-           ,'{p27_Template.SCICtnNo}'
-           ,{p27_Template.ShippingMarkCombinationUkey}
-           ,{p27_Template.ShippingMarkTypeUkey}
-           ,'{p27_Template.FilePath}'
-           ,'{p27_Template.FileName}'
-           ,'{p27_Template.Side}'
-           ,{p27_Template.Seq}
-           ,{p27_Template.FromRight}
-           ,{p27_Template.FromBottom}
-           ,{p27_Template.Width}
-           ,{p27_Template.Length}
+           ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+           ,'{p24_Template.SCICtnNo}'
+           ,{p24_Template.ShippingMarkCombinationUkey}
+           ,{p24_Template.ShippingMarkTypeUkey}
+           ,'{p24_Template.FilePath}'
+           ,'{p24_Template.FileName}'
+           ,'{p24_Template.Side}'
+           ,{p24_Template.Seq}
+           ,{p24_Template.FromRight}
+           ,{p24_Template.FromBottom}
+           ,{p24_Template.Width}
+           ,{p24_Template.Length}
            ,{dPI} )
 ;
 ";
+                }
             }
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 DualResult r;
+                if (MyUtility.Check.Empty(headInsert))
+                {
+                    transactionScope.Dispose();
+                    return false;
+                }
+
                 r = DBProxy.Current.Execute(null, headInsert);
                 if (!r)
                 {
@@ -721,6 +849,63 @@ INSERT INTO ShippingMarkStamp_Detail
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        public void ShowResult()
+        {
+            DataTable dt = new DataTable();
+            dt.ColumnsStringAdd("PackingListID");
+            dt.ColumnsStringAdd("Reault");
+            dt.ColumnsStringAdd("Message");
+
+            foreach (var item in this.P24_GenerateResults)
+            {
+                DataRow dr = dt.NewRow();
+                dr["PackingListID"] = item.PackingListID;
+                dr["Reault"] = item.IsSuccess ? "Success" : "Fail";
+                string msg = string.Empty;
+                List<string> msgList = new List<string>();
+                if (item.IsSuccess)
+                {
+                    msgList.Add(item.Message);
+                }
+                else
+                {
+                    string tmp;
+                    if (item.BasicSettingError != null && item.BasicSettingError.Any())
+                    {
+                        tmp = "Sticker basic setting not yet complete : " + item.BasicSettingError.Distinct().OrderBy(o => o).JoinToString(",");
+                        msgList.Add(tmp);
+                    }
+
+                    if (item.CtnError != null && item.CtnError.Any())
+                    {
+                        tmp = "Carton already in Clog : " + item.CtnError.Distinct().OrderBy(o => o).JoinToString(",");
+                        msgList.Add(tmp);
+                    }
+
+                    if (item.InformationError != null && item.InformationError.Any())
+                    {
+                        tmp = "Shipping mark information not maintained in PMS yet : " + item.InformationError.Distinct().OrderBy(o => o).JoinToString(",");
+                        msgList.Add(tmp);
+                    }
+                }
+
+                dr["Message"] = msgList.JoinToString(Environment.NewLine);
+
+                dt.Rows.Add(dr);
+            }
+
+            MsgGridForm form = new MsgGridForm(dt, "Check below message.", "P24 Generate Results");
+
+            form.grid1.Columns[0].Width = 150;
+            form.grid1.Columns[1].Width = 200;
+            form.grid1.Columns[2].Width = 400;
+            form.Width = 800;
+            form.grid1.RowHeadersVisible = true;
+            form.ControlBox = true;
+            form.ShowDialog();
         }
     }
 
@@ -783,6 +968,9 @@ INSERT INTO ShippingMarkStamp_Detail
         public List<DefineColumn> DefineColumns { get; set; }
     }
 
+    /// <summary>
+    /// Generate結果收集
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleType", Justification = "Reviewed.")]
     public class P24_GenerateResult
     {
@@ -793,7 +981,11 @@ INSERT INTO ShippingMarkStamp_Detail
         public bool IsSuccess { get; set; }
 
         /// <inheritdoc/>
-        public string ResultType { get; set; }
+        public List<string> BasicSettingError { get; set; }
+
+        public List<string> InformationError { get; set; }
+
+        public List<string> CtnError { get; set; }
 
         /// <inheritdoc/>
         public string Message { get; set; }
