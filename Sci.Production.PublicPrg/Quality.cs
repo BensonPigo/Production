@@ -115,7 +115,8 @@ namespace Sci.Production.PublicPrg
                 (maindr["Weight"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonWeight"])) &&
                 (maindr["ShadeBond"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) &&
                 (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"])) &&
-                (maindr["Odor"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonOdor"])))
+                (maindr["Odor"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonOdor"])) &&
+                (maindr["Moisture"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonMoisture"])))
             {
                 allResult = "Pass";
                 status = "Confirmed";
@@ -127,7 +128,8 @@ namespace Sci.Production.PublicPrg
                 (MyUtility.Check.Empty(maindr["Weight"]) && !MyUtility.Convert.GetBool(maindr["NonWeight"])) ||
                 (MyUtility.Check.Empty(maindr["ShadeBond"]) && !MyUtility.Convert.GetBool(maindr["NonShadeBond"])) ||
                 (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])) ||
-                (MyUtility.Check.Empty(maindr["Odor"]) && !MyUtility.Convert.GetBool(maindr["NonOdor"])))
+                (MyUtility.Check.Empty(maindr["Odor"]) && !MyUtility.Convert.GetBool(maindr["NonOdor"])) ||
+                (MyUtility.Check.Empty(maindr["Moisture"]) && !MyUtility.Convert.GetBool(maindr["NonMoisture"])))
             {
                 allResult = string.Empty;
             }

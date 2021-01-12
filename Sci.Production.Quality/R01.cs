@@ -277,6 +277,8 @@ select
 	,F.Odor
 	,[OdorInspector] = (select name from Pass1 where id = f.OdorInspector)
 	,F.OdorDate
+    ,F.Moisture
+    ,F.MoistureDate
 	,[Result2] = L.Result
 	,[N/A Crocking] = IIF(L.nonCrocking=1,'Y',' ')
 	,LC.Crocking
@@ -467,6 +469,8 @@ select
 	,tf.Odor
 	,tf.OdorInspector
 	,tf.OdorDate
+    ,tf.Moisture
+    ,tf.MoistureDate
 	,tf.Result2
 	,tf.[N/A Crocking]
 	,tf.Crocking

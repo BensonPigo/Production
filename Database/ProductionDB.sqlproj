@@ -2565,6 +2565,8 @@
     <Build Include="dbo\Tables\FtyInventory_Barcode.sql" />
     <Build Include="dbo\Tables\QABrandSetting.sql" />
     <Build Include="dbo\Functions\SplitDefectNum.sql" />
+    <Build Include="dbo\Tables\FIR_Moisture.sql" />
+    <Build Include="dbo\Tables\Brand_QAMoistureStandardList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

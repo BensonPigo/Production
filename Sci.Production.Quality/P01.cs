@@ -35,6 +35,7 @@ namespace Sci.Production.Quality
                 this.modifyShadeBondTestToolStripMenuItem,
                 this.modifyContinuityTestToolStripMenuItem,
                 this.modifyOdorTestToolStripMenuItem,
+                this.modifyMoistureTestToolStripMenuItem,
             });
 
             // 關閉表身Grid DoubleClick 會新增row的問題
@@ -91,60 +92,72 @@ namespace Sci.Production.Quality
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmd = string.Format(
 @"Select 
-a.id,
-a.poid,
-a.SEQ1,
-a.SEQ2,
-Receivingid,
-a.Refno,
-a.SCIRefno,
-Suppid,
-ArriveQty,
-InspDeadline,
-Result,
-PhysicalEncode,
-WeightEncode,
-ShadeBondEncode,
-ContinuityEncode,
-NonPhysical,
-Physical,
-TotalInspYds,
-PhysicalDate,
-Physical,
-NonWeight, 
-Weight,
-WeightDate,
-Weight,
-NonShadebond,
-Shadebond,
-ShadebondDate,
-shadebond,
-NonContinuity,
-Continuity,
-ContinuityDate,
-Continuity,
-a.Status,
-ReplacementReportID,
-(a.seq1+a.seq2) as seq,
-(Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
-c.Exportid,
-[whseArrival] = isnull(c.whseArrival, ti.IssueDate),
-dbo.getPass1(a.Approve) as approve1,
-approveDate,
-approve,
-d.ColorID,
-(Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
-c.ExportID as Wkno
-,cn.name
-,a.nonOdor
-,a.Odor
-,a.OdorEncode
-,a.OdorDate
-,[PhysicalInspector] = (select name from pass1 where id = a.PhysicalInspector)
-,[WeightInspector] = (select name from pass1 where id = a.WeightInspector)
-,[ShadeboneInspector] = (select name from pass1 where id = a.ShadeboneInspector)
-,[ContinuityInspector] = (select name from pass1 where id = a.ContinuityInspector)
-,[OdorInspector] = (select name from pass1 where id = a.OdorInspector)
+    a.id,
+    a.poid,
+    a.SEQ1,
+    a.SEQ2,
+    Receivingid,
+    a.Refno,
+    a.SCIRefno,
+    Suppid,
+    ArriveQty,
+    InspDeadline,
+    Result,
+    PhysicalEncode,
+    WeightEncode,
+    ShadeBondEncode,
+    ContinuityEncode,
+    NonPhysical,
+    Physical,
+    TotalInspYds,
+    PhysicalDate,
+    Physical,
+    NonWeight, 
+    Weight,
+    WeightDate,
+    Weight,
+    NonShadebond,
+    Shadebond,
+    ShadebondDate,
+    shadebond,
+    NonContinuity,
+    Continuity,
+    ContinuityDate,
+    Continuity,
+    a.Status,
+    ReplacementReportID,
+    (a.seq1+a.seq2) as seq,
+    (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
+    c.Exportid,
+    [whseArrival] = isnull(c.whseArrival, ti.IssueDate),
+    dbo.getPass1(a.Approve) as approve1,
+    approveDate,
+    approve,
+    d.ColorID,
+    (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
+    c.ExportID as Wkno
+    ,cn.name
+    ,a.nonOdor
+    ,a.Odor
+    ,a.OdorEncode
+    ,a.OdorDate
+    ,a.nonMoisture
+    ,a.Moisture
+    ,a.MoistureDate
+    ,[PhysicalInspector] = (select name from pass1 where id = a.PhysicalInspector)
+    ,[WeightInspector] = (select name from pass1 where id = a.WeightInspector)
+    ,[ShadeboneInspector] = (select name from pass1 where id = a.ShadeboneInspector)
+    ,[ContinuityInspector] = (select name from pass1 where id = a.ContinuityInspector)
+    ,[OdorInspector] = (select name from pass1 where id = a.OdorInspector)
+	,Moisture,
+	MoistureDate ,
+	MaterialCompositionGrp,
+	MaterialCompositionItem,
+	MoistureStandardDesc,
+	MoistureStandard1,
+	MoistureStandard2,
+	MoistureStandard1_Comparison,
+	MoistureStandard2_Comparison
 From FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
@@ -165,6 +178,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             DataGridViewGeneratorCheckBoxColumnSettings nonSha = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings nonCon = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings nonOdor = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings nonMoisture = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings phy = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings phyD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorNumericColumnSettings phyYds = new DataGridViewGeneratorNumericColumnSettings();
@@ -176,6 +190,8 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             DataGridViewGeneratorDateColumnSettings conD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings odor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings odorD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings moisture = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings moistureD = new DataGridViewGeneratorDateColumnSettings();
             #region ClickEvent
             phy.CellMouseDoubleClick += (s, e) =>
             {
@@ -339,6 +355,32 @@ and ActualYds > 0
                 frm.Dispose();
                 this.RenewData();
             };
+            moisture.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P01_Moisture(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            moistureD.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData;
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P01_Moisture(false, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
             #endregion
             #region Validat & Editable
             nonPhy.CellEditable += (s, e) =>
@@ -417,6 +459,21 @@ and ActualYds > 0
                 dr.EndEdit();
                 this.FinalResult(dr);
             };
+            nonMoisture.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (dr["Status"].ToString() == "Approved")
+                {
+                    e.IsEditable = false;
+                }
+            };
+            nonMoisture.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                dr["nonMoisture"] = e.FormattedValue;
+                dr.EndEdit();
+                this.FinalResult(dr);
+            };
             #endregion
             #region set grid
             this.detailgrid.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
@@ -452,6 +509,10 @@ and ActualYds > 0
                 .Text("Odor", header: "Odor", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: odor)
                 .Date("OdorDate", header: "Last Odor\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: odorD)
 
+                .CheckBox("nonMoisture", header: "Moisture \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonMoisture)
+                .Text("Moisture", header: "Moisture", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: moisture)
+                .Date("MoistureDate", header: "Last Moisture\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: moistureD)
+
                 .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
@@ -464,6 +525,7 @@ and ActualYds > 0
             this.detailgrid.Columns["NonShadeBond"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.detailgrid.Columns["NonContinuity"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.detailgrid.Columns["nonOdor"].DefaultCellStyle.BackColor = Color.MistyRose;
+            this.detailgrid.Columns["NonMoisture"].DefaultCellStyle.BackColor = Color.MistyRose;
 
             // 檸檬薄紗組
             this.detailgrid.Columns["Physical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
@@ -485,6 +547,10 @@ and ActualYds > 0
             // Lavender
             this.detailgrid.Columns["Odor"].DefaultCellStyle.BackColor = Color.Lavender;
             this.detailgrid.Columns["OdorDate"].DefaultCellStyle.BackColor = Color.Lavender;
+
+            // Jimmy 指定款
+            this.detailgrid.Columns["Moisture"].DefaultCellStyle.BackColor = Color.FromArgb(175, 205, 255);
+            this.detailgrid.Columns["MoistureDate"].DefaultCellStyle.BackColor = Color.FromArgb(175, 205, 255);
             #endregion
 
         }
@@ -562,7 +628,7 @@ and ActualYds > 0
             {
                 if (detailTb.Rows.Count != 0)
                 {
-                    DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonphysical and nonweight and nonshadebond and noncontinuity and nonOdor)");
+                    DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonphysical and nonweight and nonshadebond and noncontinuity and nonOdor and nonMoisture)");
                     if (inspectAry.Length > 0)
                     {
                         inspnum = Math.Round(((decimal)inspectAry.Length / detailRowCount) * 100, 2).ToString();
@@ -612,6 +678,7 @@ and ActualYds > 0
             this.displayShadeBond.BackColor = Color.LightGreen;
             this.displayContinuity.BackColor = Color.AntiqueWhite;
             this.displayOdor.BackColor = Color.Lavender;
+            this.displayMoisture.BackColor = Color.FromArgb(175, 205, 255);
             #endregion
             this.detailgrid.AutoResizeColumns();
         }
@@ -631,8 +698,9 @@ and ActualYds > 0
                     int nonsha = dr["NonShadeBond"].ToString() == "True" ? 1 : 0;
                     int noncon = dr["NonContinuity"].ToString() == "True" ? 1 : 0;
                     int nonOdor = dr["NonOdor"].ToString() == "True" ? 1 : 0;
-                    save_po_cmd = save_po_cmd + $@"Update FIR Set Result = '{dr["Result"]}',NonPhysical = {nonph},NonWeight = {nonwei},
-                    NonShadeBond = {nonsha},NonContinuity = {noncon},Status = '{dr["Status"]}',NonOdor={nonOdor}
+                    int nonMoisture = dr["NonMoisture"].ToString() == "True" ? 1 : 0;
+                    save_po_cmd += $@"Update FIR Set Result = '{dr["Result"]}',NonPhysical = {nonph},NonWeight = {nonwei},
+                    NonShadeBond = {nonsha},NonContinuity = {noncon},Status = '{dr["Status"]}',NonOdor={nonOdor},NonMoisture={nonMoisture}
                     Where ID = '{dr["ID"]}';";
                 }
                 #region 重新判斷AllResult
@@ -915,6 +983,40 @@ and ActualYds > 0
 
             var currentID = this.CurrentDetailData["ID"].ToString();
             var frm = new P01_Odor(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.RenewData();
+
+            // 重新計算表頭資料
+            this.OnDetailEntered();
+
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < this.detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = this.detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+
+            this.detailgrid.SelectRowTo(rowindex);
+        }
+
+        private void ModifyMoistureTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentDetailData;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var currentID = this.CurrentDetailData["ID"].ToString();
+            var frm = new P01_Moisture(this.IsSupportEdit, this.CurrentDetailData["ID"].ToString(), null, null, dr);
             frm.ShowDialog(this);
             frm.Dispose();
             this.RenewData();
