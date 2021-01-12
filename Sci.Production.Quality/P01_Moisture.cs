@@ -323,7 +323,8 @@ and a.seq2='{this.maindr["seq2"]}'
                 // 沒勾選 nonMoisture 要判斷 必需的 Dyelot
                 if (!MyUtility.Convert.GetBool(this.maindr["nonMoisture"]))
                 {
-                    var nowdyelotList = gridTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["dyelot"])).Distinct().ToList();
+                    var nowdyelotList = gridTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted)
+                        .Select(s => MyUtility.Convert.GetString(s["dyelot"])).Distinct().ToList();
                     var needdyelotList = dyeDt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["dyelot"])).Distinct().ToList();
                     if (needdyelotList.Except(nowdyelotList).Any() || nowdyelotList.Except(needdyelotList).Any())
                     {
@@ -451,7 +452,7 @@ where ID = '{this.id}'
 
             if (this.MoistureStandardListdr == null)
             {
-                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                 {
                     dr["Result"] = string.Empty;
                 }
@@ -463,7 +464,7 @@ where ID = '{this.id}'
                 decimal s1 = MyUtility.Convert.GetDecimal(this.MoistureStandardListdr["MoistureStandard1"]);
                 decimal s2 = MyUtility.Convert.GetDecimal(this.MoistureStandardListdr["MoistureStandard2"]);
 
-                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                 {
                     if (dr["ActMoisture"] == DBNull.Value)
                     {
