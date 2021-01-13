@@ -617,16 +617,9 @@ where o.ID = @OperationID";
                     if (dtOperation.Rows.Count > 0)
                     {
                         operationList = dtOperation.Rows[0]["Mold"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-
-                        if (this.CurrentDetailData["Template"].Empty())
-                        {
-                            this.CurrentDetailData["Template"] = dtOperation.Rows[0]["Template"].ToString();
-                        }
-
                         if (e.FormattedValue.Empty())
                         {
                             this.CurrentDetailData["Mold"] = dtOperation.Rows[0]["Mold"].ToString();
-
                             return;
                         }
                     }
@@ -650,17 +643,6 @@ where Junk = 0";
 
                     // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
                     List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-
-                    // ISP20210061 可以不包含原本設定
-                    // 不存在 operation
-                    //var existsOperation = operationList.Except(getMold);
-                    //if (existsOperation.Any() && operationList.Any())
-                    //{
-                    //    e.Cancel = true;
-                    //    this.CurrentDetailData["Mold"] = string.Join(",", getMold.Except(existsOperation).ToList());
-                    //    MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  need include in Operation setting !!", "Data need include in setting");
-                    //    return;
-                    //}
 
                     // 不存在 Mold
                     var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
@@ -707,10 +689,50 @@ where Junk = 0";
 
             template.CellValidating += (s, e) =>
             {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode)
                 {
-                    this.CurrentDetailData["Template"] = e.FormattedValue;
+                    List<SqlParameter> cmds = new List<SqlParameter>() { new SqlParameter { ParameterName = "@OperationID", Value = MyUtility.Convert.GetString(this.CurrentDetailData["OperationID"]) } };
                     string sqlcmd = @"
+select [Mold] = STUFF((
+		        select concat(',' ,s.Data)
+		        from SplitString(o.MoldID, ';') s
+		        inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		        where m.IsAttachment = 1
+                and m.Junk = 0
+		        for xml path ('')) 
+	        ,1,1,'')
+	,[Template] = STUFF((
+		            select concat(',' ,s.Data)
+		            from SplitString(o.MoldID, ';') s
+		            inner join Mold m WITH (NOLOCK) on s.Data = m.ID
+		            where m.IsTemplate = 1
+                    and m.Junk = 0
+		            for xml path ('')) 
+	            ,1,1,'')
+from Operation o WITH (NOLOCK) 
+where o.ID = @OperationID";
+                    DataTable dtOperation;
+                    DualResult result = DBProxy.Current.Select(null, sqlcmd, cmds, out dtOperation);
+                    List<string> operationList = new List<string>();
+                    if (!result)
+                    {
+                        this.CurrentDetailData["Mold"] = string.Empty;
+                        MyUtility.Msg.WarningBox("SQL Connection failt!!\r\n" + result.ToString());
+                    }
+
+                    if (dtOperation.Rows.Count > 0)
+                    {
+                        operationList = dtOperation.Rows[0]["Mold"].ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+
+                        if (MyUtility.Check.Empty(e.FormattedValue))
+                        {
+                            this.CurrentDetailData["Template"] = dtOperation.Rows[0]["Template"].ToString();
+                            return;
+                        }
+                    }
+
+                    this.CurrentDetailData["Template"] = e.FormattedValue;
+                    sqlcmd = @"
 select ID,DescEN 
 from Mold WITH (NOLOCK) 
 where Junk = 0
@@ -741,7 +763,7 @@ where Junk = 0";
                     if (!selectId)
                     {
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", errTemplate.ToArray()) + "  Data not found !!", "Data not found");
+                        MyUtility.Msg.WarningBox("Template : " + string.Join(",", errTemplate.ToArray()) + "  Data not found !!", "Data not found");
                     }
 
                     trueTemplate.Sort();
