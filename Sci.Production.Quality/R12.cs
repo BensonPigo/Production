@@ -29,12 +29,31 @@ select	f.POID,
 		psd.Refno,
 		psd.ColorID,
 		[ArriveWH_Date] = a.WhseArrival,
+        f.ArriveQty,
+        ct.Roll,
+        ct2.Dyelot,
         {0}
 from Fir f with (nolock)
 inner join Receiving a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
+outer apply(
+    select Roll = count(1)
+    from(
+        select distinct b.Roll, b.Dyelot
+        from Receiving_Detail b with (nolock)
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ct
+outer apply(
+    select Dyelot = count(1)
+    from(
+        select distinct b.Dyelot
+        from Receiving_Detail b with (nolock)
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ct2
 {1}
 {3}
 where 1 = 1
@@ -52,12 +71,31 @@ select	f.POID,
 		psd.Refno,
 		psd.ColorID,
 		[ArriveWH_Date] = a.IssueDate,
+        f.ArriveQty,
+        ct.Roll,
+        ct2.Dyelot,
         {0}
 from Fir f with (nolock)
 inner join TransferIn a with (nolock) on a.Id = f.ReceivingID
 left join Orders o with (nolock) on o.ID = f.POID
 left join PO_Supp_Detail psd with (nolock) on psd.ID = f.POID and psd.SEQ1 = f.SEQ1 and psd.SEQ2 = f.SEQ2
 left join Fabric fa with (nolock) on fa.SCIRefno = psd.SCIRefno
+outer apply(
+    select Roll = count(1)
+    from(
+        select distinct b.Roll, b.Dyelot
+        from TransferIn_Detail b with (nolock)
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ct
+outer apply(
+    select Dyelot = count(1)
+    from(
+        select distinct b.Dyelot
+        from TransferIn_Detail b with (nolock)
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ct2
 {1}
 {3}
 where 1 = 1
