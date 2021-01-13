@@ -56,7 +56,9 @@ namespace Sci.Production.Cutting
                 {
                     bool rfCardErase = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select RFCardEraseBeforePrinting from [System]"));
                     this.ShowWaitMessage("Process Print!");
+                    this.print.Enabled = false;
                     DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(this.p10_PrintDatas, 0, rfCardErase);
+                    this.print.Enabled = true;
                     this.HideWaitMessage();
                     if (!result)
                     {
@@ -77,7 +79,9 @@ namespace Sci.Production.Cutting
                 this.ShowWaitMessage("Process Erase!");
 
                 // 放在Stacker的所有卡片擦除
+                this.print.Enabled = false;
                 DualResult result = Prg.BundleRFCard.BundleRFErase();
+                this.print.Enabled = true;
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());

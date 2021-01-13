@@ -473,14 +473,14 @@ from
                                 result = CardDrop(bundleRFCard);
                                 if (!result)
                                 {
-                                    throw new Exception("Card Capture Error");
+                                    throw new Exception("Card Capture Error " + BFPrintErrorMSG(result.Messages.ToString()));
                                 }
 
                                 continue;
                             }
                             else
                             {
-                                throw new Exception("Card Capture Error" + result.Messages.ToString());
+                                throw new Exception("Card Capture Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             }
                         }
 
@@ -493,7 +493,7 @@ from
                         }
                         else
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Get RF UID Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Get RF UID Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -505,7 +505,7 @@ from
                                 result = CardEraseSettingArea(bundleRFCard);
                                 if (!result)
                                 {
-                                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card set Erase Error");
+                                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card set Erase Error " + BFPrintErrorMSG(result.Messages.ToString()));
                                     throw new Exception(result.Messages.ToString());
                                 }
 
@@ -516,7 +516,7 @@ from
                             result = CardErasePartialArea(bundleRFCard);
                             if (!result)
                             {
-                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Erase Error");
+                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Erase Error " + BFPrintErrorMSG(result.Messages.ToString()));
                                 throw new Exception(result.Messages.ToString());
                             }
                         }
@@ -525,7 +525,7 @@ from
                         result = CardSramReset(bundleRFCard);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Sram Reset Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Sram Reset Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -534,14 +534,14 @@ from
                         result = GetSettingText(data[nowIndex], out settings);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Get SettingText Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Get SettingText Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
                         result = CardSettingTextTOSram(bundleRFCard, settings);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card SettingText TO Sram Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card SettingText TO Sram Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -549,7 +549,7 @@ from
                         result = CardSettingBarcodeSram(bundleRFCard, data[nowIndex].Barcode);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Setting Barcode TO Sram Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Setting Barcode TO Sram Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -557,7 +557,7 @@ from
                         result = CardPrint(bundleRFCard);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Print Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Print Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -565,7 +565,7 @@ from
                         result = CardDrop(bundleRFCard);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Capture Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Capture Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -573,7 +573,7 @@ from
                         result = UpdateBundleDetailRFUID(data[nowIndex].BundleID.ToString(), data[nowIndex].BundleNo.ToString(), cardUID);
                         if (!result)
                         {
-                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Write To DB Error");
+                            result = BundleRFCardPrintErrorMsg(bundleRFCard, "Write To DB Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
                         }
 
@@ -590,6 +590,37 @@ from
             catch (Exception ex)
             {
                 result = new DualResult(false, new BaseResult.MessageInfo(ex.Message.ToString()));
+            }
+            finally
+            {
+                bundleRFCard.UsbPortClose();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Clean Thermal Printer Head
+        /// </summary>
+        /// <returns>DualResult</returns>
+        public static DualResult BundleRFCleanThermalPrinterHead()
+        {
+            DualResult result = new DualResult(false);
+            BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
+            try
+            {
+                if (bundleRFCard.UsbPortOpen())
+                {
+                    result = CardCleanThermalPrinterHead(bundleRFCard);
+                    if (!result)
+                    {
+                        throw new Exception(string.Join("Card Clean Thermal Printer Head : ", BFPrintErrorMSG(result.Messages.ToString())));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, ex);
             }
             finally
             {
@@ -620,12 +651,24 @@ from
             while (!(result = BundleRFCardPrint(data, nowIndex, out returnIndex, isEraser)))
             {
                 nowIndex = returnIndex;
-                DialogResult confirmResult = MessageBox.Show(
+                DialogResult confirmResult = Prg.MessageBoxEX.Show(
                             result.Messages.ToString(),
                             confirmTitle,
-                            MessageBoxButtons.RetryCancel);
-                if (confirmResult == DialogResult.Retry)
+                            MessageBoxButtons.YesNoCancel,
+                            new string[] { "Retry", "Head Clean", "Cancel" });
+                if (confirmResult.EqualString("Yes"))
                 {
+                    continue;
+                }
+                else if (confirmResult.EqualString("No"))
+                {
+                    DualResult resultClean = BundleRFCleanThermalPrinterHead();
+                    if (!resultClean)
+                    {
+                        result = new DualResult(false, resultClean.Messages.ToString());
+                        continue;
+                    }
+
                     continue;
                 }
                 else
@@ -648,7 +691,7 @@ from
             result = CardSramReset(bundleRFCard);
             if (!result)
             {
-                return new DualResult(false, new BaseResult.MessageInfo("Card Sram Reset Error"));
+                return new DualResult(false, new BaseResult.MessageInfo("Card Sram Reset Error " + BFPrintErrorMSG(result.Messages.ToString())));
             }
 
             // P35
@@ -656,21 +699,21 @@ from
             result = CardSettingTextTOSram(bundleRFCard, settings);
             if (!result)
             {
-                return new DualResult(false, new BaseResult.MessageInfo("Card SettingText TO Sram Error"));
+                return new DualResult(false, new BaseResult.MessageInfo("Card SettingText TO Sram Error " + BFPrintErrorMSG(result.Messages.ToString())));
             }
 
             // P41
             result = CardPrint(bundleRFCard);
             if (!result)
             {
-                return new DualResult(false, new BaseResult.MessageInfo("Card Print Error"));
+                return new DualResult(false, new BaseResult.MessageInfo("Card Print Error " + BFPrintErrorMSG(result.Messages.ToString())));
             }
 
             // C36
             result = CardDrop(bundleRFCard);
             if (!result)
             {
-                return new DualResult(false, new BaseResult.MessageInfo("Card Capture Error"));
+                return new DualResult(false, new BaseResult.MessageInfo("Card Capture Error " + BFPrintErrorMSG(result.Messages.ToString())));
             }
 
             result = new DualResult(false, new BaseResult.MessageInfo(errMsg));
@@ -1376,6 +1419,38 @@ from
         }
 
         /// <summary>
+        /// [P32] It is to clean Thermal Printer Head.
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardCleanThermalPrinterHead(BundleRFCardUSB bundleRFCard)
+        {
+            DualResult result = new DualResult(false);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            ushort tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+
+            // P32
+            gbacmd[0] = 0x50;
+            gbacmd[1] = 0x33;
+            gbacmd[2] = 0x32;
+
+            res = bundleRFCard.ExeCmd(gbacmd, tDat, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (rDat[0] == 0x00)
+            {
+                result = new DualResult(true);
+            }
+            else
+            {
+                result = new DualResult(false, new BaseResult.MessageInfo(errcode));
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// [P35] Setting the Text data to the Sram.(position free)
         /// </summary>
         /// <returns>DualResult</returns>
@@ -1754,6 +1829,110 @@ from
             }
 
             return len;
+        }
+
+        /// <summary>
+        /// 錯誤訊息代碼對應的描述
+        /// </summary>
+        /// <param name="code">錯誤代碼</param>
+        /// <returns>錯誤代碼描述</returns>
+        private static string BFPrintErrorMSG(string code)
+        {
+            string rtnStr = string.Empty;
+            switch (code)
+            {
+                case "0x2001":
+                    rtnStr = "Using the command that does not defined in this model.";
+                    break;
+                case "0x2002":
+                    rtnStr = "Not available command in this model. ";
+                    break;
+                case "0x2003":
+                    rtnStr = "Sending the command that has the invalid communication frame. ";
+                    break;
+                case "0x2004":
+                    rtnStr = "When the card is jammed. ";
+                    break;
+                case "0x2005":
+                    rtnStr = "No cards. ";
+                    break;
+                case "0x2006":
+                    rtnStr = "When the card exists already in the terminal. ";
+                    break;
+                case "0x2007":
+                    rtnStr = "When the terminal is running or busy.";
+                    break;
+                case "0x2008":
+                    rtnStr = "When the RTC time is incorrect by internal terminal or incorrect input data. ";
+                    break;
+                case "0x2009":
+                    rtnStr = "When more than two cards exit in the terminal simultaneously.";
+                    break;
+                case "0x200B":
+                    rtnStr = "When the using card error, commonly occur in MSRW.";
+                    break;
+                case "0x2100":
+                    rtnStr = "Not Applicable Dispenser. ";
+                    break;
+                case "0x2101":
+                    rtnStr = "Dispenser communication error";
+                    break;
+                case "0x2104":
+                    rtnStr = "No cards at stacker. ";
+                    break;
+                case "0x2300":
+                    rtnStr = "Unavailable RF module. ";
+                    break;
+                case "0x2301":
+                    rtnStr = "Communication error at the RF Module. ";
+                    break;
+                case "0x2302":
+                    rtnStr = "Authentication Error at the RF Module. ";
+                    break;
+                case "0x2303":
+                    rtnStr = "Error while the terminal writes at the RF Card.";
+                    break;
+                case "0x2304":
+                    rtnStr = "Error while the terminal reads at the RF Card. ";
+                    break;
+                case "0x2305":
+                    rtnStr = "No RF Card. ";
+                    break;
+                case "0x2306":
+                    rtnStr = "Error while the value increases(or decreases) at the RF Card.";
+                    break;
+                case "0x2400":
+                    rtnStr = "Unavailable FLASH memory ic. ";
+                    break;
+                case "0x2600":
+                    rtnStr = "Unavailable PRINTER module.";
+                    break;
+                case "0x2601":
+                    rtnStr = "Unavailable PRINTER module.";
+                    break;
+                case "0x2602":
+                    rtnStr = "THERMAL SHUTTER OPEN ERROR. ";
+                    break;
+                case "0x2603":
+                    rtnStr = "THERMAL SHUTTER CLOSE ERROR.";
+                    break;
+                case "0x2604":
+                    rtnStr = " Too big the chosen value. ";
+                    break;
+                case "0x2608":
+                    rtnStr = "Can’t detect the Black mark.";
+                    break;
+                case "0x2609":
+                    rtnStr = "Too High the Thermal head temperature.";
+                    break;
+                case "0x2620":
+                    rtnStr = "Exceeded the print count. ";
+                    break;
+                default:
+                    break;
+            }
+
+            return rtnStr.Empty() ? code : code + " : " + rtnStr;
         }
     }
 }
