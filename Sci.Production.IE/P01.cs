@@ -651,15 +651,16 @@ where Junk = 0";
                     // 前端轉進來的資料是用[;]區隔，統一用[,]區隔
                     List<string> getMold = e.FormattedValue.ToString().Replace(";", ",").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
 
+                    // ISP20210061 可以不包含原本設定
                     // 不存在 operation
-                    var existsOperation = operationList.Except(getMold);
-                    if (existsOperation.Any() && operationList.Any())
-                    {
-                        e.Cancel = true;
-                        this.CurrentDetailData["Mold"] = string.Join(",", getMold.Except(existsOperation).ToList());
-                        MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  need include in Operation setting !!", "Data need include in setting");
-                        return;
-                    }
+                    //var existsOperation = operationList.Except(getMold);
+                    //if (existsOperation.Any() && operationList.Any())
+                    //{
+                    //    e.Cancel = true;
+                    //    this.CurrentDetailData["Mold"] = string.Join(",", getMold.Except(existsOperation).ToList());
+                    //    MyUtility.Msg.WarningBox("Attachment : " + string.Join(",", existsOperation.ToList()) + "  need include in Operation setting !!", "Data need include in setting");
+                    //    return;
+                    //}
 
                     // 不存在 Mold
                     var existsMold = getMold.Except(dtMold.AsEnumerable().Select(x => x.Field<string>("ID")).ToList());
