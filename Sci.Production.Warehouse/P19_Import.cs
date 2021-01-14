@@ -34,17 +34,10 @@ namespace Sci.Production.Warehouse
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
-            if (this.comboStockType.SelectedIndex < 0)
+            if ((this.comboStockType.SelectedIndex < 0 || MyUtility.Check.Empty(this.txtSPNo.Text)) &&
+                (this.comboStockType.SelectedIndex < 0 || MyUtility.Check.Empty(this.txtWKno.Text)))
             {
-                MyUtility.Msg.WarningBox("< Stock Type > can't be empty!!");
-                this.comboStockType.Focus();
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.txtSPNo.Text))
-            {
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
-                this.txtSPNo.Focus();
+                MyUtility.Msg.WarningBox("<SP#> and <WK#> cannot all be empty.");
                 return;
             }
 
@@ -74,7 +67,7 @@ namespace Sci.Production.Warehouse
                 @"
 select  0 as selected 
         , '' id
-		, [ExportID] = Stuff((select distinct concat(',', r.InvNo)				
+		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)				
                 from Receiving r WITH (NOLOCK)
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
 				where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
@@ -104,9 +97,14 @@ LEFT JOIN Factory F ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
 Where FI.lock = 0 
 and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
-        and FI.inqty - FI.outqty + FI.adjustqty > 0 
-        and FI.Poid = @sp 
+        and FI.inqty - FI.outqty + FI.adjustqty > 0         
         and FI.stocktype = '{1}'", Env.User.Keyword, stocktype));
+
+            if (!MyUtility.Check.Empty(sp))
+            {
+                sbSQLCmd.Append(@"
+        and FI.Poid = @sp ");
+            }
 
             sp_seq1.Value = this.txtSeq1.Seq1;
             sp_seq2.Value = this.txtSeq1.Seq2;
@@ -132,7 +130,7 @@ AND exists (select 1
             from Receiving r WITH (NOLOCK)
             inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
 			where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
-            and r.InvNo like '%{this.txtWKno.Text}%' )");
+            and r.ExportId like '%{this.txtWKno.Text}%' )");
             }
 
             if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")
