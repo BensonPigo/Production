@@ -704,7 +704,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
                     update_cmd = @"insert into FIR_Laboratory_Crocking(ID,roll,Dyelot,DryScale,WetScale,Inspdate,Inspector,Result,Remark,AddDate,AddName,ResultDry,ResultWet, DryScale_Weft, ResultDry_Weft, WetScale_Weft, ResultWet_Weft)
-                    values(@ID,@roll,@Dyelot,@DryScale,@WetScale,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@ResultDry,@ResultWet, @DryScale_Weft, @ResultDry_Weft, @WetScale_Weft, @ResultWet_Weft)";
+                    values(@ID,@roll,@Dyelot,@DryScale,@WetScale,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@ResultDry,@ResultWet, isnull(@DryScale_Weft, ''), isnull(@ResultDry_Weft, ''), isnull(@WetScale_Weft, ''), isnull(@ResultWet_Weft, ''))";
                     spamAdd.Add(new SqlParameter("@id", dr["ID"]));
                     spamAdd.Add(new SqlParameter("@roll", dr["roll"]));
                     spamAdd.Add(new SqlParameter("@Dyelot", dr["Dyelot"]));
@@ -1382,14 +1382,14 @@ where bof.id='{this.maindr["POID"]}' and p.seq1='{this.maindr["seq1"]}' and p.se
 SELECT distinct [Article] = Article.val,fd.InspDate,p1.Name, fd.Inspector
 FROM  PO_Supp_Detail p with (nolock)
 inner join Order_BOF bof with (nolock) on p.id=bof.id and bof.SCIRefno=p.SCIRefno
-outer apply (SELECT val =  Stuff((select concat( ',',oc.Article)   
+outer apply (SELECT val =  Stuff((select distinct concat( ',',oc.Article)   
                                  from Order_ColorCombo oc with (nolock)
                                  where oc.id=p.id and oc.FabricCode=bof.FabricCode and p.ColorID = oc.ColorID
                                  FOR XML PATH('')),1,1,'') ) Article
 inner join FIR_Laboratory f on f.poid = p.ID and f.seq1 = p.seq1 and f.seq2 = p.seq2
 inner join FIR_Laboratory_Crocking fd on fd.id = f.id
 left join pass1 p1 with (nolock) on p1.id = fd.Inspector
-where bof.id='{this.maindr["POID"]}' and p.seq1='{this.maindr["seq1"]}' and p.seq2='{this.maindr["seq2"]}'
+where f.ID = '{this.ID}'
 order by fd.InspDate
 ";
             DataTable dt;
