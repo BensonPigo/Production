@@ -34,7 +34,7 @@ namespace Sci.Production.Warehouse
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         private void BtnFindNow_Click(object sender, EventArgs e)
         {
-            if ((this.comboStockType.SelectedIndex < 0 || MyUtility.Check.Empty(this.txtSPNo.Text)) ||
+            if ((this.comboStockType.SelectedIndex < 0 || MyUtility.Check.Empty(this.txtSPNo.Text)) &&
                 (this.comboStockType.SelectedIndex < 0 || MyUtility.Check.Empty(this.txtWKno.Text)))
             {
                 MyUtility.Msg.WarningBox("<SP#> and <WK#> cannot all be empty.");
