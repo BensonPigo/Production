@@ -69,6 +69,8 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         private void BtnPrint_Click(object sender, EventArgs e)
         {
+            this.grid1.ValidateControl();
+
             // 抓Invo,ETA 資料
             string cmd = $"select id,Eta from Export where id='{this.maindr["Exportid"]}' ";
             DualResult result = DBProxy.Current.Select(string.Empty, cmd, out DataTable dt_Exp);
