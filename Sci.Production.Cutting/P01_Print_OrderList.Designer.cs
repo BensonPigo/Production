@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioCuttingTape = new Sci.Win.UI.RadioButton();
             this.radioCuttingschedule = new Sci.Win.UI.RadioButton();
             this.radioQtyBreakdown_PoCombbySPList = new Sci.Win.UI.RadioButton();
             this.radioCuttingWorkOrder = new Sci.Win.UI.RadioButton();
@@ -41,7 +42,6 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
-            this.radioCuttingTape = new Sci.Win.UI.RadioButton();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,6 +62,18 @@
             this.groupBox1.Size = new System.Drawing.Size(410, 319);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
+            // 
+            // radioCuttingTape
+            // 
+            this.radioCuttingTape.AutoSize = true;
+            this.radioCuttingTape.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.radioCuttingTape.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioCuttingTape.Location = new System.Drawing.Point(6, 50);
+            this.radioCuttingTape.Name = "radioCuttingTape";
+            this.radioCuttingTape.Size = new System.Drawing.Size(118, 24);
+            this.radioCuttingTape.TabIndex = 1;
+            this.radioCuttingTape.Text = "Cutting Tape";
+            this.radioCuttingTape.UseVisualStyleBackColor = true;
             // 
             // radioCuttingschedule
             // 
@@ -124,6 +136,7 @@
             this.radioConsumptionCalculateByMarkerListConsPerPC.TabIndex = 9;
             this.radioConsumptionCalculateByMarkerListConsPerPC.Text = "Consumption Calculate by Marker List Cons/Per pc";
             this.radioConsumptionCalculateByMarkerListConsPerPC.UseVisualStyleBackColor = true;
+            this.radioConsumptionCalculateByMarkerListConsPerPC.Visible = false;
             // 
             // radioTTLConsumption
             // 
@@ -203,18 +216,6 @@
             this.label5.Text = "Pager Size A4";
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // radioCuttingTape
-            // 
-            this.radioCuttingTape.AutoSize = true;
-            this.radioCuttingTape.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.radioCuttingTape.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioCuttingTape.Location = new System.Drawing.Point(6, 50);
-            this.radioCuttingTape.Name = "radioCuttingTape";
-            this.radioCuttingTape.Size = new System.Drawing.Size(118, 24);
-            this.radioCuttingTape.TabIndex = 1;
-            this.radioCuttingTape.Text = "Cutting Tape";
-            this.radioCuttingTape.UseVisualStyleBackColor = true;
             // 
             // P01_Print_OrderList
             // 

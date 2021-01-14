@@ -3,7 +3,7 @@ Create Function [dbo].[GetCeiling]
 (
 	 @Value		Numeric(15,4)	--傳入值
 	,@Round		Int				--無條件進位至此設定的小數位數(0=整數)
-	,@Step		Numeric(7,4)	--若傳入值不等於0時，依此條件值做無條件進位
+	,@Step		Numeric(18,4)	--若傳入值不等於0時，依此條件值做無條件進位
 )
 Returns Numeric(15,4)
 As
