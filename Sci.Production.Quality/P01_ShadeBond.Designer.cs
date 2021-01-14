@@ -71,6 +71,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.displNoofRoll = new Sci.Win.UI.DisplayBox();
             this.displNoofDyelot = new Sci.Win.UI.DisplayBox();
+            this.btnPrintFormatReport4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -78,6 +79,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnPrintFormatReport4);
             this.btmcont.Controls.Add(this.btnPrintFormatReport8);
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.btnInspectedallpass);
@@ -93,6 +95,7 @@
             this.btmcont.Controls.SetChildIndex(this.btnInspectedallpass, 0);
             this.btmcont.Controls.SetChildIndex(this.button1, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport8, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport4, 0);
             // 
             // gridcont
             // 
@@ -530,6 +533,17 @@
             this.displNoofDyelot.Size = new System.Drawing.Size(78, 23);
             this.displNoofDyelot.TabIndex = 234;
             // 
+            // btnPrintFormatReport4
+            // 
+            this.btnPrintFormatReport4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.btnPrintFormatReport4.Location = new System.Drawing.Point(431, 5);
+            this.btnPrintFormatReport4.Name = "btnPrintFormatReport4";
+            this.btnPrintFormatReport4.Size = new System.Drawing.Size(141, 30);
+            this.btnPrintFormatReport4.TabIndex = 133;
+            this.btnPrintFormatReport4.Text = "Print Format Report(4 Slot)";
+            this.btnPrintFormatReport4.UseVisualStyleBackColor = true;
+            this.btnPrintFormatReport4.Click += new System.EventHandler(this.BtnPrintFormatReport4_Click);
+            // 
             // P01_ShadeBond
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
@@ -674,5 +688,6 @@
         private Win.UI.Label label2;
         private Win.UI.DisplayBox displNoofRoll;
         private Win.UI.DisplayBox displNoofDyelot;
+        private System.Windows.Forms.Button btnPrintFormatReport4;
     }
 }
