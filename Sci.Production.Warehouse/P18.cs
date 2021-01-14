@@ -1215,7 +1215,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             DataRow[] count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
             if (distCnt1.Length + count2.Length > 0)
             {
-                barcodeList = Prgs.GetBarcodeNo("FtyInventory", "F", distCnt1.Length + count2.Length);
+                barcodeList = Prgs.GetBarcodeNo("FtyInventory_Barcode", "F", distCnt1.Length + count2.Length);
                 int cnt = 0;
 
                 // 排序CombineBarcode, 將所有未展開主料置頂
