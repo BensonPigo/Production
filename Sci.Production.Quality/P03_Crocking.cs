@@ -1519,8 +1519,9 @@ where bof.id='{this.maindr["POID"]}' and p.seq1='{this.maindr["seq1"]}' and p.se
                     pastCubeRange.Insert(cubeCopyRange.Copy(Type.Missing)); // 貼上
                 }
                 #endregion
-
-                int lastPageRowNum = lastPageRowNum = 71 + (74 * (infoForPDFs.Count - 1));
+                int printPageCountNotIncludeFirst = infoForPDFs[0].IsSingle ? (infoForPDFs.Count - 1) : infoForPDFs.Count;
+                int headPageCount = dt2.Rows.Count > 58 ? MyUtility.Convert.GetInt(Math.Ceiling((dt2.Rows.Count - 58) / 74.0)) : 0;
+                int lastPageRowNum = lastPageRowNum = 71 + (74 * (printPageCountNotIncludeFirst + headPageCount));
 
                 worksheet.PageSetup.PrintArea = $"$A$1:$N${lastPageRowNum.ToString()}";
                 Marshal.ReleaseComObject(worksheet);
