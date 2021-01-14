@@ -37,6 +37,10 @@
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboFabric = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtWKno = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtSeq1 = new Sci.Production.Class.TxtSeq();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
@@ -44,10 +48,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtWKno = new Sci.Win.UI.TextBox();
-            this.comboFabric = new Sci.Production.Class.ComboDropDownList(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -150,6 +150,48 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
+            // comboFabric
+            // 
+            this.comboFabric.AddAllItem = false;
+            this.comboFabric.BackColor = System.Drawing.Color.White;
+            this.comboFabric.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFabric.FormattingEnabled = true;
+            this.comboFabric.IsSupportUnselect = true;
+            this.comboFabric.Location = new System.Drawing.Point(775, 17);
+            this.comboFabric.Name = "comboFabric";
+            this.comboFabric.OldText = "";
+            this.comboFabric.Size = new System.Drawing.Size(121, 24);
+            this.comboFabric.TabIndex = 4;
+            this.comboFabric.Type = "FabricType_Condition";
+            // 
+            // txtWKno
+            // 
+            this.txtWKno.BackColor = System.Drawing.Color.White;
+            this.txtWKno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWKno.Location = new System.Drawing.Point(566, 18);
+            this.txtWKno.Name = "txtWKno";
+            this.txtWKno.Size = new System.Drawing.Size(113, 23);
+            this.txtWKno.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(691, 18);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 23);
+            this.label2.TabIndex = 126;
+            this.label2.Text = "Fabric Type";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(523, 19);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.Size = new System.Drawing.Size(40, 23);
+            this.label1.TabIndex = 125;
+            this.label1.Text = "WK#";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // txtSeq1
             // 
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -166,7 +208,7 @@
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelSPNo.RectStyle.BorderWidth = 1F;
-            this.labelSPNo.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelSPNo.RectStyle.ExtBorderWidth = 1F;
             this.labelSPNo.Size = new System.Drawing.Size(85, 23);
             this.labelSPNo.TabIndex = 124;
@@ -180,13 +222,12 @@
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelStockType.RectStyle.BorderWidth = 1F;
-            this.labelStockType.RectStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.labelStockType.RectStyle.ExtBorderWidth = 1F;
             this.labelStockType.Size = new System.Drawing.Size(85, 23);
             this.labelStockType.TabIndex = 123;
             this.labelStockType.Text = "Stock Type";
             this.labelStockType.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelStockType.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelStockType.TextStyle.Color = System.Drawing.Color.White;
             // 
             // comboStockType
             // 
@@ -233,44 +274,6 @@
             this.gridImport.Size = new System.Drawing.Size(1038, 422);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(523, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(40, 23);
-            this.label1.TabIndex = 125;
-            this.label1.Text = "WK#";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(691, 18);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 23);
-            this.label2.TabIndex = 126;
-            this.label2.Text = "Fabric Type";
-            // 
-            // txtWKno
-            // 
-            this.txtWKno.BackColor = System.Drawing.Color.White;
-            this.txtWKno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWKno.Location = new System.Drawing.Point(566, 18);
-            this.txtWKno.Name = "txtWKno";
-            this.txtWKno.Size = new System.Drawing.Size(113, 23);
-            this.txtWKno.TabIndex = 3;
-            // 
-            // comboFabric
-            // 
-            this.comboFabric.BackColor = System.Drawing.Color.White;
-            this.comboFabric.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFabric.FormattingEnabled = true;
-            this.comboFabric.IsSupportUnselect = true;
-            this.comboFabric.Location = new System.Drawing.Point(775, 17);
-            this.comboFabric.Name = "comboFabric";
-            this.comboFabric.OldText = "";
-            this.comboFabric.Size = new System.Drawing.Size(121, 24);
-            this.comboFabric.TabIndex = 4;
-            this.comboFabric.Type = "FabricType_Condition";
             // 
             // P19_Import
             // 
