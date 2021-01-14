@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
                 @"
 select  0 as selected 
         , '' id
-		, [ExportID] = Stuff((select distinct concat(',', r.InvNo)				
+		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)				
                 from Receiving r WITH (NOLOCK)
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
 				where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
@@ -130,7 +130,7 @@ AND exists (select 1
             from Receiving r WITH (NOLOCK)
             inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
 			where rd.PoId = FI.POID and rd.Seq1 = FI.SEQ1 and rd.Seq2 = FI.SEQ2 and rd.Roll = FI.Roll and rd.Dyelot = FI.Dyelot
-            and r.InvNo like '%{this.txtWKno.Text}%' )");
+            and r.ExportId like '%{this.txtWKno.Text}%' )");
             }
 
             if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")
