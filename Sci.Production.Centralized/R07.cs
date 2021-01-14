@@ -23,6 +23,7 @@ namespace Sci.Production.Centralized
         private string mdivision;
         private string cdCode;
         private string shift;
+        private string brand;
         private DateTime? outputDate1;
         private DateTime? outputDate2;
         private DataTable[] printData;
@@ -84,6 +85,7 @@ namespace Sci.Production.Centralized
             this.factory = this.comboFactory.Text;
             this.cdCode = this.txtCDCode.Text;
             this.shift = this.comboShift.SelectedValue.ToString();
+            this.brand = this.txtbrand1.Text;
             this.bolSintexEffReportCompare = this.radioSintexEffReportCompare.Checked ? 1 : 0;
             return base.ValidateInput();
         }
@@ -97,13 +99,14 @@ namespace Sci.Production.Centralized
         {
             this.printData = new DataTable[3];
             string sqlCmd = string.Format(
-                "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', {6}",
+                "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', {7}",
                 this.outputDate1.Value.ToString("yyyy/MM/dd"),
                 this.outputDate2.Value.ToString("yyyy/MM/dd"),
                 this.mdivision,
                 this.factory,
                 this.cdCode,
                 this.shift,
+                this.brand,
                 this.bolSintexEffReportCompare);
 
             DBProxy.Current.DefaultTimeout = 2700;  // timeout時間改為45分鐘
