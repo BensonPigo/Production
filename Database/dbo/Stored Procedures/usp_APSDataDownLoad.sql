@@ -208,13 +208,26 @@ BEGIN
 	--Table WorkHour.holiday 標記為1, 或取消為0
 	BEGIN	
 	update w set
-		w.holiday = 1
+		w.holiday = 1,
+		w.Hours = 0
 	FROM WorkHour w 
 	inner join #Holiday h on h.HolidayDate = w.Date 
 							 and h.CODE = w.FactoryID
 							 and h.HolidayDate between @startDate and @EndDate
 							 and w.holiday = 0
 	
+	delete wd
+	from Workhour_Detail wd
+	where exists(select 1 
+				from WorkHour w
+				where	w.Holiday = 1 and
+						w.Date between @startDate and @EndDate and
+						w.SewingLineID = wd.SewingLineID and
+						w.FactoryID = wd.FactoryID and
+						w.Date = wd.Date
+				)
+
+
 	update w set
 		w.holiday = 0
 	FROM WorkHour w 
@@ -223,6 +236,7 @@ BEGIN
 	where h.HolidayDate is null
 		  and w.date between @startDate and @EndDate
 		  and w.holiday = 1
+
 	END	
 	--
 	drop table #dateranges,#Holiday
