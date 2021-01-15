@@ -521,14 +521,14 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             else
             {
                 this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("DryScale", header: "Dry Scale (Warp)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
-                .Text("ResultDry", header: "Dry Result (Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
-                .Text("DryScale_Weft", header: "Dry Scale (Weft)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
-                .Text("ResultDry_Weft", header: "Dry Result (Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
-                .Text("WetScale", header: "Wet Scale (Warp)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
-                .Text("ResultWet", header: "Wet Result (Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
-                .Text("WetScale_Weft", header: "Wet Scale (Weft)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
-                .Text("ResultWet_Weft", header: "Wet Result (Weft)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true);
+                .Text("DryScale", header: "Dry Scale" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultDry", header: "Dry Result" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("DryScale_Weft", header: "Dry Scale" + Environment.NewLine + "(Weft)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultDry_Weft", header: "Dry Result" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("WetScale", header: "Wet Scale" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultWet", header: "Wet Result" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("WetScale_Weft", header: "Wet Scale" + Environment.NewLine + "(Weft)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultWet_Weft", header: "Wet Result" + Environment.NewLine + "(Weft)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true);
             }
 
             this.Helper.Controls.Grid.Generator(this.grid)
