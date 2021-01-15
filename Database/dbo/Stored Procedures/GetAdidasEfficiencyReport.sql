@@ -5,6 +5,7 @@
 	@FactoryID as varchar(8) = '',
 	@CDCode as varchar(6) = '',
 	@Shift as varchar(1) = '',
+	@BrandID as varchar(8) = '',
 	@IsSintexEffReportCompare as bit = 0
 AS
 BEGIN
@@ -126,7 +127,12 @@ Begin
 	and s.SHIFT = ''' + @Shift + '''' 
 	End 
 
-	
+	if @BrandID <> ''
+	Begin
+		set @sql = @sql + '
+	and o.BrandID = ''' + @BrandID + '''' 
+	End 
+
 	set @sql = @sql + '
 	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID
 ' 
@@ -231,6 +237,11 @@ from
 	and s.SHIFT = ''' + @Shift + '''' 
 	End 
 
+	if @BrandID <> ''
+	Begin
+		set @sql = @sql + '
+	and o.BrandID = ''' + @BrandID + '''' 
+	End 
 	
 	set @sql = @sql + '
 	Group by s.OutputDate, s.FactoryID, s.SewingLineID, s.Shift, o.StyleID, s.Manpower, o.CdCodeID, sd.ComboType, o.SeasonID, o.BrandID, o.Category, f.CountryID
