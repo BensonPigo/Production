@@ -22,6 +22,9 @@ namespace Sci.Production.Quality
         private readonly string loginID = Env.User.UserID;
         private readonly string ID;
         private DataRow maindr;
+        private int crockingTestOption = 0;
+        private string singleCubeRangeSource = $"A1:N36";
+        private string doubleCubeRangeSource = $"A39:N110";
 
         /// <inheritdoc/>
         public P03_Crocking(bool canedit, string id, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -30,6 +33,19 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.maindr = mainDr;
             this.ID = id.Trim();
+            string sqlGetCrockingTestOption = $@"
+declare @CrockingTestOption tinyint
+
+select @CrockingTestOption = CrockingTestOption 
+from QABrandSetting with (nolock) 
+where BrandID = ( select  o.BrandID
+                  from Fir f with (nolock)
+                  inner join Orders o with (nolock) on f.POID = o.ID
+                  where f.ID = '{id}')
+
+select [CrockingTestOption] = isnull(@CrockingTestOption, 0)
+";
+            this.crockingTestOption = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlGetCrockingTestOption));
         }
 
         /// <inheritdoc/>
@@ -139,13 +155,11 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings rollcell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings dryScaleCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings wetScaleCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings scaleCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings labTechCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings inspDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resultdry = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings resultwet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings resultCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings dyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region grid MouseClickEvent
@@ -250,34 +264,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             };
 
-            dryScaleCell.EditingMouseDown += (s, e) =>
-                {
-                    if (e.RowIndex == -1)
-                    {
-                        return;
-                    }
-
-                    if (this.EditMode == false)
-                    {
-                        return;
-                    }
-
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                        string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
-                        SelectItem item1 = new SelectItem(scalecmd, "15", dr["DryScale"].ToString());
-                        DialogResult result = item1.ShowDialog();
-                        if (result == DialogResult.Cancel)
-                        {
-                            return;
-                        }
-
-                        dr["DryScale"] = item1.GetSelectedString();
-                    }
-                };
-
-            wetScaleCell.EditingMouseDown += (s, e) =>
+            scaleCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
                 {
@@ -292,17 +279,19 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
+                    string colName = ((DataGridViewColumn)s).Name;
                     string scalecmd = @"select id from Scale WITH (NOLOCK) where junk!=1";
-                    SelectItem item1 = new SelectItem(scalecmd, "15", dr["WetScale"].ToString());
+                    SelectItem item1 = new SelectItem(scalecmd, "15", dr[colName].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
                     }
 
-                    dr["WetScale"] = item1.GetSelectedString();
+                    dr[colName] = item1.GetSelectedString();
                 }
             };
+
             labTechCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -335,7 +324,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             };
 
-            resultdry.CellMouseDoubleClick += (s, e) =>
+            resultCell.CellMouseDoubleClick += (s, e) =>
             {
                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                 if (!((Win.Forms.Base)grid.FindForm()).EditMode)
@@ -343,34 +332,15 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
+                string colName = ((DataGridViewColumn)s).Name;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Resultdry"].ToString().ToUpper() == "PASS")
+                if (dr[colName].ToString().ToUpper() == "PASS")
                 {
-                    dr["Resultdry"] = "Fail";
+                    dr[colName] = "Fail";
                 }
                 else
                 {
-                    dr["Resultdry"] = "Pass";
-                }
-
-                this.Resultchange();
-            };
-            resultwet.CellMouseDoubleClick += (s, e) =>
-            {
-                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                if (!((Win.Forms.Base)grid.FindForm()).EditMode)
-                {
-                    return;
-                }
-
-                DataRow dr = grid.GetDataRow(e.RowIndex);
-                if (dr["Resultwet"].ToString().ToUpper() == "PASS")
-                {
-                    dr["Resultwet"] = "Fail";
-                }
-                else
-                {
-                    dr["Resultwet"] = "Pass";
+                    dr[colName] = "Pass";
                 }
 
                 this.Resultchange();
@@ -489,84 +459,6 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             };
 
-            dryScaleCell.CellValidating += (s, e) =>
-                {
-                    DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                    string oldvalue = dr["DryScale"].ToString();
-                    string newvalue = e.FormattedValue.ToString();
-                    if (!this.EditMode)
-                    {
-                        return; // 非編輯模式
-                    }
-
-                    if (e.RowIndex == -1)
-                    {
-                        return; // 沒東西 return
-                    }
-
-                    if (MyUtility.Check.Empty(e.FormattedValue))
-                    {
-                        return; // 沒資料 return
-                    }
-
-                    if (dr.RowState != DataRowState.Added)
-                    {
-                        if (oldvalue == newvalue)
-                        {
-                            return;
-                        }
-                    }
-
-                    string dryScale_cmd = string.Format(@"	select DryScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", this.maindr["id"]);
-                    DataRow roll_dr;
-                    if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                    {
-                        dr["DryScale"] = string.Empty;
-                        dr.EndEdit();
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("<Dry Scale: {0}> data not found!", e.FormattedValue));
-                        return;
-                    }
-                };
-            wetScaleCell.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["wetScale"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode)
-                {
-                    return; // 非編輯模式
-                }
-
-                if (e.RowIndex == -1)
-                {
-                    return; // 沒東西 return
-                }
-
-                if (MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return; // 沒資料 return
-                }
-
-                if (dr.RowState != DataRowState.Added)
-                {
-                    if (oldvalue == newvalue)
-                    {
-                        return;
-                    }
-                }
-
-                string dryScale_cmd = string.Format(@"select wetScale from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Scale b WITH (NOLOCK) on a.DryScale=b.id where a.id ='{0}'", this.maindr["id"]);
-                DataRow roll_dr;
-                if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                {
-                    dr["wetScale"] = string.Empty;
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<Wet Scale: {0}> data not found!", e.FormattedValue));
-                    return;
-                }
-            };
             labTechCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
@@ -617,14 +509,32 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             this.Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: dyelotCell)
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.ResultCell)
-            .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell, iseditingreadonly: true)
-            .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: resultdry, iseditingreadonly: true)
-            .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell, iseditingreadonly: true)
-            .Text("ResultWet", header: "Result(Wet)", width: Widths.AnsiChars(5), settings: resultwet, iseditingreadonly: true)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out this.ResultCell);
+            if (this.crockingTestOption == 0)
+            {
+                this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultWet", header: "Result(Wet)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true);
+            }
+            else
+            {
+                this.Helper.Controls.Grid.Generator(this.grid)
+                .Text("DryScale", header: "Dry Scale" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultDry", header: "Dry Result" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("DryScale_Weft", header: "Dry Scale" + Environment.NewLine + "(Weft)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultDry_Weft", header: "Dry Result" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("WetScale", header: "Wet Scale" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultWet", header: "Wet Result" + Environment.NewLine + "(Warp)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true)
+                .Text("WetScale_Weft", header: "Wet Scale" + Environment.NewLine + "(Weft)", width: Widths.AnsiChars(5), settings: scaleCell, iseditingreadonly: true)
+                .Text("ResultWet_Weft", header: "Wet Result" + Environment.NewLine + "(Weft)", width: Widths.AnsiChars(5), settings: resultCell, iseditingreadonly: true);
+            }
+
+            this.Helper.Controls.Grid.Generator(this.grid)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: inspDateCell)
-            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),  settings: labTechCell)
-            .Text("Name", header: "Name", width: Widths.AnsiChars(25),  iseditingreadonly: true)
+            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: labTechCell)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
             .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
@@ -641,13 +551,16 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
         private void Resultchange()
         {
-            if (MyUtility.Convert.GetString(this.CurrentData["ResultDry"]).EqualString("Pass") && MyUtility.Convert.GetString(this.CurrentData["ResultWet"]).EqualString("Pass"))
+            if (MyUtility.Convert.GetString(this.CurrentData["ResultDry"]).EqualString("Fail") ||
+                MyUtility.Convert.GetString(this.CurrentData["ResultWet"]).EqualString("Fail") ||
+                MyUtility.Convert.GetString(this.CurrentData["ResultDry_Weft"]).EqualString("Fail") ||
+                MyUtility.Convert.GetString(this.CurrentData["ResultWet_Weft"]).EqualString("Fail"))
             {
-                this.CurrentData["Result"] = "Pass";
+                this.CurrentData["Result"] = "Fail";
             }
             else
             {
-                this.CurrentData["Result"] = "Fail";
+                this.CurrentData["Result"] = "Pass";
             }
 
             this.CurrentData.EndEdit();
@@ -701,15 +614,20 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 }
             }
 
-            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["DryScale"])))
-            {
-                MyUtility.Msg.WarningBox("<Dry Scale> can not be empty.");
-                return false;
-            }
+            bool isScaleResultEmpty = afterDT.AsEnumerable().Any(row =>
+                                                    MyUtility.Check.Empty(row["DryScale"]) ||
+                                                    MyUtility.Check.Empty(row["ResultDry"]) ||
+                                                    MyUtility.Check.Empty(row["WetScale"]) ||
+                                                    MyUtility.Check.Empty(row["ResultWet"]) ||
+                                                    (this.crockingTestOption == 1 && (MyUtility.Check.Empty(row["DryScale_Weft"]) ||
+                                                                                      MyUtility.Check.Empty(row["ResultDry_Weft"]) ||
+                                                                                      MyUtility.Check.Empty(row["WetScale_Weft"]) ||
+                                                                                      MyUtility.Check.Empty(row["ResultWet_Weft"])))
+                                                    );
 
-            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["WetScale"])))
+            if (isScaleResultEmpty)
             {
-                MyUtility.Msg.WarningBox("<WetScale> can not be empty.");
+                MyUtility.Msg.WarningBox("<Scale> & <Result> cannot be empty.");
                 return false;
             }
 
@@ -785,8 +703,8 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (dr.RowState == DataRowState.Added)
                 {
                     List<SqlParameter> spamAdd = new List<SqlParameter>();
-                    update_cmd = @"insert into FIR_Laboratory_Crocking(ID,roll,Dyelot,DryScale,WetScale,Inspdate,Inspector,Result,Remark,AddDate,AddName,ResultDry,ResultWet)
-                    values(@ID,@roll,@Dyelot,@DryScale,@WetScale,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@ResultDry,@ResultWet)";
+                    update_cmd = @"insert into FIR_Laboratory_Crocking(ID,roll,Dyelot,DryScale,WetScale,Inspdate,Inspector,Result,Remark,AddDate,AddName,ResultDry,ResultWet, DryScale_Weft, ResultDry_Weft, WetScale_Weft, ResultWet_Weft)
+                    values(@ID,@roll,@Dyelot,@DryScale,@WetScale,@Inspdate,@Inspector,@Result,@Remark,@AddDate,@AddName,@ResultDry,@ResultWet, isnull(@DryScale_Weft, ''), isnull(@ResultDry_Weft, ''), isnull(@WetScale_Weft, ''), isnull(@ResultWet_Weft, ''))";
                     spamAdd.Add(new SqlParameter("@id", dr["ID"]));
                     spamAdd.Add(new SqlParameter("@roll", dr["roll"]));
                     spamAdd.Add(new SqlParameter("@Dyelot", dr["Dyelot"]));
@@ -800,6 +718,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     spamAdd.Add(new SqlParameter("@AddName", this.loginID));
                     spamAdd.Add(new SqlParameter("@ResultDry", dr["ResultDry"]));
                     spamAdd.Add(new SqlParameter("@ResultWet", dr["ResultWet"]));
+                    spamAdd.Add(new SqlParameter("@DryScale_Weft", dr["DryScale_Weft"]));
+                    spamAdd.Add(new SqlParameter("@ResultDry_Weft", dr["ResultDry_Weft"]));
+                    spamAdd.Add(new SqlParameter("@WetScale_Weft", dr["WetScale_Weft"]));
+                    spamAdd.Add(new SqlParameter("@ResultWet_Weft", dr["ResultWet_Weft"]));
 
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamAdd);
                     if (!upResult)
@@ -813,7 +735,11 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     List<SqlParameter> spamUpd = new List<SqlParameter>();
                     update_cmd = @"update FIR_Laboratory_Crocking
                     set ID=@ID,roll=@roll,Dyelot=@Dyelot,DryScale=@DryScale,WetScale=@WetScale,Inspdate=@Inspdate,Inspector=@Inspector,
-                        Result=@Result,Remark=@Remark,EditDate=@EditDate,EditName=@EditName,ResultDry=@ResultDry,ResultWet=@ResultWet
+                        Result=@Result,Remark=@Remark,EditDate=@EditDate,EditName=@EditName,ResultDry=@ResultDry,ResultWet=@ResultWet,
+                        DryScale_Weft = @DryScale_Weft,
+                        ResultDry_Weft = @ResultDry_Weft,
+                        WetScale_Weft = @WetScale_Weft,
+                        ResultWet_Weft = @ResultWet_Weft
                         where id=@id AND roll=@roll AND Dyelot=@Dyelot and roll=@rollbefore";
 
                     spamUpd.Add(new SqlParameter("@id", dr["ID"]));
@@ -830,6 +756,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     spamUpd.Add(new SqlParameter("@rollbefore", dr["Roll", DataRowVersion.Original]));
                     spamUpd.Add(new SqlParameter("@ResultDry", dr["ResultDry"]));
                     spamUpd.Add(new SqlParameter("@ResultWet", dr["ResultWet"]));
+                    spamUpd.Add(new SqlParameter("@DryScale_Weft", dr["DryScale_Weft"]));
+                    spamUpd.Add(new SqlParameter("@ResultDry_Weft", dr["ResultDry_Weft"]));
+                    spamUpd.Add(new SqlParameter("@WetScale_Weft", dr["WetScale_Weft"]));
+                    spamUpd.Add(new SqlParameter("@ResultWet_Weft", dr["ResultWet_Weft"]));
 
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamUpd);
                     if (!upResult)
@@ -971,7 +901,20 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             DataTable dt = (DataTable)this.gridbs.DataSource;
-            string[] columnNames = new string[] { "Roll", "Dyelot", "DryScale", "WetScale", "Result", "InspDate", "Inspector", "Remark", "Last update" };
+            string[] columnNames;
+            string excelName = string.Empty;
+            switch (this.crockingTestOption)
+            {
+                case 0:
+                    columnNames = new string[] { "Roll", "Dyelot", "DryScale", "WetScale", "Result", "InspDate", "Inspector", "Remark", "Last update" };
+                    excelName = "Quality_P03_Crocking_Test.xltx";
+                    break;
+                default:
+                    columnNames = new string[] { "Roll", "Dyelot", "DryScale", "DryScale_Weft", "WetScale", "WetScale_Weft", "Result", "InspDate", "Inspector", "Remark", "Last update" };
+                    excelName = "Quality_P03_Crocking_Weft_Warp_Test.xltx";
+                    break;
+            }
+
             var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, this.grid.Columns.Count) as object[,];
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -1004,7 +947,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
             excel.Workbooks.Add();
-            MyUtility.Excel.CopyToXls(ret, xltFileName: "Quality_P03_Crocking_Test.xltx", fileName: string.Empty, openfile: false, headerline: 5, excelAppObj: excel);
+            MyUtility.Excel.CopyToXls(ret, xltFileName: excelName, fileName: string.Empty, openfile: false, headerline: 5, excelAppObj: excel);
             Microsoft.Office.Interop.Excel.Worksheet excelSheets = excel.ActiveWorkbook.Worksheets[1]; // 取得工作表
             excel.Cells[2, 2] = this.txtSP.Text.ToString();
             excel.Cells[2, 4] = this.txtSEQ.Text.ToString();
@@ -1064,6 +1007,18 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         }
 
         private void BtntoPDF_Click(object sender, EventArgs e)
+        {
+            if (this.crockingTestOption == 0)
+            {
+                this.CreateExcelOnlyWetDry();
+            }
+            else
+            {
+                this.CreateExcelOnlyWEFTandWARP();
+            }
+        }
+
+        private void CreateExcelOnlyWetDry()
         {
             this.ShowWaitMessage("Data Loading...");
             DataTable dtt = (DataTable)this.gridbs.DataSource;
@@ -1341,6 +1296,245 @@ where bof.id='{this.maindr["POID"]}' and p.seq1='{this.maindr["seq1"]}' and p.se
             string strPDFFileName = string.Empty;
             strFileName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF");
             strPDFFileName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF", Class.PDFFileNameExtension.PDF);
+            objApp.ActiveWorkbook.SaveAs(strFileName);
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            #endregion
+
+            if (ConvertToPDF.ExcelToPDF(strFileName, strPDFFileName))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
+                Process.Start(startInfo);
+            }
+
+            this.HideWaitMessage();
+        }
+
+        private class PageInfoForPDF
+        {
+            public int StartRow { get; set; }
+
+            public bool IsSingle { get; set; }
+        }
+
+        private List<PageInfoForPDF> GetPageInfo(int firstStartRow, int ttlRowCnt)
+        {
+            List<PageInfoForPDF> infoForPDFs = new List<PageInfoForPDF>();
+            int pagestartRow = firstStartRow;
+            bool isSingle = true;
+
+            if (firstStartRow >= 35 && firstStartRow <= 71)
+            {
+                pagestartRow = 73;
+                isSingle = false;
+            }
+
+            if (firstStartRow > 71 && ((firstStartRow - 71) % 74) > 37)
+            {
+                pagestartRow = ((((firstStartRow - 71) / 74) + 1) * 74) + 73;
+                isSingle = false;
+            }
+
+            infoForPDFs.Add(new PageInfoForPDF { StartRow = pagestartRow, IsSingle = isSingle });
+
+            int removeFirstPageRowCnt = isSingle ? ttlRowCnt - 1 : ttlRowCnt - 2;
+            int pageCnt = MyUtility.Convert.GetInt(Math.Ceiling(removeFirstPageRowCnt / 2.0));
+            isSingle = false;
+            for (int i = 0; i < pageCnt; i++)
+            {
+                if (i == pageCnt - 1 && (removeFirstPageRowCnt % 2) > 0)
+                {
+                    isSingle = true;
+                }
+
+                if (pagestartRow % 74 != 73)
+                {
+                    pagestartRow = pagestartRow < 72 ? 73 : ((((pagestartRow - 71) / 74) + 1) * 74) + 73;
+                }
+                else
+                {
+                    pagestartRow += 74;
+                }
+
+                infoForPDFs.Add(new PageInfoForPDF { StartRow = pagestartRow, IsSingle = isSingle });
+            }
+
+            return infoForPDFs;
+        }
+
+        private void CreateExcelOnlyWEFTandWARP()
+        {
+            this.ShowWaitMessage("Data Loading...");
+            DataTable dtt = (DataTable)this.gridbs.DataSource;
+            if (dtt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
+
+            string submitDate = string.Empty;
+            if (!MyUtility.Check.Empty(this.maindr["ReceiveSampleDate"]))
+            {
+                submitDate = ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("yyyy") + "/" + ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("MM") + "/" + ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("dd");
+            }
+
+            string sqlcmd = $@"
+SELECT distinct [Article] = Article.val,fd.InspDate,p1.Name, fd.Inspector
+FROM  PO_Supp_Detail p with (nolock)
+inner join Order_BOF bof with (nolock) on p.id=bof.id and bof.SCIRefno=p.SCIRefno
+outer apply (SELECT val =  Stuff((select distinct concat( ',',oc.Article)   
+                                 from Order_ColorCombo oc with (nolock)
+                                 where oc.id=p.id and oc.FabricCode=bof.FabricCode and p.ColorID = oc.ColorID
+                                 FOR XML PATH('')),1,1,'') ) Article
+inner join FIR_Laboratory f on f.poid = p.ID and f.seq1 = p.seq1 and f.seq2 = p.seq2
+inner join FIR_Laboratory_Crocking fd on fd.id = f.id
+left join pass1 p1 with (nolock) on p1.id = fd.Inspector
+where f.ID = '{this.ID}'
+order by fd.InspDate
+";
+            DataTable dt;
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Quality_P03_Crocking_Test_for_PDF_Weft_Warp.xltx");
+            Microsoft.Office.Interop.Excel.Worksheet worksheetForCopyCube = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[2];
+            objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
+            for (int i = 1; i < dt.Rows.Count; i++)
+            {
+                Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
+
+                worksheet1.Copy(worksheetn);
+            }
+
+            int j = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[j + 1];   // 取得工作表
+                worksheet.Cells[3, 2] = submitDate;
+                if (!MyUtility.Check.Empty(row["InspDate"]))
+                {
+                    worksheet.Cells[3, 5] = ((DateTime)row["InspDate"]).ToString("yyyy") + "/" + ((DateTime)row["InspDate"]).ToString("MM") + "/" + ((DateTime)row["InspDate"]).ToString("dd");
+                }
+
+                worksheet.Cells[5, 12] = row["article"];
+                worksheet.Cells[3, 9] = this.txtSP.Text;
+                worksheet.Cells[3, 13] = this.txtBrand.Text;
+                worksheet.Cells[5, 2] = this.txtStyle.Text;
+                worksheet.Cells[5, 5] = MyUtility.GetValue.Lookup($"select CustPONo from orders where id = '{this.txtSP.Text}'");
+                worksheet.Cells[6, 2] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{this.txtSP.Text}' and  o.StyleUkey = s.ukey");
+                worksheet.Cells[6, 12] = this.txtArriveQty.Text;
+                worksheet.Cells[13, 9] = row["Name"];
+
+                string sqlcmd2 = $@"
+SELECT  fd.DryScale,
+        fd.ResultDry, 
+        fd.DryScale_Weft, 
+        fd.ResultDry_Weft,
+        fd.WetScale_Weft,
+        fd.ResultWet_Weft,
+        fd.WetScale,
+        fd.ResultWet,
+        fd.Remark,
+        fd.Inspector,
+        fd.Roll,
+        fd.Dyelot,
+        fd.Result
+FROM PO_Supp_Detail p with (nolock)
+inner join Order_BOF bof with (nolock) on p.id=bof.id and bof.SCIRefno=p.SCIRefno
+inner join orders o with (nolock) on o.id = bof.id
+inner join FIR_Laboratory f with (nolock) on f.poid = o.poid and f.seq1 = p.seq1 and f.seq2 = p.seq2
+inner join FIR_Laboratory_Crocking fd with (nolock) on fd.id = f.id
+where bof.id='{this.maindr["POID"]}' and p.seq1='{this.maindr["seq1"]}' and p.seq2='{this.maindr["seq2"]}' 
+    and fd.InspDate = '{MyUtility.Convert.GetDate(row["InspDate"]).Value.ToShortDateString()}'
+    and fd.Inspector = '{MyUtility.Convert.GetString(row["Inspector"])}'
+";
+                DataTable dt2;
+                DBProxy.Current.Select(null, sqlcmd2, out dt2);
+                for (int i = 1; i < dt2.Rows.Count; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11:A11", Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
+                }
+
+                int k = 10;
+                foreach (DataRow row2 in dt2.Rows)
+                {
+                    worksheet.Cells[k, 1] = this.txtBrandRefno.Text;
+                    worksheet.Cells[k, 2] = this.txtColor.Text;
+                    worksheet.Cells[k, 3] = row2["Dyelot"];
+                    worksheet.Cells[k, 4] = row2["Roll"];
+                    worksheet.Cells[k, 5] = row2["DryScale"];
+                    worksheet.Cells[k, 6] = row2["ResultDry"];
+                    worksheet.Cells[k, 7] = row2["DryScale_Weft"];
+                    worksheet.Cells[k, 8] = row2["ResultDry_Weft"];
+                    worksheet.Cells[k, 9] = row2["WetScale"];
+                    worksheet.Cells[k, 10] = row2["ResultWet"];
+                    worksheet.Cells[k, 11] = row2["WetScale_Weft"];
+                    worksheet.Cells[k, 12] = row2["ResultWet_Weft"];
+                    worksheet.Cells[k, 13] = row2["Result"];
+                    worksheet.Cells[k, 14] = row2["Remark"];
+
+                    Microsoft.Office.Interop.Excel.Range rg = worksheet.Range[worksheet.Cells[k, 1], worksheet.Cells[k, 14]];
+
+                    // 加框線
+                    rg.Borders.LineStyle = 1;
+                    rg.Borders.Weight = 3;
+                    rg.WrapText = true; // 自動換列
+                    rg.Font.Bold = false;
+
+                    // 水平,垂直置中
+                    rg.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                    rg.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+
+                    k++;
+                }
+
+                // worksheet.get_Range("B9:J9").Font.Bold = true;
+                // worksheet.Cells.EntireColumn.AutoFit();
+                #region 開始畫格子
+
+                int firstCubeStartRow = 15 + dt2.Rows.Count;
+
+                List<PageInfoForPDF> infoForPDFs = this.GetPageInfo(firstCubeStartRow, dt2.Rows.Count);
+                Microsoft.Office.Interop.Excel.Range cubeCopyRange;
+                Microsoft.Office.Interop.Excel.Range pastCubeRange;
+                foreach (PageInfoForPDF pageInfoForPDF in infoForPDFs)
+                {
+                    if (pageInfoForPDF.IsSingle)
+                    {
+                        cubeCopyRange = worksheetForCopyCube.get_Range(this.singleCubeRangeSource, Type.Missing).EntireRow;
+                    }
+                    else
+                    {
+                        cubeCopyRange = worksheetForCopyCube.get_Range(this.doubleCubeRangeSource, Type.Missing).EntireRow;
+                    }
+
+                    pastCubeRange = worksheet.get_Range($"A{pageInfoForPDF.StartRow}", Type.Missing).EntireRow;
+                    pastCubeRange.Insert(cubeCopyRange.Copy(Type.Missing)); // 貼上
+                }
+                #endregion
+                int printPageCountNotIncludeFirst = infoForPDFs[0].IsSingle ? (infoForPDFs.Count - 1) : infoForPDFs.Count;
+                int headPageCount = dt2.Rows.Count > 58 ? MyUtility.Convert.GetInt(Math.Ceiling((dt2.Rows.Count - 58) / 74.0)) : 0;
+                int lastPageRowNum = lastPageRowNum = 71 + (74 * (printPageCountNotIncludeFirst + headPageCount));
+
+                worksheet.PageSetup.PrintArea = $"$A$1:$N${lastPageRowNum.ToString()}";
+                Marshal.ReleaseComObject(worksheet);
+                j++;
+            }
+
+            worksheetForCopyCube.Delete();
+
+            #region Save & Show Excel
+            string strFileName = string.Empty;
+            string strPDFFileName = string.Empty;
+            strFileName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF_Weft_Warp");
+            strPDFFileName = Class.MicrosoftFile.GetName("Quality_P03_Crocking_Test_for_PDF_Weft_Warp", Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

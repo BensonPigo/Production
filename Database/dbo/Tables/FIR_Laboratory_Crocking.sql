@@ -14,14 +14,67 @@
     [EditDate]  DATETIME       NULL,
     [ResultDry] VARCHAR (5)    NULL,
     [ResultWet] VARCHAR (5)    NULL,
+    [DryScale_Weft] VARCHAR(5) CONSTRAINT [DF_FIR_Laboratory_Crocking_DryScale_Weft] DEFAULT ('') not NULL,
+    [WetScale_Weft] VARCHAR(5) CONSTRAINT [DF_FIR_Laboratory_Crocking_WetScale_Weft] DEFAULT ('') not NULL,
+    [ResultDry_Weft] VARCHAR(5) CONSTRAINT [DF_FIR_Laboratory_Crocking_ResultDry_Weft] DEFAULT ('') not NULL,
+    [ResultWet_Weft] VARCHAR(5) CONSTRAINT [DF_FIR_Laboratory_Crocking_ResultWet_Weft] DEFAULT ('') not NULL,
     CONSTRAINT [PK_FIR_Laboratory_Crocking] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+go
 
-
-
-
-
-
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'品牌要求摩擦測試區分成經緯向，此欄位代表的是 (緯向) 乾摩擦色牢度評級',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'FIR_Laboratory_Crocking',
+		@level2type = N'COLUMN',
+		@level2name = N'DryScale_Weft'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'品牌要求摩擦測試區分成經緯向，此欄位代表的是 (緯向) 濕摩擦色牢度評級',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'FIR_Laboratory_Crocking',
+		@level2type = N'COLUMN',
+		@level2name = N'WetScale_Weft'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'品牌要求摩擦測試區分成經緯向，此欄位代表的是 (緯向) 乾摩擦檢驗結果 (Fail / Pass)',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'FIR_Laboratory_Crocking',
+		@level2type = N'COLUMN',
+		@level2name = N'ResultDry_Weft'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'品牌要求摩擦測試區分成經緯向，此欄位代表的是 (緯向) 濕摩擦檢驗結果 (Fail / Pass)',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'FIR_Laboratory_Crocking',
+		@level2type = N'COLUMN',
+		@level2name = N'ResultWet_Weft'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'若品牌要求摩擦測試區分成經緯向，此欄位代表的是 (經向 Warp) 濕摩擦檢驗結果 (Fail / Pass)',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'FIR_Laboratory_Crocking',
+		@level2type = N'COLUMN',
+		@level2name = N'ResultDry'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'若品牌要求摩擦測試區分成經緯向，此欄位代表的是 (經向 Warp) 濕摩擦檢驗結果 (Fail / Pass)',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'FIR_Laboratory_Crocking',
+		@level2type = N'COLUMN',
+		@level2name = N'ResultWet'
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Crocking', @level2type = N'COLUMN', @level2name = N'Remark';
 
@@ -59,11 +112,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'缸號', @l
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'乾灰階分數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Crocking', @level2type = N'COLUMN', @level2name = N'DryScale';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'若品牌要求摩擦測試區分成經緯向，此欄位代表的是 (經向 Warp) 濕摩擦色牢度評級', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Crocking', @level2type = N'COLUMN', @level2name = N'DryScale';
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'濕灰階分數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Crocking', @level2type = N'COLUMN', @level2name = N'WetScale';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'若品牌要求摩擦測試區分成經緯向，此欄位代表的是 (經向 Warp) 濕摩擦色牢度評級', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory_Crocking', @level2type = N'COLUMN', @level2name = N'WetScale';
 
 
 GO
