@@ -175,7 +175,7 @@ namespace Sci.Production.Quality
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: refno)
-            .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: inspection)
@@ -234,7 +234,7 @@ namespace Sci.Production.Quality
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonSCIID", header: "Approved Season", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ApprovedSeason)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -516,6 +516,7 @@ select distinct
 	Supp.AbbEN,
 	psd.Refno,
 	psd.ColorID,
+    [ColorName] = c.ColorName,
 	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
 	sr.InspectionReport,
 	sr.TPEInspectionReport,
@@ -577,6 +578,12 @@ outer apply(
 	left join Receiving r on r.id= f.ReceivingID
 	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
 )b
+outer apply(
+    select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
+    from Color c
+    where c.ID = psd.ColorID
+    and c.BrandID = psd.BrandID 
+)c
 {sqlwhere}
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
@@ -803,6 +810,7 @@ select distinct
 	Supp.AbbEN,
 	psd.Refno,
 	psd.ColorID,
+    [ColorName] = c.ColorName,
 	o.SeasonID,
     fd.SeasonSCIID,
     fd.Period,
@@ -825,7 +833,13 @@ left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
 left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
-where   ps.seq1 not like '7%' 
+outer apply(
+    select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
+    from Color c
+    where c.ID = psd.ColorID
+    and c.BrandID = psd.BrandID 
+)c
+where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
@@ -841,6 +855,7 @@ fty.TestDocFactoryGroup
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
 ,a.[TPEFirstDyelot]
+,[ColorName] = iif(a.[ColorName] is null, b.ColorID, a.[ColorName])
 from #tmp a
 inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
