@@ -60,8 +60,8 @@
             // 
             this.detailcont.Controls.Add(this.btnMoistureStandardList);
             this.detailcont.Controls.Add(this.radioPanel2);
-            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.radioPanel1);
+            this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.txtFormula);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.label3);
@@ -77,7 +77,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(712, 269);
+            this.browse.Size = new System.Drawing.Size(712, 285);
             // 
             // tabs
             // 
@@ -88,7 +88,7 @@
             this.radioPanel1.Controls.Add(this.radioOption1);
             this.radioPanel1.Controls.Add(this.radioOption2);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PointRateOption", true));
-            this.radioPanel1.Location = new System.Drawing.Point(185, 69);
+            this.radioPanel1.Location = new System.Drawing.Point(122, 62);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;
             this.radioPanel1.Size = new System.Drawing.Size(189, 48);
@@ -126,7 +126,7 @@
             this.txtFormula.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtFormula.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtFormula.IsSupportEditMode = false;
-            this.txtFormula.Location = new System.Drawing.Point(185, 123);
+            this.txtFormula.Location = new System.Drawing.Point(122, 116);
             this.txtFormula.Name = "txtFormula";
             this.txtFormula.ReadOnly = true;
             this.txtFormula.Size = new System.Drawing.Size(355, 23);
@@ -137,7 +137,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(310, 44);
+            this.checkJunk.Location = new System.Drawing.Point(247, 37);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 2;
@@ -146,7 +146,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(93, 124);
+            this.label3.Location = new System.Drawing.Point(30, 117);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 23);
             this.label3.TabIndex = 5;
@@ -154,7 +154,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(93, 83);
+            this.label2.Location = new System.Drawing.Point(30, 76);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 4;
@@ -162,7 +162,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(93, 42);
+            this.label1.Location = new System.Drawing.Point(30, 35);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 23);
             this.label1.TabIndex = 3;
@@ -174,7 +174,7 @@
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "brandid", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtbrand.IsSupportEditMode = false;
-            this.txtbrand.Location = new System.Drawing.Point(185, 42);
+            this.txtbrand.Location = new System.Drawing.Point(122, 35);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.ReadOnly = true;
             this.txtbrand.Size = new System.Drawing.Size(119, 23);
@@ -189,13 +189,13 @@
             this.btnMoistureStandardList.Text = "Moisture Standard List";
             this.btnMoistureStandardList.UseVisualStyleBackColor = true;
             this.btnMoistureStandardList.Click += new System.EventHandler(this.BtnMoistureStandardList_Click);
-            //
+            // 
             // radioPanel2
             // 
             this.radioPanel2.Controls.Add(this.radioForWetDry);
             this.radioPanel2.Controls.Add(this.radioForWeftWarp);
             this.radioPanel2.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CrockingTestOption", true));
-            this.radioPanel2.Location = new System.Drawing.Point(185, 166);
+            this.radioPanel2.Location = new System.Drawing.Point(122, 159);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.ReadOnly = true;
             this.radioPanel2.Size = new System.Drawing.Size(373, 66);
@@ -229,7 +229,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(93, 166);
+            this.label4.Location = new System.Drawing.Point(30, 159);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(89, 23);
             this.label4.TabIndex = 9;
