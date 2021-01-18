@@ -410,6 +410,7 @@ order by x.[Bundle]");
 
                 try
                 {
+                    this.print.Enabled = false;
                     bool rfCardErase = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select RFCardEraseBeforePrinting from [System]"));
                     DataTable dataTable = this.dt;
                     var query = this.dt.AsEnumerable()
@@ -514,13 +515,19 @@ order by x.[Bundle]");
                     MyUtility.Msg.ErrorBox(ex.ToString());
                     return false;
                 }
+                finally
+                {
+                    this.print.Enabled = true;
+                }
             }
             else if (this.radioBundleErase.Checked)
             {
                 this.ShowWaitMessage("Process Erase!");
 
                 // 放在Stacker的所有卡片擦除
+                this.print.Enabled = false;
                 DualResult result = Prg.BundleRFCard.BundleRFErase();
+                this.print.Enabled = true;
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
