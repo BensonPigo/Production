@@ -2148,12 +2148,54 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                     bool p24 = true;
                     bool p03 = true;
+                    bool p24_Html = true;
 
                     match.UpdateModels.RemoveAll(o => o.PackingListID != match.SelectedPackingID);
 
-                    p24 = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
+                    #region HTML事前檢查
+                    DataRow[] selecteds = new DataRow[match.UpdateModels.Select(o => o.PackingListID).Distinct().Count()];
 
-                    // P24成功再更新 P03
+                    int qq = 0;
+                    foreach (string p in match.UpdateModels.Select(o => o.PackingListID).Distinct())
+                    {
+                        DataTable d = new DataTable();
+                        d.ColumnsStringAdd("ID");
+                        DataRow t = d.NewRow();
+                        t["ID"] = p;
+                        selecteds[qq] = t;
+                        qq++;
+                    }
+
+                    P24_Generate p24_Generate = new P24_Generate();
+                    p24_Generate.Generate(selecteds, ref p24Result, true, "P26");
+                    #endregion
+
+                    // 沒有錯誤訊息表示檢查成功
+                    if (!MyUtility.Check.Empty(p24Result.ResultMsg))
+                    {
+                        string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
+
+                        Result r = new Result()
+                        {
+                            FileSeq = match.FileSeq,
+                            ResultMsg = stampMsg,
+                        };
+                        this.ConfirmMsg.Add(r);
+
+                        p24_Html = false;
+                    }
+
+                    // HTML檢查通過才進行P24
+                    if (p24_Html)
+                    {
+                        p24 = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
+                    }
+                    else
+                    {
+                        p24 = false;
+                    }
+
+                    // P24成功才進行P03
                     if (p24)
                     {
                         p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
@@ -2172,21 +2214,33 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                         {
                             try
                             {
-                                DataRow[] selecteds = new DataRow[match.UpdateModels.Select(o => o.PackingListID).Distinct().Count()];
+                                p24_Generate.Generate(selecteds, ref p24Result, false, "P26");
 
-                                int qq = 0;
-                                foreach (string p in match.UpdateModels.Select(o => o.PackingListID).Distinct())
+                                // 由於APU產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
+                                if (!MyUtility.Check.Empty(p24Result.ResultMsg))
                                 {
-                                    DataTable d = new DataTable();
-                                    d.ColumnsStringAdd("ID");
-                                    DataRow t = d.NewRow();
-                                    t["ID"] = p;
-                                    selecteds[qq] = t;
-                                    qq++;
-                                }
+                                    string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
 
-                                P24_Generate p24_Generate = new P24_Generate();
-                                p24_Generate.Generate(selecteds, ref p24Result, "P26");
+                                    Result r = new Result()
+                                    {
+                                        FileSeq = match.FileSeq,
+                                        ResultMsg = stampMsg,
+                                    };
+                                    this.ConfirmMsg.Add(r);
+
+                                    string disposeSQL = $@"
+DELETE FROM ShippingMarkPic_Detail
+WHERE ShippingMarkTypeUkey IN (
+    SELECT a.Ukey 
+    FROM ShippingMarkPic a 
+    WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+)
+
+DELETE FROM ShippingMarkPic
+WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+";
+                                    DBProxy.Current.Execute(null, disposeSQL);
+                                }
 
                                 transactionscope.Complete();
                             }
@@ -2200,14 +2254,12 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                         bool stickerAlreadyExisted = this.MatchList.Where(o => o.FileSeq == match.FileSeq).FirstOrDefault().StickerAlreadyExisted;
 
-                        string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
-
                         if (stickerAlreadyExisted)
                         {
                             Result r = new Result()
                             {
                                 FileSeq = match.FileSeq,
-                                ResultMsg = "Overwrite success. " + Environment.NewLine + stampMsg,
+                                ResultMsg = "Overwrite success. ",
                             };
                             this.ConfirmMsg.Add(r);
                         }
@@ -2216,7 +2268,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                             Result r = new Result()
                             {
                                 FileSeq = match.FileSeq,
-                                ResultMsg = "Upload success. " + Environment.NewLine + stampMsg,
+                                ResultMsg = "Upload success. ",
                             };
                             this.ConfirmMsg.Add(r);
                         }
@@ -2254,7 +2306,6 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                     dr.EndEdit();
                 }
-
             }
             catch (Exception ex)
             {
@@ -2265,7 +2316,6 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 this.HideWaitMessage();
                 this.btnProcessing.PerformClick();
             }
-
         }
 
         /// <summary>
@@ -2966,15 +3016,15 @@ where o.CustPONo='{pono}'
         {
             // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
             string seqCmd = $@"
-SELECT Seq FROM (
-	SELECT [Rank]=RANK() OVER (ORDER BY sd.Seq ),sd.*
-	FROM ShippingMarkPic_Detail sd 
-	INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
-	INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
-	INNER JOIN PackingList p ON p.ID = s.PackingListID
-	where sd.FileName='{fileName}'
-)a
-WHERE Rank={seq}
+    SELECT Seq FROM (
+	    SELECT [Rank]=RANK() OVER (ORDER BY sd.Seq ),sd.*
+	    FROM ShippingMarkPic_Detail sd 
+	    INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
+	    INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+	    INNER JOIN PackingList p ON p.ID = s.PackingListID
+	    where sd.FileName='{fileName}' AND st.IsSSCC = 1
+    )a
+    WHERE Rank={seq}
 
 ";
 
@@ -2991,6 +3041,7 @@ AND sd.Seq = (
     {seqCmd}
 )
 
+---- 更新P24表頭
 UPDATE s
 SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
 FROM ShippingMarkPic s WITH(NOLOCK)

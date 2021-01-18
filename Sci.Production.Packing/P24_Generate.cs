@@ -277,7 +277,7 @@ DROP TABLE #base,#Mix
             this.ShowWaitMessage("Processing...");
 
             Sci.Production.Packing.P26.Result t = new P26.Result();
-            this.Generate(selecteds, ref t, string.Empty);
+            this.Generate(selecteds, ref t, false, string.Empty);
             this.ShowResult();
 
             this.HideWaitMessage();
@@ -462,14 +462,14 @@ AND p.ID IN ('{packingListIDs.JoinToString("','")}')
         }
 
         /// <inheritdoc/>
-        public void Generate(DataRow[] selecteds, ref Sci.Production.Packing.P26.Result p26Result, string callFrom = "")
+        public void Generate(DataRow[] selecteds, ref Sci.Production.Packing.P26.Result p26Result, bool isP26Check, string callFrom = "")
         {
             if (callFrom == "P26")
             {
                 this.P24_GenerateResults = new List<P24_GenerateResult>();
             }
 
-            // 第一階段檢查
+            // 第一階段檢查：基礎設定
             selecteds = this.CheckBasicSettingClog(selecteds);
 
             if (selecteds == null)
@@ -633,6 +633,12 @@ DROP TABLE #base, #Mix
                     }
                 }
 
+                return;
+            }
+
+            // 若是事前檢查，則無需後續動作
+            if (isP26Check)
+            {
                 return;
             }
 
@@ -873,53 +879,34 @@ END
 ";
             }
 
-            // 表身
-            // 透過P26先寫入圖片再產生HTML，因此不可以刪掉表身
-            // if (callFrom != "P26")
-            // {
-            //     bodyInsert += $@"DELETE FROM ShippingMarkPic_Detail WHERE ShippingMarkPicUkey In (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID IN ('{string.Join("','", p24_Templates.Select(o => o.PackingListID).Distinct().ToList())}') ) ;";
-            // }
-
+            // 表身：透過P26先寫入圖片再產生HTML，因此不可以刪掉表身
             foreach (P24_Template p24_Template in p24_Templates)
             {
-                /*if (callFrom != "P26")
-                {
-                    bodyInsert += $@"
-
-INSERT INTO ShippingMarkPic_Detail
-           (ShippingMarkPicUkey, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
-     VALUES
-           ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
-           ,'{p24_Template.SCICtnNo}'
-           ,{p24_Template.ShippingMarkCombinationUkey}
-           ,{p24_Template.ShippingMarkTypeUkey}
-           ,'{p24_Template.FilePath}'
-           ,'{p24_Template.FileName}'
-           ,'{p24_Template.Side}'
-           ,{p24_Template.Seq}
-           ,{p24_Template.FromRight}
-           ,{p24_Template.FromBottom}
-           ,{p24_Template.Width}
-           ,{p24_Template.Length}
-           ,{dPI} )
-;
-";
-                }
-                else
-                {*/
-                    bodyInsert += $@"
+                bodyInsert += $@"
 IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail 
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
 )
 BEGIN
+    ----- ShippingMarkType.IsSSCC = 0才能有HTML
     UPDATE ShippingMarkPic_Detail
     SET FilePath = '{p24_Template.FilePath}'
         ,FileName = '{p24_Template.FileName}'
-        ,dPI = {dPI}
+        ,DPI = {dPI}
+        ,Image = NULL
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.IsSSCC = 0)
+
+    ---- ShippingMarkType.IsSSCC = 1 的FilePath FileName清空
+    UPDATE ShippingMarkPic_Detail
+    SET FilePath = ''
+        ,FileName = ''
+        ,DPI = 0
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.IsSSCC = 1)
 END
 ELSE
 BEGIN
@@ -942,7 +929,6 @@ BEGIN
 END
 ;
 ";
-                //}
             }
 
             using (TransactionScope transactionScope = new TransactionScope())
