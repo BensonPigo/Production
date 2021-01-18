@@ -404,7 +404,7 @@ where a.id = @ID";
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "TI", "TransferIn", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "TI", "TransferIn", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
