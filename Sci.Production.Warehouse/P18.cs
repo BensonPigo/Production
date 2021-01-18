@@ -87,7 +87,6 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["IssueDate"] = DateTime.Now;
         }
 
         // delete前檢查
@@ -274,13 +273,6 @@ where a.id = @ID";
             StringBuilder warningmsg = new StringBuilder();
 
             #region 必輸檢查
-            if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
-            {
-                MyUtility.Msg.WarningBox("< Issue Date >  can't be empty!", "Warning");
-                this.dateIssueDate.Focus();
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.txtFromFactory.Text))
             {
                 MyUtility.Msg.WarningBox("From Factory cannot be null! ");
@@ -412,7 +404,7 @@ where a.id = @ID";
             #region 取單號
             if (this.IsDetailInserting)
             {
-                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "TI", "TransferIn", (DateTime)this.CurrentMaintain["Issuedate"]);
+                string tmpId = MyUtility.GetValue.GetID(Env.User.Keyword + "TI", "TransferIn", DateTime.Now);
                 if (MyUtility.Check.Empty(tmpId))
                 {
                     MyUtility.Msg.WarningBox("Get document ID fail!!");
@@ -1014,6 +1006,13 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["IssueDate"]))
+            {
+                MyUtility.Msg.WarningBox("Arrive WH Date cannot be empty");
+                this.dateIssueDate.Focus();
+                return;
+            }
+
             base.ClickConfirm();
             var dr = this.CurrentMaintain;
             if (dr == null)
