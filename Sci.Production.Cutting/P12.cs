@@ -909,14 +909,15 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 return;
             }
 
-            DataTable dtSelect = this.dtt.Select("selected = 1").TryCopyToDataTable(this.dtt);
-            if (dtSelect.Rows.Count == 0)
+            var querydr = this.dtt.AsEnumerable().Where(row => (bool)row["selected"]);
+            if (!querydr.Any() || querydr.ToList().Count() == 0)
             {
                 this.grid1.Focus();
                 MyUtility.Msg.ErrorBox("Grid must be chose one");
                 return;
             }
 
+            DataTable dtSelect = querydr.ToList().CopyToDataTable();
             DataTable allNoDatas = null;
             dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
             {
