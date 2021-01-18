@@ -12,81 +12,121 @@ BEGIN
 
 	DECLARE @Result varchar(15);
 	DECLARE @dyelot varchar(8);
-	DECLARE @err_msg nvarchar(2000);
-
-	BEGIN TRY
-	IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND PhysicalEncode = 0) -- Not Encoded
-	BEGIN
-		IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND nonPhysical = 0) -- 需檢驗的要作缸號檢查 (每批來料要每缸都有檢查資料)
-		BEGIN
-			DECLARE dyelot_cursor CURSOR FOR 
-			select r.Dyelot from (
-									Select distinct a.Dyelot from dbo.View_AllReceivingDetail a WITH (NOLOCK)
-									inner join dbo.FIR b WITH (NOLOCK)
-									on b.POID = a.PoId and b.SEQ1 =a.Seq1 and b.SEQ2 = a.Seq2 and b.ReceivingID = a.Id
-									where b.Id=@FirID
-								 ) r
-					left join (select distinct dyelot from dbo.FIR_Physical WITH (NOLOCK) where id = @FirID ) i 
-					on i.Dyelot = r.Dyelot
-					where i.Dyelot is null
-
-			OPEN dyelot_cursor;
-			FETCH NEXT FROM dyelot_cursor INTO @dyelot;
-			IF @dyelot is not null
-			BEGIN
-				WHILE @@FETCH_STATUS = 0
-				BEGIN
-					SET @err_msg = isnull(@err_msg,'')+'Dyelot: ' +@dyelot + ' is not inspected.'+char(13)+char(10);
-					FETCH NEXT FROM dyelot_cursor INTO @dyelot;
-				END
-
-				IF @err_msg is not null
-				BEGIN
-					RAISERROR (@err_msg, -- Message text.
-				   16, -- Severity.
-				   1 -- State.
-				   );
-				END
-			END
-			CLOSE dyelot_cursor;
-
-		END
-		BEGIN TRANSACTION
-
-		Update Fir set PhysicalDate = GetDate()
-						,PhysicalEncode=1
-						,EditName=@Login
-						,EditDate = GetDate()
-						,Physical = IIF(EXISTS(SELECT * FROM DBO.FIR_Physical WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
-						,TotalDefectPoint = (select sum(t.TotalPoint) from dbo.FIR_Physical t WITH (NOLOCK) where t.ID =@FirID)
-						,TotalInspYds = (select sum(t.ActualYds) from dbo.FIR_Physical t WITH (NOLOCK) where t.ID =@FirID)
-						,Status='Confirmed' 
-				where id =@FirID;
-
-		SELECT @Result = DBO.GetFirResult(@FirID);
-
-		IF @Result = ''
-			Update dbo.FIR set Result = @Result , status = 'New' where id = @FirID;
-		ELSE
-			Update dbo.FIR set Result = @Result , status = 'Confirmed' where id = @FirID;
-
-			COMMIT TRANSACTION;
-		
-	END
+	DECLARE @err_msg nvarchar(max);
 	
-	ELSE
-	BEGIN
-		Update Fir set PhysicalDate = NULL
-						,PhysicalEncode=0
-						,EditName=@Login
-						,EditDate = GetDate()
-						,Physical = ''
-						,TotalDefectPoint = 0
-						,TotalInspYds = 0
-						,Status='New' 
-						,Result = ''
-				where id =@FirID;
-	END
+	BEGIN TRY
+		IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND (PhysicalEncode = 0 or OdorEncode = 0))
+		Begin
+			-- Do Physical Encode Check Dyelot
+			IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND PhysicalEncode = 0 and nonPhysical = 0)
+			BEGIN
+				-- FIR_Physical 未檢驗的 Dyelot
+				Set @err_msg = 'Physical Dyelot is not inspected:'+ char(10) +
+				Stuff((
+					select CONCAT(',',Dyelot)
+					from(
+						Select distinct a.Dyelot
+						from dbo.View_AllReceivingDetail a WITH (NOLOCK)
+						inner join dbo.FIR b WITH (NOLOCK) on b.POID = a.PoId and b.SEQ1 =a.Seq1 and b.SEQ2 = a.Seq2 and b.ReceivingID = a.Id
+						where b.Id=@FirID
+						and not exists(select 1 from dbo.FIR_Physical WITH (NOLOCK) where id = @FirID and Dyelot = a.Dyelot)
+					)x
+					for xml path('')
+				),1,1,'')
+				 + char(10) + char(10)
+			END
+
+			 -- Do Odor Encode Check Dyelot
+			IF EXISTS(SELECT * FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND OdorEncode = 0 and nonOdor = 0)
+			BEGIN
+				-- FIR_Odor 未檢驗的 Dyelot
+				Set @err_msg = isnull(@err_msg, '') + 'Odor Dyelot is not inspected: '+ char(10) +
+				Stuff((
+					select CONCAT(',',Dyelot)
+					from(
+						Select distinct a.Dyelot
+						from dbo.View_AllReceivingDetail a WITH (NOLOCK)
+						inner join dbo.FIR b WITH (NOLOCK) on b.POID = a.PoId and b.SEQ1 =a.Seq1 and b.SEQ2 = a.Seq2 and b.ReceivingID = a.Id
+						where b.Id=@FirID
+						and not exists(select 1 from dbo.FIR_Odor WITH (NOLOCK) where id = @FirID and Dyelot = a.Dyelot)
+					)x
+					for xml path('')
+				),1,1,'')
+			END
+			
+			IF @err_msg is not null
+			BEGIN
+				RAISERROR (@err_msg, -- Message text.
+				16, -- Severity.
+				1 -- State.
+				);
+			END
+
+			-- 上方 Physical and Odor check Dyelot end
+			IF @err_msg is null
+			Begin
+				BEGIN TRANSACTION
+					IF EXISTS(SELECT 1 FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND PhysicalEncode = 0)
+					BEGIN
+						Update Fir
+						set
+							PhysicalDate = GetDate()
+							,PhysicalEncode=1
+							,Physical = IIF(EXISTS(SELECT 1 FROM DBO.FIR_Physical WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
+							,PhysicalInspector=@Login
+
+							,EditName=@Login
+							,EditDate = GetDate()
+							,TotalDefectPoint = (select sum(t.TotalPoint) from dbo.FIR_Physical t WITH (NOLOCK) where t.ID =@FirID)
+							,TotalInspYds = (select sum(t.ActualYds) from dbo.FIR_Physical t WITH (NOLOCK) where t.ID =@FirID)
+						where id =@FirID;
+					END
+
+					IF EXISTS(SELECT 1 FROM DBO.FIR WITH (NOLOCK) WHERE ID = @FirID AND OdorEncode = 0)
+					BEGIN
+						Update Fir
+						set
+							OdorDate = GetDate()
+							,OdorEncode=1
+							,Odor = IIF(EXISTS(SELECT 1 FROM DBO.FIR_Odor WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
+							,OdorInspector = GetDate()
+
+							,EditName=@Login
+							,EditDate = GetDate()
+						where id =@FirID;
+					END
+
+				SELECT @Result = DBO.GetFirResult(@FirID);
+				IF @Result = ''
+					Update dbo.FIR set Result = @Result , status = 'New' where id = @FirID;
+				ELSE
+					Update dbo.FIR set Result = @Result , status = 'Confirmed' where id = @FirID;
+
+				COMMIT TRANSACTION;
+			End
+		End
+		-- Do Amend
+		Else
+		BEGIN
+			Update Fir
+			set
+				PhysicalDate = NULL
+				,PhysicalEncode=0
+				,Physical = ''
+
+				,OdorDate = NULL
+				,OdorEncode = 0
+				,Odor = ''
+			
+				,Status='New' 
+				,Result = ''
+				,TotalDefectPoint = 0
+				,TotalInspYds = 0
+
+				,EditName=@Login
+				,EditDate = GetDate()
+			where id =@FirID;
+		END
 
 	END TRY
 	BEGIN CATCH
