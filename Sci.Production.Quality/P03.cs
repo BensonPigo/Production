@@ -11,6 +11,9 @@ using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
+    /// <summary>
+    /// P03
+    /// </summary>
     public partial class P03 : Win.Tems.Input6
     {
         private readonly string loginID = Env.User.UserID;
@@ -18,6 +21,10 @@ namespace Sci.Production.Quality
         private int index;
         private DataRow[] find_dr;
 
+        /// <summary>
+        /// P03
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

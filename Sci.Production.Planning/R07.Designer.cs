@@ -42,22 +42,24 @@
             this.radioSintexEffReportCompare = new Sci.Win.UI.RadioButton();
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.numYear = new System.Windows.Forms.NumericUpDown();
+            this.lbBrand = new Sci.Win.UI.Label();
+            this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(442, 12);
+            this.print.Location = new System.Drawing.Point(426, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(442, 48);
+            this.toexcel.Location = new System.Drawing.Point(426, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(442, 84);
+            this.close.Location = new System.Drawing.Point(426, 84);
             this.close.TabIndex = 6;
             // 
             // lbOutputDate
@@ -137,7 +139,7 @@
             // 
             // lbCDcode
             // 
-            this.lbCDcode.Location = new System.Drawing.Point(13, 121);
+            this.lbCDcode.Location = new System.Drawing.Point(13, 160);
             this.lbCDcode.Name = "lbCDcode";
             this.lbCDcode.Size = new System.Drawing.Size(98, 23);
             this.lbCDcode.TabIndex = 136;
@@ -145,7 +147,7 @@
             // 
             // lbShift
             // 
-            this.lbShift.Location = new System.Drawing.Point(13, 157);
+            this.lbShift.Location = new System.Drawing.Point(13, 196);
             this.lbShift.Name = "lbShift";
             this.lbShift.Size = new System.Drawing.Size(98, 23);
             this.lbShift.TabIndex = 137;
@@ -155,7 +157,7 @@
             // 
             this.txtCDCode.BackColor = System.Drawing.Color.White;
             this.txtCDCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCDCode.Location = new System.Drawing.Point(115, 121);
+            this.txtCDCode.Location = new System.Drawing.Point(115, 160);
             this.txtCDCode.Name = "txtCDCode";
             this.txtCDCode.Size = new System.Drawing.Size(100, 23);
             this.txtCDCode.TabIndex = 138;
@@ -166,7 +168,7 @@
             this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShift.FormattingEnabled = true;
             this.comboShift.IsSupportUnselect = true;
-            this.comboShift.Location = new System.Drawing.Point(115, 157);
+            this.comboShift.Location = new System.Drawing.Point(115, 196);
             this.comboShift.Name = "comboShift";
             this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(66, 24);
@@ -174,7 +176,7 @@
             // 
             // lbFormat
             // 
-            this.lbFormat.Location = new System.Drawing.Point(13, 192);
+            this.lbFormat.Location = new System.Drawing.Point(13, 231);
             this.lbFormat.Name = "lbFormat";
             this.lbFormat.Size = new System.Drawing.Size(98, 23);
             this.lbFormat.TabIndex = 140;
@@ -184,7 +186,7 @@
             // 
             this.radioSintexEffReportCompare.AutoSize = true;
             this.radioSintexEffReportCompare.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSintexEffReportCompare.Location = new System.Drawing.Point(115, 220);
+            this.radioSintexEffReportCompare.Location = new System.Drawing.Point(115, 259);
             this.radioSintexEffReportCompare.Name = "radioSintexEffReportCompare";
             this.radioSintexEffReportCompare.Size = new System.Drawing.Size(193, 21);
             this.radioSintexEffReportCompare.TabIndex = 142;
@@ -197,7 +199,7 @@
             this.radioDetail.AutoSize = true;
             this.radioDetail.Checked = true;
             this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(115, 192);
+            this.radioDetail.Location = new System.Drawing.Point(115, 231);
             this.radioDetail.Name = "radioDetail";
             this.radioDetail.Size = new System.Drawing.Size(82, 21);
             this.radioDetail.TabIndex = 141;
@@ -229,9 +231,28 @@
             0});
             this.numYear.Visible = false;
             // 
+            // lbBrand
+            // 
+            this.lbBrand.Location = new System.Drawing.Point(13, 120);
+            this.lbBrand.Name = "lbBrand";
+            this.lbBrand.Size = new System.Drawing.Size(98, 23);
+            this.lbBrand.TabIndex = 144;
+            this.lbBrand.Text = "Brand";
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(115, 120);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 145;
+            // 
             // R07
             // 
-            this.ClientSize = new System.Drawing.Size(522, 283);
+            this.ClientSize = new System.Drawing.Size(522, 343);
+            this.Controls.Add(this.txtbrand1);
+            this.Controls.Add(this.lbBrand);
             this.Controls.Add(this.numYear);
             this.Controls.Add(this.radioSintexEffReportCompare);
             this.Controls.Add(this.radioDetail);
@@ -272,6 +293,8 @@
             this.Controls.SetChildIndex(this.radioDetail, 0);
             this.Controls.SetChildIndex(this.radioSintexEffReportCompare, 0);
             this.Controls.SetChildIndex(this.numYear, 0);
+            this.Controls.SetChildIndex(this.lbBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -294,5 +317,7 @@
         private Win.UI.RadioButton radioSintexEffReportCompare;
         private Win.UI.RadioButton radioDetail;
         private System.Windows.Forms.NumericUpDown numYear;
+        private Win.UI.Label lbBrand;
+        private Class.Txtbrand txtbrand1;
     }
 }

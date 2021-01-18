@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Sci.Production.PublicPrg
@@ -104,6 +105,7 @@ namespace Sci.Production.PublicPrg
         public static string[] GetOverallResult_Status(DataRow maindr)
         {
             string status = "New";
+
             string allResult;
             #region 新改的邏輯
 
@@ -174,6 +176,25 @@ namespace Sci.Production.PublicPrg
             return re_str;
         }
         #endregion
+
+        /// <summary>
+        /// defect 形式: 空白, A1, AA4
+        /// 最後一碼數字最大為 4 所以只會有 1 碼
+        /// default type = 0 排除數字, 取 defectID
+        /// type = 1 排除字母取 point
+        /// </summary>
+        /// <inheritdoc/>
+        public static string SplitDefectNum(string defectcode, int type = 0)
+        {
+            if (type == 0)
+            {
+                return Regex.Replace(defectcode, @"[\d]", string.Empty);
+            }
+            else
+            {
+                return Regex.Replace(defectcode, @"[A-Za-z]", string.Empty);
+            }
+        }
 
         /// <summary>
         /// Double Click後將Result替換成相反結果(Pass<=>Fail)
@@ -409,8 +430,7 @@ from    Adidas_FGWT with (nolock)
 where 1 = 1 {sqlWhere}
 ";
 
-            DataTable dtResult;
-            DualResult result = DBProxy.Current.Select(null, sqlGetDefaultFGWT, out dtResult);
+            DualResult result = DBProxy.Current.Select(null, sqlGetDefaultFGWT, out DataTable dtResult);
 
             if (!result)
             {

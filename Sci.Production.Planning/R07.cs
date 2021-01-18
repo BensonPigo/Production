@@ -20,6 +20,7 @@ namespace Sci.Production.Planning
         private string mdivision;
         private string cdCode;
         private string shift;
+        private string brand;
         private DateTime? outputDate1;
         private DateTime? outputDate2;
         private DataTable[] printData;
@@ -78,6 +79,7 @@ namespace Sci.Production.Planning
             this.factory = this.txtfactory.Text;
             this.cdCode = this.txtCDCode.Text;
             this.shift = this.comboShift.SelectedValue.ToString();
+            this.brand = this.txtbrand1.Text;
             this.bolSintexEffReportCompare = this.radioSintexEffReportCompare.Checked ? 1 : 0;
             return base.ValidateInput();
         }
@@ -91,13 +93,14 @@ namespace Sci.Production.Planning
         {
             this.printData = new DataTable[3];
             string sqlCmd = string.Format(
-                "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', {6}",
+                "exec dbo.GetAdidasEfficiencyReport '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', {7}",
                 this.outputDate1.Value.ToString("yyyy/MM/dd"),
                 this.outputDate2.Value.ToString("yyyy/MM/dd"),
                 this.mdivision,
                 this.factory,
                 this.cdCode,
                 this.shift,
+                this.brand,
                 this.bolSintexEffReportCompare);
 
             DBProxy.Current.DefaultTimeout = 1800;

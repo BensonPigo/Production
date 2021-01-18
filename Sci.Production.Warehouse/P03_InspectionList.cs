@@ -70,7 +70,8 @@ Odor,
 OdorEncode,
 OdorDate,
 a.PhysicalInspector,a.WeightInspector,a.ShadeboneInspector,a.ContinuityInspector,a.OdorInspector  
-From FIR a WITH (NOLOCK) Left join dbo.View_AllReceiving c WITH (NOLOCK) on c.id = a.receivingid
+From FIR a WITH (NOLOCK)
+Left join dbo.View_AllReceiving c WITH (NOLOCK) on c.id = a.receivingid
 Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2  and a.receivingid = @receivingid  order by seq1,seq2 ";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@poid", this.dr["id"].ToString()));

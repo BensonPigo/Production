@@ -2,7 +2,7 @@
     [Id]          VARCHAR (13)   CONSTRAINT [DF_TransferIn_Id] DEFAULT ('') NOT NULL,
     [MDivisionID] VARCHAR (8)    CONSTRAINT [DF_TransferIn_MDivisionID] DEFAULT ('') NOT NULL,
     [FactoryID]   VARCHAR (8)    NULL,
-    [IssueDate]   DATE           NOT NULL,
+    [IssueDate]   DATE           NULL,
     [Status]      VARCHAR (15)   CONSTRAINT [DF_TransferIn_Status] DEFAULT ('') NULL,
     [Remark]      NVARCHAR (100) CONSTRAINT [DF_TransferIn_Remark] DEFAULT ('') NULL,
     [FromFtyID]   VARCHAR (8)    CONSTRAINT [DF_TransferIn_FromFtyID] DEFAULT ('') NOT NULL,

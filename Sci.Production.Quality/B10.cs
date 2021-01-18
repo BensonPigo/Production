@@ -86,6 +86,7 @@ namespace Sci.Production.Quality
         {
             this.txtbrand.ReadOnly = false;
             this.radioOption1.Checked = true;
+            this.radioForWetDry.Checked = true;
             base.ClickNewAfter();
         }
 

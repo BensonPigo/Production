@@ -7,6 +7,7 @@
 		AddName varchar(10) NOT NULL CONSTRAINT [DF_QABrandSetting_AddName] DEFAULT (''),
 		EditDate Datetime NULL,
 		EditName varchar(10) NOT NULL CONSTRAINT [DF_QABrandSetting_EditName] DEFAULT (''),
+		CrockingTestOption tinyint  NOT NULL CONSTRAINT [DF_QABrandSetting_CrockingTestOption] DEFAULT (0),
 	 CONSTRAINT [PK_QABrandSetting] PRIMARY KEY CLUSTERED 
 	(
 		BrandID ASC
@@ -22,4 +23,16 @@ GO
 		@level1name = N'QABrandSetting',
 		@level2type = N'COLUMN',
 		@level2name = N'PointRateOption'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+		@value = N'此欄位影響摩擦測試項目
+ 0 : Only 1 for Wet and Dry
+ 1 : 2 kind (WEFT and WARP) of testing for Wet and Dry',
+		@level0type = N'SCHEMA',
+		@level0name = N'dbo',
+		@level1type = N'TABLE',
+		@level1name = N'QABrandSetting',
+		@level2type = N'COLUMN',
+		@level2name = N'CrockingTestOption'
 GO
