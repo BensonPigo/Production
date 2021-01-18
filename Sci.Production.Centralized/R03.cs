@@ -281,6 +281,11 @@ and ((o.LocalOrder = 1 and o.SubconInType in ('1','2')) or (o.LocalOrder = 0 and
                     strSQL += string.Format(" AND f.FtyZone = '{0}' ", this.FtyZone);
                 }
 
+                if (this.numNewStyleBaseOn.Value != 0)
+                {
+                    strSQL += string.Format(@" and dateadd(month, {0}, o.SciDelivery ) < so.OutputDate", -this.numNewStyleBaseOn.Value);
+                }
+
                 strSQL += @"
 select OutputDate
 ,Category
@@ -460,7 +465,13 @@ select A,B,C,D,E,F
 ,L,M
 ,N= Stuff((select   concat('/', a.FactoryID + ' ' + (case     when Max(a.OutputDate) is null then 'New Style'
                                                                when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
-                                                               else concat(min(a.SewingLineID),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
+                                                               else concat((Stuff((
+																	select distinct concat(' ', t.SewingLineID)
+																	from #tmp t
+																	where t.A = #tmp.A
+                                                                    and t.B = #tmp.B
+                                                                    and t.E = #tmp.E
+																	FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
                                                                end))
                 from #tmp a where   a.A = #tmp.A and 
                                     a.B = #tmp.B and
@@ -587,7 +598,13 @@ select A,B,C,D,E,F,G,H,I,J
 ,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
 ,P= case    when Max(OutputDate) is null then 'New Style'
             when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
-            else concat(min(SewingLineID),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
+            else concat((Stuff((
+							select distinct concat(' ', t.SewingLineID)
+							from #tmp t
+							where t.C = #tmp.C
+							and t.D = #tmp.D
+							and t.H = #tmp.H
+							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
 Group BY A,B,C,D,E,F,G,H,I,J 
@@ -620,7 +637,13 @@ order by A,B,C,D,G";
 ,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
 ,P= case    when Max(OutputDate) is null then 'New Style'
             when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
-            else concat(min(SewingLineID),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
+            else concat((Stuff((
+							select distinct concat(' ', t.SewingLineID)
+							from #tmp t
+							where t.B = #tmp.B
+							and t.E = #tmp.E
+							and t.I = #tmp.I
+							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
 Group BY A,B,C,D,E,F,G,H,I,J 
