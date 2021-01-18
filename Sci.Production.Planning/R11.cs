@@ -131,7 +131,8 @@ outer apply(
 					where oa.id=o.ID
 					for xml path('')),1,1,'')
 ) oa
-Where 1=1 {whereIncludeCancelOrder} "));
+where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID and f.IsProduceFty = 0)
+{whereIncludeCancelOrder} "));
             #region --- 條件組合  ---
             this.condition.Clear();
             if (!MyUtility.Check.Empty(this.sciDelivery1))
