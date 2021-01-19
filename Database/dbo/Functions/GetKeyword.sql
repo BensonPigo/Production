@@ -1,11 +1,11 @@
-﻿
-Create FUNCTION [dbo].[GetKeyword]
+﻿CREATE FUNCTION [dbo].[GetKeyword]
 (
 	  @OrderID				VarChar(13)
 	 ,@Order_BoaUkey		BigInt
 	 ,@Keyword				VarChar(Max)
 	 ,@Article				VarChar(8)	= ''
 	 ,@SizeCode				VarChar(8)	= ''
+	 ,@Location				VarChar(1)	= ''
 )
 RETURNS nvarchar(max)
 AS
@@ -58,6 +58,7 @@ BEGIN
 		  From Cte_Keyword
 		 Where StartPos > 0
 		   And EndPos > 0
+		   And StartPos < EndPos
 		 Order by StartPos;
 	
 	Select @Keyword_RowID = Min(RowID), @Keyword_RowCount = Max(RowID) From @tmp_Keyword;
@@ -154,7 +155,7 @@ BEGIN
 					Begin
 						If IsNull(@KeyValue, '') = ''
 						Begin
-							set @KeyValue = dbo.GetKeywordValue(@OrderID,@KeywordID,@Article,@SizeCode)
+							set @KeyValue = dbo.GetKeywordValue(@OrderID,@KeywordID,@Article,@SizeCode,@Location)
 
 							If Upper(@KeywordID) = Upper('Orig Buyer deliver')
 							Begin

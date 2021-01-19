@@ -4,8 +4,8 @@
     [BrandID]             VARCHAR (8)    CONSTRAINT [DF_Style_BrandID] DEFAULT ('') NOT NULL,
     [ProgramID]           VARCHAR (12)   CONSTRAINT [DF_Style_ProgramID] DEFAULT ('') NOT NULL,
     [SeasonID]            VARCHAR (10)   CONSTRAINT [DF_Style_SeasonID] DEFAULT ('') NOT NULL,
-    [Model]               VARCHAR (5)    CONSTRAINT [DF_Style_Model] DEFAULT ('') NOT NULL,
-    [Description]         NVARCHAR (50)  CONSTRAINT [DF_Style_Description] DEFAULT ('') NOT NULL,
+    [Model]               VARCHAR (25)   CONSTRAINT [DF_Style_Model] DEFAULT ('') NULL,
+    [Description]         VARCHAR (100)  CONSTRAINT [DF_Style_Description] DEFAULT ('') NULL,
     [StyleName]           NVARCHAR (50)  CONSTRAINT [DF_Style_StyleName] DEFAULT ('') NOT NULL,
     [ComboType]           VARCHAR (4)    CONSTRAINT [DF_Style_ComboType] DEFAULT ('') NULL,
     [CdCodeID]            VARCHAR (6)    CONSTRAINT [DF_Style_CdCodeID] DEFAULT ('') NOT NULL,
@@ -60,18 +60,24 @@
     [Gender]              VARCHAR (10)   CONSTRAINT [DF_Style_Gender1] DEFAULT ('') NULL,
     [ThreadEditname]      VARCHAR (10)   NULL,
     [ThreadEditdate]      DATETIME       NULL,
-    [ThickFabric] BIT CONSTRAINT [DF_Style_ThickFabric] DEFAULT (0) NOT NULL, 
-    [DyeingID] VARCHAR(5) NULL, 
-    [Pressing1] INT NULL DEFAULT (1), 
-    [Pressing2] INT NULL DEFAULT (0), 
-    [Folding1] INT NULL DEFAULT (0), 
-    [Folding2] INT NULL DEFAULT (0), 
-	ExpectionFormStatus Varchar(1) NOT NULL CONSTRAINT [DF_Style_ExpectionFormStatus] DEFAULT(''),
-	ExpectionFormDate Date NULL,
-    [ThickFabricBulk] BIT NULL DEFAULT ((0)), 
-    [HangerPack] BIT NULL DEFAULT ((0)), 
+    [ThickFabric]         BIT            CONSTRAINT [DF_Style_ThickFabric] DEFAULT ((0)) NOT NULL,
+    [DyeingID]            VARCHAR (5)    NULL,
+    [TPEEditName]         VARCHAR (10)   NULL,
+    [TPEEditDate]         DATETIME       NULL,
+    [Pressing1]           INT            DEFAULT ((1)) NULL,
+    [Pressing2]           INT            DEFAULT ((0)) NULL,
+    [Folding1]            INT            DEFAULT ((0)) NULL,
+    [Folding2]            INT            DEFAULT ((0)) NULL,
+    [ExpectionFormStatus] VARCHAR (1)    NULL,
+    [ExpectionFormDate]   DATE           NULL,
+    [ThickFabricBulk]     BIT            DEFAULT ((0)) NULL,
+    [HangerPack]          BIT            DEFAULT ((0)) NULL,
+    [FitType]             VARCHAR (50)   NULL,
+    [GearLine]            VARCHAR (50)   NULL,
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
+
+
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式資料基本檔', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style';
@@ -319,50 +325,30 @@ CREATE NONCLUSTERED INDEX [StyleUkey]
 
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditname';
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ThreadP01use', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ThreadEditdate';
 
 
 GO
 
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'整燙設定1',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style',
-    @level2type = N'COLUMN',
-    @level2name = N'Pressing1'
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'整燙設定2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style',
-    @level2type = N'COLUMN',
-    @level2name = N'Pressing2'
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��S�]�w1', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Pressing1';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'折衣設定1',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style',
-    @level2type = N'COLUMN',
-    @level2name = N'Folding1'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��S�]�w2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Pressing2';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'折衣設定2',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style',
-    @level2type = N'COLUMN',
-    @level2name = N'Folding2'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���]�w1', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Folding1';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���]�w2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'Folding2';
+
+
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Approce/Reject', @level0type = N'SCHEMA', @level0name = N'dbo'
@@ -370,15 +356,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Approce/Rej
 , @level2type = N'COLUMN', @level2name = N'ExpectionFormStatus'
 GO
 	
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紀錄日期', @level0type = N'SCHEMA', @level0name = N'dbo'
-, @level1type = N'TABLE', @level1name = N'Style'
-, @level2type = N'COLUMN', @level2name = N'ExpectionFormDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style', @level2type = N'COLUMN', @level2name = N'ExpectionFormDate';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'大貨與報價拆分判斷邏輯',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'Style',
-    @level2type = N'COLUMN',
-    @level2name = N'ThickFabricBulk'

@@ -1172,7 +1172,12 @@ else
 				t.SizeItem_Elastic		= s.SizeItem_Elastic,
 				t.BomTypePo				= s.BomTypePo,
 				t.Keyword				= s.Keyword,
-				t.Seq1					= s.Seq1
+				t.Seq1					= s.Seq1,
+				t.BomTypeMatching		= s.BomTypeMatching,
+				t.BomTypeCalculatePCS	= s.BomTypeCalculatePCS,
+				t.SizeItem_PCS			= s.SizeItem_PCS,
+				t.LimitUp				= s.LimitUp,
+				t.LimitDown				= s.LimitDown
 		when not matched by target then
 			insert (
 				Id					, Ukey				, Refno					, SCIRefno				, SuppID
@@ -1180,18 +1185,21 @@ else
 				, SizeItem			, BomTypeZipper		, Remark				, ProvidedPatternRoom	, ColorDetail			
 				, isCustCD			, lossType			, LossPercent			, LossQty				, LossStep				
 				, AddName			, AddDate			, EditName				, EditDate				, SizeItem_Elastic		
-				, BomTypePo			, Keyword			, Seq1
+				, BomTypePo			, Keyword			, Seq1					, BomTypeMatching		, BomTypeCalculatePCS
+				, SizeItem_PCS		, LimitUp			, LimitDown
 			) values (
 				s.Id				, s.Ukey			, s.Refno				, s.SCIRefno			, s.SuppID
 				, s.Seq1			, s.ConsPC			, s.BomTypeSize			, s.FabricPanelCode		, s.PatternPanel		
 				, s.SizeItem		, s.BomTypeZipper	, s.Remark				, s.ProvidedPatternRoom	, s.ColorDetail			
 				, s.isCustCD		, s.lossType		, s.LossPercent			, s.LossQty				, s.LossStep			
 				, s.AddName			, s.AddDate			, s.EditName			, s.EditDate			, s.SizeItem_Elastic	
-				, s.BomTypePo		, s.Keyword			, s.Seq1
+				, s.BomTypePo		, s.Keyword			, s.Seq1				, s.BomTypeMatching		, s.BomTypeCalculatePCS
+				, s.SizeItem_PCS	, s.LimitUp			, s.LimitDown
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 		
+
 		-----------------Order_BoA_Article----------------
 		Merge Production.dbo.Order_BoA_Article as t
 		Using (
@@ -1249,7 +1257,8 @@ else
 				t.AddDate			= s.AddDate,
 				t.EditName			= s.EditName,
 				t.EditDate			= s.EditDate,
-				t.Keyword			= s.Keyword
+				t.Keyword			= s.Keyword,
+				t.Special			= s.Special
 		when not matched by target then
 			insert (
 				Id				, UKEY			, Order_BOAUkey		, OrderQty			, Refno
@@ -1257,15 +1266,65 @@ else
 				, ColorId		, SuppColor		, SizeCode			, Sizespec			, SizeUnit
 				, OrderIdList	, SysUsageQty	, Remark			, BomZipperInsert	, BomCustPONo
 				, AddName		, AddDate		, EditName			, EditDate			, Keyword
+				, Special
 			) values (
 				s.Id			, s.UKEY		, s.Order_BOAUkey	, s.OrderQty		, s.Refno
 				, s.SCIRefno	, s.Price		, s.UsageQty		, s.UsageUnit		, s.Article
 				, s.ColorId		, s.SuppColor	, s.SizeCode		, s.Sizespec		, s.SizeUnit
 				, s.OrderIdList	, s.SysUsageQty	, s.Remark			, s.BomZipperInsert	, s.BomCustPONo
 				, s.AddName		, s.AddDate		, s.EditName		, s.EditDate		, s.Keyword
+				, s.Special
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
+
+		---------------Order_BOA_Matching
+		Merge Production.dbo.Order_BOA_Matching as t
+		Using (
+			select a.* 
+			from Trade_To_Pms.dbo.Order_BOA_Matching a With (NoLock)
+			inner join #Torder b on a.id = b.id
+		) as s on t.[Order_BOAUkey] = s.[Order_BOAUkey]
+		when matched then
+			update set
+				 t.[ID]				=s.[ID]
+				,t.[Order_BOAUkey]	=s.[Order_BOAUkey]
+				,t.[Seq]			=s.[Seq]
+				,t.[AddName]		=s.[AddName]
+				,t.[AddDate]		=s.[AddDate]
+				,t.[EditName]		=s.[EditName]
+				,t.[EditDate]		=s.[EditDate]
+		when not matched then 
+			insert  ([ID],[Order_BOAUkey],[Seq],[AddName],[AddDate],[EditName],[EditDate])
+			values (s.[ID],s.[Order_BOAUkey],s.[Seq],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])		
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;		
+			
+		---------------Order_BOA_Matching_Detail
+		Merge Production.dbo.Order_BOA_Matching_Detail as t
+		Using (
+			select a.* 
+			from Trade_To_Pms.dbo.Order_BOA_Matching_Detail a With (NoLock)
+			inner join #Torder b on a.id = b.id
+		) as s on t.[Order_BOAUkey] = s.[Order_BOAUkey]
+		when matched then
+			update set
+				 t.[ID]			   = s.[ID]
+				,t.[Order_BOAUkey] = s.[Order_BOAUkey]
+				,t.[Seq]		   = s.[Seq]
+				,t.[SizeCode]	   = s.[SizeCode]
+				,t.[MatchingRatio] = s.[MatchingRatio]
+				,t.[AddName]	   = s.[AddName]
+				,t.[AddDate]	   = s.[AddDate]
+				,t.[EditName]	   = s.[EditName]
+				,t.[EditDate]	   = s.[EditDate]
+		when not matched then 
+			insert  ([ID],[Order_BOAUkey],[Seq],[SizeCode],[MatchingRatio],[AddName],[AddDate],[EditName],[EditDate])
+			values (s.[ID],s.[Order_BOAUkey],s.[Seq],s.[SizeCode],s.[MatchingRatio],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;	
+
+
 
 		---------------Order_MarkerList------------Marker List
 

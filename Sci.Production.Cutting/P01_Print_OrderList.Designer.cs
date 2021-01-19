@@ -136,7 +136,6 @@
             this.radioConsumptionCalculateByMarkerListConsPerPC.TabIndex = 9;
             this.radioConsumptionCalculateByMarkerListConsPerPC.Text = "Consumption Calculate by Marker List Cons/Per pc";
             this.radioConsumptionCalculateByMarkerListConsPerPC.UseVisualStyleBackColor = true;
-            this.radioConsumptionCalculateByMarkerListConsPerPC.Visible = false;
             // 
             // radioTTLConsumption
             // 

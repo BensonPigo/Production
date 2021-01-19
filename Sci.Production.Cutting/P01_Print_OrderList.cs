@@ -1323,20 +1323,14 @@ select distinct sizecode,Seq
                 this.Extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
-                sxrc sxr = new sxrc(xltPath, true)
-                {
-                    AllowRangeTransferToString = false,
-                };
-                string cuttingfactory4 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
-                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory4, "Factory", "ID"));
+                SaveXltReportCls sxr = new SaveXltReportCls(xltPath, true);
+                sxr.AllowRangeTransferToString = false;
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
-                sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "QTY", dr["QTY"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
-                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1])
-                {
-                    ShowHeader = false,
-                };
+                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dts[1]);
+                dt.ShowHeader = false;
 
                 // 欄位水平對齊
                 for (int i = 1; i <= dt.Columns.Count; i++)
@@ -1347,7 +1341,7 @@ select distinct sizecode,Seq
                         xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                     }
 
-                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, xha);
+                    SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, xha);
                     if (i == 6 | i == 9 | i == 11 | i == 13)
                     {
                         citbl.PointCnt = 2; // 小數點兩位

@@ -142,6 +142,42 @@ SELECT ID
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
+----------------------Brand_Month
+Delete Production.dbo.Brand_Month
+from Production.dbo.Brand_Month as a left join Trade_To_Pms.dbo.Brand_Month as b
+on a.id = b.id and a.Year = b.Year and a.Month = b.Month
+where b.id is null
+
+UPDATE a
+SET 	
+     a.[MonthLabel]=b.[MonthLabel]
+    ,a.[AddName]	 =b.[AddName]
+    ,a.[AddDate]	 =b.[AddDate]
+    ,a.[EditName]	 =b.[EditName]
+    ,a.[EditDate]	 =b.[EditDate]
+from Production.dbo.Brand_Month as a inner join Trade_To_Pms.dbo.Brand_Month as b ON a.id = b.id and a.Year = b.Year and a.Month = b.Month
+
+INSERT INTO [dbo].[Brand_Month]
+           ([ID]
+           ,[Year]
+           ,[Month]
+           ,[MonthLabel]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+SELECT
+	 [ID]
+    ,[Year]
+    ,[Month]
+    ,[MonthLabel]
+    ,[AddName]
+    ,[AddDate]
+    ,[EditName]
+    ,[EditDate]
+from Trade_To_Pms.dbo.Brand_Month as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.Brand_Month as a WITH (NOLOCK) where a.id = b.id and a.Year = b.Year and a.Month = b.Month)
+
 --Season
 --ASeason Season
 ----------------------刪除主TABLE多的資料
@@ -447,6 +483,7 @@ SET
       ,a.EditDate	      =b.EditDate
 	  ,a.IsTrimCardOther = b.isTrimCardOther	
 	  ,a.IsThread        = b.IsThread
+	  ,a.LossQtyCalculateType        = b.LossQtyCalculateType
 
 from Production.dbo.MtlType as a inner join Trade_To_Pms.dbo.MtlType as b ON a.id=b.id
 where b.EditDate between @DateStart and @DateEnd
@@ -467,6 +504,7 @@ ID
       ,EditDate
 	  ,isTrimCardOther
 	  ,IsThread
+	  ,LossQtyCalculateType
 
 )
 select 
@@ -485,6 +523,7 @@ ID
       ,EditDate
 	  ,isTrimCardOther
 	  ,IsThread
+	  ,LossQtyCalculateType
 
 from Trade_To_Pms.dbo.MtlType as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.MtlType as a WITH (NOLOCK) where a.id = b.id)
@@ -737,6 +776,8 @@ SET
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
 	  ,a.Kit		          =b.Kit
+	  ,a.HealthID		      =b.HealthID
+
 from Production.dbo.CustCD as a inner join Trade_To_Pms.dbo.CustCD as b ON a.id=b.id and a.BrandID=b.BrandID
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.CustCD(
@@ -773,6 +814,7 @@ BrandID
       ,EditName
       ,EditDate
 	  ,Kit
+	  ,HealthID
 )
 select 
 BrandID
@@ -808,6 +850,7 @@ BrandID
       ,EditName
       ,EditDate
 	  ,Kit
+	  ,HealthID
 from Trade_To_Pms.dbo.CustCD as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CustCD as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID)
 
@@ -1531,7 +1574,7 @@ MtltypeId
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,IgnoreLimitUpBrand
 )
 select 
 MtltypeId
@@ -1548,6 +1591,7 @@ MtltypeId
       ,AddDate
       ,EditName
       ,EditDate
+	  ,IgnoreLimitUpBrand
 from Trade_To_Pms.dbo.LossRateAccessory as b WITH (NOLOCK)
 where not exists(select MtltypeId from Production.dbo.LossRateAccessory as a WITH (NOLOCK) where a.MtltypeId = b.MtltypeId)
 
@@ -1598,6 +1642,7 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.Waste	      = (b.LossTW + b.LossNonTW)/2
+      ,a.IgnoreLimitUpBrand	      =b.IgnoreLimitUpBrand	
 	  
 
 from Production.dbo.LossRateAccessory as a inner join Trade_To_Pms.dbo.LossRateAccessory as b ON a.MtltypeId=b.MtltypeId
@@ -4043,6 +4088,52 @@ DELETE Production.dbo.Consignee_Detail
 FROM Production.dbo.Consignee_Detail a
 LEFT JOIN Trade_To_Pms.dbo.Consignee_Detail b ON a.Ukey = b.Ukey 
 WHERE b.Ukey is null
+
+
+--------HealthLabelSupp_FtyExpiration
+DELETE Production.dbo.HealthLabelSupp_FtyExpiration
+FROM Production.dbo.HealthLabelSupp_FtyExpiration a
+LEFT JOIN Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
+WHERE b.id is null
+
+UPDATE a
+SET  
+     a.[Registry]		= b.[Registry]
+    ,a.[Expiration]		= b.[Expiration]
+    ,a.[AddName]		= b.[AddName]
+    ,a.[AddDate]		= b.[AddDate]
+    ,a.[EditName]		= b.[EditName]
+    ,a.[EditDate]		= b.[EditDate]
+    ,a.[ApplyExtension]	= b.[ApplyExtension]
+    ,a.[Remark]			= b.[Remark]
+FROM Production.dbo.HealthLabelSupp_FtyExpiration a
+INNER JOIN Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
+
+INSERT INTO [dbo].[HealthLabelSupp_FtyExpiration]
+           ([ID]
+           ,[FactoryID]
+           ,[Registry]
+           ,[Expiration]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+           ,[ApplyExtension]
+           ,[Remark])
+select 
+	 a.[ID]
+	,a.[FactoryID]
+	,a.[Registry]
+	,a.[Expiration]
+	,a.[AddName]
+	,a.[AddDate]
+	,a.[EditName]
+	,a.[EditDate]
+	,a.[ApplyExtension]
+	,a.[Remark]
+FROM Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration a
+LEFT JOIN Production.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
+WHERE b.id is null
 
 END
 

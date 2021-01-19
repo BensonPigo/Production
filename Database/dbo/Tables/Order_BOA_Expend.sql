@@ -30,8 +30,11 @@
     [EditName]        VARCHAR (10)    CONSTRAINT [DF_Order_BOA_Expend_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME        NULL,
     [Keyword]         VARCHAR (MAX)   NULL,
+    [Special]         NVARCHAR (MAX)  NULL,
     CONSTRAINT [PK_Order_BOA_Expend] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 
