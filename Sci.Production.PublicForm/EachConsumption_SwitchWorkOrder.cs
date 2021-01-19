@@ -133,6 +133,15 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
             }
             #endregion
 
+            #region 產生P20單不可做 CuttingOutput_Detail
+            string sqlcmd = $@"select 1 from CuttingOutput_Detail where CuttingID  = '{this.cuttingid}'";
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox("Already created output, cannnot delete");
+                return;
+            }
+            #endregion
+
             #region 若只要有一筆不存在BOF就不可轉
             cmd = string.Format(@"Select * from Order_EachCons a WITH (NOLOCK) Left join Order_Bof b WITH (NOLOCK) on a.id = b.id and a.FabricCode = b.FabricCode Where a.id = '{0}' and b.id is null", this.cuttingid);
             DualResult worRes = DBProxy.Current.Select(null, cmd, out DataTable bofnullTb);
