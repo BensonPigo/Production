@@ -28,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>Sci.Production.Centralized.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\Sci.Production.Centralized.XML</DocumentationFile>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,6 +39,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>Sci.Production.Centralized.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -67,6 +69,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Sci.Production.Centralized.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ict, Version=1.0.1705.800, Culture=neutral, processorArchitecture=MSIL">
