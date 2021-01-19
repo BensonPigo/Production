@@ -889,7 +889,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                dtMain.ImportRow(this.CurrentMaintain);
                 Task.Run(() => new Gensong_AutoWHFabric().SentReturnReceiptToGensongAutoWHFabric(dtMain, isConfirmed))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
