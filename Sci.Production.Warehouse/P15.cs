@@ -404,6 +404,12 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     }
                 }
                 #endregion
+                #region 檢查庫存項WMSLock
+                if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "IssueLack_Detail"))
+                {
+                    return;
+                }
+                #endregion
                 #region -- 檢查負數庫存 --
 
                 sqlcmd = string.Format(
@@ -590,6 +596,12 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     }
                 }
                 #endregion
+                #region 檢查庫存項WMSLock
+                if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "IssueLack_Detail"))
+                {
+                    return;
+                }
+                #endregion
                 #region -- 檢查負數庫存 --
 
                 sqlcmd = string.Format(
@@ -638,6 +650,13 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 , IssueLackId = DEFAULT where id = '{2}';", this.CurrentMaintain["issuedate"], this.CurrentMaintain["id"], this.CurrentMaintain["requestid"]));
             sqlupd4.Append(Environment.NewLine);
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = DEFAULT where dbo.Lack_Detail.id = '{0}' ", this.CurrentMaintain["requestid"]));
+            #endregion
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "IssueLack_Detail"))
+            {
+                return;
+            }
             #endregion
 
             TransactionScope transactionscope = new TransactionScope();
@@ -1072,7 +1091,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail, isConfirmed, "P15"))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

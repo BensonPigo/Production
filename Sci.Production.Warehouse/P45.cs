@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -260,6 +261,14 @@ Balacne Qty is not enough!!
             {
                 return;
             }
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Adjust_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region    依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
             string sql = string.Format(
                 @"

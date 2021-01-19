@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
@@ -106,6 +107,7 @@ select  [select] = 0
         ,[Qty] = f.InQty - f.OutQty+f.AdjustQty
         ,f.Ukey
         ,[Lock] = iif(f.Lock = 1, 'Y', '')
+        ,f.WMSLock
         ,[MDivisionPoDetailUkey] = mdp.Ukey
 from FtyInventory f 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = f.PoId and p1.seq1 = f.Seq1 and p1.SEQ2 = f.Seq2
@@ -153,6 +155,19 @@ and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
             if (!selectedBulk.Any())
             {
                 MyUtility.Msg.WarningBox("Please select data first");
+                return;
+            }
+
+            DataRow[] chkWMSLock = this.dtBulk.Select(" select = 1 and WMSLock = 1");
+            string errmsg = string.Empty;
+            if (chkWMSLock.Length > 0)
+            {
+                foreach (DataRow tmp in chkWMSLock)
+                {
+                    errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} is locked!!" + Environment.NewLine;
+                }
+
+                MyUtility.Msg.WarningBox("Material Locked cause from WMS system not received below material yet." + Environment.NewLine + errmsg, "Warning");
                 return;
             }
 

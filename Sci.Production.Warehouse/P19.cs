@@ -308,6 +308,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "TransferOut_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = $@"
@@ -558,6 +565,13 @@ having f.balanceQty + sum(d.Qty) < 0
 
             #endregion 檢查負數庫存
 
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "TransferOut_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region 更新表頭狀態資料
 
             sqlupd3 = string.Format(
@@ -628,6 +642,13 @@ having f.balanceQty + sum(d.Qty) < 0
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
             #endregion 更新庫存數量  ftyinventory
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "TransferOut_Detail"))
+            {
+                return;
+            }
+            #endregion
 
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)
@@ -881,7 +902,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail, isConfirmed, "P19"))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

@@ -2093,6 +2093,13 @@ WHERE i.Id = '{this.CurrentMaintain["id"]}' AND  f.lock = 1
             }
             #endregion
 
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "Issue_Summary"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
@@ -2304,6 +2311,13 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                        }).ToList();
             sqlupd2_B.Append(Prgs.UpdateMPoDetail(4, null, false));
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
+            #endregion
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
+            {
+                return;
+            }
             #endregion
 
             TransactionScope transactionscope = new TransactionScope();
@@ -3519,7 +3533,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
                     this.ShowErr(drResult);
                 }
 
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail, isConfirmed, "P33"))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

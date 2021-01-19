@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
+using System.Configuration;
+using static AutomationErrMsg;
+using Newtonsoft.Json;
 
 namespace Sci.Production.Automation
 {
@@ -92,6 +95,36 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
+        /// Save Automation Check Msg
+        /// </summary>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
+        public static void SaveAutomationCheckMsg(AutomationErrMsg automationErrMsg)
+        {
+            string saveSql = $@"
+      insert into AutomationCheckMsg( SuppID,  ModuleName,  APIThread,  SuppAPIThread,  ErrorCode,  ErrorMsg,  JSON,  AddName, AddDate)
+                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, @AddName, GETDATE())
+";
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+               new SqlParameter("@SuppID", automationErrMsg.suppID),
+               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
+               new SqlParameter("@APIThread", automationErrMsg.apiThread),
+               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
+               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
+               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
+               new SqlParameter("@JSON", automationErrMsg.json),
+               new SqlParameter("@AddName", Env.User.UserID),
+            };
+
+            DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
+
+            if (!result)
+            {
+                throw result.GetException();
+            }
+        }
+
+        /// <summary>
         /// AutomationExceptionHandler
         /// </summary>
         /// <param name="task">Task</param>
@@ -120,6 +153,36 @@ namespace Sci.Production.Automation
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
                 SaveAutomationErrMsg(automationErrMsg);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// SendWebAPI for WM_Auto Only
+        /// </summary>
+        /// <param name="baseUrl">Base Url</param>
+        /// <param name="requestUri">Request Url</param>
+        /// <param name="jsonBody">Json Body</param>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
+        /// <returns>DualResult</returns>
+        public static DualResult WH_Auto_SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
+        {
+            DualResult result = new DualResult(true);
+            WebApiBaseResult webApiBaseResult;
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 30);
+            bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                automationErrMsg.errorCode = JsonConvert.DeserializeObject<IWebApiFailResponse>(webApiBaseResult.responseContent).Error_Code.ToString();
+                automationErrMsg.errorMsg = JsonConvert.DeserializeObject<IWebApiFailResponse>(webApiBaseResult.responseContent).Error.ToString();
+                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                SaveAutomationCheckMsg(automationErrMsg);
+            }
+            else if (saveAllmsg)
+            {
+                SaveAutomationCheckMsg(automationErrMsg);
             }
 
             return result;
@@ -158,6 +221,41 @@ namespace Sci.Production.Automation
         public static string GetSciUrl()
         {
             return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{Sci}' and ModuleName = '{Sci}' and ModuleType = '{ModuleType}' ", "Production");
+        }
+
+        /// <summary>
+        /// Get Supplier Url
+        /// </summary>
+        /// <returns>WebApiURL.URL</returns>
+        public static string GetSupplierUrl(string supp, string ModuleName)
+        {
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{supp}' and ModuleName = '{ModuleName}' and ModuleType = '{ModuleType}' ", "Production");
+        }
+
+        public delegate ErrorRespone ParsingErrResponse(string webApiBaseResult);
+
+        public interface IWebApiFailResponse
+        {
+            int Error_Code { get; set; }
+            string Error { get; set; }
+        }
+
+        public class ErrorRespone
+        {
+            private string error_code = string.Empty;
+            private string error = string.Empty;
+
+            public string Error_code
+            {
+                get { return this.error_code; }
+                set { this.error_code = value; }
+            }
+
+            public string Error
+            {
+                get { return this.error; }
+                set { this.error = value; }
+            }
         }
     }
 }

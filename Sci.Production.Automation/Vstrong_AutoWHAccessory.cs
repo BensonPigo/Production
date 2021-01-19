@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Newtonsoft.Json;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,73 +17,209 @@ namespace Sci.Production.Automation
     {
         private static readonly string VstrongSuppID = "3A0196";
         private static readonly string moduleName = "AutoWHAccessory";
+        private static readonly string suppAPIThread = "snpvsinterface/services/pmstowms";
         private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
+        private static readonly string URL = GetSupplierUrl(VstrongSuppID, moduleName);
 
         /// <inheritdoc/>
         public static bool IsVstrong_AutoWHAccessoryEnable => IsModuleAutomationEnable(VstrongSuppID, moduleName);
 
         /// <summary>
-        /// Receive_Detail
+        /// Sent Receive_Detail New
         /// </summary>
-        /// <param name="dtDetail">Detail DataSource</param>
-        public void SentReceive_DetailToVstrongAutoWHAccessory(DataTable dtDetail)
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="type">type</param>
+        public void SentReceive_Detail_New(DataTable dtDetail, string type = "")
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            string apiThread = "SentReceiving_DetailToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            DualResult result;
+            string sqlcmd = string.Empty;
 
-            dynamic bodyObject = new ExpandoObject();
-            bodyObject = dtDetail.AsEnumerable()
-                .Select(dr => new
+            // Confirm後要上鎖物料
+            if (type == "P07" || type == "P18")
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
                 {
-                    ID = dr["ID"].ToString(),
-                    InvNo = dr["InvNo"].ToString(),
-                    PoId = dr["PoId"].ToString(),
-                    Seq1 = dr["Seq1"].ToString(),
-                    Seq2 = dr["Seq2"].ToString(),
-                    Refno = dr["Refno"].ToString().TrimEnd(),
-                    StockUnit = dr["StockUnit"].ToString(),
-                    StockQty = (decimal)dr["StockQty"],
-                    PoUnit = dr["PoUnit"].ToString(),
-                    ShipQty = (decimal)dr["ShipQty"],
-                    Color = dr["Color"].ToString().TrimEnd(),
-                    SizeCode = dr["SizeCode"].ToString().TrimEnd(),
-                    Weight = (decimal)dr["Weight"],
-                    StockType = dr["StockType"].ToString(),
-                    MtlType = dr["MtlType"].ToString(),
-                    Ukey = (long)dr["Ukey"],
-                    ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
-                    WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
-                    Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
-                });
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Receiving_Detail", bodyObject));
+            #region 記錄Confirmed後有傳給WMS的資料
+            switch (type)
+            {
+                case "P07":
+                case "P08":
+                    sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "P18":
+                    sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+            }
 
-            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+            #endregion
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
+
+            // 將DataTable 轉成Json格式
+            string jsonBody = callMethod.GetJsonBody(dtDetail, "Receiving_Detail");
+
+            // Call API傳送給WMS
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, callMethod.automationErrMsg);
+        }
+
+        /// <summary>
+        /// Sent Receive_Detail Delete
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="type">type</param>
+        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string type = "")
+        {
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
+            string jsonBody = callMethod.GetJsonBody(dtDetail, "Receiving_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            switch (type)
+            {
+                case "P07":
+                case "P08":
+                    sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "P18":
+                    sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return true;
+            }
+
+            return true;
         }
 
         /// <summary>
         /// Issue_Detail To Vstrong
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        public void SentIssue_DetailToVstrongAutoWHAccessory(DataTable dtDetail)
+        /// <param name="isConfirmed">is Confirmed</param>
+        /// <param name="type">type</param>
+        public void SentIssue_DetailToVstrongAutoWHAccessory(DataTable dtDetail, bool isConfirmed, string type = "")
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
+            #region Confirmed 後記錄那些資料有傳給WMS
+            DualResult result;
+            string sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                switch (type)
+                {
+                    case "P11":
+                    case "P12":
+                    case "P13":
+                    case "P33":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from Issue_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P15":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from IssueLack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P19":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from TransferOut_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
+
             string apiThread = "SentIssue_DetailToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dtDetail.AsEnumerable()
@@ -123,9 +260,7 @@ namespace Sci.Production.Automation
             }
 
             string apiThread = "SentRemoveC_DetailToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             string sqlcmd = $@"
 select distinct 
@@ -164,6 +299,7 @@ and exists(
             DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
             {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -171,6 +307,26 @@ and exists(
             {
                 return;
             }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from Adjust_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dt.AsEnumerable()
@@ -205,9 +361,7 @@ and exists(
             }
 
             string apiThread = "SentSubTransfer_DetailToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             string sqlcmd = $@"
 select distinct
@@ -263,6 +417,7 @@ and exists(
             DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
             {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -270,6 +425,26 @@ and exists(
             {
                 return;
             }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from SubTransfer_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dt.AsEnumerable()
@@ -310,9 +485,7 @@ and exists(
             }
 
             string apiThread = "SentWHCloseToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dtMaster.AsEnumerable()
@@ -340,9 +513,7 @@ and exists(
             }
 
             string apiThread = "SentReturnReceiptToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             string sqlcmd = $@"
 select rrd.Id
@@ -378,6 +549,7 @@ and exists(
             DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
             {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -385,6 +557,26 @@ and exists(
             {
                 return;
             }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from ReturnReceipt_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dt.AsEnumerable()
@@ -418,9 +610,7 @@ and exists(
             }
 
             string apiThread = "SentBorrowBackToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             string sqlcmd = $@"
 select distinct
@@ -471,11 +661,37 @@ union all
 )
 ";
             DataTable dt = new DataTable();
-            MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dt);
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+
             if (dt == null || dt.Rows.Count <= 0)
             {
                 return;
             }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from BorrowBack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dt.AsEnumerable()
@@ -515,9 +731,7 @@ union all
             }
 
             string apiThread = "SentLocationTransToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             string sqlcmd = $@"
 select lt2.Id
@@ -560,6 +774,7 @@ and exists(
             DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
             {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -567,6 +782,26 @@ and exists(
             {
                 return;
             }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from LocationTrans_detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dt.AsEnumerable()
@@ -602,9 +837,7 @@ and exists(
             }
 
             string apiThread = "SentAdjust_DetailToVstrong";
-            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
-            this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.SetAutoAutomationErrMsg(apiThread);
 
             string sqlcmd = $@"
 select distinct 
@@ -645,6 +878,7 @@ and exists(
             DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
             {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -652,6 +886,26 @@ and exists(
             {
                 return;
             }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+            if (isConfirmed)
+            {
+                sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from Adjust_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+            #endregion
 
             dynamic bodyObject = new ExpandoObject();
             bodyObject = dt.AsEnumerable()
@@ -674,6 +928,48 @@ and exists(
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        #region 資料邏輯層
+        private string GetJsonBody(DataTable dtDetail,string type)
+        {
+            string jsonBody = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
+            dynamic bodyObject = new ExpandoObject();
+            switch (type)
+            {
+                case "Receiving_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(dr => new
+                    {
+                        ID = dr["ID"].ToString(),
+                        InvNo = dr["InvNo"].ToString(),
+                        PoId = dr["PoId"].ToString(),
+                        Seq1 = dr["Seq1"].ToString(),
+                        Seq2 = dr["Seq2"].ToString(),
+                        Refno = dr["Refno"].ToString().TrimEnd(),
+                        StockUnit = dr["StockUnit"].ToString(),
+                        StockQty = (decimal)dr["StockQty"],
+                        PoUnit = dr["PoUnit"].ToString(),
+                        ShipQty = (decimal)dr["ShipQty"],
+                        Color = dr["Color"].ToString().TrimEnd(),
+                        SizeCode = dr["SizeCode"].ToString().TrimEnd(),
+                        Weight = (decimal)dr["Weight"],
+                        StockType = dr["StockType"].ToString(),
+                        MtlType = dr["MtlType"].ToString(),
+                        Ukey = (long)dr["Ukey"],
+                        ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
+                        WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
+                        Status = dr["Status"].ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    });
+                    break;
+            }
+
+            return jsonBody = JsonConvert.SerializeObject(callMethod.CreateVstrongStructure(type, bodyObject));
+        }
+        #endregion
+
         private object CreateVstrongStructure(string tableName, object structureID)
         {
             Dictionary<string, object> resultObj = new Dictionary<string, object>
@@ -688,6 +984,14 @@ and exists(
             resultObj.Add("DataTable", dataStructure);
 
             return resultObj;
+        }
+
+        private void SetAutoAutomationErrMsg(string apiThread)
+        {
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+            this.automationErrMsg.moduleName = moduleName;
+            this.automationErrMsg.suppID = VstrongSuppID;
         }
     }
 }
