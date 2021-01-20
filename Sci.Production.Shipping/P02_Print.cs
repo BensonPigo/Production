@@ -89,9 +89,9 @@ namespace Sci.Production.Shipping
                 this.messrs = string.Empty;
                 if (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "1" || MyUtility.Convert.GetString(this.masterData["ToTag"]) == "3")
                 {
-                    if (MyUtility.Check.Seek(string.Format("select AbbEN,AddressEN,Tel from Supp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"])), out dr))
+                    if (MyUtility.Check.Seek(string.Format("select NameEN,AddressEN,Tel from Supp WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.masterData["ToSite"])), out dr))
                     {
-                        this.messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["AbbEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
+                        this.messrs = string.Format("{0}\r\n{1}\r\nTEL: {2}", MyUtility.Convert.GetString(dr["NameEN"]), MyUtility.Convert.GetString(dr["AddressEN"]), MyUtility.Convert.GetString(dr["Tel"]));
                     }
                 }
                 else if (MyUtility.Convert.GetString(this.masterData["ToTag"]) == "4")
