@@ -207,6 +207,14 @@ where sd.ID = '{0}'", masterID);
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
             this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
+            this.btnIncludeFoundryRatio.Enabled = MyUtility.Check.Seek($@"
+SELECT  1
+from ShareExpense se WITH (NOLOCK) 
+INNER JOIN GMTBooking g ON se.InvNo = g.ID
+where   ShippingAPID = '{this.CurrentMaintain["ID"]}'
+and (Junk = 0 or Junk is null)
+AND g.Foundry = 1
+");
 
             // Reason description
             this.txtReasonDesc.Text = MyUtility.GetValue.Lookup(
@@ -1249,6 +1257,12 @@ Non SP# Sample/Mock-up
                 this.txtcurrency.ReadOnly = true;
                 this.txtcurrency.IsSupportEditMode = false;
             }
+        }
+
+        private void BtnIncludeFoundryRatio_Click(object sender, EventArgs e)
+        {
+            P08_IncludeFoundryRatio form = new P08_IncludeFoundryRatio(this.CurrentMaintain);
+            form.ShowDialog();
         }
     }
 }
