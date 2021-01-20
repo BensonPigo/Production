@@ -234,7 +234,7 @@ namespace Sci.Production.Quality
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("ColorName", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SeasonSCIID", header: "Approved Season", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out this.col_ApprovedSeason)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -810,7 +810,6 @@ select distinct
 	Supp.AbbEN,
 	psd.Refno,
 	psd.ColorID,
-    [ColorName] = c.ColorName,
 	o.SeasonID,
     fd.SeasonSCIID,
     fd.Period,
@@ -833,12 +832,6 @@ left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
 left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
-outer apply(
-    select [ColorName] = iif(c.Varicolored > 1, c.Name, c.ID)
-    from Color c
-    where c.ID = psd.ColorID
-    and c.BrandID = psd.BrandID 
-)c
 where ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
@@ -849,17 +842,16 @@ fty.TestDocFactoryGroup
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
-,[ColorID] = iif(a.ColorID is null , b.ColorID, a.colorid)
+,[ColorID] = iif(a.ColorID is null , b.ColorID, a.ColorID)
 ,[SeasonID] = a.SeasonID
 ,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
 ,a.[TPEFirstDyelot]
-,[ColorName] = iif(a.[ColorName] is null, b.ColorID, a.[ColorName])
 from #tmp a
 inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
-and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
+and a.Refno=b.Refno and a.suppid=b.suppid and a.ColorID=b.ColorID 
 where 1=1 and 
 {sqlwhere}
 Order by  SuppID, Refno, ColorID, a.SeasonSCIID
