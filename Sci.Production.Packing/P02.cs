@@ -1343,7 +1343,7 @@ select '' as ID
 , [Balance] = iif(isnull(oqc.Qty, 0) = 0, 0, oqd.Qty % oqc.Qty)
 , [PrepackQty] = IIF(o.CtnType != 2 
                         ,0
-                        ,CAST( (oqc.qty / @minQty  ) as int)
+                        ,CAST(iif(@minQty = 0, 0, (oqc.qty / @minQty)) as int)
                     )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
@@ -1381,7 +1381,7 @@ select '' as ID, '' as RefNo
 , [Balance] = iif(isnull(o.CTNQty,0) = 0, 0, oqd.Qty % o.CTNQty)
 , [PrepackQty] = IIF(o.CtnType != 2 
                         ,0
-                        ,CAST( (o.CTNQty / @minQty  ) as int)
+                        ,CAST(iif(@minQty = 0, 0, (o.CTNQty / @minQty)) as int)
                     )
 from Order_QtyShip_Detail oqd WITH (NOLOCK) 
 left Join Orders o WITH (NOLOCK) on o.ID = oqd.Id
