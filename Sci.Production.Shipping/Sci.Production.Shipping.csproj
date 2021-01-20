@@ -262,6 +262,12 @@
     <Compile Include="P05_UnconfirmHistory.Designer.cs">
       <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="P08_IncludeFoundryRatio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P08_IncludeFoundryRatio.Designer.cs">
+      <DependentUpon>P08_IncludeFoundryRatio.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10_DeleteGarmentBookingHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1012,6 +1018,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05_UnconfirmHistory.resx">
       <DependentUpon>P05_UnconfirmHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P08_IncludeFoundryRatio.resx">
+      <DependentUpon>P08_IncludeFoundryRatio.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_DeleteGarmentBookingHistory.resx">
       <DependentUpon>P10_DeleteGarmentBookingHistory.cs</DependentUpon>
