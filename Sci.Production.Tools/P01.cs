@@ -36,6 +36,7 @@ namespace Sci.Production.Tools
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("SuppID", header: "Supp#", width: Widths.AnsiChars(15))
                 .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(5))
+                .Text("SuppAPIThread", header: "SuppAPIThread", width: Widths.AnsiChars(20))
                 .Text("APIThread", header: "API Thread", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ErrorCode", header: "Error Code", width: Widths.AnsiChars(5),  iseditingreadonly: true)
                 .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(40), iseditingreadonly: true)
@@ -49,14 +50,29 @@ namespace Sci.Production.Tools
 
         private void BtnFilter_Click(object sender, EventArgs e)
         {
+            List<string> filter = new List<string>();
+
             if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
             {
-                this.listControlBindingSource1.Filter = $"SuppID='{this.txtsupplier.TextBox1.Text}' ";
+                filter.Add($"SuppID='{this.txtsupplier.TextBox1.Text}' ");
             }
-            else
+
+            if (this.dateErrorTime.HasValue1)
             {
-                this.listControlBindingSource1.Filter = string.Empty;
+                filter.Add($"AddDate >= '{this.dateErrorTime.DateBox1.Text}' ");
             }
+
+            if (this.dateErrorTime.HasValue2)
+            {
+                filter.Add($"AddDate < '{((DateTime)this.dateErrorTime.DateBox2.Value).AddDays(1)}' ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSuppAPIThread.Text))
+            {
+                filter.Add($"SuppAPIThread ='{this.txtSuppAPIThread.Text}' ");
+            }
+
+            this.listControlBindingSource1.Filter = filter.JoinToString(" and ");
         }
 
         private void BtnEditSave_Click(object sender, EventArgs e)
@@ -107,18 +123,15 @@ SET AutomationAutoRunTime = {automationAutoRunTime}
             // 正常執行但是Fail
             DataTable failDt = gridData.Clone();
 
-            // 其他例外狀況(例如找不到這筆資料的Ukey)
-            DataTable otherFailDt = gridData.Clone();
-
             // 成功狀況
             DataTable successDt = gridData.Clone();
 
             foreach (DataRow selecteData in selecteDatas)
             {
                 string cmdText = $@"
-declare @dd bit
-exec dbo.SentJsonToAGV {(long)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @dd OUTPUT
-SELECT [Result]= @dd
+declare @result nvarchar(max)
+exec dbo.SentJsonFromAutomationErrMsg {(long)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @result OUTPUT, 1200
+SELECT [Result]= @result
 ";
                 result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
 
@@ -128,29 +141,18 @@ SELECT [Result]= @dd
                     return;
                 }
 
-                if (result)
+                DataRow nRow = selecteData;
+                if (!MyUtility.Check.Empty(resultDt.Rows[0]["Result"]))
                 {
-                    DataRow nRow = selecteData;
-                    otherFailDt.ImportRow(nRow);
-                }
-                else if (!(bool)resultDt.Rows[0]["Result"])
-                {
-                    DataRow nRow = selecteData;
                     failDt.ImportRow(nRow);
                 }
                 else
                 {
-                    DataRow nRow = selecteData;
                     successDt.ImportRow(nRow);
                 }
             }
 
             #region 統整最後結果
-
-            if (otherFailDt.Rows.Count > 0)
-            {
-                MyUtility.Msg.ShowMsgGrid(otherFailDt, msg: "Can not find this resent data!!");
-            }
 
             if (failDt.Rows.Count > 0)
             {
@@ -158,7 +160,7 @@ SELECT [Result]= @dd
             }
 
             // 無失敗才跳成功訊息
-            if (otherFailDt.Rows.Count == 0 && failDt.Rows.Count == 0 && successDt.Rows.Count > 0)
+            if (failDt.Rows.Count == 0 && successDt.Rows.Count > 0)
             {
                 MyUtility.Msg.InfoBox("Success!!");
             }
@@ -181,8 +183,11 @@ SELECT [Selected]=0
 	,a.JSON
 	,a.AddDate
     ,a.Ukey
+    ,a.SuppAPIThread
 FROM AutomationErrMsg a WITH(NOLOCK)
 LEFT JOIN Supp s WITH(NOLOCK) ON a.SuppID=s.ID
+where   a.ReSented = 0 and
+        a.SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag')
 ";
 
             DBProxy.Current.Select(null, cmd, out DataTable dt);
