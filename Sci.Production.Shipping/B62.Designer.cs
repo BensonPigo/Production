@@ -43,6 +43,8 @@
             this.labCDCPrice = new Sci.Win.UI.Label();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.labRefno = new Sci.Win.UI.Label();
+            this.dispKHCustomsDescriptionCDCCode = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +61,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dispKHCustomsDescriptionCDCCode);
             this.masterpanel.Controls.Add(this.txtRefno);
             this.masterpanel.Controls.Add(this.labRefno);
             this.masterpanel.Controls.Add(this.labCDCPrice);
@@ -74,8 +78,7 @@
             this.masterpanel.Controls.Add(this.checkJunk);
             this.masterpanel.Controls.Add(this.txtCustomsDesc);
             this.masterpanel.Controls.Add(this.labCustomsDesc);
-            this.masterpanel.Size = new System.Drawing.Size(775, 145);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Size = new System.Drawing.Size(775, 173);
             this.masterpanel.Controls.SetChildIndex(this.labCustomsDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomsDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkJunk, 0);
@@ -91,19 +94,22 @@
             this.masterpanel.Controls.SetChildIndex(this.labCDCPrice, 0);
             this.masterpanel.Controls.SetChildIndex(this.labRefno, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRefno, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dispKHCustomsDescriptionCDCCode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 145);
-            this.detailpanel.Size = new System.Drawing.Size(775, 282);
+            this.detailpanel.Location = new System.Drawing.Point(0, 173);
+            this.detailpanel.Size = new System.Drawing.Size(775, 254);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(667, 107);
+            this.gridicon.Location = new System.Drawing.Point(667, 135);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(775, 282);
+            this.detailgridcont.Size = new System.Drawing.Size(775, 254);
             // 
             // detail2
             // 
@@ -173,10 +179,10 @@
             // txtCustomsDesc
             // 
             this.txtCustomsDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtCustomsDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "KHCustomsDescriptionID", true));
+            this.txtCustomsDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CDCName", true));
             this.txtCustomsDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtCustomsDesc.IsSupportEditMode = false;
-            this.txtCustomsDesc.Location = new System.Drawing.Point(172, 76);
+            this.txtCustomsDesc.Location = new System.Drawing.Point(172, 104);
             this.txtCustomsDesc.Name = "txtCustomsDesc";
             this.txtCustomsDesc.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtCustomsDesc.ReadOnly = true;
@@ -186,7 +192,7 @@
             // 
             // labCustomsDesc
             // 
-            this.labCustomsDesc.Location = new System.Drawing.Point(33, 76);
+            this.labCustomsDesc.Location = new System.Drawing.Point(33, 104);
             this.labCustomsDesc.Name = "labCustomsDesc";
             this.labCustomsDesc.Size = new System.Drawing.Size(136, 23);
             this.labCustomsDesc.TabIndex = 9;
@@ -246,7 +252,7 @@
             this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtDesc.Location = new System.Drawing.Point(172, 107);
+            this.txtDesc.Location = new System.Drawing.Point(172, 135);
             this.txtDesc.Name = "txtDesc";
             this.txtDesc.ReadOnly = true;
             this.txtDesc.Size = new System.Drawing.Size(462, 23);
@@ -254,7 +260,7 @@
             // 
             // labDesc
             // 
-            this.labDesc.Location = new System.Drawing.Point(33, 107);
+            this.labDesc.Location = new System.Drawing.Point(33, 135);
             this.labDesc.Name = "labDesc";
             this.labDesc.Size = new System.Drawing.Size(136, 23);
             this.labDesc.TabIndex = 22;
@@ -311,6 +317,25 @@
             this.labRefno.Text = "RefNo";
             this.labRefno.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // dispKHCustomsDescriptionCDCCode
+            // 
+            this.dispKHCustomsDescriptionCDCCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.dispKHCustomsDescriptionCDCCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KHCustomsDescriptionCDCCode", true));
+            this.dispKHCustomsDescriptionCDCCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.dispKHCustomsDescriptionCDCCode.Location = new System.Drawing.Point(172, 75);
+            this.dispKHCustomsDescriptionCDCCode.Name = "dispKHCustomsDescriptionCDCCode";
+            this.dispKHCustomsDescriptionCDCCode.Size = new System.Drawing.Size(100, 23);
+            this.dispKHCustomsDescriptionCDCCode.TabIndex = 85;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(33, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(136, 23);
+            this.label1.TabIndex = 86;
+            this.label1.Text = "CDCCode";
+            this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // B62
             // 
             this.ClientSize = new System.Drawing.Size(783, 527);
@@ -363,5 +388,7 @@
         private Win.UI.NumericBox numUnitPrice;
         private Win.UI.TextBox txtRefno;
         private Win.UI.Label labRefno;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox dispKHCustomsDescriptionCDCCode;
     }
 }

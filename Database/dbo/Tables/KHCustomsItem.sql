@@ -1,17 +1,20 @@
 ﻿CREATE TABLE [dbo].[KHCustomsItem] (
-    [Ukey]                   BIGINT         IDENTITY (1, 1) NOT NULL,
-    [CustomsType]            VARCHAR (10)   NOT NULL,
-    [RefNo]                  VARCHAR (21)   NOT NULL,
-    [KHCustomsDescriptionID] VARCHAR (30)   CONSTRAINT [DF_KHCustomsItem_KHCustomsDescriptionID] DEFAULT ('') NULL,
-    [CDCUnitPrice]           NUMERIC (9, 4) CONSTRAINT [DF_KHCustomsItem_CDCUnitPrice] DEFAULT ((0)) NULL,
-    [Description]            VARCHAR (MAX)  CONSTRAINT [DF_KHCustomsItem_Description] DEFAULT ('') NULL,
-    [Junk]                   BIT            CONSTRAINT [DF_KHCustomsItem_Junk] DEFAULT ((0)) NULL,
-    [AddName]                VARCHAR (10)   CONSTRAINT [DF_KHCustomsItem_AddName] DEFAULT ('') NULL,
-    [AddDate]                DATETIME       NULL,
-    [EditName]               VARCHAR (10)   CONSTRAINT [DF_KHCustomsItem_EditName] DEFAULT ('') NULL,
-    [EditDate]               DATETIME       NULL,
+    [Ukey]                        BIGINT         IDENTITY (1, 1) NOT NULL,
+    [RefNo]                       VARCHAR (30)   NOT NULL,
+    [KHCustomsDescriptionCDCCode] VARCHAR (5)    CONSTRAINT [DF_KHCustomsItem_KHCustomsDescriptionID] DEFAULT ('') NULL,
+    [CDCUnitPrice]                NUMERIC (9, 4) CONSTRAINT [DF_KHCustomsItem_CDCUnitPrice] DEFAULT ((0)) NULL,
+    [Description]                 VARCHAR (MAX)  CONSTRAINT [DF_KHCustomsItem_Description] DEFAULT ('') NULL,
+    [Junk]                        BIT            CONSTRAINT [DF_KHCustomsItem_Junk] DEFAULT ((0)) NULL,
+    [AddName]                     VARCHAR (10)   CONSTRAINT [DF_KHCustomsItem_AddName] DEFAULT ('') NULL,
+    [AddDate]                     DATETIME       NULL,
+    [EditName]                    VARCHAR (10)   CONSTRAINT [DF_KHCustomsItem_EditName] DEFAULT ('') NULL,
+    [EditDate]                    DATETIME       NULL,
     CONSTRAINT [PK_KHCustomsItem] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
+
+
 
 
 GO
@@ -43,7 +46,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'此料號�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關物料大類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsItem', @level2type = N'COLUMN', @level2name = N'KHCustomsDescriptionID';
+
 
 
 GO
@@ -54,12 +57,13 @@ CustomsType為
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'報關內容分類如下
-1. Fabric
-2. Accessory
-3. Machine', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsItem', @level2type = N'COLUMN', @level2name = N'CustomsType';
+
 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'KHCustomsItem Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsItem', @level2type = N'COLUMN', @level2name = N'Ukey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關大類編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsItem', @level2type = N'COLUMN', @level2name = N'KHCustomsDescriptionCDCCode';
 

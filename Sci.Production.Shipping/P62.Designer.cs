@@ -66,6 +66,8 @@
             this.numTtlActDeclGW = new Sci.Win.UI.NumericBox();
             this.numTtlActDeclNW = new Sci.Win.UI.NumericBox();
             this.labDecActNWGW = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.numActTtlFOB = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -82,6 +84,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numActTtlFOB);
+            this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.numTtlActDeclGW);
             this.masterpanel.Controls.Add(this.numTtlActDeclNW);
@@ -160,6 +164,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numTtlActDeclNW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTtlActDeclGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.label5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numActTtlFOB, 0);
             // 
             // detailpanel
             // 
@@ -662,6 +668,36 @@
             this.labDecActNWGW.TabIndex = 88;
             this.labDecActNWGW.Text = "Declaration Act N.W. / G.W.";
             // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(593, 149);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(177, 23);
+            this.label6.TabIndex = 92;
+            this.label6.Text = "Declaration Act Amount";
+            // 
+            // numActTtlFOB
+            // 
+            this.numActTtlFOB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numActTtlFOB.DecimalPlaces = 3;
+            this.numActTtlFOB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numActTtlFOB.IsSupportEditMode = false;
+            this.numActTtlFOB.Location = new System.Drawing.Point(773, 149);
+            this.numActTtlFOB.Name = "numActTtlFOB";
+            this.numActTtlFOB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numActTtlFOB.ReadOnly = true;
+            this.numActTtlFOB.Size = new System.Drawing.Size(90, 23);
+            this.numActTtlFOB.TabIndex = 93;
+            this.numActTtlFOB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P62
             // 
             this.ApvChkValue = "New";
@@ -675,6 +711,7 @@
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportJunk = true;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
@@ -744,5 +781,7 @@
         private Win.UI.NumericBox numTtlActDeclGW;
         private Win.UI.NumericBox numTtlActDeclNW;
         private Win.UI.Label labDecActNWGW;
+        private Win.UI.NumericBox numActTtlFOB;
+        private Win.UI.Label label6;
     }
 }

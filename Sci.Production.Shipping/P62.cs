@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci.Win.Tems;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -98,6 +99,7 @@ where ked2.id = '{masterID}'
            .Numeric("CTNQty", header: "CTN", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
            .Numeric("POPrice", header: "FOB", width: Widths.AnsiChars(9), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
            .Numeric("TtlFOB", header: "Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5, iseditingreadonly: true)
+           .Numeric("ActTtlPOPrice", header: "Act Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5)
            .Text("LocalINVNo", header: "Local Invoice No", width: Widths.AnsiChars(25), iseditingreadonly: false)
            .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
            .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
@@ -331,6 +333,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             this.numTtlActDeclNW.Value = ttlActDecNW;
             this.numTtlActDeclGW.Value = ttlActDecGW;
             this.numDecAmount.Value = ttlDecAmount;
+            this.numActTtlFOB.Value = this.DetailDatas.AsEnumerable().Sum(s => MyUtility.Convert.GetDecimal(s["ActTtlPOPrice"]));
         }
 
         /// <summary>

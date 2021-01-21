@@ -51,17 +51,20 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
 select id2.* 
-,kc.CustomsType
-,[CustomsDescription] = kd.ID
+,kd.CustomsType
+,[CustomsDescription] = kd.CDCName
 ,[CDCAmount] = id2.CDCQty * id2.CDCUnitPrice
 ,[NWDiff] = id2.ActNetKg - id2.NetKg
 ,[HSCode] = kcd.HSCode
+,CDCCode= kc.KHCustomsDescriptionCDCCode
 from KHImportDeclaration_Detail id2
-left join KHCustomsItem kc on kc.RefNo=id2.Refno and CustomsType in ('Fabric', 'Accessory', 'Machine')
+inner join KHImportDeclaration i on i.ID = id2.ID
+left join KHCustomsItem kc on kc.RefNo=id2.Refno
 left join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey 
-    and kcd.KHCustomsItemUkey = id2.KHCustomsItemUkey      
-left join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID
-left join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = id2.UnitId   
+    and kcd.KHCustomsItemUkey = id2.KHCustomsItemUkey and kcd.Port = i.ImportPort
+left join KHCustomsDescription kd on kd.CDCCode = kc.KHCustomsDescriptionCDCCode
+    and kd.CustomsType in ('Fabric', 'Accessory', 'Machine')
+left join KHCustomsDescription_Detail kdd on kd.CDCCode=kdd.CDCCode and kdd.PurchaseUnit = id2.UnitId   
 where id2.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
@@ -237,14 +240,14 @@ where RefNo='{e.FormattedValue}' and junk=0
                 dr["UnitID"] = drSeek["Unit"];
 
                 sqlcmd = $@"
-Select kd.CDCUnit, Ki.CDCUnitPrice,ki.CustomsType
-,[CustomsDescription] = ki.KHCustomsDescriptionID  
+Select kd.CDCUnit, Ki.CDCUnitPrice,kd.CustomsType
+,[CustomsDescription] = kd.CDCName  
 , [CDCUnit] = kd.CDCUnit  
 , [CDCUnitPrice] = ki.CDCUnitPrice  
 from view_KHImportItem vk
-inner join KHCustomsItem ki on vk.Refno=Ki.Refno and vk.CustomsType = ki.CustomsType
-inner join KHCustomsDescription kd on  kd.id=ki.KHCustomsDescriptionID 
-inner join KHCustomsDescription_Detail kdd on  kd.id=kdd.id and kdd.PurchaseUnit = vk.Unit
+inner join KHCustomsItem ki on vk.Refno=Ki.Refno
+inner join KHCustomsDescription kd on  kd.CDCCode=ki.KHCustomsDescriptionCDCCode and vk.CustomsType = kd.CustomsType
+inner join KHCustomsDescription_Detail kdd on  kd.CDCCode=kdd.CDCCode and kdd.PurchaseUnit = vk.Unit
 where vk.Refno = '{e.FormattedValue}'
 ";
                 if (MyUtility.Check.Seek(sqlcmd, out drSeek))
@@ -312,9 +315,9 @@ where vk.Refno = '{e.FormattedValue}'
 Select [CDCQty] = kdd.Ratio * {qty} 
 , [CDCAmount] = kdd.Ratio * {qty} * ki.CDCUnitPrice  
 from view_KHImportItem vk
-inner join KHCustomsItem ki on vk.Refno=Ki.Refno and vk.CustomsType = ki.CustomsType
-inner join KHCustomsDescription kd on  kd.id=ki.KHCustomsDescriptionID 
-inner join KHCustomsDescription_Detail kdd on  kd.id=kdd.id and kdd.PurchaseUnit = vk.Unit
+inner join KHCustomsItem ki on vk.Refno=Ki.Refno
+inner join KHCustomsDescription kd on  kd.CDCCode=ki.KHCustomsDescriptionCDCCode and vk.CustomsType = kd.CustomsType
+inner join KHCustomsDescription_Detail kdd on  kd.CDCCode=kdd.CDCCode and kdd.PurchaseUnit = vk.Unit
 where vk.Refno = '{dr["Refno"]}'
 ";
                 if (MyUtility.Check.Seek(sqlcmd, out drSeek))
@@ -350,6 +353,7 @@ where vk.Refno = '{dr["Refno"]}'
            .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_NW) // Edit on AddRow by hand
            .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true).Get(out this.col_GW) // Edit on AddRow by hand
            .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
+           .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
            .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("CDCQty", header: "CDCQty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(25), iseditingreadonly: true)
@@ -436,8 +440,9 @@ select distinct [ExportID] = e.ID
              , [UnitID] = s.UnitId 
              , [NetKg] = s.NW 
              , [WeightKg] = s.GW
-             , [CustomsType] = kc.CustomsType  
-             , [CustomsDescription] = kc.KHCustomsDescriptionID  
+             , [CustomsType] = kd.CustomsType  
+             , CDCCode=kc.KHCustomsDescriptionCDCCode
+             , [CustomsDescription] = kd.CDCName
              , [CDCQty] = s.Qty*kdd.Ratio 
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
@@ -451,10 +456,11 @@ select distinct [ExportID] = e.ID
              , [KHCustomsItemUkey] = kc.Ukey 
 from tmpExport s
 inner join Export e on s.ID = e.ID
-inner join KHCustomsItem kc on kc.RefNo = s.SCIRefno and CustomsType in ('Fabric', 'Accessory', 'Machine')
+inner join KHCustomsItem kc on kc.RefNo = s.SCIRefno
 left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=e.ImportPort          
-left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID
-left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = s.UnitId   
+left  join KHCustomsDescription kd on kd.CDCCode = kc.KHCustomsDescriptionCDCCode
+    and kd.CustomsType in ('Fabric', 'Accessory', 'Machine')
+left  join KHCustomsDescription_Detail kdd on kd.CDCCode=kdd.CDCCode and kdd.PurchaseUnit = s.UnitId   
 
 union all
 
@@ -474,8 +480,9 @@ select [ExportID] = FE.ID
              , [UnitID] = s.UnitID   
              , [NetKg] = s.NW  
              , [WeightKg] = s.GW  
-             , [CustomsType] = kc.CustomsType  
-             , [CustomsDescription] = kc.KHCustomsDescriptionID  
+             , [CustomsType] = kd.CustomsType  
+             , CDCCode=kc.KHCustomsDescriptionCDCCode
+             , [CustomsDescription] = kd.CDCName  
              , [CDCQty] = s.Qty*kdd.Ratio  
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
@@ -489,10 +496,11 @@ select [ExportID] = FE.ID
 			 , [KHCustomsItemUkey] = kc.Ukey
 from tmpFtyExport s
 inner join FtyExport fe on s.ID = fe.ID  
-inner  join KHCustomsItem kc on kc.RefNo = s.SCIRefno and CustomsType in ('Fabric', 'Accessory')
+inner  join KHCustomsItem kc on kc.RefNo = s.SCIRefno
 left  join KHCustomsItem_Detail kcd on kc.Ukey=kcd.KHCustomsItemUkey and kcd.Port=fe.ImportPort        
-left  join KHCustomsDescription kd on kd.ID = kc.KHCustomsDescriptionID          
-left  join KHCustomsDescription_Detail kdd on kd.id=kdd.id and kdd.PurchaseUnit = s.UnitId 
+left  join KHCustomsDescription kd on kd.CDCCode = kc.KHCustomsDescriptionCDCCode
+    and kd.CustomsType in ('Fabric', 'Accessory')
+left  join KHCustomsDescription_Detail kdd on kd.CDCCode=kdd.CDCCode and kdd.PurchaseUnit = s.UnitId 
 ) a
  where 1=1
    and not EXISTS (select * from KHImportDeclaration where Blno =@BLNo)

@@ -73,6 +73,7 @@ select [Shipper] = kd.Shipper
      , [CTN] = kdd.CTNQty 
      , [FOB] = kdd.POPrice
 	 , [Ttl FOB] = (kdd.ShipModeSeqQty * kdd.POPrice)
+	 , [Act Ttl FOB] = kdd.ActTtlPOPrice
      , [Local Inv#] = kdd.LocalINVNO 
      , [Description] = kdd.Description 
      , [HS Code] = kdd.HSCode 

@@ -80,8 +80,9 @@ select [WK#] = kid.ExportID
      , [Unit] = Kid.UnitID 
      , [NW] = Kid.NetKg 
      , [GW] = Kid.WeightKg 
-     , [Type] = kc.CustomsType 
-     , [Customs Description] = kc.KHCustomsDescriptionID 
+     , [Type] = kcdp.CustomsType 
+     , kcdp.CDCCode
+     , [Customs Description] = kcdp.CDCName
      , [CDC Qty] = Kid.Qty*kcdp2.Ratio
      , [CDC Unit] = kid.CDCUnit 
      , [CDC Unit Price] = kid.CDCUnitPrice 
@@ -95,8 +96,8 @@ select [WK#] = kid.ExportID
  inner join KHImportDeclaration_Detail kid on ki.id=kid.id
  inner join KHCustomsItem kc on kc.Refno=Kid.Refno and kc.ukey= kid.KHCustomsItemUkey
  inner join KHCustomsItem_Detail kcd on kc.ukey=kcd.KHCustomsItemUkey and kcd.Port=Ki.ImportPort
- inner join KHCustomsDescription kcdp on kc.KHCustomsDescriptionID = kcdp.ID
- inner join KHCustomsDescription_Detail kcdp2 on kcdp2.ID = kcdp.ID and kcdp2.PurchaseUnit = kid.UnitId
+ inner join KHCustomsDescription kcdp on kc.KHCustomsDescriptionCDCCode = kcdp.CDCCode
+ inner join KHCustomsDescription_Detail kcdp2 on kcdp2.CDCCode = kcdp.CDCCode and kcdp2.PurchaseUnit = kid.UnitId
  outer apply (
 	select value = count(*) from FtyExport fe where fe.id=kid.exportid
  )IsLocalShipment

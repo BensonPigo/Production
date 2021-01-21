@@ -50,15 +50,16 @@ where 1=1
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
-                string sqlcmd = @"select ID,CDCUnit from KHCustomsDescription where junk=0 ";
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, "ID,CDCUnit", "20,35", this.CurrentMaintain["KHCustomsDescriptionID"].ToString(), "KHCustomsDescriptionID ,CDCUnit");
+                string sqlcmd = $@"select CDCCode,CDCName,CDCUnit from KHCustomsDescription where junk=0 and CustomsType = '{this.CurrentMaintain["CustomsType"]}'";
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, string.Empty, this.CurrentMaintain["CDCName"].ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
                     return;
                 }
 
-                this.CurrentMaintain["KHCustomsDescriptionID"] = item.GetSelecteds()[0]["ID"];
+                this.CurrentMaintain["KHCustomsDescriptionCDCCode"] = item.GetSelecteds()[0]["CDCCode"];
+                this.CurrentMaintain["CDCName"] = item.GetSelecteds()[0]["CDCName"];
                 this.txtCDCUnit.Text = item.GetSelecteds()[0]["CDCUnit"].ToString();
             }
         }
@@ -132,17 +133,17 @@ where 1=1
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["RefNo"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["KHCustomsDescriptionID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["KHCustomsDescriptionCDCCode"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["CDCUnitPrice"]))
             {
                 MyUtility.Msg.WarningBox(@"< Ref#>, < Customer Description >, <CDC Unit Price(USD)>cannot be empty.");
                 return false;
             }
 
-            string sqlcmd = $@"select 1 from KHCustomsItem where RefNo='{this.CurrentMaintain["RefNo"]}' and CustomsType='{this.CurrentMaintain["CustomsType"]}' and ukey != '{this.CurrentMaintain["ukey"]}'";
+            string sqlcmd = $@"select 1 from KHCustomsItem where RefNo='{this.CurrentMaintain["RefNo"]}' and ukey != '{this.CurrentMaintain["ukey"]}'";
             if (MyUtility.Check.Seek(sqlcmd))
             {
-                MyUtility.Msg.WarningBox($@"Save failed. [Customs Type]: {this.CurrentMaintain["CustomsType"]} [Refno#]: {this.CurrentMaintain["RefNo"]} has already existed.");
+                MyUtility.Msg.WarningBox($@"Save failed. [Refno#]: {this.CurrentMaintain["RefNo"]} has already existed.");
                 return false;
             }
 

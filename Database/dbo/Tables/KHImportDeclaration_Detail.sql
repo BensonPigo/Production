@@ -11,7 +11,7 @@
     [ShipModeID]        VARCHAR (10)   CONSTRAINT [DF_KHImportDeclaration_Detail_ShipModeID] DEFAULT ('') NULL,
     [Vessel]            VARCHAR (60)   CONSTRAINT [DF_KHImportDeclaration_Detail_Vessel] DEFAULT ('') NULL,
     [ExportPort]        VARCHAR (20)   CONSTRAINT [DF_KHImportDeclaration_Detail_ExportPort] DEFAULT ('') NULL,
-    [RefNo]             VARCHAR (23)   CONSTRAINT [DF_KHImportDeclaration_Detail_RefNo] DEFAULT ('') NULL,
+    [RefNo]             VARCHAR (30)   CONSTRAINT [DF_KHImportDeclaration_Detail_RefNo] DEFAULT ('') NULL,
     [Description]       NVARCHAR (MAX) CONSTRAINT [DF_KHImportDeclaration_Detail_Description] DEFAULT ('') NULL,
     [Qty]               NUMERIC (9, 2) CONSTRAINT [DF_KHImportDeclaration_Detail_Qty] DEFAULT ((0)) NULL,
     [Price]             NUMERIC (9, 4) CONSTRAINT [DF_KHImportDeclaration_Detail_Price] DEFAULT ((0)) NULL,
@@ -28,6 +28,8 @@
     [ActHSCode]         VARCHAR (14)   CONSTRAINT [DF_KHImportDeclaration_Detail_ActHSCode] DEFAULT ('') NULL,
     CONSTRAINT [PK_KHImportDeclaration_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

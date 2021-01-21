@@ -37,6 +37,7 @@ namespace Sci.Production.Shipping
                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                .Text("INVNo", header: "Invoice No.", iseditingreadonly: true, width: Widths.AnsiChars(18))
                .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(15))
+               .Text("CustPONO", header: "PO#", iseditingreadonly: true, width: Widths.AnsiChars(15))
                .Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(13))
                .Text("Description", header: "Style Description", iseditingreadonly: true, width: Widths.AnsiChars(30))
                .Text("Season", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(8))
@@ -89,6 +90,7 @@ select selected = 0
 ,[CTNQty] = sum(pd.CTNQty)
 ,[FOB] = isnull(PoPrice.AvgPrice,o.PoPrice)
 ,[TtlFOB] = isnull(PoPrice.AvgPrice,o.PoPrice) * sum(pd.ShipQty)
+,[ActTtlPOPrice] = isnull(PoPrice.AvgPrice,o.PoPrice) * sum(pd.ShipQty)
 , [Forwarder] = g.Forwarder
 ,[NetKg] =  (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else
 	(sum(pd.NW) + ( sum(pd.NW) * 0.05)) end)

@@ -1,9 +1,11 @@
-﻿CREATE TABLE [dbo].[KHCustomsDescription_Detail] (
-    [ID]           VARCHAR (50)   NOT NULL,
+CREATE TABLE [dbo].[KHCustomsDescription_Detail] (
+    [CDCCode]      VARCHAR (5)    NOT NULL,
     [PurchaseUnit] VARCHAR (8)    NOT NULL,
     [Ratio]        NUMERIC (8, 4) CONSTRAINT [DF_KHCustomsDescription_Detail_Ratio] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_KHCustomsDescription_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [PurchaseUnit] ASC)
+    CONSTRAINT [PK_KHCustomsDescription_Detail_1] PRIMARY KEY CLUSTERED ([CDCCode] ASC, [PurchaseUnit] ASC)
 );
+
+
 
 
 
@@ -17,5 +19,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SCI採購�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關物料大類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsDescription_Detail', @level2type = N'COLUMN', @level2name = N'ID';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關大類編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsDescription_Detail', @level2type = N'COLUMN', @level2name = N'CDCCode';
 

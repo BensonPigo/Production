@@ -72,20 +72,9 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        protected override bool ClickEditBefore()
-        {
-            this.txtCustomsDesc.ReadOnly = true;
-            if (this.EditMode && this.Perm.Junk)
-            {
-                this.checkJunk.ReadOnly = false;
-            }
-
-            return base.ClickEditBefore();
-        }
-
-        /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
+            this.comboCustomsType.ReadOnly = true;
             this.txtCustomsDesc.ReadOnly = true;
             if (this.EditMode && this.Perm.Junk)
             {
@@ -123,9 +112,12 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.txtCDCUnit.Text) || MyUtility.Check.Empty(this.txtCustomsDesc.Text))
+            if (MyUtility.Check.Empty(this.comboCustomsType.Text) ||
+                MyUtility.Check.Empty(this.txtCDCCode.Text) ||
+                MyUtility.Check.Empty(this.txtCDCUnit.Text) ||
+                MyUtility.Check.Empty(this.txtCustomsDesc.Text))
             {
-                MyUtility.Msg.WarningBox("<Customs Description > or < CDC Unit> cannot be empty.");
+                MyUtility.Msg.WarningBox("<CustomsType>, <CDC Code>, <Customs Description> and <CDC Unit> cannot be empty.");
                 return false;
             }
 

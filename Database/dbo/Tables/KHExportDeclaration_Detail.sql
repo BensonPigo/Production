@@ -8,6 +8,7 @@
     [ShipModeSeqQty] INT            CONSTRAINT [DF_KHExportDeclaration_Detail_ShipModeSeqQty] DEFAULT ((0)) NULL,
     [CTNQty]         INT            CONSTRAINT [DF_KHExportDeclaration_Detail_CTNQty] DEFAULT ((0)) NULL,
     [POPrice]        NUMERIC (9, 4) CONSTRAINT [DF_KHExportDeclaration_Detail_POPrice] DEFAULT ((0)) NULL,
+    [ActTtlPOPrice]  NUMERIC (9, 4) CONSTRAINT [DF_KHExportDeclaration_Detail_ActTtlPOPrice] DEFAULT ((0)) NULL,
     [LocalINVNo]     VARCHAR (25)   CONSTRAINT [DF_KHExportDeclaration_Detail_LocalINVNo] DEFAULT ('') NULL,
     [NetKg]          NUMERIC (9, 2) CONSTRAINT [DF_KHExportDeclaration_Detail_NetKg] DEFAULT ((0)) NULL,
     [WeightKg]       NUMERIC (9, 2) CONSTRAINT [DF_KHExportDeclaration_Detail_WeightKg] DEFAULT ((0)) NULL,
@@ -19,6 +20,8 @@
     [CODate]         DATE           NULL,
     CONSTRAINT [PK_KHExportDeclaration_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [INVNo] ASC, [OrderID] ASC)
 );
+
+
 
 
 
@@ -91,4 +94,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出口報�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出口報關實際淨重', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration_Detail', @level2type = N'COLUMN', @level2name = N'ActNetKg';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際FOB總價', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration_Detail', @level2type = N'COLUMN', @level2name = N'ActTtlPOPrice';
 
