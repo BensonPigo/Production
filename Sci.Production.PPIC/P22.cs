@@ -39,6 +39,24 @@ namespace Sci.Production.PPIC
         }
 
         /// <inheritdoc/>
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            this.DetailSelectCommand = $@"
+SELECT rd.Refno
+	,rd.RequestQty
+	,rd.ReplacementLocalItemReasonID
+	,rr.Description
+	,rd.Remark
+FROM ReplacementLocalItem r
+INNER JOIN ReplacementLocalItem_Detail rd ON r.ID = rd.ID
+LEFT JOIN ReplacementLocalItemReason rr ON rd.ReplacementLocalItemReasonID = rr.ID
+
+where r.ID = '{masterID}'
+";
+
+            return base.OnDetailSelectCommandPrepare(e);
+        }
 
         /// <inheritdoc/>
         protected override void OnDetailEntered()
@@ -60,7 +78,6 @@ namespace Sci.Production.PPIC
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings refno = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings reason = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings inqty = new DataGridViewGeneratorNumericColumnSettings();
@@ -86,158 +103,7 @@ namespace Sci.Production.PPIC
             outqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             requestqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
             issueqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-            #region Seq按右鍵與Validating
-            seq.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        if (e.RowIndex != -1)
-                        {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            SelectItem item = Prgs.SelePoItem(MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq"]), "FabricType = 'F'");
-                            DialogResult result = item.ShowDialog();
-                            if (result == DialogResult.Cancel)
-                            {
-                                return;
-                            }
 
-                            IList<DataRow> selectData = item.GetSelecteds();
-                            dr["Seq"] = item.GetSelectedString();
-                            dr["Seq1"] = selectData[0]["Seq1"];
-                            dr["Seq2"] = selectData[0]["Seq2"];
-                            dr["RefNo"] = selectData[0]["RefNo"];
-                            dr["Description"] = selectData[0]["Description"];
-
-                            DataTable wHdata;
-                            DualResult whdr = DBProxy.Current.Select(null, string.Format("SELECT m.InQty,m.OutQty FROM MDivisionPoDetail m WITH (NOLOCK) inner join Orders o WITH (NOLOCK) on m.POID=o.ID inner join Factory f WITH (NOLOCK) on f.ID=o.FtyGroup WHERE m.POID = '{0}' AND m.Seq1 = '{1}' AND m.Seq2 = '{2}' AND f.MDivisionID = '{3}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]), Env.User.Keyword), out wHdata);
-                            if (whdr)
-                            {
-                                if (wHdata.Rows.Count > 0)
-                                {
-                                    dr["WhseInQty"] = MyUtility.Convert.GetDecimal(wHdata.Rows[0]["InQty"]);
-                                    dr["FTYInQty"] = MyUtility.Convert.GetDecimal(wHdata.Rows[0]["OutQty"]);
-                                }
-                            }
-
-                            DateTime? maxIssueDate = this.MaxIssueDate(MyUtility.Convert.GetString(selectData[0]["Seq1"]), MyUtility.Convert.GetString(selectData[0]["Seq2"]));
-                            if (MyUtility.Check.Empty(maxIssueDate))
-                            {
-                                dr["FTYLastRecvDate"] = DBNull.Value;
-                            }
-                            else
-                            {
-                                dr["FTYLastRecvDate"] = maxIssueDate;
-                            }
-
-                            dr.EndEdit();
-                        }
-                    }
-                }
-            };
-
-            seq.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Seq"]))
-                    {
-                        if (MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
-                        {
-                            this.ClearGridData(dr);
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("SP# can't empty!!");
-                            return;
-                        }
-
-                        if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
-                        {
-                            this.ClearGridData(dr);
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
-                            return;
-                        }
-
-                        DataRow poData;
-
-                        // bug fix:直接輸入seq會有錯誤訊息
-                        // string sqlCmd = string.Format(@"select left(seq1+' ',3)+seq2 as Seq, Refno,InQty,OutQty,seq1,seq2, dbo.getmtldesc(id,seq1,seq2,2,0) as Description
-                        //                                from dbo.PO_Supp_Detail
-                        //                                where id ='{0}' and seq1 = '{1}' and seq2 = '{2}' and FabricType = 'F'", MyUtility.Convert.GetString(CurrentMaintain["POID"]), MyUtility.Convert.GetString(e.FormattedValue).Substring(0, 3), MyUtility.Convert.GetString(e.FormattedValue).Substring(2, 2));
-                        string seq12 = MyUtility.Convert.GetString(e.FormattedValue);
-                        char[] ch1 = new char[] { ' ' };
-                        string[] inputString = seq12.Split(ch1, StringSplitOptions.RemoveEmptyEntries);
-                        if (inputString.Length < 2 || inputString.Length > 3)
-                        {
-                            MyUtility.Msg.WarningBox("Please input legal seq#!! example:01 03");
-                            this.ClearGridData(dr);
-                            e.Cancel = true;
-                            return;
-                        }
-
-                        string sqlCmd = string.Format(
-                            @"select 
-left(psd.seq1+' ',3)+psd.seq2 as Seq
-, psd.Refno,isnull(m.InQty,0) as InQty
-,isnull(m.OutQty,0) as OutQty
-,psd.seq1
-,psd.seq2
-, dbo.getmtldesc(psd.id,psd.seq1,psd.seq2,2,0) as Description 
-,[Status]=IIF(LockStatus.LockCount > 0 ,'Locked','Unlocked')
-from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
-left join MDivisionPoDetail m WITH (NOLOCK) on m.POID = psd.ID and m.Seq1 = psd.SEQ1 and m.Seq2 = psd.SEQ2
-inner join dbo.Factory F WITH (NOLOCK) on F.id=psd.factoryid and F.MDivisionID='{3}'
-OUTER APPLY(
-	SELECT [LockCount]=COUNT(UKEY)
-	FROM FtyInventory
-	WHERE POID='{0}'
-	AND Seq1=psd.Seq1
-	AND Seq2=psd.Seq2
-	AND Lock = 1
-)LockStatus
-                        where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType = 'F'",
-                            MyUtility.Convert.GetString(this.CurrentMaintain["POID"]),
-                            inputString[0],
-                            inputString[1],
-                            Env.User.Keyword);
-
-                        if (!MyUtility.Check.Seek(sqlCmd, out poData))
-                        {
-                            this.ClearGridData(dr);
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox(string.Format("< Seq: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
-                            return;
-                        }
-                        else
-                        {
-                            dr["Seq"] = poData["Seq"];
-                            dr["Seq1"] = poData["Seq1"];
-                            dr["Seq2"] = poData["Seq2"];
-                            dr["RefNo"] = poData["RefNo"];
-                            dr["Description"] = poData["Description"];
-                            dr["WhseInQty"] = MyUtility.Convert.GetDecimal(poData["InQty"]);
-                            dr["FTYInQty"] = MyUtility.Convert.GetDecimal(poData["OutQty"]);
-                            dr["Status"] = MyUtility.Convert.GetString(poData["Status"]);
-                            DateTime? maxIssueDate = this.MaxIssueDate(MyUtility.Convert.GetString(poData["Seq1"]), MyUtility.Convert.GetString(poData["Seq2"]));
-                            if (MyUtility.Check.Empty(maxIssueDate))
-                            {
-                                dr["FTYLastRecvDate"] = DBNull.Value;
-                            }
-                            else
-                            {
-                                dr["FTYLastRecvDate"] = maxIssueDate;
-                            }
-
-                            dr.EndEdit();
-                        }
-                    }
-                }
-            };
-
-            #endregion
 
             #region RefNo的CoubleClick
             refno.EditingMouseDoubleClick += (s, e) =>
@@ -254,85 +120,11 @@ OUTER APPLY(
             };
             #endregion
 
-            #region PPICReasonID按右鍵與Validating
-            reason.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    if (e.Button == MouseButtons.Right)
-                    {
-                        if (e.RowIndex != -1)
-                        {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                            SelectItem item = new SelectItem(string.Format("select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"])), "5,40", MyUtility.Convert.GetString(dr["PPICReasonID"]));
-                            DialogResult returnResult = item.ShowDialog();
-                            if (returnResult == DialogResult.Cancel)
-                            {
-                                return;
-                            }
-
-                            IList<DataRow> selectData = item.GetSelecteds();
-                            dr["PPICReasonID"] = item.GetSelectedString();
-                            dr["PPICReasonDesc"] = selectData[0]["Description"];
-                            dr.EndEdit();
-                        }
-                    }
-                }
-            };
-
-            reason.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Seq"]))
-                    {
-                        if (MyUtility.Convert.GetString(e.FormattedValue).IndexOf("'") != -1)
-                        {
-                            dr["PPICReasonID"] = string.Empty;
-                            dr["PPICReasonDesc"] = string.Empty;
-                            dr.EndEdit();
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox("Can not enter the  '  character!!");
-                            return;
-                        }
-
-                        DataRow reasonData;
-                        string sqlCmd = string.Format(@"select ID,Description from PPICReason WITH (NOLOCK) where Type = 'FL' and Junk = 0 and TypeForUse = '{0}' and ID = '{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["Type"]), MyUtility.Convert.GetString(e.FormattedValue));
-                        if (!MyUtility.Check.Seek(sqlCmd, out reasonData))
-                        {
-                            dr["PPICReasonID"] = string.Empty;
-                            dr["PPICReasonDesc"] = string.Empty;
-                            dr.EndEdit();
-                            e.Cancel = true;
-                            MyUtility.Msg.WarningBox(string.Format("< Reason Id: {0} > not found!!!", MyUtility.Convert.GetString(e.FormattedValue)));
-                            return;
-                        }
-                        else
-                        {
-                            dr["PPICReasonID"] = MyUtility.Convert.GetString(e.FormattedValue);
-                            dr["PPICReasonDesc"] = reasonData["Description"];
-                            dr.EndEdit();
-                        }
-                    }
-                }
-            };
-            #endregion
-
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Seq", header: "Seq#", width: Widths.AnsiChars(5), settings: seq)
                 .Text("RefNo", header: "Refer#", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: refno)
-                .Date("FTYLastRecvDate", header: "Prod. Last Rcvd Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("FTYInQty", header: "Prod. Accu. Rcvd Qty", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true, settings: outqty)
-                .Numeric("WhseInQty", header: "WH Accu. Rcvd Qty", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true, settings: inqty)
                 .Numeric("RequestQty", header: "Request Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999.99M, minimum: 0, settings: requestqty)
-                .Numeric("RejectQty", header: "# of pcs rejected")
-                .Numeric("IssueQty", header: "Issue Qty upon request", decimal_places: 2, iseditingreadonly: true, settings: issueqty)
-                .ComboBox("Process", header: "Process", width: Widths.AnsiChars(15), settings: process)
-                .Text("PPICReasonID", header: "Reason Id", width: Widths.AnsiChars(5), settings: reason)
-                .EditText("PPICReasonDesc", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Status", header: "Status", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("ReplacementLocalItemReasonID", header: "Reason Id", width: Widths.AnsiChars(5), settings: reason)
+                .EditText("Description", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: false);
         }
 
