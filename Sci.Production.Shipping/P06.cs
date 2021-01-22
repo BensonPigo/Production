@@ -776,7 +776,7 @@ where	exists (
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip,Order_Qty'"))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
 
@@ -785,7 +785,7 @@ where	exists (
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{listOrderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
@@ -874,7 +874,7 @@ where ID = '{orderid}'
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
 
@@ -883,7 +883,7 @@ where ID = '{orderid}'
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{listOrderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }

@@ -1818,7 +1818,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
 
                 // 不透過Call API的方式，自己組合，傳送API
                 Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListIDs, string.Empty))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
@@ -1903,7 +1903,7 @@ update Express set Status = 'Sent', StatusUpdateDate = GETDATE(), EditName = '{0
 
                 // 不透過Call API的方式，自己組合，傳送API
                 Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListIDs, string.Empty))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }

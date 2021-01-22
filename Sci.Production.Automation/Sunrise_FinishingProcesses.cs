@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
@@ -40,15 +43,47 @@ namespace Sci.Production.Automation
             string[] structureID = listID.Split(',');
 
             int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 10.0));
+            List<AutomationCreateRecord> listSendData = new List<AutomationCreateRecord>();
+            SqlConnection sqlConnection = new SqlConnection();
 
-            for (int i = 0; i < sendApiCount; i++)
+            try
             {
-                int skipCount = i * 10;
-                var packIDs = structureID.Skip(skipCount).Take(10).Select(s => new { ID = s });
+                // 先以10筆為單位拆分後再傳出
+                for (int i = 0; i < sendApiCount; i++)
+                {
+                    int skipCount = i * 10;
+                    var packIDs = structureID.Skip(skipCount).Take(10).Select(s => new { ID = s });
 
-                string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure(tableName, packIDs));
+                    string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure(tableName, packIDs));
+                    AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(this.automationErrMsg, jsonBody);
+                    DBProxy._OpenConnection("Production", out sqlConnection);
+                    automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
 
-                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+                    listSendData.Add(automationCreateRecord);
+                }
+
+
+                foreach (AutomationCreateRecord item in listSendData)
+                {
+                    SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, item.json, this.automationErrMsg);
+                    DBProxy._OpenConnection("Production", out sqlConnection);
+                    item.DeleteAutomationCreateRecord(sqlConnection);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (listSendData.Count > 0)
+                {
+                    foreach (AutomationCreateRecord item in listSendData)
+                    {
+                        this.automationErrMsg.SetErrInfo(ex, item.json);
+                        SaveAutomationErrMsg(this.automationErrMsg);
+                    }
+                }
+                else
+                {
+                    throw ex;
+                }
             }
         }
 

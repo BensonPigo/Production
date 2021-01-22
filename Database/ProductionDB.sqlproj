@@ -2472,7 +2472,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\BatchReSentJsonToAGV.sql" />
+    <Build Include="dbo\Stored Procedures\BatchReSentAutomationErr.sql" />
     <Build Include="dbo\Tables\AutomationSubProcess.sql" />
     <Build Include="dbo\Views\View_AllReceiving.sql">
       <AnsiNulls>On</AnsiNulls>
@@ -2566,6 +2566,7 @@
     <Build Include="dbo\Tables\QABrandSetting.sql" />
     <Build Include="dbo\Tables\FIR_Moisture.sql" />
     <Build Include="dbo\Tables\Brand_QAMoistureStandardList.sql" />
+    <Build Include="dbo\Tables\AutomationCreateRecord.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

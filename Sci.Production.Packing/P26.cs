@@ -17,6 +17,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -2157,7 +2158,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                     if (listPackingID.Count > 0)
                     {
                         Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listPackingID.Distinct().JoinToString(","), string.Empty))
-                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                     }
                     #endregion
 
@@ -2169,7 +2170,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                         foreach (var packing in listPackingID)
                         {
                             Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packing, string.Empty))
-                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                         }
                     }
                     #endregion

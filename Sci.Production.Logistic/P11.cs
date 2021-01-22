@@ -256,7 +256,7 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
             {
                 // 不透過Call API的方式，自己組合，傳送API
                 Task.Run(() => new Gensong_FinishingProcesses().SentClogGarmentDisposeToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
@@ -320,7 +320,7 @@ where exists (select 1 from ClogGarmentDispose_Detail t where t.ID = '{this.Curr
             {
                 // 不透過Call API的方式，自己組合，傳送API
                 Task.Run(() => new Gensong_FinishingProcesses().SentClogGarmentDisposeToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
