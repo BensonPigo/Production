@@ -10,43 +10,22 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class R01 : Win.Tems.PrintForm
     {
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string season;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string mdivision;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string factory;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string orderby;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string spno1;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string spno2;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string fabrictype;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string refno1;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string refno2;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string style;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string country;
-
-        // string season, mdivision, factory, orderby, spno1, spno2, fabrictype, stocktype, refno1, refno2, style, country, supp;
         private string supp;
+
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DateTime? suppDelivery1;
@@ -57,6 +36,10 @@ namespace Sci.Production.Warehouse
         private DateTime? ata2;
         private DataTable printData;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="R01"/> class.
+        /// </summary>
+        /// <param name="menuitem">ToolStripMenuItem</param>
         public R01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -212,7 +195,8 @@ select --isnull(d.mdivisionid,cte.mdivisionid)
         ,ArrivedQty = d.InQty
         ,ReleasedQty = d.OutQty
         ,AdjustQty = d.AdjustQty
-        ,Balance = d.InQty - d.OutQty + d.AdjustQty
+        ,ReturnQty = d.ReturnQty
+        ,Balance = d.InQty - d.OutQty + d.AdjustQty - d.ReturnQty
         ,StockUnit = b.StockUnit
 from cte 
 inner join dbo.PO_Supp a WITH (NOLOCK) on a.id = cte.poid
@@ -248,7 +232,8 @@ select --isnull(d.mdivisionid,(select orders.mdivisionid from dbo.orders WITH (N
         ,ArrivedQty = d.InQty
         ,ReleasedQty = d.OutQty
         ,AdjustQty = d.AdjustQty
-        ,Balance = d.InQty - d.OutQty + d.AdjustQty
+        ,ReturnQty = d.ReturnQty
+        ,Balance = d.InQty - d.OutQty + d.AdjustQty - d.ReturnQty
         ,StockUnit = b.StockUnit
 from dbo.PO_Supp a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.id and b.SEQ1 = a.SEQ1

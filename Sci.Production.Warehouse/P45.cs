@@ -272,9 +272,9 @@ and f.StockType = 'O'", this.CurrentMaintain["id"]);
             string chksql = string.Format(
                 @"
 Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
-	,balance = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+	,balance = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
 	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
-	,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) -(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
+	,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - (isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
 {0}", sql);
             if (!(dr = DBProxy.Current.Select(null, chksql, out DataTable dt)))
             {

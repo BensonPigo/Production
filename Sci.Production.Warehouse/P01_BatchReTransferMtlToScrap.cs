@@ -127,7 +127,7 @@ left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = f.PoId and p1.seq1 = f.Seq1
 left join MDivisionPoDetail mdp on  mdp.POID=p1.ID and 
                                     mdp.Seq1=p1.SEQ1 and 
                                     mdp.Seq2=p1.SEQ2
-where   f.InQty - f.OutQty+f.AdjustQty >0 and f.StockType='B' and o.WhseClose is not null 
+where   (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) >0 and f.StockType='B' and o.WhseClose is not null 
         {sqlWhere}
 
 select  [select] = 0,

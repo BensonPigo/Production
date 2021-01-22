@@ -193,7 +193,7 @@ left join MDivisionPoDetail B WITH (NOLOCK) on B.POID = A.ID
 inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid 
 										  and F.MDivisionID = '{0}'
 where A.ID = '{1}' 
-	  and (A.Complete = 0 or B.InQty <> B.OutQty - B.AdjustQty)",
+	  and (A.Complete = 0 or B.InQty - B.OutQty + B.AdjustQty - B.ReturnQty > 0)",
                             Env.User.Keyword,
                             item["POID"]);
 
@@ -360,7 +360,7 @@ from (
 	inner join po p on a.id = p.ID 
 	inner join orders o on o.POID = p.ID
 	where A.ID = o.POID 
-		  and (ETA <= GETDATE() or B.InQty = (B.OutQty - B.AdjustQty))
+		  and (ETA <= GETDATE() or B.InQty - B.OutQty + B.AdjustQty - B.ReturnQty = 0)
 		  and p.Complete = 0
 	      and o.Finished = 0 
 		  and o.Category = 'M'
@@ -398,7 +398,7 @@ from (
 												   and B.Seq2 = A.SEQ2
 	inner join dbo.Factory F WITH (NOLOCK) on F.id = A.factoryid 
 											  and F.MDivisionID = '{0}'
-	where (A.Complete = 0  or B.InQty <> B.OutQty - B.AdjustQty)
+	where (A.Complete = 0  or B.InQty - B.OutQty + B.AdjustQty - B.ReturnQty > 0)
 		  and o.Category = 'M'
 		  and PO.ID is null
 

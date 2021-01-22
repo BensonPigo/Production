@@ -384,13 +384,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlcmd = string.Format(
                 @"
 Select distinct d.seq1,d.seq2,d.qty
-        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,
+        ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,
         d.ukey
 from dbo.Issue_Detail d WITH (NOLOCK) 
 inner join Issue i WITH (NOLOCK) on d.id = i.id
 Left join FtyInventory f WITH (NOLOCK) on i.OrderID = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and f.StockType = 'B'  
 	and isnull(d.Roll,'') = isnull(f.Roll,'') and isnull(d.Dyelot,'')  = isnull(f.Dyelot,'')
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) 
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) 
 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {

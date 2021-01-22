@@ -56,7 +56,7 @@ select  0 as selected
         , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
         , c.Roll
         , c.Dyelot
-        , c.inqty-c.outqty + c.adjustqty as QtyBefore
+        , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as QtyBefore
         , 0.00 as QtyAfter
         , dbo.Getlocation(c.ukey) as location
         , '' reasonid

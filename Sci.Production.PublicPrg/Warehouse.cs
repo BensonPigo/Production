@@ -558,8 +558,8 @@ alter table #TmpSource alter column Dyelot varchar(15)
 alter table #TmpSource alter column Barcode varchar(16)
 
 select t.Ukey
-, s.Barcode
-,[Balance] = t.InQty - t.OutQty + t.AdjustQty
+    , s.Barcode
+    ,[Balance] = t.InQty - t.OutQty + t.AdjustQty - t.ReturnQty
 into #tmpS1
 from FtyInventory t
 inner join #TmpSource s on t.POID = s.poid
@@ -708,7 +708,8 @@ select  p.id,concat(Ltrim(Rtrim(p.seq1)), ' ', p.seq2) as seq
         , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
         , isnull(m.OutQty, 0) as outQty
         , isnull(m.AdjustQty, 0) as AdjustQty
-        , isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) as balance
+        , isnull(m.ReturnQty, 0) as ReturnQty
+        , isnull(m.inqty, 0) - isnull(m.OutQty, 0) + isnull(m.AdjustQty, 0) - isnull(m.ReturnQty, 0) as balance
         , isnull(m.LInvQty, 0) as LInvQty
         , p.fabrictype
         , p.seq1
@@ -764,7 +765,7 @@ where p.id ='{0}'
 
             DBProxy.Current.Select(null, sqlcmd, out dt);
 
-            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,balance,linvqty", "6,8,35,8,10,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty")
+            Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt, "Seq,refno,description,colorid,SizeSpec,FinalETA,inqty,stockunit,outqty,adjustqty,ReturnQty,balance,linvqty", "6,8,35,8,10,6,6,6,6,6,6,6", defaultseq, "Seq,Ref#,Description,Color,Size,ETA,In Qty,Stock Unit,Out Qty,Adqty,Return Qty,Balance,Inventory Qty")
             {
                 Width = 1024,
             };
@@ -949,14 +950,14 @@ for xml path('') ";
                 sqlcmd = $@"
 with cte as (
     select  Dyelot
-            , sum(inqty-OutQty+AdjustQty) as GroupQty
+            , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
     from dbo.FtyInventory a WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                       and p.seq1 = a.Seq1 
                                                       and p.seq2 = a.Seq2
     where   poid = '{materials["poid"]}' 
             and Stocktype = '{stocktype}' 
-            and inqty - OutQty + AdjustQty > 0
+            and inqty - OutQty + AdjustQty - ReturnQty > 0
             and p.SCIRefno = '{materials["scirefno"]}' 
             and p.ColorID = '{materials["colorid"]}' 
             and a.Seq1 BETWEEN '00' AND '99'
@@ -977,12 +978,13 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , roll = RTRIM(LTRIM(roll))
         , stocktype
         , Dyelot = RTRIM(LTRIM(a.Dyelot))
-        , inqty - OutQty + AdjustQty qty
+        , inqty - OutQty + AdjustQty - ReturnQty qty
         , inqty
         , outqty
         , adjustqty
-        , inqty - OutQty + AdjustQty balanceqty
-        , running_total = sum(inqty-OutQty+AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
+        , ReturnQty
+        , inqty - OutQty + AdjustQty - ReturnQty balanceqty
+        , running_total = sum(inqty - OutQty + AdjustQty - ReturnQty) over (order by c.GroupQty DESC,a.Dyelot,(inqty - OutQty + AdjustQty - ReturnQty) desc
                                                             rows between unbounded preceding and current row)
         --,c.GroupQty
 from cte c 
@@ -992,7 +994,7 @@ inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID
                                                   and p.seq2 = a.Seq2
 where   poid = '{materials["poid"]}' 
         and Stocktype = '{stocktype}' 
-        and inqty - OutQty + AdjustQty > 0
+        and inqty - OutQty + AdjustQty - ReturnQty > 0
         and p.SCIRefno = '{materials["scirefno"]}' 
         and p.ColorID = '{materials["colorid"]}' 
         and a.Seq1 BETWEEN '00' AND '99'
@@ -1005,14 +1007,14 @@ where   poid = '{materials["poid"]}'
                     @"
 with cte as (
     select  Dyelot
-            , sum (inqty - OutQty + AdjustQty) as GroupQty
+            , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
     from dbo.FtyInventory a WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                       and p.seq1 = a.Seq1 
                                                       and p.seq2 = a.Seq2
     where   poid = '{1}' 
             and Stocktype = '{4}' 
-            and inqty - OutQty + AdjustQty > 0
+            and inqty - OutQty + AdjustQty - ReturnQty > 0
             and p.seq1 = '{2}' 
             and p.seq2 = '{3}'
     Group by Dyelot
@@ -1032,12 +1034,13 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , roll = RTRIM(LTRIM(roll))
         , stocktype
         , Dyelot = RTRIM(LTRIM(a.Dyelot))
-        , inqty - OutQty + AdjustQty qty
+        , inqty - OutQty + AdjustQty - ReturnQty qty
         , inqty
         , outqty
         , adjustqty
-        , inqty - OutQty + AdjustQty balanceqty
-        , running_total = sum(inqty-OutQty+AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
+        , ReturnQty
+        , inqty - OutQty + AdjustQty - ReturnQty balanceqty
+        , running_total = sum(inqty - OutQty + AdjustQty - ReturnQty) over (order by c.GroupQty DESC,a.Dyelot,(inqty - OutQty + AdjustQty - ReturnQty) DESC
                                                             rows between unbounded preceding and current row) 
         , num = ROW_NUMBER()over(order by a.Dyelot)
         ,c.GroupQty
@@ -1049,7 +1052,7 @@ inner join cte c on c.Dyelot = a.Dyelot
 where   a.lock = 0
         and poid = '{1}' 
         and Stocktype = '{4}' 
-        and inqty-OutQty+AdjustQty > 0
+        and inqty - OutQty + AdjustQty - ReturnQty > 0
         and p.seq1 = '{2}' 
         and p.seq2 = '{3}'", Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
@@ -1060,14 +1063,14 @@ where   a.lock = 0
                 sqlcmd = $@"
 with cte as (
     select  Dyelot
-            , sum (inqty - OutQty + AdjustQty) as GroupQty
+            , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
     from dbo.FtyInventory a WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID 
                                                       and p.seq1 = a.Seq1 
                                                       and p.seq2 = a.Seq2
     where   poid = '{materials["StockPOID"]}' 
             and Stocktype = '{stocktype}' 
-            and inqty - OutQty + AdjustQty > 0
+            and inqty - OutQty + AdjustQty - ReturnQty > 0
             and p.seq1 = '{materials["StockSeq1"]}' 
             and p.seq2 = '{materials["StockSeq2"]}'
     Group by Dyelot
@@ -1087,12 +1090,13 @@ select  location = Stuff ((select ',' + t.mtllocationid
         , roll = RTRIM(LTRIM(roll))
         , stocktype
         , Dyelot = RTRIM(LTRIM(a.Dyelot))
-        , inqty - OutQty + AdjustQty qty
+        , inqty - OutQty + AdjustQty - ReturnQty qty
         , inqty
         , outqty
         , adjustqty
-        , inqty - OutQty + AdjustQty balanceqty
-        , running_total = sum (inqty - OutQty + AdjustQty) over (order by c.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty DESC
+        , ReturnQty
+        , inqty - OutQty + AdjustQty - ReturnQty balanceqty
+        , running_total = sum(inqty - OutQty + AdjustQty - ReturnQty) over (order by c.GroupQty DESC,a.Dyelot,(inqty - OutQty + AdjustQty - ReturnQty) DESC
                                                                  rows between unbounded preceding and current row) 
         --,c.GroupQty
 from dbo.FtyInventory a WITH (NOLOCK) 
@@ -1102,7 +1106,7 @@ inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on  p.id = a.POID
 inner join cte c on c.Dyelot = a.Dyelot
 where   poid = '{materials["StockPOID"]}' 
         and Stocktype = '{stocktype}' 
-        and inqty - OutQty + AdjustQty > 0
+        and inqty - OutQty + AdjustQty - ReturnQty > 0
         and p.seq1 = '{materials["StockSeq1"]}' 
         and p.seq2 = '{materials["StockSeq2"]}'";
             }
@@ -1319,7 +1323,7 @@ where   poid = '{materials["StockPOID"]}'
             sqlcmd = string.Format(
                 @"
 select distinct a.Seq1, a.Seq2, ctpd.Dyelot 
-,GroupQty = sum(a.InQty-a.OutQty+a.AdjustQty)
+,GroupQty = sum(a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty)
 ,ReleaseQty = ReleaseQty.value
 into #tmp
 from  CutTapePlan_Detail ctpd
@@ -1352,13 +1356,14 @@ select
 	, roll = RTRIM(LTRIM(roll))
 	, stocktype
 	, Dyelot = RTRIM(LTRIM(a.Dyelot))
-	, qty = inqty - OutQty + AdjustQty
+	, qty = inqty - OutQty + AdjustQty - ReturnQty
 	, inqty
 	, outqty
 	, adjustqty
+    , ReturnQty
     , ReleaseQty
-	, balanceqty = inqty - OutQty + AdjustQty 
-    , running_total = sum(inqty-OutQty+AdjustQty) over (order by t.GroupQty DESC,a.Dyelot,inqty-OutQty+AdjustQty desc
+	, balanceqty = inqty - OutQty + AdjustQty - ReturnQty
+    , running_total = sum(inqty - OutQty + AdjustQty - ReturnQty) over (order by t.GroupQty DESC,a.Dyelot,(inqty - OutQty + AdjustQty - ReturnQty) desc
                                                         rows between unbounded preceding and current row)
 from #tmp t
 inner join FtyInventory a on a.POID = '{0}' and a.Seq1 = t.Seq1 and a.Seq2 = t.Seq2 and a.Dyelot = t.Dyelot and a.StockType = '{2}'
@@ -1454,7 +1459,7 @@ select   [POID]=psd.ID
 	, psd.SCIRefno
 	, psd.SuppColor
     , a.stocktype
-    , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty,0.00)
+    , [BulkQty] =ISNULL( a.inqty - a.outqty + a.adjustqty - a.ReturnQty,0.00)
 	, [Qty]=0.00
 	, [BulkLocation]= STUFF ((
 									SELECT ',' + MtlLocationID 
@@ -1605,8 +1610,10 @@ where    psd.ID = '{material["poid"]}'
             if (!mtlAutoLock)
             {
                 sqlcmd = string.Format(
-                    @"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,f.Dyelot
+                    @"
+Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
@@ -1635,12 +1642,14 @@ where f.lock=1 and d.Id = '{0}'", dr["id"]);
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(
-                @"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,f.Dyelot
+                @"
+Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Qty>0  and d.Id = '{0}'", dr["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Qty>0  and d.Id = '{0}'", dr["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
@@ -1661,8 +1670,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
 
             sqlcmd = string.Format(
-                @"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty, f.Dyelot
+                @"
+Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    , f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on  d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
@@ -1670,7 +1681,7 @@ and d.toSeq2 = f.seq2
 and d.toStocktype = f.StockType
 and d.toRoll = f.Roll
 and d.toDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Qty<0 and d.Id = '{0}'", dr["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Qty<0 and d.Id = '{0}'", dr["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
@@ -1869,7 +1880,7 @@ Select  d.frompoid
     , d.fromseq2
     , d.fromRoll
     , d.Qty
-    , balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+    , balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
     ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID 
@@ -1909,7 +1920,8 @@ Select  d.frompoid
         , d.fromseq2
         , d.fromRoll
         , d.Qty
-        , balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0),d.FromDyelot
+        , balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+        , d.FromDyelot
 from (
 		Select  frompoid
                 , fromseq1
@@ -1929,7 +1941,7 @@ left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID
                                           and d.FromSeq2 = f.Seq2 
                                           and D.FromStockType = F.StockType
                                           and d.FromDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) < d.Qty) ", subTransfer_ID);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) < d.Qty) ", subTransfer_ID);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result;
@@ -1956,7 +1968,7 @@ Select  d.topoid
         , d.toseq2
         , d.toRoll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
         , d.toDyelot
 from (
 		Select  topoid
@@ -1977,7 +1989,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.toPoId = f.PoId
                                             and d.toStocktype = f.StockType 
                                             and d.toRoll = f.Roll
                                             and d.toDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) ", subTransfer_ID);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) ", subTransfer_ID);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result;
@@ -2274,7 +2286,7 @@ Select 	d.frompoid
 		,d.fromseq2
 		,d.fromRoll
 		,d.Qty
-		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+		,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
         ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) 
@@ -2311,13 +2323,13 @@ Select 	d.frompoid
 		,d.fromseq2
 		,d.fromRoll
 		,d.Qty
-		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+		,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
         , f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) 
 	on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", subTransfer_ID);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", subTransfer_ID);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 return result2;

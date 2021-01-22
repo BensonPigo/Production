@@ -418,7 +418,7 @@ Select  d.poid
         ,d.seq2
         ,d.Roll
         ,d.Qty
-        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+        ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
@@ -452,11 +452,11 @@ Select  d.poid
         ,d.seq2
         ,d.Roll
         ,d.Qty
-        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+        ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -599,7 +599,7 @@ Select  d.poid
         ,d.seq2
         ,d.Roll
         ,d.Qty
-        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+        ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
@@ -633,11 +633,11 @@ Select  d.poid
         ,d.seq2
         ,d.Roll
         ,d.Qty
-        ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot   
+        ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,d.Dyelot   
 from dbo.Issue_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on d.poid = f.poid and d.seq1 = f.seq1 and d.seq2 = f.seq2 and d.Dyelot = f.Dyelot
     and d.roll = f.roll and d.stocktype = f.stocktype
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -826,7 +826,7 @@ select
 [Barcode1] = f.Barcode
 ,[Barcode2] = fb.Barcode
 ,[OriBarcode] = fbOri.Barcode
-,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[NewBarcode] = ''
 ,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
 from Production.dbo.Issue_Detail i2
@@ -941,7 +941,7 @@ select  o.FtyGroup
         , a.Dyelot
         , a.Qty
         , a.StockType
-        , Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
+        , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty,0.00) as balance
         , dbo.Getlocation(c.ukey) location
         , a.ukey
 		, p1.NetQty

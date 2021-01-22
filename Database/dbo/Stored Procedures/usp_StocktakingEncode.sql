@@ -78,11 +78,11 @@ BEGIN
 
 		-- 檢查欲產生的調整單明細是否數量不足;無法調整的項目
 		DECLARE CheckBalanceQty_cursor CURSOR FOR
-		select f.POID,f.seq1,f.seq2,f.Roll,f.Dyelot --into #tmpCheckLock
-		from dbo.Stocktaking_Detail sd WITH (NOLOCK)
-		inner join dbo.FtyInventory f WITH (NOLOCK) on f.Ukey = sd.FtyInventoryUkey
-		where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
-		and f.InQty-f.OutQty+f.AdjustQty + (sd.QtyAfter - sd.QtyBefore) < 0;
+			select f.POID,f.seq1,f.seq2,f.Roll,f.Dyelot --into #tmpCheckLock
+			from dbo.Stocktaking_Detail sd WITH (NOLOCK)
+			inner join dbo.FtyInventory f WITH (NOLOCK) on f.Ukey = sd.FtyInventoryUkey
+			where sd.id = @StocktakingID and sd.QtyBefore != sd.QtyAfter 
+			and f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty + (sd.QtyAfter - sd.QtyBefore) < 0;
 		OPEN CheckBalanceQty_cursor;
 			FETCH NEXT FROM CheckBalanceQty_cursor INTO @poid,@seq1,@seq2,@roll,@dyelot;
 		IF @poid is not null

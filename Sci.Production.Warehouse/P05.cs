@@ -218,7 +218,7 @@ SELECT
     ,ed.Seq2
     ,f.Roll
     ,f.Dyelot
-    ,[BalanceQty]=f.InQty-f.OutQty+ f.AdjustQty
+    ,[BalanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
     ,[Location]=dbo.Getlocation(f.ukey)
     ,fc.MDivisionID
     ,e.FactoryID
@@ -227,7 +227,7 @@ FROM Export_Detail ed
 INNER JOIN FtyInventory f   ON f.POID= ed.POID
                             AND f.SEQ1= ed.SEQ1
                             AND f.SEQ2= ed.SEQ2
-                            AND f.InQty- f.OutQty+ f.AdjustQty>0
+                            AND f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty > 0
 INNER JOIN Export e ON e.ID = ed.ID
 LEFT JOIN Factory fc ON fc.ID = e.FactoryID
 LEFT JOIN DropDownList dd ON dd.ID LIKE '%'+f.stockType+'%'  AND dd.Type='Pms_StockType'

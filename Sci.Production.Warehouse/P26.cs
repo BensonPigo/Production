@@ -188,7 +188,7 @@ namespace Sci.Production.Warehouse
 
                     string getFtyInventorySql = $@"
 select 
-[Qty] = InQty - OutQty + AdjustQty ,
+[Qty] = InQty - OutQty + AdjustQty - ReturnQty,
 [fromlocation] = dbo.Getlocation(ukey) 
 from FtyInventory
 where

@@ -105,7 +105,8 @@ with cte as (
 		    , mpd.InQty
 		    , mpd.OutQty
 		    , mpd.AdjustQty
-		    , balanceqty = mpd.InQty-mpd.OutQty-mpd.AdjustQty
+            , mpd.ReturnQty
+		    , balanceqty = mpd.InQty - mpd.OutQty + mpd.AdjustQty - mpd.ReturnQty
 		    , mpd.ALocation
 		    , mpd.LInvQty
 		    , mpd.BLocation

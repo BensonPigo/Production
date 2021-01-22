@@ -657,11 +657,11 @@ from (
 		                            where fid.Ukey = fi.UKey 
 		                            for xml path(''))
 		                           ,'')
-	        ,[Qty] = IIF(fi.InQty-fi.OutQty+fi.AdjustQty != 0, dbo.getVNUnitTransfer(
+	        ,[Qty] = IIF(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty != 0, dbo.getVNUnitTransfer(
 			        isnull(f.Type, '')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit, '')
-			        ,(fi.InQty-fi.OutQty+fi.AdjustQty)
+			        ,(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty)
 			        ,isnull(f.Width,0)
 			        ,isnull(f.PcsWidth,0)
 			        ,isnull(f.PcsLength,0)
@@ -675,7 +675,7 @@ from (
                         ,default)
 			        , 0)
 	        , [W/House Unit] = f.CustomsUnit
-	        , [W/House Qty(Stock Unit)] = fi.InQty-fi.OutQty+fi.AdjustQty
+	        , [W/House Qty(Stock Unit)] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
 	        , [Stock Unit] = psd.StockUnit
 	from FtyInventory fi WITH (NOLOCK)  --EDIT
     inner join Orders o WITH (NOLOCK) on o.id= fi.POID
@@ -684,7 +684,7 @@ from (
                                                   and psd.SEQ2 = fi.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where (fi.StockType = 'B' or fi.StockType = 'I')		 	
-    and fi.InQty-fi.OutQty+fi.AdjustQty != 0
+    and fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty != 0
           {whereftys}
     
     union all
@@ -1895,10 +1895,10 @@ from (
 	        , [Dyelot] = ft.Dyelot
 	        , [StockType] = ft.StockType
 	        , [Location] = ftd.MtlLocationID		
-	        , [Qty] = IIF(ft.InQty-ft.OutQty+ft.AdjustQty != 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	        , [Qty] = IIF(ft.InQty - ft.OutQty + ft.AdjustQty - ft.ReturnQty != 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 			        ,psd.StockUnit
 			        ,isnull(f.CustomsUnit,'')
-			        ,ft.InQty-ft.OutQty+ft.AdjustQty
+			        ,ft.InQty - ft.OutQty + ft.AdjustQty- ft.ReturnQty
 			        ,isnull(f.Width,0)
 			        ,isnull(f.PcsWidth,0)
 			        ,isnull(f.PcsLength,0)
@@ -1911,7 +1911,7 @@ from (
 				        ,(select Rate from dbo.View_Unitrate WITH (NOLOCK) where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')
                         ,default),0)
 	        , [CustomsUnit] = isnull(f.CustomsUnit,'')
-	        , [ScrapQty] = ft.InQty-ft.OutQty+ft.AdjustQty
+	        , [ScrapQty] = ft.InQty - ft.OutQty + ft.AdjustQty - ft.ReturnQty
 	        , [StockUnit] = psd.StockUnit
 	from FtyInventory ft WITH (NOLOCK) 
 	left join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey	
@@ -1922,7 +1922,7 @@ from (
     inner join orders o WITH (NOLOCK) on o.id=ft.POID
 	where 1=1 
             and ft.StockType='O'
-			and ft.InQty-ft.OutQty+ft.AdjustQty != 0
+			and ft.InQty - ft.OutQty + ft.AdjustQty - ft.ReturnQty != 0
             {whereftys}
 
     union all

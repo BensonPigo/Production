@@ -44,8 +44,8 @@ namespace Sci.Production.Warehouse
             StringBuilder selectCommand1 = new StringBuilder();
             selectCommand1.Append(string.Format(
                 @"select *,
-            --sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
-            sum(TMP.inqty - TMP.outqty+tmp.adjust) over (order by IssueDate,tmp.addDate, name) as [balance] 
+            --sum(TMP.inqty - TMP.outqty + tmp.adjust) over ( order by tmp.addDate,TMP.inqty desc, TMP.outqty,tmp.adjust) as [balance] 
+            sum(TMP.inqty - TMP.outqty + TMP.adjust - TMP.ReturnQty) over (order by IssueDate,tmp.addDate, name) as [balance] 
             from (
  			select 	a.IssueDate
 					, a.id
@@ -56,6 +56,7 @@ namespace Sci.Production.Warehouse
                 	,inqty = 0 
                 	,outqty = 0
                 	,adjust = adjust.Qty
+                    ,ReturnQty = 0
                 	,remark 
                 	,location = MtlLocation.location 
                 	,AddDate
@@ -113,6 +114,7 @@ namespace Sci.Production.Warehouse
             		,inqty = 0
             		,released = released.qty
             		,adjust = 0
+                    ,ReturnQty = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
@@ -169,6 +171,7 @@ namespace Sci.Production.Warehouse
             		,arrived = arrived.qty
             		,ouqty = 0 
             		,adjust = 0 
+                    ,ReturnQty = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
@@ -224,6 +227,7 @@ namespace Sci.Production.Warehouse
             		,inqty = 0
             		,released = released.qty
             		,adjust = 0
+                    ,ReturnQty = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
@@ -280,6 +284,7 @@ namespace Sci.Production.Warehouse
             		,arrived = arrived.qty
             		,ouqty = 0
             		,adjust = 0
+                    ,ReturnQty = 0
             		,remark 
             		,location = MtlLocation.location
             		,AddDate
@@ -342,6 +347,7 @@ namespace Sci.Production.Warehouse
                 	    , inqty = 0 
                 		, Released.qty
                         , adjust = 0
+                        , ReturnQty = 0
                 		, remark
                         , location = MtlLocation.location
                         , AddDate
@@ -401,6 +407,7 @@ namespace Sci.Production.Warehouse
         			,inqty = 0
         			,outqty = released.qty
         			,adjust = 0 
+                    ,ReturnQty = 0
         			,a.remark 
         			,location = MtlLocation.location
         			,AddDate
@@ -457,6 +464,7 @@ namespace Sci.Production.Warehouse
             		,inqty = 0
             		,released = released.qty
             		,adjust = 0
+                    ,ReturnQty = 0
             		,remark
             		,location = MtlLocation.location
             		,AddDate
@@ -514,6 +522,7 @@ namespace Sci.Production.Warehouse
                     ,arrived = arrived.qty
                     ,ouqty = 0
                     ,adjust = 0
+                    ,ReturnQty = 0
                     ,remark = '' 
                     ,X.Location
                     ,AddDate
@@ -558,6 +567,7 @@ namespace Sci.Production.Warehouse
             		,inqty = 0
             		,released = released.qty
             		,adjust = 0
+                    ,ReturnQty = 0
             		,remark
             		,location = MtlLocation.location
             		,AddDate
@@ -613,7 +623,8 @@ namespace Sci.Production.Warehouse
 	                , name = 'P23. Transfer Inventory to Bulk'
 	                , inqty = 0
                     , released = released.qty
-                    , adjust = 0 
+                    , adjust = 0
+                    , ReturnQty = 0
                     , remark = ''  
                     , X.Location
                     , AddDate
@@ -657,6 +668,7 @@ namespace Sci.Production.Warehouse
                         , arrived.qty arrived
                         ,0 as ouqty
                         ,0 as adjust
+                        ,0 as ReturnQty
                         , remark
 	                    ,ToLocation = (Select cast(tmp.ToLocation as nvarchar)+',' 
                                        from (select b1.ToLocation 
@@ -702,6 +714,7 @@ namespace Sci.Production.Warehouse
                         , arrived.qty arrived
                         , 0 as ouqty
                         , 0 as adjust
+                        , 0 as ReturnQty
                         , a.remark
 	                    , (Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
@@ -746,6 +759,7 @@ namespace Sci.Production.Warehouse
             		,inqty = 0
             		,released = released.qty
             		,adjust = 0
+                    ,ReturnQty = 0
             		,remark
             		,location = MtlLocation.location
             		,AddDate
@@ -802,6 +816,7 @@ namespace Sci.Production.Warehouse
 	            , inqty.qty as inqty
                 , 0 as released
                 , 0 as adjust 
+                , 0 as ReturnQty
                 , isnull(a.remark,'') remark 
 				,(Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
@@ -850,6 +865,7 @@ namespace Sci.Production.Warehouse
 	                , inqty.qty as inqty
                     , 0 released
                     , 0 as adjust
+                    , 0 as ReturnQty
                     , remark
                     , X.location
                     , AddDate
@@ -896,6 +912,7 @@ namespace Sci.Production.Warehouse
                     , 0 as inqty
                     , released.qty released
                     , 0 as adjust 
+                    , 0 as ReturnQty
                     , isnull(a.remark,'') remark 
 			        , (Select cast(tmp.ToLocation as nvarchar)+',' 
                                     from (select b1.ToLocation 
@@ -934,7 +951,7 @@ namespace Sci.Production.Warehouse
 
             selectCommand1.Append(@"
                 ) tmp
-                group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name, AddDate
+                group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name, AddDate
                 order by IssueDate,tmp.addDate,name");
 
             #endregion
@@ -949,11 +966,13 @@ namespace Sci.Production.Warehouse
                 object inqty = selectDataTable1.Compute("sum(inqty)", null);
                 object outqty = selectDataTable1.Compute("sum(outqty)", null);
                 object adjust = selectDataTable1.Compute("sum(adjust)", null);
-                object balance = Convert.ToDecimal(inqty) - Convert.ToDecimal(outqty) + Convert.ToDecimal(adjust);
+                object returnQty = selectDataTable1.Compute("sum(ReturnQty)", null);
+                object balance = Convert.ToDecimal(inqty) - Convert.ToDecimal(outqty) + Convert.ToDecimal(adjust) - Convert.ToDecimal(returnQty);
                 this.numTotal1.Value = !MyUtility.Check.Empty(inqty) ? decimal.Parse(inqty.ToString()) : 0m;
                 this.numTotal2.Value = !MyUtility.Check.Empty(outqty) ? decimal.Parse(outqty.ToString()) : 0m;
                 this.numTotal3.Value = !MyUtility.Check.Empty(adjust) ? decimal.Parse(adjust.ToString()) : 0m;
-                this.numTotal4.Value = !MyUtility.Check.Empty(balance) ? decimal.Parse(balance.ToString()) : 0m;
+                this.numTotal4.Value = !MyUtility.Check.Empty(returnQty) ? decimal.Parse(returnQty.ToString()) : 0m;
+                this.numTotal5.Value = !MyUtility.Check.Empty(balance) ? decimal.Parse(balance.ToString()) : 0m;
             }
 
             this.bindingSource1.DataSource = selectDataTable1;
@@ -1109,6 +1128,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                 .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(20))
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
@@ -1185,8 +1205,9 @@ namespace Sci.Production.Warehouse
             worksheet.Columns[5].NumberFormat = "0.00";
             worksheet.Columns[6].NumberFormat = "0.00";
             worksheet.Columns[7].NumberFormat = "0.00";
-            worksheet.Columns[8].NumberFormat = "@";
+            worksheet.Columns[8].NumberFormat = "0.00";
             worksheet.Columns[9].NumberFormat = "@";
+            worksheet.Columns[10].NumberFormat = "@";
 
             for (int i = 1; i <= this.gridTransactionDetail.Columns.Count; i++)
             {

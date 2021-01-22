@@ -68,7 +68,7 @@ select  selected = 0
         , StockType = 'B' 
         , ftyinventoryukey = c.ukey  
         , location = dbo.Getlocation(c.ukey)
-        , balance = c.inqty-c.outqty + c.adjustqty 
+        , balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
 		,a.NetQty
 		,a.LossQty
         , [FabricTypeName] = (select name from DropDownList where Type='FabricType_Condition' and a.FabricType = id)
@@ -89,7 +89,7 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1
 inner join dbo.Orders on c.poid = orders.id
 inner join dbo.Factory on orders.FactoryID = factory.ID
 INNER JOIN Fabric f on a.SCIRefNo=f.SCIRefNo
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 AND Orders.category!='A'
+Where a.id = '{0}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND Orders.category!='A'
     and factory.MDivisionID = '{1}'
 ", sp, Env.User.Keyword));
                 if (!this.txtSeq1.CheckSeq1Empty() && this.txtSeq1.CheckSeq2Empty())

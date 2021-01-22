@@ -156,13 +156,15 @@ select  distinct
         ArrivedQty			= isnull(C.InQty, 0), 
         ReleasedQty			= isnull(C.OutQty, 0), 
         AdjustQty			= isnull(C.AdjustQty, 0),
+        ReturnQty			= isnull(C.ReturnQty, 0),
         StockInQty			= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) ,
         StockAllocatedQty	= Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) , 
         StockBalanceQty		= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) -Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) ,
         InQty				= isnull(x.InQty, 0), 
         OutQty				= isnull(x.OutQty, 0), 
         AdjustQty			= isnull(x.AdjustQty, 0),
-        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
+        ReturnQty			= isnull(x.ReturnQty, 0),
+        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0) - isnull(x.ReturnQty, 0)
 from cte
 inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
@@ -192,6 +194,7 @@ outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
             , isnull(sum(m.OutQty),0.00) OutQty
             , isnull(sum(m.AdjustQty),0.00) AdjustQty 
+            , isnull(sum(m.ReturnQty),0.00) ReturnQty 
     from dbo.FtyInventory m WITH (NOLOCK) 
     where   m.POID = a.POID 
             and m.seq1 = a.seq1 
@@ -218,14 +221,16 @@ select  distinct
         ShipQty				= Round((isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * v.RateValue, 2),
         ArrivedQty			= isnull(C.InQty, 0), 
         ReleasedQty			= isnull(C.OutQty, 0), 
-        AdjustQty			= isnull(C.AdjustQty, 0) ,
+        AdjustQty			= isnull(C.AdjustQty, 0),
+        ReturnQty			= isnull(C.ReturnQty, 0),
         StockInQty			= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) ,
         StockAllocatedQty	= Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) , 
         StockBalanceQty		= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) -Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) ,
         InQty				= isnull(x.InQty, 0), 
         OutQty				= isnull(x.OutQty, 0), 
         AdjustQty			= isnull(x.AdjustQty, 0),
-        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)
+        ReturnQty			= isnull(x.ReturnQty, 0),
+        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0) - isnull(x.ReturnQty, 0)
 from Inventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
 inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
@@ -254,6 +259,7 @@ outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
             , isnull(sum(m.OutQty),0.00) OutQty
             , isnull(sum(m.AdjustQty),0.00) AdjustQty 
+            , isnull(sum(m.ReturnQty),0.00) ReturnQty 
     from dbo.FtyInventory m WITH (NOLOCK) 
     where   m.POID = a.POID 
             and m.seq1 = a.seq1 
@@ -355,7 +361,7 @@ where b.InputQty> 0"));
             if (this.filterIndex == 0)
             {
                 // sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
-                sqlCmd.Append(" and Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0)");
+                sqlCmd.Append(" and Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0) - isnull(x.ReturnQty, 0)");
             }
 
             if (this.filterIndex == 1)

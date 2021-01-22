@@ -142,7 +142,8 @@ select distinct
         InQty		= a.InQty,
         OutQty		= a.OutQty,
         AdjustQty	= a.AdjustQty,
-        Balance		= isnull(a.inqty, 0) - isnull(a.outqty, 0) + isnull(a.adjustqty, 0)
+        ReturnQty   = a.ReturnQty,
+        Balance		= isnull(a.InQty, 0) - isnull(a.OutQty, 0) + isnull(a.AdjustQty, 0) - isnull(a.ReturnQty, 0)
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
@@ -212,7 +213,7 @@ where   1=1");
 
             if (chkbalance)
             {
-                sqlcmd.Append(@" And a.inqty- a.outqty + a.adjustqty > 0");
+                sqlcmd.Append(@" And a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty > 0");
             }
 
             if (!MyUtility.Check.Empty(factory))

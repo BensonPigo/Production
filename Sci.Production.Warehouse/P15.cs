@@ -378,8 +378,10 @@ namespace Sci.Production.Warehouse
             {
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(
-                    @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                    @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.IssueLack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
@@ -407,11 +409,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 #region -- 檢查負數庫存 --
 
                 sqlcmd = string.Format(
-                    @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                    @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.IssueLack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     this.ShowErr(sqlcmd, result2);
@@ -564,8 +568,10 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
             {
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(
-                    @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                    @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.IssueLack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
@@ -593,11 +599,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 #region -- 檢查負數庫存 --
 
                 sqlcmd = string.Format(
-                    @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                    @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.IssueLack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
                 if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     this.ShowErr(sqlcmd, result2);
