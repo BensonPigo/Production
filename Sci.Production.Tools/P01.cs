@@ -34,13 +34,13 @@ namespace Sci.Production.Tools
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("SuppID", header: "Supp#", width: Widths.AnsiChars(15))
-                .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(5))
-                .Text("SuppAPIThread", header: "SuppAPIThread", width: Widths.AnsiChars(20))
-                .Text("APIThread", header: "API Thread", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("ErrorCode", header: "Error Code", width: Widths.AnsiChars(5),  iseditingreadonly: true)
-                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(40), iseditingreadonly: true)
-                .Text("JSON", header: "Content", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("SuppID", header: "Supp#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .EditText("SuppAPIThread", header: "SuppAPIThread", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("APIThread", header: "API Thread", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("ErrorCode", header: "Error Code", width: Widths.AnsiChars(5),  iseditingreadonly: true)
+                .EditText("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .EditText("JSON", header: "Content", width: Widths.AnsiChars(40), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Error Time", width: Widths.AnsiChars(20),  iseditingreadonly: true)
             ;
             #endregion 欄位設定
@@ -95,7 +95,6 @@ UPDATE System
 SET AutomationAutoRunTime = {automationAutoRunTime}
 ";
                 DualResult result = DBProxy.Current.Execute(null, cmd);
-
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -192,6 +191,12 @@ where   a.ReSented = 0 and
 
             DBProxy.Current.Select(null, cmd, out DataTable dt);
             this.listControlBindingSource1.DataSource = dt;
+            this.GetRunTime();
+        }
+
+        private void GetRunTime()
+        {
+            this.RunTime.Text = MyUtility.GetValue.Lookup("select AutomationAutoRunTime from system ");
         }
     }
 }

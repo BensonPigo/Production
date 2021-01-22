@@ -31,8 +31,13 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtSuppAPIThread = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.dateErrorTime = new Sci.Win.UI.DateRange();
+            this.label4 = new Sci.Win.UI.Label();
             this.RunTime = new Sci.Win.UI.NumericBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.btnFilter = new Sci.Win.UI.Button();
             this.btnEditSave = new Sci.Win.UI.Button();
             this.label2 = new Sci.Win.UI.Label();
@@ -45,11 +50,6 @@
             this.panel7 = new Sci.Win.UI.Panel();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label4 = new Sci.Win.UI.Label();
-            this.dateErrorTime = new Sci.Win.UI.DateRange();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtSuppAPIThread = new Sci.Win.UI.TextBox();
-            this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -76,6 +76,53 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1072, 80);
             this.panel1.TabIndex = 1;
+            // 
+            // txtSuppAPIThread
+            // 
+            this.txtSuppAPIThread.BackColor = System.Drawing.Color.White;
+            this.txtSuppAPIThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSuppAPIThread.Location = new System.Drawing.Point(132, 45);
+            this.txtSuppAPIThread.Name = "txtSuppAPIThread";
+            this.txtSuppAPIThread.Size = new System.Drawing.Size(532, 24);
+            this.txtSuppAPIThread.TabIndex = 14;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(12, 45);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(117, 23);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "SuppAPIThread";
+            // 
+            // dateErrorTime
+            // 
+            // 
+            // 
+            // 
+            this.dateErrorTime.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateErrorTime.DateBox1.Name = "";
+            this.dateErrorTime.DateBox1.Size = new System.Drawing.Size(128, 24);
+            this.dateErrorTime.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateErrorTime.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateErrorTime.DateBox2.Name = "";
+            this.dateErrorTime.DateBox2.Size = new System.Drawing.Size(128, 24);
+            this.dateErrorTime.DateBox2.TabIndex = 1;
+            this.dateErrorTime.IsRequired = false;
+            this.dateErrorTime.Location = new System.Drawing.Point(384, 13);
+            this.dateErrorTime.Name = "dateErrorTime";
+            this.dateErrorTime.Size = new System.Drawing.Size(280, 24);
+            this.dateErrorTime.TabIndex = 12;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(298, 13);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 23);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Error Time";
             // 
             // RunTime
             // 
@@ -108,6 +155,15 @@
             this.label3.Size = new System.Drawing.Size(32, 18);
             this.label3.TabIndex = 9;
             this.label3.Text = "Min";
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(132, 13);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier.TabIndex = 1;
+            this.txtsupplier.TextBox1Binding = "";
             // 
             // btnFilter
             // 
@@ -230,62 +286,6 @@
             this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(1048, 444);
             this.grid.TabIndex = 0;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(298, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 23);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Error Time";
-            // 
-            // dateErrorTime
-            // 
-            // 
-            // 
-            // 
-            this.dateErrorTime.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateErrorTime.DateBox1.Name = "";
-            this.dateErrorTime.DateBox1.Size = new System.Drawing.Size(128, 24);
-            this.dateErrorTime.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateErrorTime.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateErrorTime.DateBox2.Name = "";
-            this.dateErrorTime.DateBox2.Size = new System.Drawing.Size(128, 24);
-            this.dateErrorTime.DateBox2.TabIndex = 1;
-            this.dateErrorTime.IsRequired = false;
-            this.dateErrorTime.Location = new System.Drawing.Point(384, 13);
-            this.dateErrorTime.Name = "dateErrorTime";
-            this.dateErrorTime.Size = new System.Drawing.Size(280, 24);
-            this.dateErrorTime.TabIndex = 12;
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(12, 45);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(117, 23);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "SuppAPIThread";
-            // 
-            // txtSuppAPIThread
-            // 
-            this.txtSuppAPIThread.BackColor = System.Drawing.Color.White;
-            this.txtSuppAPIThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSuppAPIThread.Location = new System.Drawing.Point(132, 45);
-            this.txtSuppAPIThread.Name = "txtSuppAPIThread";
-            this.txtSuppAPIThread.Size = new System.Drawing.Size(532, 24);
-            this.txtSuppAPIThread.TabIndex = 14;
-            // 
-            // txtsupplier
-            // 
-            this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(132, 13);
-            this.txtsupplier.Name = "txtsupplier";
-            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier.TabIndex = 1;
-            this.txtsupplier.TextBox1Binding = "";
             // 
             // P01
             // 
