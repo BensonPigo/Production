@@ -357,9 +357,12 @@ where a.id= @ID";
         /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
+            string strSort = ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort;
+            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = string.Empty;
             base.OnDetailGridInsert(index);
             this.CurrentDetailData["Stocktype"] = 'B';
             this.CurrentDetailData["MdivisionID"] = Env.User.Keyword;
+            ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = strSort;
         }
 
         // Detail Grid 設定
