@@ -30,6 +30,7 @@ namespace Sci.Production.Tools
             this.EditMode = true;
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
+            this.dateErrorTime.DateBox1.Text = DateTime.Today.AddDays(-1).ToString("yyyy/MM/dd");
 
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -50,29 +51,7 @@ namespace Sci.Production.Tools
 
         private void BtnFilter_Click(object sender, EventArgs e)
         {
-            List<string> filter = new List<string>();
-
-            if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
-            {
-                filter.Add($"SuppID='{this.txtsupplier.TextBox1.Text}' ");
-            }
-
-            if (this.dateErrorTime.HasValue1)
-            {
-                filter.Add($"AddDate >= '{this.dateErrorTime.DateBox1.Text}' ");
-            }
-
-            if (this.dateErrorTime.HasValue2)
-            {
-                filter.Add($"AddDate < '{((DateTime)this.dateErrorTime.DateBox2.Value).AddDays(1)}' ");
-            }
-
-            if (!MyUtility.Check.Empty(this.txtSuppAPIThread.Text))
-            {
-                filter.Add($"SuppAPIThread ='{this.txtSuppAPIThread.Text}' ");
-            }
-
-            this.listControlBindingSource1.Filter = filter.JoinToString(" and ");
+            this.Search();
         }
 
         private void BtnEditSave_Click(object sender, EventArgs e)
@@ -185,11 +164,35 @@ SELECT [Selected]=0
     ,a.SuppAPIThread
 FROM AutomationErrMsg a WITH(NOLOCK)
 LEFT JOIN Supp s WITH(NOLOCK) ON a.SuppID=s.ID
-where   a.ReSented = 0 and
-        a.SuppAPIThread in ('api/SunriseFinishingProcesses/SentDataByApiTag', 'api/GensongFinishingProcesses/SentDataByApiTag')
+where   a.ReSented = 0
 ";
 
-            DBProxy.Current.Select(null, cmd, out DataTable dt);
+            if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
+            {
+                cmd += $"and a.SuppID='{this.txtsupplier.TextBox1.Text}' ";
+            }
+
+            if (this.dateErrorTime.HasValue1)
+            {
+                cmd += $"and a.AddDate >= '{this.dateErrorTime.DateBox1.Text}' ";
+            }
+
+            if (this.dateErrorTime.HasValue2)
+            {
+                cmd += $"and a.AddDate < '{((DateTime)this.dateErrorTime.DateBox2.Value).AddDays(1).ToString("yyyy/MM/dd")}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSuppAPIThread.Text))
+            {
+                cmd += $"and a.SuppAPIThread ='{this.txtSuppAPIThread.Text}' ";
+            }
+
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable dt);
+            if (result == false)
+            {
+                MessageBox.Show(result.ToString());
+            }
+
             this.listControlBindingSource1.DataSource = dt;
             this.GetRunTime();
         }
