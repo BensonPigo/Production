@@ -30,11 +30,14 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtFactory = new Sci.Production.Class.Txtfactory();
+            this.label5 = new Sci.Win.UI.Label();
             this.btnUploadFromMercury = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
             this.dateSCIDev = new Sci.Win.UI.DateRange();
             this.dateBuyerDev = new Sci.Win.UI.DateRange();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.txtSP = new Sci.Win.UI.TextBox();
             this.chkIncludeHistory = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancel = new Sci.Win.UI.CheckBox();
@@ -47,9 +50,6 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid = new Sci.Win.UI.Grid();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtFactory = new Sci.Production.Class.Txtfactory();
-            this.txtBrand = new Sci.Production.Class.Txtbrand();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
@@ -77,6 +77,28 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 107);
             this.panel1.TabIndex = 1;
+            // 
+            // txtFactory
+            // 
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.BoolFtyGroupList = false;
+            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsProduceFty = false;
+            this.txtFactory.IssupportJunk = false;
+            this.txtFactory.Location = new System.Drawing.Point(88, 73);
+            this.txtFactory.MDivision = null;
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(66, 23);
+            this.txtFactory.TabIndex = 11;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(10, 73);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Factory";
             // 
             // btnUploadFromMercury
             // 
@@ -149,6 +171,15 @@
             this.dateBuyerDev.Name = "dateBuyerDev";
             this.dateBuyerDev.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDev.TabIndex = 3;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(88, 40);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(66, 23);
+            this.txtBrand.TabIndex = 2;
             // 
             // txtSP
             // 
@@ -276,37 +307,6 @@
             this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(988, 476);
             this.grid.TabIndex = 0;
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(10, 73);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Factory";
-            // 
-            // txtFactory
-            // 
-            this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.BoolFtyGroupList = true;
-            this.txtFactory.FilteMDivision = false;
-            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory.IsProduceFty = false;
-            this.txtFactory.IssupportJunk = false;
-            this.txtFactory.Location = new System.Drawing.Point(88, 73);
-            this.txtFactory.MDivision = null;
-            this.txtFactory.Name = "txtFactory";
-            this.txtFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory.TabIndex = 11;
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(88, 40);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(66, 23);
-            this.txtBrand.TabIndex = 2;
             // 
             // B10
             // 
