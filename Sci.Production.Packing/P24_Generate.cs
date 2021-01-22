@@ -897,6 +897,7 @@ BEGIN
         ,Image = NULL
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
     AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.IsSSCC = 0)
 
     ---- ShippingMarkType.IsSSCC = 1 的FilePath FileName清空
