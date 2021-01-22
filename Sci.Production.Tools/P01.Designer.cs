@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.RunTime = new Sci.Win.UI.NumericBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.txtSuppAPIThread = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.dateErrorTime = new Sci.Win.UI.DateRange();
+            this.label4 = new Sci.Win.UI.Label();
             this.txtsupplier = new Sci.Production.Class.Txtsupplier();
             this.btnFilter = new Sci.Win.UI.Button();
-            this.btnEditSave = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -46,65 +46,87 @@
             this.panel7 = new Sci.Win.UI.Panel();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.RunTime = new Sci.Win.UI.NumericBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnEditSave = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.RunTime);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.panel6);
+            this.panel1.Controls.Add(this.txtSuppAPIThread);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.dateErrorTime);
+            this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.txtsupplier);
             this.panel1.Controls.Add(this.btnFilter);
-            this.panel1.Controls.Add(this.btnEditSave);
-            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1072, 45);
+            this.panel1.Size = new System.Drawing.Size(1072, 80);
             this.panel1.TabIndex = 1;
             // 
-            // RunTime
+            // txtSuppAPIThread
             // 
-            this.RunTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RunTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.RunTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.RunTime.IsSupportEditMode = false;
-            this.RunTime.Location = new System.Drawing.Point(814, 12);
-            this.RunTime.Name = "RunTime";
-            this.RunTime.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.RunTime.ReadOnly = true;
-            this.RunTime.Size = new System.Drawing.Size(69, 23);
-            this.RunTime.TabIndex = 10;
-            this.RunTime.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.txtSuppAPIThread.BackColor = System.Drawing.Color.White;
+            this.txtSuppAPIThread.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSuppAPIThread.Location = new System.Drawing.Point(132, 45);
+            this.txtSuppAPIThread.Name = "txtSuppAPIThread";
+            this.txtSuppAPIThread.Size = new System.Drawing.Size(532, 23);
+            this.txtSuppAPIThread.TabIndex = 14;
             // 
-            // label3
+            // label5
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(889, 19);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(30, 17);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Min";
+            this.label5.Location = new System.Drawing.Point(12, 45);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(117, 23);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "SuppAPIThread";
+            // 
+            // dateErrorTime
+            // 
+            // 
+            // 
+            // 
+            this.dateErrorTime.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateErrorTime.DateBox1.Name = "";
+            this.dateErrorTime.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateErrorTime.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateErrorTime.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateErrorTime.DateBox2.Name = "";
+            this.dateErrorTime.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateErrorTime.DateBox2.TabIndex = 1;
+            this.dateErrorTime.IsRequired = false;
+            this.dateErrorTime.Location = new System.Drawing.Point(384, 13);
+            this.dateErrorTime.Name = "dateErrorTime";
+            this.dateErrorTime.Size = new System.Drawing.Size(280, 23);
+            this.dateErrorTime.TabIndex = 12;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(298, 13);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 23);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Error Time";
             // 
             // txtsupplier
             // 
             this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(90, 13);
+            this.txtsupplier.Location = new System.Drawing.Point(132, 13);
             this.txtsupplier.Name = "txtsupplier";
             this.txtsupplier.Size = new System.Drawing.Size(147, 23);
             this.txtsupplier.TabIndex = 1;
@@ -112,7 +134,7 @@
             // 
             // btnFilter
             // 
-            this.btnFilter.Location = new System.Drawing.Point(243, 9);
+            this.btnFilter.Location = new System.Drawing.Point(670, 6);
             this.btnFilter.Name = "btnFilter";
             this.btnFilter.Size = new System.Drawing.Size(101, 30);
             this.btnFilter.TabIndex = 2;
@@ -120,31 +142,11 @@
             this.btnFilter.UseVisualStyleBackColor = true;
             this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
             // 
-            // btnEditSave
-            // 
-            this.btnEditSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditSave.Location = new System.Drawing.Point(959, 9);
-            this.btnEditSave.Name = "btnEditSave";
-            this.btnEditSave.Size = new System.Drawing.Size(101, 30);
-            this.btnEditSave.TabIndex = 4;
-            this.btnEditSave.Text = "Edit";
-            this.btnEditSave.UseVisualStyleBackColor = true;
-            this.btnEditSave.Click += new System.EventHandler(this.BtnEditSave_Click);
-            // 
-            // label2
-            // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Location = new System.Drawing.Point(707, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(104, 23);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Auto-Run Time";
-            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(12, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.Size = new System.Drawing.Size(117, 23);
             this.label1.TabIndex = 3;
             this.label1.Text = "Supp#";
             // 
@@ -158,17 +160,17 @@
             // panel3
             // 
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel3.Location = new System.Drawing.Point(0, 45);
+            this.panel3.Location = new System.Drawing.Point(0, 80);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(12, 523);
+            this.panel3.Size = new System.Drawing.Size(12, 488);
             this.panel3.TabIndex = 3;
             // 
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel4.Location = new System.Drawing.Point(1060, 45);
+            this.panel4.Location = new System.Drawing.Point(1060, 80);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(12, 523);
+            this.panel4.Size = new System.Drawing.Size(12, 488);
             this.panel4.TabIndex = 4;
             // 
             // panel5
@@ -195,9 +197,9 @@
             // 
             this.panel7.Controls.Add(this.grid);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(12, 45);
+            this.panel7.Location = new System.Drawing.Point(12, 80);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(1048, 479);
+            this.panel7.Size = new System.Drawing.Size(1048, 444);
             this.panel7.TabIndex = 6;
             // 
             // grid
@@ -216,21 +218,86 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(0, 0);
             this.grid.Name = "grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(1048, 479);
+            this.grid.Size = new System.Drawing.Size(1048, 444);
             this.grid.TabIndex = 0;
+            // 
+            // panel6
+            // 
+            this.panel6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Controls.Add(this.RunTime);
+            this.panel6.Controls.Add(this.label3);
+            this.panel6.Controls.Add(this.btnEditSave);
+            this.panel6.Controls.Add(this.label2);
+            this.panel6.Location = new System.Drawing.Point(841, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(228, 80);
+            this.panel6.TabIndex = 15;
+            // 
+            // RunTime
+            // 
+            this.RunTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RunTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.RunTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.RunTime.IsSupportEditMode = false;
+            this.RunTime.Location = new System.Drawing.Point(122, 13);
+            this.RunTime.Name = "RunTime";
+            this.RunTime.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.RunTime.ReadOnly = true;
+            this.RunTime.Size = new System.Drawing.Size(69, 23);
+            this.RunTime.TabIndex = 14;
+            this.RunTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(192, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(30, 17);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Min";
+            // 
+            // btnEditSave
+            // 
+            this.btnEditSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEditSave.Location = new System.Drawing.Point(121, 40);
+            this.btnEditSave.Name = "btnEditSave";
+            this.btnEditSave.Size = new System.Drawing.Size(101, 30);
+            this.btnEditSave.TabIndex = 11;
+            this.btnEditSave.Text = "Edit";
+            this.btnEditSave.UseVisualStyleBackColor = true;
+            this.btnEditSave.Click += new System.EventHandler(this.BtnEditSave_Click);
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Location = new System.Drawing.Point(10, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(109, 23);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Auto-Run Time";
             // 
             // P01
             // 
@@ -264,6 +331,8 @@
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -271,11 +340,8 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private System.Windows.Forms.Label label3;
         private Class.Txtsupplier txtsupplier;
         private Win.UI.Button btnFilter;
-        private Win.UI.Button btnEditSave;
-        private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
@@ -285,6 +351,14 @@
         private Win.UI.Panel panel7;
         private Win.UI.Grid grid;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.TextBox txtSuppAPIThread;
+        private Win.UI.Label label5;
+        private Win.UI.DateRange dateErrorTime;
+        private Win.UI.Label label4;
+        private System.Windows.Forms.Panel panel6;
         private Win.UI.NumericBox RunTime;
+        private System.Windows.Forms.Label label3;
+        private Win.UI.Button btnEditSave;
+        private Win.UI.Label label2;
     }
 }

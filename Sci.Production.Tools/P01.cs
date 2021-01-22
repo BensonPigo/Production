@@ -30,16 +30,18 @@ namespace Sci.Production.Tools
             this.EditMode = true;
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
+            this.dateErrorTime.DateBox1.Text = DateTime.Today.AddDays(-1).ToString("yyyy/MM/dd");
 
             #region -- 欄位設定 --
             this.Helper.Controls.Grid.Generator(this.grid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("SuppID", header: "Supp#", width: Widths.AnsiChars(15))
-                .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(5))
-                .Text("APIThread", header: "API Thread", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("ErrorCode", header: "Error Code", width: Widths.AnsiChars(5),  iseditingreadonly: true)
-                .Text("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(40), iseditingreadonly: true)
-                .Text("JSON", header: "Content", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("SuppID", header: "Supp#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .EditText("SuppAPIThread", header: "SuppAPIThread", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("APIThread", header: "API Thread", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .EditText("ErrorCode", header: "Error Code", width: Widths.AnsiChars(5),  iseditingreadonly: true)
+                .EditText("ErrorMsg", header: "Error Msg.", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .EditText("JSON", header: "Content", width: Widths.AnsiChars(40), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Error Time", width: Widths.AnsiChars(20),  iseditingreadonly: true)
             ;
             #endregion 欄位設定
@@ -49,14 +51,7 @@ namespace Sci.Production.Tools
 
         private void BtnFilter_Click(object sender, EventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
-            {
-                this.listControlBindingSource1.Filter = $"SuppID='{this.txtsupplier.TextBox1.Text}' ";
-            }
-            else
-            {
-                this.listControlBindingSource1.Filter = string.Empty;
-            }
+            this.Search();
         }
 
         private void BtnEditSave_Click(object sender, EventArgs e)
@@ -79,7 +74,6 @@ UPDATE System
 SET AutomationAutoRunTime = {automationAutoRunTime}
 ";
                 DualResult result = DBProxy.Current.Execute(null, cmd);
-
                 if (!result)
                 {
                     this.ShowErr(result);
@@ -107,18 +101,15 @@ SET AutomationAutoRunTime = {automationAutoRunTime}
             // 正常執行但是Fail
             DataTable failDt = gridData.Clone();
 
-            // 其他例外狀況(例如找不到這筆資料的Ukey)
-            DataTable otherFailDt = gridData.Clone();
-
             // 成功狀況
             DataTable successDt = gridData.Clone();
 
             foreach (DataRow selecteData in selecteDatas)
             {
                 string cmdText = $@"
-declare @dd bit
-exec dbo.SentJsonToAGV {(long)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @dd OUTPUT
-SELECT [Result]= @dd
+declare @result nvarchar(max)
+exec dbo.SentJsonFromAutomationErrMsg {(long)selecteData["Ukey"]},'{Sci.Env.User.UserID}', @result OUTPUT, 1200
+SELECT [Result]= @result
 ";
                 result = DBProxy.Current.Select(null, cmdText, out DataTable resultDt);
 
@@ -128,29 +119,18 @@ SELECT [Result]= @dd
                     return;
                 }
 
-                if (result)
+                DataRow nRow = selecteData;
+                if (!MyUtility.Check.Empty(resultDt.Rows[0]["Result"]))
                 {
-                    DataRow nRow = selecteData;
-                    otherFailDt.ImportRow(nRow);
-                }
-                else if (!(bool)resultDt.Rows[0]["Result"])
-                {
-                    DataRow nRow = selecteData;
                     failDt.ImportRow(nRow);
                 }
                 else
                 {
-                    DataRow nRow = selecteData;
                     successDt.ImportRow(nRow);
                 }
             }
 
             #region 統整最後結果
-
-            if (otherFailDt.Rows.Count > 0)
-            {
-                MyUtility.Msg.ShowMsgGrid(otherFailDt, msg: "Can not find this resent data!!");
-            }
 
             if (failDt.Rows.Count > 0)
             {
@@ -158,7 +138,7 @@ SELECT [Result]= @dd
             }
 
             // 無失敗才跳成功訊息
-            if (otherFailDt.Rows.Count == 0 && failDt.Rows.Count == 0 && successDt.Rows.Count > 0)
+            if (failDt.Rows.Count == 0 && successDt.Rows.Count > 0)
             {
                 MyUtility.Msg.InfoBox("Success!!");
             }
@@ -181,12 +161,45 @@ SELECT [Selected]=0
 	,a.JSON
 	,a.AddDate
     ,a.Ukey
+    ,a.SuppAPIThread
 FROM AutomationErrMsg a WITH(NOLOCK)
 LEFT JOIN Supp s WITH(NOLOCK) ON a.SuppID=s.ID
+where   a.ReSented = 0
 ";
 
-            DBProxy.Current.Select(null, cmd, out DataTable dt);
+            if (!MyUtility.Check.Empty(this.txtsupplier.TextBox1.Text))
+            {
+                cmd += $"and a.SuppID='{this.txtsupplier.TextBox1.Text}' ";
+            }
+
+            if (this.dateErrorTime.HasValue1)
+            {
+                cmd += $"and a.AddDate >= '{this.dateErrorTime.DateBox1.Text}' ";
+            }
+
+            if (this.dateErrorTime.HasValue2)
+            {
+                cmd += $"and a.AddDate < '{((DateTime)this.dateErrorTime.DateBox2.Value).AddDays(1).ToString("yyyy/MM/dd")}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSuppAPIThread.Text))
+            {
+                cmd += $"and a.SuppAPIThread ='{this.txtSuppAPIThread.Text}' ";
+            }
+
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable dt);
+            if (result == false)
+            {
+                MessageBox.Show(result.ToString());
+            }
+
             this.listControlBindingSource1.DataSource = dt;
+            this.GetRunTime();
+        }
+
+        private void GetRunTime()
+        {
+            this.RunTime.Text = MyUtility.GetValue.Lookup("select AutomationAutoRunTime from system ");
         }
     }
 }
