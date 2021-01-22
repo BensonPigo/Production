@@ -152,11 +152,11 @@ and(((select WIP_ByShell from system) = 1
     or (select WIP_ByShell from system) = 0
 )
 
---當相同 OrderID,Article,Size,Fabric,Color 只取第一個 PatternPanel,FabricCombo 為基準
+--當相同 OrderID,Article,Size,Fabric,Color 只取第一個 PatternPanel,FabricCombo 為基準(以 FabricPanelCode 排序)
 select x.*,x2.PatternPanel,x2.FabricCombo,FabricPanelCode
 into #beforeAllO
 from (select distinct Orderid,POID,Article,SizeCode,FabricCode,ColorID from #beforeAllO1) x
-outer apply(select top 1 * from #beforeAllO1 where Orderid = x.Orderid and POID = x.POID and Article = x.Article and SizeCode = x.SizeCode and FabricCode = x.FabricCode and ColorID = x.ColorID order by PatternPanel)x2
+outer apply(select top 1 * from #beforeAllO1 where Orderid = x.Orderid and POID = x.POID and Article = x.Article and SizeCode = x.SizeCode and FabricCode = x.FabricCode and ColorID = x.ColorID order by FabricPanelCode)x2
 
 -- Bundle Local 單
 select	distinct
