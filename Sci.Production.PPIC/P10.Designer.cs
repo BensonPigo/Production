@@ -541,6 +541,7 @@
             // 
             this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
             this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.IsFactory = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(103, 111);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
