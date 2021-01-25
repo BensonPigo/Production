@@ -15,6 +15,7 @@
 	[Width] [int] NOT NULL,
 	[Length] [int] NOT NULL,
 	[DPI] INT NOT NULL DEFAULT 0, 
+	FilePath Varchar (150) NOT NULL CONSTRAINT [DF_ShippingMarkPic_Detail_FilePath]  DEFAULT(''),
     CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
 (
 	[ShippingMarkPicUkey] ASC,
@@ -64,7 +65,7 @@ GO
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SCICtnNo+Seq+Side', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic_Detail', @level2type = N'COLUMN', @level2name = N'FileName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'圖檔名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic_Detail', @level2type = N'COLUMN', @level2name = N'FileName';
 
 
 GO
@@ -84,4 +85,11 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'轉 HTML 的 DPI', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingMarkPic_Detail', @level2type = N'COLUMN', @level2name = N'DPI';
 
 
+GO
+
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'圖檔位置'
+, @level0type = N'SCHEMA', @level0name = N'dbo'
+, @level1type = N'TABLE', @level1name = N'ShippingMarkPic_Detail'
+, @level2type = N'COLUMN', @level2name = N'FilePath';
+;	
 GO
