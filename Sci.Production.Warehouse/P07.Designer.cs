@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelInvoiceNo = new Sci.Win.UI.Label();
             this.labelWKNO = new Sci.Win.UI.Label();
@@ -68,6 +69,10 @@
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioEncodeSeq = new Sci.Win.UI.RadioButton();
             this.radiobySP = new Sci.Win.UI.RadioButton();
+            this.lbLocation = new Sci.Win.UI.Label();
+            this.txtMtlLocation1 = new Sci.Production.Class.TxtMtlLocation(this.components);
+            this.btnUpdateLocation = new Sci.Win.UI.Button();
+            this.comboStockType = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -85,6 +90,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboStockType);
+            this.masterpanel.Controls.Add(this.btnUpdateLocation);
+            this.masterpanel.Controls.Add(this.txtMtlLocation1);
+            this.masterpanel.Controls.Add(this.lbLocation);
             this.masterpanel.Controls.Add(this.radioPanel1);
             this.masterpanel.Controls.Add(this.labSortBy);
             this.masterpanel.Controls.Add(this.txtSeq1);
@@ -122,7 +131,7 @@
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateETA);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(1007, 198);
+            this.masterpanel.Size = new System.Drawing.Size(1007, 234);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateETA, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -161,11 +170,15 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSeq1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labSortBy, 0);
             this.masterpanel.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbLocation, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtMtlLocation1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 198);
-            this.detailpanel.Size = new System.Drawing.Size(1007, 279);
+            this.detailpanel.Location = new System.Drawing.Point(0, 234);
+            this.detailpanel.Size = new System.Drawing.Size(1007, 243);
             // 
             // gridicon
             // 
@@ -180,7 +193,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1007, 279);
+            this.detailgridcont.Size = new System.Drawing.Size(1007, 243);
             // 
             // detail2
             // 
@@ -475,7 +488,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1007, 198);
+            this.shapeContainer1.Size = new System.Drawing.Size(1007, 234);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -500,7 +513,7 @@
             // 
             // btnFind
             // 
-            this.btnFind.Location = new System.Drawing.Point(320, 161);
+            this.btnFind.Location = new System.Drawing.Point(320, 195);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(81, 30);
             this.btnFind.TabIndex = 15;
@@ -513,14 +526,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(115, 165);
+            this.txtLocateForSP.Location = new System.Drawing.Point(115, 199);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(135, 23);
             this.txtLocateForSP.TabIndex = 13;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(3, 165);
+            this.labelLocateForSP.Location = new System.Drawing.Point(3, 199);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -575,7 +588,7 @@
             // txtSeq1
             // 
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(254, 165);
+            this.txtSeq1.Location = new System.Drawing.Point(254, 199);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Seq1 = "";
             this.txtSeq1.Seq2 = "";
@@ -627,6 +640,48 @@
             this.radiobySP.Text = "SP#, Seq, Roll, Dyelot";
             this.radiobySP.UseVisualStyleBackColor = true;
             this.radiobySP.Value = "1";
+            // 
+            // lbLocation
+            // 
+            this.lbLocation.Location = new System.Drawing.Point(3, 165);
+            this.lbLocation.Name = "lbLocation";
+            this.lbLocation.Size = new System.Drawing.Size(109, 23);
+            this.lbLocation.TabIndex = 65;
+            this.lbLocation.Text = "Location";
+            // 
+            // txtMtlLocation1
+            // 
+            this.txtMtlLocation1.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation1.Location = new System.Drawing.Point(207, 165);
+            this.txtMtlLocation1.Name = "txtMtlLocation1";
+            this.txtMtlLocation1.Size = new System.Drawing.Size(108, 23);
+            this.txtMtlLocation1.StockTypeFilte = "";
+            this.txtMtlLocation1.TabIndex = 67;
+            // 
+            // btnUpdateLocation
+            // 
+            this.btnUpdateLocation.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUpdateLocation.Location = new System.Drawing.Point(320, 161);
+            this.btnUpdateLocation.Name = "btnUpdateLocation";
+            this.btnUpdateLocation.Size = new System.Drawing.Size(81, 30);
+            this.btnUpdateLocation.TabIndex = 68;
+            this.btnUpdateLocation.Text = "Update";
+            this.btnUpdateLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateLocation.Click += new System.EventHandler(this.BtnUpdateLocation_Click);
+            // 
+            // comboStockType
+            // 
+            this.comboStockType.BackColor = System.Drawing.Color.White;
+            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStockType.FormattingEnabled = true;
+            this.comboStockType.IsSupportUnselect = true;
+            this.comboStockType.Location = new System.Drawing.Point(115, 164);
+            this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
+            this.comboStockType.Size = new System.Drawing.Size(86, 24);
+            this.comboStockType.TabIndex = 69;
+            this.comboStockType.SelectedValueChanged += new System.EventHandler(this.ComboStockType_SelectedValueChanged);
             // 
             // P07
             // 
@@ -714,5 +769,9 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioEncodeSeq;
         private Win.UI.RadioButton radiobySP;
+        private Win.UI.Button btnUpdateLocation;
+        private Class.TxtMtlLocation txtMtlLocation1;
+        private Win.UI.Label lbLocation;
+        private Win.UI.ComboBox comboStockType;
     }
 }

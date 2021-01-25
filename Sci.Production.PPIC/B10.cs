@@ -16,6 +16,7 @@ namespace Sci.Production.PPIC
     {
         private string sp;
         private string brandID;
+        private string factoryID;
         private DateTime? BuyerDelivery_s;
         private DateTime? BuyerDelivery_e;
         private DateTime? SCIDelivery_s;
@@ -50,8 +51,10 @@ namespace Sci.Production.PPIC
             this.Helper.Controls.Grid.Generator(this.grid)
               .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
               .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+              .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(7), iseditingreadonly: true)
               .Text("StyleID", header: "Style", width: Widths.AnsiChars(7), iseditingreadonly: true)
               .Text("BrandID", header: "Brand", width: Widths.AnsiChars(20), iseditingreadonly: true)
+              .CheckBox("VasShas", header: "VAS/SHAS", width: Widths.AnsiChars(10), iseditable: false)
               .Date("BuyerDelivery", header: "Buyer Dlv.", width: Widths.AnsiChars(13), iseditingreadonly: true)
               .Date("SCIDelivery", header: "SCI Dlv.", width: Widths.AnsiChars(13), iseditingreadonly: true)
               .Text("CAB", header: "CAB Code", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_CAB)
@@ -88,6 +91,7 @@ namespace Sci.Production.PPIC
             this.sp = this.txtSP.Text;
             this.IncludeCancel = this.chkIncludeCancel.Checked;
             this.IncludeFinish = this.chkIncludeHistory.Checked;
+            this.factoryID = this.txtFactory.Text;
 
             return true;
         }
@@ -100,8 +104,10 @@ namespace Sci.Production.PPIC
             string cmd = $@"
 SELECT [Selected]=0
 		,ID
+		,FactoryID
 		,StyleID
 		,BrandID
+		,VasShas
 		,SeasonID
 		,BuyerDelivery
 		,SCIDelivery
@@ -125,6 +131,12 @@ WHERE 1=1
             {
                 cmd += $@"AND BrandID=@BrandID" + Environment.NewLine;
                 parameters.Add(new SqlParameter("@BrandID", this.brandID));
+            }
+
+            if (!MyUtility.Check.Empty(this.factoryID))
+            {
+                cmd += $@"AND FactoryID=@FactoryID" + Environment.NewLine;
+                parameters.Add(new SqlParameter("@FactoryID", this.factoryID));
             }
 
             if (this.BuyerDelivery_s.HasValue && this.BuyerDelivery_e.HasValue)

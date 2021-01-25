@@ -55,6 +55,9 @@ namespace Sci.Production.Warehouse
             };
             MyUtility.Tool.SetupCombox(this.comboTypeFilter, 2, 1, "ALL,ALL,Fabric,Fabric,Accessory,Accessory");
             this.comboTypeFilter.SelectedIndex = 0;
+            this.comboStockType.DataSource = new BindingSource(this.di_stocktype, null);
+            this.comboStockType.ValueMember = "Key";
+            this.comboStockType.DisplayMember = "Value";
         }
 
         /// <inheritdoc/>
@@ -73,6 +76,9 @@ namespace Sci.Production.Warehouse
             this.di_fabrictype.Add("O", "Other");
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
+            this.comboStockType.DataSource = new BindingSource(this.di_stocktype, null);
+            this.comboStockType.ValueMember = "Key";
+            this.comboStockType.DisplayMember = "Value";
         }
 
         /// <inheritdoc/>
@@ -1248,6 +1254,7 @@ WHERE   StockType='{this.CurrentDetailData["stocktype"].ToString()}'
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("IsSelect", header: string.Empty, width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
             .Text("poid", header: "SP#", width: Widths.AnsiChars(11), settings: ts4).Get(out cbb_poid) // 1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts).Get(out cbb_Seq) // 2
             .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(9), iseditable: false).Get(out cbb_fabrictype) // 3
@@ -2357,6 +2364,7 @@ select  a.id
 		,[SortCmbRoll] = ISNULL(cmb.Roll,a.Roll)
 		,[SortCmbDyelot] = ISNULL(cmb.Dyelot,a.Dyelot)
         ,clickInsert = 1 -- 用來處理按+插入列狀況
+        ,[IsSelect] = cast(0 as bit)
 from dbo.Receiving_Detail a WITH (NOLOCK) 
 INNER JOIN Receiving b WITH (NOLOCK) ON a.id= b.Id
 left join orders o WITH (NOLOCK) on o.id = a.PoId
@@ -3085,6 +3093,29 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             {
                 ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
             }
+        }
+
+        private void BtnUpdateLocation_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            List<DataRow> dataRows = this.DetailDatas.Where(x => x.Field<bool>("IsSelect") &&
+                                              x.Field<string>("StockType").EqualString(this.comboStockType.SelectedValue))
+                                        .ToList();
+            foreach (DataRow dr in dataRows)
+            {
+                dr["Location"] = this.txtMtlLocation1.Text;
+                dr.EndEdit();
+            }
+        }
+
+        private void ComboStockType_SelectedValueChanged(object sender, EventArgs e)
+        {
+            this.txtMtlLocation1.Text = string.Empty;
+            this.txtMtlLocation1.StockTypeFilte = this.comboStockType.SelectedValue.ToString();
         }
     }
 }

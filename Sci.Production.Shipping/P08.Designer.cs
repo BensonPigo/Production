@@ -88,6 +88,7 @@
             this.lbSisFtyAPID = new Sci.Win.UI.Label();
             this.txtSisFtyAPID = new Sci.Win.UI.TextBox();
             this.txtcurrency = new Sci.Production.Class.Txtcurrency();
+            this.btnIncludeFoundryRatio = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -104,6 +105,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnIncludeFoundryRatio);
             this.masterpanel.Controls.Add(this.txtcurrency);
             this.masterpanel.Controls.Add(this.txtSisFtyAPID);
             this.masterpanel.Controls.Add(this.lbSisFtyAPID);
@@ -225,6 +227,7 @@
             this.masterpanel.Controls.SetChildIndex(this.lbSisFtyAPID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSisFtyAPID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcurrency, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnIncludeFoundryRatio, 0);
             // 
             // detailpanel
             // 
@@ -954,6 +957,16 @@
             this.txtcurrency.Size = new System.Drawing.Size(48, 23);
             this.txtcurrency.TabIndex = 14;
             // 
+            // btnIncludeFoundryRatio
+            // 
+            this.btnIncludeFoundryRatio.Location = new System.Drawing.Point(776, 154);
+            this.btnIncludeFoundryRatio.Name = "btnIncludeFoundryRatio";
+            this.btnIncludeFoundryRatio.Size = new System.Drawing.Size(29, 26);
+            this.btnIncludeFoundryRatio.TabIndex = 106;
+            this.btnIncludeFoundryRatio.Text = "...";
+            this.btnIncludeFoundryRatio.UseVisualStyleBackColor = true;
+            this.btnIncludeFoundryRatio.Click += new System.EventHandler(this.BtnIncludeFoundryRatio_Click);
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1052,5 +1065,6 @@
         private Win.UI.TextBox txtSisFtyAPID;
         private Win.UI.Label lbSisFtyAPID;
         private Class.Txtcurrency txtcurrency;
+        private Win.UI.Button btnIncludeFoundryRatio;
     }
 }
