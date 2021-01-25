@@ -2568,6 +2568,8 @@
     <Build Include="dbo\Tables\FIR_Moisture.sql" />
     <Build Include="dbo\Tables\Brand_QAMoistureStandardList.sql" />
     <Build Include="dbo\Tables\AutomationCreateRecord.sql" />
+    <Build Include="dbo\Tables\SpreadingSchedule_Detail.sql" />
+    <Build Include="dbo\Tables\SpreadingSchedule.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
