@@ -75,6 +75,7 @@ SELECT pd.OrderID
     , b.ShippingMarkPicUkey
     , b.SCICtnNo
     , b.FileName
+    , [HTMLFile] = IIF(b.FileName = '' ,0 , 1)
     , [ShippingMark]=IIF(b.Image IS NULL , 0 , 1 )
     , b.ShippingMarkCombinationUkey
     , b.ShippingMarkTypeUkey
@@ -87,7 +88,6 @@ SELECT pd.OrderID
     , b.FromBottom
     , b.Width
     , b.Length
-    ,FileNameOri=b.FileName
     ,local_file_type=''
     ,FileSourcePath=''
     ,FileAction=''
@@ -153,6 +153,7 @@ ORDER BY CAST(pd.CTNStartNo as int)
             .Numeric("Width", header: "Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Length", header: "Length", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .CheckBox("ShippingMark", header: "Shipping Mark", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("HTMLFile", header: "HTML File", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .Button("Upload", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnUpload)
             .Button("Delete", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnDelete)
             ;
@@ -1244,6 +1245,7 @@ SELECT DISTINCT
 	,a.ShippingMarkCombinationUkey
 	,[ShippingMarkType]=st.ID
 	,b.ShippingMarkTypeUkey
+    ,[HTMLFile] = 0----畫面上根據有無FileName欄位打勾的欄位，新增時一定是空的，所以給0
     ,[ShippingMark]=0 ----畫面上根據有無Image欄位打勾的欄位，新增時一定是空的，所以給0
 	,b.IsSSCC
 	,b.Side
@@ -1256,7 +1258,6 @@ SELECT DISTINCT
 	,c.Length
 	,[Image]=NULL
 	,[FileName]=''
-    ,FileNameOri=''
     ,local_file_type=''
     ,FileSourcePath=''
     ,FileAction=''
@@ -1327,6 +1328,7 @@ SELECT DISTINCT
 	,a.ShippingMarkCombinationUkey
 	,[ShippingMarkType]=st.ID
 	,b.ShippingMarkTypeUkey
+    ,[HTMLFile]=0 ----畫面上根據有無FileName欄位打勾的欄位，新增時一定是空的，所以給0
     ,[ShippingMark]=0 ----畫面上根據有無Image欄位打勾的欄位，新增時一定是空的，所以給0
 	,b.IsSSCC
 	,b.Side
@@ -1339,7 +1341,6 @@ SELECT DISTINCT
 	,c.Length
 	,[Image]=NULL
 	,[FileName]=''
-    ,FileNameOri=''
     ,local_file_type=''
     ,FileSourcePath=''
     ,FileAction=''
@@ -1519,6 +1520,36 @@ WHERE [Sticker Combination] IS NULL
             }
 
             return file;
+        }
+
+        private void BtnGenerate_Click(object sender, EventArgs e)
+        {
+            P24_Generate form = new P24_Generate();
+            form.ShowDialog();
+            this.Reload();
+        }
+
+        /// <inheritdoc/>
+        public void Reload()
+        {
+            if (this.CurrentDataRow != null)
+            {
+                string idIndex = string.Empty;
+                if (!MyUtility.Check.Empty(this.CurrentDataRow))
+                {
+                    if (!MyUtility.Check.Empty(this.CurrentDataRow["PackingListID"]))
+                    {
+                        idIndex = MyUtility.Convert.GetString(this.CurrentDataRow["PackingListID"]);
+                    }
+                }
+
+                this.ReloadDatas();
+                this.RenewData();
+                if (!MyUtility.Check.Empty(idIndex))
+                {
+                    this.gridbs.Position = this.gridbs.Find("PackingListID", idIndex);
+                }
+            }
         }
     }
 

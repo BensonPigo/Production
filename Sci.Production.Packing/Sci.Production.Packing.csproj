@@ -510,6 +510,12 @@
     <Compile Include="P24.Designer.cs">
       <DependentUpon>P24.cs</DependentUpon>
     </Compile>
+    <Compile Include="P24_Generate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24_Generate.Designer.cs">
+      <DependentUpon>P24_Generate.cs</DependentUpon>
+    </Compile>
     <Compile Include="P25.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -738,6 +744,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P24.resx">
       <DependentUpon>P24.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P24_Generate.resx">
+      <DependentUpon>P24_Generate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P25.resx">
       <DependentUpon>P25.cs</DependentUpon>

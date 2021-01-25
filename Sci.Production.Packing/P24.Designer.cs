@@ -32,6 +32,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.btnDownload = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
+            this.btnGenerate = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -52,7 +53,7 @@
             this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.txtPackingListID);
-            this.masterpanel.Size = new System.Drawing.Size(1085, 92);
+            this.masterpanel.Size = new System.Drawing.Size(892, 92);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtPackingListID, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
@@ -62,7 +63,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 92);
-            this.detailpanel.Size = new System.Drawing.Size(1085, 257);
+            this.detailpanel.Size = new System.Drawing.Size(892, 257);
             // 
             // gridicon
             // 
@@ -70,7 +71,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1085, 257);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 257);
             // 
             // detail2
             // 
@@ -83,18 +84,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1085, 387);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1085, 349);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(1085, 38);
             // 
             // browse
             // 
@@ -125,30 +114,41 @@
             // 
             // btnDownload
             // 
-            this.btnDownload.Location = new System.Drawing.Point(860, 13);
+            this.btnDownload.Location = new System.Drawing.Point(840, 13);
             this.btnDownload.Name = "btnDownload";
-            this.btnDownload.Size = new System.Drawing.Size(217, 30);
+            this.btnDownload.Size = new System.Drawing.Size(237, 30);
             this.btnDownload.TabIndex = 4;
-            this.btnDownload.Text = "Download ShippingMark pic";
+            this.btnDownload.Text = "Download ShippingMark Sticker";
             this.btnDownload.UseVisualStyleBackColor = true;
             this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
             // 
             // btnImport
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(860, 49);
+            this.btnImport.Location = new System.Drawing.Point(840, 49);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(217, 30);
+            this.btnImport.Size = new System.Drawing.Size(237, 30);
             this.btnImport.TabIndex = 5;
-            this.btnImport.Text = "Import ShippingMark pic";
+            this.btnImport.Text = "Import ShippingMark Sticker";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // btnGenerate
+            // 
+            this.btnGenerate.Location = new System.Drawing.Point(910, 3);
+            this.btnGenerate.Name = "btnGenerate";
+            this.btnGenerate.Size = new System.Drawing.Size(171, 30);
+            this.btnGenerate.TabIndex = 6;
+            this.btnGenerate.Text = "Generate Sticker File";
+            this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.BtnGenerate_Click);
             // 
             // P24
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1093, 449);
+            this.Controls.Add(this.btnGenerate);
             this.GridAlias = "ShippingMarkPic_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "ShippingMarkPicUkey,SCICtnNo,ShippingMarkTypeUkey";
@@ -161,9 +161,10 @@
             this.KeyField2 = "ShippingMarkPicUkey";
             this.Name = "P24";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
-            this.Text = "P24. Shipping Mark Pic (for GenSong)";
+            this.Text = "P24. Shipping Mark Sticker (for GenSong)";
             this.WorkAlias = "ShippingMarkPic";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnGenerate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -188,5 +189,6 @@
         private Win.UI.Button btnImport;
         private Win.UI.Button btnDownload;
         private Win.UI.Label label4;
+        private Win.UI.Button btnGenerate;
     }
 }

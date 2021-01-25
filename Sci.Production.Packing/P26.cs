@@ -37,6 +37,8 @@ namespace Sci.Production.Packing
         private List<Match> MatchList = new List<Match>();
         private List<PackingListCandidate_Datasource> PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
         private List<Result> ConfirmMsg = new List<Result>();
+        private string finalSql = string.Empty;
+        private List<SqlParameter> finalSqlParameter = new List<SqlParameter>();
 
         /// <summary>
         /// 目前處理的檔案格式
@@ -1276,7 +1278,6 @@ namespace Sci.Production.Packing
 
         private bool P24_Database(List<UpdateModel> updateModelList, string uploadType)
         {
-            DualResult result;
             string updateCmd = string.Empty;
             string shippingMarkPath = MyUtility.GetValue.Lookup("select ShippingMarkPath from  System ");
             List<string> fileNames = new List<string>();
@@ -1285,6 +1286,7 @@ namespace Sci.Production.Packing
             List<string> p24_BodyList = new List<string>();
 
             List<DataTable> dtList = new List<DataTable>();
+            DualResult result;
 
             #region 寫P24表頭
 
@@ -1338,7 +1340,7 @@ AND comb.Category='PIC'
 AND EXISTS (SELECT 1 FROM #MixCarton0 WHERE PackingListID=p.ID AND Ukey=pd.Ukey)
 
 ----寫入ShippingMarkPic 表頭
-SELECT t.PackingListID
+SELECT DISTINCT t.PackingListID
     ,[AddName]='{Sci.Env.User.UserID}'
     ,[AddDate]=GETDATE()
 INTO #tmp_Pic{ii}
@@ -1427,7 +1429,7 @@ DROP TABLE #tmp_Combination{ii} ,#tmp_Pic{ii}
 
 ----先整理出IsMix的箱子
 SELECT [PackingListID]=pd.ID ,pd.SCICtnNo
-INTO #MixCarton{i}
+INTO #MixCTN{i}
 FROM PackingList p 
 INNER JOIN PackingList_Detail pd ON p.ID=pd.ID
 INNER JOIN Orders o ON o.ID = pd.OrderID
@@ -1444,13 +1446,23 @@ AND (SELECT COUNT(qq.Ukey) FROM PackingList_Detail qq
 		and qq.Ukey != pd.Ukey) > 0
 
 ----先找該PackingList的CustCD
-SELECT DISTINCT [StickerCombinationUkey]=ISNULL(c.StickerCombinationUkey_MixPack 
-,	(
+SELECT DISTINCT [StickerCombinationUkey]= IIF(  (IIF(EXISTS (SELECT 1 FROM #MixCTN0 t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0)) = 0
+,(ISNULL(c.StickerCombinationUkey,	
+	(
 	SELECT Ukey 
 	FROM ShippingMarkCombination
-	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = (IIF( EXISTS (SELECT 1 FROM #MixCarton{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
+	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 0   
 	)
-),[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCarton{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
+))
+,(ISNULL(c.StickerCombinationUkey_MixPack,	
+	(
+	SELECT Ukey 
+	FROM ShippingMarkCombination
+	WHERE BrandID = p.BrandID AND Category='PIC'  AND IsDefault = 1 AND IsMixPack = 1
+	)
+))
+)
+,[IsMixPack] = (IIF(EXISTS (SELECT 1 FROM #MixCTN{i} t WHERE t.PackingListID = pd.ID AND t.SCICtnNo = pd.SCICtnNo ) ,1 ,0))   
 ,p.BrandID,pd.RefNo,[PackingListID]=p.ID ,pd.SCICtnNo
 INTO #tmp_Combination_D{i}
 FROM PackingList p 
@@ -1505,6 +1517,21 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 ";
                 p24_BodyList.Add(cmd);
                 i++;
+            }
+
+            // 開始更新DB
+            foreach (var p24_Head in p24_HeadList)
+            {
+                this.finalSql += p24_Head.ToString();
+            }
+
+            int idxx = 0;
+            foreach (DataTable dt in dtList)
+            {
+                string cmd = p24_BodyList[idxx];
+
+                this.finalSql += cmd;
+                idxx++;
             }
 
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
@@ -1742,6 +1769,7 @@ DROP TABLE #tmpOrders{i},#tmp{i}
                 return false;
             }
 
+            this.finalSql += updateCmd.ToString();
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
                 try
@@ -2058,6 +2086,12 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
         {
             try
             {
+                // 初始化
+                this.finalSql = string.Empty;
+                this.finalSqlParameter = new List<SqlParameter>();
+                this.imageIdx = 0;
+                Result p24Result = new Result();
+
                 // 同一次上傳中不可選擇相同的 P/L
                 if (this.MatchList.Select(o => o.SelectedPackingID).Distinct().Count() != this.MatchList.Select(o => o.SelectedPackingID).Count())
                 {
@@ -2117,17 +2151,110 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                     bool p24 = true;
                     bool p03 = true;
+                    bool p24_Html = true;
 
                     match.UpdateModels.RemoveAll(o => o.PackingListID != match.SelectedPackingID);
 
-                    p24 = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
-                    p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
+                    #region HTML事前檢查
+                    DataRow[] selecteds = new DataRow[match.UpdateModels.Select(o => o.PackingListID).Distinct().Count()];
+
+                    int qq = 0;
+                    foreach (string p in match.UpdateModels.Select(o => o.PackingListID).Distinct())
+                    {
+                        DataTable d = new DataTable();
+                        d.ColumnsStringAdd("ID");
+                        DataRow t = d.NewRow();
+                        t["ID"] = p;
+                        selecteds[qq] = t;
+                        qq++;
+                    }
+
+                    P24_Generate p24_Generate = new P24_Generate();
+                    p24_Generate.Generate(selecteds, ref p24Result, true, "P26");
+                    #endregion
+
+                    // 沒有錯誤訊息表示檢查成功
+                    if (!MyUtility.Check.Empty(p24Result.ResultMsg))
+                    {
+                        string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
+
+                        Result r = new Result()
+                        {
+                            FileSeq = match.FileSeq,
+                            ResultMsg = stampMsg,
+                        };
+                        this.ConfirmMsg.Add(r);
+
+                        p24_Html = false;
+                    }
+
+                    // HTML檢查通過才進行P24
+                    if (p24_Html)
+                    {
+                        p24 = this.P24_Database(match.UpdateModels, this.currentFileType.ToString());
+                    }
+                    else
+                    {
+                        p24 = false;
+                    }
+
+                    // P24成功才進行P03
+                    if (p24)
+                    {
+                        p03 = this.P03_Database(match.UpdateModels, this.currentFileType.ToString());
+                    }
+
                     if (!p24 || !p03)
                     {
                         failFileSeqs.Add(match.FileSeq);
                     }
-                    else
+
+                    if (p24 && p03)
                     {
+                        #region Call P24 產生HTML檔
+
+                        using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
+                        {
+                            try
+                            {
+                                p24_Generate.Generate(selecteds, ref p24Result, false, "P26");
+
+                                // 由於APU產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
+                                if (!MyUtility.Check.Empty(p24Result.ResultMsg))
+                                {
+                                    string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
+
+                                    Result r = new Result()
+                                    {
+                                        FileSeq = match.FileSeq,
+                                        ResultMsg = stampMsg,
+                                    };
+                                    this.ConfirmMsg.Add(r);
+
+                                    string disposeSQL = $@"
+DELETE FROM ShippingMarkPic_Detail
+WHERE ShippingMarkTypeUkey IN (
+    SELECT a.Ukey 
+    FROM ShippingMarkPic a 
+    WHERE a.PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+)
+
+DELETE FROM ShippingMarkPic
+WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
+";
+                                    DBProxy.Current.Execute(null, disposeSQL);
+                                }
+
+                                transactionscope.Complete();
+                            }
+                            catch (Exception ex)
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr(ex);
+                            }
+                        }
+                        #endregion
+
                         bool stickerAlreadyExisted = this.MatchList.Where(o => o.FileSeq == match.FileSeq).FirstOrDefault().StickerAlreadyExisted;
 
                         if (stickerAlreadyExisted)
@@ -2135,7 +2262,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                             Result r = new Result()
                             {
                                 FileSeq = match.FileSeq,
-                                ResultMsg = "Overwrite success",
+                                ResultMsg = "Overwrite success. ",
                             };
                             this.ConfirmMsg.Add(r);
                         }
@@ -2144,7 +2271,7 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                             Result r = new Result()
                             {
                                 FileSeq = match.FileSeq,
-                                ResultMsg = "Upload success",
+                                ResultMsg = "Upload success. ",
                             };
                             this.ConfirmMsg.Add(r);
                         }
@@ -2217,7 +2344,6 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
                 this.HideWaitMessage();
                 this.btnProcessing.PerformClick();
             }
-
         }
 
         /// <summary>
@@ -2907,6 +3033,7 @@ where o.CustPONo='{pono}'
             this.InsertImageToDatabase(imageName, "1", data);
         }
 
+        private int imageIdx = 0;
         /// <summary>
         /// 寫入Image欄位
         /// </summary>
@@ -2917,46 +3044,50 @@ where o.CustPONo='{pono}'
         {
             // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
             string seqCmd = $@"
-SELECT Seq FROM (
-	SELECT [Rank]=RANK() OVER (ORDER BY sd.Seq ),sd.*
-	FROM ShippingMarkPic_Detail sd 
-	INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
-	INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
-	INNER JOIN PackingList p ON p.ID = s.PackingListID
-	where sd.FileName='{fileName}'
-)a
-WHERE Rank={seq}
+    SELECT Seq FROM (
+	    SELECT [Rank]=RANK() OVER (ORDER BY sd.Seq ),sd.*
+	    FROM ShippingMarkPic_Detail sd 
+	    INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
+	    INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+	    INNER JOIN PackingList p ON p.ID = s.PackingListID
+	    where sd.FileName='{fileName}' AND st.FromTemplate = 0
+    )a
+    WHERE Rank={seq}
 
 ";
 
             string cmd = $@"
 ----寫入圖片
 UPDATE sd
-SET sd.Image=@Image
+SET sd.Image=@Image{this.imageIdx}
 FROM ShippingMarkPic_Detail sd 
 INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
 INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
 WHERE 1=1 
-AND sd.FileName=@FileName
+AND sd.FileName=@FileName{this.imageIdx}
 AND sd.Seq = (
     {seqCmd}
 )
 
+---- 更新P24表頭
 UPDATE s
 SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
 FROM ShippingMarkPic s WITH(NOLOCK)
 INNER JOIN ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
 INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
 WHERE 1=1 
-AND sd.FileName=@FileName
+AND sd.FileName=@FileName{this.imageIdx}
 AND sd.Seq = (
     {seqCmd}
 )
 ";
+            this.finalSql += cmd;
 
             List<SqlParameter> para = new List<SqlParameter>();
-            para.Add(new SqlParameter("@FileName", fileName));
-            para.Add(new SqlParameter("@Image", dataArry));
+            para.Add(new SqlParameter($"@FileName{this.imageIdx}", fileName));
+            para.Add(new SqlParameter($"@Image{this.imageIdx}", dataArry));
+            this.imageIdx++;
+            this.finalSqlParameter.AddRange(para);
 
             DualResult result = DBProxy.Current.Execute(null, cmd, para);
 
