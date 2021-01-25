@@ -3114,6 +3114,7 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
         private void ComboStockType_SelectedValueChanged(object sender, EventArgs e)
         {
             this.txtMtlLocation1.Text = string.Empty;
+            this.txtMtlLocation1.StockTypeFilte = this.comboStockType.SelectedValue.ToString();
         }
     }
 }
