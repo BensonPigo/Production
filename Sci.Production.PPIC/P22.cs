@@ -11,6 +11,8 @@ using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
 using System.Transactions;
 using Sci.Win.Tools;
+using System.Data.SqlClient;
+using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -80,50 +82,208 @@ where r.ID = '{masterID}'
             base.OnDetailGridSetup();
             DataGridViewGeneratorTextColumnSettings refno = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings reason = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings inqty = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings outqty = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings requestqty = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings issueqty = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings process = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataTable processSourceDt = new DataTable();
-            Dictionary<string, string> processSourcedata = new Dictionary<string, string>();
-            string sqlprocess = $@"Select FullName from Production.dbo.subprocess where IsLackingAndReplacement=1";
-            DualResult dualResult = DBProxy.Current.Select(null, sqlprocess, out processSourceDt);
-            foreach (DataRow item in processSourceDt.Rows)
+
+            #region RefNo事件
+            refno.EditingMouseDown += (s, e) =>
             {
-                string fullname = MyUtility.Convert.GetString(item["FullName"]);
-                processSourcedata.Add(fullname, fullname);
-            }
-
-            process.DataSource = new BindingSource(processSourcedata, null);
-            process.ValueMember = "Key";
-            process.DisplayMember = "Value";
-
-            inqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-            outqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-            requestqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-            issueqty.CellZeroStyle = Ict.Win.UI.DataGridViewNumericBoxZeroStyle.Empty;
-
-
-            #region RefNo的CoubleClick
-            refno.EditingMouseDoubleClick += (s, e) =>
-            {
-                if (e.Button == MouseButtons.Left)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (e.RowIndex != -1)
                     {
-                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                        EditMemo callNextForm = new EditMemo(MyUtility.Convert.GetString(dr["Description"]), "Description", false, null);
-                        callNextForm.ShowDialog(this);
+                        string sqlCmd = $@"
+select RefNo,Description, LocalSuppid, UnitID ,Price 
+from LocalItem 
+where Junk = 0 AND Category = 'Carton'
+";
+
+                        SelectItem sel = new SelectItem(sqlCmd, "RefNo,Description,LocalSuppid,UnitID,Price", this.CurrentDetailData["RefNo"].ToString(), null);
+                        DialogResult res = sel.ShowDialog();
+                        if (res == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        this.CurrentDetailData["RefNo"] = sel.GetSelecteds()[0]["RefNo"];
+                        this.CurrentDetailData.EndEdit();
                     }
+                }
+            };
+
+            refno.CellMouseClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.RowIndex != -1)
+                    {
+                        string sqlCmd = $@"
+select RefNo,Description, LocalSuppid, UnitID ,Price 
+from LocalItem 
+where Junk = 0 AND Category = 'Carton'
+";
+
+                        SelectItem sel = new SelectItem(sqlCmd, "RefNo,Description,LocalSuppid,UnitID,Price", this.CurrentDetailData["RefNo"].ToString(), null);
+                        DialogResult res = sel.ShowDialog();
+                        if (res == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        this.CurrentDetailData["RefNo"] = sel.GetSelecteds()[0]["RefNo"];
+                        this.CurrentDetailData.EndEdit();
+                    }
+                }
+            };
+
+            refno.CellValidating += (s, e) =>
+            {
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
+                if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
+                {
+
+                    List<SqlParameter> sqlpara = new List<SqlParameter>
+                    {
+                        new SqlParameter("@RefNo", e.FormattedValue),
+                    };
+
+                    string sqlCmd = $@"
+select RefNo,Description, LocalSuppid, UnitID ,Price 
+from LocalItem 
+where Junk = 0 AND Category = 'Carton'
+AND RefNo = @RefNo
+";
+
+                    if (MyUtility.Check.Seek(sqlCmd, sqlpara, out DataRow dr))
+                    {
+                        this.CurrentDetailData["RefNo"] = e.FormattedValue;
+                        this.CurrentDetailData.EndEdit();
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!");
+                        this.CurrentDetailData["RefNo"] = string.Empty;
+                        this.CurrentDetailData.EndEdit();
+                        return;
+                    }
+                }
+                else if (this.EditMode && e.FormattedValue.ToString() == string.Empty)
+                {
+                    this.CurrentDetailData["RefNo"] = string.Empty;
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+            #endregion
+
+            #region ReplacementLocalItemReasonID事件
+            reason.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.RowIndex != -1)
+                    {
+                        List<SqlParameter> paras = new List<SqlParameter>();
+                        string sqlCmd = $@"
+select ID , Description
+from ReplacementLocalItemReason  
+where Junk = 0 AND Type='R'
+AND ID  = @ID 
+";
+                        paras.Add(new SqlParameter("@ID", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString()));
+
+                        SelectItem sel = new SelectItem(sqlCmd, paras, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
+                        DialogResult res = sel.ShowDialog();
+                        if (res == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        this.CurrentDetailData["ReplacementLocalItemReasonID"] = sel.GetSelecteds()[0]["ID"];
+                        this.CurrentDetailData.EndEdit();
+                    }
+                }
+            };
+
+            reason.CellMouseClick += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.RowIndex != -1)
+                    {
+                        List<SqlParameter> paras = new List<SqlParameter>();
+                        string sqlCmd = $@"
+select ID , Description
+from ReplacementLocalItemReason  
+where Junk = 0 AND Type='R'
+AND ID  = @ID 
+";
+                        paras.Add(new SqlParameter("@ID", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString()));
+
+                        SelectItem sel = new SelectItem(sqlCmd, paras, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
+                        DialogResult res = sel.ShowDialog();
+                        if (res == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        this.CurrentDetailData["ReplacementLocalItemReasonID"] = sel.GetSelecteds()[0]["ID"];
+                        this.CurrentDetailData.EndEdit();
+                    }
+                }
+            };
+
+            reason.CellValidating += (s, e) =>
+            {
+                if (this.CurrentDetailData == null)
+                {
+                    return;
+                }
+
+                if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
+                {
+
+                    List<SqlParameter> sqlpara = new List<SqlParameter>
+                    {
+                        new SqlParameter("@ID ", e.FormattedValue),
+                    };
+
+                    string sqlCmd = $@"
+select ID , Description
+from ReplacementLocalItemReason  
+where Junk = 0 AND Type='R'
+AND ID  = @ID 
+";
+
+                    if (MyUtility.Check.Seek(sqlCmd, sqlpara, out DataRow dr))
+                    {
+                        this.CurrentDetailData["ReplacementLocalItemReasonID"] = e.FormattedValue;
+                        this.CurrentDetailData["Description"] = MyUtility.Convert.GetString(dr["Description"]);
+                        this.CurrentDetailData.EndEdit();
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!");
+                        this.CurrentDetailData["ReplacementLocalItemReasonID"] = string.Empty;
+                        this.CurrentDetailData["Description"] = string.Empty;
+                        this.CurrentDetailData.EndEdit();
+                        return;
+                    }
+                }
+                else if (this.EditMode && e.FormattedValue.ToString() == string.Empty)
+                {
+                    this.CurrentDetailData["ReplacementLocalItemReasonID"] = string.Empty;
+                    this.CurrentDetailData["Description"] = string.Empty;
+                    this.CurrentDetailData.EndEdit();
                 }
             };
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("RefNo", header: "Refer#", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: refno)
-                .Numeric("RequestQty", header: "Request Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999.99M, minimum: 0, settings: requestqty)
-                .Text("ReplacementLocalItemReasonID", header: "Reason Id", width: Widths.AnsiChars(5), settings: reason)
+                .Text("RefNo", header: "Refer#", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: refno)
+                .Numeric("RequestQty", header: "Request Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, maximum: 99999999.99M, minimum: 0)
+                .Text("ReplacementLocalItemReasonID", header: "Reason Id", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: reason)
                 .EditText("Description", header: "Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: false);
         }
@@ -154,10 +314,11 @@ where r.ID = '{masterID}'
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            this.CurrentMaintain["IssueDate"] = DateTime.Today;
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
-            this.CurrentMaintain["FabricType"] = "F";
             this.CurrentMaintain["ApplyName"] = Env.User.UserID;
             this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Type"] = "R";
         }
 
         /// <inheritdoc/>
@@ -198,118 +359,49 @@ where r.ID = '{masterID}'
         protected override bool ClickSaveBefore()
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Type"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["ApplyName"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["SubconName"]))
             {
-                MyUtility.Msg.WarningBox("Type can't empty");
-                this.comboType.Focus();
-                return false;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Shift"]))
-            {
-                MyUtility.Msg.WarningBox("Shift can't empty");
-                this.comboShift.Focus();
-                return false;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderID"]))
-            {
-                MyUtility.Msg.WarningBox("SP# can't empty");
-                this.txtSP.Focus();
-                return false;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ApplyName"]))
-            {
-                MyUtility.Msg.WarningBox("Handle can't empty");
-                this.txtuserHandle.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("<SP#>,<Handle>,<Sewing Line>,<Subcon Name>, can't empty");
                 return false;
             }
             #endregion
-            int i = 0; // 計算表身Grid的總筆數
+
+            List<string> errorRefno = new List<string>();
             foreach (DataRow dr in this.DetailDatas)
             {
-                #region 刪除表身Seq為空白的資料
-                if (MyUtility.Check.Empty(dr["Seq"]))
-                {
-                    dr.Delete();
-                    continue;
-                }
-                #endregion
-                i++;
-                #region 表身的RequestQty不可小於0、Reason不可為空 、Type='R'時RejectQty不可小(等)於0
+                // RequestQty 都須 > 0
                 if (MyUtility.Check.Empty(dr["RequestQty"]) || MyUtility.Convert.GetDecimal(dr["RequestQty"]) <= 0)
                 {
                     MyUtility.Msg.WarningBox("< Request Qty >  can't equal or less 0!");
                     return false;
                 }
 
-                if (MyUtility.Check.Empty(dr["PPICReasonID"]))
+                // 表頭選的 SubConName, 必須和表身 Refno對應 LocalItem. LocalSuppid一致
+                string cmd = $@"
+SELECT 1
+FROM LocalItem
+WHERE LocalSuppid = '{this.CurrentMaintain["SubConName"]}'
+AND Refno = '{dr["Refno"]}'
+";
+                if (!MyUtility.Check.Seek(cmd))
                 {
-                    MyUtility.Msg.WarningBox("< Reason Id >  can't empty!");
-                    return false;
-                }
-
-                if (MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "R" && (MyUtility.Check.Empty(dr["RejectQty"]) || MyUtility.Convert.GetInt(dr["RejectQty"]) <= 0))
-                {
-                    MyUtility.Msg.WarningBox("< # of pcs rejected >  can't equal or less 0!");
-                    return false;
-                }
-
-                #endregion
-            }
-
-            // 表身Grid資料不可為空
-            if (i == 0)
-            {
-                MyUtility.Msg.WarningBox("Detail can't empty!!");
-                return false;
-            }
-
-            // RequestQty不可以超過Warehouse的A倉庫存數量
-            DataTable exceedData;
-            try
-            {
-                string strSQLSelect = string.Format(
-                    @"
-select * from (
-SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(mpd.InQty-mpd.OutQty+mpd.AdjustQty-mpd.LInvQty,0) as StockQty
-FROM #tmp l
-left join MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = '{0}' and mpd.SEQ1 = l.Seq1 and mpd.SEQ2 = l.Seq2) a
-where a.RequestQty > a.StockQty",
-                    MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
-
-                MyUtility.Tool.ProcessWithDatatable(
-                    (DataTable)this.detailgridbs.DataSource,
-                    "Seq,Seq1,Seq2,RequestQty",
-                    strSQLSelect,
-                    out exceedData);
-            }
-            catch (Exception ex)
-            {
-                this.ShowErr("Save error.", ex);
-                return false;
-            }
-
-            StringBuilder msg = new StringBuilder();
-            if (this.comboType.Text != "Lacking")
-            {
-                foreach (DataRow dr in exceedData.Rows)
-                {
-                    msg.Append(string.Format("Seq#:{0}  < Request Qty >:{1} exceed stock qty:{2}\r\n", MyUtility.Convert.GetString(dr["Seq"]), MyUtility.Convert.GetString(dr["RequestQty"]), MyUtility.Convert.GetString(dr["StockQty"])));
+                    errorRefno.Add(MyUtility.Convert.GetString(dr["Refno"]));
                 }
             }
 
-            if (msg.Length != 0)
+            if (errorRefno.Count > 0)
             {
-                MyUtility.Msg.WarningBox(msg.ToString());
+                MyUtility.Msg.WarningBox($"Refno# : {errorRefno.Distinct().JoinToString(",")} not belongs to {this.CurrentMaintain["SubConName"]}");
                 return false;
             }
 
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(Env.User.Factory + "FR", "Lack", DateTime.Today, 2, "Id", null);
+                string id = MyUtility.GetValue.GetID(Env.User.Factory + "RC", "ReplacementLocalItem", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
@@ -320,6 +412,53 @@ where a.RequestQty > a.StockQty",
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            base.ClickConfirm();
+
+            DualResult result;
+
+            string updateCmd = $@"
+update ReplacementLocalItem set 
+Status = 'Confirmed'
+,ApvName = '{Env.User.UserID}'
+,ApvDate = GetDate()
+,EditName = '{Env.User.UserID}'
+,EditDate = GetDate() 
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+            result = DBProxy.Current.Execute(null, updateCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Confirm fail!\r\n" + result.ToString());
+                return;
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            base.ClickUnconfirm();
+            DualResult result;
+
+            string updateCmd = $@"
+update ReplacementLocalItem set 
+Status = 'New'
+,ApvName = ''
+,ApvDate = NULL
+,EditName = '{Env.User.UserID}'
+,EditDate = GetDate() 
+where ID = '{this.CurrentMaintain["ID"]}'
+";
+            result = DBProxy.Current.Execute(null, updateCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Unconfirm fail!\r\n" + result.ToString());
+                return;
+            }
         }
 
         // SP#
@@ -365,9 +504,9 @@ where a.RequestQty > a.StockQty",
 
                         if (result && orders.Rows.Count > 0)
                         {
-                            if (MyUtility.Convert.GetString(orders.Rows[0]["FtyGroup "]) != ftyGroup)
+                            if (MyUtility.Convert.GetString(orders.Rows[0]["FtyGroup"]) != ftyGroup)
                             {
-                                MyUtility.Msg.WarningBox($"Current login factory is {ftyGroup} , it is different factory group with SP# factory {MyUtility.Convert.GetString(orders.Rows[0]["FtyGroup "])}");
+                                MyUtility.Msg.WarningBox($"Current login factory is {ftyGroup} , it is different factory group with SP# factory {MyUtility.Convert.GetString(orders.Rows[0]["FtyGroup"])}");
                                 this.CurrentMaintain["OrderID"] = string.Empty;
                                 this.CurrentMaintain["POID"] = string.Empty;
                                 this.CurrentMaintain["FactoryID"] = string.Empty;
