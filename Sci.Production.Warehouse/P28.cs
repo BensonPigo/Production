@@ -1059,14 +1059,14 @@ and i2.id = '{dr["ID"]}'
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster, true))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             // AutoWHAccessory WebAPI for Vstrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMaster, true))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");

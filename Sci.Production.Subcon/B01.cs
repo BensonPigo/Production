@@ -207,7 +207,7 @@ WHERE Type='Pms_LocalItem_UnPack'
             if (this.CurrentMaintain["Category"].ToString().ToUpper() == "CARTON")
             {
                 Task.Run(() => new Sunrise_FinishingProcesses().SentLocalItemToFinishingProcesses(this.CurrentMaintain["RefNo"].ToString()))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }

@@ -378,7 +378,7 @@ WHERE td.TemplateName <> ''
                 foreach (var packingListID in successPackingList.Select(o => o.PackingListID).Distinct())
                 {
                     Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(packingListID, string.Empty))
-                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
                 #endregion
 
@@ -386,7 +386,7 @@ WHERE td.TemplateName <> ''
                 foreach (var packingListID in successPackingList.Select(o => o.PackingListID).Distinct())
                 {
                     Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListID, string.Empty))
-                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
                 #endregion
             }

@@ -374,7 +374,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             {
                 string styleKey = $"{this.CurrentMaintain["ID"]}`{this.CurrentMaintain["SeasonID"]}`{this.CurrentMaintain["BrandID"]}";
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentStyleFPSSettingToFinishingProcesses '{styleKey}'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }

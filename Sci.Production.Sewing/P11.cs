@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using System.Threading;
 
 namespace Sci.Production.Sewing
 {
@@ -856,7 +857,7 @@ HAVING SUM(sdd.QAQty) >= '{this.DetailDatas[i]["TransferQty"]}'
             #region ISP20201344 資料交換 - Sunrise
             string listUkey = this.DetailDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
             Task.Run(() => new Sunrise_FinishingProcesses().SentSewingOutputTransfer(listUkey))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             #endregion
             MyUtility.Msg.InfoBox("Complete!");
         }

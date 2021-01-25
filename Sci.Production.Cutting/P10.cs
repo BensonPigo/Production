@@ -672,7 +672,7 @@ update [Bundle_Detail_Order] set qty = {dr["qty"]} where BundleNo ='{dr["BundleN
                     .ToList();
 
                 Task.Run(() => new Guozi_AGV().SentBundleToAGV(() => listBundleToAGV_PostBody))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             var listDeletedDetail = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Deleted && s["BundleNo", DataRowVersion.Original] != DBNull.Value);

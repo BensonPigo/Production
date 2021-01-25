@@ -570,7 +570,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 {
                     DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                     Task.Run(() => new Gensong_AutoWHFabric().SentWHCloseToGensongAutoWHFabric(dtMain))
-                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 // SubTransfer_Detail
@@ -586,7 +586,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
                     Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, true))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
                 #endregion
 
@@ -597,7 +597,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 {
                     DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                     Task.Run(() => new Vstrong_AutoWHAccessory().SentWHCloseToVstrongAutoWHAccessory(dtMain))
-                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 // SubTransfer_Detail
@@ -613,7 +613,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
                     Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMain, true))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
 
                 // this.QueryData();

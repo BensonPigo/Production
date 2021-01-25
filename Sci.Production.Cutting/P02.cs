@@ -3557,7 +3557,7 @@ where wd.WorkOrderUkey is null
             {
                 DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
                 Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             // CutRef被清空要傳delete給廠商

@@ -988,7 +988,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                 }
 
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_DetailToVstrongAutoWHAccessory(dtDetail))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
     }

@@ -44,7 +44,7 @@ namespace Sci.Production.Cutting
             {
                 DataTable dtCuttingCell = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Guozi_AGV().SentCutCellToAGV(dtCuttingCell))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             return base.ClickSavePost();
