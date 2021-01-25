@@ -3108,6 +3108,7 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             foreach (DataRow dr in dataRows)
             {
                 dr["Location"] = this.txtMtlLocation1.Text;
+                dr.EndEdit();
             }
         }
 
