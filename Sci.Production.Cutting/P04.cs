@@ -348,7 +348,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             {
                 DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
                 Task.Run(() => new Gensong_AutoWHFabric().SentCutplan_DetailToGensongAutoWHFabric(dtDetail, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 

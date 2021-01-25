@@ -2170,7 +2170,7 @@ and i.id = '{this.CurrentMaintain["ID"]}'
                 }
 
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
     }

@@ -67,27 +67,12 @@ namespace Sci.Production.Automation
         /// <param name="automationErrMsg">Automation Err Msg</param>
         public static void SaveAutomationErrMsg(AutomationErrMsg automationErrMsg)
         {
-            string saveSql = $@"
- insert into AutomationErrMsg(SuppID, ModuleName, APIThread, SuppAPIThread, ErrorCode, ErrorMsg, JSON, ReSented, AddName, AddDate)
-                        values(@SuppID, @ModuleName, @APIThread, @SuppAPIThread, @ErrorCode, @ErrorMsg, @JSON, 0, @AddName, GETDATE())
-";
-            List<SqlParameter> listPar = new List<SqlParameter>()
+            automationErrMsg.addName = Env.User.UserID;
+            SqlConnection sqlConnection = new SqlConnection();
+            DBProxy._OpenConnection("Production", out sqlConnection);
+            using (sqlConnection)
             {
-               new SqlParameter("@SuppID", automationErrMsg.suppID),
-               new SqlParameter("@ModuleName", automationErrMsg.moduleName),
-               new SqlParameter("@APIThread", automationErrMsg.apiThread),
-               new SqlParameter("@SuppAPIThread", automationErrMsg.suppAPIThread),
-               new SqlParameter("@ErrorCode", automationErrMsg.errorCode),
-               new SqlParameter("@ErrorMsg", automationErrMsg.errorMsg),
-               new SqlParameter("@JSON", automationErrMsg.json),
-               new SqlParameter("@AddName", Env.User.UserID),
-            };
-
-            DualResult result = DBProxy.Current.Execute("Production", saveSql, listPar);
-
-            if (!result)
-            {
-                throw result.GetException();
+                PmsWebApiUtility20.Automation.SaveAutomationErrMsg(automationErrMsg, sqlConnection);
             }
         }
 
@@ -113,7 +98,8 @@ namespace Sci.Production.Automation
         {
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 130);
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600);
+            automationErrMsg.json = jsonBody;
 
             if (!webApiBaseResult.isSuccess)
             {
@@ -148,6 +134,18 @@ namespace Sci.Production.Automation
                 this.errorCode = string.Empty;
                 this.errorMsg = result.GetException().ToString();
                 this.json = string.Empty;
+            }
+
+            /// <summary>
+            /// SetErrInfo
+            /// </summary>
+            /// <param name="ex">ex</param>
+            /// <param name="json">json</param>
+            public void SetErrInfo(Exception ex, string json)
+            {
+                this.errorCode = "995";
+                this.errorMsg = "From PMS Exception" + Environment.NewLine + ex.ToString();
+                this.json = json;
             }
         }
 

@@ -233,7 +233,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                 {
                     string listID = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).JoinToString(",");
                     Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID, string.Empty))
-                               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 
                     // 因為會傳圖片，拆成單筆 PackingListNo 轉出，避免一次傳出的容量過大超過api大小限制
                     foreach (DataRow dr in dt.Rows)
@@ -243,7 +243,7 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
                         {
                             // 不透過Call API的方式，自己組合，傳送API
                             Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["PackingListID"]), string.Empty))
-                                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                         }
                         #endregion
                     }

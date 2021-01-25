@@ -754,7 +754,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip,Order_SizeCode,Order_Qty'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
 
@@ -763,7 +763,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             {
                 // 透過Call API的方式，傳送API
                 Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
@@ -1399,7 +1399,7 @@ where POID = @poid group by POID,b.spno";
             List<string> listPOID = new List<string>();
             listPOID.Add(this.CurrentMaintain["POID"].ToString());
             Task.Run(() => new Guozi_AGV().SentOrdersToAGV(listPOID))
-                          .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                          .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 
             sqlCmd = string.Format("update sewingschedule set OrderFinished = 1 where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             result = DBProxy.Current.Execute(null, sqlCmd);

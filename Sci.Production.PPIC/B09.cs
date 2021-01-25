@@ -65,7 +65,7 @@ from FinishingProcess");
             base.ClickSaveAfter();
             #region ISP20201344 資料交換 - Sunrise
             Task.Run(() => new Sunrise_FinishingProcesses().SentFinishingProcess(this.CurrentMaintain["DM300"].ToString()))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             #endregion
         }
 

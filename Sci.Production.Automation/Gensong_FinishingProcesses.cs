@@ -1,7 +1,11 @@
 ﻿using Newtonsoft.Json;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
@@ -66,8 +70,29 @@ namespace Sci.Production.Automation
             var structureID = listID.Split(',').Select(s => new { ID = s });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure(tableName, structureID));
+            AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(this.automationErrMsg, jsonBody);
+            SqlConnection sqlConnection = new SqlConnection();
+            try
+            {
+                DBProxy._OpenConnection("Production", out sqlConnection);
+                automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+
+                DBProxy._OpenConnection("Production", out sqlConnection);
+                automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+            }
+            catch (Exception ex)
+            {
+                if (!MyUtility.Check.Empty(automationCreateRecord.ukey))
+                {
+                    DBProxy._OpenConnection("Production", out sqlConnection);
+                    automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+                }
+
+                this.automationErrMsg.SetErrInfo(ex, jsonBody);
+                SaveAutomationErrMsg(this.automationErrMsg);
+            }
         }
 
         /// <summary>

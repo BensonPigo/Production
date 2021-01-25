@@ -263,7 +263,7 @@ select SP = (select ID + ','
                         transactionScope.Dispose();
                         this.Haveupdate = true;
                         Task.Run(() => new Guozi_AGV().SentOrdersToAGV(listPOID))
-              .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+              .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                         MyUtility.Msg.InfoBox("Update completed!");
                     }
                     else

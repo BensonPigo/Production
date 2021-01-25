@@ -79,13 +79,13 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
             if (dsForAutomation[0].Rows.Count > 0)
             {
                 Task.Run(() => new Guozi_AGV().SentSewingLineToAGV(dsForAutomation[0]))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             if (dsForAutomation[1].Rows.Count > 0)
             {
                 Task.Run(() => new Guozi_AGV().SentSewingScheduleToAGV(dsForAutomation[1]))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             if (dsForAutomation[2].Rows.Count > 0)

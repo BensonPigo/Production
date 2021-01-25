@@ -144,7 +144,7 @@ INSERT INTO [dbo].[MtlLocation]
 //                    if (dtMain != null || dtMain.Rows.Count > 0)
 //                    {
 //                        Task.Run(() => new Gensong_AutoWHFabric().SentMtlLocationToGensongAutoWHFabric(dtMain))
-//                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+//                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 //                    }
 //                }
 //            }
