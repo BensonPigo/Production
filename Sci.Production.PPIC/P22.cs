@@ -24,7 +24,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'F'";
+            //this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'F'";
             this.txtuserApprove.TextBox1.ReadOnly = true;
             this.txtuserApprove.TextBox1.IsSupportEditMode = false;
             this.InsertDetailGridOnDoubleClick = false;
@@ -34,7 +34,7 @@ namespace Sci.Production.PPIC
         public P22(ToolStripMenuItem menuitem, string id)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'F' and ID = '" + id + "'";
+            //this.DefaultFilter = "MDivisionID = '" + Env.User.Keyword + "' and FabricType = 'F' and ID = '" + id + "'";
             this.txtuserApprove.TextBox1.ReadOnly = true;
             this.txtuserApprove.TextBox1.IsSupportEditMode = false;
             this.InsertDetailGridOnDoubleClick = false;
@@ -316,8 +316,8 @@ AND ID  = @ID
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "R";
 
+            // 目前需求只有說做replacement，因此Readonly
             this.comboType.ReadOnly = true;
-
         }
 
         /// <inheritdoc/>
@@ -597,6 +597,12 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     }
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            return base.ClickPrint();
         }
     }
 }

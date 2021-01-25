@@ -468,10 +468,12 @@ namespace Sci.Production.PPIC
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1076, 549);
             this.GridAlias = "ReplacementLocalItem_Detail";
+            this.GridNew = 0;
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P22";
-            this.GridNew = 0;
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P22. Carton Replacement";
             this.UnApvChkValue = "Confirmed";
