@@ -481,7 +481,9 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	delete dbo.MachinePO where ID in(select ID from #deleteMachinePOID)
 	
 	drop table #tmpTrade_To_PmsMachinePO
-
+	
+	-- 刪除不存在 Trade 轉來的資料
+	delete MachinePO_Detail where not exists(select 1 from #tmpTrade_To_PmsMachinePO where ID = MachinePO_Detail.ID)
 
 
 -----------------MachinePO_Detail Type <>'M'---------------------
