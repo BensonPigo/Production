@@ -103,7 +103,7 @@ namespace Sci.Production.PPIC
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1068, 178);
+            this.masterpanel.Size = new System.Drawing.Size(892, 178);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -138,7 +138,7 @@ namespace Sci.Production.PPIC
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 178);
-            this.detailpanel.Size = new System.Drawing.Size(1068, 271);
+            this.detailpanel.Size = new System.Drawing.Size(892, 171);
             // 
             // gridicon
             // 
@@ -147,7 +147,7 @@ namespace Sci.Production.PPIC
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1068, 271);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 171);
             // 
             // detail2
             // 
@@ -160,19 +160,6 @@ namespace Sci.Production.PPIC
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1068, 487);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1068, 449);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 449);
-            this.detailbtm.Size = new System.Drawing.Size(1068, 38);
             // 
             // browse
             // 
@@ -473,6 +460,7 @@ namespace Sci.Production.PPIC
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
+            this.GridUniqueKey = "ID,Refno,ReplacementLocalItemReasonID";            
             this.Name = "P22";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P22. Carton Replacement";

@@ -45,7 +45,8 @@ namespace Sci.Production.PPIC
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = $@"
-SELECT rd.Refno
+SELECT rd.ID
+    ,rd.Refno
 	,rd.RequestQty
 	,rd.ReplacementLocalItemReasonID
 	,rr.Description
@@ -602,6 +603,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
+            P22_Print form = new P22_Print();
+            form.ShowDialog();
             return base.ClickPrint();
         }
     }
