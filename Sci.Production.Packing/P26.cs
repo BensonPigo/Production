@@ -3022,7 +3022,7 @@ where o.CustPONo='{pono}'
 	    INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
 	    INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
 	    INNER JOIN PackingList p ON p.ID = s.PackingListID
-	    where sd.FileName='{fileName}' AND st.IsSSCC = 1
+	    where sd.FileName='{fileName}' AND st.FromTemplate = 0
     )a
     WHERE Rank={seq}
 

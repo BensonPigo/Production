@@ -545,7 +545,7 @@ SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkPic和的 [PackingL
     ,b.RefNo
     ,b.CTNStartNo
     ,td.TemplateName
-	,t.IsSSCC  ---- 如果是圖片檔，則不會有範本，不需要產生HTML
+	,t.FromTemplate
 	----對應ShippingMarkPic_Detail
     ,b.SCICtnNo
 	,b.ShippingMarkCombinationUkey
@@ -606,7 +606,7 @@ DROP TABLE #base, #Mix
                     FromRight = MyUtility.Convert.GetDouble(dr["FromRight"]),
                     Width = MyUtility.Convert.GetInt(dr["Width"]),
                     Length = MyUtility.Convert.GetInt(dr["Length"]),
-                    IsSSCC = MyUtility.Convert.GetBool(dr["IsSSCC"]),
+                    FromTemplate = MyUtility.Convert.GetBool(dr["FromTemplate"]),
 
                     DefineColumns = new List<DefineColumn>(),
                 };
@@ -615,7 +615,7 @@ DROP TABLE #base, #Mix
             }
 
             // 取得要替換的欄位的值
-            List<P24_Template> nList = this.GetTemplateFieldValue(tList.Where(o => !o.IsSSCC).ToList());
+            List<P24_Template> nList = this.GetTemplateFieldValue(tList.Where(o=>o.FromTemplate).ToList());
             if (MyUtility.Check.Empty(nList) || nList.Count == 0)
             {
                 if (callFrom == "P26")
@@ -653,7 +653,7 @@ DROP TABLE #base, #Mix
             }
 
             // 剛剛被排除掉的SSCC要加回來
-            bList.AddRange(tList.Where(o => o.IsSSCC));
+            bList.AddRange(tList.Where(o => !o.FromTemplate));
 
             bool success = this.UpdateDatabese(bList, callFrom);
 
@@ -677,7 +677,7 @@ DROP TABLE #base, #Mix
 
                 if (callFrom == string.Empty)
                 {
-                    MyUtility.Msg.InfoBox("Success!!");
+                    //MyUtility.Msg.InfoBox("Success!!");
                     this.Query();
                 }
             }
@@ -797,7 +797,7 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
             {
                 foreach (P24_Template oneCarton in p24_Templates)
                 {
-                    if (oneCarton.IsSSCC)
+                    if (!oneCarton.FromTemplate)
                     {
                         continue;
                     }
@@ -899,32 +899,35 @@ IF EXISTS(
     AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
 )
 BEGIN
-    ----- ShippingMarkType.IsSSCC = 0才能有HTML
+    ----- ShippingMarkType.FromTemplate = 1 才能有HTML
     UPDATE ShippingMarkPic_Detail
     SET FilePath = '{p24_Template.FilePath}'
         ,FileName = '{p24_Template.FileName}'
         ,DPI = {dPI}
         ,Image = NULL
+        ,IsSSCC = (SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
     AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
-    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.IsSSCC = 0)
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.FromTemplate = 1)
 
-    ---- ShippingMarkType.IsSSCC = 1 的FilePath FileName清空
+    ---- ShippingMarkType.FromTemplate = 0 的FilePath FileName清空
     UPDATE ShippingMarkPic_Detail
     SET FilePath = ''
         ,FileName = ''
         ,DPI = 0
+        ,IsSSCC = (SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
-    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.IsSSCC = 1)
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.FromTemplate = 0)
 END
 ELSE
 BEGIN
     INSERT INTO ShippingMarkPic_Detail
-               (ShippingMarkPicUkey, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
+               (ShippingMarkPicUkey, IsSSCC, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
          VALUES
                ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+               ,(SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
                ,'{p24_Template.SCICtnNo}'
                ,{p24_Template.ShippingMarkCombinationUkey}
                ,{p24_Template.ShippingMarkTypeUkey}
@@ -1103,7 +1106,7 @@ END
         public string TemplatePath { get; set; }
 
         /// <inheritdoc/>
-        public bool IsSSCC { get; set; }
+        public bool FromTemplate { get; set; }
 
         /// <inheritdoc/>
         public List<DefineColumn> DefineColumns { get; set; }
