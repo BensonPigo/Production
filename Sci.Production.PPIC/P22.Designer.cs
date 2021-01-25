@@ -31,7 +31,7 @@ namespace Sci.Production.PPIC
         {
             this.txtDept = new Sci.Win.UI.TextBox();
             this.lblDept = new Sci.Win.UI.Label();
-            this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
+            this.txtLocalSupp = new Sci.Production.Class.TxtLocalSupp();
             this.labelSubconName = new Sci.Win.UI.Label();
             this.lbStatus = new Sci.Win.UI.Label();
             this.txtuserApprove = new Sci.Production.Class.Txtuser();
@@ -76,7 +76,7 @@ namespace Sci.Production.PPIC
             // 
             this.masterpanel.Controls.Add(this.txtDept);
             this.masterpanel.Controls.Add(this.lblDept);
-            this.masterpanel.Controls.Add(this.txtLocalSupp1);
+            this.masterpanel.Controls.Add(this.txtLocalSupp);
             this.masterpanel.Controls.Add(this.labelSubconName);
             this.masterpanel.Controls.Add(this.lbStatus);
             this.masterpanel.Controls.Add(this.txtuserApprove);
@@ -131,7 +131,7 @@ namespace Sci.Production.PPIC
             this.masterpanel.Controls.SetChildIndex(this.txtuserApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtDept, 0);
             // 
@@ -142,7 +142,7 @@ namespace Sci.Production.PPIC
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Location = new System.Drawing.Point(950, 143);
             // 
             // detailgridcont
@@ -151,15 +151,15 @@ namespace Sci.Production.PPIC
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1068, 487);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(1062, 441);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(1062, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -200,16 +200,16 @@ namespace Sci.Production.PPIC
             this.lblDept.TabIndex = 79;
             this.lblDept.Text = "Department";
             // 
-            // txtLocalSupp1
+            // txtLocalSupp
             // 
-            this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
-            this.txtLocalSupp1.DisplayBox1Binding = "";
-            this.txtLocalSupp1.IsFactory = false;
-            this.txtLocalSupp1.Location = new System.Drawing.Point(103, 113);
-            this.txtLocalSupp1.Name = "txtLocalSupp1";
-            this.txtLocalSupp1.Size = new System.Drawing.Size(252, 23);
-            this.txtLocalSupp1.TabIndex = 78;
-            this.txtLocalSupp1.TextBox1Binding = "";
+            this.txtLocalSupp.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubconName", true));
+            this.txtLocalSupp.DisplayBox1Binding = "";
+            this.txtLocalSupp.IsFactory = false;
+            this.txtLocalSupp.Location = new System.Drawing.Point(103, 113);
+            this.txtLocalSupp.Name = "txtLocalSupp";
+            this.txtLocalSupp.Size = new System.Drawing.Size(252, 23);
+            this.txtLocalSupp.TabIndex = 78;
+            this.txtLocalSupp.TextBox1Binding = "";
             // 
             // labelSubconName
             // 
@@ -374,6 +374,7 @@ namespace Sci.Production.PPIC
             this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(110, 24);
             this.comboShift.TabIndex = 50;
+            this.comboShift.SelectedIndexChanged += new System.EventHandler(this.ComboShift_SelectedIndexChanged);
             // 
             // comboType
             // 
@@ -387,6 +388,7 @@ namespace Sci.Production.PPIC
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 49;
+            this.comboType.Validating += new System.ComponentModel.CancelEventHandler(this.ComboType_Validating);
             // 
             // displayNo
             // 
@@ -469,6 +471,7 @@ namespace Sci.Production.PPIC
             this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P22";
+            this.GridNew = 0;
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P22. Carton Replacement";
             this.UnApvChkValue = "Confirmed";
@@ -497,7 +500,7 @@ namespace Sci.Production.PPIC
 
         private Win.UI.TextBox txtDept;
         private Win.UI.Label lblDept;
-        private Class.TxtLocalSupp txtLocalSupp1;
+        private Class.TxtLocalSupp txtLocalSupp;
         private Win.UI.Label labelSubconName;
         private Win.UI.Label lbStatus;
         private Class.Txtuser txtuserApprove;

@@ -66,14 +66,15 @@ where r.ID = '{masterID}'
             base.OnDetailEntered();
             this.lbStatus.Text = this.CurrentMaintain["status"].ToString().Trim();
 
-            if (this.CurrentMaintain["Shift"].Equals("O") && this.EditMode)
-            {
-                this.txtLocalSupp1.TextBox1.ReadOnly = false;
-            }
-            else
-            {
-                this.txtLocalSupp1.TextBox1.ReadOnly = true;
-            }
+            //this.txtLocalSupp.TextBox1.ReadOnly = false;
+            //if (this.CurrentMaintain["Shift"].Equals("O") && this.EditMode)
+            //{
+            //    this.txtLocalSupp.TextBox1.ReadOnly = false;
+            //}
+            //else
+            //{
+            //    this.txtLocalSupp.TextBox1.ReadOnly = true;
+            //}
         }
 
         /// <inheritdoc/>
@@ -189,11 +190,9 @@ AND RefNo = @RefNo
 select ID , Description
 from ReplacementLocalItemReason  
 where Junk = 0 AND Type='R'
-AND ID  = @ID 
 ";
-                        paras.Add(new SqlParameter("@ID", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString()));
 
-                        SelectItem sel = new SelectItem(sqlCmd, paras, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
+                        SelectItem sel = new SelectItem(sqlCmd, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
                         DialogResult res = sel.ShowDialog();
                         if (res == DialogResult.Cancel)
                         {
@@ -217,11 +216,9 @@ AND ID  = @ID
 select ID , Description
 from ReplacementLocalItemReason  
 where Junk = 0 AND Type='R'
-AND ID  = @ID 
 ";
-                        paras.Add(new SqlParameter("@ID", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString()));
 
-                        SelectItem sel = new SelectItem(sqlCmd, paras, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
+                        SelectItem sel = new SelectItem(sqlCmd, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
                         DialogResult res = sel.ShowDialog();
                         if (res == DialogResult.Cancel)
                         {
@@ -243,7 +240,6 @@ AND ID  = @ID
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
-
                     List<SqlParameter> sqlpara = new List<SqlParameter>
                     {
                         new SqlParameter("@ID ", e.FormattedValue),
@@ -319,6 +315,9 @@ AND ID  = @ID
             this.CurrentMaintain["ApplyName"] = Env.User.UserID;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["Type"] = "R";
+
+            this.comboType.ReadOnly = true;
+
         }
 
         /// <inheritdoc/>
@@ -566,6 +565,38 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
+        }
+
+        private void ComboShift_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //if (!MyUtility.Check.Empty(this.comboShift.SelectedValue) && this.EditMode)
+            //{
+            //    if (this.comboShift.SelectedValue.Equals("O"))
+            //    {
+            //        this.txtLocalSupp.TextBox1.ReadOnly = false;
+            //    }
+            //    else
+            //    {
+            //        this.txtLocalSupp.TextBox1.ReadOnly = true;
+            //        this.CurrentMaintain["Shift"] = this.comboShift.SelectedValue;
+            //        this.CurrentMaintain["SubconName"] = string.Empty;
+            //    }
+            //}
+        }
+
+        private void ComboType_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode)
+            {
+                if (this.comboType.OldValue != this.comboType.SelectedValue && this.detailgridbs.DataSource != null)
+                {
+                    foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+                    {
+                        dr["PPICReasonID"] = string.Empty;
+                        dr["PPICReasonDesc"] = string.Empty;
+                    }
+                }
+            }
         }
     }
 }
