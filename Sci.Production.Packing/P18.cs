@@ -424,28 +424,9 @@ Drop TABLE #Base
             if (clearType.Equals("ALL"))
             {
                 string upd_sql = $@"
-/*
 UPDATE PackingList_Detail 
 SET ScanQty = 0 ,ScanEditDate = NULL , ActCTNWeight = 0
 WHERE ID = '{packingListID}' AND CTNStartNo = '{cTNStartNo}' 
-*/
-
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID='{packingListID}' AND a.CTNStartNo='{cTNStartNo}'
-
-UPDATE pd
-SET ScanQty = 0 ,ScanEditDate = NULL , ActCTNWeight = 0
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
 ";
 
                 string insertCmds = $@"
@@ -858,7 +839,6 @@ Drop TABLE #Base
                 }
 
                 string upd_sql = $@"
-/*
 update PackingList_Detail 
 set ScanQty = QtyPerCTN 
 , ScanEditDate = GETDATE()
@@ -867,29 +847,7 @@ set ScanQty = QtyPerCTN
 , ActCTNWeight = {this.numWeight.Value}
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-*/
 
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID = '{this.selecedPK.ID}' 
-AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-
-UPDATE pd
-SET ScanQty = QtyPerCTN 
-, ScanEditDate = GETDATE()
-, ScanName = '{Env.User.UserID}'   
-, Lacking = 0
-, ActCTNWeight = {this.numWeight.Value}
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
 ";
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
@@ -1270,7 +1228,6 @@ Drop TABLE #Base
                 foreach (DataRow dr in dt.Rows)
                 {
                     upd_sql += $@"
-/*
 update PackingList_Detail 
 set   
 ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])} 
@@ -1279,28 +1236,7 @@ ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}
 , Lacking = 1
 , BarCode = '{dr["Barcode"]}'
 where Ukey={dr["Ukey"]}
-*/
 
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.Ukey={dr["Ukey"]}
-
-UPDATE pd
-SET ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])} 
-, ScanEditDate = GETDATE()
-, ScanName = '{Env.User.UserID}'   
-, Lacking = 1
-, BarCode = '{dr["Barcode"]}'
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
 ";
                 }
 
@@ -1732,7 +1668,6 @@ Drop TABLE #Base
                 }
 
                 string upd_sql = $@"
-/*
 update PackingList_Detail 
 set ScanQty = QtyPerCTN 
 , ScanEditDate = GETDATE()
@@ -1741,29 +1676,7 @@ set ScanQty = QtyPerCTN
 , ActCTNWeight = {this.numWeight.Value}
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-*/
 
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID = '{this.selecedPK.ID}' 
-AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}' 
-
-UPDATE pd
-SET ScanQty = QtyPerCTN 
-    , ScanEditDate = GETDATE()
-    , ScanName = '{Env.User.UserID}'   
-    , Lacking = 0
-    , ActCTNWeight = {this.numWeight.Value}
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
 ";
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
