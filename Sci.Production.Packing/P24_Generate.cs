@@ -545,7 +545,7 @@ SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkPic和的 [PackingL
     ,b.RefNo
     ,b.CTNStartNo
     ,td.TemplateName
-	
+	,t.IsSSCC  ---- 如果是圖片檔，則不會有範本，不需要產生HTML
 	----對應ShippingMarkPic_Detail
     ,b.SCICtnNo
 	,b.ShippingMarkCombinationUkey
@@ -563,9 +563,9 @@ INNER JOIN  ShippingMarkPicture pict WITH(NOLOCK) ON pict.BrandID = b.BrandID
 						AND pict.ShippingMarkCombinationUkey = b.ShippingMarkCombinationUkey
 INNER JOIN ShippingMarkPicture_Detail pictD WITH(NOLOCK) ON pict.Ukey = pictD.ShippingMarkPictureUkey
 INNER JOIN ShippingMarkType t WITH(NOLOCK) ON t.Ukey = pictD.ShippingMarkTypeUkey
-INNER JOIN ShippingMarkType_Detail td WITH(NOLOCK) ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
+LEFT JOIN ShippingMarkType_Detail td WITH(NOLOCK) ON t.Ukey = td.ShippingMarkTypeUkey AND td.StickerSizeID = pictD.StickerSizeID
 INNER JOIN StickerSize st WITH(NOLOCK) ON st.ID = pictD.StickerSizeID
-WHERE td.TemplateName <> ''
+--WHERE td.TemplateName <> ''
 
 DROP TABLE #base, #Mix
 ";
@@ -606,6 +606,7 @@ DROP TABLE #base, #Mix
                     FromRight = MyUtility.Convert.GetDouble(dr["FromRight"]),
                     Width = MyUtility.Convert.GetInt(dr["Width"]),
                     Length = MyUtility.Convert.GetInt(dr["Length"]),
+                    IsSSCC = MyUtility.Convert.GetBool(dr["IsSSCC"]),
 
                     DefineColumns = new List<DefineColumn>(),
                 };
@@ -614,7 +615,7 @@ DROP TABLE #base, #Mix
             }
 
             // 取得要替換的欄位的值
-            List<P24_Template> nList = this.GetTemplateFieldValue(tList);
+            List<P24_Template> nList = this.GetTemplateFieldValue(tList.Where(o => !o.IsSSCC).ToList());
             if (MyUtility.Check.Empty(nList) || nList.Count == 0)
             {
                 if (callFrom == "P26")
@@ -650,6 +651,9 @@ DROP TABLE #base, #Mix
             {
                 return;
             }
+
+            // 剛剛被排除掉的SSCC要加回來
+            bList.AddRange(tList.Where(o => o.IsSSCC));
 
             bool success = this.UpdateDatabese(bList, callFrom);
 
@@ -793,6 +797,11 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
             {
                 foreach (P24_Template oneCarton in p24_Templates)
                 {
+                    if (oneCarton.IsSSCC)
+                    {
+                        continue;
+                    }
+
                     Job job = new Job() { RepositoryName = oneCarton.TemplatePath, PrinterType = PrinterType.HtmlFile };
 
                     JobDataRecordSet jobdata = new JobDataRecordSet();
@@ -887,6 +896,7 @@ IF EXISTS(
     SELECT 1 FROM ShippingMarkPic_Detail 
     WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
     AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
 )
 BEGIN
     ----- ShippingMarkType.IsSSCC = 0才能有HTML
@@ -1091,6 +1101,9 @@ END
 
         /// <inheritdoc/>
         public string TemplatePath { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsSSCC { get; set; }
 
         /// <inheritdoc/>
         public List<DefineColumn> DefineColumns { get; set; }
