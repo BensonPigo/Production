@@ -785,8 +785,8 @@ order by NO
             worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,7,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,7,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
-            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,4,0)),\"\",IF(VLOOKUP(D{rownum},Operation,4,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,4,0)),\"\",VLOOKUP(D{rownum - 1},Operation,4,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
-            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,4,0)),\"\",IF(VLOOKUP(S{rownum},Operation,4,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,4,0)),\"\",VLOOKUP(S{rownum - 1},Operation,4,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,12,0)),\"\",IF(VLOOKUP(D{rownum},Operation,12,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,12,0)),\"\",VLOOKUP(D{rownum - 1},Operation,12,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,12,0)),\"\",IF(VLOOKUP(S{rownum},Operation,12,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,12,0)),\"\",VLOOKUP(S{rownum - 1},Operation,12,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, bool showMachineType = false)
@@ -1318,7 +1318,7 @@ order by NO
                     list_GCTimeChartData.Add(new GCTimeChartData()
                     {
                         OperatorNo = MyUtility.Convert.GetString(nodr["No"]),
-                        TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "S")}{norow}",
+                        TotalGSDFormula = $"='{worksheet.Name}'!{(leftDirection ? "C" : "W")}{norow}",
                         TotalCycleFormula = $"='{worksheet.Name}'!{(leftDirection ? "B" : "X")}{norow}",
                     });
 
