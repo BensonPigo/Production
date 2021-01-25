@@ -872,7 +872,9 @@ WHERE ID IN ('{templateFields.JoinToString("','")}')
                     });
                 }
 
-                headInsert += $@"
+                if (callFrom == string.Empty)
+                {
+                    headInsert += $@"
 ---刪除舊有資料
 DELETE FROM ShippingMarkPic_Detail
 WHERE ShippingMarkPicUkey IN (SELECT Ukey FROM ShippingMarkPic WHERE PackingListID = '{packingListID}')
@@ -882,38 +884,81 @@ WHERE PackingListID = '{packingListID}'
 
 INSERT INTO ShippingMarkPic (PackingListID ,AddDate ,AddName)
         VALUES ('{packingListID}' ,GETDATE() ,'{Sci.Env.User.UserID}')
+";
+                }
 
+                headInsert += $@"
+IF NOT EXISTS(SELECT 1 FROM ShippingMarkPic WHERE PackingListID = '{packingListID}' )
+BEGIN
+    INSERT INTO ShippingMarkPic (PackingListID ,AddDate ,AddName)
+         VALUES ('{packingListID}' ,GETDATE() ,'{Sci.Env.User.UserID}')
+END
+ELSE
+BEGIN
+    UPDATE ShippingMarkPic 
+    SET EditDate=GETDATE() ,EditName='{Sci.Env.User.UserID}' 
+    WHERE PackingListID = '{packingListID}'
+END
 ;
 ";
             }
 
-            // 表身
+            // 表身：透過P26先寫入圖片再產生HTML，因此不可以刪掉表身
             foreach (P24_Template p24_Template in p24_Templates)
             {
-
                 bodyInsert += $@"
-INSERT INTO ShippingMarkPic_Detail
-            (ShippingMarkPicUkey, IsSSCC, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
-        VALUES
-            ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
-            ,(SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
-            ,'{p24_Template.SCICtnNo}'
-            ,{p24_Template.ShippingMarkCombinationUkey}
-            ,{p24_Template.ShippingMarkTypeUkey}
-            ,'{p24_Template.FilePath}'
-            ,'{p24_Template.FileName}'
-            ,'{p24_Template.Side}'
-            ,{p24_Template.Seq}
-            ,{p24_Template.FromRight}
-            ,{p24_Template.FromBottom}
-            ,{p24_Template.Width}
-            ,{p24_Template.Length}
-            ,{dPI} )
+IF EXISTS(
+    SELECT 1 FROM ShippingMarkPic_Detail 
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
+)
+BEGIN
+    ----- ShippingMarkType.FromTemplate = 1 才能有HTML
+    UPDATE ShippingMarkPic_Detail
+    SET FilePath = '{p24_Template.FilePath}'
+        ,FileName = '{p24_Template.FileName}'
+        ,DPI = {dPI}
+        ,Image = NULL
+        ,IsSSCC = (SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey = '{p24_Template.ShippingMarkTypeUkey}'
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.FromTemplate = 1)
 
+    ---- ShippingMarkType.FromTemplate = 0 的FilePath FileName清空
+    UPDATE ShippingMarkPic_Detail
+    SET FilePath = ''
+        ,FileName = ''
+        ,DPI = 0
+        ,IsSSCC = (SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
+    WHERE ShippingMarkPicUkey = (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+    AND SCICtnNo = '{p24_Template.SCICtnNo}'
+    AND ShippingMarkTypeUkey IN (SELECT Ukey FROM ShippingMarkType t WHERE t.FromTemplate = 0)
+END
+ELSE
+BEGIN
+    INSERT INTO ShippingMarkPic_Detail
+               (ShippingMarkPicUkey, IsSSCC, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
+         VALUES
+               ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
+               ,(SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
+               ,'{p24_Template.SCICtnNo}'
+               ,{p24_Template.ShippingMarkCombinationUkey}
+               ,{p24_Template.ShippingMarkTypeUkey}
+               ,'{p24_Template.FilePath}'
+               ,'{p24_Template.FileName}'
+               ,'{p24_Template.Side}'
+               ,{p24_Template.Seq}
+               ,{p24_Template.FromRight}
+               ,{p24_Template.FromBottom}
+               ,{p24_Template.Width}
+               ,{p24_Template.Length}
+               ,{dPI} )
+END
 ;
 ";
             }
-
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 DualResult r;
