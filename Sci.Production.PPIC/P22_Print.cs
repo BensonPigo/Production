@@ -72,27 +72,27 @@ FROM ReplacementLocalItem a WITH(NOLOCK)
 INNER JOIN Orders o WITH(NOLOCK) ON a.OrderID = o.ID
 INNER JOIN ReplacementLocalItem_Detail b WITH(NOLOCK) ON a.ID = b.ID
 INNER JOIN LocalItem l WITH(NOLOCK) ON l.Refno = b.Refno
-INNER JOIN ReplacementLocalItemReason reason WITH(NOLOCK) ON reason.ID = b.ReplacementLocalItemReasonID
+LEFT JOIN ReplacementLocalItemReason reason WITH(NOLOCK) ON reason.ID = b.ReplacementLocalItemReasonID
 WHERE 1=1
 ";
             if (this.DateCreate1.HasValue)
             {
-                sqlCmd += $@"AND a.AddDate >= '{this.DateCreate1.Value.ToShortDateString()}'" + Environment.NewLine;
+                sqlCmd += $@"AND a.AddDate >= '{this.DateCreate1.Value.ToString("yyyy/MM/dd HH:mm:ss")}'" + Environment.NewLine;
             }
 
             if (this.DateCreate2.HasValue)
             {
-                sqlCmd += $@"AND a.AddDate <= '{this.DateCreate2.Value.AddDays(1).AddSeconds(-1).ToShortDateString()}'" + Environment.NewLine;
+                sqlCmd += $@"AND a.AddDate <= '{this.DateCreate2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss")}'" + Environment.NewLine;
             }
 
             if (this.DateApv1.HasValue)
             {
-                sqlCmd += $@"AND a.ApvDate >= '{this.DateApv1.Value.ToShortDateString()}'" + Environment.NewLine;
+                sqlCmd += $@"AND a.ApvDate >= '{this.DateApv1.Value.ToString("yyyy/MM/dd HH:mm:ss")}'" + Environment.NewLine;
             }
 
             if (this.DateApv2.HasValue)
             {
-                sqlCmd += $@"AND a.ApvDate <= '{this.DateApv2.Value.AddDays(1).AddSeconds(-1).ToShortDateString()}'" + Environment.NewLine;
+                sqlCmd += $@"AND a.ApvDate <= '{this.DateApv2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss")}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.mDivisionID))

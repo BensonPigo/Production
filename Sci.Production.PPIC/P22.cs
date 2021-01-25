@@ -67,6 +67,7 @@ where r.ID = '{masterID}'
             base.OnDetailEntered();
             this.lbStatus.Text = this.CurrentMaintain["status"].ToString().Trim();
 
+            this.comboType.ReadOnly = true;
             //this.txtLocalSupp.TextBox1.ReadOnly = false;
             //if (this.CurrentMaintain["Shift"].Equals("O") && this.EditMode)
             //{
@@ -98,7 +99,7 @@ from LocalItem
 where Junk = 0 AND Category = 'Carton'
 ";
 
-                        SelectItem sel = new SelectItem(sqlCmd, "RefNo,Description,LocalSuppid,UnitID,Price", this.CurrentDetailData["RefNo"].ToString(), null);
+                        SelectItem sel = new SelectItem(sqlCmd, "15,40,10,10,10", this.CurrentDetailData["RefNo"].ToString(), null);
                         DialogResult res = sel.ShowDialog();
                         if (res == DialogResult.Cancel)
                         {
@@ -123,7 +124,7 @@ from LocalItem
 where Junk = 0 AND Category = 'Carton'
 ";
 
-                        SelectItem sel = new SelectItem(sqlCmd, "RefNo,Description,LocalSuppid,UnitID,Price", this.CurrentDetailData["RefNo"].ToString(), null);
+                        SelectItem sel = new SelectItem(sqlCmd, "15,40,10,10,10", this.CurrentDetailData["RefNo"].ToString(), null);
                         DialogResult res = sel.ShowDialog();
                         if (res == DialogResult.Cancel)
                         {
@@ -193,7 +194,7 @@ from ReplacementLocalItemReason
 where Junk = 0 AND Type='R'
 ";
 
-                        SelectItem sel = new SelectItem(sqlCmd, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
+                        SelectItem sel = new SelectItem(sqlCmd, "10,30", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
                         DialogResult res = sel.ShowDialog();
                         if (res == DialogResult.Cancel)
                         {
@@ -219,7 +220,7 @@ from ReplacementLocalItemReason
 where Junk = 0 AND Type='R'
 ";
 
-                        SelectItem sel = new SelectItem(sqlCmd, "ID,Description", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
+                        SelectItem sel = new SelectItem(sqlCmd, "10,30", this.CurrentDetailData["ReplacementLocalItemReasonID"].ToString(), null);
                         DialogResult res = sel.ShowDialog();
                         if (res == DialogResult.Cancel)
                         {
