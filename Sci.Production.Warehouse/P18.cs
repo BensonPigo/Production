@@ -1760,7 +1760,7 @@ and t.id = '{this.CurrentMaintain["id"]}'
                 }
 
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -1820,7 +1820,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
                 }
 
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_DetailToVstrongAutoWHAccessory(dtDetail))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 

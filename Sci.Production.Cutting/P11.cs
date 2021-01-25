@@ -2714,7 +2714,7 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
                 }
             };
             Task.Run(() => new Guozi_AGV().SentBundleToAGV(funListBundle))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 
             #endregion
 
