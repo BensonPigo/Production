@@ -212,8 +212,8 @@ namespace Sci.Production.Packing
                     {
                         dr["barcode"] = DBNull.Value;
                     }
-
-                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
+                    string cmd = $@"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'";
+                    DBProxy.Current.Execute(null, cmd);
                 }
 
                 DualResult result_load = this.LoadScanDetail(0);
@@ -322,8 +322,8 @@ namespace Sci.Production.Packing
                 {
                     seledr["Barcode"] = DBNull.Value;
                 }
-
-                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ");
+                string cmd = $@"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ";
+                DBProxy.Current.Execute(null, cmd);
             }
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
@@ -384,7 +384,8 @@ namespace Sci.Production.Packing
                 string upd_sql = $@"
 UPDATE PackingList_Detail 
 SET ScanQty = 0 ,ScanEditDate = NULL , ActCTNWeight = 0
-WHERE ID = '{packingListID}' AND CTNStartNo = '{cTNStartNo}' ";
+WHERE ID = '{packingListID}' AND CTNStartNo = '{cTNStartNo}' 
+";
 
                 string insertCmds = $@"
 
@@ -676,15 +677,37 @@ WHERE o.ID='{dr.OrderID}'");
                     }
 
                     this.upd_sql_barcode += $@"
-update PackingList_Detail
-set BarCode = '{this.txtScanEAN.Text}'
-where PackingList_Detail.Article 
-=  '{no_barcode_dr["Article"]}'
-and PackingList_Detail.SizeCode
-=  '{no_barcode_dr["SizeCode"]}'
-and PackingList_Detail.ID = '{this.selecedPK.ID}'
-and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-";
+                    /*
+                    update PackingList_Detail
+                    set BarCode = '{this.txtScanEAN.Text}'
+                    where PackingList_Detail.Article 
+                    =  '{no_barcode_dr["Article"]}'
+                    and PackingList_Detail.SizeCode
+                    =  '{no_barcode_dr["SizeCode"]}'
+                    and PackingList_Detail.ID = '{this.selecedPK.ID}'
+                    and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+                    */
+
+                    select a.Article,a.Color,a.SizeCode,o.StyleUkey
+                    INTO #Base
+                    from PackingList_Detail a
+                    inner join Orders o ON o.ID = a.OrderID
+                    where a.ID = '{this.selecedPK.ID}'
+                    AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+                    AND a.Article = '{no_barcode_dr["Article"]}' 
+                    AND a.SizeCode = '{no_barcode_dr["SizeCode"]}'
+
+                    UPDATE pd
+                    SET BarCode = '{this.txtScanEAN.Text}'
+                    from  PackingList_Detail pd
+                    inner join Orders od ON od.ID = pd.OrderID
+                    inner join #Base b ON b.Article = pd.Article
+                    AND b.Color = pd.Color
+                    AND b.SizeCode = pd.SizeCode
+                    AND b.StyleUkey = od.StyleUkey
+
+                    Drop TABLE #Base
+                    ";
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
@@ -774,14 +797,16 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 }
 
                 string upd_sql = $@"
-update PackingList_Detail 
-set ScanQty = QtyPerCTN 
-, ScanEditDate = GETDATE()
-, ScanName = '{Env.User.UserID}'   
-, Lacking = 0
-, ActCTNWeight = {this.numWeight.Value}
-where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
+                update PackingList_Detail 
+                set ScanQty = QtyPerCTN 
+                , ScanEditDate = GETDATE()
+                , ScanName = '{Env.User.UserID}'   
+                , Lacking = 0
+                , ActCTNWeight = {this.numWeight.Value}
+                where id = '{this.selecedPK.ID}' 
+                and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+
+                ";
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
                 {
@@ -1169,6 +1194,7 @@ ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}
 , Lacking = 1
 , BarCode = '{dr["Barcode"]}'
 where Ukey={dr["Ukey"]}
+
 ";
                 }
 
@@ -1200,13 +1226,12 @@ where Ukey={dr["Ukey"]}
             string scanName = string.Empty;
 
             string sql = $@"
-select  ScanName, isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
-        pd.ScanEditDate
-from PackingList_Detail pd
-left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-where pd.id = '{this.selecedPK.ID}' 
-and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-";
+            select  ScanName, isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
+                    pd.ScanEditDate
+            from PackingList_Detail pd
+            left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+            where pd.id = '{this.selecedPK.ID}' 
+            and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'";
 
             if (MyUtility.Check.Seek(sql, out drPassName))
             {
@@ -1396,8 +1421,8 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     {
                         dr["Barcode"] = DBNull.Value;
                     }
-
-                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  ");
+                    string cmd = $@"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'";
+                    DBProxy.Current.Execute(null, cmd);
                 }
 
                 DualResult result_load = this.LoadScanDetail(0);
@@ -1475,15 +1500,37 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
 
                     this.upd_sql_barcode += $@"
-update PackingList_Detail
-set BarCode = '{this.txtScanEAN.Text}'
-where PackingList_Detail.Article 
-=  '{no_barcode_dr["Article"]}'
-and PackingList_Detail.SizeCode
-=  '{no_barcode_dr["SizeCode"]}'
-and PackingList_Detail.ID = '{this.selecedPK.ID}'
-and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-";
+                    /*
+                    update PackingList_Detail
+                    set BarCode = '{this.txtScanEAN.Text}'
+                    where PackingList_Detail.Article 
+                    =  '{no_barcode_dr["Article"]}'
+                    and PackingList_Detail.SizeCode
+                    =  '{no_barcode_dr["SizeCode"]}'
+                    and PackingList_Detail.ID = '{this.selecedPK.ID}'
+                    and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+                    */
+
+                    select a.Article,a.Color,a.SizeCode,o.StyleUkey
+                    INTO #Base
+                    from PackingList_Detail a
+                    inner join Orders o ON o.ID = a.OrderID
+                    where a.ID ='{this.selecedPK.ID}'
+                    AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
+                    AND a.Article =  '{no_barcode_dr["Article"]}'
+                    and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
+
+                    UPDATE pd
+                    SET BarCode = '{this.txtScanEAN.Text}'
+                    from  PackingList_Detail pd
+                    inner join Orders od ON od.ID = pd.OrderID
+                    inner join #Base b ON b.Article = pd.Article
+                    AND b.Color = pd.Color
+                    AND b.SizeCode = pd.SizeCode
+                    AND b.StyleUkey = od.StyleUkey
+
+                    Drop TABLE #Base
+                    ";
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
@@ -1564,7 +1611,9 @@ set ScanQty = QtyPerCTN
 , Lacking = 0
 , ActCTNWeight = {this.numWeight.Value}
 where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' ";
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+
+";
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
                 {
