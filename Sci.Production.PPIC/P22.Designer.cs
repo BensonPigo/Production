@@ -477,6 +477,7 @@ namespace Sci.Production.PPIC
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P22. Carton Replacement";
             this.UnApvChkValue = "Confirmed";
+            this.ApvChkValue = "New";
             this.WorkAlias = "ReplacementLocalItem";
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
