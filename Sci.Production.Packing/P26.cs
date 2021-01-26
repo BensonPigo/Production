@@ -2211,15 +2211,31 @@ WHERE p.ID='{packingListID}' AND pd.ReceiveDate IS NOT NULL
 
                     if (p24 && p03)
                     {
+                        cmd = $@"
+UPDATE b
+SET FileName = '' , FilePath = ''
+from ShippingMarkPic a
+inner join ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
+WHERE a.PackingListID IN ('{selecteds.AsEnumerable().Select(o => MyUtility.Convert.GetString(o["ID"])).JoinToString("','")}')
+";
+
                         #region Call P24 產生HTML檔
 
                         using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
                         {
                             try
                             {
+                                DualResult result;
+
+                                result = DBProxy.Current.Execute(null, cmd);
+                                if (!result)
+                                {
+                                    throw result.GetException();
+                                }
+
                                 p24_Generate.Generate(selecteds, ref p24Result, false, "P26");
 
-                                // 由於APU產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
+                                // 由於API產生圖片耗時很久，因此前面通過的HTML驗證，過程中可能有變數，因此加上收集錯誤訊息，若有錯誤訓則把整個P24刪掉
                                 if (!MyUtility.Check.Empty(p24Result.ResultMsg))
                                 {
                                     string stampMsg = MyUtility.Check.Empty(p24Result.ResultMsg) ? string.Empty : p24Result.ResultMsg;
@@ -2242,7 +2258,12 @@ WHERE ShippingMarkTypeUkey IN (
 DELETE FROM ShippingMarkPic
 WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["ID"].ToString()))}') 
 ";
-                                    DBProxy.Current.Execute(null, disposeSQL);
+                                    result = DBProxy.Current.Execute(null, disposeSQL);
+
+                                    if (!result)
+                                    {
+                                        throw result.GetException();
+                                    }
                                 }
 
                                 transactionscope.Complete();

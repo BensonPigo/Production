@@ -615,7 +615,7 @@ DROP TABLE #base, #Mix
             }
 
             // 取得要替換的欄位的值
-            List<P24_Template> nList = this.GetTemplateFieldValue(tList.Where(o=>o.FromTemplate).ToList());
+            List<P24_Template> nList = this.GetTemplateFieldValue(tList.Where(o => o.FromTemplate).ToList());
             if (MyUtility.Check.Empty(nList) || nList.Count == 0)
             {
                 if (callFrom == "P26")
@@ -959,6 +959,7 @@ END
 ;
 ";
             }
+
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 DualResult r;
