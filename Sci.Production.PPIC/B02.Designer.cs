@@ -104,6 +104,7 @@
             this.comboType.IsSupportUnselect = true;
             this.comboType.Location = new System.Drawing.Point(119, 117);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 12;
             // 
@@ -130,7 +131,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(40, 117);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(75, 23);
@@ -139,7 +139,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(40, 75);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -148,7 +147,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(40, 33);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(75, 23);
@@ -168,6 +166,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02. Accessory Lacking & Replacement Reason";
             this.UniqueExpress = "Type,ID";
             this.WorkAlias = "PPICReason";
