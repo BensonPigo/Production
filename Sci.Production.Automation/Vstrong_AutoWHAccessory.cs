@@ -217,6 +217,11 @@ select distinct
 ,[FromLocation] = Fromlocation.listValue
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToStockType
 ,[ToLocation] = sd.ToLocation
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (fi.POID, fi.seq1, fi.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[SizeCode] = po3.SizeSpec
+,[MtlType] = Fabric.MtlTypeID
 ,sd.Qty
 ,sd.Ukey
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
@@ -228,6 +233,10 @@ left join FtyInventory FI on sd.fromPoid = fi.poid
     and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
     and sd.fromDyelot = fi.Dyelot and sd.fromRoll = fi.roll 
     and sd.fromStocktype = fi.stocktype
+left join PO_Supp_Detail po3 on po3.ID = sd.FromPOID and po3.SEQ1 = sd.FromSeq1
+and po3.SEQ2 = sd.FromSeq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)
@@ -287,6 +296,11 @@ and exists(
                     ToSeq2 = dr["ToSeq2"].ToString(),
                     ToStockType = dr["ToStockType"].ToString(),
                     ToLocation = dr["ToLocation"].ToString(),
+                    Refno = dr["Refno"].ToString(),
+                    StockUnit = dr["StockUnit"].ToString(),
+                    Color = dr["Color"].ToString(),
+                    SizeCode = dr["SizeCode"].ToString(),
+                    MtlType = dr["MtlType"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
@@ -429,6 +443,11 @@ select distinct
 ,[FromLocation] = Fromlocation.listValue
 ,bb2.ToPOID,bb2.ToSeq1,bb2.ToSeq2,bb2.ToStockType
 ,[ToLocation] = bb2.ToLocation
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (fi.POID, fi.seq1, fi.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[SizeCode] = po3.SizeSpec
+,[MtlType] = Fabric.MtlTypeID
 ,bb2.Qty
 ,bb2.Ukey
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
@@ -438,6 +457,10 @@ from Production.dbo.BorrowBack_Detail bb2
 inner join #tmp bb on bb.ID=bb2.Id
 left join FtyInventory FI on bb2.FromPoid = Fi.Poid and bb2.FromSeq1 = Fi.Seq1 and bb2.FromSeq2 = Fi.Seq2 
     and bb2.FromRoll = Fi.Roll and bb2.FromDyelot = Fi.Dyelot and bb2.FromStockType = FI.StockType
+left join PO_Supp_Detail po3 on po3.ID = bb2.FromPOID and po3.SEQ1 = bb2.FromSeq1
+and po3.SEQ2 = bb2.FromSeq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select listValue = Stuff((
 			select concat(',',FromLocation)
@@ -492,6 +515,11 @@ union all
                     ToSeq2 = dr["ToSeq2"].ToString(),
                     ToStockType = dr["ToStockType"].ToString(),
                     ToLocation = dr["ToLocation"].ToString(),
+                    Refno = dr["Refno"].ToString(),
+                    StockUnit = dr["StockUnit"].ToString(),
+                    Color = dr["Color"].ToString(),
+                    SizeCode = dr["SizeCode"].ToString(),
+                    MtlType = dr["MtlType"].ToString(),
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
@@ -526,6 +554,11 @@ select lt2.Id
 ,lt2.Seq2
 ,lt2.FromLocation
 ,lt2.ToLocation
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (f.POID, f.seq1, f.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[SizeCode] = po3.SizeSpec
+,[MtlType] = Fabric.MtlTypeID
 ,lt2.Ukey
 ,lt2.StockType
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
@@ -535,6 +568,10 @@ select lt2.Id
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
 left join FtyInventory f on lt2.FtyInventoryUkey = f.ukey
+left join PO_Supp_Detail po3 on po3.ID = lt2.POID and po3.SEQ1 = lt2.Seq1
+and po3.SEQ2 = lt2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 where 1=1
 and exists(
     select 1
@@ -578,6 +615,11 @@ and exists(
                     Seq2 = s["Seq2"].ToString(),
                     FromLocation = s["FromLocation"].ToString(),
                     ToLocation = s["ToLocation"].ToString(),
+                    Refno = s["Refno"].ToString(),
+                    StockUnit = s["StockUnit"].ToString(),
+                    Color = s["Color"].ToString(),
+                    SizeCode = s["SizeCode"].ToString(),
+                    MtlType = s["MtlType"].ToString(),
                     Qty = (decimal)s["Qty"],
                     Ukey = (long)s["Ukey"],
                     StockType = s["StockType"].ToString(),
@@ -671,6 +713,91 @@ and exists(
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Adjust_Detail", bodyObject));
 
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// IssueReturn_Detail To Vstrong
+        /// </summary>
+        /// <param name="dtMaster">dtMaster</param>
+        /// <param name="isConfirmed">bool</param>
+        public void SentIssueReturn_DetailToVstrongAutoWHAccessory(DataTable dtMaster, bool isConfirmed)
+        {
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            string apiThread = "SentIssueReturn_DetailToVstrong";
+            string suppAPIThread = "Api/VstrongAutoWHAccessory/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            string sqlcmd = $@"
+select ir2.Id
+,ir2.POID
+,ir2.Seq1
+,ir2.Seq2
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (f.POID, f.seq1, f.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[SizeCode] = po3.SizeSpec
+,[MtlType] = Fabric.MtlTypeID
+,ir2.Ukey
+,ir2.StockType
+,[Status] = case '{isConfirmed}' when 'True' then 'New' 
+    when 'False' then 'Delete' end
+,[Qty] = ir2.Qty
+,[CmdTime] = GETDATE()
+from IssueReturn_Detail ir2
+inner join #tmp lt on lt.Id=ir2.Id
+left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
+left join PO_Supp_Detail po3 on po3.ID = ir2.POID and po3.SEQ1 = ir2.Seq1
+and po3.SEQ2 = ir2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
+where 1=1
+and exists(
+    select 1
+    from PO_Supp_Detail psd
+    where psd.ID= ir2.POID and psd.SEQ1 = ir2.Seq1
+    and psd.SEQ2 = ir2.Seq2 and psd.FabricType='A'
+)
+
+";
+            DataTable dt = new DataTable();
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, null, sqlcmd, out dt)))
+            {
+                return;
+            }
+
+            if (dt == null || dt.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dt.AsEnumerable()
+                .Select(s => new
+                {
+                    ID = s["ID"].ToString(),
+                    POID = s["POID"].ToString(),
+                    Seq1 = s["Seq1"].ToString(),
+                    Seq2 = s["Seq2"].ToString(),
+                    StockType = s["StockType"].ToString(),
+                    Ukey = (long)s["Ukey"],
+                    Refno = s["Refno"].ToString(),
+                    StockUnit = s["StockUnit"].ToString(),
+                    Color = s["Color"].ToString(),
+                    SizeCode = s["SizeCode"].ToString(),
+                    MtlType = s["MtlType"].ToString(),
+                    Qty = (decimal)s["Qty"],
+                    Status = s["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("IssueReturn_Detail", bodyObject));
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 

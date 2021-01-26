@@ -2271,7 +2271,7 @@ SELECT
 ,[StockQty] = rd.StockQty
 ,[PoUnit] = rd.PoUnit
 ,[ShipQty] = rd.ShipQty
-,[Color] = po3.ColorID
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[SizeCode] = po3.SizeSpec
 ,[Weight] = rd.Weight
 ,[StockType] = rd.StockType
@@ -2290,6 +2290,7 @@ left join Production.dbo.FtyInventory f on f.POID = rd.PoId
 	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
 	and f.StockType = rd.StockType
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
