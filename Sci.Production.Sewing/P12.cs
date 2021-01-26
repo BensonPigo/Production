@@ -251,7 +251,7 @@ select
 [selected] = 1,
 pd.ID,
 pd.CTNStartNo,
-[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail with (nolock) where {keyWhere} and DisposeFromClog= 0 FOR XML PATH('')),1,1,'') ,
+[OrderIdlist] = Stuff((select distinct concat( '/',OrderID) from PackingList_Detail with (nolock) where {keyWhere} and DisposeFromClog= 0 FOR XML PATH('')),1,1,'') ,
 pd.OrderID,
 o.CustPONo,
 o.StyleID,
@@ -272,7 +272,9 @@ left join Pullout pu with (nolock) on p.PulloutID = pu.ID
 left join Country c with (nolock) on o.Dest = c.ID 
 where	pd.CTNStartNo != '' and 
 		p.MDivisionID = '{Env.User.Keyword}' and
-		p.Type in ('B','L') ";
+		p.Type in ('B','L') and
+        pd.DRYTransferDate is null
+";
 
             bool checkBarcode = MyUtility.Check.Seek(chkSql, out packDataResult.Dr);
             packDataResult.Result = false;
