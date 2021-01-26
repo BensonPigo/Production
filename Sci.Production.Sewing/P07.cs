@@ -45,6 +45,14 @@ namespace Sci.Production.Sewing
         {
             this.listControlBindingSource1.DataSource = null;
 
+            if (MyUtility.Check.Empty(this.dateReceive.TextBox1.Value) &&
+                MyUtility.Check.Empty(this.txtPackID.Text) &&
+                MyUtility.Check.Empty(this.txtsp.Text))
+            {
+                MyUtility.Msg.WarningBox("Please fill <SP#>, <Receive Date> or <Pack ID>");
+                return;
+            }
+
             string datereceive1 = string.Empty, datereceive2 = string.Empty, packid = string.Empty, sp = string.Empty;
             string sqlwhere = string.Empty;
             if (!MyUtility.Check.Empty(this.dateReceive.TextBox1.Value))
