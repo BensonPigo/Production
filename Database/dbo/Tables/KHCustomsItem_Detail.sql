@@ -2,7 +2,7 @@
     [KHCustomsItemUkey] BIGINT       NOT NULL,
     [Port]              VARCHAR (20) NOT NULL,
     [HSCode]            VARCHAR (14) NOT NULL,
-    CONSTRAINT [PK_KHCustomsItem_Detail] PRIMARY KEY CLUSTERED ([KHCustomsItemUkey] ASC, [HSCode] ASC)
+    CONSTRAINT [PK_KHCustomsItem_Detail] PRIMARY KEY CLUSTERED ([KHCustomsItemUkey], [Port])
 );
 
 
