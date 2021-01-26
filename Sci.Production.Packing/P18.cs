@@ -212,29 +212,7 @@ namespace Sci.Production.Packing
                     {
                         dr["barcode"] = DBNull.Value;
                     }
-
-                    string cmd = $@"
-----update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'  
-
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID='{this.PackingListID}' AND a.CTNStartNo='{this.CTNStarNo}'
-
-UPDATE pd
-set barcode = null 
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
-
-";
-
+                    string cmd = $@"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'";
                     DBProxy.Current.Execute(null, cmd);
                 }
 
@@ -344,27 +322,7 @@ Drop TABLE #Base
                 {
                     seledr["Barcode"] = DBNull.Value;
                 }
-
-                string cmd = $@"
-----update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' 
-
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID='{MyUtility.Convert.GetString(dr.ID)}' AND a.CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}'
-
-UPDATE pd
-set barcode = null 
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
-";
+                string cmd = $@"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ";
                 DBProxy.Current.Execute(null, cmd);
             }
 
@@ -719,37 +677,37 @@ WHERE o.ID='{dr.OrderID}'");
                     }
 
                     this.upd_sql_barcode += $@"
-/*
-update PackingList_Detail
-set BarCode = '{this.txtScanEAN.Text}'
-where PackingList_Detail.Article 
-=  '{no_barcode_dr["Article"]}'
-and PackingList_Detail.SizeCode
-=  '{no_barcode_dr["SizeCode"]}'
-and PackingList_Detail.ID = '{this.selecedPK.ID}'
-and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-*/
+                    /*
+                    update PackingList_Detail
+                    set BarCode = '{this.txtScanEAN.Text}'
+                    where PackingList_Detail.Article 
+                    =  '{no_barcode_dr["Article"]}'
+                    and PackingList_Detail.SizeCode
+                    =  '{no_barcode_dr["SizeCode"]}'
+                    and PackingList_Detail.ID = '{this.selecedPK.ID}'
+                    and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+                    */
 
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID = '{this.selecedPK.ID}'
-AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-AND a.Article = '{no_barcode_dr["Article"]}' 
-AND a.SizeCode = '{no_barcode_dr["SizeCode"]}'
+                    select a.Article,a.Color,a.SizeCode,o.StyleUkey
+                    INTO #Base
+                    from PackingList_Detail a
+                    inner join Orders o ON o.ID = a.OrderID
+                    where a.ID = '{this.selecedPK.ID}'
+                    AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+                    AND a.Article = '{no_barcode_dr["Article"]}' 
+                    AND a.SizeCode = '{no_barcode_dr["SizeCode"]}'
 
-UPDATE pd
-SET BarCode = '{this.txtScanEAN.Text}'
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
+                    UPDATE pd
+                    SET BarCode = '{this.txtScanEAN.Text}'
+                    from  PackingList_Detail pd
+                    inner join Orders od ON od.ID = pd.OrderID
+                    inner join #Base b ON b.Article = pd.Article
+                    AND b.Color = pd.Color
+                    AND b.SizeCode = pd.SizeCode
+                    AND b.StyleUkey = od.StyleUkey
 
-Drop TABLE #Base
-";
+                    Drop TABLE #Base
+                    ";
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
@@ -839,16 +797,16 @@ Drop TABLE #Base
                 }
 
                 string upd_sql = $@"
-update PackingList_Detail 
-set ScanQty = QtyPerCTN 
-, ScanEditDate = GETDATE()
-, ScanName = '{Env.User.UserID}'   
-, Lacking = 0
-, ActCTNWeight = {this.numWeight.Value}
-where id = '{this.selecedPK.ID}' 
-and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+                update PackingList_Detail 
+                set ScanQty = QtyPerCTN 
+                , ScanEditDate = GETDATE()
+                , ScanName = '{Env.User.UserID}'   
+                , Lacking = 0
+                , ActCTNWeight = {this.numWeight.Value}
+                where id = '{this.selecedPK.ID}' 
+                and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 
-";
+                ";
                 sql_result = DBProxy.Current.Execute(null, upd_sql);
                 if (!sql_result)
                 {
@@ -1268,13 +1226,12 @@ where Ukey={dr["Ukey"]}
             string scanName = string.Empty;
 
             string sql = $@"
-select  ScanName, isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
-        pd.ScanEditDate
-from PackingList_Detail pd
-left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
-where pd.id = '{this.selecedPK.ID}' 
-and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-";
+            select  ScanName, isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName,
+                    pd.ScanEditDate
+            from PackingList_Detail pd
+            left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+            where pd.id = '{this.selecedPK.ID}' 
+            and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'";
 
             if (MyUtility.Check.Seek(sql, out drPassName))
             {
@@ -1464,28 +1421,7 @@ and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     {
                         dr["Barcode"] = DBNull.Value;
                     }
-
-                    string cmd = $@"
-----update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}' 
-
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID = '{this.PackingListID}' 
-AND a.CTNStartNo = '{this.CTNStarNo}' 
-
-UPDATE pd
-SET barcode = null
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
-
-Drop TABLE #Base
-";
+                    string cmd = $@"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'";
                     DBProxy.Current.Execute(null, cmd);
                 }
 
@@ -1564,37 +1500,37 @@ Drop TABLE #Base
                     }
 
                     this.upd_sql_barcode += $@"
-/*
-update PackingList_Detail
-set BarCode = '{this.txtScanEAN.Text}'
-where PackingList_Detail.Article 
-=  '{no_barcode_dr["Article"]}'
-and PackingList_Detail.SizeCode
-=  '{no_barcode_dr["SizeCode"]}'
-and PackingList_Detail.ID = '{this.selecedPK.ID}'
-and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-*/
+                    /*
+                    update PackingList_Detail
+                    set BarCode = '{this.txtScanEAN.Text}'
+                    where PackingList_Detail.Article 
+                    =  '{no_barcode_dr["Article"]}'
+                    and PackingList_Detail.SizeCode
+                    =  '{no_barcode_dr["SizeCode"]}'
+                    and PackingList_Detail.ID = '{this.selecedPK.ID}'
+                    and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+                    */
 
-select a.Article,a.Color,a.SizeCode,o.StyleUkey
-INTO #Base
-from PackingList_Detail a
-inner join Orders o ON o.ID = a.OrderID
-where a.ID ='{this.selecedPK.ID}'
-AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
-AND a.Article =  '{no_barcode_dr["Article"]}'
-and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
+                    select a.Article,a.Color,a.SizeCode,o.StyleUkey
+                    INTO #Base
+                    from PackingList_Detail a
+                    inner join Orders o ON o.ID = a.OrderID
+                    where a.ID ='{this.selecedPK.ID}'
+                    AND a.CTNStartNo =  '{this.selecedPK.CTNStartNo}'
+                    AND a.Article =  '{no_barcode_dr["Article"]}'
+                    and a.SizeCode=  '{no_barcode_dr["SizeCode"]}'
 
-UPDATE pd
-SET BarCode = '{this.txtScanEAN.Text}'
-from  PackingList_Detail pd
-inner join Orders od ON od.ID = pd.OrderID
-inner join #Base b ON b.Article = pd.Article
-AND b.Color = pd.Color
-AND b.SizeCode = pd.SizeCode
-AND b.StyleUkey = od.StyleUkey
+                    UPDATE pd
+                    SET BarCode = '{this.txtScanEAN.Text}'
+                    from  PackingList_Detail pd
+                    inner join Orders od ON od.ID = pd.OrderID
+                    inner join #Base b ON b.Article = pd.Article
+                    AND b.Color = pd.Color
+                    AND b.SizeCode = pd.SizeCode
+                    AND b.StyleUkey = od.StyleUkey
 
-Drop TABLE #Base
-";
+                    Drop TABLE #Base
+                    ";
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
                         if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
