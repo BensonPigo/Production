@@ -36,6 +36,7 @@ namespace Sci.Production.PublicPrg
         /// *   8.  更新LInvQty
         /// *   16. 更新LObQty
         /// *   32. 更新AdQty
+        /// *   37. 更新ReturnQty 
         /// </summary>
         /// <param name="type">type</param>
         /// <param name="datas">datas</param>
@@ -275,6 +276,20 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 ;drop Table #TmpSource";
                     #endregion
                     break;
+                case 37:
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t
+set t.ReturnQty  = isnull(t.ReturnQty ,0.00) + s.qty
+from mdivisionpodetail t 
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2;";
+
+                    sqlcmd += @";drop Table #TmpSource;";
+                    break;
             }
 
             return sqlcmd;
@@ -296,6 +311,7 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// *   6.  更新OutQty with Location
         /// *   8.  更新AdjustQty
         /// *   26. 更新Location
+        /// *   37. 更新Return QTY
         /// </summary>
         /// <param name="type">type</param>
         /// <param name="datas">datas</param>
@@ -543,6 +559,74 @@ when not matched AND s.Ukey IS NOT NULL then
 drop table #tmp_L_K
 drop table #TmpSource
 ";
+                    #endregion
+                    break;
+                case 37:
+                    #region 更新Return QTY
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype
+    ,[roll] = RTRIM(LTRIM(isnull(roll, ''))) 
+    ,[ReturnQty] = sum(qty)
+    ,[dyelot] = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+select s.*,psdseq1=psd.seq1
+into #tmpS11
+from #tmpS1 s
+left join PO_Supp_Detail psd on psd.id = s.poid and psd.seq1 = s.seq1 and psd.seq2 = s.seq2
+
+merge dbo.FtyInventory as target
+using #tmpS11 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set ReturnQty = isnull(target.ReturnQty ,0.00) + s.ReturnQty,
+         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{mtlAutoLock},0),
+         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,'{Env.User.UserID}',''),
+         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,getdate(),null)
+when not matched then
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[ReturnQty], [Lock],[LockName],[LockDate])
+    values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
+			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.ReturnQty,
+              iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{mtlAutoLock},0),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,'{Env.User.UserID}',''),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {mtlAutoLock}=1 ,getdate(),null)
+            );
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+select distinct [location] = location.[Data] ,[ukey] = f.ukey
+into #tmp_L_K 
+from #TmpSource s
+left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
+cross apply (select [Data] from [dbo].[SplitString](s.Location,',')) location
+
+merge dbo.ftyinventory_detail as t 
+using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
+when not matched then
+    insert ([ukey],[mtllocationid]) 
+	values (s.ukey,isnull(s.location,''));
+
+--delete t from FtyInventory_Detail t
+--where  exists(select 1 from #tmp_L_K x where x.ukey=t.Ukey and x.location != t.MtlLocationID)
+drop table #tmp_L_K 
+"; // ↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
+                    }
+
+                    sqlcmd += @"drop table #tmpS1, #tmpS11; 
+                                drop table #TmpSource;";
                     #endregion
                     break;
                 case 70:
