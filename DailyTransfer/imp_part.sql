@@ -481,7 +481,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	delete dbo.MachinePO where ID in(select ID from #deleteMachinePOID)
 	
 	drop table #tmpTrade_To_PmsMachinePO
-
+	
 
 
 -----------------MachinePO_Detail Type <>'M'---------------------
@@ -566,6 +566,11 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	delete dbo.MachinePO_Detail where ID in(select ID from #deleteMachinePOID)
 
 	drop table #deleteMachinePOID
+	
+		-- 刪除不存在 Trade 轉來的資料 , 這次有表頭, 沒表身的部分
+	delete MachinePO_Detail
+	where exists(select 1 from #tmpTrade_To_PmsMachinePO t where ID = MachinePO_Detail.ID)
+	and not exists(select 1 from #tmpTrade_To_PmsMachinePO t inner join SciTrade_To_Pms_MachinePO_Detail d on t.id = d.id where t.ID = MachinePO_Detail.ID and d.seq1 = MachinePO_Detail.seq1 and d.seq2 = MachinePO_Detail.seq2)
 
 ------------------MachinePO_Detail_TPEAP----------------------
 	select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty), b.ExportID
