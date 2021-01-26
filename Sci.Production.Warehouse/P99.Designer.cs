@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
-            this.UpdateCommand = new System.Windows.Forms.TabPage();
+            this.TabPage_UpdateCommand = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridUpdate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -51,10 +51,13 @@
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.dateCreate = new Sci.Win.UI.DateRange();
             this.labCreateDate = new Sci.Win.UI.Label();
-            this.UnLock = new System.Windows.Forms.TabPage();
+            this.TabPage_UnLock = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridUnLock = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.labReceivingID = new Sci.Win.UI.Label();
+            this.labWkNo = new Sci.Win.UI.Label();
+            this.labelSPNo = new Sci.Win.UI.Label();
             this.comboMaterialType_Sheet2 = new System.Windows.Forms.ComboBox();
             this.labMaterialType = new Sci.Win.UI.Label();
             this.txtReceivingID = new Sci.Win.UI.TextBox();
@@ -66,17 +69,14 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.btnClose1 = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
-            this.labelSPNo = new Sci.Win.UI.Label();
-            this.labWkNo = new Sci.Win.UI.Label();
-            this.labReceivingID = new Sci.Win.UI.Label();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1.SuspendLayout();
-            this.UpdateCommand.SuspendLayout();
+            this.TabPage_UpdateCommand.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridUpdate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel6.SuspendLayout();
-            this.UnLock.SuspendLayout();
+            this.TabPage_UnLock.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridUnLock)).BeginInit();
             this.panel1.SuspendLayout();
@@ -86,25 +86,25 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.UpdateCommand);
-            this.tabControl1.Controls.Add(this.UnLock);
+            this.tabControl1.Controls.Add(this.TabPage_UpdateCommand);
+            this.tabControl1.Controls.Add(this.TabPage_UnLock);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(960, 546);
+            this.tabControl1.Size = new System.Drawing.Size(984, 546);
             this.tabControl1.TabIndex = 1;
             // 
-            // UpdateCommand
+            // TabPage_UpdateCommand
             // 
-            this.UpdateCommand.Controls.Add(this.panel7);
-            this.UpdateCommand.Controls.Add(this.panel6);
-            this.UpdateCommand.Location = new System.Drawing.Point(4, 25);
-            this.UpdateCommand.Name = "UpdateCommand";
-            this.UpdateCommand.Padding = new System.Windows.Forms.Padding(3);
-            this.UpdateCommand.Size = new System.Drawing.Size(952, 517);
-            this.UpdateCommand.TabIndex = 0;
-            this.UpdateCommand.Text = "Update Command";
+            this.TabPage_UpdateCommand.Controls.Add(this.panel7);
+            this.TabPage_UpdateCommand.Controls.Add(this.panel6);
+            this.TabPage_UpdateCommand.Location = new System.Drawing.Point(4, 25);
+            this.TabPage_UpdateCommand.Name = "TabPage_UpdateCommand";
+            this.TabPage_UpdateCommand.Padding = new System.Windows.Forms.Padding(3);
+            this.TabPage_UpdateCommand.Size = new System.Drawing.Size(976, 517);
+            this.TabPage_UpdateCommand.TabIndex = 0;
+            this.TabPage_UpdateCommand.Text = "Update Command";
             // 
             // panel7
             // 
@@ -112,7 +112,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(3, 117);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(946, 397);
+            this.panel7.Size = new System.Drawing.Size(970, 397);
             this.panel7.TabIndex = 1;
             // 
             // gridUpdate
@@ -131,20 +131,20 @@
             this.gridUpdate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridUpdate.Location = new System.Drawing.Point(0, 0);
             this.gridUpdate.Name = "gridUpdate";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridUpdate.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridUpdate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridUpdate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridUpdate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridUpdate.RowTemplate.Height = 24;
             this.gridUpdate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridUpdate.ShowCellToolTips = false;
-            this.gridUpdate.Size = new System.Drawing.Size(946, 397);
+            this.gridUpdate.Size = new System.Drawing.Size(970, 397);
             this.gridUpdate.TabIndex = 0;
             this.gridUpdate.TabStop = false;
             // 
@@ -168,7 +168,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(946, 114);
+            this.panel6.Size = new System.Drawing.Size(970, 114);
             this.panel6.TabIndex = 0;
             // 
             // comboMaterialType_Sheet1
@@ -214,7 +214,7 @@
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(701, 9);
+            this.btnQuery.Location = new System.Drawing.Point(725, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(101, 53);
             this.btnQuery.TabIndex = 150;
@@ -226,7 +226,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(840, 77);
+            this.btnClose.Location = new System.Drawing.Point(864, 77);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(101, 30);
             this.btnClose.TabIndex = 149;
@@ -237,7 +237,7 @@
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDelete.Location = new System.Drawing.Point(840, 41);
+            this.btnDelete.Location = new System.Drawing.Point(864, 41);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(101, 30);
             this.btnDelete.TabIndex = 148;
@@ -248,7 +248,7 @@
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdate.Location = new System.Drawing.Point(840, 5);
+            this.btnUpdate.Location = new System.Drawing.Point(864, 5);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(101, 30);
             this.btnUpdate.TabIndex = 147;
@@ -343,16 +343,16 @@
             this.labCreateDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labCreateDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // UnLock
+            // TabPage_UnLock
             // 
-            this.UnLock.Controls.Add(this.panel9);
-            this.UnLock.Controls.Add(this.panel8);
-            this.UnLock.Location = new System.Drawing.Point(4, 25);
-            this.UnLock.Name = "UnLock";
-            this.UnLock.Padding = new System.Windows.Forms.Padding(3);
-            this.UnLock.Size = new System.Drawing.Size(952, 517);
-            this.UnLock.TabIndex = 1;
-            this.UnLock.Text = "UnLock";
+            this.TabPage_UnLock.Controls.Add(this.panel9);
+            this.TabPage_UnLock.Controls.Add(this.panel8);
+            this.TabPage_UnLock.Location = new System.Drawing.Point(4, 25);
+            this.TabPage_UnLock.Name = "TabPage_UnLock";
+            this.TabPage_UnLock.Padding = new System.Windows.Forms.Padding(3);
+            this.TabPage_UnLock.Size = new System.Drawing.Size(976, 517);
+            this.TabPage_UnLock.TabIndex = 1;
+            this.TabPage_UnLock.Text = "UnLock";
             // 
             // panel9
             // 
@@ -361,7 +361,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(946, 458);
+            this.panel9.Size = new System.Drawing.Size(970, 458);
             this.panel9.TabIndex = 1;
             // 
             // gridUnLock
@@ -385,7 +385,7 @@
             this.gridUnLock.RowTemplate.Height = 24;
             this.gridUnLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridUnLock.ShowCellToolTips = false;
-            this.gridUnLock.Size = new System.Drawing.Size(946, 384);
+            this.gridUnLock.Size = new System.Drawing.Size(970, 384);
             this.gridUnLock.TabIndex = 2;
             this.gridUnLock.TabStop = false;
             // 
@@ -405,8 +405,50 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(946, 74);
+            this.panel1.Size = new System.Drawing.Size(970, 74);
             this.panel1.TabIndex = 1;
+            // 
+            // labReceivingID
+            // 
+            this.labReceivingID.Location = new System.Drawing.Point(223, 40);
+            this.labReceivingID.Name = "labReceivingID";
+            this.labReceivingID.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labReceivingID.RectStyle.BorderWidth = 1F;
+            this.labReceivingID.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labReceivingID.RectStyle.ExtBorderWidth = 1F;
+            this.labReceivingID.Size = new System.Drawing.Size(91, 23);
+            this.labReceivingID.TabIndex = 164;
+            this.labReceivingID.Text = "Receiving ID";
+            this.labReceivingID.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labReceivingID.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labWkNo
+            // 
+            this.labWkNo.Location = new System.Drawing.Point(13, 40);
+            this.labWkNo.Name = "labWkNo";
+            this.labWkNo.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labWkNo.RectStyle.BorderWidth = 1F;
+            this.labWkNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labWkNo.RectStyle.ExtBorderWidth = 1F;
+            this.labWkNo.Size = new System.Drawing.Size(70, 23);
+            this.labWkNo.TabIndex = 163;
+            this.labWkNo.Text = "WK NO";
+            this.labWkNo.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labWkNo.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labelSPNo
+            // 
+            this.labelSPNo.Location = new System.Drawing.Point(13, 11);
+            this.labelSPNo.Name = "labelSPNo";
+            this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSPNo.RectStyle.BorderWidth = 1F;
+            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelSPNo.RectStyle.ExtBorderWidth = 1F;
+            this.labelSPNo.Size = new System.Drawing.Size(70, 23);
+            this.labelSPNo.TabIndex = 162;
+            this.labelSPNo.Text = "SP#";
+            this.labelSPNo.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // comboMaterialType_Sheet2
             // 
@@ -473,7 +515,7 @@
             // 
             this.btnQuery2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery2.Location = new System.Drawing.Point(831, 11);
+            this.btnQuery2.Location = new System.Drawing.Point(855, 11);
             this.btnQuery2.Name = "btnQuery2";
             this.btnQuery2.Size = new System.Drawing.Size(101, 30);
             this.btnQuery2.TabIndex = 151;
@@ -488,89 +530,49 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel8.Location = new System.Drawing.Point(3, 461);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(946, 53);
+            this.panel8.Size = new System.Drawing.Size(970, 53);
             this.panel8.TabIndex = 0;
             // 
             // btnClose1
             // 
             this.btnClose1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose1.Location = new System.Drawing.Point(831, 11);
+            this.btnClose1.Location = new System.Drawing.Point(855, 11);
             this.btnClose1.Name = "btnClose1";
             this.btnClose1.Size = new System.Drawing.Size(101, 30);
             this.btnClose1.TabIndex = 151;
             this.btnClose1.Text = "Close";
             this.btnClose1.UseVisualStyleBackColor = true;
+            this.btnClose1.Click += new System.EventHandler(this.BtnClose1_Click);
             // 
             // btnUnlock
             // 
             this.btnUnlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUnlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUnlock.Location = new System.Drawing.Point(701, 11);
+            this.btnUnlock.Location = new System.Drawing.Point(725, 11);
             this.btnUnlock.Name = "btnUnlock";
             this.btnUnlock.Size = new System.Drawing.Size(101, 30);
             this.btnUnlock.TabIndex = 150;
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
-            // 
-            // labelSPNo
-            // 
-            this.labelSPNo.Location = new System.Drawing.Point(13, 11);
-            this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelSPNo.RectStyle.BorderWidth = 1F;
-            this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labelSPNo.RectStyle.ExtBorderWidth = 1F;
-            this.labelSPNo.Size = new System.Drawing.Size(70, 23);
-            this.labelSPNo.TabIndex = 162;
-            this.labelSPNo.Text = "SP#";
-            this.labelSPNo.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // labWkNo
-            // 
-            this.labWkNo.Location = new System.Drawing.Point(13, 40);
-            this.labWkNo.Name = "labWkNo";
-            this.labWkNo.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labWkNo.RectStyle.BorderWidth = 1F;
-            this.labWkNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labWkNo.RectStyle.ExtBorderWidth = 1F;
-            this.labWkNo.Size = new System.Drawing.Size(70, 23);
-            this.labWkNo.TabIndex = 163;
-            this.labWkNo.Text = "WK NO";
-            this.labWkNo.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labWkNo.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // labReceivingID
-            // 
-            this.labReceivingID.Location = new System.Drawing.Point(223, 40);
-            this.labReceivingID.Name = "labReceivingID";
-            this.labReceivingID.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labReceivingID.RectStyle.BorderWidth = 1F;
-            this.labReceivingID.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labReceivingID.RectStyle.ExtBorderWidth = 1F;
-            this.labReceivingID.Size = new System.Drawing.Size(91, 23);
-            this.labReceivingID.TabIndex = 164;
-            this.labReceivingID.Text = "Receiving ID";
-            this.labReceivingID.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labReceivingID.TextStyle.Color = System.Drawing.Color.Black;
+            this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
             // 
             // P99
             // 
-            this.ClientSize = new System.Drawing.Size(960, 546);
+            this.ClientSize = new System.Drawing.Size(984, 546);
             this.Controls.Add(this.tabControl1);
             this.Name = "P99";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P99. Send To WMS Command Status";
             this.Controls.SetChildIndex(this.tabControl1, 0);
             this.tabControl1.ResumeLayout(false);
-            this.UpdateCommand.ResumeLayout(false);
+            this.TabPage_UpdateCommand.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridUpdate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
-            this.UnLock.ResumeLayout(false);
+            this.TabPage_UnLock.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridUnLock)).EndInit();
             this.panel1.ResumeLayout(false);
@@ -584,11 +586,11 @@
         #endregion
 
         public Win.UI.TabControl tabControl1;
-        private System.Windows.Forms.TabPage UpdateCommand;
+        private System.Windows.Forms.TabPage TabPage_UpdateCommand;
         private Win.UI.Panel panel7;
         private Win.UI.Grid gridUpdate;
         private Win.UI.Panel panel6;
-        public System.Windows.Forms.TabPage UnLock;
+        public System.Windows.Forms.TabPage TabPage_UnLock;
         private Win.UI.Panel panel9;
         private Win.UI.Panel panel8;
         private System.Windows.Forms.Label label2;

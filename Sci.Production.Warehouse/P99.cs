@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -15,8 +16,7 @@ namespace Sci.Production.Warehouse
     {
         private string strFunction;
         private string strMaterialType_Sheet1;
-        private string strSPNo1;
-        private string strSPNo2;
+        private string strTransID;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
 
@@ -25,18 +25,73 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.EditMode = true;
-            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
+            this.Initl(true);
+            this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
+        }
 
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"A,Accessory");
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,F,Fabric,A,Accessory");
+        public P99(ToolStripMenuItem menuitem, string transID, string formNo)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.strFunction = formNo;
+            this.strTransID = transID;
+            this.Initl(false);
+            this.Query();
+        }
+
+        public void Initl(bool canEdit)
+        {
+            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @",,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
+
+            // MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",,A,Accessory");
+
+            this.strFunction = this.comboFunction.SelectedValue.ToString();
+            this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
+
+            if (!canEdit)
+            {
+                this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab
+                this.dateCreate.Value1 = null;
+                this.dateCreate.Value2 = null;
+                this.txtSPNoStart.Text = string.Empty;
+                this.txtSPNoEnd.Text = string.Empty;
+                this.comboFunction.SelectedIndex = 0;
+                this.comboFunction.SelectedIndex = 0;
+            }
+            else
+            {
+                this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
+            }
+
+            this.comboFunction.Enabled = canEdit;
+            this.checkIncludeCompleteItem.Enabled = canEdit;
+            this.dateCreate.Enabled = canEdit;
+            this.comboMaterialType_Sheet1.Enabled = canEdit;
+            this.txtSPNoStart.Enabled = canEdit;
+            this.txtSPNoEnd.Enabled = canEdit;
+            this.btnQuery.Visible = canEdit;
+        }
+
+        /// <inheritdoc/>
+        public void SetFilter(string id, string formName)
+        {
+            this.strTransID = id;
+            this.strFunction = formName;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            //MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @",,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
 
-            this.strFunction = this.comboFunction.SelectedValue.ToString();
-            this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
+            //// MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
+            //MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",,A,Accessory");
+            //MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",,A,Accessory");
+
+            //this.strFunction = this.comboFunction.SelectedValue.ToString();
+            //this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -51,7 +106,8 @@ namespace Sci.Production.Warehouse
             this.Query();
         }
 
-        private void Query()
+        /// <inheritdoc/>
+        public void Query()
         {
             string sqlcmd = string.Empty;
             switch (this.strFunction)
@@ -426,9 +482,21 @@ WITH BreakdownByArticle as (
                         sqlcmd += $@" and t2.Poid <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
                     }
 
-                    sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                    if (!MyUtility.Check.Empty(this.strTransID))
+                    {
+                        sqlcmd += $@" and t2.id = '{this.strTransID}'";
+                    }
 
-                    sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
+                    if (!MyUtility.Check.Empty(this.dateCreate.Value1) && !MyUtility.Check.Empty(this.dateCreate.Value2))
+                    {
+                        sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
+                    {
+                        sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
+                    }
+
                     sqlcmd +=
                    @")
 
@@ -984,9 +1052,20 @@ and t1.Type='B'
                     sqlcmd += $@" and t2.Poid <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
                 }
 
-                sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                if (!MyUtility.Check.Empty(this.strTransID))
+                {
+                    sqlcmd += $@" and t2.id = '{this.strTransID}'";
+                }
 
-                sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
+                if (!MyUtility.Check.Empty(this.dateCreate.Value1) && !MyUtility.Check.Empty(this.dateCreate.Value2))
+                {
+                    sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                }
+
+                if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
+                {
+                    sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
+                }
             }
 
             this.ShowWaitMessage("Data Loading....");
@@ -1014,7 +1093,7 @@ and t1.Type='B'
                 }
 
                 this.listControlBindingSource1.DataSource = dtSource;
-                this.gridUnLock.DataSource = this.listControlBindingSource1.DataSource;
+                this.gridUpdate.DataSource = this.listControlBindingSource1.DataSource;
                 this.SetGrid();
                 this.ChangeGridColor();
                 this.Grid_Filter();
@@ -1544,7 +1623,7 @@ and t1.Type='B'
         {
             if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtWKNo.Text) && MyUtility.Check.Empty(this.txtReceivingID.Text))
             {
-                MyUtility.Msg.WarningBox("<SP#>,<WK#>,<Receiving ID> cannot be empty!");
+                MyUtility.Msg.WarningBox("<SP#>, <WK#>, <Receiving ID> cannot be empty!");
                 return;
             }
 
@@ -1553,7 +1632,8 @@ and t1.Type='B'
 
         private void Query_Sheet2()
         {
-            string sqlcmd = @"select
+            string sqlcmd = @"
+select
  [Selected] = 0 --0
  ,fi.POID
  ,fi.Seq1,fi.Seq2
@@ -1565,6 +1645,7 @@ and t1.Type='B'
 				when 'I' then 'Inventory'
 				else fi.StockType end
 ,[Location] = dbo.Getlocation(fi.Ukey)
+,fi.Ukey
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
@@ -1574,6 +1655,7 @@ left join Receiving r WITH (NOLOCK) on r.id = rd.id
 left join TransferIn_Detail TD WITH (NOLOCK) on TD.PoId = fi.POID and TD.Seq1 = fi.seq1 and TD.seq2 = fi.seq2 and TD.Roll = fi.Roll and TD.Dyelot = fi.Dyelot
 left join TransferIn T WITH (NOLOCK) on T.id = TD.id
 where 1=1
+and fi.WMSLock = 1
 ";
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
@@ -1588,8 +1670,20 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.txtSeq.Seq2))
             {
-                
+                sqlcmd += $@" and fi.seq2 = '{this.txtSeq.Seq2}'";
             }
+
+            if (!MyUtility.Check.Empty(this.txtWKNo.Text))
+            {
+                sqlcmd += $@" and r.ExportID = '{this.txtWKNo.Text}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtReceivingID.Text))
+            {
+                sqlcmd += $@" and (r.ID = '{this.txtReceivingID.Text}' or TD.ID = '{this.txtReceivingID.Text}')";
+            }
+
+            sqlcmd += $@" and pd.FabricType = '{this.comboMaterialType_Sheet2.SelectedValue.ToString()}'";
 
             this.ShowWaitMessage("Data Loading....");
             DualResult result;
@@ -1617,9 +1711,7 @@ where 1=1
 
                 this.listControlBindingSource2.DataSource = dtSource;
                 this.gridUnLock.DataSource = this.listControlBindingSource2.DataSource;
-                this.SetGrid();
-                this.ChangeGridColor();
-                this.Grid_Filter();
+                this.SetGrid2();
             }
             else
             {
@@ -1631,12 +1723,52 @@ where 1=1
 
         private void SetGrid2()
         {
-
+            this.gridUnLock.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridUnLock)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+            .Text("POID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("MaterialType", header: "Material Type", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("OutQty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("BalanceQty", header: "Balance Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Text("StockType", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Location", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            ;
         }
 
-        private void ChangeGridColor2()
+        private void BtnClose1_Click(object sender, EventArgs e)
         {
+            this.Close();
+        }
 
+        private void BtnUnlock_Click(object sender, EventArgs e)
+        {
+            var upd_list = ((DataTable)this.listControlBindingSource2.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).ToList();
+            string upd_sql = string.Empty;
+            if (upd_list.Count == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in upd_list)
+            {
+                upd_sql += $@"update Ftyinventory set WMSLock = 0 where ukey = '{dr["ukey"]}'" + Environment.NewLine;
+            }
+
+            DualResult result = DBProxy.Current.Execute(null, upd_sql);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.Query_Sheet2();
+            MyUtility.Msg.InfoBox("UnLock successfully!");
         }
     }
 }

@@ -68,6 +68,7 @@
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioEncodeSeq = new Sci.Win.UI.RadioButton();
             this.radiobySP = new Sci.Win.UI.RadioButton();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -85,6 +86,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.radioPanel1);
             this.masterpanel.Controls.Add(this.labSortBy);
             this.masterpanel.Controls.Add(this.txtSeq1);
@@ -161,6 +163,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSeq1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labSortBy, 0);
             this.masterpanel.Controls.SetChildIndex(this.radioPanel1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -628,6 +631,17 @@
             this.radiobySP.UseVisualStyleBackColor = true;
             this.radiobySP.Value = "1";
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(495, 117);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 65;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P07
             // 
             this.ApvChkValue = "New";
@@ -714,5 +728,6 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioEncodeSeq;
         private Win.UI.RadioButton radiobySP;
+        private Win.UI.Button btnCallP99;
     }
 }

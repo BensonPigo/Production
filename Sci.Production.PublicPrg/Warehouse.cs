@@ -3653,6 +3653,23 @@ and exists(
 )
 and d.Id = '{id}'";
                     break;
+                case "IssueReturn_Detail":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.poid
+,[seq1] = d.seq1
+,[seq2] = d.seq2
+,[Roll] = d.Roll
+,[Dyelot] = d.Dyelot
+from dbo.IssueReturn_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = d.POID and po3.seq1 = d.Seq1 and po3.seq2 = d.Seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'";
+                    break;
             }
 
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))

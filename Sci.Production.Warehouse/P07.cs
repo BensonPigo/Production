@@ -615,6 +615,15 @@ where   #tmp.poid = dbo.po_supp.id
             // 排序要回歸SP#
             this.GridSortBy(false);
             this.Change_record();
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -3147,6 +3156,47 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             {
                 ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = @"SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCmbDyelot, Unoriginal, POID, Seq1, Seq2, Roll, Dyelot ";
             }
+        }
+
+        private P99 callP99 = null;
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is P99)
+                {
+                    form.Activate();
+                    P99 activateForm = (P99)form;
+                    activateForm.Initl(false);
+                    activateForm.SetFilter(this.CurrentMaintain["ID"].ToString(), "P07");
+                    activateForm.Query();
+                    return;
+                }
+            }
+
+            ToolStripMenuItem p99MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P99. Send To WMS Command Status"))
+                            {
+                                p99MenuItem = (ToolStripMenuItem)subMenuItem;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.callP99 = new P99(p99MenuItem, this.CurrentMaintain["ID"].ToString(), "P07");
+            this.callP99.MdiParent = this.MdiParent;
+            this.callP99.Show();
         }
     }
 }
