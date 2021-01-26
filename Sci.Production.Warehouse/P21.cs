@@ -125,6 +125,7 @@ namespace Sci.Production.Warehouse
                  // .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -198,6 +199,12 @@ namespace Sci.Production.Warehouse
             {
                 sqlWhere += $" and rd.seq1 = '{this.txtSeq.Seq1}' and rd.seq2 = '{this.txtSeq.Seq2}'";
                 sqlWhere2 += $" and td.seq1 = '{this.txtSeq.Seq1}' and td.seq2 = '{this.txtSeq.Seq2}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtBrand.Text))
+            {
+                sqlWhere += $" and o.BrandID = '{this.txtBrand.Text}'";
+                sqlWhere2 += $" and o.BrandID = '{this.txtBrand.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRef.Text))
@@ -336,8 +343,10 @@ from
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
         ,cutTime.CutBy
+        ,o.BrandID
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
+    inner join Orders o with (nolock) on o.ID = rd.POID 
     inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
     inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
     inner join Ftyinventory  fi with (nolock) on    rd.POID = fi.POID and
@@ -408,8 +417,10 @@ from
         ,[CutShadebandTime]=cutTime.CutTime
         ,[OldCutShadebandTime]=cutTime.CutTime
         ,cutTime.CutBy
+        ,o.BrandID
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
+    INNER JOIN Orders o with (nolock) ON o.ID = td.POID
     INNER JOIN PO_Supp_Detail psd with (nolock) on td.PoId = psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
     INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
     INNER JOIN Ftyinventory  fi with (nolock) on    td.POID = fi.POID and
