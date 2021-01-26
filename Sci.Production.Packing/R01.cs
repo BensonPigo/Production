@@ -195,12 +195,12 @@ namespace Sci.Production.Packing
 
             if (!MyUtility.Check.Empty(this._bdate1))
             {
-                sqlwhere.Append(string.Format(" and o.BuyerDelivery >= '{0}'", this._bdate1));
+                sqlwhere.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", this._bdate1));
             }
 
             if (!MyUtility.Check.Empty(this._bdate2))
             {
-                sqlwhere.Append(string.Format(" and o.BuyerDelivery <= '{0}'", this._bdate2));
+                sqlwhere.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", this._bdate2));
             }
 
             if (!MyUtility.Check.Empty(this._scandate1))
@@ -271,6 +271,7 @@ select
 	,[Season] = o.SeasonID
     ,[Sewingline] = o.SewLine
 	,o.Customize1
+    ,oq.BuyerDelivery
 	,[Destination] = concat(pl.Dest, ' - ', c.City)
 	,[P.O.#] = o.CustPONo
 	,[Buyer] = b.BuyerID
@@ -285,12 +286,13 @@ INTO #TMP
 from PackingList_Detail pld with (nolock)
 inner join PackingList pl with (nolock) on pl.ID = pld.ID
 inner join  Orders o with (nolock) on o.id = pld.OrderID
+INNER JOIN Order_QtyShip oq with (nolock) ON pld.OrderID = oq.ID AND pld.OrderShipModeSeq = oq.Seq
 left join Brand b with (nolock) on b.ID = pl.BrandID
 left join CustCD c with (nolock) on c.ID = o.CustCDID and c.BrandID = o.BrandID and c.Junk != 1
 where 1=1 
 {0}
 
-SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewingline],Customize1,[P.O.#],[Buyer],[Destination]
+SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewingline],Customize1,[P.O.#],[Buyer],[BuyerDelivery],[Destination]
 	,[Colorway] = c2.colorway
 	,[Color] = c3.Color
 	,[Size] = c4.Size
@@ -371,6 +373,7 @@ outer apply(
 )LackingQty
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season], [Sewingline]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
 	,[CTN#],[CTN Barcode]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,Lacking,LackingQty.Qty
+    ,[BuyerDelivery]
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
 ", sqlwhere.ToString());
@@ -386,6 +389,7 @@ select Customize1 = stuff((
 		select distinct b.Customize1
 		from PackingList_Detail pld with (nolock)
 		inner join PackingList pl with (nolock) on pl.ID = pld.ID
+        INNER JOIN Order_QtyShip oq with (nolock) ON pld.OrderID = oq.ID AND pld.OrderShipModeSeq = oq.Seq
 		inner join  Orders o with (nolock) on o.id = pld.OrderID
 		left join Brand b with (nolock) on b.ID = pl.BrandID
 		where 1=1 
@@ -442,10 +446,10 @@ select Customize1 = stuff((
             worksheet.Cells[2, 5] = this._packingno1 + "~" + this._packingno2;
             worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
             worksheet.Cells[2, 11] = this._scandate1e + "~" + this._scandate2e;
-            worksheet.Cells[2, 15] = this._po1 + "~" + this.Po2;
-            worksheet.Cells[2, 17] = this._brand;
-            worksheet.Cells[2, 20] = this._factory;
-            worksheet.Cells[2, 23] = this.rdbtnDetail.Checked ? "Complete" : (this.rdbtnSummary.Checked ? "Not Complete" : "ALL");
+            worksheet.Cells[2, 16] = this._po1 + "~" + this.Po2;
+            worksheet.Cells[2, 18] = this._brand;
+            worksheet.Cells[2, 21] = this._factory;
+            worksheet.Cells[2, 24] = this.rdbtnDetail.Checked ? "Complete" : (this.rdbtnSummary.Checked ? "Not Complete" : "ALL");
             worksheet.Cells[3, 9] = this._columnname;
             MyUtility.Excel.CopyToXls(this._printData, string.Empty, reportname, 3, showExcel: false, excelApp: objApp);
             worksheet.Columns.AutoFit();
