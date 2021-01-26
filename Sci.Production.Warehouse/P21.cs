@@ -125,7 +125,7 @@ namespace Sci.Production.Warehouse
                  // .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
