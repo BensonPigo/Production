@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.lblReceivingID = new Sci.Win.UI.Label();
             this.lblWK = new Sci.Win.UI.Label();
             this.lblArriveWHDate = new Sci.Win.UI.Label();
@@ -77,6 +77,8 @@
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.label3 = new Sci.Win.UI.Label();
             this.txtuserCutShadeband = new Sci.Production.Class.Txtuser();
+            this.txtBrand = new Sci.Production.Class.Txtbrand();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -168,14 +170,14 @@
             this.gridReceiving.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceiving.Location = new System.Drawing.Point(9, 174);
             this.gridReceiving.Name = "gridReceiving";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiving.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiving.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiving.RowTemplate.Height = 24;
@@ -581,11 +583,30 @@
             this.txtuserCutShadeband.TabIndex = 13;
             this.txtuserCutShadeband.TextBox1Binding = "";
             // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(827, 9);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(80, 23);
+            this.txtBrand.TabIndex = 148;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(779, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(45, 23);
+            this.label4.TabIndex = 149;
+            this.label4.Text = "Brand";
+            // 
             // P21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 501);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.txtBrand);
             this.Controls.Add(this.txtuserCutShadeband);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dateTimePicker2);
@@ -659,6 +680,8 @@
             this.Controls.SetChildIndex(this.dateTimePicker2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtuserCutShadeband, 0);
+            this.Controls.SetChildIndex(this.txtBrand, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiving)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -716,5 +739,7 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker2;
         private Win.UI.Label label3;
         private Class.Txtuser txtuserCutShadeband;
+        private Class.Txtbrand txtBrand;
+        private Win.UI.Label label4;
     }
 }
