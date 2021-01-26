@@ -154,7 +154,8 @@ where	pd.CTNStartNo != '' and
 		p.Type in ('B','L') and
 		pd.TransferDate  is null and
 		pd.DRYReceiveDate  is not null and 
-		(pu.Status = 'New' or pu.Status is null)
+		(pu.Status = 'New' or pu.Status is null) and 
+        pd.DRYTransferDate is null
 " + addWhere;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out this.dtTransfer);
 
@@ -403,7 +404,7 @@ where	pd.CTNStartNo != '' and
             foreach (var item in checkData)
             {
                 updSql = $@"
-update PackingList_Detail set DRYReceiveDate = null where ID = '{item["ID"]}' 
+update PackingList_Detail set DRYTransferDate = Getdate() where ID = '{item["ID"]}' 
 and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
 insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNStartNo, TransferTo, AddName, AddDate, SCICtnNo)
             values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE(),'{item["SCICtnNo"]}');

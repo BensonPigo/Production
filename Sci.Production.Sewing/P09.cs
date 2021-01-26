@@ -35,6 +35,7 @@ namespace Sci.Production.Sewing
                 .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
+                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15), iseditingreadonly: false)
                 .Text("ReceivedBy", header: "Scan By", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("AddDate", header: "Scan Time", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
@@ -92,6 +93,16 @@ select md.ScanDate
 	    , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
         , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
         , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+        , [Barcode] = STUFF((SELECT 
+				            (
+					            SELECT DISTINCT concat('/', pd.Barcode)
+                                from PackingList_Detail pd with(nolock) 
+                                where md.SCICtnNo = pd.SCICtnNo
+		                                AND md.OrderID = pd.OrderID
+		                                AND md.CTNStartNo = pd.CTNStartNo
+                                        AND md.PackingListID = pd.id 
+					            FOR XML PATH('')
+				            )) ,1,1,'')
 from MDScan md with(nolock)
 left join orders o with(nolock) on md.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest

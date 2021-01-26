@@ -37,6 +37,7 @@ namespace Sci.Production.Sewing
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: true)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15), iseditingreadonly: false)
             .Text("TransferBy", header: "Transfer By", width: Widths.Auto(), iseditingreadonly: true)
             .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
@@ -103,12 +104,23 @@ select DISTINCT
     , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
     , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
     , [RepackCtnStartNo] = iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+    , [Barcode] = STUFF((SELECT 
+			            (
+				            SELECT DISTINCT concat('/', pd.Barcode)
+                            from PackingList_Detail pd with (nolock)
+                            where dr.SCICtnNo = pd.SCICtnNo
+							AND dr.OrderID = pd.OrderID
+							AND dr.CTNStartNo = pd.CTNStartNo
+                            AND dr.PackingListID = pd.id
+				            FOR XML PATH('')
+			            )) ,1,1,'')
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 left join PackingList_Detail pd WITH (NOLOCK) on pd.SCICtnNo = dr.SCICtnNo
 													AND dr.OrderID = pd.OrderID
-													AND  pd.CTNStartNo = dr.CTNStartNo AND dr.OrderID = pd.OrderID AND dr.PackingListID=pd.id 
+													AND pd.CTNStartNo = dr.CTNStartNo
+                                                    AND dr.PackingListID = pd.id 
 where 1=1
 {sqlwhere}
 GROUP BY dr.TransferTo
@@ -126,6 +138,10 @@ GROUP BY dr.TransferTo
         ,iif(pd.OrigID != '',pd.ID, pd.OrigID)
         ,iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)
         ,iif(pd.OrigCTNStartNo != '',pd.CTNStartNo, pd.OrigCTNStartNo)
+		 ,dr.SCICtnNo
+		 ,dr.OrderID
+		 ,dr.CTNStartNo
+		 ,dr.PackingListID 
  ORDER BY dr.TransferTo,[PackingListID],[CTNStartNo],[OrderID]
 
 ";
