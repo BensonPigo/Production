@@ -236,6 +236,14 @@ where a.ID = {0}
                 return failResult;
             }
 
+            if (this.machineTypeDT == null ||
+                this.machineTypeDT.Rows.Count == 0 ||
+                this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).ToList().Count == 0)
+            {
+                DualResult failResult = new DualResult(false, "no detail data to Print");
+                return failResult;
+            }
+
             this.operationCode = this.machineTypeDT.AsEnumerable().Where(x => x.Field<bool>("IsShowinIEP03")).CopyToDataTable();
             #endregion
             #region Machine Type IsPPa
