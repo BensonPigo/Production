@@ -26,6 +26,8 @@ namespace Sci.Production.Shipping
         private string dest;
         private string shipMode;
         private string forwarder;
+        private bool excludePackingFoc;
+        private bool excludePackingLocalOrder;
 
         /// <summary>
         /// R11
@@ -143,6 +145,8 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.rdbtnMainList.Enabled = true;
                 this.rdbtnDetailList.Enabled = true;
                 this.rdbtnMainList.Checked = true;
+                this.chkExcludePackingFOC.Enabled = true;
+                this.chkExcludePackingLocalOrder.Enabled = true;
             }
             else if (this.radioRawMaterial.Checked)
             {
@@ -150,6 +154,10 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.rdbtnDetailList.Enabled = false;
                 this.rdbtnMainList.Checked = false;
                 this.rdbtnDetailList.Checked = false;
+                this.chkExcludePackingFOC.Enabled = false;
+                this.chkExcludePackingLocalOrder.Enabled = false;
+                this.chkExcludePackingFOC.Checked = false;
+                this.chkExcludePackingLocalOrder.Checked = false;
             }
         }
 
@@ -167,6 +175,8 @@ where a.ID = '{0}'", this.txtForwarder.Text);
             this.forwarder = this.txtForwarder.Text;
             this.reportType = this.radioGarment.Checked ? 1 : 2;
             this.reportType2 = this.rdbtnMainList.Checked ? 1 : 2;
+            this.excludePackingFoc = this.chkExcludePackingFOC.Checked;
+            this.excludePackingLocalOrder = this.chkExcludePackingLocalOrder.Checked;
 
             return base.ValidateInput();
         }
@@ -260,6 +270,16 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
                         sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
                     }
 
+                    if (this.excludePackingFoc)
+                    {
+                        sqlCmd.Append(string.Format(" and exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' ) "));
+                    }
+
+                    if (this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) "));
+                    }
+
                     sqlCmd.Append(@"
 ),PLData as (
 	select  IE = 'Export'
@@ -287,8 +307,7 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
 			, BLNo = ''
 			, [NoExportCharges] = ''
 	from PackingList p WITH (NOLOCK) 
-	where (p.Type = 'F' or p.Type = 'L')
-		  and not exists (
+	where not exists (
 		  		select 1 
 		  		from ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID) 
@@ -316,6 +335,23 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
                     if (!MyUtility.Check.Empty(this.shipMode))
                     {
                         sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipMode));
+                    }
+
+                    if (!this.excludePackingFoc && !this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and (p.Type = 'F' or p.Type = 'L') "));
+                    }
+                    else
+                    {
+                        if (this.excludePackingFoc)
+                        {
+                            sqlCmd.Append(string.Format(" and p.Type != 'F' "));
+                        }
+
+                        if (this.excludePackingLocalOrder)
+                        {
+                            sqlCmd.Append(string.Format(" and p.Type != 'L' "));
+                        }
                     }
 
                     sqlCmd.Append(@")
@@ -438,6 +474,16 @@ as (
                         sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
                     }
 
+                    if (this.excludePackingFoc)
+                    {
+                        sqlCmd.Append(string.Format(" and p.Type != 'F' "));
+                    }
+
+                    if (this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and p.Type != 'L' "));
+                    }
+
                     sqlCmd.Append(@"),
 PLData as (
 	select  IE = 'Export'
@@ -501,8 +547,7 @@ PLData as (
             )
             , 1, 1, '')	
 	)SP
-	where (p.Type = 'F' or p.Type = 'L')
-		  and not exists (
+	where not exists (
 		  		select 1 
 		  		from ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID)");
@@ -529,6 +574,23 @@ PLData as (
                     if (!MyUtility.Check.Empty(this.shipMode))
                     {
                         sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipMode));
+                    }
+
+                    if (!this.excludePackingFoc && !this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and (p.Type = 'F' or p.Type = 'L') "));
+                    }
+                    else
+                    {
+                        if (this.excludePackingFoc)
+                        {
+                            sqlCmd.Append(string.Format(" and p.Type != 'F' "));
+                        }
+
+                        if (this.excludePackingLocalOrder)
+                        {
+                            sqlCmd.Append(string.Format(" and p.Type != 'L' "));
+                        }
                     }
 
                     sqlCmd.Append(@")
