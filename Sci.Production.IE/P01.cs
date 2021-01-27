@@ -129,16 +129,17 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
-      ,[IsShow] = isnull(show.val, 1)
+      ,[IsShow] = cast(isnull(show.val, 0) as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
 outer apply (
-	select [val] = atf.IsShowinIEP01
+	select [val] = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP01)
 	from Operation o2 WITH (NOLOCK)
 	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
 	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
 	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{1}'
+    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID 
 	where o.ID = o2.ID
 )show
 where td.ID = '{0}'
@@ -1559,17 +1560,18 @@ select id.SEQ,
 	s.IETMSVersion,
 	(isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,
 	o.MasterPlusGroup,
-	[IsShow] = isnull(show.val, 1)
+	[IsShow] = cast(isnull(show.val, 0) as bit)
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
 left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 outer apply (
-	select [val] = atf.IsShowinIEP01
+	select [val] = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP01)
 	from Operation o2 WITH (NOLOCK)
 	inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
 	inner join ArtworkType at2 WITH (NOLOCK) on m.ArtworkTypeID =at2.ID
 	inner join ArtworkType_FTY atf WITH (NOLOCK) on at2.id= atf.ArtworkTypeID and atf.FactoryID = '{0}'
+    inner join Factory f WITH (NOLOCK) on f.ID = atf.FactoryID 
 	where o.ID = o2.ID
 )show
 --left join MtlFactor m WITH (NOLOCK) on o.MtlFactorID = m.ID and m.Type = 'F'
