@@ -36,6 +36,7 @@
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnBatchCreate = new Sci.Win.UI.Button();
+            this.chkIsWMS = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,6 +51,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkIsWMS);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.comboStockType);
             this.detailcont.Controls.Add(this.txtCode);
@@ -115,7 +117,7 @@
             this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCode.Location = new System.Drawing.Point(98, 14);
             this.txtCode.Name = "txtCode";
-            this.txtCode.Size = new System.Drawing.Size(78, 23);
+            this.txtCode.Size = new System.Drawing.Size(121, 23);
             this.txtCode.TabIndex = 7;
             this.txtCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCode_Validating);
             // 
@@ -164,6 +166,20 @@
             this.btnBatchCreate.UseVisualStyleBackColor = true;
             this.btnBatchCreate.Click += new System.EventHandler(this.BtnBatchCreate_Click);
             // 
+            // chkIsWMS
+            // 
+            this.chkIsWMS.AutoSize = true;
+            this.chkIsWMS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsWMS", true));
+            this.chkIsWMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkIsWMS.IsSupportEditMode = false;
+            this.chkIsWMS.Location = new System.Drawing.Point(299, 49);
+            this.chkIsWMS.Name = "chkIsWMS";
+            this.chkIsWMS.ReadOnly = true;
+            this.chkIsWMS.Size = new System.Drawing.Size(132, 21);
+            this.chkIsWMS.TabIndex = 10;
+            this.chkIsWMS.Text = "Is WMS Location";
+            this.chkIsWMS.UseVisualStyleBackColor = true;
+            // 
             // B02
             // 
             this.ClientSize = new System.Drawing.Size(984, 457);
@@ -199,5 +215,6 @@
         private Win.UI.Label labelDescription;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Button btnBatchCreate;
+        private Win.UI.CheckBox chkIsWMS;
     }
 }

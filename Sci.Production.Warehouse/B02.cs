@@ -37,6 +37,19 @@ namespace Sci.Production.Warehouse
             this.btnBatchCreate.Enabled = canNew;
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            if (MyUtility.Check.Seek(@"select * from System where Automation = 1"))
+            {
+                this.chkIsWMS.Visible = true;
+            }
+            else
+            {
+                this.chkIsWMS.Visible = false;
+            }
+        }
+
         // 編輯狀態限制
 
         /// <inheritdoc/>
@@ -65,6 +78,20 @@ namespace Sci.Production.Warehouse
             base.OnDetailEntered();
 
             this.btnBatchCreate.Enabled = !this.EditMode;
+        }
+
+        protected override bool ClickCopy()
+        {
+            if (!(this.CurrentMaintain == null))
+            {
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["IsWMS"]))
+                {
+                    MyUtility.Msg.WarningBox("Cannot copy WMS data!");
+                    return false;
+                }
+            }
+
+            return base.ClickCopy();
         }
 
         // 存檔前檢查
