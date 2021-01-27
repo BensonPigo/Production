@@ -565,9 +565,9 @@ namespace Sci.Production.Warehouse
             		,a.id
             		,name = 'P37. Return Receiving Material'             
             		,inqty = 0
-            		,released = released.qty
+            		,released = 0
             		,adjust = 0
-                    ,ReturnQty = 0
+                    ,ReturnQty = released.qty
             		,remark
             		,location = MtlLocation.location
             		,AddDate
