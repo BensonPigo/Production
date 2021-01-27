@@ -33,9 +33,9 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.Initl(false);
             this.strFunction = formNo;
             this.strTransID = transID;
-            this.Initl(false);
             this.Query();
         }
 
@@ -46,10 +46,6 @@ namespace Sci.Production.Warehouse
             // MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",,A,Accessory");
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",,A,Accessory");
-
-            this.strFunction = this.comboFunction.SelectedValue.ToString();
-            this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
-
             if (!canEdit)
             {
                 this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab
@@ -63,6 +59,8 @@ namespace Sci.Production.Warehouse
             else
             {
                 this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
+                this.strFunction = this.comboFunction.SelectedValue.ToString();
+                this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
             }
 
             this.comboFunction.Enabled = canEdit;
@@ -1594,7 +1592,7 @@ and t1.Type='B'
 
         private void ComboFunction_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (this.comboFunction.SelectedValue != null)
+            if (this.comboFunction.SelectedValue != null && !MyUtility.Check.Empty(this.comboFunction.SelectedValue))
             {
                 this.strFunction = this.comboFunction.SelectedValue.ToString();
             }
@@ -1769,6 +1767,11 @@ and fi.WMSLock = 1
 
             this.Query_Sheet2();
             MyUtility.Msg.InfoBox("UnLock successfully!");
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
