@@ -146,7 +146,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	from SciTrade_To_Pms_MmsQuot a WITH (NOLOCK) 
 	inner join  SciTrade_To_Pms_Part b WITH (NOLOCK) on a.PartUkey=b.Ukey where a.type='P'
 
-
 	update t set
 		t.purchaseFrom='T',
 		t.CurrencyID=s.CurrencyID,
@@ -480,10 +479,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 
 	delete dbo.MachinePO where ID in(select ID from #deleteMachinePOID)
 	
-	drop table #tmpTrade_To_PmsMachinePO
-	
-
-
 -----------------MachinePO_Detail Type <>'M'---------------------
 		update t
 		set 
@@ -505,7 +500,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where 1=1
 		
-
 		update t
 		set t.TpePOID = s.id,
 		t.seq1=s.seq1,
@@ -525,7 +519,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where a.Type='O'
 		
-
 ------------------MachinePO_Detail Type='M'----------------------
 	update t set t.MachineGroupID= s.MachineGroupID,
 				t.MasterGroupID= s.MasterGroupID,
@@ -562,16 +555,15 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	inner join dbo.SciTrade_To_Pms_MmsPO sM WITH (NOLOCK) on sM.id = s.ID
 	where not exists(select 1 from dbo.MachinePO_Detail t where t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2)
 	and not (sM.junk = 0 and sM.ApvDate is null)
-	
-	delete dbo.MachinePO_Detail where ID in(select ID from #deleteMachinePOID)
 
+	delete dbo.MachinePO_Detail where ID in(select ID from #deleteMachinePOID)
 	drop table #deleteMachinePOID
 	
 		-- 刪除不存在 Trade 轉來的資料 , 這次有表頭, 沒表身的部分
 	delete MachinePO_Detail
 	where exists(select 1 from #tmpTrade_To_PmsMachinePO t where ID = MachinePO_Detail.ID)
 	and not exists(select 1 from #tmpTrade_To_PmsMachinePO t inner join SciTrade_To_Pms_MachinePO_Detail d on t.id = d.id where t.ID = MachinePO_Detail.ID and d.seq1 = MachinePO_Detail.seq1 and d.seq2 = MachinePO_Detail.seq2)
-
+	drop table #tmpTrade_To_PmsMachinePO
 ------------------MachinePO_Detail_TPEAP----------------------
 	select b.ID,a.Seq1,a.Seq2,[TPEPOID] = b.POID,b.APDATE,b.VoucherID,b.Price, [Qty] = sum(b.Qty), b.ExportID
 	into #tmpMachinePO_Detail_TPEAP
