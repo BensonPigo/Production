@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[SpreadingSchedule_Detail] (
     [SpreadingScheduleUkey] BIGINT      NOT NULL,
     [CutRef]                VARCHAR (6) CONSTRAINT [DF_SpreadingSchedule_Detail_CutRef] DEFAULT ('') NOT NULL,
-    [SpreadingSchdlSeq]     NUMERIC (2) NULL,
+    [SpreadingSchdlSeq]     NUMERIC (3) NULL,
     [IsAGVArrived]          BIT         CONSTRAINT [DF_SpreadingSchedule_Detail_IsAGVArrived] DEFAULT ((0)) NOT NULL,
     [IsSuspend]             BIT         CONSTRAINT [DF_SpreadingSchedule_Detail_IsSuspend] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_SpreadingSchedule_Detail] PRIMARY KEY CLUSTERED ([SpreadingScheduleUkey] ASC, [CutRef] ASC)
 );
+
+
 
 
 GO
