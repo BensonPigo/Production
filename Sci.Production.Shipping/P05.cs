@@ -654,6 +654,17 @@ where   pl.INVNo = '{0}'
                 MyUtility.Msg.WarningBox("Shipping Mode can't empty!!");
                 return false;
             }
+            else
+            {
+                List<string> shipmodeIDs = new List<string> { "SEA", "S-A/C", "S-A/P" };
+                if (shipmodeIDs.Where(x => x.EqualString(this.CurrentMaintain["ShipModeID"])).ToList().Count > 0 &&
+                    MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"]))
+                {
+                    this.txtPulloutPort1.Focus();
+                    MyUtility.Msg.WarningBox("Port of Discharge can't empty!!");
+                    return false;
+                }
+            }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["ShipTermID"]))
             {
