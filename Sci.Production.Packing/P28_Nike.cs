@@ -10,11 +10,13 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P28_Nike : Form
+    /// <inheritdoc/>
+    public partial class P28_Nike : Sci.Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P28_Nike()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }
