@@ -268,7 +268,7 @@ ORDER BY b.Seq
         private void Txtbrand_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string newBrand = this.txtbrand.Text;
-            if (this.oldBrand != newBrand)
+            if (this.txtbrand.OldValue != newBrand)
             {
                 this.oldBrand = this.txtbrand.Text;
 
