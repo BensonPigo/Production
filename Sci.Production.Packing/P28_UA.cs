@@ -10,11 +10,19 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
-    public partial class P28_UA : Form
+    /// <inheritdoc/>
+    public partial class P28_UA : Sci.Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
         public P28_UA()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+        }
+
+        /// <inheritdoc/>
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

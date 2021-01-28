@@ -18,5 +18,11 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
         }
+
+        /// <inheritdoc/>
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
