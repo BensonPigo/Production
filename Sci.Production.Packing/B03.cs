@@ -382,7 +382,7 @@ AND ID = '{item.GetSelectedString()}'
         {
             string newStickerComb = this.txtStickerComb.Text;
 
-            if (this.oldStickerComb != newStickerComb)
+            if (this.txtStickerComb.OldValue != newStickerComb)
             {
                 if (MyUtility.Check.Empty(newStickerComb))
                 {
@@ -523,7 +523,7 @@ WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
         {
             string newBrandID = this.txtbrand1.Text;
 
-            if (this.oldBrandID != newBrandID)
+            if (this.txtbrand1.OldValue != newBrandID)
             {
                 this.CurrentMaintain["ShippingMarkCombinationUkey"] = DBNull.Value;
                 this.txtStickerComb.Text = string.Empty;
