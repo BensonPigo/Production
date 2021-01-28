@@ -280,6 +280,7 @@ select [SP] =
                 #endregion
             }
 
+            // Trade Purchase_P01_01
             if (this.radioEachConsumption.Checked)
             {
                 #region Each Consumption (Cutting Combo)
@@ -369,6 +370,7 @@ select [SP] =
                 #endregion
             }
 
+            // Trade Purchase_P01_02
             if (this.radioTTLConsumption.Checked)
             {
                 #region TTL consumption (PO Combo)
@@ -450,6 +452,7 @@ select [SP] =
                 #endregion
             }
 
+            // Trade Order_Report03
             if (this.radioColorQtyBDown.Checked)
             {
                 #region Color & Q'ty B'Down (PO Combo)
@@ -992,6 +995,7 @@ select distinct sizecode,Seq
                 #endregion
             }
 
+            // Trade Purchase_P01_04
             if (this.radioEachConsVSOrderQtyBDown.Checked)
             {
                 #region Each cons. vs Order Q'ty B'Down (PO Combo)
@@ -1214,6 +1218,7 @@ select distinct sizecode,Seq
                 #endregion
             }
 
+            // Trade Purchase_P01_05
             if (this.radioMarkerList.Checked)
             {
                 #region Marker List
@@ -1302,6 +1307,7 @@ select distinct sizecode,Seq
                 #endregion
             }
 
+            // Trade Purchase_P01_06
             if (this.radioConsumptionCalculateByMarkerListConsPerPC.Checked)
             {
                 #region Consumption Calculate by Marker List Cons/Per pc
