@@ -76,6 +76,7 @@
             this.txtuserCloseName = new Sci.Production.Class.Txtuser();
             this.dateLockDate = new Sci.Win.UI.DateBox();
             this.dateCloseDate = new Sci.Win.UI.DateBox();
+            this.btnPurchase = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPurchase);
             this.masterpanel.Controls.Add(this.txtuserCloseName);
             this.masterpanel.Controls.Add(this.txtuserLockName);
             this.masterpanel.Controls.Add(this.lbCloseDate);
@@ -138,7 +140,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 226);
+            this.masterpanel.Size = new System.Drawing.Size(1070, 226);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -186,11 +188,12 @@
             this.masterpanel.Controls.SetChildIndex(this.lbCloseDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuserLockName, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuserCloseName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPurchase, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 226);
-            this.detailpanel.Size = new System.Drawing.Size(892, 123);
+            this.detailpanel.Size = new System.Drawing.Size(1070, 230);
             // 
             // gridicon
             // 
@@ -205,7 +208,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 123);
+            this.detailgridcont.Size = new System.Drawing.Size(1070, 230);
             // 
             // detail2
             // 
@@ -219,8 +222,18 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1070, 494);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1070, 456);
+            // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 456);
+            this.detailbtm.Size = new System.Drawing.Size(1070, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -479,7 +492,7 @@
             this.txtInternalRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInternalRemark.Location = new System.Drawing.Point(588, 118);
             this.txtInternalRemark.Name = "txtInternalRemark";
-            this.txtInternalRemark.Size = new System.Drawing.Size(279, 23);
+            this.txtInternalRemark.Size = new System.Drawing.Size(239, 23);
             this.txtInternalRemark.TabIndex = 8;
             // 
             // numVat
@@ -779,6 +792,17 @@
             this.dateCloseDate.TabIndex = 14;
             this.dateCloseDate.TabStop = false;
             // 
+            // btnPurchase
+            // 
+            this.btnPurchase.Location = new System.Drawing.Point(833, 121);
+            this.btnPurchase.Name = "btnPurchase";
+            this.btnPurchase.Size = new System.Drawing.Size(234, 30);
+            this.btnPurchase.TabIndex = 77;
+            this.btnPurchase.TabStop = false;
+            this.btnPurchase.Text = "Purchase Order QTY Breakdown";
+            this.btnPurchase.UseVisualStyleBackColor = true;
+            this.btnPurchase.Click += new System.EventHandler(this.BtnPurchase_Click);
+            // 
             // P01
             // 
             this.ApvChkValue = "Locked";
@@ -881,5 +905,6 @@
         private Class.Txtuser txtuserCloseName;
         private Win.UI.DateBox dateCloseDate;
         private Win.UI.DateBox dateLockDate;
+        private Win.UI.Button btnPurchase;
     }
 }
