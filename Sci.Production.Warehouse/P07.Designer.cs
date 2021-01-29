@@ -634,7 +634,7 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(495, 117);
+            this.btnCallP99.Location = new System.Drawing.Point(521, 117);
             this.btnCallP99.Name = "btnCallP99";
             this.btnCallP99.Size = new System.Drawing.Size(149, 30);
             this.btnCallP99.TabIndex = 65;

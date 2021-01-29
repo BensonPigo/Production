@@ -154,7 +154,7 @@
     <Compile Include="B06.Designer.cs">
       <DependentUpon>B06.cs</DependentUpon>
     </Compile>
-    <Compile Include="callP99.cs" />
+    <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>

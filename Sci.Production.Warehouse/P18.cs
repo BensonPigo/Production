@@ -463,6 +463,15 @@ where a.id = @ID";
 
             #endregion Status Label
 
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
+
             this.IsAutomation = UtilityAutomation.IsAutomationEnable;
             this.Change_record();
         }
@@ -2222,6 +2231,12 @@ order by a.CombineBarcode,a.Unoriginal,a.POID,a.Seq1,a.Seq2
             var frm = new P07_UpdateWeight(this.detailgridbs.DataSource, this.CurrentMaintain["id"].ToString(), this.GridAlias);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        // 呼叫P99
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P18", this);
         }
     }
 }

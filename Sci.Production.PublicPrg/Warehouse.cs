@@ -706,6 +706,125 @@ where exists(
             return sqlcmd;
         }
 
+        public static string UpdateFtyInventory_IO_P99(int type)
+        {
+            string sqlcmd = string.Empty;
+            switch (type)
+            {
+                case 2:
+                    #region 更新 inqty
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+select s.*,psdseq1=psd.seq1
+into #tmpS11
+from #tmpS1 s
+left join PO_Supp_Detail psd on psd.id = s.poid and psd.seq1 = s.seq1 and psd.seq2 = s.seq2
+
+merge dbo.FtyInventory as target
+using #tmpS11 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set inqty = isnull(inqty,0.00) + s.qty;
+";
+
+                    sqlcmd += @"drop table #tmpS1, #tmpS11; 
+                                drop table #TmpSource;";
+                    #endregion
+                    break;
+                case 4:
+                    #region 更新OutQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty;
+
+drop table #tmpS1;
+drop table #TmpSource;";
+                    #endregion
+                    break;
+                case 6:
+                    #region 更新OutQty with Location
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty;";
+                    sqlcmd += @"drop table #tmpS1;
+                                drop table #TmpSource;";
+                    #endregion
+                    break;
+                case 8:
+                    #region 更新AdjustQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set adjustqty = isnull(adjustqty,0.00) + s.qty;
+
+drop table #tmpS1 
+drop table #TmpSource;";
+                    #endregion
+                    break;
+            }
+
+            return sqlcmd;
+        }
+
         #endregion
         #region -- SelePoItem --
 

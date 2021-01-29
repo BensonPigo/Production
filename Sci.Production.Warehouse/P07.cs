@@ -2382,6 +2382,7 @@ and r.id = '{this.CurrentMaintain["id"]}'
         }
 
         // 寫明細撈出的sql command
+
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -3158,45 +3159,10 @@ drop table #tmp,#tmp2,#tmp3,#tmp4,#tmp5
             }
         }
 
-        private P99 callP99 = null;
-
+        // 呼叫P99
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form is P99)
-                {
-                    form.Activate();
-                    P99 activateForm = (P99)form;
-                    activateForm.Initl(false);
-                    activateForm.SetFilter(this.CurrentMaintain["ID"].ToString(), "P07");
-                    activateForm.Query();
-                    return;
-                }
-            }
-
-            ToolStripMenuItem p99MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Env.App.MainMenuStrip.Items)
-            {
-                if (toolMenuItem.Text.EqualString("Warehouse"))
-                {
-                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
-                    {
-                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
-                        {
-                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P99. Send To WMS Command Status"))
-                            {
-                                p99MenuItem = (ToolStripMenuItem)subMenuItem;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            this.callP99 = new P99(p99MenuItem, this.CurrentMaintain["ID"].ToString(), "P07");
-            this.callP99.MdiParent = this.MdiParent;
-            this.callP99.Show();
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P07", this);
         }
     }
 }

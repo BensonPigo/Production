@@ -1,13 +1,17 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -34,66 +38,14 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.Initl(false);
-            this.strFunction = formNo;
-            this.strTransID = transID;
+            this.SetFilter(transID, formNo);
             this.Query();
-        }
-
-        public void Initl(bool canEdit)
-        {
-            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @",,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
-
-            // MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",,A,Accessory");
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",,A,Accessory");
-            if (!canEdit)
-            {
-                this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab
-                this.dateCreate.Value1 = null;
-                this.dateCreate.Value2 = null;
-                this.txtSPNoStart.Text = string.Empty;
-                this.txtSPNoEnd.Text = string.Empty;
-                this.comboFunction.SelectedIndex = 0;
-                this.comboFunction.SelectedIndex = 0;
-            }
-            else
-            {
-                this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
-                this.strFunction = this.comboFunction.SelectedValue.ToString();
-                this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
-            }
-
-            this.comboFunction.Enabled = canEdit;
-            this.checkIncludeCompleteItem.Enabled = canEdit;
-            this.dateCreate.Enabled = canEdit;
-            this.comboMaterialType_Sheet1.Enabled = canEdit;
-            this.txtSPNoStart.Enabled = canEdit;
-            this.txtSPNoEnd.Enabled = canEdit;
-            this.btnQuery.Visible = canEdit;
-        }
-
-        /// <inheritdoc/>
-        public void SetFilter(string id, string formName)
-        {
-            this.strTransID = id;
-            this.strFunction = formName;
-        }
-
-        protected override void OnFormLoaded()
-        {
-            base.OnFormLoaded();
-            //MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @",,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
-
-            //// MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
-            //MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",,A,Accessory");
-            //MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",,A,Accessory");
-
-            //this.strFunction = this.comboFunction.SelectedValue.ToString();
-            //this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            // Click 按鈕[Query]需要設定, 不然Query無法判別是哪個function
+            this.strFunction = this.comboFunction.SelectedValue.ToString();
             if (MyUtility.Check.Empty(this.strFunction) || MyUtility.Check.Empty(this.dateCreate.Value1) || MyUtility.Check.Empty(this.dateCreate.Value2))
             {
                 MyUtility.Msg.WarningBox("<Function>,<Create Date> cannot be empty!");
@@ -118,7 +70,8 @@ select    [Selected] = 0 --0
         , t2.id
         , t2.PoId --1        
 		, concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2) as seq --2
-        , (select p1.FabricType from PO_Supp_Detail p1 WITH (NOLOCK) where p1.ID = t2.PoId and p1.seq1 = t2.SEQ1 and p1.SEQ2 = t2.seq2) as fabrictype --3
+        , t2.seq1  ,t2.seq2
+        , po3.FabricType 
 		, t2.shipqty --4
         , t2.Weight --5
         , t2.ActualWeight --6
@@ -131,6 +84,8 @@ select    [Selected] = 0 --0
 				iif(t2.Unoriginal is  null , ttlQty.value, null))) +' '+ t2.PoUnit
         
         , t2.StockQty--12
+        , [Old_StockQty] = t2.StockQty
+        , [diffQty] = 0.00
         , t2.StockUnit--13
         , t2.StockType--14
         , t2.Location--15
@@ -140,6 +95,8 @@ select    [Selected] = 0 --0
         , o.FactoryID--19
         , o.OrderTypeID--20
 		, [ContainerType]= Container.Val--21
+        , t2.Ukey
+        ,Barcode = isnull(ft.barcode,'')
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 INNER JOIN Receiving t1 WITH (NOLOCK) ON t2.id= t1.Id
 left join orders o WITH (NOLOCK) on o.id = t2.PoId
@@ -179,6 +136,7 @@ outer apply(
 )ttlQty
 where 1=1
 and t1.Type='A'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P08":
@@ -186,8 +144,11 @@ and t1.Type='A'
 select    [Selected] = 0 --0
         , [SentToWMS] = iif(t2.SentToWMS=1,'V','')
         , [CompleteTime] = t2.CompleteTime
+        , t2.id
         , t2.PoId --1        
+        , po3.FabricType 
         , concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2) as seq--2
+        , t2.seq1,t2.seq2
 		, t2.Roll--3
         , t2.Dyelot--4
         , [Description] = dbo.getmtldesc(t2.poid,t2.seq1,t2.seq2,2,0)--5        
@@ -196,8 +157,13 @@ select    [Selected] = 0 --0
             from po_supp_detail b WITH (NOLOCK) 
             where b.id= t2.poid and b.seq1 = t2.seq1 and b.seq2 = t2.seq2) --7
         , [Qty] = t2.StockQty--8
+        , t2.StockQty
+        , [Old_StockQty] = t2.StockQty
+        , [diffQty] = 0.00
         , t2.Location--9
         , t2.Remark--10
+        , t2.Ukey
+        , t2.StockType
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 inner join Receiving t1 WITH (NOLOCK) on t2.Id = t1.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -206,6 +172,7 @@ left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
 
 where 1=1
 and t1.Type='B'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P18":
@@ -213,8 +180,10 @@ and t1.Type='B'
 select   [Selected] = 0 --0
         ,[SentToWMS] = iif(t2.SentToWMS=1,'V','')
         ,[CompleteTime] = t2.CompleteTime
+        ,t2.id
         , t2.PoId--1        
         , seq = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)--2
+        , t2.seq1,t2.seq2
 		, [Fabric] = case when po3.FabricType = 'F' then 'Fabric' 
                              when po3.FabricType = 'A' then 'Accessory'
                         else '' end--3
@@ -224,6 +193,8 @@ select   [Selected] = 0 --0
 		, t2.Weight--7
 		, [ActualWeight] = isnull(t2.ActualWeight, 0)--8
 		, t2.Qty--9
+        , [Old_Qty] = t2.Qty
+        , [diffQty] = 0.00
         , StockUnit = dbo.GetStockUnitBySPSeq (t2.poid, t2.seq1, t2.seq2)--10        
         , TtlQty = convert(varchar(20),
 			iif(t2.CombineBarcode is null , t2.Qty, 
@@ -233,6 +204,7 @@ select   [Selected] = 0 --0
 		, t2.Remark--14        
         , po3.Refno--15
 		, [ColorID] = Color.Value--16        
+        , t2.Ukey
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t2.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -253,6 +225,7 @@ OUTER APPLY(
 	 END
 )Color
 Where 1=1
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P11":
@@ -261,6 +234,7 @@ select [Selected] = 0 --0
 ,[SentToWMS] = iif(t2.SentToWMS=1,'V','')
 ,[CompleteTime] = t2.CompleteTime
 ,[seq] = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.seq2)--1
+, t2.seq1,t2.seq2
 , [description] = dbo.getmtldesc(t2.poid,t2.seq1,t2.seq2,2,0)--2
 , Colorid = isnull(dbo.GetColorMultipleID(po3.BrandId, po3.ColorID), '')--3
 , po3.SizeSpec--4
@@ -311,6 +285,7 @@ left join dbo.FtyInventory FI on    t2.Poid = Fi.Poid
                                     and t2.Dyelot = fi.Dyelot
 where  1=1  
 and t1.Type='B'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P12":
@@ -320,10 +295,12 @@ select [Selected] = 0 --0
 ,[CompleteTime] = t2.CompleteTime
 , t2.PoId--1
 ,[seq] = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)--2
+, t2.seq1,t2.seq2
 ,[Description] = dbo.getmtldesc(t2.poid,t2.seq1,t2.seq2,2,0)--3
 ,po3.stockunit--4
 ,t2.Qty--5
 ,[location] = dbo.Getlocation(Fi.ukey) --6
+, t2.Ukey
 from dbo.issue_detail t2 WITH (NOLOCK) 
 inner join dbo.Issue t1 WITH (NOLOCK) on t1.id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
@@ -331,6 +308,7 @@ left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2
     and t2.Roll = FI.Roll and FI.stocktype = 'B'     
 where 1=1
 and t1.Type='C'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P13":
@@ -341,6 +319,7 @@ select  [Selected] = 0 --0
 , o.FtyGroup --1
 , t2.PoId--2
 , concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2) as seq--3
+, t2.seq1,t2.seq2
 , t2.Roll--4
 , t2.Dyelot--5
 , dbo.getmtldesc(t2.poid,t2.seq1,t2.seq2,2,0) as [description]--6
@@ -361,6 +340,7 @@ select  [Selected] = 0 --0
 , t2.Qty--11, 
 ,dbo.Getlocation(c.ukey) location--12
 , Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance--13
+, t2.Ukey
 from dbo.issue_detail as t2 WITH (NOLOCK) 
 inner join issue t1 WITH (NOLOCK) on t2.Id=t1.Id
 left join Orders o on t2.poid = o.id
@@ -370,9 +350,11 @@ left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = t2.poid and c.seq1 = t2.s
 and c.stocktype = 'B' and c.roll=t2.roll and t2.Dyelot = c.Dyelot
 Where 1=1
 and t1.Type='D'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P33":
+                    #region P33 sqlcmd
                     sqlcmd = @"
 ----  先By Article撈取資料再加總
 WITH BreakdownByArticle as (
@@ -469,6 +451,7 @@ WITH BreakdownByArticle as (
     WHERE 1=1
     AND iis.ColorID <> ''
     AND t1.Type='E'
+    and t1.Status = 'Confirmed'
 ";
                     if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
                     {
@@ -590,6 +573,7 @@ OUTER APPLY(
 )Location
 
 ";
+                    #endregion
                     break;
                 case "P15":
                     sqlcmd = @"
@@ -609,6 +593,7 @@ inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
 where 1=1
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P19":
@@ -636,6 +621,7 @@ left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2
 left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2 = FI.Seq2 and t2.Dyelot = FI.Dyelot
     and t2.Roll = FI.Roll and t2.StockType = FI.StockType
 where 1=1
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P34":
@@ -667,6 +653,7 @@ left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
 where 1=1
 and t1.Type = 'B'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P35":
@@ -719,6 +706,7 @@ outer apply (
 ) as ColorID
 Where 1=1
 and t1.Type='A'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P43":
@@ -757,6 +745,7 @@ outer apply (
 outer apply(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= t2.ReasonId and junk=0 ) Reason
 where 1=1
 and t1.Type = 'O'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P45":
@@ -786,6 +775,7 @@ left join Fabric f WITH (NOLOCK) on f.SCIRefno = po3.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = t2.POID and fi.Seq1 = t2.Seq1 and fi.Seq2 = t2.Seq2 and fi.Roll = t2.Roll and fi.StockType = t2.StockType and fi.Dyelot = t2.Dyelot
 where 1=1
 and t1.Type = 'R'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P22":
@@ -817,6 +807,7 @@ left join FtyInventory FI on t2.fromPoid = fi.poid and t2.fromSeq1 = fi.seq1 and
     and t2.fromRoll = fi.roll and t2.fromStocktype = fi.stocktype
 Where 1=1
 and t1.Type='A'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P23":
@@ -860,6 +851,7 @@ left join FtyInventory FI on t2.FromPoid = fi.poid
                              and t2.fromDyelot = fi.Dyelot
 Where 1=1
 and t1.Type = 'B'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P24":
@@ -895,6 +887,7 @@ left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 
 left join FtyInventory f WITH (NOLOCK) on t2.FromPOID=f.POID and t2.FromSeq1=f.Seq1 and t2.FromSeq2=f.Seq2 and t2.FromRoll=f.Roll and t2.FromDyelot=f.Dyelot and t2.FromStockType=f.StockType
 Where 1=1
 and t1.Type = 'E'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P36":
@@ -930,6 +923,7 @@ left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 
 and po3.SEQ2 = t2.FromSeq2
 Where 1=1
 and t1.Type='C'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P37":
@@ -953,6 +947,7 @@ left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot 
 Where 1=1
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P31":
@@ -995,6 +990,7 @@ left join FtyInventory FI on t2.FromPoid = Fi.Poid and t2.FromSeq1 = Fi.Seq1 and
     and t2.FromRoll = Fi.Roll and t2.FromDyelot = Fi.Dyelot and t2.FromStockType = StockType
 Where 1=1
 and t1.Type='A'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 case "P32":
@@ -1032,6 +1028,7 @@ left join FtyInventory FI on t2.fromPoid = fi.poid and t2.fromSeq1 = fi.seq1 and
     and t2.fromRoll = fi.roll and t2.fromStocktype = fi.stocktype
 Where 1=1
 and t1.Type='B'
+and t1.Status = 'Confirmed'
 ";
                     break;
                 default:
@@ -1106,15 +1103,68 @@ and t1.Type='B'
 
         private void SetGrid()
         {
+            DataGridViewGeneratorNumericColumnSettings chk_qty = new DataGridViewGeneratorNumericColumnSettings();
+
+            // 設定Qty Setting
             switch (this.strFunction)
             {
                 case "P07":
+                    chk_qty.CellValidating += (s, e) =>
+                    {
+                        if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
+                        {
+                            DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
+                            dr["Qty"] = e.FormattedValue;
+                            if (!MyUtility.Check.Empty(dr["pounit"]) && !MyUtility.Check.Empty(dr["stockunit"]))
+                            {
+                                string rate = MyUtility.GetValue.Lookup($@"select RateValue from dbo.View_Unitrate v where v.FROM_U ='{dr["pounit"]}' and v.TO_U='{dr["stockunit"]}'");
+                                dr["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                            }
+
+                            // 計算差額, 用來更新庫存
+                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["stockqty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            if (!this.ChkFtyinventory_Balance(dt, true))
+                            {
+                                e.Cancel = true;
+                            }
+                        }
+                    };
+                    break;
+                case "P08":
+                    chk_qty.CellValidating += (s, e) =>
+                    {
+                        if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
+                        {
+                            DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
+                            dr["Qty"] = e.FormattedValue;
+                            dr["StockQty"] = e.FormattedValue;
+
+                            // 計算差額, 用來更新庫存
+                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            if (!this.ChkFtyinventory_Balance(dt, true))
+                            {
+                                e.Cancel = true;
+                            }
+                        }
+                    };
+                    break;
+            }
+
+            // 設定Grid 欄位
+            switch (this.strFunction)
+            {
+                case "P07":
+                    #region P07 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
                     .Text("SentToWMS", header: "Sen ToW MS", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                   .Text("poid", header: "SP#", width: Widths.AnsiChars(11),iseditingreadonly:true) // 1
+                   .Text("poid", header: "SP#", width: Widths.AnsiChars(11), iseditingreadonly: true) // 1
                    .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                    .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(9), iseditable: false) // 3
                    .Numeric("shipqty", header: "Ship Qty", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 4
@@ -1122,7 +1172,7 @@ and t1.Type='B'
                    .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7, iseditingreadonly: true) // 6
                    .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true) // 7
                    .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 8
-                   .Numeric("Qty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 10).Get(out this.col_Qty)
+                   .Numeric("Qty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty)
                    .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 10
                    .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
                    .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 12
@@ -1136,8 +1186,10 @@ and t1.Type='B'
                    .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(15), iseditingreadonly: true) // 20
                    .Text("ContainerType", header: "ContainerType & No", width: Widths.AnsiChars(15), iseditingreadonly: true) // 21
                    ;
+                    #endregion
                     break;
                 case "P08":
+                    #region P08 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1150,12 +1202,14 @@ and t1.Type='B'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)
                     .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
-                    .Numeric("Qty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: false).Get(out col_Qty)
+                    .Numeric("Qty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: false, settings: chk_qty).Get(out this.col_Qty)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true)
                     .EditText("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     ;
+                    #endregion
                     break;
                 case "P18":
+                    #region P18 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1169,7 +1223,7 @@ and t1.Type='B'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
-                    .Numeric("Qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10,iseditingreadonly: false).Get(out this.col_Qty)
+                    .Numeric("Qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: false).Get(out this.col_Qty)
                     .Text("stockunit", header: "Unit", iseditingreadonly: true)
                     .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
                     .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false)
@@ -1178,8 +1232,10 @@ and t1.Type='B'
                     .Text("RefNo", header: "Ref#", iseditingreadonly: true)
                     .Text("ColorID", header: "Color", iseditingreadonly: true)
                     ;
+                    #endregion
                     break;
                 case "P11":
+                    #region P11 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1200,8 +1256,10 @@ and t1.Type='B'
                     .Numeric("AutoPickqty", header: "AutoPick \r\n Calculation \r\n Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: true)
                     .Text("OutputAutoPick", header: "AutoPick \r\n Calculation \r\n Output", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     ;
+                    #endregion
                     break;
                 case "P12":
+                    #region P12 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1214,8 +1272,10 @@ and t1.Type='B'
                     .Numeric("Qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10).Get(out this.col_Qty)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true)
                     ;
+                    #endregion
                     break;
                 case "P13":
+                    #region P13 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1235,8 +1295,10 @@ and t1.Type='B'
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                     ;
+                    #endregion
                     break;
                 case "P33":
+                    #region P33 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1258,8 +1320,10 @@ and t1.Type='B'
                     .Numeric("OutputQty", header: "Output Qty" + Environment.NewLine + "(Garment)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                     .Numeric("Balance(Stock Unit)", header: "Balance" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                     .Text("Location", header: "Location", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                    #endregion
                     break;
                 case "P15":
+                    #region P15 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1272,8 +1336,10 @@ and t1.Type='B'
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10).Get(out this.col_Qty) // 6
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     ;
+                    #endregion
                     break;
                 case "P19":
+                    #region P19 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1291,8 +1357,10 @@ and t1.Type='B'
                     .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
                     .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     ;
+                    #endregion
                     break;
                 case "P34":
+                    #region P34 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1312,8 +1380,10 @@ and t1.Type='B'
                     .Text("reasonid", header: "Reason ID", iseditingreadonly: true)
                     .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20))
                     ;
+                    #endregion
                     break;
                 case "P35":
+                    #region P35 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1333,8 +1403,10 @@ and t1.Type='B'
                     .Text("reasonid", header: "Reason ID", iseditingreadonly: true) // 10
                     .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 11
                     ;
+                    #endregion
                     break;
                 case "P43":
+                    #region P43 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1353,8 +1425,10 @@ and t1.Type='B'
                     .Text("location", header: "location", iseditingreadonly: true)
                     .Text("reasonid", header: "Reason ID", iseditingreadonly: true)
                     .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20));
+                    #endregion
                     break;
                 case "P45":
+                    #region P45 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1374,8 +1448,10 @@ and t1.Type='B'
                     .Text("reasonid", header: "Reason ID", iseditingreadonly: true) // 8
                     .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 9
                     ;
+                    #endregion
                     break;
                 case "P22":
+                    #region P22 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1391,8 +1467,10 @@ and t1.Type='B'
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10).Get(out this.col_Qty) // 7
                     .Text("toLocation", header: "To Location", iseditingreadonly: true, width: Widths.AnsiChars(18)) // 8
                     ;
+                    #endregion
                     break;
                 case "P23":
+                    #region P23 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1410,8 +1488,10 @@ and t1.Type='B'
                     .Text("toseq", header: "Bulk" + Environment.NewLine + " Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 9
                     .Text("toLocation", header: "To Location", iseditingreadonly: false, width: Widths.AnsiChars(18)) // 10
                     ;
+                    #endregion
                     break;
                 case "P24":
+                    #region P24 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1428,8 +1508,10 @@ and t1.Type='B'
                     .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
                     .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(15), iseditingreadonly: true) // 8
                     ;
+                    #endregion
                     break;
                 case "P36":
+                    #region P36 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1444,8 +1526,10 @@ and t1.Type='B'
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10).Get(out this.col_Qty) // 6
                     .Text("ToLocation", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(30)) // 7
                     ;
+                    #endregion
                     break;
                 case "P37":
+                    #region P37 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1461,8 +1545,10 @@ and t1.Type='B'
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true).Get(out this.col_Qty) // 6
                     .Text("Location", header: "Location", iseditingreadonly: true) // 7
                     ;
+                    #endregion
                     break;
                 case "P31":
+                    #region P31 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1483,8 +1569,10 @@ and t1.Type='B'
                     .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)
                     ;
+                    #endregion
                     break;
                 case "P32":
+                    #region P32 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.gridUpdate)
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
@@ -1506,32 +1594,10 @@ and t1.Type='B'
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 12
                     .ComboBox("tostocktype", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false)
                     ;
+                    #endregion
                     break;
                 default:
                     break;
-            }
-        }
-
-        private void ChangeGridColor()
-        {
-            // 設定detailGrid Rows 是否可以編輯
-            this.gridUpdate.RowEnter += this.Detailgrid_RowEnter;
-            this.gridUpdate.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
-            for (int index = 0; index < this.gridUpdate.Rows.Count; index++)
-            {
-                DataRow dr = this.gridUpdate.GetDataRow(index);
-                if (this.gridUpdate.Rows.Count <= index || index < 0)
-                {
-                    return;
-                }
-
-                int i = index;
-
-                // 反灰不能勾選
-                if (dr["SentToWMS"].ToString() == "V" && !MyUtility.Check.Empty(dr["CompleteTime"]))
-                {
-                    this.gridUpdate.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
-                }
             }
         }
 
@@ -1592,10 +1658,10 @@ and t1.Type='B'
 
         private void ComboFunction_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (this.comboFunction.SelectedValue != null && !MyUtility.Check.Empty(this.comboFunction.SelectedValue))
-            {
-                this.strFunction = this.comboFunction.SelectedValue.ToString();
-            }
+            //if (this.comboFunction.SelectedValue != null && !MyUtility.Check.Empty(this.comboFunction.SelectedValue))
+            //{
+            //    this.strFunction = this.comboFunction.SelectedValue.ToString();
+            //}
         }
 
         private void CheckIncludeCompleteItem_CheckedChanged(object sender, EventArgs e)
@@ -1614,8 +1680,566 @@ and t1.Type='B'
 
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
+            if (!MyUtility.Check.Empty(this.strFunction))
+            {
+                var upd_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).ToList();
+                if (upd_list.Count == 0)
+                {
+                    return;
+                }
 
+                string sqlError = string.Empty;
+
+                // Qty不可為0
+                var zero_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && MyUtility.Check.Empty(x["Qty"])).ToList();
+                if (zero_list.Any())
+                {
+                    MyUtility.Msg.WarningBox("Qty Cannot be Empty!");
+                    return;
+                }
+
+                string upd_sql = string.Empty;
+                string chk_sql = string.Empty;
+                DualResult result;
+                DataTable dtDistID = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && !MyUtility.Check.Empty(x["Qty"])).CopyToDataTable().DefaultView.ToTable(true, "ID");
+                switch (this.strFunction)
+                {
+                    case "P07":
+                    case "P08":
+
+                        if (this.strFunction == "P07")
+                        {
+                            #region Check FtyInventory 是否已經存在
+                            if (!this.ChkFtyInventory_Exists(upd_list.CopyToDataTable()))
+                            {
+                                return;
+                            }
+                            #endregion
+                        }
+                        else if (this.strFunction == "P08")
+                        {
+                            // 檢查庫存項Lock
+                            if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
+                            {
+                                return;
+                            }
+                        }
+
+                        // 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
+                        {
+                            return;
+                        }
+
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "Receiving_Detail"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
+                        #region 更新庫存數量 mdivisionPoDetail
+                        var data_MD_2T = (from b in upd_list.AsEnumerable()
+                                          group b by new
+                                          {
+                                              poid = b.Field<string>("poid").Trim(),
+                                              seq1 = b.Field<string>("seq1").Trim(),
+                                              seq2 = b.Field<string>("seq2").Trim(),
+                                              stocktype = b.Field<string>("stocktype").Trim(),
+                                          }
+                                            into m
+                                          select new Prgs_POSuppDetailData
+                                          {
+                                              Poid = m.First().Field<string>("poid"),
+                                              Seq1 = m.First().Field<string>("seq1"),
+                                              Seq2 = m.First().Field<string>("seq2"),
+                                              Stocktype = m.First().Field<string>("stocktype"),
+                                              Qty = m.Sum(w => w.Field<decimal>("diffQty")),
+                                          }).ToList();
+                        var data_MD_8T = (from b in upd_list.AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
+                                          group b by new
+                                          {
+                                              poid = b.Field<string>("poid").Trim(),
+                                              seq1 = b.Field<string>("seq1").Trim(),
+                                              seq2 = b.Field<string>("seq2").Trim(),
+                                              stocktype = b.Field<string>("stocktype").Trim(),
+                                          }
+                                            into m
+                                          select new Prgs_POSuppDetailData
+                                          {
+                                              Poid = m.First().Field<string>("poid"),
+                                              Seq1 = m.First().Field<string>("seq1"),
+                                              Seq2 = m.First().Field<string>("seq2"),
+                                              Stocktype = m.First().Field<string>("stocktype"),
+                                              Qty = m.Sum(w => w.Field<decimal>("diffQty")),
+                                              Location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                                          }).ToList();
+
+                        #endregion
+
+                        #region -- 更新庫存數量  ftyinventory --
+                        string upd_Fty_2T = string.Empty;
+                        int mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system")) ? 1 : 0;
+                        var data_Fty_2T = upd_list.AsEnumerable().Select(m => new
+                        {
+                            poid = m.Field<string>("poid"),
+                            seq1 = m.Field<string>("seq1"),
+                            seq2 = m.Field<string>("seq2"),
+                            stocktype = m.Field<string>("stocktype"),
+                            qty = m.Field<decimal>("diffQty"),
+                            roll = m.Field<string>("roll"),
+                            dyelot = m.Field<string>("dyelot"),
+                        }).ToList();
+                        upd_Fty_2T = Prgs.UpdateFtyInventory_IO_P99(2);
+                        #endregion 更新庫存數量  ftyinventory
+
+                        #region update Qty
+
+                        string strcmd = (this.strFunction == "P07") ? ",t.ActualQty = s.Qty" : string.Empty;
+                        string sqlcmd = $@" 
+update t
+set 
+t.StockQty = s.StockQty
+{strcmd}
+from Receiving_Detail t
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set 
+t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from Receiving t
+inner join Receiving_Detail t2 on t2.id = t.id
+inner join #tmp s on t2.Ukey = s.Ukey 
+";
+ 
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable result_upd_qty)))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        #endregion
+
+                        #region 更新FIR,AIR資料
+                        if (this.strFunction == "P07")
+                        {
+                            if (MyUtility.Check.Empty(this.strTransID))
+                            {
+                                foreach (DataRow dr in dtDistID.Rows)
+                                {
+                                    List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
+                            {
+                                new SqlParameter("@ID", dr["ID"]),
+                                new SqlParameter("@LoginID", Env.User.UserID),
+                            };
+
+                                    if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
+                                    {
+                                        Exception ex = result.GetException();
+                                        MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                                        return;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
+                            {
+                                new SqlParameter("@ID", this.strTransID),
+                                new SqlParameter("@LoginID", Env.User.UserID),
+                            };
+
+                                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.insert_Air_Fir", fir_Air_Proce)))
+                                {
+                                    Exception ex = result.GetException();
+                                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                                    return;
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        TransactionScope transactionscope = new TransactionScope();
+                        DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
+                        using (transactionscope)
+                        using (sqlConn)
+                        {
+                            try
+                            {
+                                /*
+                                 * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                                 * 所有 MDivisionPoDetail 資料都在 Transaction 中更新
+                                 * 因為要在同一 SqlConnection 之下執行
+                                 */
+                                #region FtyInventory
+                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out DataTable resulttb, "#TmpSource", conn: sqlConn)))
+                                {
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
+                                #endregion
+
+                                #region MDivisionPoDetail
+                                if (data_MD_2T.Count > 0)
+                                {
+                                    string upd_MD_2T = Prgs.UpdateMPoDetail(2, data_MD_2T, true, sqlConn: sqlConn);
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+
+                                if (data_MD_8T.Count > 0)
+                                {
+                                    string upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+                                #endregion
+
+                                transactionscope.Complete();
+                                transactionscope.Dispose();
+                                MyUtility.Msg.InfoBox("Update successful");
+                            }
+                            catch (Exception ex)
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr("Commit transaction error.", ex);
+                                return;
+                            }
+                            finally
+                            {
+                                transactionscope.Dispose();
+                            }
+                        }
+
+                        break;
+
+                }
+
+                this.Query();
+            }
         }
+
+        /// <summary>
+        /// 刪除表身資料, 並將該筆資料unConfirmed 刪除庫存
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.strFunction))
+            {
+                var upd_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).ToList();
+                if (upd_list.Count == 0)
+                {
+                    return;
+                }
+
+                string sqlError = string.Empty;
+
+                // Qty不可為0
+                var zero_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && MyUtility.Check.Empty(x["Qty"])).ToList();
+                if (zero_list.Any())
+                {
+                    MyUtility.Msg.WarningBox("Qty Cannot be Empty!");
+                    return;
+                }
+
+                string upd_sql = string.Empty;
+                string chk_sql = string.Empty;
+                DualResult result;
+                DataTable dtDistID = ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.ToTable(true, "ID");
+
+                switch (this.strFunction)
+                {
+                    case "P07":
+                    case "P08":
+                        #region 檢查負庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
+                        {
+                            return;
+                        }
+                        #endregion
+
+                        if (this.strFunction == "P08")
+                        {
+                            #region 檢查是否lock
+                            if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
+                            {
+                                return;
+                            }
+                            #endregion
+
+                            #region 檢查庫存項WMSLock
+                            foreach (DataRow dr in dtDistID.Rows)
+                            {
+                                if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "Receiving_Detail"))
+                                {
+                                    return;
+                                }
+                            }
+                            #endregion
+                        }
+
+                        #region UnConfirmed 先檢查WMS是否傳送成功
+
+                        foreach (DataRow dr in upd_list)
+                        {
+                            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                            {
+                                string sqlGetData = string.Empty;
+                                sqlGetData = $@"
+SELECT 
+ [ID] = rd.id
+,[InvNo] = r.InvNo
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[StockUnit] = rd.StockUnit
+,[StockQty] = rd.StockQty
+,[PoUnit] = rd.PoUnit
+,[ShipQty] = rd.ShipQty
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[MtlType] = Fabric.MtlTypeID
+,[Ukey] = rd.Ukey
+,[ETA] = r.ETA
+,[WhseArrival] = r.WhseArrival
+,[Status] = 'Delete'
+FROM Production.dbo.Receiving_Detail rd
+inner join Production.dbo.Receiving r on rd.id = r.id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='A'
+)
+and rd.ukey = '{dr["ukey"]}'
+";
+
+                                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out DataTable dtDetail);
+                                if (!drResult)
+                                {
+                                    this.ShowErr(drResult);
+                                }
+
+                                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P07"))
+                                {
+                                    return;
+                                }
+                            }
+                        }
+
+                        #endregion
+
+
+
+                        #region 更新庫存數量 po_supp_detail & ftyinventory
+                        var data_MD_2F = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                                          group b by new
+                                          {
+                                              poid = b.Field<string>("poid"),
+                                              seq1 = b.Field<string>("seq1"),
+                                              seq2 = b.Field<string>("seq2"),
+                                              stocktype = b.Field<string>("stocktype"),
+                                          }
+                                            into m
+                                          select new Prgs_POSuppDetailData
+                                          {
+                                              Poid = m.First().Field<string>("poid"),
+                                              Seq1 = m.First().Field<string>("seq1"),
+                                              Seq2 = m.First().Field<string>("seq2"),
+                                              Stocktype = m.First().Field<string>("stocktype"),
+                                              Qty = -m.Sum(w => w.Field<decimal>("Old_StockQty")),
+                                          }).ToList();
+
+                        var data_MD_8F = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
+                                          group b by new
+                                          {
+                                              poid = b.Field<string>("poid"),
+                                              seq1 = b.Field<string>("seq1"),
+                                              seq2 = b.Field<string>("seq2"),
+                                              stocktype = b.Field<string>("stocktype"),
+                                          }
+                                            into m
+                                          select new Prgs_POSuppDetailData
+                                          {
+                                              Poid = m.First().Field<string>("poid"),
+                                              Seq1 = m.First().Field<string>("seq1"),
+                                              Seq2 = m.First().Field<string>("seq2"),
+                                              Stocktype = m.First().Field<string>("stocktype"),
+                                              Qty = -m.Sum(w => w.Field<decimal>("Old_StockQty")),
+                                          }).ToList();
+
+                        var data_Fty_2F = (from m in upd_list.CopyToDataTable().AsEnumerable()
+                                           select new
+                                           {
+                                               poid = m.Field<string>("poid"),
+                                               seq1 = m.Field<string>("seq1"),
+                                               seq2 = m.Field<string>("seq2"),
+                                               stocktype = m.Field<string>("stocktype"),
+                                               qty = -m.Field<decimal>("Old_StockQty"),
+                                               location = m.Field<string>("location"),
+                                               roll = m.Field<string>("roll"),
+                                               dyelot = m.Field<string>("dyelot"),
+                                           }).ToList();
+
+                        string upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
+                        #endregion
+
+                        #region 刪除Barcode
+                        string upd_Fty_Barcode_V1 = string.Empty;
+                        string upd_Fty_Barcode_V2 = string.Empty;
+                        var data_Fty_Barcode = (from m in upd_list.AsEnumerable().Where(s => s["FabricType"].ToString() == "F")
+                                                select new
+                                                {
+                                                    TransactionID = m.Field<string>("ID"),
+                                                    poid = m.Field<string>("poid"),
+                                                    seq1 = m.Field<string>("seq1"),
+                                                    seq2 = m.Field<string>("seq2"),
+                                                    stocktype = m.Field<string>("stocktype"),
+                                                    roll = m.Field<string>("roll"),
+                                                    dyelot = m.Field<string>("dyelot"),
+                                                    Barcode = m.Field<string>("Barcode"),
+                                                }).ToList();
+
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
+                        #endregion
+
+                        #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+                        foreach (DataRow dr in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSCompleteTime(dr["ID"].ToString(), "Receiving_Detail"))
+                            {
+                                return;
+                            }
+                        }
+
+                        #endregion
+
+                        #region Delete data
+                        string sqlcmd = @" 
+delete t
+from Receiving_Detail t
+inner join #tmp s on t.Ukey = s.Ukey ";
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable result_upd_qty)))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        #endregion
+
+                        TransactionScope transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            try
+                            {
+                                /*
+                                 * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                                 * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
+                                 * 因為要在同一 SqlConnection 之下執行
+                                 */
+                                DataTable resulttb;
+                                #region MdivisionPoDetail
+                                if (data_MD_2F.Count > 0)
+                                {
+                                    string upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false);
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource")))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+
+                                if (data_MD_8F.Count > 0)
+                                {
+                                    string upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false);
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource")))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+                                #endregion
+
+                                #region FtyInventory
+                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource")))
+                                {
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
+                                // 更新FtyInventory Barcode
+                                if (data_Fty_Barcode.Count >= 1 && this.strFunction == "P07")
+                                {
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                                    {
+                                        transactionscope.Dispose();
+                                        this.ShowErr(result);
+                                        return;
+                                    }
+                                }
+                                #endregion
+
+                                transactionscope.Complete();
+                                transactionscope.Dispose();
+                                MyUtility.Msg.InfoBox("Delete successful");
+                            }
+                            catch (Exception ex)
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr("Commit transaction error.", ex);
+                                return;
+                            }
+                        }
+
+                        transactionscope.Dispose();
+                        transactionscope = null;
+
+                        break;
+                }
+
+                this.Query();
+            }
+        }
+
+        #region Sheet 2 [UnLock]
 
         private void BtnQuery2_Click(object sender, EventArgs e)
         {
@@ -1768,10 +2392,246 @@ and fi.WMSLock = 1
             this.Query_Sheet2();
             MyUtility.Msg.InfoBox("UnLock successfully!");
         }
+        #endregion
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        #region 共用Function
+
+        // Check FtyInventory 是否已經存在
+        private bool ChkFtyInventory_Exists(DataTable dt)
+        {
+            // 判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
+            List<string> listMsg = new List<string>();
+            List<string> listDyelot = new List<string>();
+            foreach (DataRow row in dt.Rows)
+            {
+                string poid = MyUtility.Convert.GetString(row["poid"]);
+                string seq1 = MyUtility.Convert.GetString(row["seq1"]);
+                string seq2 = MyUtility.Convert.GetString(row["seq2"]);
+                string roll = MyUtility.Convert.GetString(row["roll"]);
+                string dyelot = MyUtility.Convert.GetString(row["dyelot"]);
+                string fabricType = MyUtility.Convert.GetString(row["fabrictype"]);
+                string stockType = MyUtility.Convert.GetString(row["stockType"]);
+
+                // 判斷 物料 是否為 布，布料才需要 Roll &Dyelot
+                if (fabricType.ToUpper() == "F")
+                {
+                    // 判斷 在 FtyInventory 是否存在
+                    bool chkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
+
+                    if (!chkFtyInventory)
+                    {
+                        listMsg.Add($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
+                    }
+                }
+            }
+
+            if (listMsg.Count > 0)
+            {
+                DialogResult dr = MyUtility.Msg.WarningBox(listMsg.JoinToString(string.Empty).TrimStart());
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ChkFty_Lock(DataTable dt)
+        {
+            DualResult result;
+            string sql_chk = @"
+select    f.poid
+        , f.seq1
+        , f.seq2
+        , f.Roll
+		, f.Dyelot
+        , StockQty = convert(decimal(10,2), t.StockQty)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+from FtyInventory f WITH (NOLOCK)
+inner join #tmp t on f.POID = t.PoId
+and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
+and t.Roll = f.Roll and t.Dyelot = f.Dyelot
+and t.StockType = f.StockType
+where   1=1
+and f.Lock = 1
+";
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sql_chk, out DataTable datacheck)))
+            {
+                this.ShowErr(sql_chk, result);
+                return false;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    string ids = string.Empty;
+                    foreach (DataRow tmp in datacheck.Rows)
+                    {
+                        ids += string.Format(
+                            "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked" + Environment.NewLine,
+                            tmp["poid"],
+                            tmp["seq1"],
+                            tmp["seq2"],
+                            tmp["roll"],
+                            tmp["Dyelot"]);
+                    }
+
+                    MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 檢查正/負庫存
+        /// </summary>
+        /// <returns>bool</returns>
+        private bool ChkFtyinventory_Balance(DataTable dt, bool isConfirmed)
+        {
+            string chk_sql = string.Empty;
+            DualResult result;
+
+            // 如果是Revise, 就用差異值來判斷, 因為通常Confirmed時庫存數量已被扣掉, 但現在做法是庫存並未扣除,所以只能用差異的去更新庫存
+            // 如果是delete就扣除原本的數量就行
+            string symbol = string.Empty;
+
+            switch (this.strFunction)
+            {
+                case "P07":
+                case "P08":
+                    symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
+                    chk_sql = $@"
+
+select    f.poid
+        , f.seq1
+        , f.seq2
+        , f.Roll
+		, f.Dyelot
+        , StockQty = convert(decimal(10,2), t.StockQty)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+from FtyInventory f WITH (NOLOCK)
+inner join #tmp t on f.POID = t.PoId
+and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
+and t.Roll = f.Roll and t.Dyelot = f.Dyelot
+and t.StockType = f.StockType
+where   1=1
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) {symbol} < 0)  
+
+";
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out DataTable datacheck)))
+                    {
+                        this.ShowErr(chk_sql, result);
+                        return false;
+                    }
+                    else
+                    {
+                        if (datacheck.Rows.Count > 0)
+                        {
+                            string ids = string.Empty;
+                            foreach (DataRow tmp in datacheck.Rows)
+                            {
+                                ids += string.Format(
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than stock qty: {5}" + Environment.NewLine,
+                                    tmp["poid"],
+                                    tmp["seq1"],
+                                    tmp["seq2"],
+                                    tmp["roll"],
+                                    tmp["balanceqty"],
+                                    tmp["stockqty"],
+                                    tmp["Dyelot"]);
+                            }
+
+                            MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                            return false;
+                        }
+                    }
+
+                    break;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 初始化, 設定表頭控制像是否能編輯
+        /// </summary>
+        /// <param name="canEdit">是否能編輯</param>
+        public void Initl(bool canEdit)
+        {
+            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @",,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
+
+            // MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",,A,Accessory");
+            if (!canEdit)
+            {
+                this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab
+                this.dateCreate.Value1 = null;
+                this.dateCreate.Value2 = null;
+                this.txtSPNoStart.Text = string.Empty;
+                this.txtSPNoEnd.Text = string.Empty;
+                this.comboFunction.SelectedIndex = 0;
+                this.comboFunction.SelectedIndex = 0;
+            }
+            else
+            {
+                this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
+                this.strFunction = this.comboFunction.SelectedValue.ToString();
+                this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
+            }
+
+            this.comboFunction.Enabled = canEdit;
+            this.checkIncludeCompleteItem.Enabled = canEdit;
+            this.dateCreate.Enabled = canEdit;
+            this.comboMaterialType_Sheet1.Enabled = canEdit;
+            this.txtSPNoStart.Enabled = canEdit;
+            this.txtSPNoEnd.Enabled = canEdit;
+            this.btnQuery.Visible = canEdit;
+            this.EditMode = canEdit;
+        }
+
+        /// <summary>
+        /// 設定從其他功能跳轉過來, 預先設定ID,FormName
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="formName">程式代號</param>
+        public void SetFilter(string id, string formName)
+        {
+            this.strTransID = id;
+            this.strFunction = formName;
+        }
+
+        /// <summary>
+        /// Change Grid1 Color
+        /// </summary>
+        private void ChangeGridColor()
+        {
+            // 設定detailGrid Rows 是否可以編輯
+            this.gridUpdate.RowEnter += this.Detailgrid_RowEnter;
+            this.gridUpdate.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            for (int index = 0; index < this.gridUpdate.Rows.Count; index++)
+            {
+                DataRow dr = this.gridUpdate.GetDataRow(index);
+                if (this.gridUpdate.Rows.Count <= index || index < 0)
+                {
+                    return;
+                }
+
+                int i = index;
+
+                // 反灰不能勾選
+                if (dr["SentToWMS"].ToString() == "V" && !MyUtility.Check.Empty(dr["CompleteTime"]))
+                {
+                    this.gridUpdate.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                }
+            }
+        }
+
+        #endregion
     }
 }
