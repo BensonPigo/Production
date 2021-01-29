@@ -2571,6 +2571,9 @@
     <Build Include="dbo\Tables\Order_BOA_Matching.sql" />
     <Build Include="dbo\Tables\HealthLabelSupp_FtyExpiration.sql" />
     <Build Include="dbo\Tables\Brand_Month.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_Report_QtyBreakdown.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_Report_FabColorCombination.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_Report_AccColorCombination.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

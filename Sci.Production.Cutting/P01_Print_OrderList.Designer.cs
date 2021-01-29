@@ -42,11 +42,16 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
+            this.rdExcludeCancelQty = new Sci.Win.UI.RadioButton();
+            this.rdIncludeCancelQty = new Sci.Win.UI.RadioButton();
+            this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.groupBox1.SuspendLayout();
+            this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioGroup1);
             this.groupBox1.Controls.Add(this.radioCuttingTape);
             this.groupBox1.Controls.Add(this.radioCuttingschedule);
             this.groupBox1.Controls.Add(this.radioQtyBreakdown_PoCombbySPList);
@@ -59,7 +64,7 @@
             this.groupBox1.Controls.Add(this.radioEachConsVSOrderQtyBDown);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(410, 319);
+            this.groupBox1.Size = new System.Drawing.Size(410, 354);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             // 
@@ -92,7 +97,7 @@
             this.radioQtyBreakdown_PoCombbySPList.AutoSize = true;
             this.radioQtyBreakdown_PoCombbySPList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioQtyBreakdown_PoCombbySPList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioQtyBreakdown_PoCombbySPList.Location = new System.Drawing.Point(6, 200);
+            this.radioQtyBreakdown_PoCombbySPList.Location = new System.Drawing.Point(6, 227);
             this.radioQtyBreakdown_PoCombbySPList.Name = "radioQtyBreakdown_PoCombbySPList";
             this.radioQtyBreakdown_PoCombbySPList.Size = new System.Drawing.Size(296, 24);
             this.radioQtyBreakdown_PoCombbySPList.TabIndex = 6;
@@ -130,7 +135,7 @@
             this.radioConsumptionCalculateByMarkerListConsPerPC.AutoSize = true;
             this.radioConsumptionCalculateByMarkerListConsPerPC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioConsumptionCalculateByMarkerListConsPerPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioConsumptionCalculateByMarkerListConsPerPC.Location = new System.Drawing.Point(6, 290);
+            this.radioConsumptionCalculateByMarkerListConsPerPC.Location = new System.Drawing.Point(6, 317);
             this.radioConsumptionCalculateByMarkerListConsPerPC.Name = "radioConsumptionCalculateByMarkerListConsPerPC";
             this.radioConsumptionCalculateByMarkerListConsPerPC.Size = new System.Drawing.Size(383, 24);
             this.radioConsumptionCalculateByMarkerListConsPerPC.TabIndex = 9;
@@ -154,7 +159,7 @@
             this.radioMarkerList.AutoSize = true;
             this.radioMarkerList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioMarkerList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioMarkerList.Location = new System.Drawing.Point(6, 260);
+            this.radioMarkerList.Location = new System.Drawing.Point(6, 287);
             this.radioMarkerList.Name = "radioMarkerList";
             this.radioMarkerList.Size = new System.Drawing.Size(105, 24);
             this.radioMarkerList.TabIndex = 8;
@@ -178,7 +183,7 @@
             this.radioEachConsVSOrderQtyBDown.AutoSize = true;
             this.radioEachConsVSOrderQtyBDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.radioEachConsVSOrderQtyBDown.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioEachConsVSOrderQtyBDown.Location = new System.Drawing.Point(6, 230);
+            this.radioEachConsVSOrderQtyBDown.Location = new System.Drawing.Point(6, 257);
             this.radioEachConsVSOrderQtyBDown.Name = "radioEachConsVSOrderQtyBDown";
             this.radioEachConsVSOrderQtyBDown.Size = new System.Drawing.Size(350, 24);
             this.radioEachConsVSOrderQtyBDown.TabIndex = 7;
@@ -216,9 +221,43 @@
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
+            // rdExcludeCancelQty
+            // 
+            this.rdExcludeCancelQty.AutoSize = true;
+            this.rdExcludeCancelQty.Checked = true;
+            this.rdExcludeCancelQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdExcludeCancelQty.Location = new System.Drawing.Point(148, 12);
+            this.rdExcludeCancelQty.Name = "rdExcludeCancelQty";
+            this.rdExcludeCancelQty.Size = new System.Drawing.Size(148, 21);
+            this.rdExcludeCancelQty.TabIndex = 189;
+            this.rdExcludeCancelQty.TabStop = true;
+            this.rdExcludeCancelQty.Text = "Exclude Cancel Qty";
+            this.rdExcludeCancelQty.UseVisualStyleBackColor = true;
+            // 
+            // rdIncludeCancelQty
+            // 
+            this.rdIncludeCancelQty.AutoSize = true;
+            this.rdIncludeCancelQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdIncludeCancelQty.Location = new System.Drawing.Point(1, 12);
+            this.rdIncludeCancelQty.Name = "rdIncludeCancelQty";
+            this.rdIncludeCancelQty.Size = new System.Drawing.Size(144, 21);
+            this.rdIncludeCancelQty.TabIndex = 188;
+            this.rdIncludeCancelQty.Text = "Include Cancel Qty";
+            this.rdIncludeCancelQty.UseVisualStyleBackColor = true;
+            // 
+            // radioGroup1
+            // 
+            this.radioGroup1.Controls.Add(this.rdIncludeCancelQty);
+            this.radioGroup1.Controls.Add(this.rdExcludeCancelQty);
+            this.radioGroup1.Location = new System.Drawing.Point(28, 190);
+            this.radioGroup1.Name = "radioGroup1";
+            this.radioGroup1.Size = new System.Drawing.Size(298, 36);
+            this.radioGroup1.TabIndex = 183;
+            this.radioGroup1.TabStop = false;
+            // 
             // P01_Print_OrderList
             // 
-            this.ClientSize = new System.Drawing.Size(545, 343);
+            this.ClientSize = new System.Drawing.Size(558, 378);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnToExcel);
             this.Controls.Add(this.label5);
@@ -232,6 +271,8 @@
             this.Controls.SetChildIndex(this.btnCancel, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.radioGroup1.ResumeLayout(false);
+            this.radioGroup1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -252,5 +293,8 @@
         private Win.UI.RadioButton radioCuttingWorkOrder;
         private Win.UI.RadioButton radioCuttingschedule;
         private Win.UI.RadioButton radioCuttingTape;
+        private Win.UI.RadioButton rdExcludeCancelQty;
+        private Win.UI.RadioButton rdIncludeCancelQty;
+        private Win.UI.RadioGroup radioGroup1;
     }
 }
