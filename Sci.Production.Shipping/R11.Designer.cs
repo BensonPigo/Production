@@ -334,6 +334,8 @@
             // chkExcludePackingFOC
             // 
             this.chkExcludePackingFOC.AutoSize = true;
+            this.chkExcludePackingFOC.Checked = true;
+            this.chkExcludePackingFOC.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludePackingFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkExcludePackingFOC.Location = new System.Drawing.Point(13, 359);
             this.chkExcludePackingFOC.Name = "chkExcludePackingFOC";
@@ -345,6 +347,8 @@
             // chkExcludePackingLocalOrder
             // 
             this.chkExcludePackingLocalOrder.AutoSize = true;
+            this.chkExcludePackingLocalOrder.Checked = true;
+            this.chkExcludePackingLocalOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludePackingLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkExcludePackingLocalOrder.Location = new System.Drawing.Point(13, 386);
             this.chkExcludePackingLocalOrder.Name = "chkExcludePackingLocalOrder";
