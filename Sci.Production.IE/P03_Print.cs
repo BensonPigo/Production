@@ -192,7 +192,7 @@ select   a.GroupKey
         ,a.No
         ,[IsHide] = isnull(a.IsHide, 0)
         ,[GroupHeader] = iif(left(a.OperationID, 2) = '--', '', ld.OperationID)
-        ,[IsShowinIEP03] = cast(isnull(show.IsShowinIEP03, 0) as bit)
+        ,[IsShowinIEP03] = cast(iif( a.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
         ,[OtherBy] = concat(a.MachineTypeID,a.Attachment,a.Template,a.ThreadColor)
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID

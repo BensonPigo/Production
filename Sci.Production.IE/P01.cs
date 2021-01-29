@@ -129,7 +129,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,td.Template
       ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 	  ,o.MasterPlusGroup
-      ,[IsShow] = cast(isnull(show.val, 0) as bit)
+      ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
@@ -377,7 +377,7 @@ and IETMSID = '{this.CurrentMaintain["IETMSID"]}'
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OperationID"].ToString())
                     {
-                        if (e.FormattedValue.ToString().Substring(0, 2) == "--")
+                        if (e.FormattedValue.ToString().Length > 1 && e.FormattedValue.ToString().Substring(0, 2) == "--")
                         {
                             dr["OperationID"] = e.FormattedValue.ToString();
                             dr["OperationDescEN"] = string.Empty;
@@ -1560,7 +1560,7 @@ select id.SEQ,
 	s.IETMSVersion,
 	(isnull(o.SeamLength,0) * isnull(id.Frequency,0))  as ttlSeamLength ,
 	o.MasterPlusGroup,
-	[IsShow] = cast(isnull(show.val, 0) as bit)
+    [IsShow] = cast(iif( id.OperationID like '--%' , 1, isnull(show.val, 0)) as bit)
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
