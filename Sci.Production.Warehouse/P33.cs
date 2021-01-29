@@ -2400,7 +2400,7 @@ SELECT f.Refno
         ,iis.ColorID
 		,[SuppColor]=SuppCol.SuppColor
 		,[Seq]=iid.Seq1 +'-'+iid.Seq2
-		,[Desc]=f.DescDetail
+		,[Desc]=dbo.getmtldesc(iid.POID,iid.seq1,iid.seq2,2,0) 
 		,[Issue_Detail_Qty]=Cast( iid.Qty as int)
 		,[Issue_Summary_Qty]=Cast( iis.Qty as int)
 		,[Unit]=Unit.StockUnit
