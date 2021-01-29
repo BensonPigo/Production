@@ -307,7 +307,8 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
 			, BLNo = ''
 			, [NoExportCharges] = ''
 	from PackingList p WITH (NOLOCK) 
-	where not exists (
+	where (p.Type = 'F' or p.Type = 'L')
+    and not exists (
 		  		select 1 
 		  		from ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID) 
@@ -337,21 +338,14 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
                         sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipMode));
                     }
 
-                    if (!this.excludePackingFoc && !this.excludePackingLocalOrder)
+                    if (this.excludePackingFoc)
                     {
-                        sqlCmd.Append(string.Format(" and (p.Type = 'F' or p.Type = 'L') "));
+                        sqlCmd.Append(string.Format(" and p.Type != 'F' "));
                     }
-                    else
-                    {
-                        if (this.excludePackingFoc)
-                        {
-                            sqlCmd.Append(string.Format(" and p.Type != 'F' "));
-                        }
 
-                        if (this.excludePackingLocalOrder)
-                        {
-                            sqlCmd.Append(string.Format(" and p.Type != 'L' "));
-                        }
+                    if (this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and p.Type != 'L' "));
                     }
 
                     sqlCmd.Append(@")
@@ -547,7 +541,8 @@ PLData as (
             )
             , 1, 1, '')	
 	)SP
-	where not exists (
+	where (p.Type = 'F' or p.Type = 'L')
+    and not exists (
 		  		select 1 
 		  		from ShareExpense WITH (NOLOCK) 
 		  		where InvNo = p.ID)");
@@ -576,21 +571,14 @@ PLData as (
                         sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipMode));
                     }
 
-                    if (!this.excludePackingFoc && !this.excludePackingLocalOrder)
+                    if (this.excludePackingFoc)
                     {
-                        sqlCmd.Append(string.Format(" and (p.Type = 'F' or p.Type = 'L') "));
+                        sqlCmd.Append(string.Format(" and p.Type != 'F' "));
                     }
-                    else
-                    {
-                        if (this.excludePackingFoc)
-                        {
-                            sqlCmd.Append(string.Format(" and p.Type != 'F' "));
-                        }
 
-                        if (this.excludePackingLocalOrder)
-                        {
-                            sqlCmd.Append(string.Format(" and p.Type != 'L' "));
-                        }
+                    if (this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and p.Type != 'L' "));
                     }
 
                     sqlCmd.Append(@")
