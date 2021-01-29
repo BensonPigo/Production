@@ -123,7 +123,7 @@ from (
 	    , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
         , [IsGroupHeader] = cast(iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0) as bit)
 	    , [IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-        , [IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
+        , [IsShow] = cast(iif( ld.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
 	    , ld.ID
 	    , ld.GroupKey
 	    , ld.Ukey
@@ -1522,7 +1522,7 @@ select ID = null
 		,[IsHide] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0)))
 		,[IsGroupHeader] = iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0)
 		,[IsSewingOperation] = cast(iif(show.IsDesignatedArea = 1, 1, 0) as bit)
-        ,[IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
+        ,[IsShow] = cast(iif( ld.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
 	    , [sortNO] = case when iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) = 1 then 1 
                           when ld.No = '' 
                             and iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) = 0 
@@ -1720,7 +1720,7 @@ select ID = null
 	   ,[IsHide] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, iif(show.IsDesignatedArea = 1, 1, iif(show.IsSewingline = 0, 1, 0))) as bit)
 	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
 	   ,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
-       ,[IsShow] = cast(isnull(show.IsShowinIEP03, 0) as bit)
+       ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 outer apply (
