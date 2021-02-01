@@ -97,7 +97,7 @@ select l.StyleID
 	, ld.Annotation
 	, ld.GSD
 	, ld.Cycle
-	, [diff] = iif(isnull(ld.Cycle,0) = 0, 0, 1 - (ld.GSD / ld.Cycle))
+	, [diff] = iif(isnull(ld.Cycle,0) = 0, 0, 1 - (ld.Cycle * 1.0 / ld.GSD))
 from LineMapping l WITH (NOLOCK) 
 inner join LineMapping_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
