@@ -167,6 +167,7 @@ select distinct
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = sd.ToLocation
+,[Qty] = sd.Qty
 ,sd.Ukey
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
     when 'False' then 'Delete' end
@@ -254,6 +255,7 @@ and exists(
                     ToStockType = dr["ToStockType"].ToString(),
                     ToBarcode = dr["ToBarcode"].ToString(),
                     ToLocation = dr["ToLocation"].ToString(),
+                    Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
                     CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
@@ -663,6 +665,7 @@ select lt2.Id
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
+,[Qty] = f.InQty - f.OutQty + f.AdjustQty
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
     when 'False' then 'Delete' end
 ,[CmdTime] = GETDATE()
@@ -717,6 +720,7 @@ and exists(
                     Dyelot = s["Dyelot"].ToString(),
                     FromLocation = s["FromLocation"].ToString(),
                     ToLocation = s["ToLocation"].ToString(),
+                    Qty = (decimal)s["Qty"],
                     Barcode = s["Barcode"].ToString(),
                     Ukey = (long)s["Ukey"],
                     StockType = s["StockType"].ToString(),
