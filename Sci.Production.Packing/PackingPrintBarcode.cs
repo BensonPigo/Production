@@ -173,6 +173,8 @@ namespace Sci.Production.Packing
                                 Clipboard.SetImage(oriBitmap);
                                 tables.Cell(6, 1).Range.Paste();
                                 tables.Cell(6, 1).Range.InlineShapes[1].ScaleHeight = 40f;
+                                tables.Cell(6, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
+                                tables.Cell(6, 1).Range.InlineShapes[1].Height = (float)45;
                                 tables.Cell(6, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
 
                                 tables.Cell(1, 1).Range.Text = packingNo;
