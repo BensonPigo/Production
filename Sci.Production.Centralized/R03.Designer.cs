@@ -55,7 +55,11 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
+            this.numNewStyleBaseOn = new Sci.Win.UI.NumericUpDown();
+            this.labelmonth = new Sci.Win.UI.Label();
+            this.labelNewStyleBaseOn = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
             // print
@@ -75,6 +79,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.numNewStyleBaseOn);
+            this.groupBox1.Controls.Add(this.labelmonth);
+            this.groupBox1.Controls.Add(this.labelNewStyleBaseOn);
             this.groupBox1.Controls.Add(this.txtmultiSeason);
             this.groupBox1.Controls.Add(this.comboFtyZone);
             this.groupBox1.Controls.Add(this.lbFtyZone);
@@ -101,7 +108,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(4, -5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(419, 334);
+            this.groupBox1.Size = new System.Drawing.Size(419, 350);
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.GroupBox1_Enter);
@@ -125,6 +132,8 @@
             this.comboFtyZone.FilteMDivision = false;
             this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFtyZone.FormattingEnabled = true;
+            this.comboFtyZone.IsIncludeSampleRoom = false;
+            this.comboFtyZone.IsProduceFty = false;
             this.comboFtyZone.IssupportJunk = true;
             this.comboFtyZone.IsSupportUnselect = true;
             this.comboFtyZone.Location = new System.Drawing.Point(132, 180);
@@ -146,7 +155,7 @@
             // 
             this.chkType.AutoSize = true;
             this.chkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkType.Location = new System.Drawing.Point(4, 278);
+            this.chkType.Location = new System.Drawing.Point(4, 304);
             this.chkType.Name = "chkType";
             this.chkType.Size = new System.Drawing.Size(172, 21);
             this.chkType.TabIndex = 12;
@@ -155,6 +164,7 @@
             // 
             // comboDropDownListCategory
             // 
+            this.comboDropDownListCategory.AddAllItem = false;
             this.comboDropDownListCategory.BackColor = System.Drawing.Color.White;
             this.comboDropDownListCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownListCategory.FormattingEnabled = true;
@@ -207,7 +217,7 @@
             // label11
             // 
             this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(4, 302);
+            this.label11.Location = new System.Drawing.Point(4, 328);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(375, 23);
             this.label11.TabIndex = 218;
@@ -385,6 +395,36 @@
             this.label10.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label10.TextStyle.Color = System.Drawing.Color.Blue;
             // 
+            // numNewStyleBaseOn
+            // 
+            this.numNewStyleBaseOn.BackColor = System.Drawing.Color.White;
+            this.numNewStyleBaseOn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numNewStyleBaseOn.Location = new System.Drawing.Point(132, 278);
+            this.numNewStyleBaseOn.Name = "numNewStyleBaseOn";
+            this.numNewStyleBaseOn.Size = new System.Drawing.Size(53, 23);
+            this.numNewStyleBaseOn.TabIndex = 229;
+            this.numNewStyleBaseOn.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // labelmonth
+            // 
+            this.labelmonth.Location = new System.Drawing.Point(184, 278);
+            this.labelmonth.Name = "labelmonth";
+            this.labelmonth.Size = new System.Drawing.Size(61, 23);
+            this.labelmonth.TabIndex = 231;
+            this.labelmonth.Text = "month(s)";
+            // 
+            // labelNewStyleBaseOn
+            // 
+            this.labelNewStyleBaseOn.Location = new System.Drawing.Point(3, 278);
+            this.labelNewStyleBaseOn.Name = "labelNewStyleBaseOn";
+            this.labelNewStyleBaseOn.Size = new System.Drawing.Size(128, 23);
+            this.labelNewStyleBaseOn.TabIndex = 230;
+            this.labelNewStyleBaseOn.Text = "New Style Base on";
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(528, 370);
@@ -405,6 +445,7 @@
             this.Controls.SetChildIndex(this.label10, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -438,5 +479,8 @@
         private Class.ComboFtyZone comboFtyZone;
         private Win.UI.Label lbFtyZone;
         private Class.TxtmultiSeason txtmultiSeason;
+        private Win.UI.NumericUpDown numNewStyleBaseOn;
+        private Win.UI.Label labelmonth;
+        private Win.UI.Label labelNewStyleBaseOn;
     }
 }

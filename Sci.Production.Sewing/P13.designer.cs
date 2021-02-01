@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Sewing
 {
-    partial class P07
+    partial class P13
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -30,70 +30,48 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.lbReceiveDate = new Sci.Win.UI.Label();
+            this.lbTransferDate = new Sci.Win.UI.Label();
             this.lbPackID = new Sci.Win.UI.Label();
             this.lbSP = new Sci.Win.UI.Label();
-            this.dateReceive = new Sci.Win.UI.DateRange();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.txtsp = new Sci.Win.UI.TextBox();
             this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.dateTransfer = new Sci.Win.UI.DateRange();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
-            // lbReceiveDate
+            // lbTransferDate
             // 
-            this.lbReceiveDate.Location = new System.Drawing.Point(9, 9);
-            this.lbReceiveDate.Name = "lbReceiveDate";
-            this.lbReceiveDate.Size = new System.Drawing.Size(93, 23);
-            this.lbReceiveDate.TabIndex = 1;
-            this.lbReceiveDate.Text = "Receive Date";
-            this.lbReceiveDate.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.lbReceiveDate.TextStyle.Color = System.Drawing.Color.Black;
+            this.lbTransferDate.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.lbTransferDate.Location = new System.Drawing.Point(9, 9);
+            this.lbTransferDate.Name = "lbTransferDate";
+            this.lbTransferDate.Size = new System.Drawing.Size(93, 23);
+            this.lbTransferDate.TabIndex = 1;
+            this.lbTransferDate.Text = "Transfer Date";
+            this.lbTransferDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbPackID
             // 
+            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPackID.Location = new System.Drawing.Point(9, 46);
             this.lbPackID.Name = "lbPackID";
             this.lbPackID.Size = new System.Drawing.Size(93, 23);
             this.lbPackID.TabIndex = 2;
             this.lbPackID.Text = "Pack ID";
-            this.lbPackID.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbPackID.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // lbSP
             // 
+            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbSP.Location = new System.Drawing.Point(390, 46);
             this.lbSP.Name = "lbSP";
             this.lbSP.Size = new System.Drawing.Size(75, 23);
             this.lbSP.TabIndex = 3;
             this.lbSP.Text = "SP#";
-            this.lbSP.BackColor = System.Drawing.Color.LightSkyBlue;
             this.lbSP.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // dateReceive
-            // 
-            // 
-            // 
-            // 
-            this.dateReceive.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateReceive.DateBox1.Name = "";
-            this.dateReceive.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateReceive.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateReceive.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateReceive.DateBox2.Name = "";
-            this.dateReceive.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateReceive.DateBox2.TabIndex = 1;
-            this.dateReceive.IsSupportEditMode = false;
-            this.dateReceive.Location = new System.Drawing.Point(105, 9);
-            this.dateReceive.Name = "dateReceive";
-            this.dateReceive.Size = new System.Drawing.Size(280, 23);
-            this.dateReceive.TabIndex = 4;
             // 
             // txtPackID
             // 
@@ -103,7 +81,7 @@
             this.txtPackID.Location = new System.Drawing.Point(105, 46);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(163, 23);
-            this.txtPackID.TabIndex = 5;
+            this.txtPackID.TabIndex = 3;
             // 
             // txtsp
             // 
@@ -112,15 +90,15 @@
             this.txtsp.IsSupportEditMode = false;
             this.txtsp.Location = new System.Drawing.Point(468, 46);
             this.txtsp.Name = "txtsp";
-            this.txtsp.Size = new System.Drawing.Size(118, 23);
-            this.txtsp.TabIndex = 6;
+            this.txtsp.Size = new System.Drawing.Size(147, 23);
+            this.txtsp.TabIndex = 4;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(598, 9);
+            this.btnQuery.Location = new System.Drawing.Point(684, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 7;
+            this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -156,31 +134,53 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(672, 296);
+            this.grid1.Size = new System.Drawing.Size(748, 296);
             this.grid1.TabIndex = 8;
             // 
-            // P07
+            // dateTransfer
             // 
-            this.ClientSize = new System.Drawing.Size(696, 383);
+            // 
+            // 
+            // 
+            this.dateTransfer.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateTransfer.DateBox1.Name = "";
+            this.dateTransfer.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateTransfer.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateTransfer.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateTransfer.DateBox2.Name = "";
+            this.dateTransfer.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateTransfer.DateBox2.TabIndex = 1;
+            this.dateTransfer.IsSupportEditMode = false;
+            this.dateTransfer.Location = new System.Drawing.Point(107, 9);
+            this.dateTransfer.Name = "dateTransfer";
+            this.dateTransfer.Size = new System.Drawing.Size(280, 23);
+            this.dateTransfer.TabIndex = 10;
+            // 
+            // P13
+            // 
+            this.ClientSize = new System.Drawing.Size(772, 383);
+            this.Controls.Add(this.dateTransfer);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnQuery);
             this.Controls.Add(this.txtsp);
             this.Controls.Add(this.txtPackID);
-            this.Controls.Add(this.dateReceive);
             this.Controls.Add(this.lbSP);
             this.Controls.Add(this.lbPackID);
-            this.Controls.Add(this.lbReceiveDate);
-            this.Name = "P07";
+            this.Controls.Add(this.lbTransferDate);
+            this.Name = "P13";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P07. Query For Dry Room Receive Carton Record";
-            this.Controls.SetChildIndex(this.lbReceiveDate, 0);
+            this.Text = "P13.Query For Dry Room Transfer Record";
+            this.Controls.SetChildIndex(this.lbTransferDate, 0);
             this.Controls.SetChildIndex(this.lbPackID, 0);
             this.Controls.SetChildIndex(this.lbSP, 0);
-            this.Controls.SetChildIndex(this.dateReceive, 0);
             this.Controls.SetChildIndex(this.txtPackID, 0);
             this.Controls.SetChildIndex(this.txtsp, 0);
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
+            this.Controls.SetChildIndex(this.dateTransfer, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -190,14 +190,14 @@
 
         #endregion
 
-        private Win.UI.Label lbReceiveDate;
+        private Win.UI.Label lbTransferDate;
         private Win.UI.Label lbPackID;
         private Win.UI.Label lbSP;
-        private Win.UI.DateRange dateReceive;
         private Win.UI.TextBox txtPackID;
         private Win.UI.TextBox txtsp;
         private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.DateRange dateTransfer;
     }
 }
