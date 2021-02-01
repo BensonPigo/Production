@@ -51,6 +51,8 @@
             this.rdbtnDetailList = new Sci.Win.UI.RadioButton();
             this.rdbtnMainList = new Sci.Win.UI.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
+            this.chkExcludePackingFOC = new Sci.Win.UI.CheckBox();
+            this.chkExcludePackingLocalOrder = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -329,9 +331,37 @@
             this.label1.TabIndex = 102;
             this.label1.Text = "Report Type";
             // 
+            // chkExcludePackingFOC
+            // 
+            this.chkExcludePackingFOC.AutoSize = true;
+            this.chkExcludePackingFOC.Checked = true;
+            this.chkExcludePackingFOC.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExcludePackingFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludePackingFOC.Location = new System.Drawing.Point(13, 359);
+            this.chkExcludePackingFOC.Name = "chkExcludePackingFOC";
+            this.chkExcludePackingFOC.Size = new System.Drawing.Size(162, 21);
+            this.chkExcludePackingFOC.TabIndex = 116;
+            this.chkExcludePackingFOC.Text = "Exclude Packing FOC";
+            this.chkExcludePackingFOC.UseVisualStyleBackColor = true;
+            // 
+            // chkExcludePackingLocalOrder
+            // 
+            this.chkExcludePackingLocalOrder.AutoSize = true;
+            this.chkExcludePackingLocalOrder.Checked = true;
+            this.chkExcludePackingLocalOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExcludePackingLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludePackingLocalOrder.Location = new System.Drawing.Point(13, 386);
+            this.chkExcludePackingLocalOrder.Name = "chkExcludePackingLocalOrder";
+            this.chkExcludePackingLocalOrder.Size = new System.Drawing.Size(209, 21);
+            this.chkExcludePackingLocalOrder.TabIndex = 117;
+            this.chkExcludePackingLocalOrder.Text = "Exclude Packing Local Order";
+            this.chkExcludePackingLocalOrder.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(545, 385);
+            this.ClientSize = new System.Drawing.Size(545, 437);
+            this.Controls.Add(this.chkExcludePackingLocalOrder);
+            this.Controls.Add(this.chkExcludePackingFOC);
             this.Controls.Add(this.radioPanel2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateOnBoardDate);
@@ -380,6 +410,8 @@
             this.Controls.SetChildIndex(this.dateOnBoardDate, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
+            this.Controls.SetChildIndex(this.chkExcludePackingFOC, 0);
+            this.Controls.SetChildIndex(this.chkExcludePackingLocalOrder, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -414,5 +446,7 @@
         private Win.UI.RadioButton rdbtnDetailList;
         private Win.UI.RadioButton rdbtnMainList;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox chkExcludePackingFOC;
+        private Win.UI.CheckBox chkExcludePackingLocalOrder;
     }
 }
