@@ -60,7 +60,7 @@ namespace Sci.Production.Automation
                     ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
                     WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Receiving_Detail", bodyObject));
@@ -103,7 +103,7 @@ namespace Sci.Production.Automation
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Issue_Detail", bodyObject));
@@ -133,7 +133,7 @@ namespace Sci.Production.Automation
                 {
                     POID = dr["POID"].ToString(),
                     WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : ((DateTime?)dr["WhseClose"]).Value.ToString("yyyy/MM/dd"),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
@@ -167,6 +167,7 @@ select distinct
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = sd.ToLocation
+,[Qty] = sd.Qty
 ,sd.Ukey
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
     when 'False' then 'Delete' end
@@ -254,9 +255,10 @@ and exists(
                     ToStockType = dr["ToStockType"].ToString(),
                     ToBarcode = dr["ToBarcode"].ToString(),
                     ToLocation = dr["ToLocation"].ToString(),
+                    Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
@@ -328,7 +330,7 @@ and exists(
                     Refno = s["Refno"].ToString(),
                     FabricRelaxationID = s["FabricRelaxationID"].ToString(),
                     RelaxTime = (decimal)s["RelaxTime"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("RefnoRelaxtime", bodyObject));
@@ -424,7 +426,7 @@ select distinct
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now,
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
@@ -539,7 +541,7 @@ and exists(
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack_Detail", bodyObject));
@@ -627,7 +629,7 @@ and exists(
                     Ukey = (long)s["Ukey"],
                     Barcode = s["Barcode"].ToString(),
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt_Detail", bodyObject));
@@ -663,6 +665,7 @@ select lt2.Id
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
+,[Qty] = f.InQty - f.OutQty + f.AdjustQty
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
     when 'False' then 'Delete' end
 ,[CmdTime] = GETDATE()
@@ -717,11 +720,12 @@ and exists(
                     Dyelot = s["Dyelot"].ToString(),
                     FromLocation = s["FromLocation"].ToString(),
                     ToLocation = s["ToLocation"].ToString(),
+                    Qty = (decimal)s["Qty"],
                     Barcode = s["Barcode"].ToString(),
                     Ukey = (long)s["Ukey"],
                     StockType = s["StockType"].ToString(),
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("LocationTrans_Detail", bodyObject));
@@ -807,7 +811,7 @@ and exists(
                     Barcode = dr["Barcode"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Adjust_Detail", bodyObject));
