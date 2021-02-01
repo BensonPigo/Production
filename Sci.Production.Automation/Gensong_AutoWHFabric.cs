@@ -60,7 +60,7 @@ namespace Sci.Production.Automation
                     ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
                     WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Receiving_Detail", bodyObject));
@@ -103,7 +103,7 @@ namespace Sci.Production.Automation
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Issue_Detail", bodyObject));
@@ -133,7 +133,7 @@ namespace Sci.Production.Automation
                 {
                     POID = dr["POID"].ToString(),
                     WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : ((DateTime?)dr["WhseClose"]).Value.ToString("yyyy/MM/dd"),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("WHClose", bodyObject));
@@ -256,7 +256,7 @@ and exists(
                     ToLocation = dr["ToLocation"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("SubTransfer_Detail", bodyObject));
@@ -328,7 +328,7 @@ and exists(
                     Refno = s["Refno"].ToString(),
                     FabricRelaxationID = s["FabricRelaxationID"].ToString(),
                     RelaxTime = (decimal)s["RelaxTime"],
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("RefnoRelaxtime", bodyObject));
@@ -424,7 +424,7 @@ select distinct
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now,
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Cutplan_Detail", bodyObject));
@@ -539,7 +539,7 @@ and exists(
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("BorrowBack_Detail", bodyObject));
@@ -627,7 +627,7 @@ and exists(
                     Ukey = (long)s["Ukey"],
                     Barcode = s["Barcode"].ToString(),
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("ReturnReceipt_Detail", bodyObject));
@@ -721,7 +721,7 @@ and exists(
                     Ukey = (long)s["Ukey"],
                     StockType = s["StockType"].ToString(),
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("LocationTrans_Detail", bodyObject));
@@ -807,7 +807,7 @@ and exists(
                     Barcode = dr["Barcode"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure("Adjust_Detail", bodyObject));
