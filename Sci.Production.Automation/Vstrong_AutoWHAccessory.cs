@@ -60,7 +60,7 @@ namespace Sci.Production.Automation
                     ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
                     WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Receiving_Detail", bodyObject));
@@ -102,7 +102,7 @@ namespace Sci.Production.Automation
                     StockSeq2 = dr["StockSeq2"].ToString(),
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Issue_Detail", bodyObject));
@@ -184,7 +184,7 @@ and exists(
                     Ukey = (long)dr["Ukey"],
                     StockType = dr["StockType"].ToString(),
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("RemoveC_Detail", bodyObject));
@@ -290,7 +290,7 @@ and exists(
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("SubTransfer_Detail", bodyObject));
@@ -320,7 +320,7 @@ and exists(
                 {
                     POID = dr["POID"].ToString(),
                     WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : ((DateTime?)dr["WhseClose"]).Value.ToString("yyyy/MM/dd"),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("WHClose", bodyObject));
@@ -398,7 +398,7 @@ and exists(
                     StockType = s["StockType"].ToString(),
                     Ukey = (long)s["Ukey"],
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("ReturnReceipt_Detail", bodyObject));
@@ -495,7 +495,7 @@ union all
                     Qty = (decimal)dr["Qty"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("BorrowBack_Detail", bodyObject));
@@ -582,7 +582,7 @@ and exists(
                     Ukey = (long)s["Ukey"],
                     StockType = s["StockType"].ToString(),
                     Status = s["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("LocationTrans_Detail", bodyObject));
@@ -666,7 +666,7 @@ and exists(
                     QtyAfter = (decimal)dr["QtyAfter"],
                     Ukey = (long)dr["Ukey"],
                     Status = dr["Status"].ToString(),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Adjust_Detail", bodyObject));
