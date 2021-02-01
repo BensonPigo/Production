@@ -614,7 +614,8 @@ else
 				t.CMPLTDATE	   = s.CMPLTDATE,
 				t.HangerPack = s.HangerPack,
 				t.DelayCode = s.DelayCode,
-				t.DelayDesc = s.DelayDesc
+				t.DelayDesc = s.DelayDesc,
+				t.CDCodeNew = s.CDCodeNew
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -647,6 +648,7 @@ else
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
+			, CDCodeNew
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -678,6 +680,7 @@ else
 			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, isnull (s.NeedProduction, 0)		, isnull (s.KeepPanels, 0)
 			, isnull (s.IsBuyBack, 0), isnull (s.BuyBackReason, '')		, isnull (s.IsBuyBackCrossArticle, 0) , isnull (s.IsBuyBackCrossSizeCode, 0)
 			, s.KpiEachConsCheck	, s.CMPLTDATE			, s.HangerPack			,s.DelayCode			,s.DelayDesc
+			, s.CDCodeNew
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
