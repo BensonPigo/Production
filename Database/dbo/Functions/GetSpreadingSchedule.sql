@@ -1,5 +1,5 @@
 ﻿
-CREATE FUNCTION GetSpreadingSchedule
+CREATE FUNCTION [dbo].[GetSpreadingSchedule]
 (	
 	@FactoryID varchar(8),
 	@EstCutDate Date,
@@ -70,10 +70,16 @@ RETURN
 	) CutQty
 	outer apply
 	(
-		Select actcutdate = iif(sum(cut_b.Layer) = w.Layer, Max(cut.cdate),null)
-		From cuttingoutput cut WITH (NOLOCK) 
-		inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
-		Where cut_b.workorderukey = w.Ukey and cut.Status != 'New' 
+		select actcutdate = max(x.actcutdate)
+		from WorkOrder w2 with(nolock)
+		outer apply (
+			Select actcutdate = iif(sum(cut_b.Layer) = w2.Layer, Max(cut.cdate),null)
+			From cuttingoutput cut WITH (NOLOCK) 
+			inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
+			Where cut_b.workorderukey = w2.Ukey and cut.Status != 'New'
+		)x
+		where w2.CutRef = w.CutRef
+		and w2.FactoryID = @FactoryID
 	) act
 
 	where 1=1

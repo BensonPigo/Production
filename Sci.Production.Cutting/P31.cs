@@ -220,18 +220,19 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                .Text("Suspend", header: "Suspend", width: Widths.AnsiChars(3), iseditingreadonly: true, settings: suspend)
                .Text("MaterialStatus", header: "Material\r\nStatus", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), settings: cutRef)
-               .Numeric("Cutno", header: "Cutno", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("Markername", header: "Maker\r\nName", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(3), iseditingreadonly: true)
-               .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Text("FabricCombo", header: "Fabric\r\nCombo", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Text("FabricPanelCode", header: "Fab_Panel\r\nCode", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
                .Text("ColorID", header: "Color", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("multisize", header: "Size", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(3), iseditingreadonly: true)
-               .Text("TotalCutQty", header: "Total CutQty", width: Widths.AnsiChars(12), iseditingreadonly: true)
+               .Text("TotalCutQty", header: "Total\r\nCutQty", width: Widths.AnsiChars(12), iseditingreadonly: true)
                .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Date("EstCutDate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Date("actcutdate", header: "Act. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("CutplanID", header: "CutPlan#", width: Widths.AnsiChars(14), iseditingreadonly: true)
                .Text("IsOutStanding", header: "Is OutStanding", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -409,6 +410,11 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
             x.ToList().ForEach(f => f["SpreadingSchdlSeq"] = DBNull.Value);
             foreach (DataRow dr in x)
             {
+                if (i > 999)
+                {
+                    break;
+                }
+
                 var sameCutref = x.Where(w => MyUtility.Check.Empty(w["SpreadingSchdlSeq"])
                     && MyUtility.Convert.GetString(w["CutRef"]) == MyUtility.Convert.GetString(dr["CutRef"]));
                 foreach (DataRow cdr in sameCutref)
