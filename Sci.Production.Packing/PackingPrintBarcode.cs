@@ -163,6 +163,7 @@ namespace Sci.Production.Packing
                                 string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
                                 string packingNo = "PG#.: " + printData.Rows[i]["ID"];
                                 string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
+                                string style = "Style#.: " + printData.Rows[i]["StyleID"];
                                 string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = printData.Rows[i]["PONo"].ToString();
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
@@ -170,23 +171,26 @@ namespace Sci.Production.Packing
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode);
                                 Clipboard.SetImage(oriBitmap);
-                                tables.Cell(5, 1).Range.Paste();
-                                tables.Cell(5, 1).Range.InlineShapes[1].ScaleHeight = 40f;
-                                tables.Cell(5, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+                                tables.Cell(6, 1).Range.Paste();
+                                tables.Cell(6, 1).Range.InlineShapes[1].ScaleHeight = 40f;
+                                tables.Cell(6, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
+                                tables.Cell(6, 1).Range.InlineShapes[1].Height = (float)45;
+                                tables.Cell(6, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
 
                                 tables.Cell(1, 1).Range.Text = packingNo;
                                 tables.Cell(2, 1).Range.Text = spNo;
+                                tables.Cell(3, 1).Range.Text = style;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
                                 {
                                     string madein = "Made in " + MyUtility.Convert.GetString(MyUtility.GetValue.Lookup($"select Alias from country where id = (select countryid from factory where id = '{Env.User.Factory}')"));
                                     string deldate = "del date: " + (MyUtility.Check.Empty(printData.Rows[i]["BuyerDelivery"]) ? string.Empty : ((DateTime)printData.Rows[i]["BuyerDelivery"]).ToString("yyyy/MM/dd"));
-                                    tables.Cell(3, 1).Range.Text = madein;
-                                    tables.Cell(3, 2).Range.Text = deldate;
+                                    tables.Cell(4, 1).Range.Text = madein;
+                                    tables.Cell(4, 2).Range.Text = deldate;
                                 }
 
-                                tables.Cell(4, 2).Range.Text = poNo;
+                                tables.Cell(5, 2).Range.Text = poNo;
                                 #endregion
                             }
                             else
