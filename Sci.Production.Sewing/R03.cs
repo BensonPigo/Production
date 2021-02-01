@@ -25,6 +25,7 @@ namespace Sci.Production.Sewing
         private string factory;
         private string style;
         private string category;
+        private decimal months;
         private DataTable Factory;
         private DataTable Brand;
         private DataTable BrandFactory;
@@ -73,6 +74,7 @@ namespace Sci.Production.Sewing
             this.factory = this.comboFactory.Text;
             this.style = this.txtstyle.Text;
             this.category = this.comboDropDownListCategory.SelectedValue.ToString();
+            this.months = this.numNewStyleBaseOn.Value;
             return base.ValidateInput();
         }
 
@@ -178,6 +180,11 @@ with tmp1stData as (
             if (!MyUtility.Check.Empty(this.style))
             {
                 sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", this.style));
+            }
+
+            if (this.months != 0)
+            {
+                sqlCmd.Append(string.Format(@" and dateadd(month, {0}, o.SciDelivery ) < so.OutputDate", -this.months));
             }
 
             if (this.chkType.Checked)
@@ -378,6 +385,21 @@ select  StyleID
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
+		, [Remark] = Stuff((select concat('/', a.FactoryID + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
+																	   when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
+																	   else concat((Stuff((
+																						select distinct concat(' ', t.SewingLineID)
+																						from tmp1stData t
+																						where t.StyleID = tmp4thData.StyleID
+																						and t.BrandID = tmp4thData.BrandID
+																						and t.StyleDesc = tmp4thData.StyleDesc
+																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
+																	   end))
+						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
+											a.BrandID = tmp4thData.BrandID and
+											a.StyleDesc = tmp4thData.StyleDesc 
+						group by a.FactoryID FOR XML PATH(''))
+				,1,1,'') 
 from tmp4thData
 Order by StyleID, SeasonID",
                 sqlCmd.ToString());
@@ -519,6 +541,21 @@ select  POID
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
+		, [Remark] = Stuff((select concat('/', a.FactoryID + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
+																	   when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
+																	   else concat((Stuff((
+																						select distinct concat(' ', t.SewingLineID)
+																						from tmp1stData t
+																						where t.StyleID = tmp4thData.StyleID
+																						and t.BrandID = tmp4thData.BrandID
+																						and t.StyleDesc = tmp4thData.StyleDesc
+																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
+																	   end))
+						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
+											a.BrandID = tmp4thData.BrandID and
+											a.StyleDesc = tmp4thData.StyleDesc 
+						group by a.FactoryID FOR XML PATH(''))
+				,1,1,'') 
 from tmp4thData
 Order by POID, StyleID, BrandID, CdCodeID, SeasonID",
                 sqlCmd.ToString());
@@ -559,6 +596,21 @@ select  ProgramID
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
+		, [Remark] = Stuff((select concat('/', a.FactoryID + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
+																	   when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
+																	   else concat((Stuff((
+																						select distinct concat(' ', t.SewingLineID)
+																						from tmp1stData t
+																						where t.StyleID = tmp4thData.StyleID
+																						and t.BrandID = tmp4thData.BrandID
+																						and t.StyleDesc = tmp4thData.StyleDesc
+																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
+																	   end))
+						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
+											a.BrandID = tmp4thData.BrandID and
+											a.StyleDesc = tmp4thData.StyleDesc 
+						group by a.FactoryID FOR XML PATH(''))
+				,1,1,'') 
 from tmp4thData
 Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID",
                 sqlCmd.ToString());
@@ -706,7 +758,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
             worksheet = excel.ActiveWorkbook.Worksheets[4];
             worksheet.Select();
             intRowsStart = 2;
-            objArray = new object[1, 13];
+            objArray = new object[1, 14];
             foreach (DataRow dr in this.Style.Rows)
             {
                 objArray[0, 0] = dr["StyleID"];
@@ -722,7 +774,8 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
                 objArray[0, 10] = dr["TtlManhour"];
                 objArray[0, 11] = dr["PPH"];
                 objArray[0, 12] = dr["EFF"];
-                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 13] = dr["Remark"];
+                worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -804,7 +857,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
             worksheet = excel.ActiveWorkbook.Worksheets[8];
             worksheet.Select();
             intRowsStart = 2;
-            objArray = new object[1, 13];
+            objArray = new object[1, 14];
             foreach (DataRow dr in this.POCombo.Rows)
             {
                 objArray[0, 0] = dr["POID"];
@@ -820,7 +873,8 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
                 objArray[0, 10] = dr["TtlManhour"];
                 objArray[0, 11] = dr["PPH"];
                 objArray[0, 12] = dr["EFF"];
-                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 13] = dr["Remark"];
+                worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -832,7 +886,7 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
             worksheet = excel.ActiveWorkbook.Worksheets[9];
             worksheet.Select();
             intRowsStart = 2;
-            objArray = new object[1, 12];
+            objArray = new object[1, 13];
             foreach (DataRow dr in this.Program.Rows)
             {
                 objArray[0, 0] = dr["ProgramID"];
@@ -847,7 +901,8 @@ Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
                 objArray[0, 9] = dr["TtlManhour"];
                 objArray[0, 10] = dr["PPH"];
                 objArray[0, 11] = dr["EFF"];
-                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 12] = dr["Remark"];
+                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
