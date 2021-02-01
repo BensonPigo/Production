@@ -42,7 +42,6 @@ namespace Sci.Production.Subcon
                 = string.Format(
                     @"
 select oq.ID
-	, oq.Article
 	, [Qty] = SUM(oq.Qty) * ot.TmsQty
 	, ap.PoQty
 from Order_Qty oq with (nolock)
@@ -53,7 +52,6 @@ outer apply (
 )ot
 outer apply (
 	select apd.OrderID
-		, apd.Article
 		, [PoQty] = sum(apd.PoQty)
 	from ArtworkPO ap WITH (NOLOCK) 
 	inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.id=apd.id 
@@ -61,10 +59,10 @@ outer apply (
 	and ap.ArtworkTypeID = '{1}'
 	and ap.ApvDate is not null
 	and apd.OrderID = oq.ID
-	group by apd.OrderID, apd.Article
+	group by apd.OrderID
 )ap
 where exists (select 1 from ArtworkPO_Detail ad with (nolock) where ad.ID = '{0}' and ad.OrderID = oq.ID)
-group by oq.ID, ot.TmsQty, ap.PoQty, oq.Article",
+group by oq.ID, ot.TmsQty, ap.PoQty",
                     artworkPOID,
                     artworkTypeID);
             #endregion
