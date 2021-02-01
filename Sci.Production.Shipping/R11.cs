@@ -147,6 +147,8 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.rdbtnMainList.Checked = true;
                 this.chkExcludePackingFOC.Enabled = true;
                 this.chkExcludePackingLocalOrder.Enabled = true;
+                this.chkExcludePackingFOC.Checked = true;
+                this.chkExcludePackingLocalOrder.Checked = true;
             }
             else if (this.radioRawMaterial.Checked)
             {
