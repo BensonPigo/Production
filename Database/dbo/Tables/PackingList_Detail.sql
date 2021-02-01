@@ -65,6 +65,7 @@
     [StaggeredCFAInspectionRecordID] VARCHAR(13) NOT NULL DEFAULT (''), 
 	FirstStaggeredCFAInspectionRecordID Varchar(500) NOT NULL CONSTRAINT [DF_PackingList_Detail_FirstStaggeredCFAInspectionRecordID] DEFAULT '',
 	PrePackQty int NOT NULL CONSTRAINT [DF_PackingList_Detail_PrePackQty]  DEFAULT(0),
+    [DRYTransferDate] DATE NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -257,3 +258,11 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 	@level2name = N'PrePackQty'
 ;
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'移轉日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'DRYTransferDate'
