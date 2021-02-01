@@ -40,8 +40,10 @@ RETURN
 
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
-	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef
-	left join SpreadingSchedule s with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
+	left join SpreadingSchedule s with(nolock) on	s.FactoryID = @FactoryID
+													and s.EstCutDate = @EstCutDate
+													and s.CutCellid = @CutCellid
+	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
 	outer apply
 	(
 		select article = stuff(
@@ -79,30 +81,25 @@ RETURN
 			Where cut_b.workorderukey = w2.Ukey and cut.Status != 'New'
 		)x
 		where w2.CutRef = w.CutRef
-		and w2.FactoryID = @FactoryID
+		and w2.FactoryID = w.FactoryID
 	) act
 
 	where 1=1
 	and o.Finished = 0
+	and w.FactoryID = @FactoryID
 	and (
 		(
 			@Ukey = 0 and @Cutref = ''
-			and w.FactoryID = @FactoryID
 			and w.EstCutDate <= @EstCutDate
 			and w.CutCellid = @CutCellid
 		)
 		or
 		(
 			@Ukey = 0 and w.CutRef = @Cutref
-			and w.FactoryID = @FactoryID
 		)
 		or
 		(
-			sd.SpreadingScheduleUkey = @Ukey
-			and w.FactoryID = @FactoryID
-			and s.FactoryID = @FactoryID
-			and s.EstCutDate = @EstCutDate
-			and s.CutCellid = @CutCellid
+			s.Ukey = @Ukey
 		)
 	)
 )
