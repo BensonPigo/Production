@@ -1239,5 +1239,17 @@ where id = '{spNo}' and Category = 'S'
         {
             this.txtartworktype_ftyArtworkType.ValidateControl();
         }
+
+        private void BtnPurchase_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas == null || this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Please import data first.");
+                return;
+            }
+
+            var frm = new P01_Purchase(this.CurrentMaintain);
+            frm.ShowDialog(this);
+        }
     }
 }

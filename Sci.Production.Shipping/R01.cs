@@ -129,6 +129,7 @@ select
     ,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
     ,g.Remark
     ,[PulloutComplete]=IIF(PulloutIdCount.Value = PulloutIdConfirmLockCount.Value AND PulloutIdCount.Value > 0 ,'True' ,'False')
+    ,[POD] = PulloutPortPOD.POD
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -153,6 +154,11 @@ OUTER APPLY(
 		WHERE INVNo=g.ID AND  (po.Status = 'Confirmed' OR po.Status = 'Locked')
 	) a
 )PulloutIdConfirmLockCount
+OUTER APPLY(
+    select [POD] = concat(p.ID, '-', p.Name)
+    from PulloutPort p
+    where g.DischargePortID = p.ID
+)PulloutPortPOD
 where 1=1"));
             }
             else
@@ -343,6 +349,7 @@ select DISTINCT
     , g.Vessel
     , g.BLNo
     , g.BL2No
+    ,[POD] = PulloutPortPOD.POD
 from GMTBooking g WITH (NOLOCK) 
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
@@ -360,6 +367,11 @@ SELECT [PulloutReportConfirmDate]=STUFF ((
 		)a WHERE a.AddDate <> '' for xml path('')
 	),1,1,'')
 )PulloutReportConfirmDate
+OUTER APPLY(
+    select [POD] = concat(p.ID, '-', p.Name)
+    from PulloutPort p
+    where g.DischargePortID = p.ID
+)PulloutPortPOD
 
 where pl.ID<>'' and 1=1 "));
             }
@@ -527,7 +539,7 @@ and exists (select 1
             if (this.reportType == "1")
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 30];
+                object[,] objArray = new object[1, 31];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -537,37 +549,38 @@ and exists (select 1
                     objArray[0, 4] = dr["FCRDate"];
                     objArray[0, 5] = dr["CustCDID"];
                     objArray[0, 6] = dr["Dest"];
-                    objArray[0, 7] = dr["ShipModeID"];
-                    objArray[0, 8] = dr["CYCFS"];
-                    objArray[0, 9] = dr["ShipTermID"];
-                    objArray[0, 10] = dr["Handle"];
-                    objArray[0, 11] = dr["DocumentRefNo"];
-                    objArray[0, 12] = dr["Forwarder"];
-                    objArray[0, 13] = dr["Vessel"];
-                    objArray[0, 14] = dr["ETD"];
-                    objArray[0, 15] = dr["ETA"];
-                    objArray[0, 16] = dr["SONo"];
-                    objArray[0, 17] = dr["SOCFMDate"];
-                    objArray[0, 18] = dr["CutOffDate"];
-                    objArray[0, 19] = dr["ShipPlanID"];
-                    objArray[0, 20] = dr["Status"];
-                    objArray[0, 21] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
-                    objArray[0, 22] = dr["TotalShipQty"];
-                    objArray[0, 23] = dr["TotalCTNQty"];
-                    objArray[0, 24] = dr["TotalGW"];
-                    objArray[0, 25] = dr["TotalCBM"];
-                    objArray[0, 26] = dr["AddDate"];
-                    objArray[0, 27] = dr["ConfirmDate"];
-                    objArray[0, 28] = dr["Remark"];
-                    objArray[0, 29] = dr["PulloutComplete"].ToString();
-                    worksheet.Range[string.Format("A{0}:AD{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 7] = dr["POD"];
+                    objArray[0, 8] = dr["ShipModeID"];
+                    objArray[0, 9] = dr["CYCFS"];
+                    objArray[0, 10] = dr["ShipTermID"];
+                    objArray[0, 11] = dr["Handle"];
+                    objArray[0, 12] = dr["DocumentRefNo"];
+                    objArray[0, 13] = dr["Forwarder"];
+                    objArray[0, 14] = dr["Vessel"];
+                    objArray[0, 15] = dr["ETD"];
+                    objArray[0, 16] = dr["ETA"];
+                    objArray[0, 17] = dr["SONo"];
+                    objArray[0, 18] = dr["SOCFMDate"];
+                    objArray[0, 19] = dr["CutOffDate"];
+                    objArray[0, 20] = dr["ShipPlanID"];
+                    objArray[0, 21] = dr["Status"];
+                    objArray[0, 22] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
+                    objArray[0, 23] = dr["TotalShipQty"];
+                    objArray[0, 24] = dr["TotalCTNQty"];
+                    objArray[0, 25] = dr["TotalGW"];
+                    objArray[0, 26] = dr["TotalCBM"];
+                    objArray[0, 27] = dr["AddDate"];
+                    objArray[0, 28] = dr["ConfirmDate"];
+                    objArray[0, 29] = dr["Remark"];
+                    objArray[0, 30] = dr["PulloutComplete"].ToString();
+                    worksheet.Range[string.Format("A{0}:AE{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 38];
+                object[,] objArray = new object[1, 39];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -596,18 +609,19 @@ and exists (select 1
                     objArray[0, 23] = dr["CBM"];
                     objArray[0, 24] = dr["CustCDID"];
                     objArray[0, 25] = dr["Dest"];
-                    objArray[0, 26] = dr["DocumentRefNo"];
-                    objArray[0, 27] = dr["Forwarder"];
-                    objArray[0, 28] = dr["ConfirmDate"];
-                    objArray[0, 29] = dr["AddName"];
-                    objArray[0, 30] = dr["AddDate"];
-                    objArray[0, 31] = dr["ETD"];
-                    objArray[0, 32] = dr["ETA"];
-                    objArray[0, 33] = dr["BLNo"];
-                    objArray[0, 34] = dr["BL2No"];
-                    objArray[0, 35] = dr["Vessel"];
-                    objArray[0, 36] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:AJ{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 26] = dr["POD"];
+                    objArray[0, 27] = dr["DocumentRefNo"];
+                    objArray[0, 28] = dr["Forwarder"];
+                    objArray[0, 29] = dr["ConfirmDate"];
+                    objArray[0, 30] = dr["AddName"];
+                    objArray[0, 31] = dr["AddDate"];
+                    objArray[0, 32] = dr["ETD"];
+                    objArray[0, 33] = dr["ETA"];
+                    objArray[0, 34] = dr["BLNo"];
+                    objArray[0, 35] = dr["BL2No"];
+                    objArray[0, 36] = dr["Vessel"];
+                    objArray[0, 37] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:AK{0}", intRowsStart)].Value2 = objArray;
                     if (this.hasDelivery &&
                         (MyUtility.Convert.GetDate(dr["BuyerDelivery"]) < this.dateDelivery.Value1 ||
                         MyUtility.Convert.GetDate(dr["BuyerDelivery"]) > this.dateDelivery.Value2))

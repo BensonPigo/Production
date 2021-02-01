@@ -2400,7 +2400,7 @@ SELECT f.Refno
         ,iis.ColorID
 		,[SuppColor]=SuppCol.SuppColor
 		,[Seq]=iid.Seq1 +'-'+iid.Seq2
-		,[Desc]=f.DescDetail
+		,[Desc]=dbo.getmtldesc(iid.POID,iid.seq1,iid.seq2,2,0) 
 		,[Issue_Detail_Qty]=Cast( iid.Qty as int)
 		,[Issue_Summary_Qty]=Cast( iis.Qty as int)
 		,[Unit]=Unit.StockUnit
@@ -3478,7 +3478,7 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
-,[Color] = po3.ColorID
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
 ,[Qty] = i2.Qty
@@ -3496,6 +3496,8 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 where i.Type = 'E'
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 

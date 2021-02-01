@@ -2264,6 +2264,7 @@ select  pd.ID
         , o.BuyerDelivery
         , pd.SCICtnNo
 		, pd.CustCTN
+        , o.StyleID
 from PackingList_Detail pd WITH (NOLOCK) 
 left join orders o with(nolock) on o.id = pd.OrderID
 outer apply (
