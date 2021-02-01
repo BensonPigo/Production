@@ -45,10 +45,21 @@ namespace Sci.Production.PublicForm
 
         private void GridSetup()
         {
+            DataGridViewGeneratorCheckBoxColumnSettings exWip = new DataGridViewGeneratorCheckBoxColumnSettings();
+            exWip.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid1.GetDataRow(e.RowIndex);
+                DataRow[] drs = ((DataTable)this.listControlBindingSource1.DataSource).Select($"FabricCombo = '{dr["FabricCombo"]}'");
+                foreach (DataRow item in drs)
+                {
+                    item["ExWip"] = e.FormattedValue;
+                    item.EndEdit();
+                }
+            };
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .CheckBox("ExWip", header: "Exclude in WIP", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("ExWip", header: "Exclude in WIP", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings:exWip)
                 .Text("FabricCode", header: "Fabric#", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(55), iseditingreadonly: true)
@@ -275,7 +286,7 @@ Delete Cutting_WIPExcludePatternPanel where id = '{0}'
 
                     DataTable sdt = (DataTable)this.listControlBindingSource1.DataSource;
                     string insertcmd = $@"insert into Cutting_WIPExcludePatternPanel(ID,PatternPanel,AddName,AddDate)
-select '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #tmp where ExWip = 1";
+select distinct '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #tmp where ExWip = 1";
                     DualResult result1 = MyUtility.Tool.ProcessWithDatatable(sdt, string.Empty, insertcmd, out DataTable odt);
                     if (!result1)
                     {
