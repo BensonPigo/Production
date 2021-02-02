@@ -304,6 +304,12 @@ order by a.OrderId,os.Seq",
                 }
             };
             #region SP#的Right click & Validating
+            this.orderid.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                e.IsEditable = !MyUtility.Convert.GetBool(dr["ImportFromDQS"]);
+            };
+
             this.orderid.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
