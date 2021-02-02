@@ -312,6 +312,8 @@
             this.txttpeuser1 = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser2 = new Sci.Production.Class.Txttpeuser();
             this.chkHangerPack = new Sci.Win.UI.CheckBox();
+            this.lbCDCodeNew = new Sci.Win.UI.Label();
+            this.displayCDCodeNew = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -328,6 +330,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayCDCodeNew);
+            this.detailcont.Controls.Add(this.lbCDCodeNew);
             this.detailcont.Controls.Add(this.chkHangerPack);
             this.detailcont.Controls.Add(this.chkNonRevenue);
             this.detailcont.Controls.Add(this.displayBuyBackReason);
@@ -3502,6 +3506,24 @@
             this.chkHangerPack.Text = "Hanger Pack";
             this.chkHangerPack.UseVisualStyleBackColor = true;
             // 
+            // lbCDCodeNew
+            // 
+            this.lbCDCodeNew.Location = new System.Drawing.Point(421, 336);
+            this.lbCDCodeNew.Name = "lbCDCodeNew";
+            this.lbCDCodeNew.Size = new System.Drawing.Size(96, 21);
+            this.lbCDCodeNew.TabIndex = 242;
+            this.lbCDCodeNew.Text = "CD Code (new)";
+            // 
+            // displayCDCodeNew
+            // 
+            this.displayCDCodeNew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCDCodeNew.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDCodeNew", true));
+            this.displayCDCodeNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCDCodeNew.Location = new System.Drawing.Point(519, 336);
+            this.displayCDCodeNew.Name = "displayCDCodeNew";
+            this.displayCDCodeNew.Size = new System.Drawing.Size(90, 21);
+            this.displayCDCodeNew.TabIndex = 243;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3817,5 +3839,7 @@
         private Win.UI.Button btnIntendedDeliveryDate;
         private Win.UI.CheckBox chkNonRevenue;
         private Win.UI.CheckBox chkHangerPack;
+        private Win.UI.DisplayBox displayCDCodeNew;
+        private Win.UI.Label lbCDCodeNew;
     }
 }
