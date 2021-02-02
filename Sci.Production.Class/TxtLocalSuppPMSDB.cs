@@ -80,8 +80,7 @@ from
 	select l.ID from [PMSDB\SPS].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
 	select l.ID from [PMSDB\SPR].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
 	select l.ID from [PMSDB\HZG].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
-	select l.ID from [PMSDB\HXG].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
-	select l.ID from [PMSDB\NAI].Production.dbo.LocalSupp l where l.Junk = 0 {1}
+	select l.ID from [PMSDB\HXG].Production.dbo.LocalSupp l where l.Junk = 0 {1}
 ) l
 where l.ID = '{0}'
 group by l.ID
@@ -124,8 +123,7 @@ from
 	select l.ID,l.Name,l.Abb from [PMSDB\SPS].Production.dbo.LocalSupp l where l.Junk = 0 {0} union
 	select l.ID,l.Name,l.Abb from [PMSDB\SPR].Production.dbo.LocalSupp l where l.Junk = 0 {0} union
 	select l.ID,l.Name,l.Abb from [PMSDB\HZG].Production.dbo.LocalSupp l where l.Junk = 0 {0} union
-	select l.ID,l.Name,l.Abb from [PMSDB\HXG].Production.dbo.LocalSupp l where l.Junk = 0 {0} union
-	select l.ID,l.Name,l.Abb from [PMSDB\NAI].Production.dbo.LocalSupp l where l.Junk = 0 {0}
+	select l.ID,l.Name,l.Abb from [PMSDB\HXG].Production.dbo.LocalSupp l where l.Junk = 0 {0}
 ) l
 group by l.ID 
 order by l.ID
@@ -165,8 +163,7 @@ from
 	select l.ID,l.Name,l.Abb from [PMSDB\SPS].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
 	select l.ID,l.Name,l.Abb from [PMSDB\SPR].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
 	select l.ID,l.Name,l.Abb from [PMSDB\HZG].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
-	select l.ID,l.Name,l.Abb from [PMSDB\HXG].Production.dbo.LocalSupp l where l.Junk = 0 {1} union
-	select l.ID,l.Name,l.Abb from [PMSDB\NAI].Production.dbo.LocalSupp l where l.Junk = 0 {1}
+	select l.ID,l.Name,l.Abb from [PMSDB\HXG].Production.dbo.LocalSupp l where l.Junk = 0 {1}
 ) l
 where l.ID = '{0}'
 group by l.ID 

@@ -65,13 +65,11 @@ namespace Sci.Production.Centralized
             {
                 strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
                 strSevers.Remove("PMSDB_TSR");
-                strSevers.Remove("PMSDB_NAI");
             }
             else
             {
                 strSevers = ConfigurationManager.AppSettings["TestingServer"].Split(',').ToList();
                 strSevers.Remove("testing_TSR");
-                strSevers.Remove("testing_NAI");
             }
 
             DataTable ftyServerDatas = new DataTable();
