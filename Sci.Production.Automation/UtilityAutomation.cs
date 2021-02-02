@@ -159,7 +159,7 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
-        /// SendWebAPI for WM_Auto Only
+        /// SendWebAPI for WM_Auto delete/Revise Only
         /// </summary>
         /// <param name="baseUrl">Base Url</param>
         /// <param name="requestUri">Request Url</param>
@@ -175,8 +175,8 @@ namespace Sci.Production.Automation
 
             if (!webApiBaseResult.isSuccess)
             {
-                automationErrMsg.errorCode = JsonConvert.DeserializeObject<IWebApiFailResponse>(webApiBaseResult.responseContent).Error_Code.ToString();
-                automationErrMsg.errorMsg = JsonConvert.DeserializeObject<IWebApiFailResponse>(webApiBaseResult.responseContent).Error.ToString();
+                automationErrMsg.errorCode = "99";
+                automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 SaveAutomationCheckMsg(automationErrMsg);
             }
@@ -233,12 +233,6 @@ namespace Sci.Production.Automation
         }
 
         public delegate ErrorRespone ParsingErrResponse(string webApiBaseResult);
-
-        public interface IWebApiFailResponse
-        {
-            int Error_Code { get; set; }
-            string Error { get; set; }
-        }
 
         public class ErrorRespone
         {

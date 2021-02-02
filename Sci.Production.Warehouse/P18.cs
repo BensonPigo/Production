@@ -1418,7 +1418,14 @@ when matched then
 
             // AutoWHFabric WebAPI for Gensong
             this.SentToGensong_AutoWHFabric(true);
-            this.SentToVstrong_AutoWH_ACC(true);
+
+            // AutoWH ACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Detail_New(dtDetail, "P18"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         // Unconfirm
@@ -1499,56 +1506,10 @@ where   f.lock=1
             #endregion 檢查庫存項WMSLock
 
             #region UnConfirmed 先檢查WMS是否傳送成功
-            DataTable dtDetail = new DataTable();
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-SELECT 
- [ID] = rd.id
-,[InvNo] = r.InvNo
-,[PoId] = rd.Poid
-,[Seq1] = rd.Seq1
-,[Seq2] = rd.Seq2
-,[Refno] = po3.Refno
-,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
-,[StockQty] = rd.Qty
-,[PoUnit] = ''
-,[ShipQty] = 0.00
-,[Color] = po3.ColorID
-,[SizeCode] = po3.SizeSpec
-,[Weight] = rd.Weight
-,[StockType] = rd.StockType
-,[MtlType] = Fabric.MtlTypeID
-,[Ukey] = rd.Ukey
-,[ETA] = null
-,[WhseArrival] = r.IssueDate
-,[Status] = 'Delete'
-FROM Production.dbo.TransferIn_Detail rd
-inner join Production.dbo.TransferIn r on rd.id = r.id
-inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
-	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
-left join Production.dbo.FtyInventory f on f.POID = rd.PoId
-	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
-	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
-	and f.StockType = rd.StockType
-LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
-	and FabricType='A'
-)
-and r.id = '{this.CurrentMaintain["id"]}'
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P08"))
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P08", "UnConfirmed"))
                 {
                     return;
                 }
@@ -1844,66 +1805,6 @@ and t.id = '{this.CurrentMaintain["id"]}'
                 }
 
                 Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-        }
-
-        /// <summary>
-        ///  AutoWH Acc WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            DataTable dtDetail = new DataTable();
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-SELECT 
- [ID] = rd.id
-,[InvNo] = r.InvNo
-,[PoId] = rd.Poid
-,[Seq1] = rd.Seq1
-,[Seq2] = rd.Seq2
-,[Refno] = po3.Refno
-,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
-,[StockQty] = rd.Qty
-,[PoUnit] = ''
-,[ShipQty] = 0.00
-,[Color] = po3.ColorID
-,[SizeCode] = po3.SizeSpec
-,[Weight] = rd.Weight
-,[StockType] = rd.StockType
-,[MtlType] = Fabric.MtlTypeID
-,[Ukey] = rd.Ukey
-,[ETA] = null
-,[WhseArrival] = r.IssueDate
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-FROM Production.dbo.TransferIn_Detail rd
-inner join Production.dbo.TransferIn r on rd.id = r.id
-inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
-	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
-left join Production.dbo.FtyInventory f on f.POID = rd.PoId
-	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
-	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
-	and f.StockType = rd.StockType
-LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
-	and FabricType='A'
-)
-and r.id = '{this.CurrentMaintain["id"]}'
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Detail_New(dtDetail, "P18"))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

@@ -25,11 +25,118 @@ namespace Sci.Production.Automation
         public static bool IsVstrong_AutoWHAccessoryEnable => IsModuleAutomationEnable(VstrongSuppID, moduleName);
 
         /// <summary>
+        /// 取得Receive_Detail Datatable 資料
+        /// </summary>
+        /// <param name="dtDetail"> Detail </param>
+        /// <param name="formName"> Form Name </param>
+        /// <param name="status"> Status </param>
+        /// <returns>DataTable</returns>
+        private DataTable getReceiveData(DataTable dtDetail, string formName, string status)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+
+            #region 取得資料
+
+            switch (formName)
+            {
+                case "P07":
+                case "P08":
+                    sqlcmd = $@"SELECT 
+ [ID] = rd.id
+,[InvNo] = iif('{formName}' = 'P07', r.InvNo, '')
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[StockUnit] = iif('{formName}' = 'P07',rd.StockUnit,dbo.GetStockUnitBySPSeq(rd.PoId,rd.Seq1,rd.Seq2))
+,[StockQty] = rd.StockQty
+,[PoUnit] = iif('{formName}' = 'P07',rd.PoUnit,'')
+,[ShipQty] = iif('{formName}' = 'P07',rd.ShipQty,0.00)
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[Weight] = iif('{formName}' = 'P07',rd.Weight,0.00)
+,[StockType] = rd.StockType
+,[MtlType] = Fabric.MtlTypeID
+,[Ukey] = rd.Ukey
+,[ETA] = iif('{formName}' = 'P07',r.ETA,null)
+,[WhseArrival] = iif('{formName}' = 'P07',r.WhseArrival,null)
+,[Status] = iif('{status}' = 'Revise', 'Revise' ,'delete')
+FROM Production.dbo.Receiving_Detail rd
+inner join #tmp r on rd.ID=r.Id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='A'
+)
+";
+                    break;
+                case "P18":
+                    sqlcmd = $@"
+SELECT 
+ [ID] = rd.id
+,[InvNo] = r.InvNo
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
+,[StockQty] = rd.Qty
+,[PoUnit] = ''
+,[ShipQty] = 0.00
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[MtlType] = Fabric.MtlTypeID
+,[Ukey] = rd.Ukey
+,[ETA] = null
+,[WhseArrival] = r.IssueDate
+,[Status] = iif('{status}' = 'Revise', 'Revise' ,'delete')
+FROM Production.dbo.TransferIn_Detail rd
+inner join #tmp r on rd.ID=r.Id
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='A'
+)
+";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        /// <summary>
         /// Sent Receive_Detail New
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
-        /// <param name="type">type</param>
-        public void SentReceive_Detail_New(DataTable dtDetail, string type = "")
+        /// <param name="formName">form Name</param>
+        public void SentReceive_Detail_New(DataTable dtDetail, string formName = "")
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -39,10 +146,19 @@ namespace Sci.Production.Automation
             DualResult result;
             string sqlcmd = string.Empty;
 
-            // Confirm後要上鎖物料
-            if (type == "P07" || type == "P18")
+            // 取得資料
+            DataTable dtMaster = this.getReceiveData(dtDetail, formName, "New");
+
+            // 沒資料就return
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
+                return;
+            }
+
+            // Confirm後要上鎖物料
+            if (formName == "P07" || formName == "P18")
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
                 {
                     MyUtility.Msg.WarningBox(result.Messages.ToString());
                     return;
@@ -50,7 +166,7 @@ namespace Sci.Production.Automation
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            switch (type)
+            switch (formName)
             {
                 case "P07":
                 case "P08":
@@ -75,7 +191,7 @@ where exists(
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
             {
                 MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
@@ -87,7 +203,7 @@ where exists(
             callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
 
             // 將DataTable 轉成Json格式
-            string jsonBody = callMethod.GetJsonBody(dtDetail, "Receiving_Detail");
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
 
             // Call API傳送給WMS
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, callMethod.automationErrMsg);
@@ -97,8 +213,9 @@ where exists(
         /// Sent Receive_Detail Delete
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        /// <param name="type">type</param>
-        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string type = "")
+        /// <param name="formName">type</param>
+        /// <param name = "status" > Status </ param >
+        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "")
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -110,22 +227,49 @@ where exists(
 
             // 呼叫同個Class裡的Method,需要先new物件才行
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
-            string jsonBody = callMethod.GetJsonBody(dtDetail, "Receiving_Detail");
+
+            // 取得資料
+            DataTable dtMaster = callMethod.getReceiveData(dtDetail, formName, status);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
             callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong");
 
             // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
             if (!(result = WH_Auto_SendWebAPI(URL, suppAPIThread, jsonBody, callMethod.automationErrMsg)))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
                 return false;
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
-            switch (type)
+            if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                case "P07":
-                case "P08":
-                    sqlcmd = @"
+                switch (formName)
+                {
+                    case "P07":
+                    case "P08":
+                        sqlcmd = @"
 update t
 set t.SentToWMS = 0
 from Receiving_Detail t
@@ -133,9 +277,9 @@ where exists(
 	select 1 from #tmp s
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
-                    break;
-                case "P18":
-                    sqlcmd = @"
+                        break;
+                    case "P18":
+                        sqlcmd = @"
 update t
 set t.SentToWMS = 0
 from TransferIn_Detail t
@@ -143,43 +287,193 @@ where exists(
 	select 1 from #tmp s
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
-                    break;
-            }
+                        break;
+                }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-            {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
-                return true;
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return false;
+                }
             }
 
             return true;
+        }
+
+        private DataTable getIssueData(DataTable dtDetail, string formName, string status)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+
+            #region 取得資料
+
+            switch (formName)
+            {
+                case "P11":
+                case "P12":
+                case "P13":
+                case "P33":
+                    sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = i.Type
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[StockType] = i2.StockType
+,[Qty] = i2.Qty
+,[StockPOID] = po3.StockPOID
+,[StockSeq1] = po3.StockSeq1
+,[StockSeq2] = po3.StockSeq2
+,[Ukey] = i2.ukey
+,[Status] = iif('{status}' = 'Revise', 'Revise' ,'delete')
+,CmdTime = GetDate()
+from Production.dbo.Issue_Detail i2
+inner join #tmp i on i2.Id=i.Id
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+left join PO_Supp_Detail po3 on po3.ID = i2.POID
+	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='A'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+                case "P15":
+                    sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = i.Type
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[StockType] = i2.StockType
+,[Qty] = i2.Qty
+,[StockPOID] = po3.StockPOID
+,[StockSeq1] = po3.StockSeq1
+,[StockSeq2] = po3.StockSeq2
+,[Ukey] = i2.ukey
+,[Status] = iif('{status}' = 'Revise', 'Revise' ,'delete')
+,CmdTime = GetDate()
+from Production.dbo.IssueLack_Detail i2
+inner join #tmp i on i2.Id=i.Id
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+left join PO_Supp_Detail po3 on po3.ID = i2.POID
+	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where i.Type = 'R' and i.FabricType='A'
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='A'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+                case "P19":
+                    sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = ''
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Color] = po3.ColorID
+,[SizeCode] = po3.SizeSpec
+,[StockType] = i2.StockType
+,[Qty] = i2.Qty
+,[StockPOID] = po3.StockPOID
+,[StockSeq1] = po3.StockSeq1
+,[StockSeq2] = po3.StockSeq2
+,[Ukey] = i2.ukey
+,[Status] = iif('{status}' = 'Revise', 'Revise' ,'delete')
+,CmdTime = GetDate()
+from Production.dbo.TransferOut_Detail i2
+inner join #tmp i on i2.Id=i.Id
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+left join PO_Supp_Detail po3 on po3.ID = i2.POID
+	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='A'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
         }
 
         /// <summary>
         /// Issue_Detail To Vstrong
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
-        /// <param name="isConfirmed">is Confirmed</param>
-        /// <param name="type">type</param>
-        public void SentIssue_DetailToVstrongAutoWHAccessory(DataTable dtDetail, bool isConfirmed, string type = "")
+        /// <param name="formName">formName</param>
+        /// <param name="status">status</param>
+        public void SentIssue_Detail_New(DataTable dtDetail, string formName = "", string status = "")
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
                 return;
             }
 
-            #region Confirmed 後記錄那些資料有傳給WMS
             DualResult result;
             string sqlcmd = string.Empty;
-            if (isConfirmed)
+            DataTable dtMaster = this.getIssueData(dtDetail, formName, status);
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
-                switch (type)
-                {
-                    case "P11":
-                    case "P12":
-                    case "P13":
-                    case "P33":
-                        sqlcmd = @"
+                return;
+            }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            switch (formName)
+            {
+                case "P11":
+                case "P12":
+                case "P13":
+                case "P33":
+                    sqlcmd = @"
 update t
 set t.SentToWMS = 1
 from Issue_Detail t
@@ -187,9 +481,9 @@ where exists(
 	select 1 from #tmp s
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
-                        break;
-                    case "P15":
-                        sqlcmd = @"
+                    break;
+                case "P15":
+                    sqlcmd = @"
 update t
 set t.SentToWMS = 1
 from IssueLack_Detail t
@@ -197,9 +491,9 @@ where exists(
 	select 1 from #tmp s
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
-                        break;
-                    case "P19":
-                        sqlcmd = @"
+                    break;
+                case "P19":
+                    sqlcmd = @"
 update t
 set t.SentToWMS = 1
 from TransferOut_Detail t
@@ -207,22 +501,22 @@ where exists(
 	select 1 from #tmp s
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
-                        break;
-                }
-
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-                {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
-                    return;
-                }
+                    break;
             }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+
             #endregion
 
             string apiThread = "SentIssue_DetailToVstrong";
             this.SetAutoAutomationErrMsg(apiThread);
 
             dynamic bodyObject = new ExpandoObject();
-            bodyObject = dtDetail.AsEnumerable()
+            bodyObject = dtMaster.AsEnumerable()
                 .Select(dr => new
                 {
                     Id = dr["id"].ToString(),
@@ -245,6 +539,110 @@ where exists(
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("Issue_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentIssue_Detail_delete
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="formName">formName</param>
+        /// <param name="status">status</param>
+        /// <returns>bool</returns>
+        public static bool SentIssue_Detail_delete(DataTable dtDetail, string formName = "", string status = "")
+        {
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.getReceiveData(dtDetail, formName, status);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Issue_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentIssue_DetailToVstrong");
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                switch (formName)
+                {
+                    case "P11":
+                    case "P12":
+                    case "P13":
+                    case "P33":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from Issue_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P15":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from IssueLack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P19":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from TransferOut_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -346,6 +744,230 @@ where exists(
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("RemoveC_Detail", bodyObject));
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        private DataTable getAdjust_Detail(DataTable dtDetail, string formName, string status)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+
+            #region 取得資料
+
+            switch (formName)
+            {
+                case "P45":
+                case "P48":
+                    sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Qty]  = i2.QtyBefore - i2.QtyAfter
+,[Ukey] = i2.ukey
+,i2.StockType
+,[Status] = iif('{status}' = 'Revise', 'Revise' ,'delete')
+,CmdTime = GetDate()
+from Production.dbo.Adjust_Detail i2
+inner join #tmp i on i.Id = i2.Id
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+left join PO_Supp_Detail po3 on po3.ID = i2.POID
+	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+where 1 = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='A'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        /// <summary>
+        /// Issue_Detail To Vstrong
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="formName">formName</param>
+        /// <param name="status">status</param>
+        public void SentRemoveC_Detail_New(DataTable dtDetail, string formName = "", string status = "")
+        {
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster = this.getAdjust_Detail(dtDetail, formName, status);
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            sqlcmd = string.Empty;
+
+            sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from Adjust_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+
+            #endregion
+
+            string apiThread = "SentRemoveC_DetailToVstrong";
+            this.SetAutoAutomationErrMsg(apiThread);
+
+            dynamic bodyObject = new ExpandoObject();
+            bodyObject = dtMaster.AsEnumerable()
+                .Select(dr => new
+                {
+                    Id = dr["id"].ToString(),
+                    PoId = dr["PoId"].ToString(),
+                    Seq1 = dr["Seq1"].ToString(),
+                    Seq2 = dr["Seq2"].ToString(),
+                    Qty = (decimal)dr["Qty"],
+                    Ukey = (long)dr["Ukey"],
+                    StockType = dr["StockType"].ToString(),
+                    Status = dr["Status"].ToString(),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("RemoveC_Detail", bodyObject));
+
+            SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentIssue_Detail_delete
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="formName">formName</param>
+        /// <param name="status">status</param>
+        /// <returns>bool</returns>
+        public static bool SentRemoveC_Detail_delete(DataTable dtDetail, string formName = "", string status = "")
+        {
+            if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.getReceiveData(dtDetail, formName, status);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Issue_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentIssue_DetailToVstrong");
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                switch (formName)
+                {
+                    case "P11":
+                    case "P12":
+                    case "P13":
+                    case "P33":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from Issue_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P15":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from IssueLack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P19":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from TransferOut_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

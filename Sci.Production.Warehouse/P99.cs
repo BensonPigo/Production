@@ -97,6 +97,7 @@ select    [Selected] = 0 --0
 		, [ContainerType]= Container.Val--21
         , t2.Ukey
         ,Barcode = isnull(ft.barcode,'')
+        ,t1.InvNo,t1.ETA,t1.WhseArrival
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 INNER JOIN Receiving t1 WITH (NOLOCK) ON t2.id= t1.Id
 left join orders o WITH (NOLOCK) on o.id = t2.PoId
@@ -164,6 +165,7 @@ select    [Selected] = 0 --0
         , t2.Remark--10
         , t2.Ukey
         , t2.StockType
+        ,t1.InvNo,t1.ETA,t1.WhseArrival
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 inner join Receiving t1 WITH (NOLOCK) on t2.Id = t1.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -205,6 +207,7 @@ select   [Selected] = 0 --0
         , po3.Refno--15
 		, [ColorID] = Color.Value--16        
         , t2.Ukey
+        , t1.InvNo,t1.IssueDate
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t2.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -1731,6 +1734,16 @@ and t1.Status = 'Confirmed'
                             return;
                         }
 
+                        #region UnConfirmed 先檢查WMS是否傳送成功
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        {
+                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "Revise"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region 檢查庫存項WMSLock
                         foreach (DataRow dr in dtDistID.Rows)
                         {
@@ -1924,7 +1937,6 @@ inner join #tmp s on t2.Ukey = s.Ukey
                                 transactionscope.Dispose();
                             }
                         }
-
                         break;
 
                 }
@@ -1995,67 +2007,14 @@ inner join #tmp s on t2.Ukey = s.Ukey
                         }
 
                         #region UnConfirmed 先檢查WMS是否傳送成功
-
-                        foreach (DataRow dr in upd_list)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
-                            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), "P07", "delete"))
                             {
-                                string sqlGetData = string.Empty;
-                                sqlGetData = $@"
-SELECT 
- [ID] = rd.id
-,[InvNo] = r.InvNo
-,[PoId] = rd.Poid
-,[Seq1] = rd.Seq1
-,[Seq2] = rd.Seq2
-,[Refno] = po3.Refno
-,[StockUnit] = rd.StockUnit
-,[StockQty] = rd.StockQty
-,[PoUnit] = rd.PoUnit
-,[ShipQty] = rd.ShipQty
-,[Color] = po3.ColorID
-,[SizeCode] = po3.SizeSpec
-,[Weight] = rd.Weight
-,[StockType] = rd.StockType
-,[MtlType] = Fabric.MtlTypeID
-,[Ukey] = rd.Ukey
-,[ETA] = r.ETA
-,[WhseArrival] = r.WhseArrival
-,[Status] = 'Delete'
-FROM Production.dbo.Receiving_Detail rd
-inner join Production.dbo.Receiving r on rd.id = r.id
-inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
-	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
-left join Production.dbo.FtyInventory f on f.POID = rd.PoId
-	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
-	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
-	and f.StockType = rd.StockType
-LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
-	and FabricType='A'
-)
-and rd.ukey = '{dr["ukey"]}'
-";
-
-                                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out DataTable dtDetail);
-                                if (!drResult)
-                                {
-                                    this.ShowErr(drResult);
-                                }
-
-                                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P07"))
-                                {
-                                    return;
-                                }
+                                return;
                             }
                         }
-
                         #endregion
-
-
 
                         #region 更新庫存數量 po_supp_detail & ftyinventory
                         var data_MD_2F = (from b in upd_list.CopyToDataTable().AsEnumerable()
