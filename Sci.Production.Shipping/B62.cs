@@ -51,15 +51,15 @@ where 1=1
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode)
             {
                 string sqlcmd = $@"select CDCCode,CDCName,CDCUnit from KHCustomsDescription where junk=0 and CustomsType = '{this.CurrentMaintain["CustomsType"]}'";
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, string.Empty, this.CurrentMaintain["CDCName"].ToString());
+                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlcmd, string.Empty, this.CurrentMaintain["KHCustomsDescriptionCDCName"].ToString());
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
                     return;
                 }
 
-                this.CurrentMaintain["KHCustomsDescriptionCDCCode"] = item.GetSelecteds()[0]["CDCCode"];
-                this.CurrentMaintain["CDCName"] = item.GetSelecteds()[0]["CDCName"];
+                this.CurrentMaintain["KHCustomsDescriptionCDCName"] = item.GetSelecteds()[0]["CDCName"];
+                this.CurrentMaintain["CDCCode"] = item.GetSelecteds()[0]["CDCCode"];
                 this.txtCDCUnit.Text = item.GetSelecteds()[0]["CDCUnit"].ToString();
             }
         }
@@ -85,7 +85,9 @@ where 1=1
                         return;
                     }
 
-                    this.CurrentDetailData["Port"] = item.GetSelecteds()[0]["ID"];
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    dr["Port"] = item.GetSelecteds()[0]["ID"];
+                    dr.EndEdit();
                 }
             };
 
@@ -133,7 +135,7 @@ where 1=1
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["RefNo"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["KHCustomsDescriptionCDCCode"]) ||
+                MyUtility.Check.Empty(this.CurrentMaintain["KHCustomsDescriptionCDCName"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["CDCUnitPrice"]))
             {
                 MyUtility.Msg.WarningBox(@"< Ref#>, < Customer Description >, <CDC Unit Price(USD)>cannot be empty.");

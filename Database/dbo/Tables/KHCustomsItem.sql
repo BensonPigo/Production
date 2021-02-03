@@ -1,7 +1,7 @@
-﻿CREATE TABLE [dbo].[KHCustomsItem] (
+CREATE TABLE [dbo].[KHCustomsItem] (
     [Ukey]                        BIGINT         IDENTITY (1, 1) NOT NULL,
     [RefNo]                       VARCHAR (30)   NOT NULL,
-    [KHCustomsDescriptionCDCCode] VARCHAR (5)    CONSTRAINT [DF_KHCustomsItem_KHCustomsDescriptionID] DEFAULT ('') NULL,
+    [KHCustomsDescriptionCDCName] VARCHAR (50)   CONSTRAINT [DF_KHCustomsItem_KHCustomsDescriptionID] DEFAULT ('') NULL,
     [CDCUnitPrice]                NUMERIC (9, 4) CONSTRAINT [DF_KHCustomsItem_CDCUnitPrice] DEFAULT ((0)) NULL,
     [Description]                 VARCHAR (MAX)  CONSTRAINT [DF_KHCustomsItem_Description] DEFAULT ('') NULL,
     [Junk]                        BIT            CONSTRAINT [DF_KHCustomsItem_Junk] DEFAULT ((0)) NULL,
@@ -11,6 +11,8 @@
     [EditDate]                    DATETIME       NULL,
     CONSTRAINT [PK_KHCustomsItem] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -65,5 +67,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'KHCustomsIt
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關大類編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsItem', @level2type = N'COLUMN', @level2name = N'KHCustomsDescriptionCDCCode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'海關大類編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHCustomsItem', @level2type = N'COLUMN', @level2name = N'KHCustomsDescriptionCDCName';
 

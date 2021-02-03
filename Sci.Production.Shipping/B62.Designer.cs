@@ -179,7 +179,7 @@
             // txtCustomsDesc
             // 
             this.txtCustomsDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtCustomsDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CDCName", true));
+            this.txtCustomsDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "KHCustomsDescriptionCDCName", true));
             this.txtCustomsDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtCustomsDesc.IsSupportEditMode = false;
             this.txtCustomsDesc.Location = new System.Drawing.Point(172, 104);
@@ -250,8 +250,9 @@
             // txtDesc
             // 
             this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description2", true));
+            this.txtDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDesc.IsSupportEditMode = false;
             this.txtDesc.Location = new System.Drawing.Point(172, 135);
             this.txtDesc.Name = "txtDesc";
             this.txtDesc.ReadOnly = true;
@@ -320,7 +321,7 @@
             // dispKHCustomsDescriptionCDCCode
             // 
             this.dispKHCustomsDescriptionCDCCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.dispKHCustomsDescriptionCDCCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KHCustomsDescriptionCDCCode", true));
+            this.dispKHCustomsDescriptionCDCCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDCCode", true));
             this.dispKHCustomsDescriptionCDCCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.dispKHCustomsDescriptionCDCCode.Location = new System.Drawing.Point(172, 75);
             this.dispKHCustomsDescriptionCDCCode.Name = "dispKHCustomsDescriptionCDCCode";

@@ -247,7 +247,7 @@
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
-            this.KeyField1 = "CDCCode";
+            this.KeyField1 = "CDCName";
             this.Name = "B61";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "B61. KH Customs Description";

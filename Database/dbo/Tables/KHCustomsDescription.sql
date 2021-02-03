@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[KHCustomsDescription] (
+﻿CREATE TABLE [dbo].[KHCustomsDescription] (
     [CDCCode]     VARCHAR (5)   NOT NULL,
     [CDCName]     VARCHAR (50)  NOT NULL,
     [CustomsType] VARCHAR (10)  NOT NULL,
@@ -8,8 +8,10 @@ CREATE TABLE [dbo].[KHCustomsDescription] (
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_KHCustomsDescription_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
-    CONSTRAINT [PK_KHCustomsDescription_1] PRIMARY KEY CLUSTERED ([CDCCode] ASC)
+    CONSTRAINT [PK_KHCustomsDescription_1] PRIMARY KEY CLUSTERED ([CDCName] ASC)
 );
+
+
 
 
 
