@@ -79,7 +79,52 @@ where exists(
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select FactoryID = iif(ed.potype='M'
+select distinct ed.FabricType
+	, ed.PoID
+	, ed.Seq1
+	, ed.Seq2
+into #tmp
+from Export_Detail ed WITH (NOLOCK) 
+where ed.ID = '{0}'
+and ed.PoType = 'M'
+
+select mpod.ID, mpod.Seq1, mpod.Seq2, mpo.FactoryID 
+into #tmp_MachinePO
+from SciMachine_MachinePO mpo
+inner join SciMachine_MachinePO_Detail mpod on mpo.ID = mpod.ID 
+where exists (
+		select 1 
+		from #tmp ed
+		where ed.FabricType = 'M'
+		and mpod.ID = ed.PoID 
+		and mpod.Seq1 = ed.Seq1 
+		and mpod.Seq2 = ed.Seq2)
+		
+select ppod.TPEPOID, ppod.Seq1, ppod.Seq2, ppo.FactoryID 
+into #tmp_PartPO
+from SciMachine_PartPO ppo
+inner join SciMachine_PartPO_Detail ppod on ppo.ID = ppod.ID 
+where exists (   
+	 select 1 
+	 from #tmp ed
+     where ed.FabricType = 'P'
+	 and ppod.TPEPOID = ed.PoID 
+     and ppod.Seq1 = ed.Seq1 
+     and ppod.Seq2 = ed.Seq2)
+
+select mpod.TPEPOID, mpod.Seq1, mpod.Seq2, mpo.Factoryid 
+into #tmp_MiscPO
+from SciMachine_MiscPO mpo
+inner join SciMachine_MiscPO_Detail mpod on mpo.ID = mpod.ID 
+where exists (   
+	 select 1 
+	 from #tmp ed
+     where ed.FabricType = 'O'
+	 and mpod.TPEPOID = ed.PoID 
+     and mpod.Seq1 = ed.Seq1 
+     and mpod.Seq2 = ed.Seq2)        
+
+select FactoryID = iif(ed.PoType='M'
                         , (case when ed.FabricType = 'M' then mpo.FactoryID
                                 when ed.FabricType = 'P' then ppo.FactoryID 
 			                    when ed.FabricType = 'O' then mipo.Factoryid 
@@ -157,33 +202,29 @@ OUTER APPLY(
 	),1,1,'')
 )Container
 Outer APPLY (
-	 select mpo.FactoryID 
-     from SciMachine_MachinePO mpo
-          , SciMachine_MachinePO_Detail mpod 
-     where mpo.ID = mpod.ID 
-             and mpod.ID = ed.PoID 
-             and mpod.Seq1 = ed.Seq1 
-             and mpod.seq2 = ed.Seq2
+	select mpo.FactoryID 
+	from #tmp_MachinePO mpo
+	where mpo.ID = ed.PoID 
+	and mpo.Seq1 = ed.Seq1 
+	and mpo.Seq2 = ed.Seq2
 )mpo
 Outer APPLY (
-	 select top 1 ppo.FactoryID 
-     from SciMachine_PartPO ppo
-          , SciMachine_PartPO_Detail ppod 
-     where   ppo.ID = ppod.ID 
-             and ppod.TPEPOID = ed.PoID 
-             and ppod.Seq1 = ed.Seq1 
-             and ppod.seq2 = ed.Seq2
+	select top 1 ppo.FactoryID 
+    from #tmp_PartPO ppo
+    where ppo.TPEPOID = ed.PoID 
+    and ppo.Seq1 = ed.Seq1 
+    and ppo.Seq2 = ed.Seq2
 )ppo
 Outer APPLY (
 	select mpo.Factoryid 
-    from SciMachine_MiscPO mpo
-         , SciMachine_MiscPO_Detail mpod 
-    where   mpo.ID = mpod.ID 
-            and mpod.TPEPOID = ed.PoID 
-            and mpod.Seq1 = ed.Seq1 
-            and mpod.seq2 = ed.Seq2
+    from #tmp_MiscPO mpo
+	where mpo.TPEPOID = ed.PoID 
+    and mpo.Seq1 = ed.Seq1 
+    and mpo.Seq2 = ed.Seq2
 )mipo
-where ed.ID = '{0}'", masterID);
+where ed.ID = '{0}'
+
+drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
