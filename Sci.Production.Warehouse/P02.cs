@@ -79,28 +79,10 @@ where exists(
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select  FactoryID = iif(ed.potype='M'
-                        , (case when ed.FabricType = 'M' then ( select mpo.FactoryID 
-                                                                from SciMachine_MachinePO mpo
-                                                                     , SciMachine_MachinePO_Detail mpod 
-                                                                where   mpo.ID = mpod.ID 
-                                                                        and mpod.ID = ed.PoID 
-                                                                        and mpod.Seq1 = ed.Seq1 
-                                                                        and mpod.seq2 = ed.Seq2)
-                                when ed.FabricType = 'P' then ( select top 1 ppo.FactoryID 
-                                                                from SciMachine_PartPO ppo
-                                                                     , SciMachine_PartPO_Detail ppod 
-                                                                where   ppo.ID = ppod.ID 
-                                                                        and ppod.TPEPOID = ed.PoID 
-                                                                        and ppod.Seq1 = ed.Seq1 
-                                                                        and ppod.seq2 = ed.Seq2) 
-			                    when ed.FabricType = 'O' then ( select mpo.Factoryid 
-                                                                from SciMachine_MiscPO mpo
-                                                                     , SciMachine_MiscPO_Detail mpod 
-                                                                where   mpo.ID = mpod.ID 
-                                                                        and mpod.TPEPOID = ed.PoID 
-                                                                        and mpod.Seq1 = ed.Seq1 
-                                                                        and mpod.seq2 = ed.Seq2) 
+select FactoryID = iif(ed.potype='M'
+                        , (case when ed.FabricType = 'M' then mpo.FactoryID
+                                when ed.FabricType = 'P' then ppo.FactoryID 
+			                    when ed.FabricType = 'O' then mipo.Factoryid 
 			                    else o.FactoryID 
                             end)
                         ,o.FactoryID)
@@ -174,6 +156,33 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )Container
+Outer APPLY (
+	 select mpo.FactoryID 
+     from SciMachine_MachinePO mpo
+          , SciMachine_MachinePO_Detail mpod 
+     where mpo.ID = mpod.ID 
+             and mpod.ID = ed.PoID 
+             and mpod.Seq1 = ed.Seq1 
+             and mpod.seq2 = ed.Seq2
+)mpo
+Outer APPLY (
+	 select top 1 ppo.FactoryID 
+     from SciMachine_PartPO ppo
+          , SciMachine_PartPO_Detail ppod 
+     where   ppo.ID = ppod.ID 
+             and ppod.TPEPOID = ed.PoID 
+             and ppod.Seq1 = ed.Seq1 
+             and ppod.seq2 = ed.Seq2
+)ppo
+Outer APPLY (
+	select mpo.Factoryid 
+    from SciMachine_MiscPO mpo
+         , SciMachine_MiscPO_Detail mpod 
+    where   mpo.ID = mpod.ID 
+            and mpod.TPEPOID = ed.PoID 
+            and mpod.Seq1 = ed.Seq1 
+            and mpod.seq2 = ed.Seq2
+)mipo
 where ed.ID = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
