@@ -59,6 +59,21 @@ namespace Sci.Production.Sewing
 
             this.loginFactory = Env.User.Factory;
             this.dateYesterday = DateTime.Now.AddDays(-1);
+            this.detailgrid.CellPainting += this.Detailgrid_CellPainting;
+        }
+
+        private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+            {
+                return;
+            }
+
+            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+            if (MyUtility.Convert.GetBool(dr["ImportFromDQS"]) && e.ColumnIndex == 0 && this.EditMode)
+            {
+                e.CellStyle.ForeColor = Color.Black;
+            }
         }
 
         /// <inheritdoc/>
