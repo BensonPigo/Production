@@ -59,6 +59,21 @@ namespace Sci.Production.Sewing
 
             this.loginFactory = Env.User.Factory;
             this.dateYesterday = DateTime.Now.AddDays(-1);
+            this.detailgrid.CellPainting += this.Detailgrid_CellPainting;
+        }
+
+        private void Detailgrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+            {
+                return;
+            }
+
+            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+            if (MyUtility.Convert.GetBool(dr["ImportFromDQS"]) && e.ColumnIndex == 0 && this.EditMode)
+            {
+                e.CellStyle.ForeColor = Color.Black;
+            }
         }
 
         /// <inheritdoc/>
@@ -304,6 +319,12 @@ order by a.OrderId,os.Seq",
                 }
             };
             #region SP#的Right click & Validating
+            this.orderid.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                e.IsEditable = !MyUtility.Convert.GetBool(dr["ImportFromDQS"]);
+            };
+
             this.orderid.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
