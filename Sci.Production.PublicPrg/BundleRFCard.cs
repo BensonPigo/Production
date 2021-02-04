@@ -463,7 +463,7 @@ from
                         result = CardFromStacker(bundleRFCard);
                         if (!result)
                         {
-                            if (result.Messages.EqualString("0x2105"))
+                            if (result.Messages.EqualString("0x2005") || result.Messages.EqualString("0x2105") || result.Messages.EqualString("0x2305"))
                             {
                                 throw new Exception("No card in the stacker, printer cannot get the card.Please top up the card to continue printing.");
                             }
@@ -651,29 +651,48 @@ from
             while (!(result = BundleRFCardPrint(data, nowIndex, out returnIndex, isEraser)))
             {
                 nowIndex = returnIndex;
-                DialogResult confirmResult = Prg.MessageBoxEX.Show(
+                DialogResult confirmResult;
+                if (result.Messages.ToString().IndexOf(BFPrintErrorMSG("0x2620")) > -1)
+                {
+                    confirmResult = Prg.MessageBoxEX.Show(
                             result.Messages.ToString(),
                             confirmTitle,
                             MessageBoxButtons.YesNoCancel,
                             new string[] { "Retry", "Head Clean", "Cancel" });
-                if (confirmResult.EqualString("Yes"))
-                {
-                    continue;
-                }
-                else if (confirmResult.EqualString("No"))
-                {
-                    DualResult resultClean = BundleRFCleanThermalPrinterHead();
-                    if (!resultClean)
+                    if (confirmResult.EqualString("Yes"))
                     {
-                        result = new DualResult(false, resultClean.Messages.ToString());
                         continue;
                     }
+                    else if (confirmResult.EqualString("No"))
+                    {
+                        DualResult resultClean = BundleRFCleanThermalPrinterHead();
+                        if (!resultClean)
+                        {
+                            result = new DualResult(false, resultClean.Messages.ToString());
+                            continue;
+                        }
 
-                    continue;
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    break;
+                    confirmResult = MessageBox.Show(
+                                               result.Messages.ToString(),
+                                               confirmTitle,
+                                               MessageBoxButtons.RetryCancel);
+                    if (confirmResult.EqualString("Retry"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
 
