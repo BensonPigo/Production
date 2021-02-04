@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.panel9 = new Sci.Win.UI.Panel();
@@ -65,6 +65,8 @@
             this.btnMapping = new Sci.Win.UI.Button();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.openFileDialogPackingList = new System.Windows.Forms.OpenFileDialog();
+            this.openFileDialogItemFile = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -162,14 +164,14 @@
             this.gridPackingFile.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridPackingFile.Location = new System.Drawing.Point(0, 0);
             this.gridPackingFile.Name = "gridPackingFile";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridPackingFile.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridPackingFile.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridPackingFile.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridPackingFile.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPackingFile.RowTemplate.Height = 24;
@@ -205,6 +207,7 @@
             this.btnRemovePackingFile.TabIndex = 2;
             this.btnRemovePackingFile.Text = "Remove File";
             this.btnRemovePackingFile.UseVisualStyleBackColor = true;
+            this.btnRemovePackingFile.Click += new System.EventHandler(this.BtnRemovePackingFile_Click);
             // 
             // btnAddPackingFile
             // 
@@ -214,6 +217,7 @@
             this.btnAddPackingFile.TabIndex = 1;
             this.btnAddPackingFile.Text = "Add File";
             this.btnAddPackingFile.UseVisualStyleBackColor = true;
+            this.btnAddPackingFile.Click += new System.EventHandler(this.BtnAddPackingFile_Click);
             // 
             // label1
             // 
@@ -265,14 +269,14 @@
             this.gridItemFile.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridItemFile.Location = new System.Drawing.Point(0, 0);
             this.gridItemFile.Name = "gridItemFile";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridItemFile.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridItemFile.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridItemFile.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridItemFile.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridItemFile.RowTemplate.Height = 24;
@@ -308,6 +312,7 @@
             this.btnRemoveItemFile.TabIndex = 2;
             this.btnRemoveItemFile.Text = "Remove File";
             this.btnRemoveItemFile.UseVisualStyleBackColor = true;
+            this.btnRemoveItemFile.Click += new System.EventHandler(this.BtnRemoveItemFile_Click);
             // 
             // btnAddItemFile
             // 
@@ -317,6 +322,7 @@
             this.btnAddItemFile.TabIndex = 1;
             this.btnAddItemFile.Text = "Add File";
             this.btnAddItemFile.UseVisualStyleBackColor = true;
+            this.btnAddItemFile.Click += new System.EventHandler(this.BtnAddItemFile_Click);
             // 
             // label3
             // 
@@ -368,14 +374,14 @@
             this.gridMatch.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridMatch.Location = new System.Drawing.Point(0, 0);
             this.gridMatch.Name = "gridMatch";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridMatch.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridMatch.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridMatch.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridMatch.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMatch.RowTemplate.Height = 24;
@@ -403,7 +409,7 @@
             this.btnClose.TabIndex = 4;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // btnConfirm
             // 
@@ -414,6 +420,7 @@
             this.btnConfirm.TabIndex = 3;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // panel6
             // 
@@ -442,6 +449,7 @@
             this.btnMapping.TabIndex = 3;
             this.btnMapping.Text = "Mapping PL";
             this.btnMapping.UseVisualStyleBackColor = true;
+            this.btnMapping.Click += new System.EventHandler(this.BtnMapping_Click);
             // 
             // panel4
             // 
@@ -458,6 +466,16 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(10, 601);
             this.panel3.TabIndex = 1;
+            // 
+            // openFileDialogPackingList
+            // 
+            this.openFileDialogPackingList.FileName = "openFileDialog1";
+            this.openFileDialogPackingList.Multiselect = true;
+            // 
+            // openFileDialogItemFile
+            // 
+            this.openFileDialogItemFile.FileName = "openFileDialog1";
+            this.openFileDialogItemFile.Multiselect = true;
             // 
             // P28_UA
             // 
@@ -532,5 +550,7 @@
         private Win.UI.Panel panel12;
         private Win.UI.Panel panel11;
         private Win.UI.ListControlBindingSource BindingSourceItemFile;
+        private System.Windows.Forms.OpenFileDialog openFileDialogPackingList;
+        private System.Windows.Forms.OpenFileDialog openFileDialogItemFile;
     }
 }

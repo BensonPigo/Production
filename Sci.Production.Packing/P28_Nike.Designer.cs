@@ -53,6 +53,7 @@
             this.btnMapping = new Sci.Win.UI.Button();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -162,6 +163,7 @@
             this.btnRemoveFile.TabIndex = 2;
             this.btnRemoveFile.Text = "Remove File";
             this.btnRemoveFile.UseVisualStyleBackColor = true;
+            this.btnRemoveFile.Click += new System.EventHandler(this.BtnRemoveFile_Click);
             // 
             // btnAddFile
             // 
@@ -171,6 +173,7 @@
             this.btnAddFile.TabIndex = 1;
             this.btnAddFile.Text = "Add File";
             this.btnAddFile.UseVisualStyleBackColor = true;
+            this.btnAddFile.Click += new System.EventHandler(this.BtnAddFile_Click);
             // 
             // label1
             // 
@@ -268,6 +271,7 @@
             this.btnConfirm.TabIndex = 3;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // panel6
             // 
@@ -296,6 +300,7 @@
             this.btnMapping.TabIndex = 3;
             this.btnMapping.Text = "Mapping PL";
             this.btnMapping.UseVisualStyleBackColor = true;
+            this.btnMapping.Click += new System.EventHandler(this.BtnMapping_Click);
             // 
             // panel4
             // 
@@ -312,6 +317,11 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(10, 601);
             this.panel3.TabIndex = 1;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Multiselect = true;
             // 
             // P28_Nike
             // 
@@ -366,5 +376,6 @@
         private Win.UI.Button btnMapping;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel3;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
