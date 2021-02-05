@@ -1509,7 +1509,7 @@ where   f.lock=1
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P08", "UnConfirmed"))
+                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P18", "UnConfirmed"))
                 {
                     return;
                 }

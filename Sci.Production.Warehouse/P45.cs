@@ -155,7 +155,15 @@ Reason can’t be empty!!",
             if (dts.Length < 1)
             {
                 MyUtility.Msg.InfoBox("Confirmed Successful.");
-                this.SentToVstrong_AutoWH_ACC(true);
+
+                // AutoWHACC WebAPI for Vstrong
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_Detail_New(dtDetail, "P45", "New"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
                 return;
             }
             else
@@ -315,6 +323,17 @@ Balacne Qty is not enough!!
                 return;
             }
 
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(dtDetail, "P45", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
+
             string upcmd = string.Format(
                 @"
 declare @POID varchar(13)
@@ -366,8 +385,6 @@ update Adjust set Status ='New' where id = '{0}'
                 return;
             }
             #endregion
-
-            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         /// <inheritdoc/>
@@ -673,20 +690,6 @@ where ad.Id='{0}'
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
-        }
-
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
         }
     }
 }

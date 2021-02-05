@@ -805,7 +805,15 @@ else
                     transactionscope.Dispose();
                     this.FtyBarcodeData(true);
                     this.SentToGensong_AutoWHFabric(true);
-                    this.SentToVstrong_AutoWH_ACC(true);
+
+                    // AutoWHACC WebAPI for Vstrong
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentBorrowBack_Detail_New(dt, "New"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -899,6 +907,17 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "BorrowBack_Detail_To"))
             {
                 return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
             }
             #endregion
 
@@ -1162,7 +1181,6 @@ else
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric(false);
-                    this.SentToVstrong_AutoWH_ACC(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1184,16 +1202,6 @@ else
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-        }
-
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentBorrowBackToVstrongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

@@ -350,7 +350,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     dtMain.Rows.Add(row);
                 }
 
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMain, true))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMain, "New"))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

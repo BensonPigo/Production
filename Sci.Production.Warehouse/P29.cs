@@ -1172,7 +1172,7 @@ and i2.id = '{dr["ID"]}'
             // AutoWHFabric WebAPI for Vstrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMaster, true))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMaster, "New"))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

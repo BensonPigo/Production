@@ -173,17 +173,17 @@ namespace Sci.Production.Automation
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 30);
             bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
-            if (!webApiBaseResult.isSuccess)
-            {
-                automationErrMsg.errorCode = "99";
-                automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
-                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
-                SaveAutomationCheckMsg(automationErrMsg);
-            }
-            else if (saveAllmsg)
-            {
-                SaveAutomationCheckMsg(automationErrMsg);
-            }
+            //if (!webApiBaseResult.isSuccess)
+            //{
+            //    automationErrMsg.errorCode = "99";
+            //    automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
+            //    result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+            //    SaveAutomationCheckMsg(automationErrMsg);
+            //}
+            //else if (saveAllmsg)
+            //{
+            //    SaveAutomationCheckMsg(automationErrMsg);
+            //}
 
             return result;
         }

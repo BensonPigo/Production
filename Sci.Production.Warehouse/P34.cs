@@ -473,7 +473,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + (isnull(d.Qt
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToVstrong_AutoWH_ACC(true);
+
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_Detail_New(dt, "New"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             this.SentToGensong_AutoWHFabric(true);
         }
 
@@ -552,6 +560,17 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Adjust_Detail"))
             {
                 return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
             }
             #endregion
 
@@ -679,7 +698,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToVstrong_AutoWH_ACC(true);
             this.SentToGensong_AutoWHFabric(true);
         }
 
@@ -747,20 +765,6 @@ Where a.id = '{0}' ", masterID);
             else
             {
                 this.detailgridbs.Position = index;
-            }
-        }
-
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Gensong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
 

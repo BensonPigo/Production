@@ -610,7 +610,7 @@ from #tmp";
             // AutoWHFabric WebAPI for Vstrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_DetailToVstrongAutoWHAccessory(dtMaster, true))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_Detail_New(dtDetail, "P45", "New"))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 

@@ -654,7 +654,15 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
                     this.FtyBarcodeData(true);
                     this.SentToGensong_AutoWHFabric(true);
-                    this.SentToVstrong_AutoWH_ACC(true);
+
+                    // AutoWHACC WebAPI for Vstrong
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentReturnReceipt_Detail_New(dt, "New"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -730,6 +738,17 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "ReturnReceipt_Detail"))
             {
                 return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
             }
             #endregion
 
@@ -894,7 +913,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
 
                     this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric(false);
-                    this.SentToVstrong_AutoWH_ACC(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -914,17 +932,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 dtMain.ImportRow(this.CurrentMaintain);
                 Task.Run(() => new Gensong_AutoWHFabric().SentReturnReceiptToGensongAutoWHFabric(dtMain, isConfirmed))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-        }
-
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentReturnReceiptToVstrongAutoWHAccessory(dtMain, isConfirmed))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

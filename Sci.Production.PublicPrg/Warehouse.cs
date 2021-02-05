@@ -4119,4 +4119,29 @@ and d.Id = '{id}'";
         /// <inheritdoc/>
         public string Location { get; set; }
     }
+
+    /// <inheritdoc/>
+    public class Prgs_FtyInventoryData
+    {
+        /// <inheritdoc/>
+        public string Poid { get; set; }
+
+        /// <inheritdoc/>
+        public string Seq1 { get; set; }
+
+        /// <inheritdoc/>
+        public string Seq2 { get; set; }
+
+        /// <inheritdoc/>
+        public string Roll { get; set; }
+
+        /// <inheritdoc/>
+        public string Dyelot { get; set; }
+
+        /// <inheritdoc/>
+        public string Stocktype { get; set; }
+
+        /// <inheritdoc/>
+        public decimal Qty { get; set; }
+    }
 }

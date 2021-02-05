@@ -364,7 +364,15 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
             }
 
             this.SentToGensong_AutoWHFabric();
-            this.SentToVstrong_AutoWH_ACC(true);
+
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentLocationTrans_detail_New(dt, "New"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 
@@ -422,19 +430,6 @@ Where a.id = '{0}' ", masterID);
             {
                 DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Gensong_AutoWHFabric().SentLocationTransToGensongAutoWHFabric(dtMain, true))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
-        }
-
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentLocationTransToVstrongAutoWHAccessory(dtMain, isConfirmed))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
