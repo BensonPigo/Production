@@ -1410,7 +1410,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             }
 
             #region 檢查表身不可為空
-            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("(IsHide = 0 or  IsHide is null) and (No = '' or No is null)");
+            DataRow[] findrow = ((DataTable)this.detailgridbs.DataSource).Select("(IsHide = 0 or  IsHide is null) and (No = '' or No is null) and (IsShow = 1)");
             if (findrow.Length > 0)
             {
                 MyUtility.Msg.WarningBox("< No. > can't empty!!");
