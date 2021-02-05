@@ -1860,6 +1860,9 @@ from
             string rtnStr = string.Empty;
             switch (code)
             {
+                case "0x0010":
+                    rtnStr = "The printer is not connected to PC. Please check the connection.";
+                    break;
                 case "0x2001":
                     rtnStr = "Using the command that does not defined in this model.";
                     break;
