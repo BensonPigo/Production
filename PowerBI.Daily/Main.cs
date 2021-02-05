@@ -232,7 +232,7 @@ namespace PowerBI.Daily
         {
             DualResult result;
 
-            #region Setup Data            
+            #region Setup Data  
             string sqlCmd = string.Empty;
             sqlCmd = $@"
 Use [PBIReportData];
@@ -262,6 +262,56 @@ left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
             #endregion
 
             bool ByGroupStatus = Update_ByGroupID();
+
+            #region 確認每個SP都有寫進Log, 沒有的話就重新執行
+
+            DataTable dtReExec;
+            string sqlReExec = $@"
+Use [PBIReportData];
+SELECT Region
+	,[DirName] = ''
+	,[RarName] = ''
+	,[Is_Export] = 0
+	,[ConnectionName] = r.ConnectionName
+	,[DBName] = ''
+	,[DBFileName] = ''
+	,[GroupID] = ROW_NUMBER() over(partition by seq order by region)--i.GroupID
+	,[Seq] = i.Seq
+	,[Name] = i.Name
+,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
+FROM P_TransRegion r
+left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
+where not exists(
+	select * from P_TransLog t
+	where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
+	and i.Name = t.FunctionName
+	and r.Region = t.RegionID
+)
+";
+
+            result = DBProxy.Current.Select("PBIReportData", sqlReExec, out dtReExec);
+            if (!result) { return result; }
+
+            if (dtReExec.Rows.Count > 0)
+            {
+                string sqlcmd = string.Empty;
+                foreach (DataRow dr in dtReExec.Rows)
+                {
+                    sqlcmd = dr["TSQL"].ToString();
+                    string regionID = dr["Region"].ToString().Trim();
+                    var foundRegion = this.Regions_All.Where(region => region.Region.EqualString(regionID));
+
+                    TransRegion tRegion = foundRegion.Count() == 0
+                        ? new TransRegion(dr)
+                        : foundRegion.First();
+                    TransTask task = new TransTask(dr, tRegion);
+                    task.TSQL = sqlcmd;
+                    result = DBProxy.Current.OpenConnection("PBIReportData", out SqlConnection conn);
+                    this.Transfer_Task(task, conn);
+                }
+            }
+            #endregion
+
             #region 寫log End
             EndTime = DateTime.Now;
 
@@ -343,7 +393,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
 
             var success_Before = this.Tasks_All
               .Where(t => t.GroupID < 0)
-              .Where(t => t.TaskSelected && t.RegionSelected && t.transRegion.Is_Export == false && t.transRegion.LastResult)
+              .Where(t => t.TaskSelected && t.RegionSelected && t.TransRegion.Is_Export == false && t.TransRegion.LastResult)
               //// by Region 拆完Thread
               .GroupBy(t => t.GroupID)
               .AsParallel()
@@ -359,7 +409,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
 
             var success = this.Tasks_All
                 .Where(t => t.GroupID >= 0)
-                .Where(t => t.TaskSelected && t.RegionSelected && t.transRegion.Is_Export == false && t.transRegion.LastResult)
+                .Where(t => t.TaskSelected && t.RegionSelected && t.TransRegion.Is_Export == false && t.TransRegion.LastResult)
                 //// by Region 拆完Thread
                 .GroupBy(t => t.GroupID)
                 .AsParallel()
@@ -395,7 +445,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
                     this.Regions_All.Add(tRegion);
                 }
 
-                task.transRegion = tRegion;
+                task.TransRegion = tRegion;
             }
         }
 
@@ -412,7 +462,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
                 return true;
             }
 
-            TransRegion region = region_Tasks[0].transRegion;
+            TransRegion region = region_Tasks[0].TransRegion;
 
             var tmp = region_Tasks
                 .OrderBy(t => t.Region)
@@ -437,7 +487,7 @@ insert into P_TransLog( functionName, Description, StartTime, EndTime, RegionID,
         private bool Transfer_Task_BySeq(List<TransTask> tasks)
         {
             SqlConnection conn;
-            DualResult result = DBProxy.Current.OpenConnection(tasks[0].transRegion.ConnectionName, out conn);
+            DualResult result = DBProxy.Current.OpenConnection(tasks[0].TransRegion.ConnectionName, out conn);
             return result
                 && tasks.OrderBy(t => t.Seq)
                     .All(t => this.Transfer_Task(t, conn));
@@ -487,7 +537,7 @@ END CATCH";
             DualResult result = DBProxy.Current.ExecuteByConn(conn, newSql);
             task.Succeeded = result;
             task.DualResult = result;
-            this.Log(task.transRegion, task, startTime, DateTime.Now);
+            this.Log(task.TransRegion, task, startTime, DateTime.Now);
             return result;
         }
 
