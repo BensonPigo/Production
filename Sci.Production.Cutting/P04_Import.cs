@@ -1,10 +1,10 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using Sci.Data;
 using System.Transactions;
 
 namespace Sci.Production.Cutting
@@ -82,17 +82,17 @@ and estcutdate = '{estcutdate}'";
 
             if (!MyUtility.Check.Empty(cutcellid))
             {
-                sqlcmd = sqlcmd + string.Format(" and cutcellid = '{0}'", cutcellid);
+                sqlcmd += string.Format(" and cutcellid = '{0}'", cutcellid);
             }
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlcmd = sqlcmd + string.Format(" and a.factoryid = '{0}'", factory);
+                sqlcmd += string.Format(" and a.factoryid = '{0}'", factory);
             }
 
             if (!MyUtility.Check.Empty(spreadingNo))
             {
-                sqlcmd = sqlcmd + string.Format(" and a.spreadingNoID = '{0}'", spreadingNo);
+                sqlcmd += string.Format(" and a.spreadingNoID = '{0}'", spreadingNo);
             }
 
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out this.detailTable);
@@ -223,7 +223,7 @@ and (SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR Sp
                                         }
                                     }
 
-                                    iu = iu + string.Format(
+                                    iu += string.Format(
                                         @"
 insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrderUkey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');
 ",
@@ -238,20 +238,10 @@ insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,
                                         ddr["Ukey"],
                                         dr["POID"],
                                         remark);
-                                }
 
-                                // 265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
-                                iu += string.Format(
-                                    @"
-update Workorder set CutplanID = '{0}' 
-where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}' and isnull(SpreadingNoID,'') = '{5}' ;
-",
-                                    id,
-                                    dr["CuttingID"],
-                                    dr["cutcellid"],
-                                    this.keyWord,
-                                    this.dateEstCutDate.Text,
-                                    dr["SpreadingNoID"]);
+                                    // 直接以 workOrder.Ukey 寫回
+                                    iu += $@" update Workorder set CutplanID = '{id}' where Ukey = {ddr["Ukey"]} ; ";
+                                }
                             }
 
                             idnum++;
