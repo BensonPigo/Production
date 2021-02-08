@@ -14,7 +14,7 @@
     [Contents]            NVARCHAR (MAX) CONSTRAINT [DF_Style_Content] DEFAULT ('') NOT NULL,
     [GMTLT]               SMALLINT       CONSTRAINT [DF_Style_GMTLT] DEFAULT ((0)) NOT NULL,
     [CPU]                 NUMERIC (5, 3) CONSTRAINT [DF_Style_CPU] DEFAULT ((0)) NULL,
-    [Factories]           NVARCHAR (180) CONSTRAINT [DF_Style_Factories] DEFAULT ('') NULL,
+    [Factories]           NVARCHAR (200) CONSTRAINT [DF_Style_Factories] DEFAULT ('') NULL,
     [FTYRemark]           NVARCHAR (MAX) CONSTRAINT [DF_Style_FTYRemark] DEFAULT ('') NULL,
     [SampleSMR]           VARCHAR (10)   CONSTRAINT [DF_Style_SampleSMR] DEFAULT ('') NULL,
     [SampleMRHandle]      VARCHAR (10)   CONSTRAINT [DF_Style_SampleMRHandle] DEFAULT ('') NULL,
