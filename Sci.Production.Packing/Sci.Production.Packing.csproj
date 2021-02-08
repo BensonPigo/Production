@@ -61,6 +61,10 @@
     <LangVersion>7</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bytescout.BarCodeReader, Version=11.3.0.2004, Culture=neutral, PublicKeyToken=f7dd1bd9d40a50eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Bytescout.BarCodeReader.dll</HintPath>
+    </Reference>
     <Reference Include="commons-logging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\_Dll\commons-logging.dll</HintPath>
     </Reference>
