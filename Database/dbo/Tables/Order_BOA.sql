@@ -30,8 +30,15 @@
     [BomTypePo]           BIT            NULL,
     [Keyword]             VARCHAR (MAX)  NULL,
     [Seq1]                VARCHAR (3)    NULL,
+    [BomTypeMatching]     BIT            NULL,
+    [BomTypeCalculatePCS] BIT            NULL,
+    [SizeItem_PCS]        VARCHAR (3)    NULL,
+    [LimitUp]             DECIMAL (7, 2) NULL,
+    [LimitDown]           DECIMAL (7, 2) NULL,
     CONSTRAINT [PK_Order_BOA] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

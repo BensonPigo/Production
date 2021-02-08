@@ -1,10 +1,11 @@
 ﻿
-Create FUNCTION [dbo].[GetKeywordValue]
+CREATE FUNCTION [dbo].[GetKeywordValue]
 (
 	  @OrderID		VarChar(13)
 	 ,@KeyWordID	VarChar(30)
 	 ,@Article		VarChar(8)	= ''
 	 ,@SizeCode		VarChar(8)	= ''
+	 ,@Location		VarChar(1)	= ''
 )
 RETURNS nvarchar(max)
 AS
@@ -47,10 +48,9 @@ BEGIN
 			If Upper(@KeyWordID) = Upper('Type')
 			Begin
 				Select @FieldValue = Reason.Name From dbo.Orders 
-					Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID
-						And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID
-					Left Join Production.dbo.Reason On	Reason.ReasonTypeID = 'Style_Apparel_Type'
-						And Reason.ID = 'Style.ApparelType'
+					Left Join Production.dbo.Style On Style.Ukey = StyleUkey
+					Left Join Production.dbo.Reason On Reason.ReasonTypeID = 'Style_Apparel_Type'
+						And Reason.ID = Style.ApparelType
 				Where Orders.ID = @OrderID
 
 			End;
@@ -67,7 +67,10 @@ BEGIN
 				if(@KeyWordID = 'Size page') Select @FieldValue = Style.SizePage From dbo.Orders Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID Where Orders.ID = @OrderID
 				if(@KeyWordID = 'Style name') Select @FieldValue = Style.Description From dbo.Orders Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID Where Orders.ID = @OrderID
 				if(@KeyWordID = 'GMTLT') Select @FieldValue = Style.GMTLT From dbo.Orders Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID Where Orders.ID = @OrderID
-				
+				if(@KeyWordID = 'Fit Type') Select @FieldValue = DropDownList.Name  From dbo.Orders Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID Left Join Production.dbo.DropDownList on DropDownList.ID = Style.FitType and DropDownList.Type = 'FitType'
+			  	  Where Orders.ID = @OrderID
+				if(@KeyWordID = 'Gear Line') Select @FieldValue = DropDownList.Name  From dbo.Orders Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID Left Join Production.dbo.DropDownList on DropDownList.ID = Style.GearLine and DropDownList.Type = 'GearLine'
+				  Where Orders.ID = @OrderID
 			End;
 		End;
 				
@@ -103,11 +106,23 @@ BEGIN
 				Left Join Production.dbo.HealthLabelSupp_FtyExpiration On HealthLabelSupp_FtyExpiration.ID = CustCd.HealthID
 					And HealthLabelSupp_FtyExpiration.FactoryID = Orders.FactoryID
 			Where Orders.ID = @OrderID
-
 		End;
 
+		If Upper(@TableName) = Upper('Style_Location')
+		Begin
+			If Upper(@KeyWordID) = Upper('Location')
+			Begin
+				Select @FieldValue = DropDownList.Name 
+				From dbo.Orders 
+					Left Join Production.dbo.Style On Style.BrandID = Orders.BrandID
+						And Style.ID = Orders.StyleID And Style.SeasonID = Orders.SeasonID
+					Left Join Production.dbo.Style_Location on Style.Ukey = Style_Location.StyleUkey
+					Left Join Production.dbo.DropDownList on DropDownList.ID = Style_Location.Location and DropDownList.Type = 'Location'
+				Where Orders.ID = @OrderID and Style_Location.Location = @Location
+			End;
+		End;
 	End;
 	
-	return @FieldValue
+	return ISNULL(@FieldValue, '')
 
 END

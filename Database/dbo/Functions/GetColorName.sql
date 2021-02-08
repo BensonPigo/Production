@@ -18,21 +18,25 @@ Begin
 	End;
 	
 	Declare @SuppColorIndex Int;
-	Declare @SuppColorLocation Int;
-	Declare @SuppColorID VarChar(6);
+	--Declare @SuppColorLocation Int;
+	Declare @SuppColorID VarChar(20);
 	Declare @MultipleColorID VarChar(6);
-	Declare @MultipleColorName NVarChar(90);
+	Declare @MultipleColorName NVarChar(max);
 	Declare @MultipleColorFullName NVarChar(Max);
 	Declare @Color_Multiple Table
 		(RowID BigInt Identity(1,1) Not Null, ColorID VarChar(6));
 	Declare @ColorRowID Int;		--Color Row ID
 	Declare @ColorRowCount Int;		--Color 總資料筆數
 	
+	declare @spColorList table(Data nvarchar(Max), no int)
+	insert into @spColorList
+	select * from Production.dbo.SplitString(@SuppColor,',')
+
 	Insert Into @Color_multiple
 		(ColorID)
 		Select Color_Multiple.ColorID
-		  From dbo.Color WITH (NOLOCK)
-		 Inner Join dbo.Color_Multiple WITH (NOLOCK)
+		  From Production.dbo.Color
+		 Inner Join Production.dbo.Color_Multiple
 			On Color_Multiple.ColorUkey = Color.Ukey
 		 Where Color.BrandID = @BrandID
 		   And Color.ID = @ColorID
@@ -47,7 +51,7 @@ Begin
 	
 	Set @ColorRowID = 1;
 	Set @SuppColorIndex = 1;
-	Set @SuppColorLocation = 1;
+	--Set @SuppColorLocation = 1;
 	Select @ColorRowID = Min(RowID), @ColorRowCount = Max(RowID) From @Color_multiple;
 	While @ColorRowID <= @ColorRowCount
 	Begin
@@ -58,7 +62,7 @@ Begin
 		If IsNull(@MultipleColorID, '') != ''
 		Begin
 			Select @MultipleColorName = RTrim(Color.Name)
-			  From dbo.Color WITH (NOLOCK)
+			  From Production.dbo.Color
 			 Where Color.BrandID = @BrandID
 			   And Color.ID = @MultipleColorID;
 			
@@ -69,8 +73,9 @@ Begin
 			End;
 			Else
 			Begin
-				if(CharIndex(',', @SuppColor, @SuppColorLocation + 1) - @SuppColorLocation >= 0)
-					Set @SuppColorID = SubString(@SuppColor, @SuppColorLocation, CharIndex(',', @SuppColor, @SuppColorLocation + 1) - @SuppColorLocation);
+				--if(CharIndex(',', @SuppColor, @SuppColorLocation + 1) - @SuppColorLocation >= 0)
+				--	Set @SuppColorID = SubString(@SuppColor, @SuppColorLocation, CharIndex(',', @SuppColor, @SuppColorLocation + 1) - @SuppColorLocation);
+				set @SuppColorID = (select Data from @spColorList where [no] = @ColorRowID)
 			End;
 
 			If @ColorType In ('2', '4')
@@ -121,7 +126,7 @@ Begin
 		End;
 
 		Set @ColorRowID += 1;
-		Set @SuppColorLocation = CharIndex(',', @SuppColor, @SuppColorLocation + 1) + 1;
+		--Set @SuppColorLocation = CharIndex(',', @SuppColor, @SuppColorLocation + 1) + 1;
 	End;
 
 	Return @ColorName;

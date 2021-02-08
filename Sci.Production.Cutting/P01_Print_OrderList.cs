@@ -280,6 +280,7 @@ select [SP] =
                 #endregion
             }
 
+            // Trade Purchase_P01_01
             if (this.radioEachConsumption.Checked)
             {
                 #region Each Consumption (Cutting Combo)
@@ -304,8 +305,6 @@ select [SP] =
                 DataRow dr = dts[0].Rows[0];
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_EachConsumptionCuttingCombo.xltx");
-
-                                                                           // Cutting_P01_EachConsumptionCuttingCombo.xltx
                 sxrc sxr = new sxrc(xltPath);
                 sxr.CopySheet.Add(1, dts.Length - 2);
 
@@ -336,28 +335,24 @@ select [SP] =
                         dt.LisColumnInfo.Add(citbl);
                     }
 
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 7, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 6, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 5, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 4, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 3, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 7, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft) { ColumnWidth = 17 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 6) { IsAutoFit = true, Alignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight, NumberFormate = "##,##0.0000 \"Y/pc\"", ColumnWidth = 11 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 5, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft) { ColumnWidth = 30 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 4, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight) { ColumnWidth = 8 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 3, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight) { ColumnWidth = 6 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight) { ColumnWidth = 8 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight) { ColumnWidth = 4 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight) { ColumnWidth = 10 });
 
                     // 合併儲存格
                     dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 8) } });
 
                     dt.Borders.AllCellsBorders = true;
 
-                    // 凍結窗格
-                    dt.BoFreezePanes = true;
-                    dt.IntFreezeColumn = 3;
-
                     sxr.DicDatas.Add(sxr.VPrefix + "tbl1" + idxStr, dt);
                     sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, sizeGroup);
                     sxr.DicDatas.Add(sxr.VPrefix + "MarkerDownloadID" + idxStr, markerDownloadID);
-
+                    this.pTitleRow = "1:8";
                     sxrc.ReplaceAction a = this.ExMethod;
                     sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                 }
@@ -369,6 +364,7 @@ select [SP] =
                 #endregion
             }
 
+            // Trade Purchase_P01_02
             if (this.radioTTLConsumption.Checked)
             {
                 #region TTL consumption (PO Combo)
@@ -450,6 +446,7 @@ select [SP] =
                 #endregion
             }
 
+            // Trade Order_Report03
             if (this.radioColorQtyBDown.Checked)
             {
                 #region Color & Q'ty B'Down (PO Combo)
@@ -463,14 +460,20 @@ select [SP] =
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ColorCombo_SizeBreakdown.xltx");
 
                 sxrc sxr = new sxrc(xltPath);
-                string pOComboList = rpt3.Rows[0]["POComboList"].ToString();
+                string poComboList = rpt3.Rows[0]["POComboList"].ToString();
                 string sty = rpt3.Rows[0]["Style"].ToString();
 
-                sxr.DicDatas.Add(sxr.VPrefix + "SP", pOComboList);
+                sxr.DicDatas.Add(sxr.VPrefix + "SP", poComboList);
                 sxr.DicDatas.Add(sxr.VPrefix + "Style", sty);
                 sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", "COLOR COMBINATION / Q'TY BREAKDOWN");
 
-                res = DBProxy.Current.SelectSP(string.Empty, "Cutting_Color_P01_OrderQtyDown_POCombo", new List<SqlParameter> { new SqlParameter("@OrderID", this._id), new SqlParameter("@ByType", "2") }, out DataTable[] dts);
+                List<SqlParameter> plis = new List<SqlParameter>();
+                plis.Add(new SqlParameter("@OrderID", this._id));
+                plis.Add(new SqlParameter("@ByType", "2"));
+                plis.Add(new SqlParameter("@showJunk", this.rdIncludeCancelQty.Checked ? 1 : 0));
+
+                res = DBProxy.Current.SelectSP(string.Empty, "Cutting_Color_P01_OrderQtyDown_POCombo", plis, out DataTable[] dts);
 
                 if (!res)
                 {
@@ -992,6 +995,7 @@ select distinct sizecode,Seq
                 #endregion
             }
 
+            // Trade Purchase_P01_04
             if (this.radioEachConsVSOrderQtyBDown.Checked)
             {
                 #region Each cons. vs Order Q'ty B'Down (PO Combo)
@@ -1013,207 +1017,39 @@ select distinct sizecode,Seq
                 this.Extra_P01_EachconsVSOrderQTYBDownPOCombo(dts[1]);
 
                 string xltPath = Env.Cfg.XltPathDir + "\\Cutting_P01_EachconsVSOrderQTYBDownPOCombo.xltx";
+                sxrc sxr = new sxrc(xltPath, true);
+                sxr.DicDatas.Add(sxr.VPrefix + "SPNO", dr["ORDERNO"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "Style", dr["StyleID"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
 
-                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(xltPath);
-                excel.Visible = false;
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
 
-                string cuttingfactory3 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
-                worksheet.Cells[1, 1] = MyUtility.GetValue.Lookup("NameEN", cuttingfactory3, "Factory", "ID");
-                worksheet.Cells[2, 2] = dr["ORDERNO"];
-                worksheet.Cells[3, 2] = dr["StyleID"];
+                // 欄位水平對齊
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(3, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(4, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(5, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(6, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight));
 
-                Microsoft.Office.Interop.Excel.Range rg1, rg2;
-                if (dts[1].Rows.Count > 0)
-                {
-                    int count_header = 0;
-                    int count_left = 0;
-                    int count_right = 0;
-                    int countRow_left = 1;
-                    int countRow_Right = 1;
+                // 第二欄(Color)改為文字
+                sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(dt.Columns[1].ColumnName);
+                xlc1.NumberFormate = "@";
+                dt.LisColumnInfo.Add(xlc1);
 
-                    for (int i = 0; i < dts[1].Rows.Count; i++)
-                    {
-                        #region 塞第一頁的值與Header
-                        /*
-                         * 第一頁左右只能各塞44行資料(一頁共49行 = 4行Header+44資料+一行空白)
-                         */
-                        if (i <= 43)
-                        {
-                            // 左側資料Header
-                            worksheet.Cells[4, 1] = "#";
-                            worksheet.Cells[4, 2] = "Article";
-                            worksheet.Cells[4, 3] = "Size";
-                            worksheet.Cells[4, 4] = "CutQty";
-                            worksheet.Cells[4, 5] = "OrderQty";
-                            worksheet.Cells[4, 6] = "Balance";
-                            rg1 = worksheet.Range["A4", "F4"];
-                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                            rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
+                dt.Borders.InsideVertical = false;
+                dt.Borders.OutsideVertical = false;
+                dt.Borders.DependOnColumn.Add(1, 4);
+                dt.TotalBorders.DependOnColumn.Add(3, "Sub.TTL:");
+                dt.BoAutoFitColumn = true;
 
-                            /*塞第一頁左側資料*/
-
-                            // 當FabricPanelCode有東西,就對上一行加上下底框線
-                            if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
-                            {
-                                worksheet.Range["A" + (4 + i), "F" + (4 + i)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                worksheet.Range["A" + (4 + i), "F" + (4 + i)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                            }
-
-                            // 5+i 是因為從第五行開始才塞值
-                            worksheet.Cells[5 + i, 1] = dts[1].Rows[i]["#"].ToString();
-                            worksheet.Cells[5 + i, 2] = dts[1].Rows[i]["Article"].ToString();
-                            worksheet.Cells[5 + i, 3] = dts[1].Rows[i]["Size"].ToString();
-                            worksheet.Cells[5 + i, 4] = dts[1].Rows[i]["CutQty"].ToString();
-                            worksheet.Cells[5 + i, 5] = dts[1].Rows[i]["orderQty"].ToString();
-                            worksheet.Cells[5 + i, 6] = dts[1].Rows[i]["Balance"].ToString();
-                        }
-
-                        // 塞第一頁右側資料
-                        else if (i >= 44 && i < 88)
-                        {
-                            worksheet.Cells[4, 8] = "#";
-                            worksheet.Cells[4, 9] = "Article";
-                            worksheet.Cells[4, 10] = "Size";
-                            worksheet.Cells[4, 11] = "CutQty";
-                            worksheet.Cells[4, 12] = "OrderQty";
-                            worksheet.Cells[4, 13] = "Balance";
-                            rg2 = worksheet.Range["H" + 4, "M" + 4];
-                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                            rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
-
-                            if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
-                            {
-                                worksheet.Range["H" + (4 + i - 44), "M" + (4 + i - 44)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                worksheet.Range["H" + (4 + i - 44), "M" + (4 + i - 44)].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                            }
-
-                            /*
-                             * 5 + i - 44
-                             * 從第五行開始塞資料
-                             * 需要跟左側資料平行,需要減掉左側i=44的資料筆數
-                             */
-                            worksheet.Cells[5 + i - 44, 8] = dts[1].Rows[i]["#"].ToString();
-                            worksheet.Cells[5 + i - 44, 9] = dts[1].Rows[i]["Article"].ToString();
-                            worksheet.Cells[5 + i - 44, 10] = dts[1].Rows[i]["Size"].ToString();
-                            worksheet.Cells[5 + i - 44, 11] = dts[1].Rows[i]["CutQty"].ToString();
-                            worksheet.Cells[5 + i - 44, 12] = dts[1].Rows[i]["orderQty"].ToString();
-                            worksheet.Cells[5 + i - 44, 13] = dts[1].Rows[i]["Balance"].ToString();
-                        }
-                        #endregion
-                        #region 塞第二頁以後的值與Header
-                        else
-                        {
-                            /*
-                             * 塞第二頁以後的資料
-                             * 塞進Excel的資料 以及DataTable的資料必須分開計算
-                             * Excel行數計算:
-                             *      必須從第50行算起,每一頁只能存在46行,必須以46的倍數放進Excel
-                             * DataTable筆數計算:
-                             *      每一頁只能放46行資料,每頁第一行放Header + 44行的資料 + 1行的空白分隔
-                             *      所以44的倍數計算
-                             * */
-                            // 左側資料Header
-                            if ((i % 44 == 0) && ((i / 44) % 2 == 0))
-                            {
-                                worksheet.Cells[50 + (count_header * 46), 1] = "#";
-                                worksheet.Cells[50 + (count_header * 46), 2] = "Article";
-                                worksheet.Cells[50 + (count_header * 46), 3] = "Size";
-                                worksheet.Cells[50 + (count_header * 46), 4] = "CutQty";
-                                worksheet.Cells[50 + (count_header * 46), 5] = "OrderQty";
-                                worksheet.Cells[50 + (count_header * 46), 6] = "Balance";
-                                rg1 = worksheet.Range["A" + (50 + (count_header * 46)), "F" + (50 + (count_header * 46))];
-                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
-                                count_left++;
-                                countRow_left = 1;
-                            }
-
-                            // 右側資料Header
-                            else if (i % 44 == 0 && (i / 44) % 2 != 0)
-                            {
-                                worksheet.Cells[50 + (count_header * 46), 8] = "#";
-                                worksheet.Cells[50 + (count_header * 46), 9] = "Article";
-                                worksheet.Cells[50 + (count_header * 46), 10] = "Size";
-                                worksheet.Cells[50 + (count_header * 46), 11] = "CutQty";
-                                worksheet.Cells[50 + (count_header * 46), 12] = "OrderQty";
-                                worksheet.Cells[50 + (count_header * 46), 13] = "Balance";
-                                rg2 = worksheet.Range["H" + (50 + (count_header * 46)), "M" + (50 + (count_header * 46))];
-                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].Weight = 3;
-                                count_right++;
-                                count_header++;
-                                countRow_Right = 1;
-                            }
-
-                            // 左側的資料
-                            if (i >= count_left * 2 * 44 && i < ((count_left * 2) + 1) * 44)
-                            {
-                                int bordeCnt = 50 + (46 * (count_left - 1)) + (countRow_left - 1);
-                                if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
-                                {
-                                    worksheet.Range["A" + bordeCnt, "F" + bordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                    worksheet.Range["A" + bordeCnt, "F" + bordeCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                                }
-
-                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 1] = dts[1].Rows[i]["#"].ToString();
-                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 2] = dts[1].Rows[i]["Article"].ToString();
-                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 3] = dts[1].Rows[i]["Size"].ToString();
-                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 4] = dts[1].Rows[i]["CutQty"].ToString();
-                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 5] = dts[1].Rows[i]["orderQty"].ToString();
-                                worksheet.Cells[50 + (46 * (count_left - 1)) + countRow_left, 6] = dts[1].Rows[i]["Balance"].ToString();
-                                countRow_left++;
-                            }
-
-                            // 右側的資料
-                            else
-                            {
-                                int borderCnt = 50 + (46 * (count_right - 1)) + (countRow_Right - 1);
-                                if (!MyUtility.Check.Empty(dts[1].Rows[i]["#"].ToString()))
-                                {
-                                    worksheet.Range["H" + borderCnt, "M" + borderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
-                                    worksheet.Range["H" + borderCnt, "M" + borderCnt].Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 3;
-                                }
-
-                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 8] = dts[1].Rows[i]["#"].ToString();
-                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 9] = dts[1].Rows[i]["Article"].ToString();
-                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 10] = dts[1].Rows[i]["Size"].ToString();
-                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 11] = dts[1].Rows[i]["CutQty"].ToString();
-                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 12] = dts[1].Rows[i]["orderQty"].ToString();
-                                worksheet.Cells[50 + (46 * (count_right - 1)) + countRow_Right, 13] = dts[1].Rows[i]["Balance"].ToString();
-                                countRow_Right++;
-                            }
-                        #endregion
-                        }
-                    }
-                }
-
-                #region Save & Show Excel
-                string strExcelName = MyUtility.Excel.GetRandomFileName("Cutting_P01_EachconsVSOrderQTYBDownPOCombo");
-                Microsoft.Office.Interop.Excel.Workbook workbook = excel.Workbooks[1];
-                workbook.SaveAs(strExcelName);
-                workbook.Close();
-                excel.Quit();
-                Marshal.ReleaseComObject(excel);
-                Marshal.ReleaseComObject(worksheet);
-                Marshal.ReleaseComObject(workbook);
-
-                strExcelName.OpenFile();
-                #endregion
-                this.HideWaitMessage();
-                return true;
-
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
+                sxr.BoOpenFile = true;
+                sxr.Save();
                 #endregion
             }
 
+            // Trade Purchase_P01_05
             if (this.radioMarkerList.Checked)
             {
                 #region Marker List
@@ -1233,7 +1069,7 @@ select distinct sizecode,Seq
 
                 DataRow dr = dts[0].Rows[0];
 
-                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "cutting_P01_MarkerList.xltx");
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_MarkerList.xltx");
                 sxrc sxr = new sxrc(xltPath, true);
                 sxr.CopySheet.Add(1, dts.Length - 2);
 
@@ -1249,7 +1085,7 @@ select distinct sizecode,Seq
                     sxr.DicDatas.Add(sxr.VPrefix + "REPORTNAME" + idxStr, dr["REPORTNAME"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO" + idxStr, dr["ORDERNO"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, dr["STYLENO"]);
-                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, dr["QTY"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, MyUtility.Convert.GetString(dr["QTY"]));
                     sxr.DicDatas.Add(sxr.VPrefix + "FACTORY" + idxStr, dr["FACTORY"]);
                     sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[sgIdx]);
 
@@ -1270,27 +1106,19 @@ select distinct sizecode,Seq
                         dt.LisColumnInfo.Add(citbl);
                     }
 
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter) { ColumnWidth = 7 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter) { ColumnWidth = 12 });
                     dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(3, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft));
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter));
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count - 1, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft) { ColumnWidth = 17 });
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(dt.Columns.Count, true, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter) { ColumnWidth = 13 });
                     dt.Borders.AllCellsBorders = true;
 
                     // 合併儲存格
                     dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 4, dt.Columns.Count - 2) } });
                     sxr.DicDatas.Add(sxr.VPrefix + "tbl1" + idxStr, dt);
 
-                    // 凍結窗格
-                    dt.BoFreezePanes = true;
-                    dt.IntFreezeColumn = 3;
-                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
                     sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, sizeGroup1);
-
-                    Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
-                    wks.Range["B3", "B3"].WrapText = 1;
-                    wks.get_Range("A3").RowHeight = 16.5;
-                    wks.get_Range("A4").RowHeight = 16.5;
+                    this.pTitleRow = "1:4";
                     sxrc.ReplaceAction a = this.ExMethod;
                     sxr.DicDatas.Add(sxr.VPrefix + "exAction" + idxStr, a);
                 }
@@ -1302,6 +1130,7 @@ select distinct sizecode,Seq
                 #endregion
             }
 
+            // Trade Purchase_P01_06
             if (this.radioConsumptionCalculateByMarkerListConsPerPC.Checked)
             {
                 #region Consumption Calculate by Marker List Cons/Per pc
@@ -1323,20 +1152,14 @@ select distinct sizecode,Seq
                 this.Extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
-                sxrc sxr = new sxrc(xltPath, true)
-                {
-                    AllowRangeTransferToString = false,
-                };
-                string cuttingfactory4 = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
-                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory4, "Factory", "ID"));
+                SaveXltReportCls sxr = new SaveXltReportCls(xltPath, true);
+                sxr.AllowRangeTransferToString = false;
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
-                sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
+                sxr.DicDatas.Add(sxr.VPrefix + "QTY", dr["QTY"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
-                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1])
-                {
-                    ShowHeader = false,
-                };
+                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dts[1]);
+                dt.ShowHeader = false;
 
                 // 欄位水平對齊
                 for (int i = 1; i <= dt.Columns.Count; i++)
@@ -1347,7 +1170,7 @@ select distinct sizecode,Seq
                         xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                     }
 
-                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, xha);
+                    SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, xha);
                     if (i == 6 | i == 9 | i == 11 | i == 13)
                     {
                         citbl.PointCnt = 2; // 小數點兩位
@@ -1448,49 +1271,74 @@ select distinct sizecode,Seq
 
         private void SetColumn(sxrc.XltRptTable tbl, Microsoft.Office.Interop.Excel.XlHAlign alignment)
         {
-            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName)
-            {
-                NumberFormate = "@",
-            };
+            sxrc.XlsColumnInfo xlc1 = new sxrc.XlsColumnInfo(tbl.Columns[0].ColumnName);
+            xlc1.NumberFormate = "@";
             tbl.LisColumnInfo.Add(xlc1);
 
             for (int i = 1; i < tbl.Columns.Count; i++)
             {
-                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName)
-                {
-                    Alignment = alignment,
-                };
+                sxrc.XlsColumnInfo xlc = new sxrc.XlsColumnInfo(tbl.Columns[i].ColumnName);
+                xlc.Alignment = alignment;
                 tbl.LisColumnInfo.Add(xlc);
             }
         }
 
         private void Extra_P01_EachConsumptionCuttingCombo(DataTable dt)
         {
-            string cOMB = string.Empty;
+            string comb = string.Empty;
+            string remark2 = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 DataRow dr = dt.Rows[i];
-                if (cOMB != dr["COMB"].ToString().Trim())
+                if (comb != dr["COMB"].ToString().Trim())
                 {
                     DataRow ndr = dt.NewRow();
                     ndr["COMB"] = dr["COMB"];
                     ndr["REMARK"] = dr["COMBdes"];
 
                     dt.Rows.InsertAt(ndr, i);
-
                     i += 1;
-                    cOMB = dr["COMB"].ToString().Trim();
+
+                    comb = dr["COMB"].ToString().Trim();
+
+                    if (dr.Table.Columns.Contains("REMARK2") && !MyUtility.Check.Empty(dr["REMARK2"]))
+                    {
+                        ndr = dt.NewRow();
+                        ndr["REMARK"] = dr["REMARK2"];
+                        remark2 = dr["REMARK2"].ToString();
+
+                        dt.Rows.InsertAt(ndr, i);
+                        i += 1;
+                    }
+                }
+                else
+                {
+                    // 若Remakr2不等於之前的，則插入一行新的Row for remark
+                    if (dr.Table.Columns.Contains("REMARK2") && !MyUtility.Check.Empty(dr["REMARK2"])
+                        && remark2 != dr["REMARK2"].ToString())
+                    {
+                        DataRow ndr = dt.NewRow();
+                        ndr["REMARK"] = dr["REMARK2"];
+                        remark2 = dr["REMARK2"].ToString();
+
+                        dt.Rows.InsertAt(ndr, i);
+                        i += 1;
+                    }
                 }
 
                 dr["COMB"] = string.Empty;
             }
 
             dt.Columns.Remove("COMBdes");
+            if (dt.Columns.Contains("REMARK2"))
+            {
+                dt.Columns.Remove("REMARK2");
+            }
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 DataRow dr = dt.Rows[i];
-                if (dr["REMARK"].ToString().Trim() != string.Empty & dr["COMB"].ToString().Trim() == string.Empty)
+                if (dr["MarkerName"].ToString() != string.Empty && dr["REMARK"].ToString().Trim() != string.Empty & dr["COMB"].ToString().Trim() == string.Empty)
                 {
                     DataRow ndr = dt.NewRow();
                     ndr["REMARK"] = dr["REMARK"];
@@ -1500,6 +1348,8 @@ select distinct sizecode,Seq
                 }
             }
         }
+
+        private string pTitleRow = "1:8";
 
         private void ExMethod(Microsoft.Office.Interop.Excel.Worksheet oSheet, int rowNo, int columnNo)
         {
@@ -1527,6 +1377,8 @@ select distinct sizecode,Seq
                     r.Columns.AutoFit();
                 }
             }
+
+            oSheet.PageSetup.PrintTitleRows = this.pTitleRow;
         }
 
         private void Extra_P01_Report_TTLconsumptionPOCombo(DataTable dt, decimal orderQty)
@@ -1586,13 +1438,53 @@ select distinct sizecode,Seq
 
         private void Extra_P01_EachconsVSOrderQTYBDownPOCombo(DataTable dt)
         {
-            this.AddTotal1(dt, 1, "Sub.TTL:", true);
-            this.AddTotal1(dt, 0, "Total:", false);
-            this.RemoveRepeat1(dt, 0, true);
-            this.RemoveRepeat1(dt, 1, false);
+            this.AddTotal(dt, "0,1", "Sub.TTL:", true);
+            this.AddTotal(dt, "0", "Total:", false);
+            this.RemoveRepeat(dt, 0, true);
+            this.RemoveRepeat(dt, 1, false);
         }
 
-        private void AddTotal1(DataTable dt, int cidx, string txt, bool exRow)
+        private void RemoveRepeat(DataTable dt, int cidx, bool addNewRow)
+        {
+            string col2tmp = string.Empty;
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                string col2 = dt.Rows[i][cidx].ToString();
+                if (col2 == string.Empty)
+                {
+                    if (cidx == 1)
+                    {
+                        col2tmp = string.Empty;
+                    }
+
+                    continue;
+                }
+
+                if (col2tmp != col2)
+                {
+                    col2tmp = col2;
+                    if (addNewRow)
+                    {
+                        DataRow dr = dt.NewRow();
+                        dr[cidx] = dt.Rows[i][cidx].ToString();
+                        dt.Rows.InsertAt(dr, i);
+                        i += 1;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    ////
+                }
+
+                dt.Rows[i][cidx] = string.Empty;
+            }
+        }
+
+        private void AddTotal(DataTable dt, string cidx, string txt, bool exRow)
         {
             string col2tmp = string.Empty;
             decimal sCutQty = 0;
@@ -1601,7 +1493,12 @@ select distinct sizecode,Seq
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                string col2 = dt.Rows[i][cidx].ToString();
+                string col2 = string.Empty; // string.Join(",", cidx.Split(','));  //dt.Rows[i][cidx].ToString();
+                foreach (var item in cidx.Split(','))
+                {
+                    col2 += dt.Rows[i][Convert.ToInt32(item)].ToString();
+                }
+
                 if (col2 == string.Empty)
                 {
                     continue;
@@ -1616,7 +1513,7 @@ select distinct sizecode,Seq
                     else
                     {
                         col2tmp = col2;
-                        this.AddSubTotalRow2(txt, dt, sCutQty, sOrderQty, sBalance, i);
+                        this.AddSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, i);
 
                         if (exRow)
                         {
@@ -1624,11 +1521,7 @@ select distinct sizecode,Seq
                         }
                         else
                         {
-                            // 預防不同FabricPanelCode,相同Article計算Total會把上一筆資料給刪除
-                            if (MyUtility.Check.Empty(dt.Rows[i - 1]["Size"].ToString()))
-                            {
-                                dt.Rows.RemoveAt(i - 1);
-                            }
+                            dt.Rows.RemoveAt(i - 1);
                         }
 
                         sCutQty = 0;
@@ -1642,14 +1535,7 @@ select distinct sizecode,Seq
                 }
                 else
                 {
-                }
-
-                // 防止加總上一個Total,避免Total重複相加
-                if (i > 1 && dt.Rows[i - 1]["Size"].ToString() == "Total:")
-                {
-                    sCutQty = 0;
-                    sOrderQty = 0;
-                    sBalance = 0;
+                    ////
                 }
 
                 sCutQty += decimal.Parse(dt.Rows[i]["CutQty"].ToString());
@@ -1657,10 +1543,10 @@ select distinct sizecode,Seq
                 sBalance += decimal.Parse(dt.Rows[i]["Balance"].ToString());
             }
 
-            this.AddSubTotalRow2(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
+            this.AddSubTotalRow(txt, dt, sCutQty, sOrderQty, sBalance, dt.Rows.Count);
         }
 
-        private void AddSubTotalRow2(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
+        private void AddSubTotalRow(string txt, DataTable dt, decimal sCutQty, decimal sOrderQty, decimal sBalance, int idx)
         {
             DataRow dr = dt.NewRow();
             dr["Size"] = txt;
@@ -1668,58 +1554,6 @@ select distinct sizecode,Seq
             dr["OrderQty"] = sOrderQty;
             dr["Balance"] = sBalance;
             dt.Rows.InsertAt(dr, idx);
-        }
-
-        private void RemoveRepeat1(DataTable dt, int cidx, bool addNewRow)
-        {
-            string col2tmp = string.Empty;
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                string col2 = dt.Rows[i][cidx].ToString();
-                if (col2 == string.Empty)
-                {
-                    continue;
-                }
-
-                if (col2tmp != col2)
-                {
-                    if (col2tmp == string.Empty)
-                    {
-                        col2tmp = col2;
-                        if (addNewRow)
-                        {
-                            DataRow dr = dt.NewRow();
-                            dr[cidx] = dt.Rows[i][cidx].ToString();
-                            dt.Rows.InsertAt(dr, i);
-                            i += 1;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        col2tmp = col2;
-                        if (addNewRow)
-                        {
-                            DataRow dr = dt.NewRow();
-                            dr[cidx] = dt.Rows[i][cidx].ToString();
-                            dt.Rows.InsertAt(dr, i);
-                            i += 1;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-                }
-                else
-                {
-                }
-
-                dt.Rows[i][cidx] = string.Empty;
-            }
         }
 
         private void Extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)

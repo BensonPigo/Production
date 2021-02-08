@@ -1,4 +1,5 @@
 ﻿
+
 CREATE PROCEDURE [dbo].[cutting_P01_MarkerList]
 	@OrderID VARCHAR(13)
 AS
@@ -8,14 +9,17 @@ BEGIN
 	select @OrderID=POID FROM dbo.Orders where ID = @OrderID
 	
 	SELECT
-	ORDERNO=RTRIM(POID) + d.spno ,STYLENO=StyleID+'-'+SeasonID ,QTY=SUM(Qty) ,FACTORY=FactoryID
-	,REPORTNAME = (SELECT top 1 Title FROM dbo.Company where Junk = 0 and IsDefault = 1 order by ID desc)
+		ORDERNO = RTRIM(POID) + d.spno
+		, STYLENO = StyleID + '-' + SeasonID
+		, QTY = dbo.GetEachConsOrderQty(Orders.POID)
+		, FACTORY = (select FactoryID from Orders where Id = @OrderID)
+		, REPORTNAME = (SELECT top 1 Title FROM dbo.Company where Junk = 0 and IsDefault = 1 order by ID desc)
 	FROM dbo.Orders
 	OUTER APPLY(SELECT STUFF((SELECT '/'+SUBSTRING(ID,11,4) FROM Orders WHERE POID = @OrderID  order by ID FOR XML PATH('')),1,1,'') as spno) d
 	WHERE POID = @OrderID
 	GROUP BY POID,d.spno,StyleID,SeasonID,FactoryID
 	
-
+	
 	Select a.id,a.Ukey
 	,'COMB' = FabricPanelCode
 	,'COMBdes' = e.Refno + ' ' + e.Description + '                Mark Width:' + a.Width + '  Mark Weight:' + cast(e.Weight as nvarchar(20))
@@ -32,7 +36,7 @@ BEGIN
 
 	--For Each Size Group
 	--select * into #SizeCodes from GetSizeCodeColumnByID(@OrderID,1) a where a.SizeCode in (select SizeCode from #tmp) order by Seq
-		select c.SizeCode,c.SizeGroup,ROW_NUMBER() over(order by  SizeGroup,SizeCode,seq) Seq Into #SizeCodes from (
+	select c.SizeCode,c.SizeGroup,ROW_NUMBER() over(order by  SizeGroup,seq) Seq Into #SizeCodes from (
 		select distinct a.SizeCode,sm.SizeGroup,o.Seq  from Order_EachCons_SizeQty a
 		left join Order_EachCons b on a.Order_EachConsUkey = b.Ukey
 		left join SMNotice sm on b.SMNoticeID = sm.ID
@@ -54,21 +58,10 @@ BEGIN
 			select @colStr=STUFF((SELECT ',['+SizeCode+']' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH('')),1,1,'')
 			select @colStr3= 'where ' + STUFF((SELECT ' ['+SizeCode+'] is not null or' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH('')),1,1,'')
 			select @colStr3 = substring(@colStr3,1,len(@colStr3)-3)
-
-			declare @sql varchar(max) = '
-			SELECT 
-			SizeGroup='''+@SizeGroup+'''
-			,COMB
-			,COMBdes
-			,MarkerName
-			,REMARK
-			,'+@colStr+'
-			,MarkerLength as ''MAKER LEN.+1"''
-			,ActCuttingPerimeter AS ''Cut Perimeter''
-			 FROM (
+			
+			declare @sql varchar(max) = 'SELECT SizeGroup='''+@SizeGroup+''',COMB,COMBdes,MarkerName,REMARK,'+@colStr+',MarkerLength as ''MAKER LEN.+1"'',ActCuttingPerimeter AS ''Cut Perimeter'' FROM (
 				select COMB,COMBdes,MarkerName,MarkerLength,ActCuttingPerimeter,REMARK,SizeCode,Qty,Seq from #tmp
-			) a 
-			pivot (max(Qty) for SizeCode in ('+@colStr+')) b '+@colStr3+'
+			) a pivot (max(Qty) for SizeCode in ('+@colStr+')) b '+@colStr3+'
 			order by Seq'
 
 			--print @sql
