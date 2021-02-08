@@ -123,13 +123,19 @@ namespace Sci.Production.Automation
             StackTrace stackTrace = new StackTrace();
             MethodBase methodBase = stackTrace.GetFrame(3).GetMethod();
 
-            requestHeaders.Add("CallFrom", methodBase.DeclaringType.FullName);
+            string callFrom = methodBase.DeclaringType.FullName;
+            if (callFrom.Contains("+"))
+            {
+                callFrom = callFrom.Split('+')[0];
+            }
+
             string activity = methodBase.Name;
             if (activity.Contains("<") && activity.Contains(">"))
             {
                 activity = activity.Split('<')[1].Split('>')[0];
             }
 
+            requestHeaders.Add("CallFrom", callFrom);
             requestHeaders.Add("Activity", activity);
             requestHeaders.Add("User", Env.User.UserID);
 
