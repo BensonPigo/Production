@@ -12,6 +12,8 @@ using Ict.Win;
 using System.Linq.Dynamic;
 using Sci.Win.Tools;
 using System.Transactions;
+using System.Threading.Tasks;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Packing
 {
@@ -212,8 +214,10 @@ namespace Sci.Production.Packing
                     {
                         dr["barcode"] = DBNull.Value;
                     }
+
                     string cmd = $@"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'";
                     DBProxy.Current.Execute(null, cmd);
+                    this.TaskCallWebAPI(this.PackingListID);
                 }
 
                 DualResult result_load = this.LoadScanDetail(0);
@@ -322,8 +326,10 @@ namespace Sci.Production.Packing
                 {
                     seledr["Barcode"] = DBNull.Value;
                 }
+
                 string cmd = $@"update PackingList_Detail set barcode = null where ID = '{MyUtility.Convert.GetString(dr.ID)}' AND CTNStartNo='{MyUtility.Convert.GetString(dr.CTNStartNo)}' ";
                 DBProxy.Current.Execute(null, cmd);
+                this.TaskCallWebAPI(dr.ID);
             }
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
@@ -696,10 +702,19 @@ WHERE o.ID='{dr.OrderID}'");
                     AND a.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     AND a.Article = '{no_barcode_dr["Article"]}' 
                     AND a.SizeCode = '{no_barcode_dr["SizeCode"]}'
-
+                    
                     UPDATE pd
                     SET BarCode = '{this.txtScanEAN.Text}'
                     from  PackingList_Detail pd
+                    inner join Orders od ON od.ID = pd.OrderID
+                    inner join #Base b ON b.Article = pd.Article
+                    AND b.Color = pd.Color
+                    AND b.SizeCode = pd.SizeCode
+                    AND b.StyleUkey = od.StyleUkey
+
+                    --抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
+                    select distinct pd.ID
+                    from    PackingList_Detail pd
                     inner join Orders od ON od.ID = pd.OrderID
                     inner join #Base b ON b.Article = pd.Article
                     AND b.Color = pd.Color
@@ -779,10 +794,17 @@ WHERE o.ID='{dr.OrderID}'");
             {
                 if (!MyUtility.Check.Empty(this.upd_sql_barcode))
                 {
-                    if (!(sql_result = DBProxy.Current.Execute(null, this.upd_sql_barcode)))
+                    DataTable dtUpdateID;
+                    if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
                     {
                         this.ShowErr(sql_result);
                         return;
+                    }
+
+                    if (dtUpdateID.Rows.Count > 0)
+                    {
+                        List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
+                        this.TaskCallWebAPI(listID);
                     }
                 }
 
@@ -1181,7 +1203,12 @@ WHERE o.ID='{dr.OrderID}'");
             // 如果掃描數量> 0,則 update PackingList_Detail
             if (this.numBoxScanQty.Value > 0)
             {
-                string upd_sql = string.Empty;
+                string upd_sql = @"
+Create table #tmpUpdatedID
+	(
+		ID varchar(13) null
+	)
+";
 
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -1193,16 +1220,28 @@ ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}
 , ScanName = '{Env.User.UserID}'   
 , Lacking = 1
 , BarCode = '{dr["Barcode"]}'
+output	inserted.ID
+into #tmpUpdatedID
 where Ukey={dr["Ukey"]}
 
 ";
                 }
 
-                sql_result = DBProxy.Current.Execute(null, upd_sql);
+                upd_sql += @"select distinct ID from #tmpUpdatedID
+drop table #tmpUpdatedID
+";
+                DataTable dtUpdateID;
+                sql_result = DBProxy.Current.Select(null, upd_sql, out dtUpdateID);
                 if (!sql_result)
                 {
                     this.ShowErr(sql_result);
                     return;
+                }
+
+                if (dtUpdateID.Rows.Count > 0)
+                {
+                    List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
+                    this.TaskCallWebAPI(listID);
                 }
 
                 this.AfterCompleteScanCarton();
@@ -1421,8 +1460,10 @@ where Ukey={dr["Ukey"]}
                     {
                         dr["Barcode"] = DBNull.Value;
                     }
+
                     string cmd = $@"update PackingList_Detail set barcode = null where ID = '{this.PackingListID}' and  CTNStartNo = '{this.CTNStarNo}'";
                     DBProxy.Current.Execute(null, cmd);
+                    this.TaskCallWebAPI(this.PackingListID);
                 }
 
                 DualResult result_load = this.LoadScanDetail(0);
@@ -1529,6 +1570,15 @@ where Ukey={dr["Ukey"]}
                     AND b.SizeCode = pd.SizeCode
                     AND b.StyleUkey = od.StyleUkey
 
+                    --抓出有更新的PKID，作為後續call WebAPI 更新廠商資料用
+                    select distinct pd.ID
+                    from  PackingList_Detail pd
+                    inner join Orders od ON od.ID = pd.OrderID
+                    inner join #Base b ON b.Article = pd.Article
+                    AND b.Color = pd.Color
+                    AND b.SizeCode = pd.SizeCode
+                    AND b.StyleUkey = od.StyleUkey
+
                     Drop TABLE #Base
                     ";
                     foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
@@ -1586,10 +1636,17 @@ where Ukey={dr["Ukey"]}
             {
                 if (!MyUtility.Check.Empty(this.upd_sql_barcode))
                 {
-                    if (!(sql_result = DBProxy.Current.Execute(null, this.upd_sql_barcode)))
+                    DataTable dtUpdateID;
+                    if (!(sql_result = DBProxy.Current.Select(null, this.upd_sql_barcode, out dtUpdateID)))
                     {
                         this.ShowErr(sql_result);
                         return;
+                    }
+
+                    if (dtUpdateID.Rows.Count > 0)
+                    {
+                        List<string> listID = dtUpdateID.AsEnumerable().Select(s => s["ID"].ToString()).ToList();
+                        this.TaskCallWebAPI(listID);
                     }
                 }
 
@@ -1627,6 +1684,32 @@ and CTNStartNo = '{this.selecedPK.CTNStartNo}'
             {
                 // 讓遊標停留在原地
                 this.txtScanEAN.Focus();
+            }
+        }
+
+        private void TaskCallWebAPI(string id)
+        {
+            List<string> listID = new List<string>();
+            listID.Add(id);
+            this.TaskCallWebAPI(listID);
+        }
+
+        private void TaskCallWebAPI(List<string> listID)
+        {
+            Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID.JoinToString(","), string.Empty))
+                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+
+            // 因為會傳圖片，拆成單筆 PackingListNo 轉出，避免一次傳出的容量過大超過api大小限制
+            foreach (string id in listID)
+            {
+                #region ISP20201607 資料交換 - Gensong
+                if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
+                {
+                    // 不透過Call API的方式，自己組合，傳送API
+                    Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(id, string.Empty))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                }
+                #endregion
             }
         }
     }
