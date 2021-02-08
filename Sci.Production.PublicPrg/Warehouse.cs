@@ -825,6 +825,133 @@ drop table #TmpSource;";
             return sqlcmd;
         }
 
+        /// <summary>
+        /// for update P99 only
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="encoded"></param>
+        /// <param name="sqlConn"></param>
+        /// <returns></returns>
+        public static string UpdateMPoDetail_P99(int type, bool encoded)
+        {
+            string sqlcmd = string.Empty;
+            switch (type)
+            {
+                case 2:
+                    #region -- Case 2 InQty --
+                    if (encoded)
+                    {
+                        sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
+when matched then
+	update 
+	set target.inqty = isnull(target.inqty,0.00) + src.qty ;
+";
+                    }
+                    else
+                    {
+                        sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t
+set t.inqty = isnull(t.inqty,0.00) + s.qty
+from mdivisionpodetail t 
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
+                    }
+
+                    sqlcmd += @";drop Table #TmpSource";
+                    #endregion
+                    break;
+                case 4:
+                    #region -- Case 4 OutQty -- 合併
+                    sqlcmd = @"
+                    alter table #TmpSource alter column poid varchar(20)
+                    alter table #TmpSource alter column seq1 varchar(3)
+                    alter table #TmpSource alter column seq2 varchar(3)
+                    
+                    update t
+                    set t.OutQty = isnull(t.OutQty,0.00) + s.qty
+                    from mdivisionpodetail t 
+                    inner join #TmpSource s
+                    on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
+
+                    drop Table #TmpSource;";
+                    #endregion
+                    break;
+                case 8:
+                    #region -- Case 8 LInvQty --
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+merge dbo.mdivisionpodetail as target
+using #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
+when matched then
+update
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty 
+";
+                    }
+                    else
+                    {
+                        sqlcmd += @" set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty;";
+                    }
+
+                    sqlcmd += @";drop Table #TmpSource";
+                    #endregion
+                    break;
+                case 16:
+                    #region -- LObQty --
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t 
+set t.LObQty = isnull(t.LObQty,0.00) + s.qty
+from mdivisionpodetail t
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
+
+;drop Table #TmpSource";
+                    #endregion
+                    break;
+                case 32:
+                    #region -- AdjustQty --
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t 
+set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
+from mdivisionpodetail t 
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
+
+;drop Table #TmpSource";
+                    #endregion
+                    break;
+            }
+
+            return sqlcmd;
+        }
+
         #endregion
         #region -- SelePoItem --
 

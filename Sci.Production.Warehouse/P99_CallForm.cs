@@ -7,9 +7,11 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     class P99_CallForm
     {
-        public static bool CallForm(string TransID, string FormName, Form thisForm)
+        /// <inheritdoc/>
+        public static bool CallForm(string transID, string formName, Form thisForm)
         {
             P99 callP99 = null;
             foreach (Form form in Application.OpenForms)
@@ -19,7 +21,7 @@ namespace Sci.Production.Warehouse
                     form.Activate();
                     P99 activateForm = (P99)form;
                     activateForm.Initl(false);
-                    activateForm.SetFilter(TransID, FormName);
+                    activateForm.SetFilter(transID, formName);
                     activateForm.Query();
                     return true;
                 }
@@ -44,12 +46,11 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            callP99 = new P99(p99MenuItem, TransID, FormName);
+            callP99 = new P99(p99MenuItem, transID, formName);
             callP99.MdiParent = thisForm.MdiParent;
             callP99.Show();
 
             return true;
         }
-
     }
 }

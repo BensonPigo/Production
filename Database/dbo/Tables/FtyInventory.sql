@@ -15,6 +15,7 @@
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
     [Barcode] VARCHAR(16) NULL DEFAULT (''), 
+    [WMSLock] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

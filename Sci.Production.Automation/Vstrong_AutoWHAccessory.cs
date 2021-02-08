@@ -26,6 +26,7 @@ namespace Sci.Production.Automation
         public static bool IsVstrong_AutoWHAccessoryEnable => IsModuleAutomationEnable(VstrongSuppID, moduleName);
 
         #region Receive
+
         /// <summary>
         /// Sent Receive_Detail New
         /// </summary>
@@ -108,8 +109,9 @@ where exists(
         /// <param name="dtDetail">Detail DataSource</param>
         /// <param name="formName">type</param>
         /// <param name = "status" > Status </ param >
+        /// <param name = "isP99" > is P99 </ param >
         /// <returns>bool</returns>
-        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "")
+        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -123,7 +125,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetReceiveData(dtDetail, formName, status);
+            DataTable dtMaster = callMethod.GetReceiveData(dtDetail, formName, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -279,8 +281,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="formName">formName</param>
         /// <param name="status">status</param>
+        /// <param name = "isP99" > is P99 </ param >
         /// <returns>bool</returns>
-        public static bool SentIssue_Detail_delete(DataTable dtDetail, string formName = "", string status = "")
+        public static bool SentIssue_Detail_delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -294,7 +297,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetIssueData(dtDetail, formName, status);
+            DataTable dtMaster = callMethod.GetIssueData(dtDetail, formName, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -435,8 +438,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="formName">formName</param>
         /// <param name="status">status</param>
+        /// <param name = "isP99" > is P99 </ param >
         /// <returns>bool</returns>
-        public static bool SentRemoveC_Detail_delete(DataTable dtDetail, string formName = "", string status = "")
+        public static bool SentRemoveC_Detail_delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -450,7 +454,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetRemoveC_Detail(dtDetail, formName, status);
+            DataTable dtMaster = callMethod.GetRemoveC_Detail(dtDetail, formName, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -567,8 +571,9 @@ where exists(
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
+        /// <param name = "isP99" > is P99 </ param >
         /// <returns>bool</returns>
-        public static bool SentSubTransfer_Detail_delete(DataTable dtDetail, string status = "")
+        public static bool SentSubTransfer_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -582,7 +587,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetSubTransfer_Detail(dtDetail, status);
+            DataTable dtMaster = callMethod.GetSubTransfer_Detail(dtDetail, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -692,8 +697,9 @@ where exists(
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
+        /// <param name = "isP99" > is P99 </ param >
         /// <returns>bool</returns>
-        public static bool SentReturnReceipt_Detail_delete(DataTable dtDetail, string status = "")
+        public static bool SentReturnReceipt_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -707,7 +713,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetReturnReceipt_Detail(dtDetail, status);
+            DataTable dtMaster = callMethod.GetReturnReceipt_Detail(dtDetail, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -782,7 +788,7 @@ where exists(
                 {
                     POID = dr["POID"].ToString(),
                     WhseClose = MyUtility.Check.Empty(dr["WhseClose"]) ? null : ((DateTime?)dr["WhseClose"]).Value.ToString("yyyy/MM/dd"),
-                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                    CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                 });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateVstrongStructure("WHClose", bodyObject));
@@ -845,7 +851,7 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <returns>bool</returns>
-        public static bool SentBorrowBack_Detail_delete(DataTable dtDetail, string status = "")
+        public static bool SentBorrowBack_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -859,7 +865,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetBorrowBack_Detail(dtDetail, status);
+            DataTable dtMaster = callMethod.GetBorrowBack_Detail(dtDetail, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -970,7 +976,7 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <returns>bool</returns>
-        public static bool SentAdjust_Detail_delete(DataTable dtDetail, string status = "")
+        public static bool SentAdjust_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -984,7 +990,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetAdjust_Detail(dtDetail, status);
+            DataTable dtMaster = callMethod.GetAdjust_Detail(dtDetail, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -1166,7 +1172,7 @@ where exists(
                         ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
                         WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
                         Status = dr["Status"].ToString(),
-                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     });
                     break;
                 case "Issue_Detail":
@@ -1187,7 +1193,7 @@ where exists(
                        StockSeq2 = dr["StockSeq2"].ToString(),
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
-                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                    });
                     break;
                 case "Adjust_Detail":
@@ -1203,7 +1209,7 @@ where exists(
                             QtyBefore = (decimal)dr["QtyBefore"],
                             QtyAfter = (decimal)dr["QtyAfter"],
                             Status = dr["Status"].ToString(),
-                            CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                            CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                         });
                     break;
                 case "RemoveC_Detail":
@@ -1218,7 +1224,7 @@ where exists(
                             Ukey = (long)dr["Ukey"],
                             StockType = dr["StockType"].ToString(),
                             Status = dr["Status"].ToString(),
-                            CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                            CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                         });
                     break;
                 case "SubTransfer_Detail":
@@ -1240,7 +1246,7 @@ where exists(
                         Qty = (decimal)dr["Qty"],
                         Ukey = (long)dr["Ukey"],
                         Status = dr["Status"].ToString(),
-                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     });
                     break;
                 case "ReturnReceipt_Detail":
@@ -1255,7 +1261,7 @@ where exists(
                        StockType = dr["StockType"].ToString(),
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
-                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                    });
                     break;
                 case "BorrowBack_Detail":
@@ -1276,7 +1282,7 @@ where exists(
                        Qty = (decimal)dr["Qty"],
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
-                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                    });
                     break;
                 case "LocationTrans_Detail":
@@ -1293,7 +1299,7 @@ where exists(
                        Ukey = (long)s["Ukey"],
                        StockType = s["StockType"].ToString(),
                        Status = s["Status"].ToString(),
-                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                    });
                     break;
             }
@@ -1301,12 +1307,13 @@ where exists(
             return jsonBody = JsonConvert.SerializeObject(callMethod.CreateVstrongStructure(type, bodyObject));
         }
 
-        private DataTable GetReceiveData(DataTable dtDetail, string formName, string status)
+        private DataTable GetReceiveData(DataTable dtDetail, string formName, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
-
+            string strBody = isP99 ? "inner join #tmp s on rd.ukey = s.ukey " : "inner join #tmp s on rd.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "rd.StockQty";
             #region 取得資料
 
             switch (formName)
@@ -1321,7 +1328,7 @@ where exists(
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
 ,[StockUnit] = iif('{formName}' = 'P07',rd.StockUnit,dbo.GetStockUnitBySPSeq(rd.PoId,rd.Seq1,rd.Seq2))
-,[StockQty] = rd.StockQty
+,[StockQty] = {strQty}
 ,[PoUnit] = iif('{formName}' = 'P07',rd.PoUnit,'')
 ,[ShipQty] = iif('{formName}' = 'P07',rd.ShipQty,0.00)
 ,[Color] = po3.ColorID
@@ -1334,7 +1341,8 @@ where exists(
 ,[WhseArrival] = iif('{formName}' = 'P07',r.WhseArrival,null)
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 FROM Production.dbo.Receiving_Detail rd
-inner join #tmp r on rd.ID=r.Id
+inner join Production.dbo.Receiving r on rd.id = r.id
+{Environment.NewLine + strBody}
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
 left join Production.dbo.FtyInventory f on f.POID = rd.PoId
@@ -1351,6 +1359,7 @@ and exists(
 ";
                     break;
                 case "P18":
+                    strQty = isP99 ? "s.Qty" : "rd.Qty";
                     sqlcmd = $@"
 SELECT 
  [ID] = rd.id
@@ -1360,7 +1369,7 @@ SELECT
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
-,[StockQty] = rd.Qty
+,[StockQty] = {strQty}
 ,[PoUnit] = ''
 ,[ShipQty] = 0.00
 ,[Color] = po3.ColorID
@@ -1373,7 +1382,8 @@ SELECT
 ,[WhseArrival] = r.IssueDate
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 FROM Production.dbo.TransferIn_Detail rd
-inner join #tmp r on rd.ID=r.Id
+inner join TransferIn r on rd.ID=r.Id
+{Environment.NewLine + strBody}
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
 left join Production.dbo.FtyInventory f on f.POID = rd.PoId
@@ -1401,11 +1411,13 @@ and exists(
             return dtMaster;
         }
 
-        private DataTable GetIssueData(DataTable dtDetail, string formName, string status)
+        private DataTable GetIssueData(DataTable dtDetail, string formName, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "i2.Qty";
 
             #region 取得資料
 
@@ -1425,7 +1437,7 @@ select distinct
 ,[Color] = po3.ColorID
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
-,[Qty] = i2.Qty
+,[Qty] = {strQty}
 ,[StockPOID] = po3.StockPOID
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
@@ -1433,7 +1445,8 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.Issue_Detail i2
-inner join #tmp i on i2.Id=i.Id
+inner join Production.dbo.Issue i on i2.id = i.id
+{strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType
@@ -1465,7 +1478,7 @@ select distinct
 ,[Color] = po3.ColorID
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
-,[Qty] = i2.Qty
+,[Qty] = {strQty}
 ,[StockPOID] = po3.StockPOID
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
@@ -1473,7 +1486,8 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.IssueLack_Detail i2
-inner join #tmp i on i2.Id=i.Id
+inner join Production.dbo.IssueLack i on i2.id = i.id
+{strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType
@@ -1505,7 +1519,7 @@ select distinct
 ,[Color] = po3.ColorID
 ,[SizeCode] = po3.SizeSpec
 ,[StockType] = i2.StockType
-,[Qty] = i2.Qty
+,[Qty] = {strQty}
 ,[StockPOID] = po3.StockPOID
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
@@ -1513,7 +1527,8 @@ select distinct
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.TransferOut_Detail i2
-inner join #tmp i on i2.Id=i.Id
+inner join Production.dbo.TransferOut i on i2.id = i.id
+{strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType
@@ -1546,11 +1561,13 @@ and exists(
             return dtMaster;
         }
 
-        private DataTable GetRemoveC_Detail(DataTable dtDetail, string formName, string status)
+        private DataTable GetRemoveC_Detail(DataTable dtDetail, string formName, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
+            string strQty = isP99 ? "i2.QtyBefore - s.Qty" : "i2.QtyBefore - i2.QtyAfter";
 
             #region 取得資料
 
@@ -1564,13 +1581,14 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
-,[Qty]  = i2.QtyBefore - i2.QtyAfter
+,[Qty]  = {strQty}
 ,[Ukey] = i2.ukey
 ,i2.StockType
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.Adjust_Detail i2
-inner join #tmp i on i.Id = i2.Id
+inner join Production.dbo.Adjust i on i2.id = i.id
+{strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType
@@ -1603,11 +1621,13 @@ and exists(
             return dtMaster;
         }
 
-        private DataTable GetSubTransfer_Detail(DataTable dtDetail, string status)
+        private DataTable GetSubTransfer_Detail(DataTable dtDetail, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s2 on sd.ukey = s2.ukey " : "inner join #tmp s2 on sd.ID = s2.Id ";
+            string strQty = isP99 ? "s2.Qty" : "sd.Qty";
 
             #region 取得資料
             sqlcmd = $@"
@@ -1618,12 +1638,13 @@ select distinct
 ,[FromLocation] = Fromlocation.listValue
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToStockType
 ,[ToLocation] = sd.ToLocation
-,sd.Qty
+,[Qty] = {strQty}
 ,sd.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.SubTransfer_Detail sd
-inner join #tmp s on sd.ID=s.Id
+inner join Production.dbo.SubTransfer s on s.id = sd.id
+{strBody}
 left join FtyInventory FI on sd.fromPoid = fi.poid 
     and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
     and sd.fromDyelot = fi.Dyelot and sd.fromRoll = fi.roll 
@@ -1669,11 +1690,13 @@ and exists(
             return dtMaster;
         }
 
-        private DataTable GetReturnReceipt_Detail(DataTable dtDetail, string status)
+        private DataTable GetReturnReceipt_Detail(DataTable dtDetail, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on rrd.ukey = s.ukey " : "inner join #tmp s on rrd.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "rrd.Qty";
 
             #region 取得資料
             sqlcmd = $@"
@@ -1681,13 +1704,14 @@ select rrd.Id
 ,rrd.POID
 ,rrd.Seq1
 ,rrd.Seq2
-,rrd.Qty
+,[Qty] = {strQty}
 ,rrd.StockType
 ,rrd.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,[CmdTime] = GETDATE()
 from ReturnReceipt_Detail rrd
-inner join #tmp rr on rrd.Id=rr.Id
+inner join Production.dbo.ReturnReceipt rr on rr.id = rrd.id
+{strBody}
 left join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
 where 1=1
 and exists(
@@ -1715,11 +1739,13 @@ and exists(
             return dtMaster;
         }
 
-        private DataTable GetBorrowBack_Detail(DataTable dtDetail, string status)
+        private DataTable GetBorrowBack_Detail(DataTable dtDetail, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on bb2.ukey = s.ukey " : "inner join #tmp s on bb2.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "bb2.Qty";
 
             #region 取得資料
             sqlcmd = $@"
@@ -1729,12 +1755,13 @@ select distinct
 ,[FromLocation] = Fromlocation.listValue
 ,bb2.ToPOID,bb2.ToSeq1,bb2.ToSeq2,bb2.ToStockType
 ,[ToLocation] = bb2.ToLocation
-,bb2.Qty
+,[Qty] = {strQty}
 ,bb2.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.BorrowBack_Detail bb2
-inner join #tmp bb on bb.ID=bb2.Id
+inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
+{strBody}
 left join FtyInventory FI on bb2.FromPoid = Fi.Poid and bb2.FromSeq1 = Fi.Seq1 and bb2.FromSeq2 = Fi.Seq2 
     and bb2.FromRoll = Fi.Roll and bb2.FromDyelot = Fi.Dyelot and bb2.FromStockType = FI.StockType
 outer apply(
@@ -1780,11 +1807,13 @@ union all
             return dtMaster;
         }
 
-        private DataTable GetAdjust_Detail(DataTable dtDetail, string status)
+        private DataTable GetAdjust_Detail(DataTable dtDetail, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
             DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "i2.QtyAfter";
 
             #region 取得資料
             sqlcmd = $@"
@@ -1796,11 +1825,12 @@ select distinct
 ,[Ukey] = i2.ukey
 ,[StockType] = i2.StockType
 ,[QtyBefore] = i2.QtyBefore
-,[QtyAfter] = i2.QtyAfter
+,[QtyAfter] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.Adjust_Detail i2
-inner join #tmp i on i.Id = i2.Id
+inner join Production.dbo.Adjust i on i.id = i2.id
+{strBody}
 left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
     and f.StockType = i2.StockType

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.TabPage_UpdateCommand = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
@@ -92,7 +92,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(984, 546);
+            this.tabControl1.Size = new System.Drawing.Size(1060, 546);
             this.tabControl1.TabIndex = 1;
             // 
             // TabPage_UpdateCommand
@@ -102,7 +102,7 @@
             this.TabPage_UpdateCommand.Location = new System.Drawing.Point(4, 25);
             this.TabPage_UpdateCommand.Name = "TabPage_UpdateCommand";
             this.TabPage_UpdateCommand.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage_UpdateCommand.Size = new System.Drawing.Size(976, 517);
+            this.TabPage_UpdateCommand.Size = new System.Drawing.Size(1052, 517);
             this.TabPage_UpdateCommand.TabIndex = 0;
             this.TabPage_UpdateCommand.Text = "Update Command";
             // 
@@ -112,7 +112,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(3, 117);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(970, 397);
+            this.panel7.Size = new System.Drawing.Size(1046, 397);
             this.panel7.TabIndex = 1;
             // 
             // gridUpdate
@@ -131,20 +131,20 @@
             this.gridUpdate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridUpdate.Location = new System.Drawing.Point(0, 0);
             this.gridUpdate.Name = "gridUpdate";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridUpdate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridUpdate.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridUpdate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridUpdate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridUpdate.RowTemplate.Height = 24;
             this.gridUpdate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridUpdate.ShowCellToolTips = false;
-            this.gridUpdate.Size = new System.Drawing.Size(970, 397);
+            this.gridUpdate.Size = new System.Drawing.Size(1046, 397);
             this.gridUpdate.TabIndex = 0;
             this.gridUpdate.TabStop = false;
             // 
@@ -168,7 +168,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(970, 114);
+            this.panel6.Size = new System.Drawing.Size(1046, 114);
             this.panel6.TabIndex = 0;
             // 
             // comboMaterialType_Sheet1
@@ -177,7 +177,7 @@
             this.comboMaterialType_Sheet1.Location = new System.Drawing.Point(540, 38);
             this.comboMaterialType_Sheet1.Name = "comboMaterialType_Sheet1";
             this.comboMaterialType_Sheet1.Size = new System.Drawing.Size(121, 24);
-            this.comboMaterialType_Sheet1.TabIndex = 162;
+            this.comboMaterialType_Sheet1.TabIndex = 5;
             this.comboMaterialType_Sheet1.SelectedValueChanged += new System.EventHandler(this.ComboMaterialType_Sheet1_SelectedValueChanged);
             // 
             // labMaterialType2
@@ -185,7 +185,7 @@
             this.labMaterialType2.Location = new System.Drawing.Point(439, 38);
             this.labMaterialType2.Name = "labMaterialType2";
             this.labMaterialType2.Size = new System.Drawing.Size(98, 23);
-            this.labMaterialType2.TabIndex = 163;
+            this.labMaterialType2.TabIndex = 10;
             this.labMaterialType2.Text = "Material Type";
             // 
             // labSPNo
@@ -193,7 +193,7 @@
             this.labSPNo.Location = new System.Drawing.Point(14, 71);
             this.labSPNo.Name = "labSPNo";
             this.labSPNo.Size = new System.Drawing.Size(111, 23);
-            this.labSPNo.TabIndex = 152;
+            this.labSPNo.TabIndex = 14;
             this.labSPNo.Text = "SP#";
             // 
             // labFunction
@@ -205,7 +205,7 @@
             this.labFunction.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labFunction.RectStyle.ExtBorderWidth = 1F;
             this.labFunction.Size = new System.Drawing.Size(111, 23);
-            this.labFunction.TabIndex = 151;
+            this.labFunction.TabIndex = 12;
             this.labFunction.Text = "Function";
             this.labFunction.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labFunction.TextStyle.Color = System.Drawing.Color.Black;
@@ -214,10 +214,10 @@
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(725, 9);
+            this.btnQuery.Location = new System.Drawing.Point(801, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(101, 53);
-            this.btnQuery.TabIndex = 150;
+            this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -226,10 +226,10 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(864, 77);
+            this.btnClose.Location = new System.Drawing.Point(940, 77);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(101, 30);
-            this.btnClose.TabIndex = 149;
+            this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
@@ -238,10 +238,10 @@
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDelete.Location = new System.Drawing.Point(864, 41);
+            this.btnDelete.Location = new System.Drawing.Point(940, 41);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(101, 30);
-            this.btnDelete.TabIndex = 148;
+            this.btnDelete.TabIndex = 8;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
@@ -250,10 +250,10 @@
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUpdate.Location = new System.Drawing.Point(864, 5);
+            this.btnUpdate.Location = new System.Drawing.Point(940, 5);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(101, 30);
-            this.btnUpdate.TabIndex = 147;
+            this.btnUpdate.TabIndex = 7;
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
@@ -265,7 +265,7 @@
             this.checkIncludeCompleteItem.Location = new System.Drawing.Point(439, 8);
             this.checkIncludeCompleteItem.Name = "checkIncludeCompleteItem";
             this.checkIncludeCompleteItem.Size = new System.Drawing.Size(202, 21);
-            this.checkIncludeCompleteItem.TabIndex = 146;
+            this.checkIncludeCompleteItem.TabIndex = 4;
             this.checkIncludeCompleteItem.Text = "Include Complete Command";
             this.checkIncludeCompleteItem.UseVisualStyleBackColor = true;
             this.checkIncludeCompleteItem.CheckedChanged += new System.EventHandler(this.CheckIncludeCompleteItem_CheckedChanged);
@@ -280,8 +280,7 @@
             this.comboFunction.Name = "comboFunction";
             this.comboFunction.OldText = "";
             this.comboFunction.Size = new System.Drawing.Size(289, 24);
-            this.comboFunction.TabIndex = 145;
-            this.comboFunction.SelectedValueChanged += new System.EventHandler(this.ComboFunction_SelectedValueChanged);
+            this.comboFunction.TabIndex = 0;
             // 
             // label2
             // 
@@ -289,7 +288,7 @@
             this.label2.Location = new System.Drawing.Point(257, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 17);
-            this.label2.TabIndex = 143;
+            this.label2.TabIndex = 11;
             this.label2.Text = " ～";
             // 
             // txtSPNoEnd
@@ -299,7 +298,7 @@
             this.txtSPNoEnd.Location = new System.Drawing.Point(289, 71);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(128, 23);
-            this.txtSPNoEnd.TabIndex = 140;
+            this.txtSPNoEnd.TabIndex = 3;
             // 
             // txtSPNoStart
             // 
@@ -308,7 +307,7 @@
             this.txtSPNoStart.Location = new System.Drawing.Point(128, 71);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(128, 23);
-            this.txtSPNoStart.TabIndex = 139;
+            this.txtSPNoStart.TabIndex = 2;
             // 
             // dateCreate
             // 
@@ -329,7 +328,7 @@
             this.dateCreate.Location = new System.Drawing.Point(128, 38);
             this.dateCreate.Name = "dateCreate";
             this.dateCreate.Size = new System.Drawing.Size(280, 23);
-            this.dateCreate.TabIndex = 138;
+            this.dateCreate.TabIndex = 1;
             // 
             // labCreateDate
             // 
@@ -340,7 +339,7 @@
             this.labCreateDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labCreateDate.RectStyle.ExtBorderWidth = 1F;
             this.labCreateDate.Size = new System.Drawing.Size(111, 23);
-            this.labCreateDate.TabIndex = 141;
+            this.labCreateDate.TabIndex = 13;
             this.labCreateDate.Text = "Create Date";
             this.labCreateDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labCreateDate.TextStyle.Color = System.Drawing.Color.Black;
@@ -352,7 +351,7 @@
             this.TabPage_UnLock.Location = new System.Drawing.Point(4, 25);
             this.TabPage_UnLock.Name = "TabPage_UnLock";
             this.TabPage_UnLock.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage_UnLock.Size = new System.Drawing.Size(976, 517);
+            this.TabPage_UnLock.Size = new System.Drawing.Size(1052, 517);
             this.TabPage_UnLock.TabIndex = 1;
             this.TabPage_UnLock.Text = "UnLock";
             // 
@@ -363,7 +362,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(970, 458);
+            this.panel9.Size = new System.Drawing.Size(1046, 458);
             this.panel9.TabIndex = 1;
             // 
             // gridUnLock
@@ -387,7 +386,7 @@
             this.gridUnLock.RowTemplate.Height = 24;
             this.gridUnLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridUnLock.ShowCellToolTips = false;
-            this.gridUnLock.Size = new System.Drawing.Size(970, 384);
+            this.gridUnLock.Size = new System.Drawing.Size(1046, 384);
             this.gridUnLock.TabIndex = 2;
             this.gridUnLock.TabStop = false;
             // 
@@ -407,7 +406,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(970, 74);
+            this.panel1.Size = new System.Drawing.Size(1046, 74);
             this.panel1.TabIndex = 1;
             // 
             // labReceivingID
@@ -517,7 +516,7 @@
             // 
             this.btnQuery2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery2.Location = new System.Drawing.Point(855, 11);
+            this.btnQuery2.Location = new System.Drawing.Point(931, 11);
             this.btnQuery2.Name = "btnQuery2";
             this.btnQuery2.Size = new System.Drawing.Size(101, 30);
             this.btnQuery2.TabIndex = 151;
@@ -532,14 +531,14 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel8.Location = new System.Drawing.Point(3, 461);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(970, 53);
+            this.panel8.Size = new System.Drawing.Size(1046, 53);
             this.panel8.TabIndex = 0;
             // 
             // btnClose1
             // 
             this.btnClose1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose1.Location = new System.Drawing.Point(855, 11);
+            this.btnClose1.Location = new System.Drawing.Point(931, 11);
             this.btnClose1.Name = "btnClose1";
             this.btnClose1.Size = new System.Drawing.Size(101, 30);
             this.btnClose1.TabIndex = 151;
@@ -551,7 +550,7 @@
             // 
             this.btnUnlock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUnlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnUnlock.Location = new System.Drawing.Point(725, 11);
+            this.btnUnlock.Location = new System.Drawing.Point(801, 11);
             this.btnUnlock.Name = "btnUnlock";
             this.btnUnlock.Size = new System.Drawing.Size(101, 30);
             this.btnUnlock.TabIndex = 150;
@@ -561,7 +560,7 @@
             // 
             // P99
             // 
-            this.ClientSize = new System.Drawing.Size(984, 546);
+            this.ClientSize = new System.Drawing.Size(1060, 546);
             this.Controls.Add(this.tabControl1);
             this.Name = "P99";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";

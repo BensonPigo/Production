@@ -1,14 +1,14 @@
-﻿using Sci.Data;
-using Sci.Production.Prg;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Sci.Data;
+using Sci.Production.Prg;
+using static AutomationErrMsg;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
-using System.Configuration;
-using static AutomationErrMsg;
-using Newtonsoft.Json;
 
 namespace Sci.Production.Automation
 {
@@ -173,19 +173,22 @@ namespace Sci.Production.Automation
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 30);
             bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
-            //if (!webApiBaseResult.isSuccess)
-            //{
-            //    automationErrMsg.errorCode = "99";
-            //    automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
-            //    result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
-            //    SaveAutomationCheckMsg(automationErrMsg);
-            //}
-            //else if (saveAllmsg)
-            //{
-            //    SaveAutomationCheckMsg(automationErrMsg);
-            //}
+            if (!webApiBaseResult.isSuccess)
+            {
+                automationErrMsg.errorCode = "99";
+                automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
+                automationErrMsg.json = jsonBody;
+                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                SaveAutomationCheckMsg(automationErrMsg);
+            }
+            else if (saveAllmsg)
+            {
+                SaveAutomationCheckMsg(automationErrMsg);
+            }
 
             return result;
+
+            // return new DualResult(true);
         }
 
         /// <summary>
@@ -226,25 +229,31 @@ namespace Sci.Production.Automation
         /// <summary>
         /// Get Supplier Url
         /// </summary>
+        /// <param name="supp">supp</param>
+        /// <param name="moduleName">moduleName</param>
         /// <returns>WebApiURL.URL</returns>
-        public static string GetSupplierUrl(string supp, string ModuleName)
+        public static string GetSupplierUrl(string supp, string moduleName)
         {
-            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{supp}' and ModuleName = '{ModuleName}' and ModuleType = '{ModuleType}' ", "Production");
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{supp}' and ModuleName = '{moduleName}' and ModuleType = '{ModuleType}' ", "Production");
         }
 
+        /// <inheritdoc/>
         public delegate ErrorRespone ParsingErrResponse(string webApiBaseResult);
 
+        /// <inheritdoc/>
         public class ErrorRespone
         {
             private string error_code = string.Empty;
             private string error = string.Empty;
 
+            /// <inheritdoc/>
             public string Error_code
             {
                 get { return this.error_code; }
                 set { this.error_code = value; }
             }
 
+            /// <inheritdoc/>
             public string Error
             {
                 get { return this.error; }

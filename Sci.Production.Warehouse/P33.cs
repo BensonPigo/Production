@@ -1658,7 +1658,6 @@ DROP TABLE #tmp_sumQty,#step1,#tmp,#final,#final2
                                 {
                                     row = queryRow.FirstOrDefault();
                                 }
-
                             }
 
                             if (MyUtility.Check.Empty(refno))
