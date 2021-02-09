@@ -1070,7 +1070,7 @@ select lt2.Id
 ,lt2.Ukey
 ,lt2.StockType
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
-,[Qty] = f.InQty - f.OutQty + f.AdjustQty
+,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id

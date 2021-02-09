@@ -272,7 +272,7 @@ and t1.Status = 'Confirmed'
 		, t3.SizeCode
 		, t3.Qty
         , t2.Ukey
-        , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty),0.00)--12
+        , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty - fi.ReturnQty),0.00)--12
         , AutoPickqty=(select SUM(AutoPickQty)  from Issue_Size iss where iss.Issue_DetailUkey = t2.ukey)--13
         , OutputAutoPick=(
 			select  STUFF((
@@ -360,7 +360,7 @@ select  [Selected] = 0 --0
 , [diffQty] = 0.00
 ,t2.id
 ,dbo.Getlocation(c.ukey) location--12
-, Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance--13
+, Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty, 0.00) as balance--13
 , t2.Ukey
 from dbo.issue_detail as t2 WITH (NOLOCK) 
 inner join issue t1 WITH (NOLOCK) on t2.Id=t1.Id
@@ -584,7 +584,7 @@ SELECt [Selected] = 0 --0
 		, Seq1,Seq2,Roll,Dyelot,StockType,Type
 FROM final t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty )) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID=t.POID
@@ -2616,8 +2616,8 @@ inner join #tmp s on t.id = s.id
 SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Seq1,AD2.Seq2,
         AD2.Roll,AD2.Dyelot,AD2.ID,
-       [CheckQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty) + ( AD2.diffQty) , 
-       [FTYLobQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty),
+       [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) + ( AD2.diffQty) , 
+       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
        [AdjustQty]= (AD2.qty - AD2.qtybefore )       
 FROM    FtyInventory FTI
 inner join #tmp AD2 on FTI.POID=AD2.POID 
@@ -3978,8 +3978,8 @@ inner join #tmp s on t.Ukey = s.Ukey ";
 SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Seq1,AD2.Seq2,
         AD2.Roll,AD2.Dyelot,AD2.id,
-       [CheckQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty) - ( AD2.qty - AD2.qtybefore ) , 
-       [FTYLobQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty),
+       [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.qty - AD2.qtybefore ) , 
+       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
        [AdjustQty]= (AD2.qty - AD2.qtybefore )       
 FROM    FtyInventory FTI
 inner join #tmp AD2 on FTI.POID=AD2.POID 
@@ -4085,9 +4085,9 @@ and f.StockType = 'O'";
                         string chksql = string.Format(
                             @"
 Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
-	,balance = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+	,balance = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty)
 	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.old_qty,0)
-	,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) -(isnull(d.old_qty,0)-isnull(d.QtyBefore,0))
+	,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty) -(isnull(d.old_qty,0) - isnull(d.QtyBefore,0))
 {0}", sql);
                         if (!(dr = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, chksql, out DataTable dt)))
                         {
@@ -4756,13 +4756,13 @@ inner join #tmp s on t.Ukey = s.Ukey
         private void Query_Sheet2()
         {
             string sqlcmd = @"
-select
+select distinct
  [Selected] = 0 --0
  ,fi.POID
  ,fi.Seq1,fi.Seq2
  ,[MaterialType] = case when pd.FabricType = 'F' then 'Fabric' when pd.FabricType='A' then 'Accessory' end
- ,fi.Roll,fi.Dyelot,fi.InQty,fi.OutQty,fi.AdjustQty
- ,[Balance] = fi.InQty-fi.OutQty+fi.AdjustQty
+ ,fi.Roll,fi.Dyelot,fi.InQty,fi.OutQty,fi.AdjustQty,fi.ReturnQty
+ ,[Balance] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
  ,[StockType] = case fi.StockType 
 				when 'B' then 'Bulk'
 				when 'I' then 'Inventory'
@@ -4858,6 +4858,7 @@ and fi.WMSLock = 1
             .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Numeric("OutQty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Numeric("BalanceQty", header: "Balance Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Text("StockType", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Location", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -4889,9 +4890,9 @@ and fi.WMSLock = 1
                 this.ShowErr(result);
                 return;
             }
-
-            this.Query_Sheet2();
+            
             MyUtility.Msg.InfoBox("UnLock successfully!");
+            this.Query_Sheet2();
         }
         #endregion
 
@@ -4993,7 +4994,7 @@ select    f.poid
         , f.seq2
         , f.Roll
 		, f.Dyelot       
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t on f.POID = t.PoId
 and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
@@ -5061,14 +5062,14 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , StockQty = convert(decimal(10,2), t.StockQty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t on f.POID = t.PoId
 and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
 and t.Roll = f.Roll and t.Dyelot = f.Dyelot
 and t.StockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) {symbol} < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol} < 0)  
 
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -5111,14 +5112,14 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Qty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t on f.POID = t.PoId
 and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
 and t.Roll = f.Roll and t.Dyelot = f.Dyelot
 and t.StockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) {symbol} < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol} < 0)  
 
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -5161,14 +5162,14 @@ select  distinct  f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Ttl_Qty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t on f.POID = t.PoId
 and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
 and t.Roll = f.Roll and t.Dyelot = f.Dyelot
 and t.StockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) {symbol} < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol} < 0)  
 
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -5214,14 +5215,14 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Qty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t on f.POID = t.PoId
 and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
 and t.Roll = f.Roll and t.Dyelot = f.Dyelot
 and t.StockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) {symbol} < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol} < 0)  
 
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -5265,14 +5266,14 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Qty) - convert(decimal(10,2), t.QtyBefore)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t on f.POID = t.PoId
 and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
 and t.Roll = f.Roll and t.Dyelot = f.Dyelot
 and t.StockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) {symbol} < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol} < 0)  
 
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -5313,14 +5314,14 @@ and t.FromSeq1 = f.Seq1 and t.FromSeq2 = f.Seq2
 and t.FromRoll = f.Roll and t.FromDyelot = f.Dyelot
 and t.FromStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - (t.diffQty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.diffQty) < 0)  
 " : @"
 on f.POID = t.ToPoId
 and t.ToSeq1 = f.Seq1 and t.ToSeq2 = f.Seq2
 and t.ToRoll = f.Roll and t.ToDyelot = f.Dyelot
 and t.ToStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - (t.Old_Qty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.Old_Qty) < 0)  
 ";
                     chk_sql = $@"
 
@@ -5330,7 +5331,7 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Qty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t 
 {symbol}
@@ -5376,7 +5377,7 @@ and t.FromSeq1 = f.Seq1 and t.FromSeq2 = f.Seq2
 and t.FromRoll = f.Roll and t.FromDyelot = f.Dyelot
 and t.FromStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - (t.diffQty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.diffQty) < 0)  
 and t.Qty > 0
 " : @"
 on f.POID = t.ToPoId
@@ -5384,7 +5385,7 @@ and t.FromSeq1 = f.Seq1 and t.FromSeq2 = f.Seq2
 and t.FromRoll = f.Roll and t.FromDyelot = f.Dyelot
 and t.FromStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + (t.Old_Qty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) + (t.Old_Qty) < 0)  
 and t.Qty < 0
 ";
                     chk_sql = $@"
@@ -5395,7 +5396,7 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Qty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t 
 {symbol}
@@ -5436,7 +5437,7 @@ and t.ToSeq1 = f.Seq1 and t.ToSeq2 = f.Seq2
 and t.ToRoll = f.Roll and t.ToDyelot = f.Dyelot
 and t.ToStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + (t.diffQty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) + (t.diffQty) < 0)  
 and t.Qty < 0
 " : @"
 on f.POID = t.ToPoId
@@ -5444,7 +5445,7 @@ and t.ToSeq1 = f.Seq1 and t.ToSeq2 = f.Seq2
 and t.ToRoll = f.Roll and t.ToDyelot = f.Dyelot
 and t.ToStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - (t.old_Qty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.old_Qty) < 0)  
 ";
                     chk_sql = $@"
 
@@ -5454,7 +5455,7 @@ select    f.poid
         , f.Roll
 		, f.Dyelot
         , Qty = convert(decimal(10,2), t.Qty)
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
 from FtyInventory f WITH (NOLOCK)
 inner join #tmp t 
 {symbol}
@@ -5496,8 +5497,8 @@ inner join #tmp t
 SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Seq1,AD2.Seq2,
         AD2.Roll,AD2.Dyelot,
-       [CheckQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty) {symbol} , 
-       [FTYLobQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty),
+       [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) {symbol} , 
+       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
        [AdjustQty]= (AD2.qty - AD2.qtybefore )       
 FROM    FtyInventory FTI
 inner join #tmp AD2 on FTI.POID=AD2.POID 
@@ -5631,7 +5632,7 @@ SELECT
 md.POID
 ,md.Seq1
 ,md.seq2
-,[FTYLobQty] = sum(FTI.InQty-FTI.OutQty+FTI.AdjustQty)
+,[FTYLobQty] = sum(FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty)
 FROM    FtyInventory FTI
 inner join #tmp AD2 on FTI.POID=AD2.POID 
 and FTI.Seq1=AD2.Seq1
