@@ -824,6 +824,15 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
                     this.ShowErr(result);
                 }
                 #endregion
+
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+                {
+                    this.btnCallP99.Visible = true;
+                }
+                else
+                {
+                    this.btnCallP99.Visible = false;
+                }
             }
         }
 
@@ -2147,6 +2156,11 @@ where  o.id ='{this.CurrentMaintain["orderid"]}'
             var frm = new P11_PrintKarbanCard();
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P11", this);
         }
     }
 }

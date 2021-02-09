@@ -41,6 +41,7 @@
             this.btnFind = new Sci.Win.UI.Button();
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtLocateForSP);
             this.masterpanel.Controls.Add(this.labelLocateForSP);
@@ -69,7 +71,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 186);
+            this.masterpanel.Size = new System.Drawing.Size(954, 186);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -83,11 +85,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 186);
-            this.detailpanel.Size = new System.Drawing.Size(892, 163);
+            this.detailpanel.Size = new System.Drawing.Size(954, 163);
             // 
             // gridicon
             // 
@@ -96,7 +99,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 163);
+            this.detailgridcont.Size = new System.Drawing.Size(954, 163);
             // 
             // detail2
             // 
@@ -109,6 +112,18 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(954, 387);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(954, 349);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(954, 38);
             // 
             // browse
             // 
@@ -211,7 +226,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 186);
+            this.shapeContainer1.Size = new System.Drawing.Size(954, 186);
             this.shapeContainer1.TabIndex = 75;
             this.shapeContainer1.TabStop = false;
             // 
@@ -243,6 +258,17 @@
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 78;
             this.labelLocateForSP.Text = "Locate for SP#";
+            // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(400, 142);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 79;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
             // P45
             // 
@@ -297,5 +323,6 @@
         private Win.UI.Button btnFind;
         private Win.UI.TextBox txtLocateForSP;
         private Win.UI.Label labelLocateForSP;
+        private Win.UI.Button btnCallP99;
     }
 }

@@ -43,6 +43,7 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelStocktakingID = new Sci.Win.UI.Label();
             this.displayStocktakingID = new Sci.Win.UI.DisplayBox();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.displayStocktakingID);
             this.masterpanel.Controls.Add(this.labelStocktakingID);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -89,6 +91,7 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStocktakingID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStocktakingID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -300,6 +303,17 @@
             this.displayStocktakingID.Size = new System.Drawing.Size(120, 23);
             this.displayStocktakingID.TabIndex = 64;
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(366, 144);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 66;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P35
             // 
             this.ApvChkValue = "New";
@@ -317,6 +331,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P35";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P35. Adjust Bulk Qty";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -358,5 +373,6 @@
         private Win.UI.Label labelRemark;
         private Win.UI.Label labelStocktakingID;
         private Win.UI.DisplayBox displayStocktakingID;
+        private Win.UI.Button btnCallP99;
     }
 }

@@ -347,6 +347,15 @@ where t.id= @ID";
             {
                 this.dateEstReturnDate.Value = DateTime.Parse(tmp);
             }
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -1609,6 +1618,11 @@ The Deylot of
             }
 
             return true;
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P32", this);
         }
     }
 }

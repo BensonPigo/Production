@@ -47,6 +47,7 @@
             this.labelAction = new Sci.Win.UI.Label();
             this.txtwhseRefundAction = new Sci.Production.Class.TxtwhseRefundAction();
             this.txtwhseReasonRefundReason = new Sci.Production.Class.TxtwhseReason();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +64,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.txtwhseRefundAction);
             this.masterpanel.Controls.Add(this.labelAction);
             this.masterpanel.Controls.Add(this.labelRefundReason);
@@ -101,6 +103,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelRefundReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelAction, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtwhseRefundAction, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -356,6 +359,17 @@
             this.txtwhseReasonRefundReason.Type = "RR";
             this.txtwhseReasonRefundReason.Validated += new System.EventHandler(this.TxtwhseReasonRefundReason_Validated);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(526, 175);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 66;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P37
             // 
             this.ApvChkValue = "New";
@@ -418,5 +432,6 @@
         private Win.UI.Label labelRefundReason;
         private Class.TxtwhseReason txtwhseReasonRefundReason;
         private Class.TxtwhseRefundAction txtwhseRefundAction;
+        private Win.UI.Button btnCallP99;
     }
 }

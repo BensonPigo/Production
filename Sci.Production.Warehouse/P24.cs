@@ -180,6 +180,15 @@ namespace Sci.Production.Warehouse
             this.label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -1033,6 +1042,11 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
                 }
             }
             #endregion
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P24", this);
         }
     }
 }

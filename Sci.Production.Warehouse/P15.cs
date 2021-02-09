@@ -316,6 +316,15 @@ namespace Sci.Production.Warehouse
                 this.displayBoxShift.Text = string.Empty;
                 this.txtLocalSupp1.TextBox1.Text = string.Empty;
             }
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -1046,6 +1055,11 @@ where a.id= @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P15", this);
         }
     }
 }

@@ -139,6 +139,15 @@ WHERE o.id = '{orderID}' AND o.sewline != '') t FOR xml path('')
             }
             #endregion
 
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
+
         }
 
         private void RefreshOrderField(string orderID)
@@ -3489,6 +3498,11 @@ order by [OrderID],[Article]
         }
 
         #endregion
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P33", this);
+        }
     }
 
     /// <inheritdoc/>

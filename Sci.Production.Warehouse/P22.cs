@@ -186,6 +186,15 @@ namespace Sci.Production.Warehouse
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -1007,6 +1016,11 @@ where a.id= @ID";
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P22_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P22", this);
         }
     }
 }

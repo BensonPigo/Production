@@ -363,6 +363,15 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                 this.btnPrintFabricSticker.Enabled = false;
             }
 
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
+
             this.DetailGridColVisibleByReason();
         }
 
@@ -1091,6 +1100,11 @@ Where a.id = '{0}'", masterID);
                 this.detailgrid.Columns["LossQty"].Visible = false;
                 this.detailgrid.Columns["Article"].Visible = false;
             }
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P13", this);
         }
     }
 }
