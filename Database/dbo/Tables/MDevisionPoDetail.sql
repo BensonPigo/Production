@@ -11,6 +11,7 @@
     [BLocation] VARCHAR (5000)  CONSTRAINT [DF_MDivisionPoDetail_BLocation] DEFAULT ('') NULL,
     [Ukey]      BIGINT          IDENTITY (1, 1) NOT NULL,
     [CLocation] VARCHAR (5000)  DEFAULT ('') NULL,
+    [ReturnQty] NUMERIC(11, 2) CONSTRAINT [DF_MDivisionPoDetail_ReturnQty] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_MDivisionPoDetail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -63,3 +64,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'調整數�
 GO
 CREATE NONCLUSTERED INDEX [POID]
     ON [dbo].[MDivisionPoDetail]([POID] ASC, [Seq1] ASC, [Seq2] ASC);
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'RETURN QTY 退回數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'MDivisionPoDetail',
+    @level2type = N'COLUMN',
+    @level2name = N'ReturnQty'

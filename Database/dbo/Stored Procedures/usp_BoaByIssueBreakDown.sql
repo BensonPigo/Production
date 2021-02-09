@@ -169,7 +169,7 @@ BEGIN
 
 	;with cte2 as (
 		select	m.*
-				, [balanceqty] = m.InQty - m.OutQty + m.AdjustQty  
+				, [balanceqty] = m.InQty - m.OutQty + m.AdjustQty - m.ReturnQty
 		from #tmpPO_supp_detail 
 		inner join dbo.FtyInventory m WITH (NOLOCK) on  m.POID = #tmpPO_supp_detail.poid 
 														and m.seq1 = #tmpPO_supp_detail.seq1 

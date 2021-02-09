@@ -55,7 +55,7 @@ select  0 as selected
         , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) as [Description]
         , c.Roll
         , c.Dyelot
-        , c.inqty-c.outqty + c.adjustqty as QtyBefore
+        , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as QtyBefore
         , 0.00 as QtyAfter
         , dbo.Getlocation(c.ukey) as location
         , '' reasonid
@@ -69,7 +69,7 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'O'
 inner join dbo.factory f WITH (NOLOCK) on a.FactoryID=f.id
 Where   c.lock = 0 
-        and c.inqty-c.outqty + c.adjustqty <> 0
+        and c.inqty - c.outqty + c.adjustqty - c.ReturnQty <> 0
         and f.mdivisionid = '{0}'", Env.User.Keyword));
 
                 if (!MyUtility.Check.Empty(sp))

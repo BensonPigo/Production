@@ -102,7 +102,7 @@ select  selected = 0
         ,[Description] = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) 
         ,a.stockunit
         ,fromstocktype = c.StockType 
-        ,balance = c.InQty - c.OutQty + c.AdjustQty 
+        ,balance = c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty
         ,location = dbo.Getlocation(c.ukey)
         ,toseq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2) 
         ,toroll = c.Roll 
@@ -123,7 +123,7 @@ inner join Factory on Orders.FactoryID = Factory.ID
 left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
 Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.Seq1}' 
 and b.seq2='{this.txtSeq.Seq2}' and Factory.MDivisionID = '{Env.User.Keyword}'
-and c.inqty-c.outqty + c.adjustqty > 0 and  c.StockType='B'
+and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 and  c.StockType='B'
 AND Orders.Category <> 'A' ");
 
                 this.ShowWaitMessage("Data Loading....");

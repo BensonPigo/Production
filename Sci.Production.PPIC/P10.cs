@@ -520,7 +520,7 @@ OUTER APPLY(
                 string strSQLSelect = string.Format(
                     @"
 select * from (
-SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(mpd.InQty-mpd.OutQty+mpd.AdjustQty-mpd.LInvQty,0) as StockQty
+SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(mpd.InQty - mpd.OutQty + mpd.AdjustQty - mpd.ReturnQty - mpd.LInvQty,0) as StockQty
 FROM #tmp l
 left join MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = '{0}' and mpd.SEQ1 = l.Seq1 and mpd.SEQ2 = l.Seq2) a
 where a.RequestQty > a.StockQty",
@@ -989,16 +989,16 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID
 											   and c.stocktype = 'B'
 
 where a.id = '{this.CurrentMaintain["ID"]}'
-and c.lock = 0  and (c.inqty-c.outqty + c.adjustqty) > 0
+and c.lock = 0  and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) < b.RequestQty
 ";
             if (type != "Lacking")
             {
-                sqlchk += " and (c.inqty-c.outqty + c.adjustqty) > 0";
+                sqlchk += " and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0";
             }
 
             sqlchk += @"
 group by a.POID, b.seq1, b.seq2, b.RequestQty
-having sum(c.inqty - c.outqty + c.adjustqty) < b.RequestQty
+having sum(c.inqty - c.outqty + c.adjustqty - c.ReturnQty) < b.RequestQty
 ";
 
             DataTable chkdt;
@@ -1063,7 +1063,7 @@ select
 		, Roll
 		, Dyelot
         , StockType = 'B' 
-        , Stock = c.inqty - c.outqty + c.adjustqty
+        , Stock = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
 from dbo.lack a WITH (NOLOCK) 
 inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
@@ -1075,7 +1075,7 @@ Where c.lock = 0  and a.id = '{this.CurrentMaintain["ID"]}' and c.poid = '{dt1ro
 
                 if (type != "Lacking")
                 {
-                    t2 += " and (c.inqty-c.outqty + c.adjustqty) > 0";
+                    t2 += " and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0";
                 }
 
                 DataTable dt2;

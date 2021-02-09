@@ -441,14 +441,16 @@ where R.id= @ID";
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
-            string upd_MD_2T = string.Empty;
+            string upd_MD_37T = string.Empty;
             string upd_MD_8T = string.Empty;
-            string upd_Fty_2T = string.Empty;
+            string upd_Fty_37T = string.Empty;
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.returnreceipt_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
@@ -478,12 +480,12 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             sqlcmd = string.Format(
                 @"
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,[balanceQty] = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
-,d.Dyelot
+    ,[balanceQty] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+    ,d.Dyelot
 from dbo.ReturnReceipt_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) 
 on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -509,23 +511,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
 
             #region -- 更新庫存數量  ftyinventory --
 
-            var data_Fty_2T = (from b in this.DetailDatas
+            var data_Fty_37T = (from b in this.DetailDatas
                          select new
                          {
                              poid = b.Field<string>("poid"),
                              seq1 = b.Field<string>("seq1"),
                              seq2 = b.Field<string>("seq2"),
                              stocktype = b.Field<string>("stocktype"),
-                             qty = -b.Field<decimal>("qty"),
+                             qty = b.Field<decimal>("qty"),
                              location = b.Field<string>("location"),
                              roll = b.Field<string>("roll"),
                              dyelot = b.Field<string>("dyelot"),
                          }).ToList();
-            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
+            upd_Fty_37T = Prgs.UpdateFtyInventory_IO(37, null, true);
             #endregion
 
             #region -- update mdivisionPoDetail --
-            var data_MD_2T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+            var data_MD_37T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
@@ -541,7 +543,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                            Seq2 = m.First().Field<string>("seq2"),
                            Stocktype = m.First().Field<string>("stocktype"),
                            location = m.First().Field<string>("location"),
-                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
+                           Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             var data_MD_8T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                         group b by new
@@ -588,7 +590,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                      */
                     DataTable resulttb;
                     #region FtyInventory
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_37T, string.Empty, upd_Fty_37T, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -597,9 +599,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                     #endregion
 
                     #region MDivisionPoDetail
-                    if (data_MD_2T.Count > 0)
+                    if (data_MD_37T.Count > 0)
                     {
-                        upd_MD_2T = Prgs.UpdateMPoDetail(2, null, true, sqlConn: sqlConn);
+                        upd_MD_37T = Prgs.UpdateMPoDetail(37, null, true, sqlConn: sqlConn);
                     }
 
                     if (data_MD_8T.Count > 0)
@@ -607,9 +609,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                         upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
                     }
 
-                    if (data_MD_2T.Count > 0)
+                    if (data_MD_37T.Count > 0)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37T, string.Empty, upd_MD_37T, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             transactionscope.Dispose();
                             this.ShowErr(result);
@@ -679,14 +681,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
 
-            string upd_MD_2F = string.Empty;
+            string upd_MD_37F = string.Empty;
             string upd_MD_8F = string.Empty;
-            string upd_Fty_2F = string.Empty;
+            string upd_Fty_37F = string.Empty;
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.ReturnReceipt_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
@@ -714,11 +718,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.ReturnReceipt_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -743,23 +749,23 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             #endregion 檢查負數庫存
 
             #region -- 更新庫存數量  ftyinventory --
-            var data_Fty_2F = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+            var data_Fty_37F = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                          select new
                          {
                              poid = m.Field<string>("poid"),
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
-                             qty = m.Field<decimal>("qty"),
+                             qty = -m.Field<decimal>("qty"),
                              location = m.Field<string>("location"),
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
-            upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
+            upd_Fty_37F = Prgs.UpdateFtyInventory_IO(37, null, false);
             #endregion
 
             #region -- update mdivisionPoDetail --
-            var data_MD_2F = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+            var data_MD_37F = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                        group b by new
                        {
                            poid = b.Field<string>("poid"),
@@ -774,7 +780,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            Seq1 = m.First().Field<string>("seq1"),
                            Seq2 = m.First().Field<string>("seq2"),
                            Stocktype = m.First().Field<string>("stocktype"),
-                           Qty = m.Sum(w => w.Field<decimal>("qty")),
+                           Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
             var data_MD_8F = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
                         group b by new
@@ -820,7 +826,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                      */
                     DataTable resulttb;
                     #region FtyInventory
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_37F, string.Empty, upd_Fty_37F, out resulttb, "#TmpSource", conn: sqlConn)))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
@@ -829,9 +835,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                     #endregion
 
                     #region MDivisionPoDetail
-                    if (data_MD_2F.Count > 0)
+                    if (data_MD_37F.Count > 0)
                     {
-                        upd_MD_2F = Prgs.UpdateMPoDetail(2, null, false, sqlConn: sqlConn);
+                        upd_MD_37F = Prgs.UpdateMPoDetail(37, null, false, sqlConn: sqlConn);
                     }
 
                     if (data_MD_8F.Count > 0)
@@ -839,9 +845,9 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                         upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false, sqlConn: sqlConn);
                     }
 
-                    if (data_MD_2F.Count > 0)
+                    if (data_MD_37F.Count > 0)
                     {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37F, string.Empty, upd_MD_37F, out resulttb, "#TmpSource", conn: sqlConn)))
                         {
                             transactionscope.Dispose();
                             this.ShowErr(result);
@@ -915,7 +921,7 @@ select
 [Barcode1] = f.Barcode
 ,[Barcode2] = fb.Barcode
 ,[OriBarcode] = fbOri.Barcode
-,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[NewBarcode] = ''
 ,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
 from Production.dbo.returnReceipt_Detail i2

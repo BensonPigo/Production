@@ -92,7 +92,8 @@ select	fi.POID
         ,fi.InQty
         ,fi.OutQty
         ,fi.AdjustQty
-        ,Balance = fi.InQty - fi.OutQty + fi.AdjustQty
+        ,fi.ReturnQty
+        ,Balance = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
         ,case   when fi.StockType = 'B' then 'Bulk'
                 when fi.StockType = 'I' then 'Inventory'
                 when fi.StockType = 'O' then 'Scrap'

@@ -41,6 +41,7 @@
             this.btnReCalculate = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
+            this.numTotal5 = new Sci.Win.UI.NumericBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridTransactionDetail)).BeginInit();
             this.panel2.SuspendLayout();
@@ -77,12 +78,14 @@
             this.gridTransactionDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTransactionDetail.RowTemplate.Height = 24;
             this.gridTransactionDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTransactionDetail.ShowCellToolTips = false;
             this.gridTransactionDetail.Size = new System.Drawing.Size(1008, 507);
             this.gridTransactionDetail.TabIndex = 0;
             this.gridTransactionDetail.TabStop = false;
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.numTotal5);
             this.panel2.Controls.Add(this.numTotal4);
             this.panel2.Controls.Add(this.btnPrint);
             this.panel2.Controls.Add(this.labelTotal);
@@ -102,7 +105,7 @@
             this.numTotal4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotal4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal4.IsSupportEditMode = false;
-            this.numTotal4.Location = new System.Drawing.Point(708, 15);
+            this.numTotal4.Location = new System.Drawing.Point(622, 15);
             this.numTotal4.Name = "numTotal4";
             this.numTotal4.NullValue = new decimal(new int[] {
             0,
@@ -130,8 +133,7 @@
             // 
             // labelTotal
             // 
-            this.labelTotal.Lines = 0;
-            this.labelTotal.Location = new System.Drawing.Point(312, 15);
+            this.labelTotal.Location = new System.Drawing.Point(226, 15);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(75, 23);
             this.labelTotal.TabIndex = 4;
@@ -142,7 +144,7 @@
             this.numTotal3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotal3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal3.IsSupportEditMode = false;
-            this.numTotal3.Location = new System.Drawing.Point(602, 15);
+            this.numTotal3.Location = new System.Drawing.Point(516, 15);
             this.numTotal3.Name = "numTotal3";
             this.numTotal3.NullValue = new decimal(new int[] {
             0,
@@ -163,7 +165,7 @@
             this.numTotal2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotal2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal2.IsSupportEditMode = false;
-            this.numTotal2.Location = new System.Drawing.Point(496, 15);
+            this.numTotal2.Location = new System.Drawing.Point(410, 15);
             this.numTotal2.Name = "numTotal2";
             this.numTotal2.NullValue = new decimal(new int[] {
             0,
@@ -184,7 +186,7 @@
             this.numTotal1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotal1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal1.IsSupportEditMode = false;
-            this.numTotal1.Location = new System.Drawing.Point(390, 15);
+            this.numTotal1.Location = new System.Drawing.Point(304, 15);
             this.numTotal1.Name = "numTotal1";
             this.numTotal1.NullValue = new decimal(new int[] {
             0,
@@ -223,12 +225,34 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
+            // numTotal5
+            // 
+            this.numTotal5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotal5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotal5.IsSupportEditMode = false;
+            this.numTotal5.Location = new System.Drawing.Point(728, 15);
+            this.numTotal5.Name = "numTotal5";
+            this.numTotal5.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotal5.ReadOnly = true;
+            this.numTotal5.Size = new System.Drawing.Size(100, 23);
+            this.numTotal5.TabIndex = 6;
+            this.numTotal5.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P03_Transaction
             // 
             this.ClientSize = new System.Drawing.Size(1008, 561);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "P03_Transaction";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Transaction Detail";
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridTransactionDetail)).EndInit();
@@ -253,5 +277,6 @@
         private Win.UI.NumericBox numTotal1;
         private Win.UI.Button btnPrint;
         private Win.UI.NumericBox numTotal4;
+        private Win.UI.NumericBox numTotal5;
     }
 }

@@ -44,7 +44,7 @@ select
     [Seq#] = concat(psd.SEQ1, ' ', psd.SEQ2),
     [Bulk Location] = fid.location,
     fi.Dyelot, fi.Roll, psd.StockUnit,
-    [Balance Qty] = isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0)
+    [Balance Qty] = isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(fi.ReturnQty,0)
 from PO_Supp_Detail psd with(nolock)
 inner join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 outer apply(
@@ -56,7 +56,7 @@ outer apply(
         ), 1, 1, '')
 )fid
 where psd.Refno = '{dr["Ref#"]}' and psd.ColorID = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}'
-and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
+and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(fi.ReturnQty,0) > 0
 ";
                     SelectItem selectItem = new SelectItem(sql, string.Empty, MyUtility.Convert.GetString(dr["Dyelot"]));
                     DialogResult result = selectItem.ShowDialog();
@@ -83,7 +83,7 @@ select  1
 from PO_Supp_Detail psd with(nolock)
 inner join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 where psd.Refno = '{dr["Ref#"]}' and psd.ColorID = '{dr["ColorID"]}' and psd.id = '{dr["CuttingID"]}' and fi.Dyelot = '{e.FormattedValue}'
-and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) > 0
+and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(fi.ReturnQty,0) > 0
 ";
                 if (MyUtility.Check.Seek(sql))
                 {

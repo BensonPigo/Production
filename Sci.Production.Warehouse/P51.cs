@@ -333,12 +333,13 @@ namespace Sci.Production.Warehouse
                     }
 
                     string sqlcmd = string.Format(
-                        @"select a.ukey,a.roll,a.dyelot,inqty-a.outqty+a.adjustqty qty 
+                        @"select a.ukey,a.roll,a.dyelot, a.inqty - a.outqty + a.adjustqty - a.ReturnQty qty 
                                  ,dbo.Getlocation(a.ukey) as location 
                                  ,dbo.getmtldesc('{0}','{1}','{2}',2,0) as [description]
                                         from dbo.ftyinventory a WITH (NOLOCK) 
                                         where poid='{0}' and seq1='{1}' and seq2='{2}' 
-                                        and stocktype='{3}' and lock =0", this.CurrentDetailData["poid"],
+                                        and stocktype='{3}' and lock =0",
+                        this.CurrentDetailData["poid"],
                         this.CurrentDetailData["seq1"],
                         this.CurrentDetailData["seq2"],
                         this.CurrentDetailData["stocktype"]);
@@ -398,9 +399,10 @@ namespace Sci.Production.Warehouse
                         }
 
                         string cmd = $@"
-select a.ukey,a.roll,a.dyelot,a.inqty-a.outqty+a.adjustqty qty
-,dbo.Getlocation(a.ukey) as location 
-,dbo.getmtldesc('{this.CurrentDetailData["poid"]}','{this.CurrentDetailData["seq1"]}','{this.CurrentDetailData["seq2"]}',2,0) as [description] 
+select a.ukey,a.roll,a.dyelot
+    ,a.inqty - a.outqty + a.adjustqty - a.ReturnQty qty
+    ,dbo.Getlocation(a.ukey) as location 
+    ,dbo.getmtldesc('{this.CurrentDetailData["poid"]}','{this.CurrentDetailData["seq1"]}','{this.CurrentDetailData["seq2"]}',2,0) as [description] 
 from dbo.ftyinventory a WITH (NOLOCK) where poid='{this.CurrentDetailData["poid"]}' and seq1='{this.CurrentDetailData["seq1"]}' and seq2='{this.CurrentDetailData["seq2"]}' 
 and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValue.ToString()}' and lock =0
 ";

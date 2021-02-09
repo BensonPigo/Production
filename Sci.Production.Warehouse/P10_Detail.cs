@@ -62,9 +62,10 @@ select t.poid
 	   , FTY.InQty
 	   , FTY.OutQty
 	   , FTY.AdjustQty
-	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty as balanceqty
+       , FTY.ReturnQty
+	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty as balanceqty
 	   , [location] = dbo.Getlocation(FTY.Ukey)
-	   , GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over (partition by t.dyelot)
+	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
        , [Tone] = ShadeboneTone.Tone
 from #tmp t
@@ -173,6 +174,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc";
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 8
             .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 9
             .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 10
+            .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 10
             .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true) // 11
             .Text("DetailFIR", header: "Phy/Wei/Shade/Cont/Odor", width: Widths.AnsiChars(18), iseditingreadonly: true) // 13
             .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)

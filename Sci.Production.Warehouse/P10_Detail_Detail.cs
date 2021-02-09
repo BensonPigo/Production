@@ -68,14 +68,14 @@ namespace Sci.Production.Warehouse
 with cte as 
 (
       select Dyelot
-             , sum(inqty-OutQty+AdjustQty) as GroupQty
+             , sum(inqty - OutQty + AdjustQty - ReturnQty) as GroupQty
       from dbo.FtyInventory a WITH (NOLOCK) 
       inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.POID 
                                                        and p.seq1 = a.Seq1 
                                                        and p.seq2 = a.Seq2
       where poid = '{0}' 
             and Stocktype = 'B' 
-            and inqty-OutQty+AdjustQty > 0
+            and inqty - OutQty + AdjustQty - ReturnQty > 0
             and p.Refno = '{2}' 
             and p.ColorID = '{3}' 
             {4}--and a.Seq1 BETWEEN '00' AND '99'
@@ -96,10 +96,11 @@ select 0 as selected
        , StockType = 'B'
        , ftyinventoryukey = c.ukey 
        , location = dbo.Getlocation(c.ukey) 
-       , balanceqty = c.inqty-c.outqty + c.adjustqty
+       , balanceqty = c.inqty-c.outqty + c.adjustqty - c.ReturnQty
        , c.inqty
        , c.outqty
        , c.adjustqty 
+       , c.ReturnQty
        , [Tone] = ShadeboneTone.Tone
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 and c.stocktype = 'B'
@@ -110,7 +111,7 @@ outer apply (select [Tone] = MAX(fs.Tone)
 	        Left join FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = fi.Roll and fs.Dyelot = fi.Dyelot
 	        where fi.Ukey = c.Ukey
 			) ShadeboneTone
-Where a.id = '{0}' and c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 
+Where a.id = '{0}' and c.lock = 0 and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 
 and a.Refno='{2}' and a.colorid='{3}' {5}--and ltrim(a.seq1) between '01' and '99'
 order by d.GroupQty DESC,c.Dyelot,balanceqty DESC", this.dr_master["poid"],
                 Env.User.Keyword,

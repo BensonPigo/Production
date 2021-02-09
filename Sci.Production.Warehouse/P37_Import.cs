@@ -59,14 +59,14 @@ select  0 as selected
         , f.Dyelot
         , p1.stockunit
         , f.StockType 
-        , f.InQty - f.OutQty + f.AdjustQty balance
+        , f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty balance
         , 0.00 as qty
         , dbo.Getlocation(f.ukey) as location
         , dbo.getMtlDesc(f.PoId,f.seq1,f.seq2,2,0) [description]
         , f.ukey ftyinventoryukey
 from dbo.FtyInventory f WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = f.PoId and p1.seq1 = f.SEQ1 and p1.SEQ2 = f.seq2
-where   f.InQty - f.OutQty + f.AdjustQty > 0 
+where   f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty > 0 
         and f.lock=0 
         and stocktype !='O'"));
                 }
@@ -85,7 +85,7 @@ select  0 as selected
         , b.Dyelot
         , p1.stockunit
         , b.StockType 
-        , f.InQty - f.OutQty + f.AdjustQty balance
+        , f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty balance
         , 0.00 as qty
         , dbo.Getlocation(f.ukey) as location
         , dbo.getMtlDesc(b.PoId,b.seq1,b.seq2,2,0) [description]
@@ -94,7 +94,7 @@ from dbo.Receiving a WITH (NOLOCK)
 inner join dbo.Receiving_Detail b WITH (NOLOCK) on a.id = b.id
 inner join dbo.FtyInventory f WITH (NOLOCK) on f.POID = b.PoId and f.seq1 = b.seq1 and f.seq2 = b.Seq2 and f.stocktype = b.stocktype
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = b.PoId and p1.seq1 = b.SEQ1 and p1.SEQ2 = b.seq2
-where   f.InQty - f.OutQty + f.AdjustQty > 0 
+where   f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty > 0 
         and f.lock = 0 
         and a.Status = 'Confirmed' 
         and b.StockType!='O'

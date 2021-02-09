@@ -60,7 +60,7 @@ select  selected = 0
 	    , seq = concat(Ltrim(Rtrim(b.seq1)), ' ', b.Seq2)
 	    , [description] = dbo.getMtlDesc(a.poid,b.seq1,b.seq2,2,0)
 	    , b.RequestQty
-        , Stock = c.inqty - c.outqty + c.adjustqty
+        , Stock = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
         , location = dbo.Getlocation(c.ukey)
         , Qty = 0.00
         , issueqty = 0
@@ -86,7 +86,7 @@ and c.lock = 0 ", this.dr_master["requestid"]));
            // 判斷LACKING
             if (this.Type != "Lacking")
             {
-                strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0");
+                strSQLCmd.Append(" and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0");
             }
 
            // string AA = strSQLCmd.ToString();

@@ -12,7 +12,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	DECLARE @SQLCMD AS NVARCHAR(MAX);
-	DECLARE @currentDT AS VARCHAR(25)  -- �O���ɶ��ϥ�
+	DECLARE @currentDT AS VARCHAR(25)  -- 記錄時間使用
 
     BEGIN TRY
 				BEGIN TRANSACTION
@@ -28,7 +28,7 @@ BEGIN
 				END
 				
 				-- FtyInventory 資料歸零
-				SET @SQLCMD = N'UPDATE FtyInventory set inqty = 0,outqty = 0 ,adjustqty = 0
+				SET @SQLCMD = N'UPDATE FtyInventory set inqty = 0,outqty = 0 ,adjustqty = 0, ReturnQty = 0
 					where POID = @pPoid and Seq1 = @pSeq1 and Seq2 = @pSeq2';
 
 				EXEC sp_executesql @SQLCMD , N'@pPoid varchar(13) ,@pSeq1 varchar(3), @pSeq2 varchar(2)'
@@ -37,7 +37,7 @@ BEGIN
 				-- Update Ftyinventory Bulk 倉
 				With group6key as(
 					SELECT b.poid,b.seq1,b.seq2,b.roll,b.Dyelot,
-						sum(AInqty) AInqty,sum(AOutqty) AOutqty,sum(AAdjustQty) AAdjustQty 
+						sum(AInqty) AInqty,sum(AOutqty) AOutqty,sum(AAdjustQty) AAdjustQty, sum(AReturnQty) AReturnQty
 						FROM View_TransactionList b WITH (NOLOCK)
 						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll,b.Dyelot
@@ -45,16 +45,16 @@ BEGIN
 				MERGE  DBO.FTYINVENTORY AS T
 				USING group6key AS S
 				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL  and T.Dyelot = S.Dyelot  and t.stocktype='B'
-				WHEN MATCHED THEN UPDATE set inqty = S.AInqty, outqty = s.AOutqty , adjustQty = AAdjustqty
+				WHEN MATCHED THEN UPDATE set inqty = S.AInqty, outqty = s.AOutqty , adjustQty = AAdjustqty, ReturnQty = AReturnQty
 				WHEN NOT MATCHED BY TARGET THEN 
-				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty)
-				values (@Ukey,S.POID,S.SEQ1,S.SEQ2,S.ROLL,'B',S.dyelot,S.AInqty,S.AOutqty,S.AAdjustQty)
+				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,ReturnQty)
+				values (@Ukey,S.POID,S.SEQ1,S.SEQ2,S.ROLL,'B',S.dyelot,S.AInqty,S.AOutqty,S.AAdjustQty,AReturnQty)
 				;
 
 				-- Update Ftyinventory Inventory 倉
 				With group6key as(
 					SELECT b.poid,b.seq1,b.seq2,b.roll,b.Dyelot,
-						sum(BInqty) BInqty,sum(BOutqty) BOutqty,sum(BAdjustQty) BAdjustQty 
+						sum(BInqty) BInqty,sum(BOutqty) BOutqty,sum(BAdjustQty) BAdjustQty, sum(BReturnQty) BReturnQty
 						FROM View_TransactionList b WITH (NOLOCK)
 						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll,b.Dyelot
@@ -62,16 +62,16 @@ BEGIN
 				MERGE  DBO.FTYINVENTORY AS T
 				USING group6key AS S
 				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL  and T.Dyelot = S.Dyelot  and t.stocktype='I'
-				WHEN MATCHED THEN UPDATE set inqty = S.BInqty, outqty = s.BOutqty , adjustQty = BAdjustQty
+				WHEN MATCHED THEN UPDATE set inqty = S.BInqty, outqty = s.BOutqty , adjustQty = BAdjustQty, ReturnQty = BReturnQty
 				WHEN NOT MATCHED BY TARGET THEN 
-				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty)
-				values (@Ukey,S.POID,S.SEQ1,S.SEQ2,S.ROLL,'I',S.dyelot,S.BInqty,S.BOutqty,S.BAdjustQty)
+				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,ReturnQty)
+				values (@Ukey,S.POID,S.SEQ1,S.SEQ2,S.ROLL,'I',S.dyelot,S.BInqty,S.BOutqty,S.BAdjustQty,BReturnQty)
 				;
 
 				-- Update Ftyinventory Scrap 倉
 				With group6key as(
 					SELECT b.poid,b.seq1,b.seq2,b.roll,b.Dyelot,
-						sum(CInqty) CInqty,sum(COutqty) COutqty,sum(CAdjustQty) CAdjustQty 
+						sum(CInqty) CInqty,sum(COutqty) COutqty,sum(CAdjustQty) CAdjustQty, sum(CReturnQty) CReturnQty
 						FROM View_TransactionList b WITH (NOLOCK)
 						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll,b.Dyelot
@@ -79,24 +79,24 @@ BEGIN
 				MERGE  DBO.FTYINVENTORY AS T
 				USING group6key AS S
 				ON T.POID = S.POID AND T.SEQ1 =  S.SEQ1 AND T.SEQ2 = S.SEQ2 AND T.ROLL = S.ROLL  and T.Dyelot = S.Dyelot  and t.stocktype='O'
-				WHEN MATCHED THEN UPDATE set inqty = S.CInqty, outqty = s.COutqty , adjustQty = CAdjustQty
+				WHEN MATCHED THEN UPDATE set inqty = S.CInqty, outqty = s.COutqty , adjustQty = CAdjustQty, ReturnQty = CReturnQty
 				WHEN NOT MATCHED BY TARGET THEN 
-				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty)
-				values (@Ukey,S.POID,S.SEQ1,S.SEQ2,S.ROLL,'O',S.dyelot,S.CInqty,S.COutqty,S.CAdjustQty)
+				INSERT (MDivisionPoDetailUkey,poid,seq1,seq2,roll,stocktype,dyelot,inqty,outqty,adjustqty,ReturnQty)
+				values (@Ukey,S.POID,S.SEQ1,S.SEQ2,S.ROLL,'O',S.dyelot,S.CInqty,S.COutqty,S.CAdjustQty,CReturnQty)
 				;
 
 				-- Update MDivisionPoDetail
 				 UPDATE MDivisionPoDetail 
-				 SET INQTY = ISNULL(t.inqty,0), OutQty =  ISNULL(t.outqty,0) , AdjustQty =  ISNULL(t.adjustqty,0) , LInvQty =  ISNULL(t.BBalance ,0), LObQty =  ISNULL(t.CBalance,0)
+				 SET INQTY = ISNULL(t.inqty,0), OutQty =  ISNULL(t.outqty,0) , AdjustQty =  ISNULL(t.adjustqty,0) , LInvQty =  ISNULL(t.BBalance ,0), LObQty =  ISNULL(t.CBalance,0), ReturnQty = ISNULL(t.ReturnQty,0)
 				 FROM MDivisionPoDetail WITH (NOLOCK)
 				 LEFT JOIN (SELECT a.PoId,a.seq1,a.seq2
-						 , sum(inqty) inqty, sum(outqty) outqty, sum(adjustqty) adjustqty
-						 , sum(BInqty) - sum(Boutqty) + sum(BAdjustQty) BBalance  
-						 , sum(CInqty) - sum(COutqty) + sum(CAdjustQty) CBalance
+						 , sum(inqty) inqty, sum(outqty) outqty, sum(adjustqty) adjustqty, sum(ReturnQty) ReturnQty
+						 , sum(BInqty) - sum(Boutqty) + sum(BAdjustQty)-Sum(BReturnQty) BBalance  
+						 , sum(CInqty) - sum(COutqty) + sum(CAdjustQty)-Sum(CReturnQty) CBalance
 						 FROM View_TransactionList a WITH (NOLOCK)
 						 where a.PoId = @Poid and a.seq1 = @Seq1 and a.seq2 = @Seq2 AND a.status in ('confirmed','Closed')
 						 group by a.PoId,a.seq1,a.seq2
-						) T
+						) t
 				 on t.PoId = MDivisionPoDetail.POID and t.seq1 =MDivisionPoDetail.seq1 and t.seq2 =  MDivisionPoDetail.Seq2 
 				 where ukey = @Ukey;
 

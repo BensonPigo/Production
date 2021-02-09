@@ -47,7 +47,8 @@ namespace Sci.Production.Warehouse
             decimal iN = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
             decimal oUT = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
             decimal aDJ = MyUtility.Check.Empty(this.dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["adjustqty"].ToString());
-            this.numBalQtyBySeq.Value = iN - oUT + aDJ;
+            decimal rQT = MyUtility.Check.Empty(this.dr["ReturnQty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["ReturnQty"].ToString());
+            this.numBalQtyBySeq.Value = iN - oUT + aDJ - rQT;
 
             #region "顯示DTM"
             DataTable dtmDt;
@@ -91,8 +92,8 @@ namespace Sci.Production.Warehouse
                                 ,[stocktype] = case when stocktype = 'B' then 'Bulk'
                                                     when stocktype = 'I' then 'Invertory'
 			                                        when stocktype = 'O' then 'Scrap' End
-                                                ,a.InQty,a.OutQty,a.AdjustQty
-                                                ,a.InQty - a.OutQty + a.AdjustQty as balance
+                                                ,a.InQty,a.OutQty,a.AdjustQty,a.ReturnQty
+                                                ,a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty as balance
                                                 ,dbo.Getlocation(a.ukey)  MtlLocationID 
                                             from FtyInventory a WITH (NOLOCK) 
                                             where a.Poid = '{0}'
@@ -124,9 +125,10 @@ select tmp.Roll
 	, inqty
 	, outqty
 	, adjust
+    , ReturnQty
 	, Remark
 	, location
-	, [balance] = sum(TMP.inqty - TMP.outqty+tmp.adjust) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD )
+	, [balance] = sum(TMP.inqty - TMP.outqty + tmp.adjust - tmp.ReturnQty) over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD )
 from (
 	select b.roll
 		, b.stocktype
@@ -138,6 +140,7 @@ from (
 		, [inqty] = 0
 		, [outqty] = 0
 		, [adjust] = sum(QtyAfter - QtyBefore)
+        , [ReturnQty] = 0
 		, a.remark 
 		, [location] = '' 
 	from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
@@ -160,6 +163,7 @@ union all
 		, [inqty] = 0
 		, [released] = sum(qty) 
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
@@ -182,6 +186,7 @@ union all
 		, [inqty] = sum(qty)
 		, [ouqty] = 0
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark 
 		, [location] = b.ToLocation
 	from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
@@ -208,6 +213,7 @@ union all
 		, [inqty] = 0
 		, [released] = sum(Qty)
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 		, [location] = '' 
 	from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
@@ -231,6 +237,7 @@ union all
 		, [inqty] = 0
 		, [outqty] = sum(b.Qty) 
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 		, [location] = '' 
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
@@ -255,6 +262,7 @@ union all
 		, [inqty] = 0 
 		, [outqty] = 0  
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark 
 		, [location] = '' 
 	from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
@@ -277,6 +285,7 @@ union all
 		, [inqty] = 0
 		, [released] = sum(0.00 - b.Qty)
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, remark
 		, [location] = b.Location
 	from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
@@ -300,6 +309,7 @@ union all
 	    , [inqty] = sum(b.StockQty)
 		, [outqty] = 0
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, [remark] = '' 
 		, [location] = b.Location
     from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
@@ -321,6 +331,7 @@ union all
 		, [inqty] = sum(-Qty)
 		, [released] = 0
 		, [adjust] = 0
+        , [ReturnQty] = b.Qty
 		, a.remark
 		, [location] = ''
 	from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
@@ -329,7 +340,7 @@ union all
 	and seq1 = '{1}'
 	and seq2 = '{2}' 
 	and a.id = b.id    
-	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot
+	group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,b.roll,b.stocktype,b.dyelot,b.Qty
 
 union all
 
@@ -347,6 +358,7 @@ union all
 		, [inqty] = 0
 		, [released] = sum(Qty)
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, [remark] = isnull(a.remark,'') 
 		, [location] = ''
 	from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
@@ -372,6 +384,7 @@ union all
 		, [arrived] = sum(Qty)
 		, [ouqty] = 0
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 	    , [ToLocation] = isnull(stuff((Select concat(',', tmp.ToLocation)
 										from (select b1.ToLocation 
@@ -406,6 +419,7 @@ union all
         , [arrived] = sum(Qty)
 		, [ouqty] = 0
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 		, [Location] = ISNULL(stuff((Select concat(',', tmp.Location)
                         from (select b1.Location 
@@ -439,6 +453,7 @@ union all
         , [inqty] = 0
 		, [released] = sum(Qty)
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
 	from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
@@ -462,6 +477,7 @@ union all
 		, [inqty] = sum(Qty)
 		, [released] = 0
 		, [adjust] = 0
+        , [ReturnQty] = 0
 		, a.remark
 		, [location] = ''
 	from RequestCrossM a WITH (NOLOCK) , RequestCrossM_Receive b WITH (NOLOCK) 
@@ -474,7 +490,7 @@ union all
 
 ) tmp
 where stocktype <> 'O'
-group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
+group by IssueDate,inqty,outqty,adjust,ReturnQty,id,Remark,location,tmp.name,tmp.roll,tmp.stocktype,tmp.dyelot
 
 ",
                     this.dr["id"].ToString(),
@@ -541,6 +557,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("InQty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("OutQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                      .Text("MtlLocationID", header: "Location", width: Widths.AnsiChars(10))
                      ;
@@ -555,6 +572,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Adjust", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Text("Location", header: "Location", width: Widths.AnsiChars(5));
 
@@ -568,6 +586,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("DTM", header: "DTM", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      ;
@@ -672,12 +691,13 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            inqty = m.Sum(w => w.Field<decimal>("inqty")),
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
                            AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
-                           balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")),
+                           ReturnQty = m.Sum(i => i.Field<decimal>("ReturnQty")),
+                           balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")) - m.Sum(i => i.Field<decimal>("ReturnQty")),
                            DTM = this.numArrivedQtyBySeq.Value == 0 ? 0 : m.Sum(w => w.Field<decimal>("inqty")) / this.numArrivedQtyBySeq.Value * this.useQty,
                        };
 
             this.dtSummary.Rows.Clear();
-            tmp.ToList().ForEach(q2 => this.dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount, q2.DTM));
+            tmp.ToList().ForEach(q2 => this.dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.ReturnQty, q2.balance, null, q2.rollcount, q2.DTM));
         }
 
         private void BtnPrint_Click(object sender, EventArgs e)
@@ -699,7 +719,7 @@ select  a.id [SP]
         , a.ColorID [Color]
         , b.InQty [Arrived_Qty_by_Seq]
         , b.OutQty [Released_Qty_by_Seq]
-        , b.InQty-b.OutQty+b.AdjustQty [Bal_Qty]
+        , b.InQty-b.OutQty+b.AdjustQty-b.ReturnQty [Bal_Qty]
         , [Description] = dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) 
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.MDivisionPoDetail b WITH (NOLOCK) on a.id = b.POID 
@@ -726,7 +746,8 @@ select  c.Roll[Roll]
         , c.InQty [Arrived_Qty]
         , c.OutQty [Released_Qty]
         , c.AdjustQty [Adjust_Qty]
-        , c.InQty-c.OutQty+c.AdjustQty [Balance]
+        , c.ReturnQty [Return_Qty]
+        , c.InQty-c.OutQty+c.AdjustQty-c.ReturnQty [Balance]
         , [Location]=dbo.Getlocation(c.Ukey)
 from dbo.FtyInventory c WITH (NOLOCK) 
 where   c.poid = @ID 

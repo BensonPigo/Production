@@ -219,7 +219,7 @@ namespace Sci.Production.Quality
 SET ARITHABORT ON
 
 select 
-    [BalanceQty]=sum(fit.inqty - fit.outqty + fit.adjustqty) 
+    [BalanceQty]=sum(fit.inqty - fit.outqty + fit.adjustqty - fit.ReturnQty) 
     ,rd.poid
     ,rd.seq1
     ,rd.seq2

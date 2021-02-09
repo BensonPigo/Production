@@ -69,7 +69,7 @@ select  selected = 0
         , fromDyelot = c.Dyelot
         , fromFactoryID = Orders.FactoryID
         , fromStocktype = c.StockType
-        , balance = c.inqty - c.outqty + c.adjustqty 
+        , balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
         , qty = 0.00 
         , location = dbo.Getlocation(c.ukey)
         , a.FabricType
@@ -89,7 +89,7 @@ inner join dbo.Orders on c.Poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
 Where  1=1
 {1}
-        and c.InQty-c.OutQty+c.AdjustQty > 0 
+        and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 
         and c.stocktype = 'O' 
         and Factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion

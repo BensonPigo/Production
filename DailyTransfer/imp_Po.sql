@@ -492,12 +492,12 @@ select po3.*
 into #deletePo3
 from PO_Supp_Detail po3
 outer apply(
-	select isnull(sum(InQty+OutQty+AdjustQty),0) ttlQty from FtyInventory 
+	select isnull(sum(InQty+OutQty+AdjustQty-ReturnQty),0) ttlQty from FtyInventory 
 	where POID=po3.ID and Seq1=po3.SEQ1 and Seq2=po3.SEQ2
 	and AdjustQty =0
 )fty
 outer apply(
-	select isnull(sum(InQty+OutQty+AdjustQty),0) ttlQty from MDivisionPoDetail  
+	select isnull(sum(InQty+OutQty+AdjustQty-ReturnQty),0) ttlQty from MDivisionPoDetail  
 	where POID=po3.ID and Seq1=po3.SEQ1 and Seq2=po3.SEQ2
 	and AdjustQty =0
 )MDPoDetail

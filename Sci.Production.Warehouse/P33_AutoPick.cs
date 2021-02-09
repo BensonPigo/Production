@@ -275,7 +275,7 @@ SELECT  [Selected]
 		, [AccuIssued]
 FROM #final2 t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
@@ -293,7 +293,7 @@ OUTER APPLY(
 			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
 			GROUP BY psd.seq1,psd.seq2
-			--HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+			--HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
 		)
 		FOR XML PATH('')
 	),1,1,'')

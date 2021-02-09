@@ -65,7 +65,7 @@ select  selected = 0
         , fromDyelot = c.Dyelot 
         , fromFactoryID = orders.FactoryID
         , fromStocktype = c.StockType 
-        , balance = c.inqty-c.outqty + c.adjustqty 
+        , balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
         , qty = 0.00 
         , FabricType =  case a.FabricType 
                             when 'f' then 'Fabric'
@@ -88,7 +88,7 @@ inner join Orders on c.Poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.id
 Where  1=1
 {1}
-        and c.InQty-c.OutQty+c.AdjustQty > 0 
+        and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 
         and c.stocktype = 'B'
         and Factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion

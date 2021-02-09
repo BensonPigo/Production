@@ -76,7 +76,7 @@ select Sel = 0
 	    , StockUnit = psd.StockUnit
 	    , location = dbo.Getlocation(trsd.FtyInventoryUkey)
 	    , Qty = trsd.Qty
-        , [StockQty] = (isnull(fi.InQty, 0)  - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0))
+        , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0) - isnull(fi.ReturnQty, 0))
         , [StockType] = case    when trsd.StockType = 'I' then 'Inventory'
                                 when trsd.StockType = 'B' then 'Bulk'
                                 else trsd.StockType end

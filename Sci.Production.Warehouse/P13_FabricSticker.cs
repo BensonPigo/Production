@@ -78,7 +78,7 @@ select Sel = 0
 	    , Style = o.StyleID
         , StockUnit = psd.StockUnit
 	    , Location = isnull(dbo.Getlocation(isd.FtyInventoryUkey),'')
-        , [StockQty] = (isnull(fi.InQty, 0)  - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0))
+        , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) - isnull(fi.ReturnQty, 0)
         , [BulkLocation] = BulkLocation.val
 from {this.fromTable} isd with (nolock)
 left join Orders o with (nolock) on o.ID=isd.POID
