@@ -13,6 +13,7 @@
     [ReasonId]         VARCHAR (5)     CONSTRAINT [DF_Adjust_Detail_ReasonId] DEFAULT ('') NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Adjust_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

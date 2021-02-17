@@ -22,6 +22,7 @@
     [CombineBarcode] VARCHAR NULL, 
     [Unoriginal] BIT NULL, 
     [EncodeSeq] INT NOT NULL DEFAULT ((0)), 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

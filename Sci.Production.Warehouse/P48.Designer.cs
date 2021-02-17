@@ -219,6 +219,7 @@
             // 
             // txtdropdownlistFabricType
             // 
+            this.txtdropdownlistFabricType.AddAllItem = false;
             this.txtdropdownlistFabricType.BackColor = System.Drawing.Color.White;
             this.txtdropdownlistFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlistFabricType.FormattingEnabled = true;
@@ -232,6 +233,7 @@
             // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
