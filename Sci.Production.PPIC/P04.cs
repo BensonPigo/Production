@@ -373,7 +373,7 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 string styleKey = $"{this.CurrentMaintain["ID"]}`{this.CurrentMaintain["SeasonID"]}`{this.CurrentMaintain["BrandID"]}";
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentStyleFPSSettingToFinishingProcesses '{styleKey}'"))
+                Task.Run(() => new Sunrise_FinishingProcesses().SentStyleFPSSettingToFinishingProcesses(styleKey))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion

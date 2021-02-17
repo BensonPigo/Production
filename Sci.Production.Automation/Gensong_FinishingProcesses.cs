@@ -24,8 +24,8 @@ namespace Sci.Production.Automation
         /// SentOrdersToFinishingProcesses_Gensong
         /// </summary>
         /// <param name="listID">List ID</param>
-        /// <param name="actionType">Action Type</param>
-        public void SentOrdersToFinishingProcesses(string listID, string actionType)
+        /// <param name="transTable">transTable</param>
+        public void SentOrdersToFinishingProcesses(string listID, string transTable)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
@@ -36,15 +36,37 @@ namespace Sci.Production.Automation
             string suppAPIThread = "api/GensongFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
-            string tableName = actionType == "Delete" ? "Order_Delete" : "Orders";
 
+            string orderTransTable = transTable;
+            string tableArray;
+            if (orderTransTable == "Order_Delete")
+            {
+                tableArray = "Order_Delete";
+            }
+            else
+            {
+                tableArray = "Orders";
+            }
+
+            object postBody;
+            string[] structureID = listID.Split(',');
+
+            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 500.0));
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
+            dataTable.Add("orderTransTable", orderTransTable);
 
-            var structureID = listID.Split(',').Select(s => new { ID = s });
+            // 先以500筆為單位拆分後再傳出
+            for (int i = 0; i < sendApiCount; i++)
+            {
+                int skipCount = i * 500;
+                var orderIDs = structureID.Skip(skipCount).Take(500).Select(s => new { ID = s });
+                dataTable.Add(tableArray, orderIDs);
+                postBody = new { TableArray = new string[] { tableArray }, DataTable = dataTable };
 
-            string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure(tableName, structureID));
+                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, JsonConvert.SerializeObject(postBody), this.automationErrMsg);
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+                dataTable.Remove(tableArray);
+            }
         }
 
         /// <summary>
