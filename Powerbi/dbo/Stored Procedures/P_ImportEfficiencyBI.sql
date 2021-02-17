@@ -18,6 +18,7 @@ declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
 declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
+declare @SqlCmd4 nvarchar(max) ='';
 
 SET @SqlCmd1 = '
 
@@ -44,6 +45,12 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
     ,o.SciDelivery
+	,[CDCodeNew] = o.CDCodeNew
+	,[ProductType] = sty.ProductType
+	,[FabricType] = sty.FabricType
+	,[Lining] = sty.Lining
+	,[Gender] = sty.Gender
+	,[Construction] = sty.Construction
 into #tmpSewingDetail
 from ['+@LinkServerName+'].Production.dbo.System WITH (NOLOCK),['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -63,6 +70,19 @@ outer apply
 		for xml path('''')
 	),1,1,'''')
 )sr
+Outer apply (
+	SELECT s.[ID]
+		, ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM ['+@LinkServerName+'].Production.dbo.Style s WITH(NOLOCK)
+	left join ['+@LinkServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
+	left join ['+@LinkServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
+	left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
+	where s.Ukey = o.StyleUkey
+)sty
 outer apply( select BrandID from ['+@LinkServerName+'].Production.dbo.orders o1 WITH (NOLOCK) where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from ['+@LinkServerName+'].Production.dbo.Style WITH (NOLOCK) where id = o.StyleID and SeasonID = o.SeasonID and BrandID != ''SUBCON-I'') StyleBrand
 where 1=1 
@@ -102,6 +122,12 @@ select distinct ID
     ,SubConOutContractNumber
     ,SubconInSisterFty
     ,SewingReasonDesc
+	,CDCodeNew
+	,ProductType
+	,FabricType
+	,Lining
+	,Gender
+	,Construction
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -159,7 +185,9 @@ outer apply
 						)
 )cl 
 where t.OrderCategory in (''B'',''S'')-----Artwork
- 
+'
+
+SET @SqlCmd3 = '
 -----by orderid & all ArtworkTypeID
 
 select * INTO #Final from(
@@ -209,7 +237,12 @@ select * INTO #Final from(
 		,InlineQty,Diff = t.QAQty-InlineQty
 		,rate
         ,isnull(t.SewingReasonDesc,'''')SewingReasonDesc
-		 
+		,t.CDCodeNew
+		,t.ProductType
+		,t.FabricType
+		,t.Lining
+		,t.Gender
+		,t.Construction
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
@@ -217,7 +250,7 @@ drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#tmp_s1
 
 '
 
-SET @SqlCmd3= '
+SET @SqlCmd4= '
 
 MERGE INTO P_SewingDailyOutput t --要被insert/update/delete的表
 USING #Final s --被參考的表
@@ -275,6 +308,12 @@ WHEN MATCHED THEN
 		,t.Rate = s.Rate
 		,t.SewingReasonDesc = s.SewingReasonDesc
 		,t.SciDelivery = s.SciDelivery
+		,t.CDCodeNew = s.CDCodeNew
+		,t.ProductType = s.ProductType
+		,t.FabricType = s.FabricType
+		,t.Lining = s.Lining
+		,t.Gender = s.Gender
+		,t.Construction = s.Construction
 WHEN NOT MATCHED THEN
     INSERT VALUES (
 			s.MDivisionID
@@ -320,6 +359,12 @@ WHEN NOT MATCHED THEN
            ,s.Rate
            ,s.SewingReasonDesc
 		   ,s.SciDelivery
+		   ,s.CDCodeNew
+		   ,s.ProductType
+		   ,s.FabricType
+		   ,s.Lining
+		   ,s.Gender
+		   ,s.Construction
 		  );
 
 delete t
@@ -339,7 +384,7 @@ select OrderID from #Final s
 
 '
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3
-	EXEC sp_executesql @SqlCmd_Combin
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4
+EXEC sp_executesql @SqlCmd_Combin
 
 End
