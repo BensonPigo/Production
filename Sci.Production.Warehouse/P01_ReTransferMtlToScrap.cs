@@ -103,7 +103,7 @@ select  [select] = 0
         ,[description] = dbo.getmtldesc(f.PoId,f.Seq1,f.Seq2,2,0)
         ,f.Roll
         ,f.Dyelot
-        ,[Qty] = f.InQty - f.OutQty+f.AdjustQty
+        ,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
         ,f.Ukey
         ,[Lock] = iif(f.Lock = 1, 'Y', '')
         ,[MDivisionPoDetailUkey] = mdp.Ukey
@@ -113,7 +113,7 @@ left join MDivisionPoDetail mdp on  mdp.POID=p1.ID and
                                     mdp.Seq1=p1.SEQ1 and 
                                     mdp.Seq2=p1.SEQ2
 inner join orders o on o.id = f.POID
-where f.InQty - f.OutQty+f.AdjustQty >0 and f.StockType='B' and o.WhseClose is not null 
+where (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) > 0 and f.StockType='B' and o.WhseClose is not null 
 and o.MDivisionID='{Env.User.Keyword}' and f.POID = '{this.poID}'
 ";
 

@@ -93,7 +93,7 @@ select selected = 0
 	   , StockType = 'B' 
 	   , ftyinventoryukey = c.ukey
 	   , location = dbo.Getlocation(c.ukey)
-	   , balance = c.inqty - c.outqty + c.adjustqty
+	   , balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
 	   , stockunit = (select stockunit 
 	   				  from po_supp_detail WITH (NOLOCK) 
 	   				  where id = c.poid 
@@ -116,7 +116,7 @@ Where a.id = '{0}'
            // 判斷LACKING
             if (this.Type != "Lacking")
             {
-                strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0");
+                strSQLCmd.Append(" and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0");
             }
 
            // string AA = strSQLCmd.ToString();

@@ -522,7 +522,8 @@ where psd.id ='{0}' and psd.seq1 = '{1}' and psd.seq2 = '{2}' and psd.FabricType
                     "Seq,Seq1,Seq2,RequestQty",
                     string.Format(
                     @"select * from (
-SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty,isnull(mpd.InQty-mpd.OutQty+mpd.AdjustQty-mpd.LInvQty,0) as StockQty
+SELECT l.Seq,l.Seq1,l.Seq2,l.RequestQty
+    ,isnull(mpd.InQty - mpd.OutQty + mpd.AdjustQty - mpd.ReturnQty - mpd.LInvQty, 0) as StockQty
 FROM #tmp l
 left join MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = '{0}' and mpd.SEQ1 = l.Seq1 and mpd.SEQ2 = l.Seq2) a
 where a.RequestQty > a.StockQty",
@@ -948,11 +949,11 @@ inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID
 											   and c.seq1 = b.seq1 
 											   and c.seq2  = b.seq2 
 											   and c.stocktype = 'B'
-where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outqty + c.adjustqty < b.RequestQty
+where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outqty + c.adjustqty - c.ReturnQty < b.RequestQty
 ";
             if (type != "Lacking")
             {
-                sqlchk += " and (c.inqty-c.outqty + c.adjustqty) > 0";
+                sqlchk += " and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0";
             }
 
             DataTable chkdt;
@@ -1016,7 +1017,7 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0
             // 判斷LACKING
             if (type != "Lacking")
             {
-                strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0");
+                strSQLCmd.Append(" and (c.inqty - c.outqty + c.adjustqty - c.ReturnQty) > 0");
             }
             #endregion
 

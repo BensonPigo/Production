@@ -462,6 +462,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             .Text("StockUnit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 25
             .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5) // 26
             .Numeric("AdjustQty", header: "Adjust" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true) // 27
+            .Numeric("ReturnQty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true) // 27
             .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts6) // 28
             .Text("LInvQty", header: "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts7) // 29
             .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8) // 30
@@ -695,6 +696,7 @@ from(
             , StockUnit = iif (InQty = 0, '', StockUnit)
             , OutQty = iif (OutQty = 0, '', Convert (varchar, OutQty))
             , AdjustQty = iif (AdjustQty = 0, '', Convert (varchar, AdjustQty))
+            , ReturnQty = iif (ReturnQty = 0, '', Convert (varchar, ReturnQty))
             , balanceqty = iif (balanceqty = 0, '', Convert (varchar, balanceqty))
             , LInvQty = iif (LInvQty = 0, '', format(LInvQty,'#,###,###,###.##'))
             , LObQty = iif (LObQty = 0, '',format(LObQty,'#,###,###,###.##'))
@@ -760,7 +762,8 @@ from(
                     , a.StockUnit
                     , iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
                     , iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
-                    , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
+                    , iif(m.ReturnQty is null,'0.00',m.ReturnQty) ReturnQty
+                    , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty) - iif(m.ReturnQty is null,'0.00',m.ReturnQty)  balanceqty
                     , m.LInvQty
                     , m.LObQty
                     , m.ALocation
@@ -878,7 +881,8 @@ from(
                     , a.StockUnit
                     , iif(m.OutQty is null,'0.00',m.OutQty) as OutQty
                     , iif(m.AdjustQty is null,'0.00',m.AdjustQty) AdjustQty
-                    , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty)  balanceqty
+                    , iif(m.ReturnQty is null,'0.00',m.ReturnQty) ReturnQty
+                    , iif(m.InQty is null,'0.00',m.InQty) - iif(m.OutQty is null,'0.00',m.OutQty) + iif(m.AdjustQty is null,'0.00',m.AdjustQty) - iif(m.ReturnQty is null,'0.00',m.ReturnQty)  balanceqty
                     , m.LInvQty
                     , m.LObQty
                     , m.ALocation
@@ -988,6 +992,7 @@ select ROW_NUMBER_D = 1
        , [StockUnit] = l.UnitID 
        , [OutQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
        , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
+       , [ReturnQty] = '0'
        , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
        , [LInvQty] =  '-' 
        , [LObQty] = iif (l.LobQty = 0, '',format(l.LobQty,'#,###,###,###.##'))

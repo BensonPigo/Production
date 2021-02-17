@@ -79,7 +79,7 @@ select   0 as selected
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , a.Roll
         , a.Dyelot
-        , a.InQty - a.OutQty + a.AdjustQty qty
+        , a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty qty
         , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) fromlocation
@@ -181,7 +181,7 @@ where    f.MDivisionID='{0}'
                 }
 
                 strSQLCmd.Append(@" 
-group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType, r.exportID, LastEditDate.val");
+group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.ReturnQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType, r.exportID, LastEditDate.val");
             }
 
             // break;
@@ -207,7 +207,7 @@ select  0 as selected
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , a.Roll
         , a.Dyelot
-        , a.InQty - a.OutQty + a.AdjustQty qty
+        , a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty qty
         , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) as fromlocation
@@ -237,7 +237,7 @@ select  0 as selected
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , a.Roll
         , a.Dyelot
-        , a.InQty - a.OutQty + a.AdjustQty qty
+        , a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty qty
         , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) as fromlocation
@@ -269,7 +269,7 @@ select  0 as selected
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , a.Roll
         , a.Dyelot
-        , a.InQty - a.OutQty + a.AdjustQty qty
+        , a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty qty
         , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) as fromlocation
@@ -301,7 +301,7 @@ select  0 as selected
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , a.Roll
         , a.Dyelot
-        , a.InQty - a.OutQty + a.AdjustQty qty
+        , a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty qty
         , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) as fromlocation
@@ -333,7 +333,7 @@ select  0 as selected
         , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
         , a.Roll
         , a.Dyelot
-        , a.InQty - a.OutQty + a.AdjustQty qty
+        , a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty qty
         , a.Ukey
         , dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description] 
         , dbo.Getlocation(a.ukey) as fromlocation
@@ -496,7 +496,7 @@ WHERE   StockType='{0}'
 
                     string getFtyInventorySql = $@"
 select 
-[Qty] = InQty - OutQty + AdjustQty ,
+[Qty] = InQty - OutQty + AdjustQty - ReturnQty,
 [fromlocation] = dbo.Getlocation(ukey),
 [LastEditDate] = LastEditDate.val,
 [FtyInventoryUkey] = FtyInventory.Ukey

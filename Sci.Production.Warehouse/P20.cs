@@ -102,6 +102,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                 .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ts6, iseditingreadonly: true)
                  ;
         }
@@ -379,6 +380,7 @@ order by InventoryUkey,ConfirmDate,ID");
         , f.InQty
         , f.OutQty
         , f.AdjustQty
+        , f.ReturnQty
         , dbo.Getlocation(f.ukey)  Location
 from FtyInventory f WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on f.PoID= b.id and f.Seq1 = b.SEQ1 and f.Seq2 = b.SEQ2
@@ -475,7 +477,7 @@ where   stocktype='I'");
             this.dtTpeIventory.TableName = "dtTpeIventory";
 
             this.dtInvtrans.TableName = "dtInvtrans";
-            this.dtFtyInventory.Columns.Add("balance", typeof(decimal), "InQty-outqty+adjustqty");
+            this.dtFtyInventory.Columns.Add("balance", typeof(decimal), "InQty-outqty+adjustqty-ReturnQty");
 
             DataRelation relation = new DataRelation(
                 "rel1",

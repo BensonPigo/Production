@@ -82,11 +82,11 @@ select  0 as selected
         , FI.Roll
         , FI.Dyelot
         , 0.00 as Qty
-        , FI.inqty-FI.outqty + FI.adjustqty as Balance
+        , FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty as Balance
         , FI.StockType
         , FI.ukey as ftyinventoryukey
         , dbo.Getlocation(FI.ukey) location
-        , FI.inqty - FI.outqty + FI.adjustqty as stockqty
+        , FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty as stockqty
 		, [ToPOID]=''
 		, [ToSeq]=''
 		, [ToSeq1]=''
@@ -97,7 +97,7 @@ LEFT JOIN Factory F ON F.ID = O.FactoryID
 LEFT JOIN PO_Supp_Detail PSD ON PSD.ID=FI.POID AND PSD.SEQ1 = FI.SEQ1 AND PSD.SEQ2=FI.SEQ2
 Where FI.lock = 0 
 and ( F.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
-        and FI.inqty - FI.outqty + FI.adjustqty > 0         
+        and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
         and FI.stocktype = '{1}'", Env.User.Keyword, stocktype));
 
             if (!MyUtility.Check.Empty(sp))

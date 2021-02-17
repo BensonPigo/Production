@@ -429,15 +429,15 @@ and oqs.Id = '{0}'
 
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.orderID}','Orders,Order_QtyShip,Order_SizeCode,Order_Qty'"))
+                Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(this.orderID, "Orders,Order_QtyShip,Order_SizeCode,Order_Qty"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
             #region ISP20201607 資料交換 - Gensong
             if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
             {
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{this.orderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+               Task.Run(() => new Gensong_FinishingProcesses().SentOrdersToFinishingProcesses(this.orderID, "Orders,Order_QtyShip"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
             return Ict.Result.True;

@@ -1,13 +1,10 @@
 ﻿
-
-
-
 CREATE PROCEDURE [dbo].[usp_WarehouseClose] 
 	-- Add the parameters for the stored procedure here
 	@poid varchar(13) -- 採購母單單號
 	,@MDivisionid varchar(8)
-	,@loginid varchar(10)
 	,@Factoryid varchar(8)
+	,@loginid varchar(10)
 	
 AS
 BEGIN
@@ -106,7 +103,7 @@ BEGIN
 			,[ToRoll]=[Roll]
 			,[ToStockType]='O'
 			,[ToDyelot]=[Dyelot]
-			,[Qty]=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)
+			,[Qty]=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) - ISNULL(ReturnQty,0.0)
 			,[ToLocation]=isnull(
 			(
 				SELECT TOP 1 ID 
@@ -118,7 +115,7 @@ BEGIN
 		FROM DBO.FtyInventory sd WITH (NOLOCK)
 		WHERE sd.poid = @poid
 		and stocktype='B'
-		and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 
+		and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) - ISNULL(ReturnQty,0.0) > 0 
 		and lock=0
 
 		INSERT INTO [dbo].[SubTransfer_Detail]
@@ -134,10 +131,10 @@ BEGIN
 		-- 更新庫存 MDivisionPoDetail & FtyInventory
 
 		-- Insert Update FtyInventory (Scrap) 要先做Scrap倉再更新Bulk！！
-		SELECT poid,seq1,seq2,roll,dyelot,qty=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0),stocktype='O' ,sd.Ukey
+		SELECT poid,seq1,seq2,roll,dyelot,qty=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) - ISNULL(ReturnQty,0.0),stocktype='O' ,sd.Ukey
 		into #tmpFtyInventory
 		FROM dbo.FtyInventory sd WITH (NOLOCK)
-		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) > 0 and lock=0 
+		WHERE sd.POID = @poid and stocktype='B' and ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) - ISNULL(ReturnQty,0.0) > 0 and lock=0 
 
 		declare @TB table(Ukey bigint, sourceUkey bigint)
 		
@@ -182,7 +179,7 @@ BEGIN
 		-- FtyInventory, FtyInventory_Detail先更新完, 再更新 MDivisionPoDetail
 		select
 			f.POID,f.seq1,f.seq2,
-			[Qty]=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0)
+			[Qty]=ISNULL(InQty,0.0) - ISNULL(OutQty,0.0) + ISNULL(AdjustQty,0.0) - ISNULL(ReturnQty,0.0)
 		into #afterInsertFtyInventory
 		from FtyInventory f with(nolock)
 		where f.poid = @poid and f.StockType = 'O'

@@ -744,7 +744,8 @@ select  e.poid
         , StockUnit = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
         , M.OutQty
         , M.AdjustQty
-        , BalanceQty = M.inqty - M.OutQty + M.AdjustQty
+        , M.ReturnQty
+        , BalanceQty = M.inqty - M.OutQty + M.AdjustQty - M.ReturnQty
         , M.LInvQty
         , p.fabrictype
         , e.seq1
@@ -770,9 +771,9 @@ Order By e.Seq1, e.Seq2, e.Refno";
 
                         DBProxy.Current.Select(null, sqlcmd, out DataTable poitems);
 
-                        string columns = "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,BalanceQty,linvqty";
-                        string heasercap = "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Balance,Inventory Qty";
-                        string columnwidths = "6,15,25,8,10,6,6,6,6,6,6";
+                        string columns = "Seq,refno,description,colorid,eta,inqty,stockunit,outqty,adjustqty,ReturnQty,BalanceQty,linvqty";
+                        string heasercap = "Seq,Ref#,Description,Color,ETA,In Qty,Stock Unit,Out Qty,Adqty,Return,Balance,Inventory Qty";
+                        string columnwidths = "6,15,25,8,10,6,6,6,6,6,6,6";
                         SelectItem item = new SelectItem(poitems, columns, columnwidths, this.CurrentDetailData["seq"].ToString(), heasercap)
                         {
                             Width = 1024,
@@ -1622,7 +1623,7 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.StockQty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
         , d.Dyelot
 from dbo.Receiving_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
@@ -1631,7 +1632,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
                                             and d.Dyelot = f.Dyelot
-where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + d.StockQty < 0) 
+where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0) + d.StockQty < 0) 
         and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {
@@ -1951,7 +1952,7 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.StockQty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
         , d.Dyelot
 from dbo.Receiving_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
@@ -1960,7 +1961,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
                                             and d.Dyelot = f.Dyelot
-where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - d.StockQty < 0) 
+where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - d.StockQty < 0) 
         and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out DataTable datacheck)))
             {

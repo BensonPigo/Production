@@ -1042,7 +1042,8 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
+        ,f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on  d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
@@ -1083,7 +1084,8 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
+        ,f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
@@ -1091,7 +1093,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
                                             and d.Dyelot = f.Dyelot
-where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + d.Qty < 0) 
+where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0) + d.Qty < 0) 
         and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -1442,7 +1444,8 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
+        ,f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on  d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
@@ -1483,7 +1486,8 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
+        , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
+        ,f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
@@ -1491,7 +1495,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
                                             and d.Dyelot = f.Dyelot
-where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - d.Qty < 0) 
+where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - d.Qty < 0) 
         and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {

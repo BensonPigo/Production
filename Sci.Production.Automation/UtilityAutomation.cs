@@ -3,6 +3,8 @@ using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 using static PmsWebApiUtility20.WebApiTool;
 using DualResult = Ict.DualResult;
@@ -98,9 +100,9 @@ namespace Sci.Production.Automation
         {
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600);
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
             automationErrMsg.json = jsonBody;
-
             if (!webApiBaseResult.isSuccess)
             {
                 result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
@@ -109,6 +111,35 @@ namespace Sci.Production.Automation
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// GetCustomHeaders
+        /// </summary>
+        /// <returns>Dictionary</returns>
+        public static Dictionary<string, string> GetCustomHeaders()
+        {
+            Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
+            StackTrace stackTrace = new StackTrace();
+            MethodBase methodBase = stackTrace.GetFrame(3).GetMethod();
+
+            string callFrom = methodBase.DeclaringType.FullName;
+            if (callFrom.Contains("+"))
+            {
+                callFrom = callFrom.Split('+')[0];
+            }
+
+            string activity = methodBase.Name;
+            if (activity.Contains("<") && activity.Contains(">"))
+            {
+                activity = activity.Split('<')[1].Split('>')[0];
+            }
+
+            requestHeaders.Add("CallFrom", callFrom);
+            requestHeaders.Add("Activity", activity);
+            requestHeaders.Add("User", Env.User.UserID);
+
+            return requestHeaders;
         }
 
         /// <summary>

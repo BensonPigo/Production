@@ -194,15 +194,15 @@ select  poid = b.ID
         , b.StockUnit
         , dbo.Getlocation(a.ukey)[location]
         , [Production].[dbo].getmtldesc(b.id, b.seq1, b.seq2, 2, 0)[description]
-        , isnull((a.InQty - a.OutQty + a.AdjustQty), 0.00) as balanceqty
-        , b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty
+        , isnull((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty), 0.00) as balanceqty
+        , b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty,a.ReturnQty
         , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
                                  from dbo.issue WITH (NOLOCK) 
                                  inner join dbo.Issue_Detail WITH (NOLOCK) on Issue_Detail.id = Issue.Id 
                                  where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
                                         and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
                                         and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
-        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty 
+        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty - fi.ReturnQty 
                                 from dbo.ftyinventory FI WITH (NOLOCK) 
                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
@@ -230,10 +230,10 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
 
                     Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(
                         bulkItems,
-                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty",
-                        "4,14,10,10,13,4,3,6,6,6,10",
+                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,inqty,outqty,adjustqty,ReturnQty",
+                        "4,14,10,10,13,4,3,6,6,6,6",
                         this.CurrentDetailData["seq"].ToString(),
-                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,In Qty,Out Qty,Adjust Qty,Ukey")
+                        "FabricType,SCIRefno,MtlTypeID,IssueType,Poid,Seq1,Seq2,In Qty,Out Qty,Adjust Qty,Return Qty")
                     {
                         Width = 1024,
                     };
@@ -307,7 +307,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
         , b.StockUnit
         , dbo.Getlocation(a.ukey)[location]
         , [Production].[dbo].getmtldesc(b.id, b.seq1, b.seq2, 2, 0)[description]
-        , isnull((a.InQty - a.OutQty + a.AdjustQty), 0.00) as balanceqty
+        , isnull((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty), 0.00) as balanceqty
         ,b.FabricType,b.SCIRefno,f.MtlTypeID,m.IssueType,a.inqty,a.outqty,a.adjustqty
          , [accu_issue] = isnull((select sum(Issue_Detail.qty) 
                                  from dbo.issue WITH (NOLOCK) 
@@ -315,7 +315,7 @@ order by b.ID, b.seq1, b.seq2", this.CurrentDetailData["poid"]);
                                  where Issue.type = 'B' and Issue.Status = 'Confirmed' and issue.id != a.POId 
                                         and Issue_Detail.poid = a.poid and Issue_Detail.seq1 = a.seq1 and Issue_Detail.seq2 = a.seq2
                                         and Issue_Detail.roll = a.roll and Issue_Detail.stocktype = a.stocktype),0.00) 
-        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty 
+        , balanceqty = isnull(( select fi.inqty - fi.outqty + fi.adjustqty - fi.ReturnQty
                                 from dbo.ftyinventory FI WITH (NOLOCK) 
                                 where a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
                                         and a.roll = fi.roll and a.stocktype = fi.stocktype)
@@ -431,7 +431,7 @@ select  a.Id
                              ) v for xml path(''))
                             ,'') 
         , a.Ukey
-        , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty),0.00)
+        , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty - fi.ReturnQty),0.00)
         , AutoPickqty=(select SUM(AutoPickQty)  from Issue_Size iss where iss.Issue_DetailUkey = a.ukey)
         , OutputAutoPick=(
 			select  STUFF((
@@ -1018,7 +1018,7 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+        , isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on  d.POID = f.POID  
                                             and D.StockType = F.StockType
@@ -1062,7 +1062,7 @@ Select  d.poid
         , d.seq1
         , d.seq2
         , d.Roll,d.Qty
-        , isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+        , isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on d.POID = f.POID  
                                           and D.StockType = F.StockType
@@ -1070,7 +1070,7 @@ left join FtyInventory f WITH (NOLOCK) on d.POID = f.POID
                                           and d.Seq1 = f.Seq1 
                                           and d.Seq2 = f.Seq2
                                           and d.Dyelot = f.Dyelot
-where   (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) 
+where   (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) 
         and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -1213,8 +1213,10 @@ where id = '{1}'", Env.User.UserID,
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
@@ -1248,12 +1250,14 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
-                @"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+                @"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
+    ,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.POID = f.POID  AND D.StockType = F.StockType
 and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -1954,7 +1958,7 @@ select  poid = b.ID
         , b.StockUnit
         , dbo.Getlocation (a.ukey) [location]
         , [Production].[dbo].getmtldesc (b.id, b.seq1, b.seq2, 2, 0)[description]
-        , isnull ((a.InQty - a.OutQty + a.AdjustQty ),0.00) as balanceqty
+        , isnull ((a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty ),0.00) as balanceqty
 from [Production].[dbo].po_supp_detail b WITH (NOLOCK) 
 inner join [Production].[dbo].Fabric f WITH (NOLOCK) on f.SCIRefno = b.SCIRefno
 inner join [Production].[dbo].MtlType m WITH (NOLOCK) on m.ID = f.MtlTypeID

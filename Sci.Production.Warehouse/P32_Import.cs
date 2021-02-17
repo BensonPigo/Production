@@ -264,8 +264,8 @@ select  distinct selected = 0
         , FromRoll = c.roll 
         , FromFactoryID = orders.FactoryID
         , FromStocktype = c.StockType 
-        , AccuDiffQty = c.InQty - c.OutQty + c.AdjustQty 
-        , balance = c.InQty - c.OutQty + c.AdjustQty 
+        , AccuDiffQty = c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty
+        , balance = c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty 
         , qty = 0.00 
         , tostocktype = bd.FromStocktype  
         , topoid = bd.FromPoId 
@@ -296,7 +296,7 @@ OUTER apply(
 			and Roll = c.Roll
             and Dyelot = c.Dyelot
 ) toSP
-where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
+where bd.id='{0}' and c.lock = 0 and c.inqty - c.OutQty + c.AdjustQty - c.ReturnQty> 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
       and  c.StockType='B'
 drop table #tmp,#tmp2
 ", this.dr_master["BorrowId"],

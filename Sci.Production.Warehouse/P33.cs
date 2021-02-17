@@ -323,7 +323,7 @@ SELECt SCIRefno
 		, Ukey
 FROM final t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
@@ -406,13 +406,13 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
 	 WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID= psd.ColorID
  )StockUnit
  OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+	SELECT [Val]=(f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) 
 	FROM PO_Supp_Detail psd2
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID=psd.ColorID AND F.StockType='B' {(MyUtility.Check.Empty(colorID) ? "AND psd2.ColorID <> ''" : $"AND psd2.ColorID='{colorID}'")}
  )BulkQty
  OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+	SELECT [Val]=(f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) 
 	FROM PO_Supp_Detail psd2
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID=psd.ColorID AND F.StockType='I' {(MyUtility.Check.Empty(colorID) ? "AND psd2.ColorID <> ''" : $"AND psd2.ColorID='{colorID}'")}
@@ -670,7 +670,7 @@ SELECT    SCIRefno
         , MDivisionID
 FROM #final2 t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
@@ -688,7 +688,7 @@ OUTER APPLY(
 			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
 			GROUP BY psd.seq1,psd.seq2
-			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
 		)
 		FOR XML PATH('')
 	),1,1,'')
@@ -937,7 +937,7 @@ SELECT    SCIRefno
         , MDivisionID
 FROM #final2 t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
@@ -955,7 +955,7 @@ OUTER APPLY(
 			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
 			GROUP BY psd.seq1,psd.seq2
-			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
 		)
 		FOR XML PATH('')
 	),1,1,'')
@@ -1072,13 +1072,13 @@ LEFT JOIN MtlType m on m.id= fc.MtlTypeID
 	 WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID= psd.ColorID
  )StockUnit
  OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+	SELECT [Val]=(f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) 
 	FROM PO_Supp_Detail psd2
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID=psd.ColorID AND F.StockType='B' {(MyUtility.Check.Empty(refno) ? "AND psd2.Refno <> ''" : $"AND psd2.Refno='{refno}'")}
  )BulkQty
  OUTER APPLY(
-	SELECT [Val]=(f.InQty-f.OutQty+f.AdjustQty) 
+	SELECT [Val]=(f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) 
 	FROM PO_Supp_Detail psd2
 	INNER JOIN FtyInventory F ON F.POID=psd2.ID AND F.SEQ1= psd2.SEQ1 AND F.SEQ2 = psd2.SEQ2
 	WHERE psd2.ID ='{this.poid}' AND psd2.SCIRefno=psd.SCIRefno AND psd2.ColorID=psd.ColorID AND F.StockType='I' {(MyUtility.Check.Empty(refno) ? "AND psd2.Refno <> ''" : $"AND psd2.Refno='{refno}'")}
@@ -1340,7 +1340,7 @@ SELECT    SCIRefno
         , MDivisionID
 FROM #final2 t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
@@ -1358,7 +1358,7 @@ OUTER APPLY(
 			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
 			GROUP BY psd.seq1,psd.seq2
-			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
 		)
 		FOR XML PATH('')
 	),1,1,'')
@@ -1606,7 +1606,7 @@ SELECT    SCIRefno
         , MDivisionID
 FROM #final2 t
 OUTER APPLY(
-	SELECT [Qty]=ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0)
+	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0)
 	FROM PO_Supp_Detail psd 
 	LEFT JOIN FtyInventory Fty ON  Fty.poid = psd.ID AND Fty.seq1 = psd.seq1 AND Fty.seq2 = psd.seq2 AND fty.StockType='B'
 	WHERE psd.SCIRefno=t.SCIRefno AND psd.ColorID=t.ColorID AND psd.ID='{this.poid}'
@@ -1624,7 +1624,7 @@ OUTER APPLY(
 			AND psd.SCIRefno = y.SCIRefno AND psd.ColorID = y.ColorID AND psd.ID = y.ID
 			AND psd.SEQ1 = y.SEQ1 AND psd.SEQ2 = y.SEQ2
 			GROUP BY psd.seq1,psd.seq2
-			HAVING ISNULL(( SUM(Fty.InQty-Fty.OutQty + Fty.AdjustQty )) ,0) > 0
+			HAVING ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty)) ,0) > 0
 		)
 		FOR XML PATH('')
 	),1,1,'')
@@ -2103,16 +2103,16 @@ SELECT   psd.Refno
 		,psd.ColorID
 		,d.Seq1
 		,d.seq2
-		,[BulkQty]=isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
-		,[IssueQty]=ISNULL(d.Qty ,0)
-		,[Balance]=isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty
+		,[BulkQty] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+		,[IssueQty] = ISNULL(d.Qty ,0)
+		,[Balance] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty
 FROM Issue i
 INNER JOIN Issue_Summary s ON i.ID = s.ID 
 INNER JOIN Issue_Detail d ON s.id=d.id AND s.Ukey = d.Issue_SummaryUkey
 INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
 INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
 WHERE i.Id = '{0}'
-AND(isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - ISNULL(d.Qty, 0)) < 0
+AND(isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty,0) - ISNULL(d.Qty, 0)) < 0
 AND f.StockType = 'B'
 ", this.CurrentMaintain["id"]);
 

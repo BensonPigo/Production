@@ -332,7 +332,7 @@ from
         ,[OldActualWeight] = rd.ActualWeight
         ,[Differential] = rd.ActualWeight - rd.Weight
         ,[FtyInventoryUkey] = fi.Ukey
-        ,[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty
+        ,[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
         ,rd.Seq1
         ,rd.Seq2
         ,psd.refno
@@ -406,7 +406,7 @@ from
         ,[OldActualWeight] = td.ActualWeight
         ,[Differential] = td.ActualWeight - td.Weight
         ,[FtyInventoryUkey] = fi.Ukey
-        ,[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty
+        ,[FtyInventoryQty] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
         ,td.Seq1
         ,td.Seq2
         ,psd.refno

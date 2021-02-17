@@ -182,7 +182,7 @@ select  selected = cast(0 as bit)
         , fi.dyelot 
         , fi.stocktype
 		, #tmp.StockUnit
-        , StockBalance = isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)
+        , StockBalance = isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0) - isnull(fi.ReturnQty, 0) 
         , Description = dbo.getmtldesc(FI.POID,FI.seq1,FI.seq2,2,0)
         , Qty = 0.00 -- TransferQty
         , [Location] = dbo.Getlocation(fi.ukey)
@@ -190,7 +190,7 @@ select  selected = cast(0 as bit)
         , ToSeq1 = rtrim(#tmp.seq1) 
         , ToSeq2 = #tmp.seq2 
         , ToSeq = concat(Ltrim(Rtrim(#tmp.seq1)), ' ', #tmp.seq2)
-        , GroupQty = Sum(isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) over (partition by #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
+        , GroupQty = Sum(isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0) - isnull(fi.ReturnQty, 0)) over (partition by #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
         , #tmp.ToFactory
         , #tmp.InventoryPOID
         , #tmp.Inventoryseq1

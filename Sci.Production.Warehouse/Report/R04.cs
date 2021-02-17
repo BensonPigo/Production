@@ -139,15 +139,15 @@ select  operation = case a.type
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
         ,productionQty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, (isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))), 2)
         ,bulkBalance = case a.type
-                            when '1' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty, 0-outqty)) 
+                            when '1' then e.InQty - e.OutQty + e.AdjustQty - e.ReturnQty - e.LInvQty + (select sum(iif(stocktype='B',outqty, 0-outqty)) 
                                                                                           from dbo.FtyInventory WITH (NOLOCK) 
                                                                                           where FtyInventory.POID = a.InventoryPOID 
                                                                                                 and FtyInventory.Seq1 = a.InventorySeq1 and FtyInventory.seq2 = a.InventorySeq2 )
-                            when '4' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty + (select sum(iif(stocktype='B',outqty, 0-outqty)) 
+                            when '4' then e.InQty - e.OutQty + e.AdjustQty - e.ReturnQty - e.LInvQty + (select sum(iif(stocktype='B',outqty, 0-outqty)) 
                                                                                           from dbo.FtyInventory WITH (NOLOCK) 
                                                                                           where FtyInventory.POID = a.InventoryPOID 
                                                                                                 and FtyInventory.Seq1 = a.InventorySeq1 and FtyInventory.seq2 = a.InventorySeq2 )
-                            when '6' then e.InQty - e.OutQty + e.AdjustQty - e.LInvQty
+                            when '6' then e.InQty - e.OutQty + e.AdjustQty - e.ReturnQty - e.LInvQty
                             else 0.00
                        end 
         ,InventorySpSeq = a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2 

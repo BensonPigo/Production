@@ -101,6 +101,7 @@ namespace Sci.Production.Warehouse
                   .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                  .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("balanceqty", header: "Balance Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Text("stocktype", header: "Stocktype", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("location", header: "location", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -163,7 +164,8 @@ select 0 as [selected]
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
-        , fi.InQty-fi.OutQty+fi.AdjustQty as balanceqty
+        , fi.ReturnQty
+        , fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty as balanceqty
         , stocktype =  case fi.stocktype 
                         when 'B' then'Bulk' 
                         when 'I' then 'Inventory' 

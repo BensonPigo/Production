@@ -753,7 +753,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             #region ISP20200757 資料交換 - Sunrise
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip,Order_SizeCode,Order_Qty'"))
+                Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "Orders,Order_QtyShip,Order_SizeCode,Order_Qty"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
@@ -762,7 +762,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
             {
                 // 透過Call API的方式，傳送API
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{this.CurrentMaintain["ID"]}','Orders,Order_QtyShip'"))
+                Task.Run(() => new Gensong_FinishingProcesses().SentOrdersToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), "Orders,Order_QtyShip"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
@@ -1351,7 +1351,7 @@ where POID = @poid group by POID,b.spno";
                         from PO_Supp_Detail A WITH (NOLOCK) 
                         inner join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
                         inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{this.CurrentMaintain["MDivisionID"]}'
-                        where A.ID = '{this.CurrentMaintain["POID"]}' and (B.InQty <> B.OutQty - B.AdjustQty )";
+                        where A.ID = '{this.CurrentMaintain["POID"]}' and (B.InQty - B.OutQty + B.AdjustQty - B.ReturnQty > 0)";
 
                         if (MyUtility.Check.Seek(sqlCmd))
                         {

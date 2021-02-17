@@ -72,7 +72,7 @@ select 	selected = 0
 		, fromRoll = c.Roll
 		, fromDyelot = c.Dyelot 
 		, fromStocktype = c.StockType 
-		, balance = c.inqty-c.outqty + c.adjustqty 
+		, balance = c.inqty - c.outqty + c.adjustqty - c.ReturnQty
 		, qty = 0.00 
 		, FabricType  = Case a.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
 		, a.stockunit
@@ -93,7 +93,7 @@ inner join Factory on orders.FactoryID = factory.id
 outer apply(select  Deadline = max(i.Deadline) from Inventory  i where i.POID = a.id and i.seq1 = a.seq1 and i.seq2 = a.seq2)i
 Where   1=1
 {1}
-        and c.InQty-c.OutQty+c.AdjustQty > 0 
+        and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 
         and c.stocktype = 'I'
         and factory.MDivisionID = '{0}'", Env.User.Keyword, where));
                 #endregion
