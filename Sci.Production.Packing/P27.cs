@@ -41,7 +41,6 @@ WITH PackingListDetail as(
 		,pd.RefNo
 		,pd.SCICtnNo
         ,pd.Seq
-        ,pd.CTNQty
 	FROM PackingList_Detail pd
 	INNER JOIN ShippingMarkStamp a  ON pd.ID = a.PackingListID
 	INNER JOIN ShippingMarkStamp_Detail b ON a.PackingListID = b.PackingListID  AND b.SCICtnNo = pd.SCICtnNo
@@ -102,7 +101,7 @@ OUTER APPLY(
 	),1,1,'')
 )SizeCode
 WHERE a.PackingListID = '{masterID}'
-ORDER BY pd.Seq ASC,pd.CTNQty DESC
+ORDER BY pd.Seq ASC
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }

@@ -57,7 +57,6 @@ WITH PackingListDetail as(
 		,pd.RefNo
 		,pd.SCICtnNo
         ,pd.Seq
-        ,pd.CTNQty
 	FROM PackingList_Detail pd
 	INNER JOIN ShippingMarkPic a  ON pd.ID = a.PackingListID
 	INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey  AND b.SCICtnNo = pd.SCICtnNo
@@ -124,7 +123,7 @@ OUTER APPLY(
 	),1,1,'')
 )SizeCode
 WHERE a.Ukey = '{masterID}'
-ORDER BY pd.Seq ASC,pd.CTNQty DESC
+ORDER BY pd.Seq ASC
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
