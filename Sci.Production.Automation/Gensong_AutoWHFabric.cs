@@ -19,6 +19,10 @@ namespace Sci.Production.Automation
         /// <inheritdoc/>
         public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
 
+        #region Reveive
+
+        #endregion
+
         /// <summary>
         /// Receive_Detail
         /// </summary>
@@ -818,6 +822,705 @@ and exists(
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
+
+        #region 資料邏輯層
+
+        private string GetJsonBody(DataTable dtDetail, string type)
+        {
+            string jsonBody = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Gensong_AutoWHFabric callMethod = new Gensong_AutoWHFabric();
+            dynamic bodyObject = new ExpandoObject();
+            switch (type)
+            {
+                case "Receiving_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(dr => new
+                    {
+                        ID = dr["ID"].ToString(),
+                        InvNo = dr["InvNo"].ToString(),
+                        PoId = dr["PoId"].ToString(),
+                        Seq1 = dr["Seq1"].ToString(),
+                        Seq2 = dr["Seq2"].ToString(),
+                        Refno = dr["Refno"].ToString(),
+                        ColorID = dr["ColorID"].ToString(),
+                        Roll = dr["Roll"].ToString(),
+                        Dyelot = dr["Dyelot"].ToString(),
+                        StockUnit = dr["StockUnit"].ToString(),
+                        StockQty = (decimal)dr["StockQty"],
+                        PoUnit = dr["PoUnit"].ToString(),
+                        ShipQty = (decimal)dr["ShipQty"],
+                        Weight = (decimal)dr["Weight"],
+                        StockType = dr["StockType"].ToString(),
+                        Barcode = dr["Barcode"].ToString(),
+                        Ukey = (long)dr["Ukey"],
+                        IsInspection = (bool)dr["IsInspection"],
+                        ETA = MyUtility.Check.Empty(dr["ETA"]) ? null : ((DateTime?)dr["ETA"]).Value.ToString("yyyy/MM/dd"),
+                        WhseArrival = MyUtility.Check.Empty(dr["WhseArrival"]) ? null : ((DateTime?)dr["WhseArrival"]).Value.ToString("yyyy/MM/dd"),
+                        Status = dr["Status"].ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
+                case "Issue_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(dr => new
+                   {
+                       Id = dr["id"].ToString(),
+                       Type = dr["Type"].ToString(),
+                       CutPlanID = dr["CutPlanID"].ToString(),
+                       EstCutdate = MyUtility.Check.Empty(dr["EstCutdate"]) ? null : ((DateTime?)dr["EstCutdate"]).Value.ToString("yyyy/MM/dd"),
+                       SpreadingNoID = dr["SpreadingNoID"].ToString(),
+                       PoId = dr["PoId"].ToString(),
+                       Seq1 = dr["Seq1"].ToString(),
+                       Seq2 = dr["Seq2"].ToString(),
+                       Roll = dr["Roll"].ToString(),
+                       Dyelot = dr["Dyelot"].ToString(),
+                       Barcode = dr["Barcode"].ToString(),
+                       NewBarcode = dr["NewBarcode"].ToString(),
+                       Qty = (decimal)dr["Qty"],
+                       Ukey = (long)dr["Ukey"],
+                       Status = dr["Status"].ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+                case "Adjust_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                        .Select(dr => new
+                        {
+                            Id = dr["id"].ToString(),
+                            PoId = dr["PoId"].ToString(),
+                            Seq1 = dr["Seq1"].ToString(),
+                            Seq2 = dr["Seq2"].ToString(),
+                            StockType = dr["StockType"].ToString(),
+                            QtyBefore = (decimal)dr["QtyBefore"],
+                            QtyAfter = (decimal)dr["QtyAfter"],
+                            Barcode = dr["Barcode"].ToString(),
+                            Ukey = (long)dr["Ukey"],
+                            Status = dr["Status"].ToString(),
+                            CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                        });
+                    break;
+                case "SubTransfer_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                    .Select(dr => new
+                    {
+                        ID = dr["ID"].ToString(),
+                        Type = dr["Type"].ToString(),
+                        FromPOID = dr["FromPOID"].ToString(),
+                        FromSeq1 = dr["FromSeq1"].ToString(),
+                        FromSeq2 = dr["FromSeq2"].ToString(),
+                        FromRoll = dr["FromRoll"].ToString(),
+                        FromDyelot = dr["FromDyelot"].ToString(),
+                        FromStockType = dr["FromStockType"].ToString(),
+                        FromBarcode = dr["FromBarcode"].ToString(),
+                        FromLocation = dr["FromLocation"].ToString(),
+                        ToPOID = dr["ToPOID"].ToString(),
+                        ToSeq1 = dr["ToSeq1"].ToString(),
+                        ToSeq2 = dr["ToSeq2"].ToString(),
+                        ToRoll = dr["ToRoll"].ToString(),
+                        ToDyelot = dr["ToDyelot"].ToString(),
+                        ToStockType = dr["ToStockType"].ToString(),
+                        ToBarcode = dr["ToBarcode"].ToString(),
+                        ToLocation = dr["ToLocation"].ToString(),
+                        Qty = (decimal)dr["Qty"],
+                        Ukey = (long)dr["Ukey"],
+                        Status = dr["Status"].ToString(),
+                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                    });
+                    break;
+                case "ReturnReceipt_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(dr => new
+                   {
+                       ID = dr["ID"].ToString(),
+                       POID = dr["POID"].ToString(),
+                       Seq1 = dr["Seq1"].ToString(),
+                       Seq2 = dr["Seq2"].ToString(),
+                       Roll = dr["Roll"].ToString(),
+                       Dyelot = dr["Dyelot"].ToString(),
+                       Qty = (decimal)dr["Qty"],
+                       StockType = dr["StockType"].ToString(),
+                       Ukey = (long)dr["Ukey"],
+                       Barcode = dr["Barcode"].ToString(),
+                       Status = dr["Status"].ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+                case "BorrowBack_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(dr => new
+                   {
+                       ID = dr["ID"].ToString(),
+                       FromPOID = dr["FromPOID"].ToString(),
+                       FromSeq1 = dr["FromSeq1"].ToString(),
+                       FromSeq2 = dr["FromSeq2"].ToString(),
+                       FromRoll = dr["FromRoll"].ToString(),
+                       FromDyelot = dr["FromDyelot"].ToString(),
+                       FromStockType = dr["FromStockType"].ToString(),
+                       FromBarcode = dr["FromBarcode"].ToString(),
+                       FromLocation = dr["FromLocation"].ToString(),
+                       ToPOID = dr["ToPOID"].ToString(),
+                       ToSeq1 = dr["ToSeq1"].ToString(),
+                       ToSeq2 = dr["ToSeq2"].ToString(),
+                       ToRoll = dr["ToRoll"].ToString(),
+                       ToDyelot = dr["ToDyelot"].ToString(),
+                       ToStockType = dr["ToStockType"].ToString(),
+                       ToBarcode = dr["ToBarcode"].ToString(),
+                       ToLocation = dr["ToLocation"].ToString(),
+                       Qty = (decimal)dr["Qty"],
+                       Ukey = (long)dr["Ukey"],
+                       Status = dr["Status"].ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+                case "LocationTrans_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(s => new
+                   {
+                       ID = s["ID"].ToString(),
+                       POID = s["POID"].ToString(),
+                       Seq1 = s["Seq1"].ToString(),
+                       Seq2 = s["Seq2"].ToString(),
+                       Roll = s["Roll"].ToString(),
+                       Dyelot = s["Dyelot"].ToString(),
+                       FromLocation = s["FromLocation"].ToString(),
+                       ToLocation = s["ToLocation"].ToString(),
+                       Qty = (decimal)s["Qty"],
+                       Barcode = s["Barcode"].ToString(),
+                       Ukey = (long)s["Ukey"],
+                       StockType = s["StockType"].ToString(),
+                       Status = s["Status"].ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+            }
+
+            return jsonBody = JsonConvert.SerializeObject(callMethod.CreateGensongStructure(type, bodyObject));
+        }
+
+        private DataTable GetReceiveData(DataTable dtDetail, string formName, string status, bool isP99 = false)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on rd.ukey = s.ukey " : "inner join #tmp s on rd.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "rd.StockQty";
+            #region 取得資料
+
+            switch (formName)
+            {
+                case "P07":
+                    sqlcmd = $@"
+SELECT [ID] = rd.id
+,[InvNo] = r.InvNo
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[ColorID] = Color.Value
+,[Roll] = rd.Roll
+,[Dyelot] = rd.Dyelot
+,[StockUnit] = rd.StockUnit
+,[StockQty] = {strQty}
+,[PoUnit] = rd.PoUnit
+,[ShipQty] = rd.ShipQty
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[Ukey] = rd.Ukey
+,[IsInspection] = convert(bit, 0)
+,[ETA] = r.ETA
+,[WhseArrival] = r.WhseArrival
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Barcode] = Barcode.value
+FROM Production.dbo.Receiving_Detail rd
+inner join Production.dbo.Receiving r on rd.id = r.id
+{Environment.NewLine + strBody}
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN po3.SuppColor
+		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
+outer apply(
+	select value = min(fb.Barcode)
+	from FtyInventory_Barcode fb 
+	where fb.Ukey = f.Ukey
+)Barcode
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='F'
+)
+";
+                    break;
+                case "P18":
+                    strQty = isP99 ? "s.Qty" : "rd.Qty";
+                    sqlcmd = $@"
+SELECT [ID] = td.id
+,[InvNo] = isnull(t.InvNo,'')
+,[PoId] = td.Poid
+,[Seq1] = td.Seq1
+,[Seq2] = td.Seq2
+,[Refno] = po3.Refno
+,[ColorID] = po3.ColorID
+,[Roll] = td.Roll
+,[Dyelot] = td.Dyelot
+,[StockUnit] = dbo.GetStockUnitBySPSeq(td.POID,td.Seq1,td.Seq2)
+,[StockQty] = {strQty}
+,[PoUnit] = po3.PoUnit
+,[ShipQty] = td.Qty
+,[Weight] = td.Weight
+,[StockType] = td.StockType
+,[Ukey] = td.Ukey
+,[IsInspection] = convert(bit, 0)
+,[ETA] = null
+,[WhseArrival] = r.IssueDate
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Barcode] = Barcode.value
+FROM Production.dbo.TransferIn_Detail td
+inner join Production.dbo.TransferIn t on td.id = t.id
+{Environment.NewLine + strBody}
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= td.PoId 
+	and po3.SEQ1=td.Seq1 and po3.SEQ2=td.Seq2
+outer apply(
+	select value = min(fb.Barcode)
+	from FtyInventory_Barcode fb 
+	inner join FtyInventory f on f.Ukey = fb.Ukey
+	where f.POID = td.POID
+	and f.Seq1 = td.Seq1 and f.Seq2= td.Seq2
+	and f.Roll = td.Roll and f.Dyelot = td.Dyelot
+	and f.StockType = td.StockType
+)Barcode
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
+	and FabricType='F'
+)
+";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        private DataTable GetIssueData(DataTable dtDetail, string formName, string status, bool isP99 = false)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "i2.Qty";
+
+            #region 取得資料
+
+            switch (formName)
+            {
+                case "P10":
+                case "P13":
+                case "P62":
+                    sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = 'A'
+,[CutPlanID] = isnull(i.CutplanID,'')
+,[EstCutdate] = c.EstCutdate
+,[SpreadingNoID] = isnull(c.SpreadingNoID,'')
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Roll] = i2.Roll
+,[Dyelot] = i2.Dyelot
+,[Barcode] = Barcode.value
+,[NewBarcode] = NewBarcode.value
+,[Ukey] = i2.ukey
+,CmdTime = GetDate()
+,[Qty] = {strQty}
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+from Production.dbo.Issue_Detail i2
+inner join Production.dbo.Issue i on i2.Id=i.Id
+{strBody}
+left join Production.dbo.Cutplan c on c.ID = i.CutplanID
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+outer apply(
+	select value = fb.Barcode
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
+)NewBarcode
+where i.Type = 'A'
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+                case "P16":
+                    sqlcmd = $@"
+select distinct 
+[Id] = i2.Id
+,[Type] = 'R' 
+,[CutPlanID] = ''
+,[EstCutdate] = null
+,[SpreadingNoID] = ''
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Roll] = i2.Roll
+,[Dyelot] = i2.Dyelot
+,[Barcode] = Barcode.value
+,[NewBarcode] = NewBarcode.value
+,[Ukey] = i2.Ukey
+,[Qty] = {strQty}
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,CmdTime = GetDate()
+from Production.dbo.IssueLack_Detail i2
+inner join Production.dbo.IssueLack i on i2.id = i.id
+{strBody}
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1 = i2.Seq1
+	and f.Seq2 = i2.Seq2 and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+    and f.StockType = i2.StockType
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+outer apply(
+	select value = fb.Barcode
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
+)NewBarcode
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+                case "P19":
+                    sqlcmd = $@"
+select distinct 
+ [Id] = i2.Id 
+,[Type] = ''
+,[CutPlanID] = ''
+,[EstCutdate] = null
+,[SpreadingNoID] = ''
+,[PoId] = i2.POID
+,[Seq1] = i2.Seq1
+,[Seq2] = i2.Seq2
+,[Roll] = i2.Roll
+,[Dyelot] = i2.Dyelot
+,[Barcode] = Barcode.value
+,[NewBarcode] = NewBarcode.value
+,[Ukey] = i2.ukey
+,[Qty] = {strQty}
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,CmdTime = GetDate()
+from Production.dbo.TransferOut_Detail i2
+inner join Production.dbo.TransferOut i on i2.id = i.id
+{strBody}
+left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
+	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
+    and f.StockType = i2.StockType
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+outer apply(
+	select value = fb.Barcode
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
+)NewBarcode
+where 1=1
+and exists(
+		select 1 from Production.dbo.PO_Supp_Detail 
+		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+		and FabricType='F'
+	)
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)
+";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        private DataTable GetSubTransfer_Detail(DataTable dtDetail, string status, bool isP99 = false)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s2 on sd.ukey = s2.ukey " : "inner join #tmp s2 on sd.ID = s2.Id ";
+            string strQty = isP99 ? "s2.Qty" : "sd.Qty";
+
+            #region 取得資料
+            sqlcmd = $@"
+select distinct
+[ID] = sd.ID
+,Type = 'D'
+,sd.FromPOID,sd.FromSeq1,sd.FromSeq2,sd.FromRoll,sd.FromDyelot,sd.FromStockType
+,[FromBarcode] = FromBarcode.value
+,[FromLocation] = Fromlocation.listValue
+,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
+,[ToBarcode] = ToBarcode.value
+,[ToLocation] = sd.ToLocation
+,[Qty] = {strQty}
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,CmdTime = GetDate()
+from Production.dbo.SubTransfer_Detail sd
+inner join Production.dbo.SubTransfer s on s.id = sd.id
+{strBody}
+left join FtyInventory FI on sd.fromPoid = fi.poid 
+    and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
+    and sd.fromDyelot = fi.Dyelot and sd.fromRoll = fi.roll 
+    and sd.fromStocktype = fi.stocktype
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					where fd.Ukey = fi.Ukey
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = fi.Ukey
+)FromBarcode
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	inner join FtyInventory toFi on toFi.Ukey = fb.Ukey
+	where toFi.POID = sd.ToPOID
+	and tofi.Seq1= sd.ToSeq1 and toFi.Seq2 = sd.ToSeq2
+	and toFi.Roll = sd.ToRoll and toFi.Dyelot = sd.ToDyelot
+	and toFi.StockType = sd.ToStockType
+)ToBarcode
+where 1=1
+and exists(
+    select 1 from Production.dbo.PO_Supp_Detail
+    where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2
+    and FabricType='F'
+)
+and exists(
+	select 1
+	from MtlLocation ml 
+	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
+		and ml.StockType=sd.FromStockType
+	where ml.IsWMS = 1
+
+	union all
+
+    select 1 from MtlLocation ml 
+	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
+	and ml.StockType=sd.ToStockType
+	where ml.IsWMS = 1
+)
+";
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        private DataTable GetReturnReceipt_Detail(DataTable dtDetail, string status, bool isP99 = false)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on rrd.ukey = s.ukey " : "inner join #tmp s on rrd.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "rrd.Qty";
+
+            #region 取得資料
+            sqlcmd = $@"
+select rrd.Id
+,rrd.POID
+,rrd.Seq1
+,rrd.Seq2
+,rrd.Roll
+,rrd.Dyelot
+,rrd.StockType
+,rrd.Ukey
+,[Qty] = {strQty}
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[CmdTime] = GETDATE()
+from ReturnReceipt_Detail rrd
+inner join Production.dbo.ReturnReceipt rr on rr.id = rrd.id
+{strBody}
+left join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+where 1=1
+and exists(
+    select 1
+    from PO_Supp_Detail psd
+    where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
+    and psd.SEQ2 = rrd.Seq2 and psd.FabricType='F'
+)
+and exists(
+	select 1
+	from FtyInventory_Detail fd
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where  fd.Ukey=f.Ukey
+	and ml.IsWMS =1 
+)
+";
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        private DataTable GetBorrowBack_Detail(DataTable dtDetail, string status, bool isP99 = false)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster;
+            string strBody = isP99 ? "inner join #tmp s on bb2.ukey = s.ukey " : "inner join #tmp s on bb2.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "bb2.Qty";
+
+            #region 取得資料
+            sqlcmd = $@"
+select distinct
+[ID] = bb2.ID
+,bb2.FromPOID,bb2.FromSeq1,bb2.FromSeq2,bb2.FromRoll,bb2.FromDyelot,bb2.FromStockType
+,[FromBarcode] = FromBarcode.value
+,[FromLocation] = Fromlocation.listValue
+,bb2.ToPOID,bb2.ToSeq1,bb2.ToSeq2,bb2.ToRoll,bb2.ToDyelot,bb2.ToStockType
+,[ToBarcode] = ToBarcode.value
+,[ToLocation] = bb2.ToLocation
+,[Qty] = {strQty}
+,bb2.Ukey
+,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,CmdTime = GetDate()
+from Production.dbo.BorrowBack_Detail bb2
+inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
+{strBody}
+left join FtyInventory FI on bb2.FromPoid = Fi.Poid and bb2.FromSeq1 = Fi.Seq1 and bb2.FromSeq2 = Fi.Seq2 
+    and bb2.FromRoll = Fi.Roll and bb2.FromDyelot = Fi.Dyelot and bb2.FromStockType = FI.StockType
+outer apply(
+	select listValue = Stuff((
+			select concat(',',FromLocation)
+			from (
+					select 	distinct
+						l.FromLocation
+					from dbo.LocationTrans_detail l
+					where l.FtyInventoryUkey = fi.Ukey
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = fi.Ukey
+)FromBarcode
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	inner join FtyInventory toFi on toFi.Ukey = fb.Ukey
+	where toFi.POID = bb2.ToPOID
+	and tofi.Seq1= bb2.ToSeq1 and toFi.Seq2 = bb2.ToSeq2
+	and toFi.Roll = bb2.ToRoll and toFi.Dyelot = bb2.ToDyelot
+	and toFi.StockType = bb2.ToStockType
+)ToBarcode
+where 1=1
+and exists(
+	select 1
+	from MtlLocation ml 
+	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
+		and ml.StockType=bb2.FromStockType
+	where ml.IsWMS = 1
+
+	union all
+
+    select 1 from MtlLocation ml 
+	inner join dbo.SplitString(bb2.ToLocation,',') sp on sp.Data = ml.ID
+	and ml.StockType=bb2.ToStockType
+	where ml.IsWMS = 1
+)
+";
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+        #endregion
+
 
         private object CreateGensongStructure(string tableName, object structureID)
         {
