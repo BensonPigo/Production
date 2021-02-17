@@ -56,6 +56,8 @@ WITH PackingListDetail as(
 		,pd.CustCtn
 		,pd.RefNo
 		,pd.SCICtnNo
+        ,pd.Seq
+        ,pd.CTNQty
 	FROM PackingList_Detail pd
 	INNER JOIN ShippingMarkPic a  ON pd.ID = a.PackingListID
 	INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey  AND b.SCICtnNo = pd.SCICtnNo

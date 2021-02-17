@@ -40,6 +40,8 @@ WITH PackingListDetail as(
 		,pd.CustCtn
 		,pd.RefNo
 		,pd.SCICtnNo
+        ,pd.Seq
+        ,pd.CTNQty
 	FROM PackingList_Detail pd
 	INNER JOIN ShippingMarkStamp a  ON pd.ID = a.PackingListID
 	INNER JOIN ShippingMarkStamp_Detail b ON a.PackingListID = b.PackingListID  AND b.SCICtnNo = pd.SCICtnNo
