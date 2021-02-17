@@ -157,6 +157,7 @@
     <Compile Include="B06.Designer.cs">
       <DependentUpon>B06.cs</DependentUpon>
     </Compile>
+    <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -555,6 +556,12 @@
     </Compile>
     <Compile Include="P11_PrintKarbanCard.Designer.cs">
       <DependentUpon>P11_PrintKarbanCard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P99.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P99.Designer.cs">
+      <DependentUpon>P99.cs</DependentUpon>
     </Compile>
     <Compile Include="Report\R02.cs">
       <SubType>Form</SubType>
@@ -1561,6 +1568,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11_PrintKarbanCard.resx">
       <DependentUpon>P11_PrintKarbanCard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P99.resx">
+      <DependentUpon>P99.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R02.resx">
       <DependentUpon>R02.cs</DependentUpon>

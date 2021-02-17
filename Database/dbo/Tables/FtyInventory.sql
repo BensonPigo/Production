@@ -16,6 +16,7 @@
     [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
     [Barcode] VARCHAR(16) NULL DEFAULT (''), 
     [ReturnQty] NUMERIC(11, 2) CONSTRAINT [DF_FtyInventory_ReturnQty] NOT NULL DEFAULT ((0)), 
+    [WMSLock] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

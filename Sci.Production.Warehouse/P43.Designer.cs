@@ -43,6 +43,7 @@
             this.txtLocateForSP = new Sci.Win.UI.TextBox();
             this.labelLocateForSP = new Sci.Win.UI.Label();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtLocateForSP);
             this.masterpanel.Controls.Add(this.labelLocateForSP);
@@ -72,7 +74,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 192);
+            this.masterpanel.Size = new System.Drawing.Size(952, 192);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -87,11 +89,12 @@
             this.masterpanel.Controls.SetChildIndex(this.labelLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 192);
-            this.detailpanel.Size = new System.Drawing.Size(892, 157);
+            this.detailpanel.Size = new System.Drawing.Size(952, 157);
             // 
             // gridicon
             // 
@@ -99,7 +102,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 157);
+            this.detailgridcont.Size = new System.Drawing.Size(952, 157);
             // 
             // detail2
             // 
@@ -115,16 +118,15 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(952, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(952, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(952, 38);
             // 
             // browse
             // 
@@ -269,10 +271,21 @@
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Size = new System.Drawing.Size(952, 186);
             this.shapeContainer2.TabIndex = 85;
             this.shapeContainer2.TabStop = false;
+            // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(376, 152);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 98;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
             // P43
             // 
@@ -292,6 +305,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P43";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P43. Adjust Scrap Qty";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -333,5 +347,6 @@
         private Win.UI.DateBox dateIssueDate;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private Win.UI.Button btnCallP99;
     }
 }

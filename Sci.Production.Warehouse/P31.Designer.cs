@@ -55,6 +55,7 @@
             this.txtsewingline = new Sci.Production.Class.Txtsewingline();
             this.txtFactory = new Sci.Production.Class.Txtfactory();
             this.txtdepartment = new Sci.Production.Class.Txtdepartment();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.txtShift);
             this.masterpanel.Controls.Add(this.txtsewingline);
             this.masterpanel.Controls.Add(this.txtdepartment);
@@ -125,6 +127,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtdepartment, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -435,12 +438,15 @@
             // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtFactory.BoolFtyGroupList = true;
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFactory.IsProduceFty = false;
             this.txtFactory.IsSupportEditMode = false;
             this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(80, 43);
+            this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.ReadOnly = true;
             this.txtFactory.Size = new System.Drawing.Size(120, 23);
@@ -456,6 +462,17 @@
             this.txtdepartment.Name = "txtdepartment";
             this.txtdepartment.Size = new System.Drawing.Size(100, 23);
             this.txtdepartment.TabIndex = 3;
+            // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(522, 144);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 100;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
             // P31
             // 
@@ -475,6 +492,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P31";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P31. Material Borrow";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -528,5 +546,6 @@
         private Class.TxtDropDownList txtShift;
         private Class.Txtsewingline txtsewingline;
         private Class.Txtdepartment txtdepartment;
+        private Win.UI.Button btnCallP99;
     }
 }

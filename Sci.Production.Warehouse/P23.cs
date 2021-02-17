@@ -187,6 +187,15 @@ namespace Sci.Production.Warehouse
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -308,7 +317,15 @@ WHERE   StockType='{0}'
             {
                 this.FtyBarcodeData(true);
                 this.SentToGensong_AutoWHFabric(true);
-                this.SentToVstrong_AutoWH_ACC(true);
+
+                // AutoWHACC WebAPI for Vstrong
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dt, "New"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
                 MyUtility.Msg.InfoBox("Confirmed successful");
             }
         }
@@ -378,6 +395,31 @@ where   f.lock = 1
                     }
 
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                    return;
+                }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "SubTransfer_Detail_To"))
+            {
+                return;
+            }
+            #endregion
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "SubTransfer_Detail_To"))
+            {
+                return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(dtDetail, "UnConfirmed"))
+                {
                     return;
                 }
             }
@@ -714,7 +756,6 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
                     this.SentToGensong_AutoWHFabric(false);
-                    this.SentToVstrong_AutoWH_ACC(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -734,22 +775,9 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();                
+                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, isConfirmed))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-        }
-
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -1177,6 +1205,11 @@ order by t.frompoid,SEQ,BULKLOCATION,t.fromroll,t.FromDyelot
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P23_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P23", this);
         }
     }
 }

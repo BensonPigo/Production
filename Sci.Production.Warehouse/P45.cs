@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -155,7 +156,15 @@ Reason can’t be empty!!",
             if (dts.Length < 1)
             {
                 MyUtility.Msg.InfoBox("Confirmed Successful.");
-                this.SentToVstrong_AutoWH_ACC(true);
+
+                // AutoWHACC WebAPI for Vstrong
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_Detail_New(dtDetail, "P45", "New"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
                 return;
             }
             else
@@ -261,6 +270,14 @@ Balacne Qty is not enough!!
             {
                 return;
             }
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Adjust_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region    依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
             string sql = string.Format(
                 @"
@@ -306,6 +323,17 @@ Balacne Qty is not enough!!
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
                 return;
             }
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(dtDetail, "P45", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
 
             string upcmd = string.Format(
                 @"
@@ -358,8 +386,6 @@ update Adjust set Status ='New' where id = '{0}'
                 return;
             }
             #endregion
-
-            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         /// <inheritdoc/>
@@ -469,6 +495,15 @@ and a.Status = 'Confirmed'
             this.label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -667,18 +702,9 @@ where ad.Id='{0}'
             return base.OnRenewDataDetailPost(e);
         }
 
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
+        private void BtnCallP99_Click(object sender, EventArgs e)
         {
-            // AutoWHFabric WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentRemoveC_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P45", this);
         }
     }
 }
