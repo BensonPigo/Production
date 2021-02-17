@@ -56,7 +56,7 @@ WITH PackingListDetail as(
 		,pd.CustCtn
 		,pd.RefNo
 		,pd.SCICtnNo
-        ,pd.Seq
+        ,[SortCTNStartNo] = (RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))
 	FROM PackingList_Detail pd
 	INNER JOIN ShippingMarkPic a  ON pd.ID = a.PackingListID
 	INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey  AND b.SCICtnNo = pd.SCICtnNo
@@ -92,6 +92,7 @@ SELECT pd.OrderID
     ,local_file_type=''
     ,FileSourcePath=''
     ,FileAction=''
+    ,pd.SortCTNStartNo
 FROm ShippingMarkPic a
 INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
 INNER JOIN PackingListDetail pd ON pd.ID = a.PackingListID AND b.SCICtnNo = pd.SCICtnNo
@@ -123,7 +124,7 @@ OUTER APPLY(
 	),1,1,'')
 )SizeCode
 WHERE a.Ukey = '{masterID}'
-ORDER BY pd.Seq ASC
+ORDER BY pd.SortCTNStartNo
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
