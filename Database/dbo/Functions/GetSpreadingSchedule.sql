@@ -13,7 +13,7 @@ RETURN
 (
 	select
 		sd.SpreadingScheduleUkey,
-		CutRef = isnull(sd.CutRef, w.CutRef),
+		w.CutRef,
 		sd.IsAGVArrived,
 		sd.IsSuspend,
 		sd.SpreadingSchdlSeq,
@@ -37,7 +37,6 @@ RETURN
 		w.CutplanID,
 		IsOutStanding = IIF(o.Finished = 0 and w.EstCutDate < CAST(getdate() as date), 'Y', 'N'),
 		o.BuyerDelivery
-
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	left join SpreadingSchedule s with(nolock) on	s.FactoryID = @FactoryID
@@ -72,26 +71,26 @@ RETURN
 	) CutQty
 	outer apply
 	(
-		select actcutdate = max(x.actcutdate)
-		from WorkOrder w2 with(nolock)
-		outer apply (
-			Select actcutdate = iif(sum(cut_b.Layer) = w2.Layer, Max(cut.cdate),null)
+		Select actcutdate = iif(sum(cut_b.Layer) = w.Layer, Max(cut.cdate),null)
 			From cuttingoutput cut WITH (NOLOCK) 
 			inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
-			Where cut_b.workorderukey = w2.Ukey and cut.Status != 'New'
-		)x
-		where w2.CutRef = w.CutRef
-		and w2.FactoryID = w.FactoryID
+			Where cut_b.workorderukey = w.Ukey and cut.Status != 'New'
 	) act
-
 	where 1=1
 	and o.Finished = 0
 	and w.FactoryID = @FactoryID
+	and (act.actcutdate is null or sd.CutRef is not null)
 	and (
 		(
-			@Ukey = 0 and @Cutref = ''
-			and w.EstCutDate <= @EstCutDate
-			and w.CutCellid = @CutCellid
+			@Ukey = 0 and 
+			@Cutref = '' and 
+			w.EstCutDate <= @EstCutDate and
+			w.CutCellid = @CutCellid and
+			--排除未來已排SpreadingSchedule的資料
+			not exists (select 1 from	SpreadingSchedule ss with(nolock)
+											inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
+									where	ss.EstCutDate > @EstCutDate and
+											ssd.CutRef = w.CutRef)
 		)
 		or
 		(
@@ -99,7 +98,12 @@ RETURN
 		)
 		or
 		(
-			s.Ukey = @Ukey
+			s.Ukey = @Ukey and
+			--排除未來已排SpreadingSchedule的資料
+			not exists (select 1 from	SpreadingSchedule ss with(nolock)
+											inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
+									where	ss.EstCutDate > @EstCutDate and
+											ssd.CutRef = w.CutRef)
 		)
 	)
 )

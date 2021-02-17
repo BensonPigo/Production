@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -47,8 +48,13 @@ namespace Sci.Production.Cutting
                 minseq = x.Min(m => MyUtility.Convert.GetInt(m["SpreadingSchdlSeq"]));
             }
 
-            // Row變色規則，若該 Row 已經變色則跳過
             if (dr["Completed"].ToString() == "Y")
+            {
+                this.detailgrid.Rows[e.RowIndex].Cells["Completed"].Style.ForeColor = Color.Red;
+            }
+
+            // Row變色規則，若該 Row 已經變色則跳過
+            if (dr["IsOutStanding"].ToString() == "Y")
             {
                 if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != ColorTranslator.FromHtml("#9D9D9D"))
                 {
@@ -290,6 +296,56 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSave()
+        {
+            // 防止SpreadingSchdlSeq null寫進資料庫
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
+                if (MyUtility.Check.Empty(dr["SpreadingSchdlSeq"]))
+                {
+                    dr.Delete();
+                }
+            }
+
+            return base.ClickSave();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            #region ISP20210219 檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除
+            string sqlDeleteSameFutureCutRef = $@"
+delete  ssd
+from SpreadingSchedule ss
+inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
+where   exists (select 1 from	SpreadingSchedule s with(nolock)
+						 inner join SpreadingSchedule_Detail sd with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
+						 where	s.EstCutDate = @EstCutDate and
+						 		s.FactoryID = @FactoryID and
+                                s.CutCellID = @CutCellID and
+                                s.EstCutDate < ss.EstCutDate and
+                                sd.CutRef = ssd.CutRef
+)
+";
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            listPar.Add(new SqlParameter("@EstCutDate", this.CurrentMaintain["EstCutDate"]));
+            listPar.Add(new SqlParameter("@FactoryID", this.CurrentMaintain["FactoryID"]));
+            listPar.Add(new SqlParameter("@CutCellID", this.CurrentMaintain["CutCellID"]));
+            DualResult result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef, listPar);
+            if (!result)
+            {
+                return result;
+            }
+            #endregion
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
