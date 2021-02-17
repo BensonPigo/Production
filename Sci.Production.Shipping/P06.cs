@@ -775,8 +775,8 @@ where	exists (
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip,Order_Qty'"))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip,Order_Qty"))
+                               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
 
@@ -784,8 +784,8 @@ where	exists (
             if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{listOrderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => new Gensong_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip"))
+                       .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
@@ -873,8 +873,8 @@ where ID = '{orderid}'
             if (Sunrise_FinishingProcesses.IsSunrise_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses '{listOrderID}','Orders,Order_QtyShip'"))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => new Sunrise_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip"))
+                                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
 
@@ -882,8 +882,8 @@ where ID = '{orderid}'
             if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
             {
                 string listOrderID = this.DetailDatas.Select(s => s["OrderID"].ToString()).JoinToString(",");
-                Task.Run(() => DBProxy.Current.Execute(null, $"exec dbo.SentOrdersToFinishingProcesses_Gensong '{listOrderID}','Orders,Order_QtyShip'"))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => new Gensong_FinishingProcesses().SentOrdersToFinishingProcesses(listOrderID, "Orders,Order_QtyShip"))
+                           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
         }
