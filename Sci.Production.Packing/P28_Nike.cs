@@ -194,6 +194,7 @@ namespace Sci.Production.Packing
 
             this.ShowWaitMessage("Processing...");
             this.BindingSourceFile.DataSource = null;
+            this.BindingSourceMatch.DataSource = null;
             this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
             this.ExcelDatas = new List<ExcelData>();
 
@@ -356,6 +357,7 @@ namespace Sci.Production.Packing
         private void BtnRemoveFile_Click(object sender, EventArgs e)
         {
             this.BindingSourceFile.DataSource = null;
+            this.BindingSourceMatch.DataSource = null;
             this.ExcelDatas = new List<ExcelData>();
         }
 
@@ -675,6 +677,11 @@ DROP TABLE #tmp
 
         private bool ConfirmCheck()
         {
+            if (this.BindingSourceMatch.DataSource == null)
+            {
+                return false;
+            }
+
             DataTable dt = (DataTable)this.BindingSourceMatch.DataSource;
 
             if (dt.AsEnumerable().Any(o => MyUtility.Convert.GetBool(o["MultipleMatches"]) && (MyUtility.Check.Empty(o["PackingListID"]) || MyUtility.Convert.GetString(o["PackingListID"]) == "Please select")))

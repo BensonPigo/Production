@@ -32,7 +32,7 @@ namespace Sci.Production.Packing
         private List<Result> ConfirmMsg = new List<Result>();
         private List<BarcodeObj> BarcodeObjsPerFile = new List<BarcodeObj>();
         private List<BarcodeObj> BarcodeObjs = new List<BarcodeObj>();
-        private string BarcodeReader_RegistrationName = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationName"]);
+        private string BarcodeReader_RegistrationName =  MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationName"]);
         private string BarcodeReader_RegistrationKey = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationKey"]);
         private bool GridBool = false;
 

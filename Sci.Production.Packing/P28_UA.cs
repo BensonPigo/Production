@@ -197,6 +197,7 @@ namespace Sci.Production.Packing
             }
 
             this.ShowWaitMessage("Processing...");
+            this.BindingSourceMatch.DataSource = null;
             this.BindingSourcePackingFile.DataSource = null;
             this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
             this.Packing_ExcelDatas = new List<Packing_ExcelData>();
@@ -347,6 +348,7 @@ namespace Sci.Production.Packing
         private void BtnRemovePackingFile_Click(object sender, EventArgs e)
         {
             this.BindingSourcePackingFile.DataSource = null;
+            this.BindingSourceMatch.DataSource = null;
             this.Packing_ExcelDatas = new List<Packing_ExcelData>();
         }
 
@@ -362,6 +364,7 @@ namespace Sci.Production.Packing
 
             this.ShowWaitMessage("Processing...");
             this.BindingSourceItemFile.DataSource = null;
+            this.BindingSourceMatch.DataSource = null;
             this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
             this.Item_ExcelDatas = new List<Item_ExcelData>();
 
@@ -493,6 +496,7 @@ namespace Sci.Production.Packing
         private void BtnRemoveItemFile_Click(object sender, EventArgs e)
         {
             this.BindingSourceItemFile.DataSource = null;
+            this.BindingSourceMatch.DataSource = null;
             this.Item_ExcelDatas = new List<Item_ExcelData>();
         }
 
@@ -986,6 +990,11 @@ AND (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
         /// <inheritdoc/>
         private bool ConfirmCheck()
         {
+            if (this.BindingSourceMatch.DataSource == null)
+            {
+                return false;
+            }
+
             DataTable dt = (DataTable)this.BindingSourceMatch.DataSource;
 
             if (dt.AsEnumerable().Any(o => MyUtility.Convert.GetBool(o["MultipleMatches"]) && (MyUtility.Check.Empty(o["PackingListID"]) || MyUtility.Convert.GetString(o["PackingListID"]) == "Please select")))
