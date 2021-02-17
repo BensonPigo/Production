@@ -62,7 +62,6 @@ namespace Sci.Production.Automation
                     listSendData.Add(automationCreateRecord);
                 }
 
-
                 foreach (AutomationCreateRecord item in listSendData)
                 {
                     SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, item.json, this.automationErrMsg);
@@ -88,6 +87,55 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
+        /// SentOrdersToFinishingProcesses
+        /// </summary>
+        /// <param name="orderID">orderID</param>
+        /// <param name="transTable">transTable</param>
+        public void SentOrdersToFinishingProcesses(string orderID, string transTable)
+        {
+            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            {
+                return;
+            }
+
+            string apiThread = "SentOrdersToFinishingProcesses";
+            string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            string orderTransTable = transTable;
+            string tableArray;
+            if (orderTransTable == "Order_Delete")
+            {
+                tableArray = "Order_Delete";
+            }
+            else
+            {
+                tableArray = "Orders";
+            }
+
+            object postBody;
+            string[] structureID = orderID.Split(',');
+
+            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 500.0));
+            Dictionary<string, object> dataTable = new Dictionary<string, object>();
+            dataTable.Add("orderTransTable", orderTransTable);
+
+            // 先以500筆為單位拆分後再傳出
+            for (int i = 0; i < sendApiCount; i++)
+            {
+                int skipCount = i * 500;
+                var orderIDs = structureID.Skip(skipCount).Take(500).Select(s => new { ID = s });
+                dataTable.Add(tableArray, orderIDs);
+                postBody = new { TableArray = new string[] { tableArray }, DataTable = dataTable };
+
+                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, JsonConvert.SerializeObject(postBody), this.automationErrMsg);
+
+                dataTable.Remove(tableArray);
+            }
+        }
+
+        /// <summary>
         /// SentLocalItemToFinishingProcesses
         /// </summary>
         /// <param name="listRefNo">List RefNo</param>
@@ -108,6 +156,39 @@ namespace Sci.Production.Automation
             var structureID = listRefNo.Split(',').Select(s => new { RefNo = s });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("LocalItem", structureID));
+
+            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// SentStyleFPSSettingToFinishingProcesses
+        /// </summary>
+        /// <param name="styleKey">styleKey</param>
+        public void SentStyleFPSSettingToFinishingProcesses(string styleKey)
+        {
+            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            {
+                return;
+            }
+
+            string apiThread = "SentStyleFPSSettingToFinishingProcesses";
+            string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            Dictionary<string, object> dataTable = new Dictionary<string, object>();
+
+            var structureID = styleKey.Split(',').Select(s => {
+                string[] keyValues = s.Split('`');
+                return new
+                {
+                    StyleID = keyValues[0].ToString(),
+                    SeasonID = keyValues[1].ToString(),
+                    BrandID = keyValues[2].ToString(),
+                };
+            });
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("StyleFPSetting", structureID));
 
             SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
