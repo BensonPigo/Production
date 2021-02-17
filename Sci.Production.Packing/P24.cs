@@ -122,7 +122,7 @@ OUTER APPLY(
 	),1,1,'')
 )SizeCode
 WHERE a.Ukey = '{masterID}'
-ORDER BY CAST(pd.CTNStartNo as int)
+ORDER BY pd.Seq ASC,pd.CTNQty DESC
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
