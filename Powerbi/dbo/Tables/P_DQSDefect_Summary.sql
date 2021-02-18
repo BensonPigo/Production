@@ -18,6 +18,12 @@
     [InspectQty]         INT            NULL,
     [RejectQty]          INT            NULL,
     [WFT]                DECIMAL (6, 3) NULL,
-    [RFT]                DECIMAL (6, 3) NULL
+    [RFT]                DECIMAL (6, 3) NULL, 
+    [CDCodeNew] VARCHAR(5) NULL, 
+    [ProductType] NVARCHAR(500) NULL, 
+    [FabricType] NVARCHAR(500) NULL, 
+    [Lining] VARCHAR(20) NULL, 
+    [Gender] VARCHAR(10) NULL, 
+    [Construction] NVARCHAR(50) NULL
 );
 

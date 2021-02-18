@@ -39,6 +39,12 @@
     [PulloutComplete]        VARCHAR (2)     NOT NULL,
     [SewInLine]              DATE            NULL,
     [SewOffLine]             DATE            NULL,
-    [TransFtyZone]           VARCHAR (8)     NULL
+    [TransFtyZone]           VARCHAR (8)     NULL,
+    [CDCodeNew] VARCHAR(5) NULL, 
+    [ProductType] NVARCHAR(500) NULL, 
+    [FabricType] NVARCHAR(500) NULL, 
+    [Lining] VARCHAR(20) NULL, 
+    [Gender] VARCHAR(10) NULL, 
+    [Construction] NVARCHAR(50) NULL
 );
 

@@ -49,7 +49,13 @@
     [BrandID]                  NVARCHAR (MAX)  NULL,
     [Orig_WorkHourPerDay]      FLOAT (53)      NULL,
     [New_SwitchTime]           FLOAT (53)      NULL,
-    [FirststCuttingOutputDate] DATE            NULL
+    [FirststCuttingOutputDate] DATE            NULL,
+    [CDCodeNew] VARCHAR(5) NULL, 
+    [ProductType] NVARCHAR(500) NULL, 
+    [FabricType] NVARCHAR(500) NULL, 
+    [Lining] VARCHAR(20) NULL, 
+    [Gender] VARCHAR(10) NULL, 
+    [Construction] NVARCHAR(50) NULL
 );
 
 
