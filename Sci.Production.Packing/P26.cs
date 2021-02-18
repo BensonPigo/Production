@@ -32,7 +32,7 @@ namespace Sci.Production.Packing
         private List<Result> ConfirmMsg = new List<Result>();
         private List<BarcodeObj> BarcodeObjsPerFile = new List<BarcodeObj>();
         private List<BarcodeObj> BarcodeObjs = new List<BarcodeObj>();
-        private string BarcodeReader_RegistrationName =  MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationName"]);
+        private string BarcodeReader_RegistrationName = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationName"]);
         private string BarcodeReader_RegistrationKey = MyUtility.Convert.GetString(ConfigurationManager.AppSettings["BarcodeReader_RegistrationKey"]);
         private bool GridBool = false;
 
@@ -299,6 +299,11 @@ namespace Sci.Production.Packing
                                         // 無法取得barcode，將上一張圖隸屬的 SSCC 與 Packing List ID 寫入這一張圖
                                         if (!hasBarcode)
                                         {
+                                            if (!this.BarcodeObjsPerFile.Any())
+                                            {
+                                                continue;
+                                            }
+
                                             var lastBarcode = this.BarcodeObjsPerFile.Last();
                                             this.BarcodeObjsPerFile.Add(new BarcodeObj()
                                             {
@@ -329,7 +334,7 @@ namespace Sci.Production.Packing
                             #endregion
 
                             // 判斷這個檔案，是否有任意 1 張圖沒有填入 SSCC 與 Packing List ID
-                            if (this.BarcodeObjsPerFile.Where(o => MyUtility.Check.Empty(o.Barcode)).Any() || this.BarcodeObjsPerFile.Where(o => MyUtility.Check.Empty(o.PackingListID)).Any())
+                            if (this.BarcodeObjsPerFile.Where(o => MyUtility.Check.Empty(o.Barcode)).Any() || this.BarcodeObjsPerFile.Where(o => MyUtility.Check.Empty(o.PackingListID)).Any() || !this.BarcodeObjsPerFile.Any())
                             {
                                 Exception ex = new Exception("Could not find SSCC.");
                                 throw ex;
@@ -354,7 +359,7 @@ namespace Sci.Production.Packing
                         catch (Exception q)
                         {
                             string msg = q.Message;
-                            if (msg != "SSCC mapping multiple Packing List." && msg != "SSCC not updated in Packing List yet." && msg != "Could not find SSCC.")
+                            if (msg != "ZPL mapping multiple Packing List." && msg != "SSCC mapping multiple Packing List." && msg != "SSCC not updated in Packing List yet." && msg != "Could not find SSCC.")
                             {
                                 // 解析失敗：Result寫入訊息
                                 msg = "Analysis failed.";
@@ -406,6 +411,12 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
             foreach (FoundBarcode barcode in reader.FoundBarcodes)
             {
                 string strBarcode = barcode.Value.Replace("<FNC1>", string.Empty);
+
+                if (strBarcode.Length < 20)
+                {
+                    continue;
+                }
+
                 DataTable dt = this.BarcodeInfoCheck(strBarcode, "U.ARMOUR");
 
                 if (dt.Rows.Count == 0)
@@ -557,11 +568,17 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
                             {
                                 dataRow["Result"] = "Cannot mapping current P/L";
                                 item.NeedMatch = false;
+                                break;
                             }
                             else
                             {
                                 item.NeedMatch = true;
                             }
+                        }
+
+                        if (!samePack.Any(o => o.NeedMatch))
+                        {
+                            continue;
                         }
 
                         // 找出這個Barcode的資訊，並存下Ukey（混尺碼一個Barcode會對應到多個Ukey，因此用Datatable)
@@ -588,7 +605,11 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
                         });
                     }
 
-                    match_List.Add(m);
+                    if (m.UpdateModels.Count > 0)
+                    {
+                        match_List.Add(m);
+                    }
+
                     fileSeq++;
                 }
                 #endregion
