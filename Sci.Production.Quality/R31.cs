@@ -25,7 +25,9 @@ namespace Sci.Production.Quality
         private string MDivisionID;
         private string FactoryID;
         private string Brand;
+        private string Stage;
         private bool exSis;
+        private bool Outstanding;
         private List<string> categoryList = new List<string>();
 
         /// <inheritdoc/>
@@ -35,6 +37,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.comboM.SetDefalutIndex(true);
             this.comboFactory.SetDataSource();
+            this.comboStage.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -64,6 +67,9 @@ namespace Sci.Production.Quality
             {
                 this.categoryList.Add("G");
             }
+
+            this.Outstanding = this.chkOutstanding.Checked;
+            this.Stage = this.comboStage.Text;
 
             if (MyUtility.Check.Empty(this.Buyerdelivery1) &&
                     MyUtility.Check.Empty(this.Buyerdelivery2) &&
@@ -313,6 +319,19 @@ WHERE 1=1
             strExcelName.OpenFile();
             #endregion
             return true;
+        }
+
+        private void ChkOutstanding_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkOutstanding.Checked)
+            {
+                this.comboStage.Enabled = true;
+            }
+            else
+            {
+                this.comboStage.Text = string.Empty;
+                this.comboStage.Enabled = false;
+            }
         }
     }
 }
