@@ -756,6 +756,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Receiving_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region UnConfirmed 先檢查WMS是否傳送成功
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
@@ -844,13 +851,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                          }).ToList();
             upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
-
-            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Receiving_Detail"))
-            {
-                return;
-            }
-            #endregion
 
             TransactionScope transactionscope = new TransactionScope();
             SqlConnection sqlConn = null;

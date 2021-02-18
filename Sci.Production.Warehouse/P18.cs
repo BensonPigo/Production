@@ -1507,6 +1507,13 @@ where   f.lock=1
             }
             #endregion 檢查庫存項WMSLock
 
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "TransferIn_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region UnConfirmed 先檢查WMS是否傳送成功
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
@@ -1647,13 +1654,6 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
             upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
 
-            #endregion
-
-            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "TransferIn_Detail"))
-            {
-                return;
-            }
             #endregion
 
             #region -- Transaction --

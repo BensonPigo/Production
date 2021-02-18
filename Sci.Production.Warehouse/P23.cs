@@ -414,17 +414,6 @@ where   f.lock = 1
             }
             #endregion
 
-            #region UnConfirmed 先檢查WMS是否傳送成功
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(dtDetail, "UnConfirmed"))
-                {
-                    return;
-                }
-            }
-            #endregion
-
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(
@@ -578,6 +567,17 @@ where (isnull(f.InQty, 0) - d.Qty + isnull(f.AdjustQty, 0) - isnull(f.ReturnQty,
                     }
 
                     MyUtility.Msg.WarningBox(ids, "Warning");
+                    return;
+                }
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(dtDetail, "UnConfirmed"))
+                {
                     return;
                 }
             }
