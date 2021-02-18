@@ -27,7 +27,9 @@ namespace Sci.Production.Cutting
     {
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
-        private readonly string tone;
+        private string tone;
+        private bool isCombineSubProcess;
+        private bool isNoneShellNoCreateAllParts;
         private DataTable CutRefTb;
         private DataTable qtyTb;
         private DataTable ArticleSizeTb;
@@ -42,26 +44,24 @@ namespace Sci.Production.Cutting
         private DataTable SizeRatioTb;
         private DataTable fsDt;
         private DataTable faDt;
+        private DataTable fcDt;
 
         /// <inheritdoc/>
         public P15(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.tone = MyUtility.GetValue.Lookup("select iif(AutoGenerateByTone=1,1,0) from SYSTEM");
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, ukey = cast(0 as bigint),ispair ,Location from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
+            string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,Parts,'' as cutref,'' as poid, ukey = cast(0 as bigint),ispair ,Location,isMain = cast(0 as bit),ComebineSubprocessGroup = cast(0 as tinyint) from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out this.allpartTb);
-            this.faDt = this.allpartTb.Clone();
 
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art, '' as cutref,'' as poid, ukey = cast(0 as bigint), ispair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
+            string pattern_cmd = "Select PatternCode,PatternDesc,Parts,'' as art, '' as cutref,'' as poid, ukey = cast(0 as bigint), ispair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='',isMain = cast(0 as bit),ComebineSubprocessGroup = cast(0 as tinyint) from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out this.patternTb);
-            this.fsDt = this.patternTb.Clone();
 
             string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out this.artTb);
@@ -351,8 +351,10 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 }
                 #endregion
                 dr["art"] = art;
-                dr["parts"] = 1;
+                dr["Parts"] = 1;
                 dr.EndEdit();
+                this.SynchronizeMain(0, "PatternCode");
+                this.Calpart();
                 this.CheckNotMain(dr);
             };
             patterncell.CellValidating += (s, e) =>
@@ -383,10 +385,11 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                     }
                     #endregion
                     dr["art"] = art;
-                    dr["parts"] = 1;
+                    dr["Parts"] = 1;
                 }
 
                 dr.EndEdit();
+                this.SynchronizeMain(0, "PatternCode");
                 this.Calpart();
                 this.CheckNotMain(dr);
             };
@@ -400,6 +403,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
                 dr["PatternDesc"] = e.FormattedValue;
                 dr.EndEdit();
+                this.SynchronizeMain(0, "patternDesc");
                 this.CheckNotMain(dr);
             };
 
@@ -454,6 +458,10 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             };
 
             DataGridViewGeneratorNumericColumnSettings partQtyCell = new DataGridViewGeneratorNumericColumnSettings();
+            partQtyCell.CellEditable += (s, e) =>
+            {
+                e.IsEditable = !this.chkCombineSubprocess.Checked;
+            };
             partQtyCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
@@ -610,14 +618,31 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 dr["PatternDesc"] = sele.GetSelecteds()[0]["PatternDesc"].ToString();
                 dr["PatternCode"] = sele.GetSelecteds()[0]["PatternCode"].ToString();
                 dr["Annotation"] = sele.GetSelecteds()[0]["Annotation"].ToString();
-                dr["parts"] = 1;
+                dr["Parts"] = 1;
                 dr.EndEdit();
+                this.SynchronizeMain(1, "PatternCode");
+                this.Calpart();
+            };
+            patterncell2.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridAllPart.GetDataRow(e.RowIndex);
+                dr["PatternCode"] = e.FormattedValue;
+                dr.EndEdit();
+                this.SynchronizeMain(1, "PatternCode");
                 this.Calpart();
             };
 
             DataGridViewGeneratorTextColumnSettings patternDesc2 = new DataGridViewGeneratorTextColumnSettings
             {
                 CharacterCasing = CharacterCasing.Normal,
+            };
+            patternDesc2.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridAllPart.GetDataRow(e.RowIndex);
+                dr["PatternDesc"] = e.FormattedValue;
+                dr.EndEdit();
+                this.SynchronizeMain(1, "PatternDesc");
+                this.Calpart();
             };
 
             DataGridViewGeneratorNumericColumnSettings partQtyCell2 = new DataGridViewGeneratorNumericColumnSettings();
@@ -756,6 +781,51 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             this.gridQty.CurrentDataRow["Qty"] = this.ArticleSizeTb.DefaultView.ToTable().AsEnumerable().Sum(sum => MyUtility.Convert.GetInt(sum["cutOutput"]));
         }
 
+        private void SynchronizeMain(int type, string columnName)
+        {
+            // tpye = 0 左同步到右， type = 1 右同步到左
+            DataRow dr = this.gridCutpart.CurrentDataRow;
+            if (!this.chkCombineSubprocess.Checked || MyUtility.Convert.GetString(dr["PatternCode"]) == "ALLPARTS")
+            {
+                return;
+            }
+
+            try
+            {
+                if (type == 0)
+                {
+                    DataRow[] adrs = this.allpartTb.Select($"ComebineSubprocessGroup = {dr["ComebineSubprocessGroup"]} and isMain = 1");
+                    if (adrs.Length == 0)
+                    {
+                        return;
+                    }
+
+                    DataRow adr = adrs[0];
+                    adr["PatternDesc"] = dr["PatternDesc"];
+                    if (columnName == "PatternCode")
+                    {
+                        adr["PatternCode"] = dr["PatternCode"];
+                        adr["Parts"] = dr["Parts"];
+                        adr["Location"] = dr["Location"];
+                        adr["IsPair"] = dr["IsPair"];
+                        dr["IsPair"] = false;
+                    }
+                }
+
+                if (type == 1 && MyUtility.Convert.GetBool(this.gridAllPart.CurrentDataRow["isMain"]))
+                {
+                    DataRow adr = this.gridAllPart.CurrentDataRow;
+                    dr["PatternDesc"] = adr["PatternDesc"];
+                    dr["PatternCode"] = adr["PatternCode"];
+                    dr["Location"] = adr["Location"];
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
+        }
+
         #region 按下 Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
@@ -800,6 +870,13 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
 
         private void Query()
         {
+            if (MyUtility.Check.Seek("select AutoGenerateByTone,IsCombineSubProcess,IsNoneShellNoCreateAllParts from SYSTEM", out DataRow sysDr))
+            {
+                this.tone = MyUtility.Convert.GetString(sysDr["AutoGenerateByTone"]);
+                this.isCombineSubProcess = MyUtility.Convert.GetBool(sysDr["IsCombineSubProcess"]);
+                this.isNoneShellNoCreateAllParts = MyUtility.Convert.GetBool(sysDr["IsNoneShellNoCreateAllParts"]);
+            }
+
             string cutref = this.txtCutRef.Text;
             string cutdate = this.dateEstCutDate.Value == null ? string.Empty : this.dateEstCutDate.Value.Value.ToShortDateString();
             string poid = this.txtPOID.Text;
@@ -826,10 +903,13 @@ Select
 	, w.colorid
 	, w.Ukey
 	, FabricKind.FabricKind
+	, FabricKind.FabricKindID
 	, TTLCutQty = (select SUM(qty) from WorkOrder_Distribute wd with(nolock) where wd.WorkOrderUkey = w.Ukey {distru_where})
 	, CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle wd with(nolock) inner join bundle_detail_Qty bdq on bdq.id = wd.id where wd.cutref = w.cutref), 0)
     , o.StyleUkey
 	, w.MDivisionId
+    , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
+    , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
 from  workorder w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
@@ -841,7 +921,7 @@ outer apply(
 )item
 outer apply (SELECT TOP 1 wd.patternpanel FROM workorder_PatternPanel wd WITH (NOLOCK) WHERE w.ukey = wd.workorderukey)wd
 outer apply(
-    SELECT TOP 1 FabricKind = DD.id + '-' + DD.NAME 
+    SELECT TOP 1 FabricKind = DD.id + '-' + DD.NAME, FabricKindID = DD.id
     FROM order_colorcombo OCC WITH (NOLOCK)
 	inner join order_bof OB WITH (NOLOCK) on OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
 	inner join  dropdownlist DD WITH (NOLOCK) on  DD.id = OB.kind
@@ -928,7 +1008,7 @@ and o.mDivisionid = '{this.keyWord}'
 {distru_where}
 order by article.article,wd.sizecode,wd.orderid,w.FabricPanelCode
 
-select bdo.qty,wd.id,bdo.BundleNo,bd.Patterncode,bd.BundleGroup,wd.CutRef,wd.Article,wd.Sizecode,bdo.OrderID
+select bdo.qty,wd.id,bdo.BundleNo,bd.PatternCode,bd.BundleGroup,wd.CutRef,wd.Article,wd.Sizecode,bdo.OrderID
 into #tmpx
 from Bundle wd with(nolock)
 inner join Bundle_Detail bd with(nolock) on bd.Id = wd.ID
@@ -938,17 +1018,17 @@ where exists(select 1 from #tmp t where wd.cutref = t.CutRef and wd.Article = t.
 select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
 into #bundleSPCreatedQty
 from (
-	select CutRef,Article,Sizecode,OrderID,qty from #tmpx where Patterncode = 'ALLPARTS'
+	select CutRef,Article,Sizecode,OrderID,qty from #tmpx where PatternCode = 'ALLPARTS'
 
 	union all
 	select CutRef,Article,Sizecode,OrderID,qty=SUM(Qty)
 	from (
 		select id,BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = min(x.Qty)
 		from(
-			select t.ID,t.Patterncode,t.BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = sum(t.Qty)
+			select t.ID,t.PatternCode,t.BundleGroup,CutRef,Article,Sizecode,OrderID, Qty = sum(t.Qty)
 			from #tmpx t
-			where not exists(select 1 from #tmpx where Patterncode = 'ALLPARTS' and id = t.id)
-			group by t.ID,t.Patterncode,t.BundleGroup,CutRef,Article,Sizecode,OrderID
+			where not exists(select 1 from #tmpx where PatternCode = 'ALLPARTS' and id = t.id)
+			group by t.ID,t.PatternCode,t.BundleGroup,CutRef,Article,Sizecode,OrderID
 		)x
 		group by id,BundleGroup,CutRef,Article,Sizecode,OrderID
 	)x
@@ -968,7 +1048,7 @@ outer apply(select PositiveBalQty = IIF(isnull(bal.balQty, 0) < 0, 0, isnull(bal
 
 select distinct MDivisionId, StyleUkey, Fabriccombo, Article, cutref, POID, ukey into #msfa from #tmp
 
-select f.patternCode,f.PatternDesc,f.Parts, art = isnull(art, ''), m.cutref, m.poid, m.ukey, f.ispair, f.Location,
+select f.PatternCode,f.PatternDesc,f.Parts, art = isnull(art, ''), m.cutref, m.poid, m.ukey, f.ispair, f.Location,
 	NoBundleCardAfterSubprocess_String = ISNULL(ns, ''),
 	PostSewingSubProcess_String=ISNULL(ps, ''),
     m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article
@@ -1001,25 +1081,41 @@ outer apply(
 )p
 
 select
-    wd.patternCode,wd.PatternDesc,wd.Parts,wd.art,wd.cutref,wd.poid,wd.ukey,wd.ispair,wd.Location,wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
-    wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.Article
+    wd.PatternCode,wd.PatternDesc,wd.Parts,wd.art,wd.cutref,wd.poid,wd.ukey,wd.ispair,wd.Location,
+    wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
+    wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.Article,
+    isMain = cast(0 as bit),
+    ComebineSubprocessGroup = cast(0 as tinyint)
 from #bundleinfo wd
+
 union all
 select distinct
-	patternCode='ALLPARTS',
+	PatternCode='ALLPARTS',
 	PatternDesc='All Parts',
 	Parts=0,art='',wd.cutref,wd.poid,wd.ukey,wd.ispair,
 	Location='',wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
-    wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.article
+    wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.article,
+    isMain = cast(0 as bit),
+    ComebineSubprocessGroup = cast(0 as tinyint)
 from #bundleinfo wd
 where not exists(select 1 from #bundleinfo c
     where c.MDivisionId = wd.MDivisionId and c.StyleUkey = wd.StyleUkey and c.Fabriccombo = wd.Fabriccombo and c.article = wd.article
-    and c.CutRef = wd.CutRef and c.Patterncode = 'ALLPARTS')
+    and c.CutRef = wd.CutRef and c.PatternCode = 'ALLPARTS')
 
-select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,
-    m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article
+select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.Parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,
+    m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article,
+    isMain = cast(0 as bit),
+    ComebineSubprocessGroup = cast(0 as tinyint)
 from #msfa m
 inner join FtyStyleInnovationAllPart f with(NOLOCK)
+    on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey and f.Fabriccombo = m.Fabriccombo and f.Article = m.Article
+
+select 0 as sel,f.PatternCode,f.PatternDesc, '' as annotation,f.Parts, m.cutref, m.poid, m.ukey, f.ispair, f.Location,
+    m.MDivisionId,m.StyleUkey,m.Fabriccombo,m.Article,
+    isMain,
+    ComebineSubprocessGroup
+from #msfa m
+inner join FtyStyleInnovationComebineSubprocess f with(NOLOCK)
     on f.MDivisionID = m.MDivisionId and f.StyleUkey = m.StyleUkey and f.Fabriccombo = m.Fabriccombo and f.Article = m.Article
 
 drop table #tmp, #msfa
@@ -1034,6 +1130,7 @@ drop table #tmp, #msfa
             this.ArticleSizeTb = rightUpDt[0];
             this.fsDt = rightUpDt[1];
             this.faDt = rightUpDt[2];
+            this.fcDt = rightUpDt[3];
 
             string sizeRatio = $@"
 Select distinct w.ukey, ws.SizeCode, ws.Qty
@@ -1060,7 +1157,7 @@ and o.mDivisionid = '{this.keyWord}'
             this.qtyTb = this.GetNoofBundle(); // 依據右上撈出資料彙整出中上
 
             // 將下方兩表加入, 下方兩表改為直接對應左上(ISP20201755)
-            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart((long)r["ukey"], r["MDivisionID"].ToString(), (long)r["styleukey"], this.ArticleSizeTb.Select($"ukey = {r["ukey"]}").AsEnumerable().Select(s => s["article"].ToString()).OrderBy(o => o).FirstOrDefault(), r["Fabriccombo"].ToString()));
+            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart(r));
             foreach (DataRow dr in this.ArticleSizeTb.Rows)
             {
                 dr["iden"] = this.qtyTb.Select($"ukey={dr["ukey"]} and no={dr["no"]}")[0]["iden"];
@@ -1078,28 +1175,94 @@ and o.mDivisionid = '{this.keyWord}'
             this.ShowExcessDatas(where);
         }
 
-        private void AddPatternAllpart(long ukey, string m, long styleukey, string article, string fabriccombo)
+        private void AddPatternAllpart(DataRow r)
         {
-            DataTable dtp = this.fsDt.Select($"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and fabriccombo = '{fabriccombo}' and Article = '{article}'").TryCopyToDataTable(this.fsDt);
-            DataTable dta = this.faDt.Select($"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and fabriccombo = '{fabriccombo}' and Article = '{article}'").TryCopyToDataTable(this.faDt);
-            if (dtp.Rows.Count == 0)
+            long ukey = MyUtility.Convert.GetLong(r["ukey"]);
+            string m = MyUtility.Convert.GetString(r["MDivisionID"]);
+            long styleukey = MyUtility.Convert.GetLong(r["styleukey"]);
+            string fabriccombo = MyUtility.Convert.GetString(r["Fabriccombo"]);
+            bool isNoneShellNoCreateAllParts = MyUtility.Convert.GetBool(r["isNoneShellNoCreateAllParts"]);
+            string article = this.ArticleSizeTb.Select($"ukey = {r["ukey"]}").AsEnumerable().Select(s => s["article"].ToString()).FirstOrDefault();
+
+            string filter = $"Ukey = {ukey} and MDivisionID = '{m}' and StyleUkey = {styleukey} and fabriccombo = '{fabriccombo}' and Article = '{article}'";
+            DataTable dtp = this.fsDt.Select(filter).TryCopyToDataTable(this.fsDt);
+            DataTable dta = this.faDt.Select(filter).TryCopyToDataTable(this.faDt);
+            DataTable dtc = this.fcDt.Select(filter).TryCopyToDataTable(this.fcDt);
+            this.RemoveFtyColumn(dtp);
+            this.RemoveFtyColumn(dta);
+            this.RemoveFtyColumn(dtc);
+
+            DataTable oriP = this.patternTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.patternTbOri);
+            DataTable oriA = this.allpartTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.allpartTbOri);
+
+            // 非 CombineSubProcess 且 FtyStyleInnovation 資料沒有
+            if (!this.isCombineSubProcess && dtp.Rows.Count == 0)
             {
-                dtp = this.patternTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.patternTbOri);
-                dta = this.allpartTbOri.Select($"Ukey = {ukey}").TryCopyToDataTable(this.allpartTbOri);
+                dtp = oriP;
+                dta = oriA;
+            }
+
+            // CombineSubProcess 且無 FtyStyleInnovation 資料，則用原資料
+            if (this.isCombineSubProcess && dtc.Rows.Count == 0)
+            {
+                dtp = oriP.Select($"isMain = 1").TryCopyToDataTable(this.patternTb);
+                dtp.AsEnumerable().ToList().ForEach(f => f["isPair"] = false);
+                dtp.ImportRow(oriP.Select($"PatternCode = 'ALLPARTS'").FirstOrDefault());
+
+                // 右邊除了 ALLPart 資訊，  資訊全部都要，不論 IsMain
+                DataTable psdt = oriP.Select($"PatternCode <> 'ALLPARTS'").TryCopyToDataTable(this.patternTb);
+                psdt.AsEnumerable().ToList().ForEach(f => dta.ImportRow(f));
+                dta.Merge(oriA);
+            }
+
+            // CombineSubProcess 且有 FtyStyleInnovation 資料，用 FtyStyleInnovation 資料
+            if (this.isCombineSubProcess && dtc.Rows.Count > 0)
+            {
+                // 右邊除了 ALLPart 資訊， FtyStyleInnovationComebineSubprocess 資訊全部都要，不論 IsMain
+                dta.Merge(dtc);
+
+                // 將 FtyStyleInnovationComebineSubprocess 出來的資料，依據 IsMain 找出顯示在左邊資訊
+                DataRow adr = dtp.Select($"PatternCode = 'ALLPARTS'").FirstOrDefault();
+                dtc.Columns.Add("art", typeof(string));
+                foreach (DataRow cdr in dtc.Rows)
+                {
+                    DataRow[] drps = oriP.Select($"PatternCode = '{cdr["PatternCode"]}'");
+                    if (drps.Length > 0)
+                    {
+                        cdr["art"] = drps[0]["art"];
+                    }
+                }
+
+                dtp = dtc.Select($@"isMain = 1").TryCopyToDataTable(this.patternTbOri);
+                if (adr != null)
+                {
+                    dtp.ImportRow(adr);
+                }
+            }
+
+            // 標記 isNoneShellNoCreateAllParts 不加上 ALLPARTS 細項
+            if (isNoneShellNoCreateAllParts)
+            {
+                this.allpartTb.Merge(dta.Select($"ComebineSubProcessGroup <> 0").TryCopyToDataTable(dta));
+                DataRow[] drps = dtp.Select($"PatternCode = 'ALLPARTS'");
+                if (drps.Length > 0)
+                {
+                    drps[0]["Parts"] = 0;
+                }
             }
             else
             {
-                dtp.Columns.Remove("MDivisionID");
-                dtp.Columns.Remove("StyleUkey");
-                dtp.Columns.Remove("Article");
-                dta.Columns.Remove("MDivisionID");
-                dta.Columns.Remove("StyleUkey");
-                dta.Columns.Remove("Article");
-                dta.Columns.Remove("Fabriccombo");
+                this.allpartTb.Merge(dta);
             }
 
             this.patternTb.Merge(dtp);
-            this.allpartTb.Merge(dta);
+        }
+
+        private void RemoveFtyColumn(DataTable dt)
+        {
+            dt.Columns.Remove("StyleUkey");
+            dt.Columns.Remove("Article");
+            dt.Columns.Remove("Fabriccombo");
         }
 
         private DataTable GetNoofBundle()
@@ -1245,7 +1408,12 @@ order by ArticleGroup";
             }
 
             w.Append(")");
+
+            this.GarmentTb.Columns.Add("ComebineSubprocessGroup", typeof(int));
+            this.GarmentTb.Columns.Add("IsMain", typeof(bool));
             DataRow[] garmentar = this.GarmentTb.Select(w.ToString());
+            this.SetComebineSubprocessGroup_IsMain(garmentar);
+
             foreach (DataRow dr in garmentar)
             {
                 // 若無 annotation 直接寫入 allpartTbOri
@@ -1255,11 +1423,12 @@ order by ArticleGroup";
                     ndr["PatternCode"] = dr["PatternCode"];
                     ndr["PatternDesc"] = dr["PatternDesc"];
                     ndr["Location"] = dr["Location"];
-                    ndr["parts"] = MyUtility.Convert.GetInt(dr["alone"]) + (MyUtility.Convert.GetInt(dr["DV"]) * 2) + (MyUtility.Convert.GetInt(dr["Pair"]) * 2);
+                    ndr["Parts"] = MyUtility.Convert.GetInt(dr["alone"]) + (MyUtility.Convert.GetInt(dr["DV"]) * 2) + (MyUtility.Convert.GetInt(dr["Pair"]) * 2);
                     ndr["Cutref"] = cutref;
                     ndr["POID"] = poid;
                     ndr["ukey"] = ukey;
                     ndr["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                    ndr["ComebineSubprocessGroup"] = 0;
                     this.allpartTbOri.Rows.Add(ndr);
                     npart = npart + MyUtility.Convert.GetInt(dr["alone"]) + (MyUtility.Convert.GetInt(dr["DV"]) * 2) + (MyUtility.Convert.GetInt(dr["Pair"]) * 2);
                 }
@@ -1285,6 +1454,7 @@ order by ArticleGroup";
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
                                 int count = (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
+                                bool ismain = MyUtility.Convert.GetBool(dr["isMain"]);
                                 for (int i = 0; i < count; i++)
                                 {
                                     DataRow ndr2 = this.patternTbOri.NewRow();
@@ -1297,6 +1467,8 @@ order by ArticleGroup";
                                     ndr2["Cutref"] = cutref;
                                     ndr2["ukey"] = ukey;
                                     ndr2["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                                    ndr2["isMain"] = ismain && i == 0;
+                                    ndr2["ComebineSubprocessGroup"] = dr["ComebineSubprocessGroup"];
                                     ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
                                     this.patternTbOri.Rows.Add(ndr2);
                                 }
@@ -1313,6 +1485,8 @@ order by ArticleGroup";
                                 ndr2["Cutref"] = cutref;
                                 ndr2["ukey"] = ukey;
                                 ndr2["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                                ndr2["isMain"] = dr["isMain"];
+                                ndr2["ComebineSubprocessGroup"] = dr["ComebineSubprocessGroup"];
                                 ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
                                 this.patternTbOri.Rows.Add(ndr2);
                             }
@@ -1327,7 +1501,7 @@ order by ArticleGroup";
                             ndr["POID"] = poid;
                             ndr["Cutref"] = cutref;
                             ndr["ukey"] = ukey;
-                            ndr["parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
+                            ndr["Parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                             npart = npart + Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                             ndr["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
                             this.allpartTbOri.Rows.Add(ndr);
@@ -1343,9 +1517,10 @@ order by ArticleGroup";
                         ndr["POID"] = poid;
                         ndr["Cutref"] = cutref;
                         ndr["ukey"] = ukey;
-                        ndr["parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
+                        ndr["Parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                         npart = npart + Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                         ndr["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                        ndr["ComebineSubprocessGroup"] = 0;
                         this.allpartTbOri.Rows.Add(ndr);
                     }
                     #endregion
@@ -1356,13 +1531,45 @@ order by ArticleGroup";
             pdr["PatternCode"] = "ALLPARTS";
             pdr["PatternDesc"] = "All Parts";
             pdr["Location"] = string.Empty;
-            pdr["parts"] = npart;
+            pdr["Parts"] = npart;
             pdr["Cutref"] = cutref;
             pdr["POID"] = poid;
             pdr["ukey"] = ukey;
+            pdr["ComebineSubprocessGroup"] = 0;
             this.patternTbOri.Rows.Add(pdr);
 
             DBProxy.Current.DefaultTimeout = 0;
+        }
+
+        private void SetComebineSubprocessGroup_IsMain(DataRow[] garmentar)
+        {
+            var annotationList = garmentar.Where(w => !MyUtility.Check.Empty(w["annotation"]))
+                .Select(s => MyUtility.Convert.GetString(s["annotation"])).Distinct().ToList();
+            var x = garmentar.Where(w => !MyUtility.Check.Empty(w["annotation"]));
+
+            // 尚未解析前<相同的 annotation>，須有一個為左下Grid代表。
+            // 原本是 Main 直接標記為 IsMain            // 若無Main 則以 seq 最小為 IsMain
+            // IsMain 最後要寫入 Bundle_Detail.IsMain / FtyStyleInnovationComebineSubprocess.IsMain
+            garmentar.AsEnumerable().ToList().ForEach(f => f["IsMain"] = f["Main"]);
+            foreach (string annotation in annotationList)
+            {
+                var x2 = x.Where(w => MyUtility.Convert.GetString(w["annotation"]) == annotation);
+                var x3 = x2.OrderBy(o => MyUtility.Convert.GetString(o["Seq"])).FirstOrDefault();
+                if (!x2.Where(w => MyUtility.Convert.GetBool(w["Main"])).Any() && x3 != null)
+                {
+                    x3["IsMain"] = true;
+                }
+            }
+
+            int comebineSubprocessGroup = 1;
+            foreach (string annotation in annotationList)
+            {
+                x.Where(w => MyUtility.Convert.GetString(w["annotation"]) == annotation
+                        && MyUtility.Check.Empty(w["comebineSubprocessGroup"]))
+                    .ToList()
+                    .ForEach(f => f["comebineSubprocessGroup"] = comebineSubprocessGroup);
+                comebineSubprocessGroup++;
+            }
         }
         #endregion
 
@@ -1382,14 +1589,36 @@ order by ArticleGroup";
             this.numNoOfBundle.Value = this.qtyTb.DefaultView.Count;
             this.labelToalCutOutputValue.Text = this.gridCutRef.CurrentDataRow["TTLCutQty"].ToString();
             this.labelAccumulateQty.Text = this.gridCutRef.CurrentDataRow["CreatedBundleQty"].ToString();
+            this.chkCombineSubprocess.Checked = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubProcess"]);
+            this.GridCutpart_SelectionChanged(null, null);
+            this.chkNoneShellNoCreateAllParts.Checked = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsNoneShellNoCreateAllParts"]);
+            this.chkNoneShellNoCreateAllParts.ReadOnly = MyUtility.Convert.GetString(this.gridCutRef.CurrentDataRow["FabricKindID"]) == "1";
+            this.ChkNoneShellNoCreateAllParts_CheckedChanged(null, null);
             this.GetBalancebyWorkOrder();
             this.ChangeRowGridQty();
             this.CheckwithOri();
+            this.Calpart();
         }
 
         private void GridQty_SelectionChanged(object sender, EventArgs e)
         {
             this.ChangeRowGridQty();
+        }
+
+        private void GridCutpart_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.gridCutpart.CurrentDataRow == null)
+            {
+                return;
+            }
+
+            string filter = $"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}";
+            if (this.chkCombineSubprocess.Checked)
+            {
+                filter += $" and ComebineSubprocessGroup = {this.gridCutpart.CurrentDataRow["ComebineSubprocessGroup"]}";
+            }
+
+            this.allpartTb.DefaultView.RowFilter = filter;
         }
 
         private void ChangeRowGridQty()
@@ -1472,7 +1701,7 @@ order by ArticleGroup";
                 Cutref = MyUtility.Convert.GetString(s["cutref"]),
                 Poid = MyUtility.Convert.GetString(s["poid"]),
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
-                PatternCode = MyUtility.Convert.GetString(s["patternCode"]),
+                PatternCode = MyUtility.Convert.GetString(s["PatternCode"]),
                 PatternDesc = MyUtility.Convert.GetString(s["PatternDesc"]),
                 Location = MyUtility.Convert.GetString(s["Location"]),
                 Parts = MyUtility.Convert.GetInt(s["Parts"]),
@@ -1500,7 +1729,7 @@ order by ArticleGroup";
                 Cutref = MyUtility.Convert.GetString(s["cutref"]),
                 Poid = MyUtility.Convert.GetString(s["poid"]),
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
-                PatternCode = MyUtility.Convert.GetString(s["patternCode"]),
+                PatternCode = MyUtility.Convert.GetString(s["PatternCode"]),
                 PatternDesc = MyUtility.Convert.GetString(s["PatternDesc"]),
                 Location = MyUtility.Convert.GetString(s["Location"]),
                 Parts = MyUtility.Convert.GetInt(s["Parts"]),
@@ -1598,7 +1827,7 @@ order by ArticleGroup";
             ndr["Ukey"] = selectartDr["Ukey"];
 
             // Annotation
-            DataRow[] adr = this.GarmentTb.Select($"PatternCode='{selectartDr["patternCode"]}'");
+            DataRow[] adr = this.GarmentTb.Select($"PatternCode='{selectartDr["PatternCode"]}'");
             if (adr.Length > 0)
             {
                 ndr["annotation"] = adr[0]["annotation"];
@@ -1694,6 +1923,9 @@ order by ArticleGroup";
                     ndr2["Cutref"] = chdr["cutref"];
                     ndr2["isPair"] = isPair;
                     ndr2["ukey"] = chdr["ukey"];
+                    ndr2["isMain"] = true;
+                    int max = this.patternTb.Select($"ukey = {chdr["ukey"]}").Max(m => MyUtility.Convert.GetInt(m["ComebineSubprocessGroup"]));
+                    ndr2["ComebineSubprocessGroup"] = max + 1;
                     this.patternTb.Rows.Add(ndr2);
                     chdr.Delete();
                 }
@@ -1714,20 +1946,30 @@ order by ArticleGroup";
 
         private void Calpart() // 計算Parts,TotalParts
         {
-            if (this.gridQty.CurrentDataRow == null || this.ArticleSizeTb == null)
+            if (this.gridCutRef.CurrentDataRow == null || this.ArticleSizeTb == null)
             {
                 return;
             }
 
-            string filter = $"iden={this.gridQty.CurrentDataRow["iden"]}";
-            string filter_ukey = $"ukey = {this.gridCutRef.CurrentDataRow["ukey"]}";
-            DataRow[] allpartdr = this.patternTb.Select($"PatternCode='ALLPARTS' and {filter_ukey}");
+            // Allpart 的 ComebineSubprocessGroup=0
+            string filterUkey = $"ukey = {this.gridCutRef.CurrentDataRow["ukey"]}";
+            string filter_ALLPARTS = filterUkey + $" and ComebineSubprocessGroup = 0";
+            DataRow[] allpartdr = this.patternTb.Select($"PatternCode='ALLPARTS' and {filter_ALLPARTS}");
             if (allpartdr.Length > 0)
             {
-                allpartdr[0]["Parts"] = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", filter_ukey));
+                allpartdr[0]["Parts"] = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", filter_ALLPARTS));
             }
 
-            string filterUkey = $"ukey = {this.gridCutRef.CurrentDataRow["ukey"]}";
+            DataRow[] patternDrs = this.patternTb.Select(filterUkey);
+            if (this.chkCombineSubprocess.Checked)
+            {
+                foreach (DataRow dr in patternDrs)
+                {
+                    string fg = filterUkey + $" and ComebineSubprocessGroup = {dr["ComebineSubprocessGroup"]}";
+                    dr["Parts"] = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", fg));
+                }
+            }
+
             int ttlallpart = MyUtility.Convert.GetInt(this.patternTb.Compute("Sum(Parts)", filterUkey));
             this.ArticleSizeTb.Select(filterUkey).ToList().ForEach(r => r["TotalParts"] = ttlallpart);
         }
@@ -1739,7 +1981,20 @@ order by ArticleGroup";
             DataRow ndr = this.patternTb.NewRow();
             ndr["cutref"] = this.gridCutRef.CurrentDataRow["cutref"];
             ndr["ukey"] = this.gridCutRef.CurrentDataRow["ukey"];
+            int max = this.patternTb.Select($"ukey = {ndr["ukey"]}").Max(m => MyUtility.Convert.GetInt(m["ComebineSubprocessGroup"]));
+            ndr["ComebineSubprocessGroup"] = max + 1;
+            ndr["isMain"] = true;
             this.patternTb.Rows.Add(ndr);
+
+            if (this.chkCombineSubprocess.Checked)
+            {
+                DataRow adr = this.allpartTb.NewRow();
+                adr["cutref"] = this.gridCutRef.CurrentDataRow["cutref"];
+                adr["ukey"] = this.gridCutRef.CurrentDataRow["ukey"];
+                adr["ComebineSubprocessGroup"] = max + 1;
+                adr["isMain"] = true;
+                this.allpartTb.Rows.Add(adr);
+            }
         }
 
         private void DeleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1748,6 +2003,11 @@ order by ArticleGroup";
             if (this.gridCutpart.CurrentDataRow["PatternCode"].ToString() == "ALLPARTS")
             {
                 return;
+            }
+
+            if (this.chkCombineSubprocess.Checked)
+            {
+                this.allpartTb.Select($"Ukey = {this.gridCutpart.CurrentDataRow["Ukey"]} and ComebineSubprocessGroup = {this.gridCutpart.CurrentDataRow["comebineSubprocessGroup"]}").Delete();
             }
 
             this.gridCutpart.CurrentDataRow.Delete();
@@ -1760,6 +2020,8 @@ order by ArticleGroup";
             DataRow ndr = this.allpartTb.NewRow();
             ndr["cutref"] = this.gridCutRef.CurrentDataRow["cutref"];
             ndr["ukey"] = this.gridCutRef.CurrentDataRow["ukey"];
+            ndr["ComebineSubprocessGroup"] = this.chkCombineSubprocess.Checked ? this.gridCutpart.CurrentDataRow["ComebineSubprocessGroup"] : 0;
+            ndr["isMain"] = false;
             this.allpartTb.Rows.Add(ndr);
         }
 
@@ -1771,7 +2033,17 @@ order by ArticleGroup";
                 return;
             }
 
-            this.gridAllPart.CurrentDataRow.Delete();
+            if (this.chkCombineSubprocess.Checked && MyUtility.Convert.GetBool(this.gridAllPart.CurrentDataRow["isMain"]))
+            {
+                // 刪除右下資料,若點選是 isMain 那筆,則這組全部刪除
+                this.allpartTb.Select($"Ukey = {this.gridCutpart.CurrentDataRow["Ukey"]} and ComebineSubprocessGroup = {this.gridCutpart.CurrentDataRow["comebineSubprocessGroup"]}").Delete();
+                this.gridCutpart.CurrentDataRow.Delete();
+            }
+            else
+            {
+                this.gridAllPart.CurrentDataRow.Delete();
+            }
+
             this.Calpart();
         }
 
@@ -1811,7 +2083,68 @@ order by ArticleGroup";
         }
         #endregion
 
+        private void ChkCombineSubprocess_CheckedChanged(object sender, EventArgs e)
+        {
+            this.btn_LefttoRight.Enabled = !this.chkCombineSubprocess.Checked;
+            this.gridAllPart.Columns["Annotation"].Visible = !this.chkCombineSubprocess.Checked;
+            this.gridCutpart.Columns["IsPair"].Visible = !this.chkCombineSubprocess.Checked;
+            this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
+            if (this.gridCutRef.CurrentDataRow == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubprocess", DataRowVersion.Original]) == this.chkCombineSubprocess.Checked)
+            {
+                return;
+            }
+
+            this.gridCutRef.CurrentDataRow["IsCombineSubprocess"] = this.chkCombineSubprocess.Checked;
+            this.gridCutRef.CurrentDataRow.AcceptChanges();
+            this.ChangeDefault();
+            this.DeleteAllpartsDatas();
+            this.GridAutoResizeColumns();
+        }
+
+        private void ChkNoneShellNoCreateAllParts_CheckedChanged(object sender, EventArgs e)
+        {
+            this.gridAllPart.Enabled = !this.chkNoneShellNoCreateAllParts.Checked;
+            if (this.gridCutRef.CurrentDataRow == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsNoneShellNoCreateAllParts", DataRowVersion.Original]) == this.chkNoneShellNoCreateAllParts.Checked)
+            {
+                return;
+            }
+
+            this.gridCutRef.CurrentDataRow["IsNoneShellNoCreateAllParts"] = this.chkNoneShellNoCreateAllParts.Checked;
+            this.gridCutRef.CurrentDataRow.AcceptChanges();
+
+            this.ChangeDefault();
+            this.DeleteAllpartsDatas();
+            this.GridAutoResizeColumns();
+        }
+
+        private void DeleteAllpartsDatas()
+        {
+            if (MyUtility.Convert.GetString(this.gridCutRef.CurrentDataRow["FabricKind"]) != "1" && this.chkNoneShellNoCreateAllParts.Checked)
+            {
+                this.allpartTb.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}  and ComebineSubprocessGroup = 0").Delete();
+                this.allpartTb.AcceptChanges();
+                this.Calpart();
+            }
+        }
+
         private void BtnDefault_Click(object sender, EventArgs e)
+        {
+            this.chkCombineSubprocess.Checked = false;
+            this.chkNoneShellNoCreateAllParts.Checked = false;
+            this.ChangeDefault();
+        }
+
+        private void ChangeDefault()
         {
             if (this.CutRefTb == null || this.gridCutRef.CurrentDataRow == null)
             {
@@ -1821,8 +2154,26 @@ order by ArticleGroup";
             long ukey = (long)this.gridCutRef.CurrentDataRow["ukey"];
             this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["ukey"] == ukey).Delete();
             this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["ukey"] == ukey).Delete();
-            DataTable pdt = this.patternTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.patternTb);
+            this.patternTb.AcceptChanges();
+            this.allpartTb.AcceptChanges();
+            DataTable pdt = this.patternTb.Clone();
             DataTable adt = this.allpartTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.allpartTb);
+            DataTable xdt = this.patternTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.patternTb);
+
+            if (!this.chkCombineSubprocess.Checked)
+            {
+                pdt = xdt;
+            }
+            else
+            {
+                pdt = xdt.Select($"isMain = 1").TryCopyToDataTable(this.patternTb);
+                pdt.AsEnumerable().ToList().ForEach(f => f["isPair"] = false);
+                pdt.ImportRow(xdt.Select($"PatternCode = 'ALLPARTS'").FirstOrDefault());
+
+                DataTable psdt = xdt.Select($"PatternCode <> 'ALLPARTS'").TryCopyToDataTable(this.patternTb);
+                psdt.AsEnumerable().ToList().ForEach(f => this.allpartTb.ImportRow(f));
+            }
+
             this.patternTb.Merge(pdt);
             this.allpartTb.Merge(adt);
             this.CheckwithOri();
@@ -1932,7 +2283,7 @@ order by ArticleGroup";
                 Cutref = MyUtility.Convert.GetString(s["cutref"]),
                 Poid = MyUtility.Convert.GetString(s["poid"]),
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
-                PatternCode = MyUtility.Convert.GetString(s["patternCode"]),
+                PatternCode = MyUtility.Convert.GetString(s["PatternCode"]),
                 PatternDesc = MyUtility.Convert.GetString(s["PatternDesc"]),
                 Location = MyUtility.Convert.GetString(s["Location"]),
                 Parts = MyUtility.Convert.GetInt(s["Parts"]),
@@ -1940,17 +2291,21 @@ order by ArticleGroup";
                 Art = MyUtility.Convert.GetString(s["art"]),
                 NoBundleCardAfterSubprocess_String = MyUtility.Convert.GetString(s["NoBundleCardAfterSubprocess_String"]),
                 PostSewingSubProcess_String = MyUtility.Convert.GetString(s["PostSewingSubProcess_String"]),
+                IsMain = MyUtility.Convert.GetBool(s["IsMain"]),
+                ComebineSubprocessGroup = MyUtility.Convert.GetInt(s["ComebineSubprocessGroup"]),
             }).ToList();
             var allPartList = this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new Pattern
             {
                 Cutref = MyUtility.Convert.GetString(s["cutref"]),
                 Poid = MyUtility.Convert.GetString(s["poid"]),
                 Ukey = MyUtility.Convert.GetLong(s["ukey"]),
-                PatternCode = MyUtility.Convert.GetString(s["patternCode"]),
+                PatternCode = MyUtility.Convert.GetString(s["PatternCode"]),
                 PatternDesc = MyUtility.Convert.GetString(s["PatternDesc"]),
                 Location = MyUtility.Convert.GetString(s["Location"]),
                 Parts = MyUtility.Convert.GetInt(s["Parts"]),
                 Ispair = MyUtility.Convert.GetBool(s["ispair"]),
+                IsMain = MyUtility.Convert.GetBool(s["IsMain"]),
+                ComebineSubprocessGroup = MyUtility.Convert.GetInt(s["ComebineSubprocessGroup"]),
             }).ToList();
             var selList = qtydataList.Where(w => ukeyList.Contains(w.Ukey) && !w.Qty.Empty()).ToList(); // 要寫入的中上表
             var idenList = selList.Select(s => s.Iden).ToList();
@@ -2145,7 +2500,7 @@ values
 ");
 
                 // Bundle_Detail_allpart
-                foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey))
+                foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.ComebineSubprocessGroup == 0))
                 {
                     insertSql.Append($@"
 Insert Into Bundle_Detail_allpart(ID, PatternCode, PatternDesc, Parts, isPair, Location) 
@@ -2259,6 +2614,14 @@ INSERT INTO [dbo].[Bundle_Detail_Order]([ID],[BundleNo],[OrderID],[Qty]) Values(
 ");
                             }
                         }
+
+                        // Bundle_Detail_ComebineSubprocess
+                        foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.ComebineSubprocessGroup == pattern.ComebineSubprocessGroup && w.ComebineSubprocessGroup > 0))
+                        {
+                            insertSql.Append($@"
+INSERT INTO [dbo].[Bundle_Detail_ComebineSubprocess]([ID],[BundleNo],[PatternCode],[PatternDesc],[Parts],[Location],[IsPair],[IsMain])
+Values('{bundleID}','{bundleNo}', '{allPart.PatternCode}', '{allPart.PatternDesc}', '{allPart.Parts}', '{allPart.Location}', '{allPart.Ispair}','{allPart.IsMain}');");
+                        }
                     }
                 }
 
@@ -2272,14 +2635,15 @@ delete FtyStyleInnovation
 where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
 
 delete FtyStyleInnovationAllPart
-where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'");
+where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
+");
 
                 // 寫入 [FtyStyleInnovation]
                 foreach (var pattern in selpatternList.Where(w => w.Ukey == first.Ukey))
                 {
                     insertSql.Append($@"
 delete @inertkey
-INSERT INTO [dbo].[FtyStyleInnovation]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[Patterncode],[PatternDesc],[Location],[Parts],[IsPair])
+INSERT INTO [dbo].[FtyStyleInnovation]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair])
 output inserted.Ukey into @inertkey
 VALUES ('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
 ,'{pattern.PatternCode}','{pattern.PatternDesc}','{pattern.Location}','{pattern.Parts}','{pattern.Ispair}')");
@@ -2299,12 +2663,28 @@ Values((select ukey from @inertkey),'{ann[i]}','{ps}','{nb}');
                     }
                 }
 
-                foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey))
+                foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.ComebineSubprocessGroup == 0))
                 {
                     insertSql.Append($@"
-INSERT INTO [dbo].[FtyStyleInnovationAllPart]([MDivisionID],[StyleUkey],[Fabriccombo],[Article],[Patterncode],[PatternDesc],[Location],[Parts],[IsPair])
+INSERT INTO [dbo].[FtyStyleInnovationAllPart]([MDivisionID],[StyleUkey],[Fabriccombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair])
 VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
 ,'{allPart.PatternCode}','{allPart.PatternDesc}','{allPart.Location}','{allPart.Parts}','{allPart.Ispair}')");
+                }
+
+                if (MyUtility.Convert.GetBool(drCut["IsCombineSubProcess"]))
+                {
+                    insertSql.Append($@"
+delete FtyStyleInnovationComebineSubprocess
+where MDivisionID = '{Sci.Env.User.Keyword}' and StyleUkey = {first.StyleUkey} and FabricCombo = '{drCut["Fabriccombo"]}' and Article = '{first.Article}'
+");
+
+                    foreach (var allPart in selallPartList.Where(w => w.Ukey == first.Ukey && w.ComebineSubprocessGroup > 0))
+                    {
+                        insertSql.Append($@"
+INSERT INTO [dbo].[FtyStyleInnovationComebineSubprocess]([MDivisionID],[StyleUkey],[FabricCombo],[Article],[PatternCode],[PatternDesc],[Location],[Parts],[IsPair],[IsMain],[ComebineSubprocessGroup])
+VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{first.Article}'
+,'{allPart.PatternCode}','{allPart.PatternDesc}','{allPart.Location}','{allPart.Parts}','{allPart.Ispair}','{allPart.IsMain}',{allPart.ComebineSubprocessGroup})");
+                    }
                 }
 
                 beforeUkey = first.Ukey;
@@ -2455,7 +2835,7 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             if (samePairCt.Where(w => w.Parts % 2 != 0).Any())
             {
                 DataTable dt = ListToDataTable.ToDataTable(samePairCt.Where(w => w.Parts % 2 != 0).ToList());
-                string msg = @"The following bundle is pair, but parts is not pair, please check Cut Part parts";
+                string msg = @"The following bundle is pair, but Parts is not pair, please check Cut Part Parts";
                 MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
                 return false;
             }

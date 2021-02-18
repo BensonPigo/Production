@@ -171,6 +171,12 @@ namespace Sci.Production.Cutting
 
             /// <inheritdoc/>
             public string PostSewingSubProcess_String { get; set; }
+
+            /// <inheritdoc/>
+            public bool IsMain { get; set; }
+
+            /// <inheritdoc/>
+            public int ComebineSubprocessGroup { get; set; }
         }
     }
 }
