@@ -189,7 +189,7 @@ select distinct  [Selected] = 0 --0
         , t2.PoId--1        
         , seq = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)--2
         , t2.seq1,t2.seq2
-		, [Fabric] = case when po3.FabricType = 'F' then 'Fabric' 
+		, [FabricType] = case when po3.FabricType = 'F' then 'Fabric' 
                              when po3.FabricType = 'A' then 'Accessory'
                         else '' end--3
         , t2.Roll--4
@@ -198,7 +198,7 @@ select distinct  [Selected] = 0 --0
 		, t2.Weight--7
 		, [ActualWeight] = isnull(t2.ActualWeight, 0)--8
 		, t2.Qty--9
-        , [Old_Qty] = t2.Qty
+        , [Old_StockQty] = t2.Qty
         , [diffQty] = 0.00
         , StockUnit = dbo.GetStockUnitBySPSeq (t2.poid, t2.seq1, t2.seq2)--10        
         , TtlQty = convert(varchar(20),
@@ -212,7 +212,7 @@ select distinct  [Selected] = 0 --0
         , t2.Ukey
         --, t1.InvNo,t1.IssueDate
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
-inner join dbo.TransferIn t1 WITH (NOLOCK)  on t2.ID=t2.Id
+inner join dbo.TransferIn t1 WITH (NOLOCK)  on t1.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
@@ -1106,14 +1106,38 @@ and t1.Status = 'Confirmed'
 
             if (this.strFunction != "P33")
             {
-                if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
-                {
-                    sqlcmd += $@" and t2.Poid >= '{this.txtSPNoStart.Text}'" + Environment.NewLine;
-                }
 
-                if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                switch (this.strFunction)
                 {
-                    sqlcmd += $@" and t2.Poid <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
+                    case "P22":
+                    case "P23":
+                    case "P24":
+                    case "P36":
+                    case "P31":
+                    case "P32":
+                        if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
+                        {
+                            sqlcmd += $@" and t2.FromPoId >= '{this.txtSPNoStart.Text}'" + Environment.NewLine;
+                        }
+
+                        if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                        {
+                            sqlcmd += $@" and t2.FromPoId <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
+                        }
+
+                        break;
+                    default:
+                        if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
+                        {
+                            sqlcmd += $@" and t2.Poid >= '{this.txtSPNoStart.Text}'" + Environment.NewLine;
+                        }
+
+                        if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                        {
+                            sqlcmd += $@" and t2.Poid <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
+                        }
+
+                        break;
                 }
 
                 if (!MyUtility.Check.Empty(this.strTransID))
@@ -1123,7 +1147,7 @@ and t1.Status = 'Confirmed'
 
                 if (!MyUtility.Check.Empty(this.dateCreate.Value1) && !MyUtility.Check.Empty(this.dateCreate.Value2))
                 {
-                    sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                    sqlcmd += $@" and convert(date, t1.AddDate) between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
                 }
 
                 if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
@@ -1159,8 +1183,8 @@ and t1.Status = 'Confirmed'
                 this.listControlBindingSource1.DataSource = dtSource;
                 this.gridUpdate.DataSource = this.listControlBindingSource1.DataSource;
                 this.SetGrid();
-                this.ChangeGridColor();
                 this.Grid_Filter();
+                this.ChangeGridColor();
             }
             else
             {
@@ -1183,20 +1207,26 @@ and t1.Status = 'Confirmed'
                         if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
-                            dr["Qty"] = e.FormattedValue;
-                            if (!MyUtility.Check.Empty(dr["pounit"]) && !MyUtility.Check.Empty(dr["stockunit"]))
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                string rate = MyUtility.GetValue.Lookup($@"select RateValue from dbo.View_Unitrate v where v.FROM_U ='{dr["pounit"]}' and v.TO_U='{dr["stockunit"]}'");
-                                dr["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
-                            }
+                                dr["Qty"] = e.FormattedValue;
+                                if (!MyUtility.Check.Empty(dr["pounit"]) && !MyUtility.Check.Empty(dr["stockunit"]))
+                                {
+                                    string rate = MyUtility.GetValue.Lookup($@"select RateValue from dbo.View_Unitrate v where v.FROM_U ='{dr["pounit"]}' and v.TO_U='{dr["stockunit"]}'");
+                                    dr["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
+                                }
 
-                            // 計算差額, 用來更新庫存
-                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["stockqty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+                                // 計算差額, 用來更新庫存
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["stockqty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
 
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
-                            {
-                                e.Cancel = true;
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    e.Cancel = true;
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1207,16 +1237,22 @@ and t1.Status = 'Confirmed'
                         if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
-                            dr["Qty"] = e.FormattedValue;
-                            dr["StockQty"] = e.FormattedValue;
-
-                            // 計算差額, 用來更新庫存
-                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
-
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                e.Cancel = true;
+                                dr["Qty"] = e.FormattedValue;
+                                dr["StockQty"] = e.FormattedValue;
+
+                                // 計算差額, 用來更新庫存
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    e.Cancel = true;
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1227,15 +1263,21 @@ and t1.Status = 'Confirmed'
                         if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
-                            dr["Qty"] = e.FormattedValue;
-
-                            // 計算差額, 用來更新庫存
-                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
-
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                e.Cancel = true;
+                                dr["Qty"] = e.FormattedValue;
+
+                                // 計算差額, 用來更新庫存
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    e.Cancel = true;
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1248,35 +1290,41 @@ and t1.Status = 'Confirmed'
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
                             DataTable dtDetail = (DataTable)this.listControlBindingSource1.DataSource;
-                            dr["Qty"] = e.FormattedValue;
-
-                            // 加總第三層Qty ,並更新到第二層Qty
-                            decimal ttlQty = Math.Round(
-                                    dtDetail.AsEnumerable()
-                                    .Where(r => r["ukey"].ToString() == dr["ukey"].ToString())
-                                    .Sum(r => MyUtility.Convert.GetDecimal(r["Qty"])), 2);
-
-                            // 計算差額, 用來更新庫存
-                            foreach (DataRow item in dtDetail.Rows)
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                if (item["Ukey"].ToString() == dr["Ukey"].ToString())
+                                dr["Qty"] = e.FormattedValue;
+
+                                // 加總第三層Qty ,並更新到第二層Qty
+                                decimal ttlQty = Math.Round(
+                                        dtDetail.AsEnumerable()
+                                        .Where(r => r["ukey"].ToString() == dr["ukey"].ToString())
+                                        .Sum(r => MyUtility.Convert.GetDecimal(r["Qty"])), 2);
+
+                                // 計算差額, 用來更新庫存
+                                foreach (DataRow item in dtDetail.Rows)
                                 {
-                                    item["Ttl_Qty"] = ttlQty;
-                                    if (this.strFunction == "P11")
+                                    if (item["Ukey"].ToString() == dr["Ukey"].ToString())
                                     {
-                                        item["diffQty"] = ttlQty - MyUtility.Convert.GetDecimal(item["Old_Qty"]);
-                                    }
-                                    else
-                                    {
-                                        item["diffQty"] = MyUtility.Convert.GetDecimal(item["Qty"]) - MyUtility.Convert.GetDecimal(item["Old_Qty"]);
+                                        item["Ttl_Qty"] = ttlQty;
+                                        if (this.strFunction == "P11")
+                                        {
+                                            item["diffQty"] = ttlQty - MyUtility.Convert.GetDecimal(item["Old_Qty"]);
+                                        }
+                                        else
+                                        {
+                                            item["diffQty"] = MyUtility.Convert.GetDecimal(item["Qty"]) - MyUtility.Convert.GetDecimal(item["Old_Qty"]);
+                                        }
                                     }
                                 }
-                            }
 
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
-                            {
-                                e.Cancel = true;
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    e.Cancel = true;
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1297,15 +1345,21 @@ and t1.Status = 'Confirmed'
                         if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
-                            dr["Qty"] = e.FormattedValue;
-
-                            // 計算差額, 用來更新庫存
-                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
-
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                e.Cancel = true;
+                                dr["Qty"] = e.FormattedValue;
+
+                                // 計算差額, 用來更新庫存
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
+
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    e.Cancel = true;
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1318,17 +1372,23 @@ and t1.Status = 'Confirmed'
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
 
-                            // Qty = QtyAfter
-                            dr["Qty"] = e.FormattedValue;
-
-                            // 計算差額, 用來更新庫存
-                            dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
-                            dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["qtybefore"]);
-
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                e.Cancel = true;
+                                // Qty = QtyAfter
+                                dr["Qty"] = e.FormattedValue;
+
+                                // 計算差額, 用來更新庫存
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
+                                dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["qtybefore"]);
+
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    e.Cancel = true;
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1339,7 +1399,6 @@ and t1.Status = 'Confirmed'
                         if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
-
                             if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["QtyBefore"]))
                             {
                                 MyUtility.Msg.WarningBox(@"Current Qty cannot be equal Original Qty!!");
@@ -1347,17 +1406,23 @@ and t1.Status = 'Confirmed'
                                 return;
                             }
 
-                            if (string.Compare(dr["qtyafter"].ToString(), e.FormattedValue.ToString()) != 0)
+                            if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                             {
-                                dr["Qty"] = e.FormattedValue; // 計算差額, 用來更新庫存
-                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
-                                dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["qtybefore"]);
-                            }
+                                if (string.Compare(dr["qtyafter"].ToString(), e.FormattedValue.ToString()) != 0)
+                                {
+                                    dr["Qty"] = e.FormattedValue; // 計算差額, 用來更新庫存
+                                    dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
+                                    dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["qtybefore"]);
+                                }
 
-                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
-                            if (!this.ChkFtyinventory_Balance(dt, true))
-                            {
-                                // e.Cancel = true; // 依照原P43,balance Qty不足只提示
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
+                                if (!this.ChkFtyinventory_Balance(dt, true))
+                                {
+                                    // e.Cancel = true; // 依照原P43,balance Qty不足只提示
+                                }
+
+                                dr["Selected"] = "1";
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -1369,6 +1434,8 @@ and t1.Status = 'Confirmed'
                         {
                             DataRow dr = this.gridUpdate.GetDataRow(e.RowIndex);
 
+
+
                             if (MyUtility.Convert.GetDecimal(e.FormattedValue) == MyUtility.Convert.GetDecimal(dr["QtyBefore"]))
                             {
                                 MyUtility.Msg.WarningBox(@"Current Qty cannot be equal Original Qty!!");
@@ -1378,21 +1445,27 @@ and t1.Status = 'Confirmed'
 
                             if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                             {
-                                if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
+                                if (MyUtility.Convert.GetDecimal(dr["Qty"]) != MyUtility.Convert.GetDecimal(e.FormattedValue))
                                 {
-                                    dr["Qty"] = 0;
-                                }
-                                else
-                                {
-                                    dr["Qty"] = e.FormattedValue; // 計算差額, 用來更新庫存
-                                    dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
-                                }
+                                    if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
+                                    {
+                                        dr["Qty"] = 0;
+                                    }
+                                    else
+                                    {
+                                        dr["Qty"] = e.FormattedValue; // 計算差額, 用來更新庫存
+                                        dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
+                                    }
 
-                                dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["qtybefore"]) - MyUtility.Convert.GetDecimal(dr["Qty"]);
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
+                                    dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["qtybefore"]) - MyUtility.Convert.GetDecimal(dr["Qty"]);
+                                    DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
+                                    if (!this.ChkFtyinventory_Balance(dt, true))
+                                    {
+                                        e.Cancel = true;
+                                    }
+
+                                    dr["Selected"] = "1";
+                                    dr.EndEdit();
                                 }
                             }
                         }
@@ -1463,7 +1536,7 @@ and t1.Status = 'Confirmed'
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
                     .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                     .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                    .Text("Fabric", header: "Fabric \r\n Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("FabricType", header: "Fabric \r\n Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -1487,6 +1560,7 @@ and t1.Status = 'Confirmed'
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                     .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    .Text("poid", header: "SP#", width: Widths.AnsiChars(11), iseditingreadonly: true) // 1
                     .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Text("Colorid", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -1552,6 +1626,7 @@ and t1.Status = 'Confirmed'
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                     .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    .Text("poid", header: "SP#", width: Widths.AnsiChars(11), iseditingreadonly: true)
                     .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(25), iseditingreadonly: true)
                     .Text("Refno", header: "Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                     .Text("ColorID", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -1868,7 +1943,7 @@ and t1.Status = 'Confirmed'
             }
 
             // ErrorMsg 是空值,代表可以confirmed才能勾選
-            if (data["SentToWMS"].ToString() == "V" && !MyUtility.Check.Empty(data["CompleteTime"]))
+            if (!MyUtility.Check.Empty(data["CompleteTime"]))
             {
                 this.col_chk.IsEditable = false;
                 this.col_Qty.IsEditingReadOnly = true;
@@ -1983,20 +2058,20 @@ and t1.Status = 'Confirmed'
                             return;
                         }
 
-                        #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr in dtDistID.Rows)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
+                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), strTable))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
+                        #region update 先檢查WMS是否傳送成功
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), strTable))
+                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
@@ -2228,16 +2303,6 @@ inner join #tmp s on t2.Ukey = s.Ukey
                             return;
                         }
 
-                        #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                        {
-                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
-
                         #region 檢查庫存項WMSLock
                         foreach (DataRow dr in dtDistID.Rows)
                         {
@@ -2267,6 +2332,17 @@ inner join #tmp s on t2.Ukey = s.Ukey
                             }
                         }
                         #endregion
+
+                        #region update 先檢查WMS是否傳送成功
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        {
+                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region 更新庫存數量  ftyinventory
 
                         // ftyinventory
@@ -2472,6 +2548,16 @@ inner join #tmp s on t.id = s.id
                             return;
                         }
 
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "Adjust_Detail"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -2482,15 +2568,6 @@ inner join #tmp s on t.id = s.id
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "Adjust_Detail"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
                         #region 更新 MdivisionPoDetail --
                         var data_MD_8F32F = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                              group b by new
@@ -2797,16 +2874,6 @@ inner join #tmp s on t.id = s.id
                             return;
                         }
 
-                        #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                        {
-                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable(), "Revise", true))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
-
                         #region 檢查庫存項WMSLock
                         foreach (DataRow dr in dtDistID.Rows)
                         {
@@ -2830,6 +2897,16 @@ inner join #tmp s on t.id = s.id
                                                   dyelot = b.Field<string>("dyelot"),
                                               }).ToList();
                         upd_Fty_2T = Prgs.UpdateFtyInventory_IO_P99(2);
+                        #endregion
+
+                        #region update 先檢查WMS是否傳送成功
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        {
+                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+                        }
                         #endregion
 
                         #region -- update mdivisionPoDetail --
@@ -2973,6 +3050,16 @@ inner join #tmp s on t.id = s.id
                             return;
                         }
 
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "BorrowBack_Detail_From"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -2983,15 +3070,6 @@ inner join #tmp s on t.id = s.id
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "BorrowBack_Detail_From"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
                         #region 更新 MdivisionPoDetail --
                         var data_MD_4T = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                           group b by new
@@ -3201,6 +3279,16 @@ inner join #tmp s on t.id = s.id
                             return;
                         }
 
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "SubTransfer_Detail_From"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -3211,15 +3299,6 @@ inner join #tmp s on t.id = s.id
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "SubTransfer_Detail_From"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
                         #region -- 更新mdivisionpodetail B倉數 --
                         var data_MD_8T_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                                       group b by new
@@ -3401,6 +3480,17 @@ inner join #tmp s on t.Ukey = s.Ukey
                             #endregion
                         }
 
+                        #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+                        foreach (DataRow dr_wms in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSCompleteTime(dr_wms["ID"].ToString(), strTable))
+                            {
+                                return;
+                            }
+                        }
+
+                        #endregion
+
                         #region UnConfirmed 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -3482,17 +3572,6 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                         upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO_P99(70);
                         upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO_P99(71);
-
-                        #endregion
-
-                        #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-                        foreach (DataRow dr_wms in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSCompleteTime(dr_wms["ID"].ToString(), strTable))
-                            {
-                                return;
-                            }
-                        }
 
                         #endregion
 
@@ -3841,6 +3920,16 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                             return;
                         }
 
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr_WMSLock in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr_WMSLock["ID"].ToString(), "Adjust_Detail"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -3851,15 +3940,6 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_WMSLock in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_WMSLock["ID"].ToString(), "Adjust_Detail"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
                         #region 更新 MdivisionPoDetail --
                         var data_MD_8F32F = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                              group b by new
@@ -4200,6 +4280,16 @@ inner join #tmp s on t.Ukey = s.Ukey
                             return;
                         }
 
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr_P37 in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr_P37["ID"].ToString(), "ReturnReceipt_Detail"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -4210,15 +4300,6 @@ inner join #tmp s on t.Ukey = s.Ukey
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_P37 in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_P37["ID"].ToString(), "ReturnReceipt_Detail"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
                         #region -- 更新庫存數量  ftyinventory --
 
                         var data_Fty_2T_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable()
@@ -4370,6 +4451,16 @@ inner join #tmp s on t.ukey = s.ukey
                             return;
                         }
 
+                        #region 檢查庫存項WMSLock
+                        foreach (DataRow dr_P31 in dtDistID.Rows)
+                        {
+                            if (!Prgs.ChkWMSLock(dr_P31["ID"].ToString(), "BorrowBack_Detail_To"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
@@ -4380,15 +4471,7 @@ inner join #tmp s on t.ukey = s.ukey
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_P31 in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_P31["ID"].ToString(), "BorrowBack_Detail_To"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
+
                         #region -- 更新MdivisionPoDetail 借出數 --
                         var data_MD_4F_P31 = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                               group b by new
@@ -4589,16 +4672,6 @@ inner join #tmp s on t.Ukey = s.Ukey
                             return;
                         }
 
-                        #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                        {
-                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable(), "delete", true))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
-
                         #region 檢查庫存項WMSLock
                         foreach (DataRow dr_SubTransfer in dtDistID.Rows)
                         {
@@ -4609,6 +4682,16 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                             // 檢查資料有任一筆WMS已完成, 就不能unConfirmed
                             if (!Prgs.ChkWMSCompleteTime(dr_SubTransfer["ID"].ToString(), "SubTransfer_Detail_To"))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
+                        #region update 先檢查WMS是否傳送成功
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        {
+                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -5103,7 +5186,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
 
                 case "P18":
-                    symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_Qty)";
+                    symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -5553,7 +5636,7 @@ WHERE FTI.StockType='O'
         /// <param name="canEdit">是否能編輯</param>
         public void Initl(bool canEdit)
         {
-            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @",,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
+            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
 
             // MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"A,Accessory");
@@ -5603,7 +5686,6 @@ WHERE FTI.StockType='O'
         {
             // 設定detailGrid Rows 是否可以編輯
             this.gridUpdate.RowEnter += this.Detailgrid_RowEnter;
-            this.gridUpdate.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             for (int index = 0; index < this.gridUpdate.Rows.Count; index++)
             {
                 DataRow dr = this.gridUpdate.GetDataRow(index);
@@ -5612,10 +5694,11 @@ WHERE FTI.StockType='O'
                     return;
                 }
 
+                this.gridUpdate.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
                 int i = index;
 
                 // 反灰不能勾選
-                if (dr["SentToWMS"].ToString() == "V" && !MyUtility.Check.Empty(dr["CompleteTime"]))
+                if (!MyUtility.Check.Empty(dr["CompleteTime"]))
                 {
                     this.gridUpdate.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                 }
