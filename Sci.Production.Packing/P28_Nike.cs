@@ -34,6 +34,7 @@ namespace Sci.Production.Packing
             this.EditMode = true;
             DataGridViewGeneratorTextColumnSettings col_PackingListCandidate = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings col_Overwrite = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_Overwrite.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
             col_PackingListCandidate.CellMouseClick += (s, e) =>
             {
@@ -167,10 +168,10 @@ namespace Sci.Production.Packing
             this.Helper.Controls.Grid.Generator(this.gridMatch)
               .Text("PONumber", header: "PONumber", width: Widths.AnsiChars(13), iseditingreadonly: true)
               .Text("POItem", header: "POItem", width: Widths.AnsiChars(13), iseditingreadonly: true)
-              .Text("PONumber", header: "PONumber", width: Widths.AnsiChars(13), iseditingreadonly: true)
               .Text("PLPOItemTotalCartons", header: "PLPOItem" + Environment.NewLine + "TotalCartons", width: Widths.AnsiChars(13), iseditingreadonly: true)
               .CheckBox("MultipleMatches", header: "Multiple" + Environment.NewLine + "Matches", width: Widths.AnsiChars(4), iseditable: false)
               .Text("PackingListID", header: "P/L" + Environment.NewLine + "Candidate", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_PackingListCandidate)
+              .CheckBox("ExistsSSCC", header: "Cust CTN# already exists", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: false)
               .CheckBox("Overwrite", header: "Overwrite", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: true, settings: col_Overwrite)
               ;
         }

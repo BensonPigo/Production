@@ -75,7 +75,7 @@ namespace Sci.Production.Packing
 ;
 
             DataGridViewGeneratorCheckBoxColumnSettings col_Overwrite = new DataGridViewGeneratorCheckBoxColumnSettings();
-
+            col_Overwrite.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             col_Overwrite.CellEditable += (s, e) =>
             {
                 DataRow dr = this.gridMatch.GetDataRow(e.RowIndex);
