@@ -183,7 +183,7 @@ namespace Sci.Production.Packing
               .Date("ShipDate", header: "Ship. Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
               .CheckBox("MultipleMatches", header: "Multiple" + Environment.NewLine + "Matches", width: Widths.AnsiChars(4), iseditable: false)
               .Text("PackingListID", header: "P/L" + Environment.NewLine + "Candidate", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_PackingListCandidate)
-              .CheckBox("ExistsSSCC", header: "Cust CTN# already exists", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: false)
+              .CheckBox("ExistsSSCC", header: "Cust CTN#" + Environment.NewLine + "already exists", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: false)
               .CheckBox("Overwrite", header: "Overwrite", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: true, settings: col_Overwrite)
               ;
         }
@@ -568,6 +568,8 @@ namespace Sci.Production.Packing
                     .Where(o => (MyUtility.Convert.GetBool(o["ExistsSSCC"]) && MyUtility.Convert.GetBool(o["Overwrite"])) || !MyUtility.Convert.GetBool(o["ExistsSSCC"]))
                     .Select(o => new { Filename = MyUtility.Convert.GetString(o["Filename"]), PackingListID = MyUtility.Convert.GetString(o["PackingListID"]) }).Distinct();
 
+                var packingIds = needUpdateFile.Select(o => o.PackingListID).JoinToString(",");
+
                 // 並不是所有資料都需要更新，因此加上註記
                 foreach (var item in needUpdateFile)
                 {
@@ -585,13 +587,6 @@ namespace Sci.Production.Packing
                     {
                         packingFileDt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == item.Filename).FirstOrDefault()["Result"] = "Success";
 
-                        #region ISP20200757 資料交換 - Sunrise
-
-                        Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(packingListID, string.Empty))
-                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-
-                        #endregion
-
                         #region ISP20201607 資料交換 - Gensong
 
                         // 不透過Call API的方式，自己組合，傳送API
@@ -605,6 +600,14 @@ namespace Sci.Production.Packing
                         packingFileDt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == item.Filename).FirstOrDefault()["Result"] = "Fail";
                     }
                 }
+
+                #region ISP20200757 資料交換 - Sunrise
+
+                // Sunrise需要將所有Packing串起來，在SentPackingToFinishingProcesses裡面切割10筆傳一次
+                Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(packingIds, string.Empty))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+
+                #endregion
             }
             catch (Exception ex)
             {
