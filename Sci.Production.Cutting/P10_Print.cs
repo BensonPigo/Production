@@ -499,7 +499,7 @@ order by x.[Bundle]");
                     }).ToList();
 
                     this.ShowWaitMessage("Process Print!");
-                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(data, 0, rfCardErase);
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(this, data, 0, rfCardErase);
                     if (!result)
                     {
                         this.HideWaitMessage();

@@ -57,7 +57,7 @@ namespace Sci.Production.Cutting
                     bool rfCardErase = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select RFCardEraseBeforePrinting from [System]"));
                     this.ShowWaitMessage("Process Print!");
                     this.print.Enabled = false;
-                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(this.p10_PrintDatas, 0, rfCardErase);
+                    DualResult result = Prg.BundleRFCard.BundleRFCardPrintAndRetry(this, this.p10_PrintDatas, 0, rfCardErase);
                     this.print.Enabled = true;
                     this.HideWaitMessage();
                     if (!result)

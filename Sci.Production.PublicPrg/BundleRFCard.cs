@@ -440,12 +440,13 @@ from
         /// <summary>
         /// Auto Bundle RFCard Print With Output Error Card
         /// </summary>
+        /// <param name="frm">Form</param>
         /// <param name="data">List.P10_PrintData</param>
         /// <param name="nowIndex">now index</param>
         /// <param name="returnIndex">return Index</param>
         /// <param name="isEraser">is Eraser</param>
         /// <returns>DualResult</returns>
-        public static DualResult BundleRFCardPrint(List<P10_PrintData> data, int nowIndex, out int returnIndex, bool isEraser = false)
+        public static DualResult BundleRFCardPrint(Form frm, List<P10_PrintData> data, int nowIndex, out int returnIndex, bool isEraser = false)
         {
             DualResult result = new DualResult(false);
             BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
@@ -458,6 +459,8 @@ from
                     while (nowIndex <= data.Count - 1)
                     {
                         returnIndex = nowIndex;
+                        frm.HideWaitMessage();
+                        frm.ShowWaitMessage((nowIndex + 1).ToString() + "/" + data.Count());
 
                         // C31
                         result = CardFromStacker(bundleRFCard);
@@ -633,11 +636,12 @@ from
         /// <summary>
         /// RF Print 列印且出錯顯示confirmbox，選擇Continue 則重複執行，直到Stop或完成
         /// </summary>
+        /// <param name="frm">Form</param>
         /// <param name="data">List.P10_PrintData</param>
         /// <param name="nowIndex">DataTable now index</param>
         /// <param name="isEraser">Is Eraser</param>
         /// <returns>DualResult</returns>
-        public static DualResult BundleRFCardPrintAndRetry(List<P10_PrintData> data, int nowIndex, bool isEraser = false)
+        public static DualResult BundleRFCardPrintAndRetry(Form frm, List<P10_PrintData> data, int nowIndex, bool isEraser = false)
         {
             DualResult result = new DualResult(false);
 
@@ -648,7 +652,8 @@ from
 
             string confirmTitle = "RF Print Error";
             int returnIndex = 0;
-            while (!(result = BundleRFCardPrint(data, nowIndex, out returnIndex, isEraser)))
+
+            while (!(result = BundleRFCardPrint(frm, data, nowIndex, out returnIndex, isEraser)))
             {
                 nowIndex = returnIndex;
                 DialogResult confirmResult;
