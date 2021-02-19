@@ -67,6 +67,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.numTotalSMV = new Sci.Win.UI.NumericBox();
+            this.gridIcon1 = new Sci.Win.UI.GridIcon();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -78,6 +79,7 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.ui_pnlBatchUpdate.SuspendLayout();
             this.SuspendLayout();
@@ -208,7 +210,9 @@
             // 
             // browse
             // 
+            this.browse.Controls.Add(this.gridIcon1);
             this.browse.Size = new System.Drawing.Size(987, 513);
+            this.browse.Controls.SetChildIndex(this.gridIcon1, 0);
             // 
             // tabs
             // 
@@ -395,7 +399,7 @@
             // 
             // btnNewVersion
             // 
-            this.btnNewVersion.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnNewVersion.Enabled = false;
             this.btnNewVersion.Location = new System.Drawing.Point(794, 4);
             this.btnNewVersion.Name = "btnNewVersion";
             this.btnNewVersion.Size = new System.Drawing.Size(103, 30);
@@ -406,7 +410,7 @@
             // 
             // btnNewStatus
             // 
-            this.btnNewStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnNewStatus.Enabled = false;
             this.btnNewStatus.Location = new System.Drawing.Point(794, 38);
             this.btnNewStatus.Name = "btnNewStatus";
             this.btnNewStatus.Size = new System.Drawing.Size(103, 30);
@@ -656,8 +660,17 @@
             0,
             0});
             // 
+            // gridIcon1
+            // 
+            this.gridIcon1.Location = new System.Drawing.Point(8, 41);
+            this.gridIcon1.Name = "gridIcon1";
+            this.gridIcon1.Size = new System.Drawing.Size(100, 32);
+            this.gridIcon1.TabIndex = 3;
+            this.gridIcon1.Text = "gridIcon1";
+            // 
             // P01
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(995, 575);
             this.DefaultControl = "txtStyle";
             this.DefaultControlForEdit = "txtStyle";
@@ -666,11 +679,14 @@
             this.GridAlias = "TimeStudy_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "Seq";
+            this.IsSupportConfirm = true;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "ID";
             this.Name = "P01";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P01. Factory GSD";
+            this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "TimeStudy";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -687,6 +703,7 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.ui_pnlBatchUpdate.ResumeLayout(false);
             this.ui_pnlBatchUpdate.PerformLayout();
@@ -736,5 +753,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label3;
         private Win.UI.NumericBox numTotalSMV;
+        private Win.UI.GridIcon gridIcon1;
     }
 }

@@ -215,9 +215,10 @@ order by td.Seq",
         {
             base.OnDetailEntered();
             this.GenCD(null, null);  // 撈CD Code
+            bool isConfirmed = this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed");
             bool canEdit = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. Factory GSD", "CanEdit");
-            this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
-            this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
+            this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
+            this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
             this.btnHistory.Enabled = !this.EditMode && this.CurrentMaintain != null;
             this.btnStdGSDList.Enabled = !this.EditMode && this.CurrentMaintain != null;
             this.btnArtSum.Enabled = this.CurrentMaintain != null;
@@ -1190,6 +1191,42 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             P01_Print callNextForm = new P01_Print(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             return base.ClickPrint();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            string sqlcmd = $@"
+update t 
+    set t.Status = 'Confirmed', 
+        t.EditName = '{Env.User.UserID}', 
+        t.EditDate = Getdate()
+from TimeStudy t 
+where StyleID = '{this.CurrentMaintain["StyleID"]}' 
+and SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
+and ComboType = '{this.CurrentMaintain["ComboType"]}' 
+and BrandID = '{this.CurrentMaintain["BrandID"]}'";
+
+            DBProxy.Current.Execute("Production", sqlcmd);
+            base.ClickConfirm();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            string sqlcmd = $@"
+update t 
+    set t.Status = 'New', 
+        t.EditName = '{Env.User.UserID}', 
+        t.EditDate = Getdate()
+from TimeStudy t 
+where StyleID = '{this.CurrentMaintain["StyleID"]}' 
+and SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
+and ComboType = '{this.CurrentMaintain["ComboType"]}' 
+and BrandID = '{this.CurrentMaintain["BrandID"]}'";
+
+            DBProxy.Current.Execute("Production", sqlcmd);
+            base.ClickUnconfirm();
         }
 
         // Style PopUp

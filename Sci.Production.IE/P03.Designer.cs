@@ -106,6 +106,12 @@
             this.grid1 = new Sci.Win.UI.Grid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtFactory = new Sci.Production.Class.Txtfactory();
+            this.lbGSDVersion = new Sci.Win.UI.Label();
+            this.lbGSDStatus = new Sci.Win.UI.Label();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.displayGSDStatus = new Sci.Win.UI.DisplayBox();
+            this.displayGSDVersion = new Sci.Win.UI.DisplayBox();
+            this.labVersionWarning = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -127,6 +133,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labVersionWarning);
+            this.masterpanel.Controls.Add(this.displayGSDVersion);
+            this.masterpanel.Controls.Add(this.displayGSDStatus);
+            this.masterpanel.Controls.Add(this.lbGSDVersion);
+            this.masterpanel.Controls.Add(this.lbGSDStatus);
             this.masterpanel.Controls.Add(this.txtFactory);
             this.masterpanel.Controls.Add(this.labelOprts);
             this.masterpanel.Controls.Add(this.numEffieiency);
@@ -191,7 +202,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelVersion);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(996, 206);
+            this.masterpanel.Size = new System.Drawing.Size(1153, 206);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
@@ -257,6 +268,11 @@
             this.masterpanel.Controls.SetChildIndex(this.numEffieiency, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelOprts, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbGSDStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbGSDVersion, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayGSDStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayGSDVersion, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
             // 
             // detailpanel
             // 
@@ -265,11 +281,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.None;
             this.detailpanel.Location = new System.Drawing.Point(225, 247);
-            this.detailpanel.Size = new System.Drawing.Size(316, 274);
+            this.detailpanel.Size = new System.Drawing.Size(473, 274);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(881, 171);
+            this.gridicon.Location = new System.Drawing.Point(1035, 170);
             // 
             // refresh
             // 
@@ -277,7 +293,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(316, 274);
+            this.detailgridcont.Size = new System.Drawing.Size(473, 274);
             // 
             // detail2
             // 
@@ -294,12 +310,12 @@
             // detail
             // 
             this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(996, 661);
+            this.detail.Size = new System.Drawing.Size(1153, 661);
             // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.splitContainer1);
-            this.detailcont.Size = new System.Drawing.Size(996, 623);
+            this.detailcont.Size = new System.Drawing.Size(1153, 623);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.splitContainer1, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
@@ -307,16 +323,16 @@
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 623);
-            this.detailbtm.Size = new System.Drawing.Size(996, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1153, 38);
             // 
             // browse
             // 
             this.browse.Location = new System.Drawing.Point(4, 24);
-            this.browse.Size = new System.Drawing.Size(996, 661);
+            this.browse.Size = new System.Drawing.Size(1153, 661);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1004, 689);
+            this.tabs.Size = new System.Drawing.Size(1161, 689);
             // 
             // createby
             // 
@@ -664,18 +680,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape10,
-            this.lineShape9,
-            this.lineShape8,
-            this.lineShape7,
-            this.lineShape6,
-            this.lineShape5,
-            this.lineShape4,
-            this.lineShape3,
-            this.lineShape2,
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(996, 206);
+            this.shapeContainer1.Size = new System.Drawing.Size(1153, 206);
             this.shapeContainer1.TabIndex = 27;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1196,7 +1201,7 @@
             // btnNotHitTargetReason
             // 
             this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnNotHitTargetReason.Location = new System.Drawing.Point(852, 7);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1006, 6);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
             this.btnNotHitTargetReason.Size = new System.Drawing.Size(139, 43);
             this.btnNotHitTargetReason.TabIndex = 31;
@@ -1207,7 +1212,7 @@
             // btnCopyFromOtherLineMapping
             // 
             this.btnCopyFromOtherLineMapping.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopyFromOtherLineMapping.Location = new System.Drawing.Point(852, 54);
+            this.btnCopyFromOtherLineMapping.Location = new System.Drawing.Point(1006, 53);
             this.btnCopyFromOtherLineMapping.Name = "btnCopyFromOtherLineMapping";
             this.btnCopyFromOtherLineMapping.Size = new System.Drawing.Size(139, 51);
             this.btnCopyFromOtherLineMapping.TabIndex = 32;
@@ -1218,7 +1223,7 @@
             // btnCopyFromGSD
             // 
             this.btnCopyFromGSD.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopyFromGSD.Location = new System.Drawing.Point(852, 109);
+            this.btnCopyFromGSD.Location = new System.Drawing.Point(1006, 108);
             this.btnCopyFromGSD.Name = "btnCopyFromGSD";
             this.btnCopyFromGSD.Size = new System.Drawing.Size(139, 30);
             this.btnCopyFromGSD.TabIndex = 33;
@@ -1350,7 +1355,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(242, 417);
+            this.grid1.Size = new System.Drawing.Size(281, 417);
             this.grid1.TabIndex = 2;
             // 
             // splitContainer1
@@ -1362,8 +1367,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid1);
-            this.splitContainer1.Size = new System.Drawing.Size(996, 417);
-            this.splitContainer1.SplitterDistance = 750;
+            this.splitContainer1.Size = new System.Drawing.Size(1153, 417);
+            this.splitContainer1.SplitterDistance = 868;
             this.splitContainer1.TabIndex = 3;
             // 
             // txtFactory
@@ -1381,10 +1386,77 @@
             this.txtFactory.Size = new System.Drawing.Size(66, 21);
             this.txtFactory.TabIndex = 75;
             // 
+            // lbGSDVersion
+            // 
+            this.lbGSDVersion.Location = new System.Drawing.Point(839, 35);
+            this.lbGSDVersion.Name = "lbGSDVersion";
+            this.lbGSDVersion.Size = new System.Drawing.Size(80, 21);
+            this.lbGSDVersion.TabIndex = 79;
+            this.lbGSDVersion.Text = "GSD Version";
+            // 
+            // lbGSDStatus
+            // 
+            this.lbGSDStatus.Location = new System.Drawing.Point(839, 7);
+            this.lbGSDStatus.Name = "lbGSDStatus";
+            this.lbGSDStatus.Size = new System.Drawing.Size(80, 21);
+            this.lbGSDStatus.TabIndex = 78;
+            this.lbGSDStatus.Text = "GSD Status";
+            // 
+            // shapeContainer2
+            // 
+            this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape10,
+            this.lineShape9,
+            this.lineShape8,
+            this.lineShape7,
+            this.lineShape6,
+            this.lineShape5,
+            this.lineShape4,
+            this.lineShape3,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer2.Size = new System.Drawing.Size(1153, 206);
+            this.shapeContainer2.TabIndex = 27;
+            this.shapeContainer2.TabStop = false;
+            // 
+            // displayGSDStatus
+            // 
+            this.displayGSDStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGSDStatus.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TimeStudyPhase", true));
+            this.displayGSDStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGSDStatus.Location = new System.Drawing.Point(922, 7);
+            this.displayGSDStatus.Name = "displayGSDStatus";
+            this.displayGSDStatus.Size = new System.Drawing.Size(78, 21);
+            this.displayGSDStatus.TabIndex = 80;
+            // 
+            // displayGSDVersion
+            // 
+            this.displayGSDVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGSDVersion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TimeStudyVersion", true));
+            this.displayGSDVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGSDVersion.Location = new System.Drawing.Point(922, 34);
+            this.displayGSDVersion.Name = "displayGSDVersion";
+            this.displayGSDVersion.Size = new System.Drawing.Size(78, 21);
+            this.displayGSDVersion.TabIndex = 81;
+            // 
+            // labVersionWarning
+            // 
+            this.labVersionWarning.AutoSize = true;
+            this.labVersionWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
+            this.labVersionWarning.Location = new System.Drawing.Point(836, 141);
+            this.labVersionWarning.Name = "labVersionWarning";
+            this.labVersionWarning.Size = new System.Drawing.Size(273, 16);
+            this.labVersionWarning.TabIndex = 82;
+            this.labVersionWarning.Text = "GSD version or FSD Statusis not latest";
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1004, 722);
+            this.ClientSize = new System.Drawing.Size(1161, 722);
             this.DefaultControl = "txtFactory";
             this.DefaultControlForEdit = "txtFactory";
             this.DefaultDetailOrder = "No";
@@ -1507,5 +1579,11 @@
         private Win.UI.Grid grid1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Class.Txtfactory txtFactory;
+        private Win.UI.Label lbGSDVersion;
+        private Win.UI.Label lbGSDStatus;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private Win.UI.DisplayBox displayGSDVersion;
+        private Win.UI.DisplayBox displayGSDStatus;
+        private System.Windows.Forms.Label labVersionWarning;
     }
 }
