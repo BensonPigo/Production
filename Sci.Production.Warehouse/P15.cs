@@ -617,12 +617,14 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     }
                 }
                 #endregion
+
                 #region 檢查庫存項WMSLock
                 if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "IssueLack_Detail"))
                 {
                     return;
                 }
                 #endregion
+
                 #region -- 檢查負數庫存 --
 
                 sqlcmd = string.Format(
@@ -655,6 +657,25 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                 }
 
                 #endregion 檢查負數庫存
+
+                #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+                if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "IssueLack_Detail"))
+                {
+                    return;
+                }
+                #endregion
+
+                #region UnConfirmed 先檢查WMS是否傳送成功
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P15", "UnConfirmed"))
+                    {
+                        return;
+                    }
+                }
+                #endregion
+
                 #region -- 更新庫存數量  ftyinventory --
                 sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
@@ -673,24 +694,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 , IssueLackId = DEFAULT where id = '{2}';", this.CurrentMaintain["issuedate"], this.CurrentMaintain["id"], this.CurrentMaintain["requestid"]));
             sqlupd4.Append(Environment.NewLine);
             sqlupd4.Append(string.Format(@"update dbo.Lack_Detail  set IssueQty = DEFAULT where dbo.Lack_Detail.id = '{0}' ", this.CurrentMaintain["requestid"]));
-            #endregion
-
-            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "IssueLack_Detail"))
-            {
-                return;
-            }
-            #endregion
-
-            #region UnConfirmed 先檢查WMS是否傳送成功
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P15", "UnConfirmed"))
-                {
-                    return;
-                }
-            }
             #endregion
 
             TransactionScope transactionscope = new TransactionScope();

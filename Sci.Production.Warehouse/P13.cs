@@ -689,6 +689,24 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             #endregion 檢查負數庫存
 
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P13", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
+
             #region 更新表頭狀態資料
             sqlupd3 = $@"update Issue set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
 
@@ -727,24 +745,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
             sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
-            #endregion
-
-            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
-            {
-                return;
-            }
-            #endregion
-
-            #region UnConfirmed 先檢查WMS是否傳送成功
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P13", "UnConfirmed"))
-                {
-                    return;
-                }
-            }
             #endregion
 
             TransactionScope transactionscope = new TransactionScope();

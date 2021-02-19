@@ -22,8 +22,8 @@ namespace Sci.Production.Warehouse
         private string strFunction;
         private string strMaterialType_Sheet1;
         private string strTransID;
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty = new Ict.Win.UI.DataGridViewNumericBoxColumn();
 
         /// <inheritdoc/>
         public P99(ToolStripMenuItem menuitem)
@@ -174,7 +174,6 @@ inner join Receiving t1 WITH (NOLOCK) on t2.Id = t1.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
-
 where 1=1
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -209,8 +208,7 @@ select distinct  [Selected] = 0 --0
 		, t2.Remark--14        
         , po3.Refno--15
 		, [ColorID] = Color.Value--16        
-        , t2.Ukey
-        --, t1.InvNo,t1.IssueDate
+        , t2.Ukey        
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t1.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -281,7 +279,7 @@ and t1.Status = 'Confirmed'
 				where iss.Issue_DetailUkey = t2.ukey
                 and iss.AutoPickQty <> 0
 				for xml path('')
-			),1,1,''))--14			
+			),1,1,''))--14
 from dbo.Issue_Detail t2 WITH (NOLOCK) 
 inner join dbo.issue t1 WITH (NOLOCK)  on t2.Id = t1.Id
 inner join dbo.Issue_Size t3 WITH (NOLOCK) on t2.ukey = t3.Issue_DetailUkey
@@ -321,7 +319,7 @@ from dbo.issue_detail t2 WITH (NOLOCK)
 inner join dbo.Issue t1 WITH (NOLOCK) on t1.id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2 = FI.Seq2 and FI.Dyelot = t2.Dyelot
-    and t2.Roll = FI.Roll and FI.stocktype = 'B'     
+    and t2.Roll = FI.Roll and FI.stocktype = 'B'   
 where 1=1
 and t1.Type='C'
 and t1.Status = 'Confirmed'
@@ -2021,7 +2019,6 @@ and t1.Status = 'Confirmed'
                 string upd_sql = string.Empty;
                 string chk_sql = string.Empty;
                 string upd_Fty_2T = string.Empty;
-                int mtlAutoLock = 0;
                 string sqlcmd = string.Empty;
                 DataTable result_upd_qty;
 
@@ -2069,75 +2066,31 @@ and t1.Status = 'Confirmed'
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region 更新庫存數量 mdivisionPoDetail
-                        var data_MD_2T = (from b in upd_list.AsEnumerable()
-                                          group b by new
-                                          {
-                                              poid = b.Field<string>("poid").Trim(),
-                                              seq1 = b.Field<string>("seq1").Trim(),
-                                              seq2 = b.Field<string>("seq2").Trim(),
-                                              stocktype = b.Field<string>("stocktype").Trim(),
-                                          }
-                                            into m
-                                          select new Prgs_POSuppDetailData
-                                          {
-                                              Poid = m.First().Field<string>("poid"),
-                                              Seq1 = m.First().Field<string>("seq1"),
-                                              Seq2 = m.First().Field<string>("seq2"),
-                                              Stocktype = m.First().Field<string>("stocktype"),
-                                              Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                          }).ToList();
-                        var data_MD_8T = (from b in upd_list.AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                                          group b by new
-                                          {
-                                              poid = b.Field<string>("poid").Trim(),
-                                              seq1 = b.Field<string>("seq1").Trim(),
-                                              seq2 = b.Field<string>("seq2").Trim(),
-                                              stocktype = b.Field<string>("stocktype").Trim(),
-                                          }
-                                            into m
-                                          select new Prgs_POSuppDetailData
-                                          {
-                                              Poid = m.First().Field<string>("poid"),
-                                              Seq1 = m.First().Field<string>("seq1"),
-                                              Seq2 = m.First().Field<string>("seq2"),
-                                              Stocktype = m.First().Field<string>("stocktype"),
-                                              Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                              Location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
-                                          }).ToList();
-
-                        #endregion
-
-                        #region -- 更新庫存數量  ftyinventory --
-                        upd_Fty_2T = string.Empty;
-                        mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system")) ? 1 : 0;
-                        var data_Fty_2T = upd_list.AsEnumerable().Select(m => new
+                        TransactionScope transactionscope = new TransactionScope();
+                        DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
+                        using (transactionscope)
+                        using (sqlConn)
                         {
-                            poid = m.Field<string>("poid"),
-                            seq1 = m.Field<string>("seq1"),
-                            seq2 = m.Field<string>("seq2"),
-                            stocktype = m.Field<string>("stocktype"),
-                            qty = m.Field<decimal>("diffQty"),
-                            roll = m.Field<string>("roll"),
-                            dyelot = m.Field<string>("dyelot"),
-                        }).ToList();
-                        upd_Fty_2T = Prgs.UpdateFtyInventory_IO_P99(2);
-                        #endregion 更新庫存數量  ftyinventory
+                            try
+                            {
+                                /*
+                                 * 更新庫存, 直接呼叫ReCalculate
+                                 */
 
-                        #region update Qty
-                        string strcmd = (this.strFunction == "P07") ? ",t.ActualQty = s.Qty" : string.Empty;
-                        if (this.strFunction != "P18")
-                        {
-                            sqlcmd = $@" 
+                                #region update Qty
+                                string strcmd = (this.strFunction == "P07") ? ",t.ActualQty = s.Qty" : string.Empty;
+                                if (this.strFunction != "P18")
+                                {
+                                    sqlcmd = $@" 
 update t
 set t.StockQty = s.StockQty
 {strcmd}
@@ -2152,10 +2105,10 @@ from Receiving t
 inner join Receiving_Detail t2 on t2.id = t.id
 inner join #tmp s on t2.Ukey = s.Ukey 
 ";
-                        }
-                        else
-                        {
-                            sqlcmd = $@"
+                                }
+                                else
+                                {
+                                    sqlcmd = $@"
 update t
 set t.Qty = s.Qty
 from TransferIn_Detail t
@@ -2169,103 +2122,67 @@ from TransferIn t
 inner join TransferIn_Detail t2 on t2.id = t.id
 inner join #tmp s on t2.Ukey = s.Ukey 
 ";
-                        }
-
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        #region 更新FIR,AIR資料
-                        if (this.strFunction == "P07" && this.strFunction == "P18")
-                        {
-                            string strCallSP = (this.strFunction == "P07") ? "dbo.insert_Air_Fir" : "dbo.insert_Air_Fir_TnsfIn";
-                            if (MyUtility.Check.Empty(this.strTransID))
-                            {
-                                foreach (DataRow dr in dtDistID.Rows)
-                                {
-                                    List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
-                                    {
-                                        new SqlParameter("@ID", dr["ID"]),
-                                        new SqlParameter("@LoginID", Env.User.UserID),
-                                    };
-
-                                    if (!(result = DBProxy.Current.ExecuteSP(string.Empty, strCallSP, fir_Air_Proce)))
-                                    {
-                                        Exception ex = result.GetException();
-                                        MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
-                                        return;
-                                    }
                                 }
-                            }
-                            else
-                            {
-                                List<SqlParameter> fir_Air_Proce_single = new List<SqlParameter>
-                                {
-                                    new SqlParameter("@ID", this.strTransID),
-                                    new SqlParameter("@LoginID", Env.User.UserID),
-                                };
 
-                                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, strCallSP, fir_Air_Proce_single)))
-                                {
-                                    Exception ex = result.GetException();
-                                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
-                                    return;
-                                }
-                            }
-                        }
-
-                        #endregion
-
-                        string upd_MD_2T = string.Empty;
-                        string upd_MD_8T = string.Empty;
-                        TransactionScope transactionscope = new TransactionScope();
-                        DBProxy.Current.OpenConnection(null, out SqlConnection sqlConn);
-                        using (transactionscope)
-                        using (sqlConn)
-                        {
-                            try
-                            {
-                                /*
-                                 * 先更新 FtyInventory 後更新 MDivisionPoDetail
-                                 * 所有 MDivisionPoDetail 資料都在 Transaction 中更新
-                                 * 因為要在同一 SqlConnection 之下執行
-                                 */
-                                #region FtyInventory
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, string.Empty, upd_Fty_2T, out DataTable resulttb, "#TmpSource", conn: sqlConn)))
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
                                 }
+
                                 #endregion
 
-                                #region MDivisionPoDetail
-                                if (data_MD_2T.Count > 0)
+                                #region 更新FIR,AIR資料
+                                if (this.strFunction == "P07" && this.strFunction == "P18")
                                 {
-                                    upd_MD_2T = Prgs.UpdateMPoDetail_P99(2, true);
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T, string.Empty, upd_MD_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                                    string strCallSP = (this.strFunction == "P07") ? "dbo.insert_Air_Fir" : "dbo.insert_Air_Fir_TnsfIn";
+                                    if (MyUtility.Check.Empty(this.strTransID))
                                     {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
+                                        foreach (DataRow dr in dtDistID.Rows)
+                                        {
+                                            List<SqlParameter> fir_Air_Proce = new List<SqlParameter>
+                                            {
+                                                new SqlParameter("@ID", dr["ID"]),
+                                                new SqlParameter("@LoginID", Env.User.UserID),
+                                            };
+
+                                            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, strCallSP, fir_Air_Proce)))
+                                            {
+                                                Exception ex = result.GetException();
+                                                transactionscope.Dispose();
+                                                MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        List<SqlParameter> fir_Air_Proce_single = new List<SqlParameter>
+                                        {
+                                            new SqlParameter("@ID", this.strTransID),
+                                            new SqlParameter("@LoginID", Env.User.UserID),
+                                        };
+
+                                        if (!(result = DBProxy.Current.ExecuteSP(string.Empty, strCallSP, fir_Air_Proce_single)))
+                                        {
+                                            Exception ex = result.GetException();
+                                            transactionscope.Dispose();
+                                            MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                                            return;
+                                        }
                                     }
                                 }
 
-                                if (data_MD_8T.Count > 0)
-                                {
-                                    upd_MD_8T = Prgs.UpdateMPoDetail_P99(8, true);
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
-                                    {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
-                                    }
-                                }
                                 #endregion
+
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
+                                {
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
 
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
@@ -2282,6 +2199,7 @@ inner join #tmp s on t2.Ukey = s.Ukey
                                 transactionscope.Dispose();
                             }
                         }
+
                         #endregion
                         break;
                     case "P11":
@@ -2334,69 +2252,28 @@ inner join #tmp s on t2.Ukey = s.Ukey
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region 更新庫存數量  ftyinventory
 
-                        // ftyinventory
-                        var bsFty_v2 = (from b in upd_list.AsEnumerable()
-                                        group b by new
-                                        {
-                                            poid = b.Field<string>("poid"),
-                                            seq1 = b.Field<string>("seq1"),
-                                            seq2 = b.Field<string>("seq2"),
-                                            stocktype = b.Field<string>("stocktype"),
-                                            roll = b.Field<string>("roll"),
-                                            dyelot = b.Field<string>("dyelot"),
-                                        }
-                                    into m
-                                        select new Prgs_FtyInventoryData
-                                        {
-                                            Poid = m.First().Field<string>("poid"),
-                                            Seq1 = m.First().Field<string>("seq1"),
-                                            Seq2 = m.First().Field<string>("seq2"),
-                                            Stocktype = m.First().Field<string>("stocktype"),
-                                            Roll = m.First().Field<string>("roll"),
-                                            Dyelot = m.First().Field<string>("Dyelot"),
-                                            Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                        }).ToList();
 
-                        // MPoDetail
-                        var bs1_v2 = (from b in upd_list.AsEnumerable()
-                                      group b by new
-                                      {
-                                          poid = b.Field<string>("poid"),
-                                          seq1 = b.Field<string>("seq1"),
-                                          seq2 = b.Field<string>("seq2"),
-                                          stocktype = b.Field<string>("stocktype"),
-                                      }
-                                    into m
-                                      select new Prgs_POSuppDetailData
-                                      {
-                                          Poid = m.First().Field<string>("poid"),
-                                          Seq1 = m.First().Field<string>("seq1"),
-                                          Seq2 = m.First().Field<string>("seq2"),
-                                          Stocktype = m.First().Field<string>("stocktype"),
-                                          Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                      }).ToList();
-                        StringBuilder sqlupd2_B_v2 = new StringBuilder();
-                        sqlupd2_B_v2.Append(Prgs.UpdateMPoDetail_P99(4, true));
-                        string sqlupd2_FIO_v2 = Prgs.UpdateFtyInventory_IO_P99(4);
-
-                        #endregion
-
-                        #region update Qty
-                        switch (this.strFunction)
+                        transactionscope = new TransactionScope();
+                        using (transactionscope)
                         {
-                            case "P11":
-                                sqlcmd = $@" 
+                            try
+                            {
+
+                                #region update Qty
+                                switch (this.strFunction)
+                                {
+                                    case "P11":
+                                        sqlcmd = $@" 
 -- 第一層
 update t
 set t.editname = '{Env.User.UserID}'
@@ -2418,9 +2295,9 @@ inner join #tmp s on t.Id = s.id
 and t.Issue_DetailUkey = s.ukey
 and t.SizeCode = s.SizeCode
 ";
-                                break;
-                            case "P33":
-                                sqlcmd = $@" 
+                                        break;
+                                    case "P33":
+                                        sqlcmd = $@" 
 -- 第一層
 update t
 set t.editname = '{Env.User.UserID}'
@@ -2444,9 +2321,9 @@ and t.poid = s.poid and t.seq1 = s.seq1
 and t.seq2 = s.seq2 and t.roll = s.roll
 and t.dyelot = s.dyelot and t.stocktype = s.stocktype
 ";
-                                break;
-                            case "P15":
-                                sqlcmd = $@" 
+                                        break;
+                                    case "P15":
+                                        sqlcmd = $@" 
 update t
 set t.Qty = s.Qty
 from IssueLack_Detail t
@@ -2458,9 +2335,9 @@ set t.editname = '{Env.User.UserID}'
 from IssueLack t
 inner join #tmp s on t.id = s.id
 ";
-                                break;
-                            case "P19":
-                                sqlcmd = $@" 
+                                        break;
+                                    case "P19":
+                                        sqlcmd = $@" 
 update t
 set t.Qty = s.Qty
 from TransferOut_Detail t
@@ -2472,9 +2349,9 @@ set t.editname = '{Env.User.UserID}'
 from TransferOut t
 inner join #tmp s on t.id = s.id
 ";
-                                break;
-                            default:
-                                sqlcmd = $@" 
+                                        break;
+                                    default:
+                                        sqlcmd = $@" 
 update t
 set t.Qty = s.Qty
 from Issue_Detail t
@@ -2486,31 +2363,20 @@ set t.editname = '{Env.User.UserID}'
 from Issue t
 inner join #tmp s on t.id = s.id
 ";
-                                break;
-                        }
+                                        break;
+                                }
 
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        transactionscope = new TransactionScope();
-                        using (transactionscope)
-                        {
-                            try
-                            {
-                                if (!(result = MyUtility.Tool.ProcessWithObject(bs1_v2, string.Empty, sqlupd2_B_v2.ToString(), out DataTable resulttb, "#TmpSource")))
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
                                 }
 
-                                if (!(result = MyUtility.Tool.ProcessWithObject(
-                                    bsFty_v2, string.Empty, sqlupd2_FIO_v2, out resulttb, "#TmpSource")))
+                                #endregion
+
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
@@ -2559,70 +2425,22 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region 更新 MdivisionPoDetail --
-                        var data_MD_8F32F = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                             group b by new
-                                             {
-                                                 poid = b.Field<string>("poid").Trim(),
-                                                 seq1 = b.Field<string>("seq1").Trim(),
-                                                 seq2 = b.Field<string>("seq2").Trim(),
-                                                 stocktype = b.Field<string>("stocktype").Trim(),
-                                             }
-                                             into m
-                                             select new Prgs_POSuppDetailData
-                                             {
-                                                 Poid = m.First().Field<string>("poid"),
-                                                 Seq1 = m.First().Field<string>("seq1"),
-                                                 Seq2 = m.First().Field<string>("seq2"),
-                                                 Stocktype = m.First().Field<string>("stocktype"),
-                                                 Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                             }).ToList();
-
-                        string upd_MD_8F = Prgs.UpdateMPoDetail_P99(8, true);
-                        string upd_MD_32F = Prgs.UpdateMPoDetail_P99(32, true);
-
-                        #endregion
-
-                        #region -- 更新庫存數量  ftyinventory --
-
-                        // ftyinventory
-                        var data_Fty_8F = (from b in upd_list.AsEnumerable()
-                                           group b by new
-                                           {
-                                               poid = b.Field<string>("poid"),
-                                               seq1 = b.Field<string>("seq1"),
-                                               seq2 = b.Field<string>("seq2"),
-                                               stocktype = b.Field<string>("stocktype"),
-                                               roll = b.Field<string>("roll"),
-                                               dyelot = b.Field<string>("dyelot"),
-                                           }
-                                    into m
-                                           select new Prgs_FtyInventoryData
-                                           {
-                                               Poid = m.First().Field<string>("poid"),
-                                               Seq1 = m.First().Field<string>("seq1"),
-                                               Seq2 = m.First().Field<string>("seq2"),
-                                               Stocktype = m.First().Field<string>("stocktype"),
-                                               Roll = m.First().Field<string>("roll"),
-                                               Dyelot = m.First().Field<string>("Dyelot"),
-                                               Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                           }).ToList();
-
-                        string upd_Fty_8F = Prgs.UpdateFtyInventory_IO_P99(8);
-
-                        #endregion 更新庫存數量  ftyinventory
-
-                        #region update Qty
-                        sqlcmd = $@" 
+                        transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            try
+                            {
+                                #region update Qty
+                                sqlcmd = $@" 
 update t
 set t.qtyafter = s.Qty
 from Adjust_Detail t
@@ -2635,34 +2453,17 @@ from Adjust t
 inner join #tmp s on t.id = s.id
 ";
 
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        transactionscope = new TransactionScope();
-                        using (transactionscope)
-                        {
-                            try
-                            {
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_8F, out DataTable resulttb, "#TmpSource")))
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
                                 }
 
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F32F, string.Empty, upd_MD_32F, out resulttb, "#TmpSource")))
-                                {
-                                    transactionscope.Dispose();
-                                    this.ShowErr(result);
-                                    return;
-                                }
+                                #endregion
 
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_8F, string.Empty, upd_Fty_8F, out resulttb, "#TmpSource")))
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
@@ -2754,9 +2555,6 @@ WHERE FTI.StockType='O'
                                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                                     return;
                                 }
-
-                                // 更新MDivisionPoDetail
-                                this.UpdMDivisionPoDetail(upd_list.CopyToDataTable());
                             }
                         }
                         #endregion 檢查負數庫存
@@ -2782,6 +2580,13 @@ inner join #tmp s on t.id = s.id
 
                         #endregion
 
+                        // Re Calculate
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
                         MyUtility.Msg.InfoBox("Revise successful");
                         #endregion
                         break;
@@ -2801,9 +2606,9 @@ inner join #tmp s on t.id = s.id
                                 MyUtility.Msg.InfoBox("Confirmed Successful.");
 
                                 #region update 先檢查WMS是否傳送成功
-                                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                                 {
-                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "Revise", true))
+                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                                     {
                                         return;
                                     }
@@ -2883,73 +2688,24 @@ inner join #tmp s on t.id = s.id
                             }
                         }
                         #endregion
-                        #region -- 更新庫存數量  ftyinventory --
-
-                        var data_Fty_2T_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                              select new
-                                              {
-                                                  poid = b.Field<string>("poid"),
-                                                  seq1 = b.Field<string>("seq1"),
-                                                  seq2 = b.Field<string>("seq2"),
-                                                  stocktype = b.Field<string>("stocktype"),
-                                                  qty = -b.Field<decimal>("diffQty"),
-                                                  roll = b.Field<string>("roll"),
-                                                  dyelot = b.Field<string>("dyelot"),
-                                              }).ToList();
-                        upd_Fty_2T = Prgs.UpdateFtyInventory_IO_P99(2);
-                        #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region -- update mdivisionPoDetail --
-                        var data_MD_2T_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                             group b by new
-                                             {
-                                                 poid = b.Field<string>("poid"),
-                                                 seq1 = b.Field<string>("seq1"),
-                                                 seq2 = b.Field<string>("seq2"),
-                                                 stocktype = b.Field<string>("stocktype"),
-                                             }
-                                    into m
-                                             select new
-                                             {
-                                                 poid = m.First().Field<string>("poid"),
-                                                 Seq1 = m.First().Field<string>("seq1"),
-                                                 Seq2 = m.First().Field<string>("seq2"),
-                                                 Stocktype = m.First().Field<string>("stocktype"),
-                                                 Qty = -m.Sum(w => w.Field<decimal>("diffQty")),
-                                             }).ToList();
-                        var data_MD_8T_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                                             group b by new
-                                             {
-                                                 poid = b.Field<string>("poid").Trim(),
-                                                 seq1 = b.Field<string>("seq1").Trim(),
-                                                 seq2 = b.Field<string>("seq2").Trim(),
-                                                 stocktype = b.Field<string>("stocktype").Trim(),
-                                             }
-                                    into m
-                                             select new Prgs_POSuppDetailData
-                                             {
-                                                 Poid = m.First().Field<string>("poid"),
-                                                 Seq1 = m.First().Field<string>("seq1"),
-                                                 Seq2 = m.First().Field<string>("seq2"),
-                                                 Stocktype = m.First().Field<string>("stocktype"),
-                                                 Location = m.First().Field<string>("location"),
-                                                 Qty = -m.Sum(w => w.Field<decimal>("diffQty")),
-                                             }).ToList();
-
-                        #endregion
-
-                        #region update Qty
-                        sqlcmd = $@" 
+                        transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            try
+                            {
+                                #region update Qty
+                                sqlcmd = $@" 
 update t
 set t.Qty = s.Qty
 from ReturnReceipt_Detail t
@@ -2962,62 +2718,22 @@ from ReturnReceipt t
 inner join #tmp s on t.id = s.id
 ";
 
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        upd_MD_2T = string.Empty;
-                        upd_MD_8T = string.Empty;
-                        transactionscope = new TransactionScope();
-                        using (transactionscope)
-                        {
-                            try
-                            {
-                                DataTable resulttb;
-                                #region FtyInventory
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T_v2, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource")))
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
                                 }
+
                                 #endregion
 
-                                #region MDivisionPoDetail
-                                if (data_MD_2T_v2.Count > 0)
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
                                 {
-                                    upd_MD_2T = Prgs.UpdateMPoDetail_P99(2, true);
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
                                 }
-
-                                if (data_MD_8T_v2.Count > 0)
-                                {
-                                    upd_MD_8T = Prgs.UpdateMPoDetail_P99(8, true);
-                                }
-
-                                if (data_MD_2T_v2.Count > 0)
-                                {
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T_v2, string.Empty, upd_MD_2T, out resulttb, "#TmpSource")))
-                                    {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
-                                    }
-                                }
-
-                                if (data_MD_8T_v2.Count > 0)
-                                {
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T_v2, string.Empty, upd_MD_8T, out resulttb, "#TmpSource")))
-                                    {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
-                                    }
-                                }
-                                #endregion
 
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
@@ -3061,106 +2777,22 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region 更新 MdivisionPoDetail --
-                        var data_MD_4T = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                          group b by new
-                                          {
-                                              poid = b.Field<string>("frompoid").Trim(),
-                                              seq1 = b.Field<string>("fromseq1").Trim(),
-                                              seq2 = b.Field<string>("fromseq2").Trim(),
-                                              stocktype = b.Field<string>("fromstocktype").Trim(),
-                                          }
-                                             into m
-                                          select new
-                                          {
-                                              poid = m.First().Field<string>("frompoid"),
-                                              Seq1 = m.First().Field<string>("fromseq1"),
-                                              Seq2 = m.First().Field<string>("fromseq2"),
-                                              Stocktype = m.First().Field<string>("fromstocktype"),
-                                              Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                          }).ToList();
-
-                        var data_MD_8T_P31 = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("fromstocktype").Trim() == "I")
-                                              group b by new
-                                              {
-                                                  poid = b.Field<string>("frompoid").Trim(),
-                                                  seq1 = b.Field<string>("fromseq1").Trim(),
-                                                  seq2 = b.Field<string>("fromseq2").Trim(),
-                                                  stocktype = b.Field<string>("fromstocktype").Trim(),
-                                              }
-                                        into m
-                                              select new Prgs_POSuppDetailData
-                                              {
-                                                  Poid = m.First().Field<string>("frompoid"),
-                                                  Seq1 = m.First().Field<string>("fromseq1"),
-                                                  Seq2 = m.First().Field<string>("fromseq2"),
-                                                  Stocktype = m.First().Field<string>("fromstocktype"),
-                                                  Qty = -m.Sum(w => w.Field<decimal>("diffQty")),
-                                              }).ToList();
-
-                        #endregion
-
-                        #region -- 更新mdivisionPoDetail 借入數 A倉數 / 還回數--
-                        var data_MD_2T_P31 = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                              group b by new
-                                              {
-                                                  poid = b.Field<string>("topoid").Trim(),
-                                                  seq1 = b.Field<string>("toseq1").Trim(),
-                                                  seq2 = b.Field<string>("toseq2").Trim(),
-                                                  stocktype = b.Field<string>("tostocktype").Trim(),
-                                              }
-                                into m
-                                              select new Prgs_POSuppDetailData
-                                              {
-                                                  Poid = m.First().Field<string>("topoid"),
-                                                  Seq1 = m.First().Field<string>("toseq1"),
-                                                  Seq2 = m.First().Field<string>("toseq2"),
-                                                  Stocktype = m.First().Field<string>("tostocktype"),
-                                                  Qty = m.Sum(w => w.Field<decimal>("diffQty")),
-                                              }).ToList();
-
-                        #endregion
-
-                        #region -- 更新庫存數量  ftyinventory --
-                        var data_Fty_4T = (from m in upd_list.CopyToDataTable().AsEnumerable()
-                                           select new
-                                           {
-                                               poid = m.Field<string>("frompoid"),
-                                               seq1 = m.Field<string>("fromseq1"),
-                                               seq2 = m.Field<string>("fromseq2"),
-                                               stocktype = m.Field<string>("fromstocktype"),
-                                               qty = m.Field<decimal>("diffQty"),
-                                               roll = m.Field<string>("fromroll"),
-                                               dyelot = m.Field<string>("fromdyelot"),
-                                           }).ToList();
-
-                        var data_Fty_2T_P31 = (from b in upd_list
-                                               select new
-                                               {
-                                                   poid = b.Field<string>("topoid"),
-                                                   seq1 = b.Field<string>("toseq1"),
-                                                   seq2 = b.Field<string>("toseq2"),
-                                                   stocktype = b.Field<string>("tostocktype"),
-                                                   qty = b.Field<decimal>("diffQty"),
-                                                   roll = b.Field<string>("toroll"),
-                                                   dyelot = b.Field<string>("todyelot"),
-                                               }).ToList();
-                        string upd_Fty_4T_P31 = Prgs.UpdateFtyInventory_IO_P99(4);
-                        upd_Fty_2T = Prgs.UpdateFtyInventory_IO_P99(2);
-
-                        #endregion 更新庫存數量  ftyinventory
-
-                        #region update Qty
-                        sqlcmd = $@" 
+                        transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            try
+                            {
+                                #region update Qty
+                                sqlcmd = $@" 
 update t
 set t.Qty = s.Qty
 from BorrowBack_Detail t
@@ -3173,78 +2805,22 @@ from BorrowBack t
 inner join #tmp s on t.id = s.id
 ";
 
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        string upd_MD_4T_P31 = string.Empty;
-                        string upd_MD_8T_P31 = string.Empty;
-                        string upd_MD_2T_P31 = string.Empty;
-                        transactionscope = new TransactionScope();
-                        using (transactionscope)
-                        {
-                            try
-                            {
-                                #region FtyInventory
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, string.Empty, upd_Fty_4T_P31, out DataTable resulttb, "#TmpSource")))
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
                                 }
 
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T_P31, string.Empty, upd_Fty_2T, out resulttb, "#TmpSource")))
-                                {
-                                    transactionscope.Dispose();
-                                    this.ShowErr(result);
-                                    return;
-                                }
                                 #endregion
 
-                                #region MDivisionPoDetail
-                                if (data_MD_4T.Count > 0)
-                                {
-                                    upd_MD_4T_P31 = Prgs.UpdateMPoDetail_P99(4, true);
-                                }
-
-                                if (data_MD_8T_P31.Count > 0)
-                                {
-                                    upd_MD_8T_P31 = Prgs.UpdateMPoDetail_P99(8, true);
-                                }
-
-                                upd_MD_2T_P31 = Prgs.UpdateMPoDetail_P99(2, true);
-
-                                if (data_MD_4T.Count > 0)
-                                {
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, string.Empty, upd_MD_4T_P31, out resulttb, "#TmpSource")))
-                                    {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
-                                    }
-                                }
-
-                                if (data_MD_8T_P31.Count > 0)
-                                {
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T_P31, string.Empty, upd_MD_8T_P31, out resulttb, "#TmpSource")))
-                                    {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
-                                    }
-                                }
-
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T_P31, string.Empty, upd_MD_2T_P31, out resulttb, "#TmpSource")))
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
                                 }
-                                #endregion
 
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
@@ -3290,68 +2866,23 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
-                        #region -- 更新mdivisionpodetail B倉數 --
-                        var data_MD_8T_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                                      group b by new
-                                                      {
-                                                          poid = b.Field<string>("frompoid"),
-                                                          seq1 = b.Field<string>("fromseq1"),
-                                                          seq2 = b.Field<string>("fromseq2"),
-                                                          stocktype = b.Field<string>("fromstocktype"),
-                                                      }
-                                            into m
-                                                      select new Prgs_POSuppDetailData
-                                                      {
-                                                          Poid = m.First().Field<string>("frompoid"),
-                                                          Seq1 = m.First().Field<string>("fromseq1"),
-                                                          Seq2 = m.First().Field<string>("fromseq2"),
-                                                          Stocktype = m.First().Field<string>("fromstocktype"),
-                                                          Qty = m.Sum(w => MyUtility.Convert.GetDecimal(w["diffQty"])),
-                                                          Location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
-                                                      }).ToList();
+                        transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            try
+                            {
 
-                        #endregion
-                        #region -- 更新庫存數量 ftyinventory --
-                        var data_Fty_4T_SubTransfer = (from m in upd_list.CopyToDataTable().AsEnumerable()
-                                                       select new
-                                                       {
-                                                           poid = m.Field<string>("frompoid"),
-                                                           seq1 = m.Field<string>("fromseq1"),
-                                                           seq2 = m.Field<string>("fromseq2"),
-                                                           stocktype = m.Field<string>("fromstocktype"),
-                                                           qty = MyUtility.Convert.GetDecimal(m["diffQty"]),
-                                                           location = m.Field<string>("tolocation"),
-                                                           roll = m.Field<string>("fromroll"),
-                                                           dyelot = m.Field<string>("fromdyelot"),
-                                                       }).ToList();
-
-                        var data_Fty_2T_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                                       select new
-                                                       {
-                                                           poid = b.Field<string>("topoid"),
-                                                           seq1 = b.Field<string>("toseq1"),
-                                                           seq2 = b.Field<string>("toseq2"),
-                                                           stocktype = b.Field<string>("tostocktype"),
-                                                           qty = MyUtility.Convert.GetDecimal(b["diffQty"]),
-                                                           location = b.Field<string>("ToLocation"),
-                                                           roll = b.Field<string>("toroll"),
-                                                           dyelot = b.Field<string>("todyelot"),
-                                                       }).ToList();
-                        string upd_Fty_4T_SubTransfer = Prgs.UpdateFtyInventory_IO_P99(4);
-                        string upd_Fty_2T_SubTransfer = Prgs.UpdateFtyInventory_IO_P99(2);
-                        #endregion 更新庫存數量 ftyinventory
-
-                        #region update Qty
-                        sqlcmd = $@" 
+                                #region update Qty
+                                sqlcmd = $@" 
 update t
 set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
@@ -3364,48 +2895,22 @@ from SubTransfer_Detail t
 inner join #tmp s on t.Ukey = s.Ukey 
 ";
 
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        string upd_MD_0F_SubTransfer = string.Empty;
-                        StringBuilder upd_MD_8T_SubTransfer = new StringBuilder();
-                        transactionscope = new TransactionScope();
-                        using (transactionscope)
-                        {
-                            try
-                            {
-                                DataTable resulttb;
-                                #region FtyInventory
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T_SubTransfer, string.Empty, upd_Fty_4T_SubTransfer, out resulttb, "#TmpSource")))
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                                 {
                                     transactionscope.Dispose();
-                                    MyUtility.Msg.ErrorBox(sqlcmd + result.ToString());
-                                    return;
-                                }
-
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T_SubTransfer, string.Empty, upd_Fty_2T_SubTransfer, out resulttb, "#TmpSource")))
-                                {
-                                    transactionscope.Dispose();
-                                    MyUtility.Msg.ErrorBox(sqlcmd + result.ToString());
-                                    return;
-                                }
-                                #endregion
-
-                                #region MDivisionPoDetail
-                                upd_MD_8T_SubTransfer.Append(Prgs.UpdateMPoDetail_P99(8, true));
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T_SubTransfer, string.Empty, upd_MD_8T_SubTransfer.ToString(), out resulttb, "#TmpSource")))
-                                {
-                                    transactionscope.Dispose();
-                                    MyUtility.Msg.ErrorBox(sqlcmd + result.ToString());
+                                    this.ShowErr(result);
                                     return;
                                 }
 
                                 #endregion
+
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
+                                {
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
 
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
@@ -3595,9 +3100,7 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                             try
                             {
                                 /*
-                                 * 先更新 FtyInventory 後更新 MDivisionPoDetail
-                                 * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
-                                 * 因為要在同一 SqlConnection 之下執行
+                                 * 直接Call ReCalculate
                                  */
                                 #region MdivisionPoDetail
                                 if (data_MD_2F.Count > 0)
@@ -3931,9 +3434,9 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable(), "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4200,9 +3703,9 @@ Balacne Qty is not enough!!
                         }
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
                             {
                                 return;
                             }
@@ -4291,9 +3794,9 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable(), "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4462,9 +3965,9 @@ inner join #tmp s on t.ukey = s.ukey
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable(), "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4473,7 +3976,7 @@ inner join #tmp s on t.ukey = s.ukey
 
 
                         #region -- 更新MdivisionPoDetail 借出數 --
-                        var data_MD_4F_P31 = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                        var data_MD_4F_BorrowBack = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                               group b by new
                                               {
                                                   poid = b.Field<string>("frompoid").Trim(),
@@ -4490,7 +3993,7 @@ inner join #tmp s on t.ukey = s.ukey
                                                   Stocktype = m.First().Field<string>("fromstocktype"),
                                                   Qty = -m.Sum(w => w.Field<decimal>("qty")),
                                               }).ToList();
-                        var data_MD_8F_P31 = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("fromstocktype").Trim() == "I")
+                        var data_MD_8F_BorrowBack = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("fromstocktype").Trim() == "I")
                                               group b by new
                                               {
                                                   poid = b.Field<string>("frompoid").Trim(),
@@ -4510,7 +4013,7 @@ inner join #tmp s on t.ukey = s.ukey
 
                         #endregion
                         #region -- 更新MdivisionPoDetail 借入數 --
-                        var data_MD_2F_P31 = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                        var data_MD_2F_BorrowBack = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                               group b by new
                                               {
                                                   poid = b.Field<string>("topoid").Trim(),
@@ -4530,7 +4033,7 @@ inner join #tmp s on t.ukey = s.ukey
 
                         #endregion
                         #region -- 更新庫存數量  ftyinventory --
-                        var data_Fty_4F_P31 = (from m in upd_list.CopyToDataTable().AsEnumerable()
+                        var data_Fty_4F_BorrowBack = (from m in upd_list.CopyToDataTable().AsEnumerable()
                                                select new
                                                {
                                                    poid = m.Field<string>("frompoid"),
@@ -4542,7 +4045,7 @@ inner join #tmp s on t.ukey = s.ukey
                                                    roll = m.Field<string>("fromroll"),
                                                    dyelot = m.Field<string>("fromdyelot"),
                                                }).ToList();
-                        var data_Fty_2F_P31 = (from m in upd_list.CopyToDataTable().AsEnumerable()
+                        var data_Fty_2F_BorrowBack = (from m in upd_list.CopyToDataTable().AsEnumerable()
                                                select new
                                                {
                                                    poid = m.Field<string>("topoid"),
@@ -4554,8 +4057,8 @@ inner join #tmp s on t.ukey = s.ukey
                                                    roll = m.Field<string>("toroll"),
                                                    dyelot = m.Field<string>("todyelot"),
                                                }).ToList();
-                        string upd_Fty_4F_P31 = Prgs.UpdateFtyInventory_IO_P99(4);
-                        string upd_Fty_2F_P31 = Prgs.UpdateFtyInventory_IO_P99(2);
+                        string upd_Fty_4F_BorrowBack = Prgs.UpdateFtyInventory_IO_P99(4);
+                        string upd_Fty_2F_BorrowBack = Prgs.UpdateFtyInventory_IO_P99(2);
                         #endregion 更新庫存數量  ftyinventory
 
                         #region delete Qty
@@ -4573,14 +4076,81 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                         #endregion
 
-                        string upd_MD_4F_P31 = string.Empty;
-                        string upd_MD_8F_P31 = string.Empty;
-                        string upd_MD_2F_P31 = string.Empty;
+                        string upd_MD_2F_BorrowBack = string.Empty;
+                        string upd_MD_4F_BorrowBack = string.Empty;
+                        string upd_MD_8F_BorrowBack = string.Empty;
                         transactionscope = new TransactionScope();
                         using (transactionscope)
                         {
                             try
                             {
+                                switch (this.strFunction)
+                                {
+                                    case "P31":
+                                        #region FtyInventory
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F, string.Empty, upd_Fty_4F, out DataTable resulttb, "#TmpSource", conn: sqlConn)))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource", conn: sqlConn)))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+
+                                        #region MDivisionPoDetail
+                                        if (data_MD_4F.Count > 0)
+                                        {
+                                            upd_MD_4F = Prgs.UpdateMPoDetail(4, null, false, sqlConn: sqlConn);
+                                        }
+
+                                        if (data_MD_8F.Count > 0)
+                                        {
+                                            upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false, sqlConn: sqlConn);
+                                        }
+
+                                        upd_MD_2F = Prgs.UpdateMPoDetail(2, data_MD_2F, false, sqlConn: sqlConn);
+
+                                        if (data_MD_4F.Count > 0)
+                                        {
+                                            if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4F, string.Empty, upd_MD_4F, out resulttb, "#TmpSource", conn: sqlConn)))
+                                            {
+                                                transactionscope.Dispose();
+                                                this.ShowErr(result);
+                                                return;
+                                            }
+                                        }
+
+                                        if (data_MD_8F.Count > 0)
+                                        {
+                                            if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource", conn: sqlConn)))
+                                            {
+                                                transactionscope.Dispose();
+                                                this.ShowErr(result);
+                                                return;
+                                            }
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F, string.Empty, upd_MD_2F, out resulttb, "#TmpSource", conn: sqlConn)))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+                                        break;
+                                    case "P32":
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+
                                 #region FtyInventory
                                 if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F_P31, string.Empty, upd_Fty_4F_P31, out resulttb, "#TmpSource")))
                                 {
@@ -4659,7 +4229,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P23":
                     case "P24":
                     case "P36":
-                        #region BorrowBack_detail
+                        #region SubTransfer_detail
                         // 檢查庫存項Lock
                         if (!this.ChkFty_Lock(upd_list.CopyToDataTable(), false))
                         {
@@ -4689,38 +4259,123 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable(), "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
                         }
                         #endregion
 
+                        #region -- 更新mdivisionpodetail A倉數 --
+                        var data_MD_2F_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                                          group b by new
+                                          {
+                                              poid = b.Field<string>("Topoid"),
+                                              seq1 = b.Field<string>("Toseq1"),
+                                              seq2 = b.Field<string>("Toseq2"),
+                                              stocktype = b.Field<string>("Tostocktype"),
+                                          }
+                                    into m
+                                          select new Prgs_POSuppDetailData
+                                          {
+                                              Poid = m.First().Field<string>("Topoid"),
+                                              Seq1 = m.First().Field<string>("Toseq1"),
+                                              Seq2 = m.First().Field<string>("Toseq2"),
+                                              Stocktype = m.First().Field<string>("Tostocktype"),
+                                              Qty = -m.Sum(w => w.Field<decimal>("qty")),
+                                              Location = string.Join(",", m.Select(r => r.Field<string>("tolocation")).Distinct()),
+                                          }).ToList();
+
+                        #endregion
+
                         #region -- 更新MdivisionPoDetail B倉數量 --
                         var data_MD_8F_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
-                                                      group b by new
-                                                      {
-                                                          poid = b.Field<string>("frompoid"),
-                                                          seq1 = b.Field<string>("fromseq1"),
-                                                          seq2 = b.Field<string>("fromseq2"),
-                                                          stocktype = b.Field<string>("fromstocktype"),
-                                                      }
+                                    group b by new
+                                    {
+                                        poid = b.Field<string>("frompoid"),
+                                        seq1 = b.Field<string>("fromseq1"),
+                                        seq2 = b.Field<string>("fromseq2"),
+                                        stocktype = b.Field<string>("fromstocktype"),
+                                    }
                                     into m
-                                                      select new Prgs_POSuppDetailData
-                                                      {
-                                                          Poid = m.First().Field<string>("frompoid"),
-                                                          Seq1 = m.First().Field<string>("fromseq1"),
-                                                          Seq2 = m.First().Field<string>("fromseq2"),
-                                                          Stocktype = m.First().Field<string>("fromstocktype"),
-                                                          Qty = -m.Sum(w => w.Field<decimal>("old_qty")),
-                                                      }).ToList();
+                                    select new Prgs_POSuppDetailData
+                                    {
+                                        Poid = m.First().Field<string>("frompoid"),
+                                        Seq1 = m.First().Field<string>("fromseq1"),
+                                        Seq2 = m.First().Field<string>("fromseq2"),
+                                        Stocktype = m.First().Field<string>("fromstocktype"),
+                                        Qty = -m.Sum(w => w.Field<decimal>("old_qty")),
+                                    }).ToList();
+
+                        #endregion
+
+                        #region -- 更新mdivisionpodetail Inventory數 --
+                        var data_MD_4F_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                                          group b by new
+                                          {
+                                              poid = b.Field<string>("frompoid"),
+                                              seq1 = b.Field<string>("fromseq1"),
+                                              seq2 = b.Field<string>("fromseq2"),
+                                              stocktype = b.Field<string>("fromstocktype"),
+                                          }
+                                    into m
+                                          select new Prgs_POSuppDetailData
+                                          {
+                                              Poid = m.First().Field<string>("frompoid"),
+                                              Seq1 = m.First().Field<string>("fromseq1"),
+                                              Seq2 = m.First().Field<string>("fromseq2"),
+                                              Stocktype = m.First().Field<string>("fromstocktype"),
+                                              Qty = -m.Sum(w => w.Field<decimal>("qty")),
+                                          }).ToList();
+
+                        #endregion
+
+                        #region -- 更新mdivisionpodetail Scrap數 --
+                        var data_MD_16F_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                                           group b by new
+                                           {
+                                               poid = b.Field<string>("topoid"),
+                                               seq1 = b.Field<string>("toseq1"),
+                                               seq2 = b.Field<string>("toseq2"),
+                                               stocktype = b.Field<string>("tostocktype"),
+                                           }
+                                into m
+                                           select new
+                                           {
+                                               poid = m.First().Field<string>("topoid"),
+                                               Seq1 = m.First().Field<string>("toseq1"),
+                                               Seq2 = m.First().Field<string>("toseq2"),
+                                               Stocktype = m.First().Field<string>("tostocktype"),
+                                               Qty = -m.Sum(w => w.Field<decimal>("qty")),
+                                           }).ToList();
+
+                        #endregion
+
+                        #region -- 更新mdivisionpodetail Scrap數 4F+16F --
+                        var data_MD_4F16F_SubTransfer = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                                             group b by new
+                                             {
+                                                 poid = b.Field<string>("frompoid"),
+                                                 seq1 = b.Field<string>("fromseq1"),
+                                                 seq2 = b.Field<string>("fromseq2"),
+                                                 stocktype = b.Field<string>("fromstocktype"),
+                                             }
+                                    into m
+                                             select new
+                                             {
+                                                 poid = m.First().Field<string>("frompoid"),
+                                                 Seq1 = m.First().Field<string>("fromseq1"),
+                                                 Seq2 = m.First().Field<string>("fromseq2"),
+                                                 Stocktype = m.First().Field<string>("fromstocktype"),
+                                                 Qty = m.Sum(w => w.Field<decimal>("qty")),
+                                             }).ToList();
 
                         #endregion
 
                         #region -- 更新庫存數量  ftyinventory --
-                        var data_Fty_4F = (from m in upd_list.CopyToDataTable().AsEnumerable()
+                        var data_Fty_4F_SubTransfer = (from m in upd_list.CopyToDataTable().AsEnumerable()
                                            select new
                                            {
                                                poid = m.Field<string>("frompoid"),
@@ -4744,9 +4399,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                                                            roll = m.Field<string>("toroll"),
                                                            dyelot = m.Field<string>("todyelot"),
                                                        }).ToList();
-                        string upd_Fty_4F = Prgs.UpdateFtyInventory_IO_P99(4);
 
-                        upd_Fty_2F = Prgs.UpdateFtyInventory_IO_P99(2);
                         #endregion 更新庫存數量  ftyinventory
 
                         #region delete Qty
@@ -4764,37 +4417,173 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                         #endregion
 
-                        StringBuilder upd_MD_8F_SubTransfer = new StringBuilder();
+                        string upd_Fty_4F_SubTransfer = Prgs.UpdateFtyInventory_IO_P99(4);
+                        string upd_Fty_2F_SubTransfer = Prgs.UpdateFtyInventory_IO_P99(2);
+
+                        string upd_MD_2F_SubTransfer = Prgs.UpdateMPoDetail_P99(2, false);
+                        string upd_MD_4F_SubTransfer = Prgs.UpdateMPoDetail_P99(4, false);
+                        string upd_MD_8F_SubTransfer = Prgs.UpdateMPoDetail_P99(8, false);
+                        string upd_MD_8T_SubTransfer = Prgs.UpdateMPoDetail_P99(8, true);
+                        string upd_MD_16F_SubTransfer = Prgs.UpdateMPoDetail_P99(16, false);
                         transactionscope = new TransactionScope();
                         using (transactionscope)
                         {
                             try
                             {
-                                #region FtyInventory
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F, string.Empty, upd_Fty_4F, out resulttb, "#TmpSource")))
+                                switch (this.strFunction)
                                 {
-                                    transactionscope.Dispose();
-                                    this.ShowErr(result);
-                                    return;
-                                }
+                                    case "P22":
+                                        #region FtyInventory
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F_SubTransfer, string.Empty, upd_Fty_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
 
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F_SubTransfer, string.Empty, upd_Fty_2F, out resulttb, "#TmpSource")))
-                                {
-                                    transactionscope.Dispose();
-                                    this.ShowErr(result);
-                                    return;
-                                }
-                                #endregion
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F_SubTransfer, string.Empty, upd_Fty_2F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
 
-                                #region MDivisionPoDetail
-                                upd_MD_8F_SubTransfer.Append(Prgs.UpdateMPoDetail_P99(8, false));
-                                if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F_SubTransfer, string.Empty, upd_MD_8F_SubTransfer.ToString(), out resulttb, "#TmpSource")))
-                                {
-                                    transactionscope.Dispose();
-                                    this.ShowErr(result);
-                                    return;
+                                        #region MDivisionPoDetail
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F_SubTransfer, string.Empty, upd_MD_8F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        #endregion
+                                        break;
+                                    case "P23":
+                                        #region FtyInventory
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F_SubTransfer, string.Empty, upd_Fty_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F_SubTransfer, string.Empty, upd_Fty_2F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+
+                                        #region MDeivisionPoDetail
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4F_SubTransfer, string.Empty, upd_MD_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F_SubTransfer, string.Empty, upd_MD_8F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2F_SubTransfer, string.Empty, upd_MD_2F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+                                        break;
+                                    case "P24":
+                                        #region FtyInventory
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F_SubTransfer, string.Empty, upd_Fty_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F_SubTransfer, string.Empty, upd_Fty_2F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+
+                                        #region MDivisionPoDetail
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4F_SubTransfer, string.Empty, upd_MD_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F_SubTransfer, string.Empty, upd_MD_8F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_16F_SubTransfer, string.Empty, upd_MD_16F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+                                        break;
+
+                                    case "P36":
+                                        #region FtyInventory
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4F_SubTransfer, string.Empty, upd_Fty_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2F_SubTransfer, string.Empty, upd_Fty_2F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+
+                                        #region MDivisionPoDetail
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4F16F_SubTransfer, string.Empty, upd_MD_4F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4F16F_SubTransfer, string.Empty, upd_MD_16F_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+
+                                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_16F_SubTransfer, string.Empty, upd_MD_8T_SubTransfer, out resulttb, "#TmpSource")))
+                                        {
+                                            transactionscope.Dispose();
+                                            this.ShowErr(result);
+                                            return;
+                                        }
+                                        #endregion
+                                        break;
                                 }
-                                #endregion
 
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
@@ -5703,6 +5492,102 @@ WHERE FTI.StockType='O'
                     this.gridUpdate.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                 }
             }
+        }
+
+        /// <summary>
+        /// get Re Calculate sql command
+        /// </summary>
+        /// <returns></returns>
+        private string ReCalculate()
+        {
+            string sqlcmd = string.Empty;
+            switch (this.strFunction)
+            {
+                case "P22":
+                case "P23":
+                case "P24":
+                case "P36":
+                case "P31":
+                case "P32":
+                    sqlcmd = @"
+use Production
+
+declare @POID as varchar(13) 
+	, @SEQ1 as varchar(3) 
+	, @SEQ2 as varchar(2) 
+	, @ukey as bigint 
+
+-- From
+DECLARE P99_tempTable_From_cur 
+CURSOR FOR 
+	select distinct  t.FromPOID, t.FromSeq1, t.FromSeq2, m.Ukey
+	from #tmp t
+	left join MDivisionPODetail m on t.FromPoId = m.POID and t.FromSeq1 = m.Seq1 and t.FromSeq2 = m.Seq2
+
+OPEN P99_tempTable_From_cur --開始run cursor                   
+FETCH NEXT FROM P99_tempTable_From_cur INTO @POID,@SEQ1,@SEQ2,@ukey
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	exec dbo.usp_SingleItemRecaculate @ukey,@POID,@SEQ1,@SEQ2
+	
+	FETCH NEXT FROM P99_tempTable_From_cur INTO @POID,@SEQ1,@SEQ2,@ukey
+END
+CLOSE P99_tempTable_From_cur
+DEALLOCATE P99_tempTable_From_cur
+
+-- To
+DECLARE P99_tempTable_To_cur 
+CURSOR FOR 
+	select distinct  t.ToPOID, t.ToSeq1, t.ToSeq2, m.Ukey
+	from #tmp t
+	left join MDivisionPODetail m on t.ToPoId = m.POID and t.ToSeq1 = m.Seq1 and t.ToSeq2 = m.Seq2
+
+OPEN P99_tempTable_To_cur --開始run cursor                   
+FETCH NEXT FROM P99_tempTable_To_cur INTO @POID,@SEQ1,@SEQ2,@ukey
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	exec dbo.usp_SingleItemRecaculate @ukey,@POID,@SEQ1,@SEQ2
+	
+	FETCH NEXT FROM P99_tempTable_To_cur INTO @POID,@SEQ1,@SEQ2,@ukey
+END
+CLOSE P99_tempTable_To_cur
+DEALLOCATE P99_tempTable_To_cur
+
+drop table #tmp
+";
+                    break;
+                default:
+                    sqlcmd = @"
+use Production
+
+declare @POID as varchar(13) 
+	, @SEQ1 as varchar(3) 
+	, @SEQ2 as varchar(2) 
+	, @ukey as bigint 
+
+DECLARE P99_tempTable_cur 
+CURSOR FOR 
+	select distinct  t.POID, t.Seq1, t.Seq2, m.Ukey
+	from #tmp t
+	left join MDivisionPODetail m on t.PoId = m.POID and t.Seq1 = m.Seq1 and t.Seq2 = m.Seq2
+
+OPEN P99_tempTable_cur --開始run cursor                   
+FETCH NEXT FROM P99_tempTable_cur INTO @POID,@SEQ1,@SEQ2,@ukey
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	exec dbo.usp_SingleItemRecaculate @ukey,@POID,@SEQ1,@SEQ2
+	
+	FETCH NEXT FROM P99_tempTable_cur INTO @POID,@SEQ1,@SEQ2,@ukey
+END
+CLOSE P99_tempTable_cur
+DEALLOCATE P99_tempTable_cur
+
+drop table #tmp
+";
+                    break;
+            }
+
+            return sqlcmd;
         }
 
         private void UpdMDivisionPoDetail(DataTable dtDetail)
