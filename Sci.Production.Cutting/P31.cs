@@ -302,16 +302,12 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
         protected override DualResult ClickSave()
         {
             // 防止SpreadingSchdlSeq null寫進資料庫
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            IList<DataRow> listDetail = this.DetailDatas;
+            for (int i = 0; i < listDetail.Count; i++)
             {
-                if (dr.RowState == DataRowState.Deleted)
+                if (MyUtility.Check.Empty(listDetail[i]["SpreadingSchdlSeq"]))
                 {
-                    continue;
-                }
-
-                if (MyUtility.Check.Empty(dr["SpreadingSchdlSeq"]))
-                {
-                    dr.Delete();
+                    listDetail[i].Delete();
                 }
             }
 
@@ -458,13 +454,17 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
                 .ThenBy(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]))
                 .ThenBy(o => MyUtility.Convert.GetString(o["FabricCombo"]))
                 .ThenBy(o => MyUtility.Convert.GetDecimal(o["Cutno"]));
+
             int i = this.DetailDatas
                 .Where(w => MyUtility.Convert.GetString(w["Completed"]) == "Y")
                 .Select(s => MyUtility.Convert.GetInt(s["SpreadingSchdlSeq"]))
                 .OrderByDescending(o => o)
                 .FirstOrDefault() + 1;
+
             x.ToList().ForEach(f => f["SpreadingSchdlSeq"] = DBNull.Value);
-            foreach (DataRow dr in x)
+
+            var distinctCutRef = x.Select(s => s["CutRef"].ToString()).Distinct();
+            foreach (string cutRef in distinctCutRef)
             {
                 if (i > 999)
                 {
@@ -472,7 +472,7 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
                 }
 
                 var sameCutref = x.Where(w => MyUtility.Check.Empty(w["SpreadingSchdlSeq"])
-                    && MyUtility.Convert.GetString(w["CutRef"]) == MyUtility.Convert.GetString(dr["CutRef"]));
+                    && MyUtility.Convert.GetString(w["CutRef"]) == cutRef);
                 foreach (DataRow cdr in sameCutref)
                 {
                     cdr["SpreadingSchdlSeq"] = i;

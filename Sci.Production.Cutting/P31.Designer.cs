@@ -70,10 +70,11 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 75);
-            this.detailpanel.Size = new System.Drawing.Size(792, 233);
+            this.detailpanel.Size = new System.Drawing.Size(792, 231);
             // 
             // gridicon
             // 
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.gridicon.Location = new System.Drawing.Point(684, 37);
             // 
             // refresh
@@ -83,15 +84,16 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(792, 233);
+            this.detailgridcont.Size = new System.Drawing.Size(792, 231);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(792, 388);
+            this.detail2.Location = new System.Drawing.Point(4, 27);
+            this.detail2.Size = new System.Drawing.Size(892, 385);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 339);
             // 
             // detailpanel2
             // 
@@ -99,17 +101,18 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(792, 388);
+            this.detail.Location = new System.Drawing.Point(4, 27);
+            this.detail.Size = new System.Drawing.Size(792, 386);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(792, 308);
+            this.detailcont.Size = new System.Drawing.Size(792, 306);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnDefault);
             this.detailbtm.Controls.Add(this.label4);
-            this.detailbtm.Location = new System.Drawing.Point(0, 308);
+            this.detailbtm.Location = new System.Drawing.Point(0, 306);
             this.detailbtm.Size = new System.Drawing.Size(792, 80);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -121,7 +124,8 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(792, 388);
+            this.browse.Location = new System.Drawing.Point(4, 27);
+            this.browse.Size = new System.Drawing.Size(792, 386);
             // 
             // tabs
             // 
@@ -174,7 +178,7 @@
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayFactory.Location = new System.Drawing.Point(106, 14);
             this.displayFactory.Name = "displayFactory";
-            this.displayFactory.Size = new System.Drawing.Size(100, 23);
+            this.displayFactory.Size = new System.Drawing.Size(100, 24);
             this.displayFactory.TabIndex = 4;
             // 
             // dateEstCut
@@ -182,7 +186,7 @@
             this.dateEstCut.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCutDate", true));
             this.dateEstCut.Location = new System.Drawing.Point(106, 43);
             this.dateEstCut.Name = "dateEstCut";
-            this.dateEstCut.Size = new System.Drawing.Size(130, 23);
+            this.dateEstCut.Size = new System.Drawing.Size(130, 24);
             this.dateEstCut.TabIndex = 5;
             this.dateEstCut.Validating += new System.ComponentModel.CancelEventHandler(this.DateEstCut_Validating);
             this.dateEstCut.Validated += new System.EventHandler(this.DateEstCut_Validated);
@@ -195,7 +199,7 @@
             this.label4.ForeColor = System.Drawing.Color.Red;
             this.label4.Location = new System.Drawing.Point(11, 33);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(510, 13);
+            this.label4.Size = new System.Drawing.Size(579, 15);
             this.label4.TabIndex = 3;
             this.label4.Text = "Default <SCHDL Seq> is based on <Est. Cut Date>, <PO>, <Buyer Delivery>, <Fabric " +
     "Combo> and <Cut#>";
@@ -220,13 +224,13 @@
             this.txtCell1.Location = new System.Drawing.Point(329, 14);
             this.txtCell1.MDivisionID = "";
             this.txtCell1.Name = "txtCell1";
-            this.txtCell1.Size = new System.Drawing.Size(30, 23);
+            this.txtCell1.Size = new System.Drawing.Size(30, 24);
             this.txtCell1.TabIndex = 6;
             this.txtCell1.Validated += new System.EventHandler(this.TxtCell1_Validated);
             // 
             // P31
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.GridAlias = "SpreadingSchedule_Detail";
