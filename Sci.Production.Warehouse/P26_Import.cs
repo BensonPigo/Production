@@ -64,6 +64,17 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
+            strSQLCmd.Append(
+                @"
+select ltd.FtyInventoryUkey, [val] = MAX(lt.EditDate)
+into #tmp_LastEditDate
+FROM LocationTrans lt with (nolock)
+INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID = ltd.ID
+WHERE lt.Status='Confirmed' 
+group by ltd.FtyInventoryUkey
+
+
+select * from (");
             if (!MyUtility.Check.Empty(sp) || !MyUtility.Check.Empty(locationid) || !MyUtility.Check.Empty(refno) || !MyUtility.Check.Empty(wk))
             {
                 sql1 = true;
@@ -98,11 +109,11 @@ left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.
 inner join dbo.Factory f on f.ID=p1.factoryID 
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 left join dbo.Receiving r WITH (NOLOCK) on r.Id = rd.Id
-outer apply(SELECT top 1 [val] = lt.EditDate
-            FROM LocationTrans lt with (nolock)
-            INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID = ltd.ID
-            WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey = a.Ukey 
-            order by lt.EditDate desc ) LastEditDate
+Outer apply (
+	select t.val
+	from #tmp_LastEditDate t
+	where t.FtyInventoryUkey = a.Ukey
+)LastEditDate
 where    f.MDivisionID='{0}' 
 ", Env.User.Keyword));
 
@@ -356,11 +367,11 @@ where
         and r1.id = '{0}' 
         {1} 
 )ul
-outer apply(SELECT top 1 [val] = lt.EditDate
-            FROM LocationTrans lt with (nolock)
-            INNER JOIN LocationTrans_detail ltd with (nolock) ON lt.ID = ltd.ID
-            WHERE lt.Status='Confirmed' AND ltd.FtyInventoryUkey = ul.FtyInventoryUkey 
-            order by lt.EditDate desc ) LastEditDate
+Outer apply (
+	select t.val
+	from #tmp_LastEditDate t
+	where t.FtyInventoryUkey = ul.FtyInventoryUkey 
+)LastEditDate
 ",
                     transid,
                     MyUtility.Check.Empty(stockType) ? string.Empty : $"and a.StockType = {stockType}",
@@ -368,7 +379,6 @@ outer apply(SELECT top 1 [val] = lt.EditDate
             }
 
             // 增加 order by FtyInventory.POID, FtyInventory.Seq1, FtyInventory.Seq2,Receiving_Detail.Ukey,FtyInventory.StockType
-            strSQLCmd.Insert(0, "select * from (");
             strSQLCmd.Append(@"
 ) a order by Receiving_Detail_ukey,StockType"); // Poid,seq1,seq2
 
