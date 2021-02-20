@@ -389,6 +389,7 @@
             this.gridMatch.ShowCellToolTips = false;
             this.gridMatch.Size = new System.Drawing.Size(566, 507);
             this.gridMatch.TabIndex = 1;
+            this.gridMatch.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridMatch_ColumnHeaderMouseClick);
             // 
             // panel7
             // 

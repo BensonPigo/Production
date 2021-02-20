@@ -34,7 +34,6 @@ namespace Sci.Production.Packing
             this.EditMode = true;
             DataGridViewGeneratorTextColumnSettings col_PackingListCandidate = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings col_Overwrite = new DataGridViewGeneratorCheckBoxColumnSettings();
-            col_Overwrite.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
             col_PackingListCandidate.CellMouseClick += (s, e) =>
             {
@@ -49,13 +48,14 @@ namespace Sci.Production.Packing
                     Win.Tools.SelectItem item;
 
                     string fileName = MyUtility.Convert.GetString(dr["FileName"]);
+                    string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
 
-                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName).Any())
+                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).Any())
                     {
                         return;
                     }
 
-                    PackingListCandidate_Datasource pData = this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName).FirstOrDefault();
+                    PackingListCandidate_Datasource pData = this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).FirstOrDefault();
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn() { ColumnName = "PackingList ID", DataType = typeof(string) });
@@ -89,13 +89,14 @@ namespace Sci.Production.Packing
                     Win.Tools.SelectItem item;
 
                     string fileName = MyUtility.Convert.GetString(dr["FileName"]);
+                    string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
 
-                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName).Any())
+                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).Any())
                     {
                         return;
                     }
 
-                    PackingListCandidate_Datasource pData = this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName).FirstOrDefault();
+                    PackingListCandidate_Datasource pData = this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).FirstOrDefault();
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn() { ColumnName = "PackingList ID", DataType = typeof(string) });
@@ -121,17 +122,14 @@ namespace Sci.Production.Packing
                 string oldvalue = dr["PackingListID"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 string fileName = MyUtility.Convert.GetString(dr["FileName"]);
+                string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
 
-                if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName).Any())
+                if (this.EditMode && oldvalue.ToUpper() != newvalue.ToUpper())
                 {
-                    return;
-                }
-
-                if (this.EditMode && oldvalue.ToUpper() != newvalue.ToUpper() /* && newvalue.ToUpper() != "PLEASE SELECT"*/)
-                {
-                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.PackingList_Candidate.Contains(newvalue)).Any() && newvalue != string.Empty)
+                    if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID && o.PackingList_Candidate.Any(x => x == newvalue)).Any() && newvalue != string.Empty)
                     {
                         dr["PackingListID"] = oldvalue;
+                        this.GetInfoByPackingList(dr);
                         dr.EndEdit();
                         MyUtility.Msg.WarningBox("Data not found");
                         return;
@@ -139,10 +137,11 @@ namespace Sci.Production.Packing
                     else
                     {
                         dr["PackingListID"] = newvalue;
-                        dr["OverWrite"] = false;
                         dr.EndEdit();
                     }
                 }
+
+                this.GetInfoByPackingList(dr);
             };
 
             col_Overwrite.CellEditable += (s, e) =>
@@ -156,6 +155,14 @@ namespace Sci.Production.Packing
                 {
                     e.IsEditable = false;
                 }
+            };
+
+            col_Overwrite.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridMatch.GetDataRow(e.RowIndex);
+                dr["OverWrite"] = e.FormattedValue;
+                dr.EndEdit();
+                this.GetInfoByPackingList(dr);
             };
 
             this.gridFile.IsEditingReadOnly = true;
@@ -359,6 +366,7 @@ namespace Sci.Production.Packing
         {
             this.BindingSourceFile.DataSource = null;
             this.BindingSourceMatch.DataSource = null;
+            this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
             this.ExcelDatas = new List<ExcelData>();
         }
 
@@ -369,6 +377,8 @@ namespace Sci.Production.Packing
 
             try
             {
+                this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
+
                 List<ExcelData> groupDatas = this.ExcelDatas
                     .GroupBy(o => new { o.PONumber, o.POItem, o.PLPOItemTotalCartons })
                     .Select(o => o.First()).Distinct().ToList();
@@ -404,6 +414,15 @@ namespace Sci.Production.Packing
                 }
 
                 List<MatchGridData> matchGridDatas = new List<MatchGridData>();
+
+                // 先把Excel資訊抓出來
+                foreach (var excelData in this.ExcelDatas)
+                {
+                    excelData.Article = excelData.Material.Split('-').Length > 1 ? excelData.Material.Split('-')[1] : excelData.Material;
+                    excelData.SizeCode = excelData.SizeDescription;
+                    excelData.ShipQty = excelData.ItemQuantity;
+                }
+
                 foreach (var groupData in groupDatas)
                 {
                     List<MatchGridData> oneData = this.MapPackingList(groupData);
@@ -420,19 +439,29 @@ namespace Sci.Production.Packing
             }
         }
 
+        private DataRow GetInfoByPackingList(DataRow current)
+        {
+            string packingListID = MyUtility.Convert.GetString(current["PackingListID"]);
+
+            string cmd = $@"
+select *
+from PackingList_Detail
+where ID = '{packingListID}' AND CustCTN != ''
+";
+            bool existsSSCC = MyUtility.Check.Seek(cmd);
+
+            current["ExistsSSCC"] = existsSSCC;
+
+            current.EndEdit();
+
+            return current;
+        }
+
         /// <inheritdoc/>
         private List<MatchGridData> MapPackingList(ExcelData groupData)
         {
             List<MatchGridData> matchGridDatas = new List<MatchGridData>();
             string fileName = groupData.FileName;
-
-            // 先把Excel資訊抓出來
-            foreach (var excelData in this.ExcelDatas)
-            {
-                excelData.Article = excelData.Material.Split('-').Length > 1 ? excelData.Material.Split('-')[1] : excelData.Material;
-                excelData.SizeCode = excelData.SizeDescription;
-                excelData.ShipQty = excelData.ItemQuantity;
-            }
 
             // 找出同一群的資料
             var samePack = this.ExcelDatas.Where(o => o.PONumber == groupData.PONumber && o.POItem == groupData.POItem && o.PLPOItemTotalCartons == groupData.PLPOItemTotalCartons).ToList();
@@ -492,6 +521,7 @@ DROP TABLE #tmp
                 FileName = fileName,
                 PONumber = groupData.PONumber,
                 POItem = groupData.POItem,
+                OrderID = groupData.OrderID,
                 PLPOItemTotalCartons = groupData.PLPOItemTotalCartons,
                 Overwrite = false,
                 ExistsSSCC = false,
@@ -561,6 +591,7 @@ DROP TABLE #tmp
                         PackingListCandidate_Datasource pp = new PackingListCandidate_Datasource()
                         {
                             FileName = fileName,
+                            OrderID = groupData.OrderID,
                             PackingList_Candidate = packingListIDs,
                         };
                         this.PackingListCandidate_Datasources.Add(pp);
@@ -584,6 +615,7 @@ DROP TABLE #tmp
                         PackingListCandidate_Datasource p = new PackingListCandidate_Datasource()
                         {
                             FileName = fileName,
+                            OrderID = groupData.OrderID,
                             PackingList_Candidate = packingListIDs,
                         };
                         this.PackingListCandidate_Datasources.Add(p);
@@ -962,7 +994,32 @@ DROP TABLE #tmp ,#tmpPackingList_Detail
             public string FileName { get; set; }
 
             /// <inheritdoc/>
+            public string OrderID { get; set; }
+
+            /// <inheritdoc/>
             public List<string> PackingList_Candidate { get; set; }
+        }
+
+        private void GridMatch_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.gridMatch.ValidateControl();
+
+            for (int i = 0; i <= this.gridMatch.Rows.Count - 1; i++)
+            {
+                DataRow dr = this.gridMatch.GetDataRow(i);
+
+                if (!MyUtility.Convert.GetBool(dr["ExistsSSCC"]))
+                {
+                    dr["Overwrite"] = false;
+                }
+                else
+                {
+                    dr["Overwrite"] = true;
+                }
+
+                dr.EndEdit();
+                this.GetInfoByPackingList(dr);
+            }
         }
     }
 }

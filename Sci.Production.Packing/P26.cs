@@ -75,7 +75,7 @@ namespace Sci.Production.Packing
 ;
 
             DataGridViewGeneratorCheckBoxColumnSettings col_Overwrite = new DataGridViewGeneratorCheckBoxColumnSettings();
-            col_Overwrite.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+
             col_Overwrite.CellEditable += (s, e) =>
             {
                 DataRow dr = this.gridMatch.GetDataRow(e.RowIndex);
@@ -1505,6 +1505,25 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
                 this.MatchList.RemoveAll(o => o.NoStickerBasicSetting == true);
             }
 
+            // Ctn in Clog = True
+            var c = this.MatchList.Where(o => o.CtnInClog == true && ((o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted));
+            if (c.Any())
+            {
+                foreach (var item in c)
+                {
+                    Result r = new Result()
+                    {
+                        FileSeq = item.FileSeq,
+                        ResultMsg = "Carton already in Clog.",
+                    };
+                    this.ConfirmMsg.Add(r);
+                }
+
+                // 記錄下無法執行上傳的項目
+                errorList.AddRange(c);
+                this.MatchList.RemoveAll(o => o.CtnInClog == true && ((o.StickerAlreadyExisted && o.Overwrite) || !o.StickerAlreadyExisted));
+            }
+
             // 確認這次上傳的檔案中是否有重複的CustCTN
             var e = this.MatchList.ToList();
             foreach (Match match in e)
@@ -1958,5 +1977,28 @@ AND sd.Seq = (
             public bool NeedMatch { get; set; }
         }
         #endregion
+
+        private void GridMatch_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.gridMatch.ValidateControl();
+
+            for (int i = 0; i <= this.gridMatch.Rows.Count - 1; i++)
+            {
+                DataRow dr = this.gridMatch.GetDataRow(i);
+
+                if (!MyUtility.Convert.GetBool(dr["StickerAlreadyExisted"]))
+                {
+                    dr["Overwrite"] = false;
+                }
+                else
+                {
+                    dr["Overwrite"] = true;
+                }
+
+                dr.EndEdit();
+                this.MatchGridColor();
+                this.GetInfoByPackingList(dr);
+            }
+        }
     }
 }
