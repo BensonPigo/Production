@@ -215,6 +215,10 @@ with tmp1stData as (
 		   , FtyZone
 	from tmp1stData
 	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone,ActManPower
+),tmp1LineMaxOutputDate as (
+	select t.StyleID, t.BrandID, t.StyleDesc, OutputDate = Max(t.OutputDate)
+	from tmp1stData t
+	group by t.StyleID, t.BrandID, t.StyleDesc
 ),tmp2ndData as (
     Select  ProgramID
             , StyleID
@@ -393,6 +397,11 @@ select  StyleID
 																						where t.StyleID = tmp4thData.StyleID
 																						and t.BrandID = tmp4thData.BrandID
 																						and t.StyleDesc = tmp4thData.StyleDesc
+                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
+                                                                                                     where t2.OutputDate = t.OutputDate 
+                                                                                                     and t2.StyleID = t.StyleID
+                                                                                                     and t2.BrandID = t.BrandID 
+                                                                                                     and t2.StyleDesc = t.StyleDesc)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
@@ -549,6 +558,11 @@ select  POID
 																						where t.StyleID = tmp4thData.StyleID
 																						and t.BrandID = tmp4thData.BrandID
 																						and t.StyleDesc = tmp4thData.StyleDesc
+                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
+                                                                                                     where t2.OutputDate = t.OutputDate 
+                                                                                                     and t2.StyleID = t.StyleID
+                                                                                                     and t2.BrandID = t.BrandID 
+                                                                                                     and t2.StyleDesc = t.StyleDesc)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
@@ -604,6 +618,11 @@ select  ProgramID
 																						where t.StyleID = tmp4thData.StyleID
 																						and t.BrandID = tmp4thData.BrandID
 																						and t.StyleDesc = tmp4thData.StyleDesc
+                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
+                                                                                                     where t2.OutputDate = t.OutputDate 
+                                                                                                     and t2.StyleID = t.StyleID
+                                                                                                     and t2.BrandID = t.BrandID 
+                                                                                                     and t2.StyleDesc = t.StyleDesc)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
