@@ -593,7 +593,7 @@ having f.balanceQty + sum(d.Qty) < 0
             #endregion
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "TransferOut_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "TransferOut_Detail"))
             {
                 return;
             }

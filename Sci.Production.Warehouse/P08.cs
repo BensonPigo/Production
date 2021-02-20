@@ -790,7 +790,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             #endregion 檢查負數庫存
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Receiving_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "Receiving_Detail"))
             {
                 return;
             }

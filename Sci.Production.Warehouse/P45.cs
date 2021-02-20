@@ -266,13 +266,14 @@ Balacne Qty is not enough!!
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (this.CurrentMaintain == null)
             {
                 return;
             }
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Adjust_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "Adjust_Detail"))
             {
                 return;
             }
@@ -294,14 +295,14 @@ Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
 	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
 	,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - (isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
 {0}", sql);
-            if (!(dr = DBProxy.Current.Select(null, chksql, out DataTable dt)))
+            if (!(dr = DBProxy.Current.Select(null, chksql, out DataTable dtCheck)))
             {
                 MyUtility.Msg.WarningBox("Update datas error!!");
                 return;
             }
 
             StringBuilder warningmsg = new StringBuilder();
-            foreach (DataRow drs in dt.Rows)
+            foreach (DataRow drs in dtCheck.Rows)
             {
                 if (MyUtility.Convert.GetInt(drs["q"]) < 0)
                 {

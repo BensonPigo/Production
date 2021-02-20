@@ -408,7 +408,7 @@ where   f.lock = 1
             #endregion
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "SubTransfer_Detail_To"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "SubTransfer_Detail_To"))
             {
                 return;
             }

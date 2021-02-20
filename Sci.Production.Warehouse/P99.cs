@@ -2035,38 +2035,20 @@ and t1.Status = 'Confirmed'
                     case "P18":
                         string strTable = (this.strFunction == "P18") ? "TransferIn_Detail" : "Receiving_Detail";
                         #region Receive_Detail & TransferIn_Detail
-                        if (this.strFunction == "P07" && this.strFunction == "P18")
-                        {
-                            #region Check FtyInventory 是否已經存在
-                            if (!this.ChkFtyInventory_Exists(upd_list.CopyToDataTable()))
-                            {
-                                return;
-                            }
-                            #endregion
-                        }
-                        else if (this.strFunction == "P08" && this.strFunction == "P18")
-                        {
-                            // 檢查庫存項Lock
-                            if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                            {
-                                return;
-                            }
-                        }
 
-                        // 檢查庫存
+                        #region 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
                         {
                             return;
                         }
+                        #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), strTable))
                         {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), strTable))
-                            {
-                                return;
-                            }
+                            return;
                         }
+
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
@@ -2213,47 +2195,39 @@ inner join #tmp s on t2.Ukey = s.Ukey
                     case "P19":
                     case "P33":
                         #region Issue_Detail & IssueLack_Detail & TransferOut_Detail & ReturnReceipt_Detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
+
+                        strTable = string.Empty;
+                        switch (this.strFunction)
+                        {
+                            case "P11":
+                            case "P12":
+                            case "P13":
+                            case "P33":
+                                strTable = "Issue_Detail";
+                                break;
+                            case "P15":
+                                strTable = "IssueLack_Detail";
+                                break;
+                            case "P19":
+                                strTable = "TransferOut_Detail";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), strTable))
                         {
                             return;
                         }
+
+                        #endregion
 
                         // 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
                         {
                             return;
                         }
-
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
-                        {
-                            switch (this.strFunction)
-                            {
-                                case "P15":
-                                    if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "IssueLack_Detail"))
-                                    {
-                                        return;
-                                    }
-
-                                    break;
-                                case "P19":
-                                    if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "TransferOut_Detail"))
-                                    {
-                                        return;
-                                    }
-
-                                    break;
-                                default:
-                                    if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "Issue_Detail"))
-                                    {
-                                        return;
-                                    }
-
-                                    break;
-                            }
-                        }
-                        #endregion
 
                         #region update 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
@@ -2403,25 +2377,18 @@ inner join #tmp s on t.id = s.id
                     case "P34":
                     case "P35":
                         #region Adjust_detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                        {
-                            return;
-                        }
 
-                        // 檢查庫存
+                        #region 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
                         {
                             return;
                         }
+                        #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
                         {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "Adjust_Detail"))
-                            {
-                                return;
-                            }
+                            return;
                         }
                         #endregion
 
@@ -2488,205 +2455,88 @@ inner join #tmp s on t.id = s.id
                         #endregion
                         break;
                     case "P43":
-                        #region P43
-                        #region 檢查負數庫存
-                        string ids = string.Empty;
-                        sqlcmd = $@"
-SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
-        AD2.Seq1,AD2.Seq2,
-        AD2.Roll,AD2.Dyelot,AD2.ID,
-       [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) + ( AD2.diffQty) , 
-       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
-       [AdjustQty]= (AD2.qty - AD2.qtybefore )       
-FROM    FtyInventory FTI
-inner join #tmp AD2 on FTI.POID=AD2.POID 
-and FTI.Seq1=AD2.Seq1
-and FTI.Seq2=AD2.Seq2 
-and FTI.Roll=AD2.Roll
-and FTI.Dyelot = AD2.Dyelot
-WHERE FTI.StockType='O' 
-";
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable datacheck)))
-                        {
-                            this.ShowErr(chk_sql, result);
-                            return;
-                        }
-                        else
-                        {
-                            if (datacheck.Rows.Count > 0)
-                            {
-                                foreach (DataRow tmp in datacheck.Rows)
-                                {
-                                    if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) >= 0)
-                                    {
-                                        #region 更新表頭狀態資料 and 數量
-                                        // 更新FtyInventory
-                                        string sqlupdHeader = $@"
-                            update FtyInventory  
-                            set  AdjustQty = AdjustQty + ({MyUtility.Convert.GetDecimal(tmp["AdjustQty"])}) 
-                            where POID = '{tmp["Poid"]}' AND SEQ1='{tmp["seq1"].ToString()}' AND SEQ2='{tmp["seq2"]}' and StockType='O' and Roll = '{tmp["Roll"]}' and Dyelot = '{tmp["Dyelot"]}'
-                            ";
-
-                                        // 更新Adjust
-                                        sqlupdHeader = sqlupdHeader + $@"
-                            update Adjust
-                            set editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{tmp["id"]}'";
-                                        if (!(result = DBProxy.Current.Execute(null, sqlupdHeader)))
-                                        {
-                                            this.ShowErr(sqlupdHeader, result);
-                                            return;
-                                        }
-                                        #endregion
-                                    }
-                                    else
-                                    {
-                                        ids += string.Format(
-                                            "SP#: {0} SEQ#:{1} Roll#:{2} Dyelot:{3}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine + "Balacne Qty is not enough!!",
-                                            tmp["poid"],
-                                            tmp["Seq"],
-                                            tmp["Roll"],
-                                            tmp["Dyelot"],
-                                            tmp["FTYLobQty"],
-                                            tmp["AdjustQty"]) + Environment.NewLine;
-                                    }
-                                }
-
-                                if (!MyUtility.Check.Empty(ids))
-                                {
-                                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                                    return;
-                                }
-                            }
-                        }
-                        #endregion 檢查負數庫存
-                        #region update Qty
-                        sqlcmd = $@" 
-update t
-set t.QtyAfter = s.Qty
-from Adjust_Detail t
-inner join #tmp s on t.Ukey = s.Ukey 
-
-update t
-set t.editname = '{Env.User.UserID}'
-,t.editdate = GETDATE()
-from Adjust t
-inner join #tmp s on t.id = s.id
-";
-
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-
-                        // Re Calculate
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        MyUtility.Msg.InfoBox("Revise successful");
-                        #endregion
-                        break;
                     case "P45":
-                        #region RemoveC_Detail
-                        foreach (DataRow dr in dtDistID.Rows)
-                        {
-                            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", dr["id"]) }, out DataTable[] dts);
-                            if (!res)
-                            {
-                                MyUtility.Msg.ErrorBox(res.ToString(), "error");
-                                return;
-                            }
+                        #region Adjust_Detail
 
-                            if (dts.Length < 1)
-                            {
-                                MyUtility.Msg.InfoBox("Confirmed Successful.");
-
-                                #region update 先檢查WMS是否傳送成功
-                                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
-                                {
-                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
-                                    {
-                                        return;
-                                    }
-                                }
-                                #endregion
-                            }
-                            else
-                            {
-                                StringBuilder warningmsg = new StringBuilder();
-                                foreach (DataRow drs in dts[0].Rows)
-                                {
-                                    if (MyUtility.Convert.GetDecimal(drs["q"]) < 0)
-                                    {
-                                        warningmsg.Append(string.Format(
-                                            @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
-Balacne Qty is not enough!!
-",
-                                            drs["POID"].ToString(),
-                                            drs["seq"].ToString(),
-                                            drs["Roll"].ToString(),
-                                            drs["Dyelot"].ToString(),
-                                            drs["balance"].ToString(),
-                                            drs["Adjustqty"].ToString()));
-                                    }
-                                }
-
-                                if (!MyUtility.Check.Empty(warningmsg.ToString()))
-                                {
-                                    MyUtility.Msg.WarningBox(warningmsg.ToString());
-                                    return;
-                                }
-                            }
-                        }
-                        #region update Qty
-                        sqlcmd = $@" 
-update t
-set t.QtyAfter = s.Qty
-from Adjust_Detail t
-inner join #tmp s on t.Ukey = s.Ukey 
-
-update t
-set t.editname = '{Env.User.UserID}'
-,t.editdate = GETDATE()
-from Adjust t
-inner join #tmp s on t.id = s.id
-";
-
-                        if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        #endregion
-                        #endregion
-                        break;
-                    case "P37":
-                        #region ReturnReceipt_Detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                        {
-                            return;
-                        }
-
-                        // 檢查庫存
+                        #region 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
                         {
                             return;
                         }
+                        #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
                         {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "ReturnReceipt_Detail"))
+                            return;
+                        }
+                        #endregion
+
+                        transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            try
                             {
+                                #region update Qty
+                                sqlcmd = $@" 
+update t
+set t.QtyAfter = s.Qty
+from Adjust_Detail t
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from Adjust t
+inner join #tmp s on t.id = s.id
+";
+
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
+                                {
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
+                                #endregion
+
+                                // Re Calculate
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, this.ReCalculate(), out result_upd_qty)))
+                                {
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
+                                transactionscope.Complete();
+                                transactionscope.Dispose();
+                                MyUtility.Msg.InfoBox("Revise successful");
+                            }
+                            catch (Exception ex)
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr("Commit transaction error.", ex);
                                 return;
                             }
+                        }
+
+                        transactionscope.Dispose();
+                        transactionscope = null;
+
+                        #endregion
+                        break;
+                    case "P37":
+                        #region ReturnReceipt_Detail
+
+                        #region 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
+                        {
+                            return;
+                        }
+                        #endregion
+
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "ReturnReceipt_Detail"))
+                        {
+                            return;
                         }
                         #endregion
 
@@ -2755,25 +2605,18 @@ inner join #tmp s on t.id = s.id
                     case "P31":
                     case "P32":
                         #region BorrowBack_detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                        {
-                            return;
-                        }
 
-                        // 檢查庫存
+                        #region 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
                         {
                             return;
                         }
+                        #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "BorrowBack_Detail_From"))
                         {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "BorrowBack_Detail_From"))
-                            {
-                                return;
-                            }
+                            return;
                         }
                         #endregion
 
@@ -2844,25 +2687,18 @@ inner join #tmp s on t.id = s.id
                     case "P24":
                     case "P36":
                         #region SubTransfer_detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                        {
-                            return;
-                        }
 
-                        // 檢查庫存
+                        #region 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
                         {
                             return;
                         }
+                        #endregion
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr in dtDistID.Rows)
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "SubTransfer_Detail_From"))
                         {
-                            if (!Prgs.ChkWMSLock(dr["ID"].ToString(), "SubTransfer_Detail_From"))
-                            {
-                                return;
-                            }
+                            return;
                         }
                         #endregion
 
@@ -2949,7 +2785,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                 string upd_sql = string.Empty;
                 string chk_sql = string.Empty;
                 DualResult result;
-                DataTable dtDistID = ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.ToTable(true, "ID");
+                string strTable = string.Empty;
 
                 switch (this.strFunction)
                 {
@@ -2957,7 +2793,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P08":
                     case "P18":
                         #region Receive_Detail && TransferIn_Detail
-                        string strTable = (this.strFunction == "P18") ? "TransferIn_Detail" : "Receiving_Detail";
+                        strTable = (this.strFunction == "P18") ? "TransferIn_Detail" : "Receiving_Detail";
                         #region 檢查負庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
@@ -2965,38 +2801,15 @@ inner join #tmp s on t.Ukey = s.Ukey
                         }
                         #endregion
 
-                        if (this.strFunction != "P07")
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), strTable))
                         {
-                            #region 檢查是否lock
-                            if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                            {
-                                return;
-                            }
-                            #endregion
-
-                            #region 檢查庫存項WMSLock
-                            foreach (DataRow dr_rec in dtDistID.Rows)
-                            {
-                                if (!Prgs.ChkWMSLock(dr_rec["ID"].ToString(), strTable))
-                                {
-                                    return;
-                                }
-                            }
-                            #endregion
-                        }
-
-                        #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-                        foreach (DataRow dr_wms in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSCompleteTime(dr_wms["ID"].ToString(), strTable))
-                            {
-                                return;
-                            }
+                            return;
                         }
 
                         #endregion
 
-                        #region UnConfirmed 先檢查WMS是否傳送成功
+                        #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
@@ -3176,6 +2989,25 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                     case "P19":
                     case "P33":
                         #region Issue_Detail
+                        strTable = string.Empty;
+                        switch (this.strFunction)
+                        {
+                            case "P11":
+                            case "P12":
+                            case "P13":
+                            case "P33":
+                                strTable = "Issue_Detail";
+                                break;
+                            case "P15":
+                                strTable = "IssueLack_Detail";
+                                break;
+                            case "P19":
+                                strTable = "TransferOut_Detail";
+                                break;
+                            default:
+                                break;
+                        }
+
                         #region 檢查負庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
@@ -3183,29 +3015,14 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         }
                         #endregion
 
-                        #region 檢查是否lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), strTable))
                         {
                             return;
                         }
                         #endregion
 
-                        #region 檢查庫存項WMSLock & 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-                        foreach (DataRow dr_WMSLock in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_WMSLock["ID"].ToString(), "Issue_Detail"))
-                            {
-                                return;
-                            }
-
-                            if (!Prgs.ChkWMSCompleteTime(dr_WMSLock["ID"].ToString(), "Issue_Detail"))
-                            {
-                                return;
-                            }
-                        }
-                        #endregion
-
-                        #region UnConfirmed 先檢查WMS是否傳送成功
+                        #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                         {
                             if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
@@ -3411,25 +3228,18 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                     case "P34":
                     case "P35":
                         #region Adjust_detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
+
+                        #region 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
                             return;
                         }
+                        #endregion
 
-                        // 檢查庫存
-                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
                         {
                             return;
-                        }
-
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_WMSLock in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_WMSLock["ID"].ToString(), "Adjust_Detail"))
-                            {
-                                return;
-                            }
                         }
                         #endregion
 
@@ -3554,14 +3364,22 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         break;
                     case "P43":
                         #region P43
-                        #region 檢查負數庫存
+
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
+                        {
+                            return;
+                        }
+                        #endregion
+
+                        #region 檢查負數庫存 & 更新庫存
 
                         string ids = string.Empty;
                         sqlcmd = @"
 SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Seq1,AD2.Seq2,
         AD2.Roll,AD2.Dyelot,AD2.id,
-       [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.qty - AD2.qtybefore ) , 
+       [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.Old_Qty - AD2.qtybefore ) , 
        [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
        [AdjustQty]= (AD2.qty - AD2.qtybefore )       
 FROM    FtyInventory FTI
@@ -3628,6 +3446,16 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ";
                         }
                         #endregion 檢查負數庫存
 
+                        #region 先檢查WMS是否傳送成功
+                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        {
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         #region delete
                         sqlcmd = $@" 
 delete t
@@ -3647,62 +3475,22 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         break;
                     case "P45":
                         #region RemoveC
-                        #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-                        foreach (DataRow dr_wms in dtDistID.Rows)
+
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "Adjust_Detail"))
                         {
-                            if (!Prgs.ChkWMSCompleteTime(dr_wms["ID"].ToString(), "Adjust_Detail"))
-                            {
-                                return;
-                            }
+                            return;
                         }
                         #endregion
 
-                        #region 依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
-                        string sql = @"
-from #tmp d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
-where d.Id = '{0}'
-and f.StockType = 'O'";
-
-                        DualResult dr;
-                        string chksql = string.Format(
-                            @"
-Select d.POID,seq = concat(d.Seq1,'-',d.Seq2),d.Roll,d.Dyelot
-	,balance = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty)
-	,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.old_qty,0)
-	,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty) -(isnull(d.old_qty,0) - isnull(d.QtyBefore,0))
-{0}", sql);
-                        if (!(dr = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, chksql, out DataTable dt)))
+                        #region 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
-                            MyUtility.Msg.WarningBox("Update datas error!!");
                             return;
                         }
+                        #endregion
 
-                        StringBuilder warningmsg = new StringBuilder();
-                        foreach (DataRow drs in dt.Rows)
-                        {
-                            if (MyUtility.Convert.GetInt(drs["q"]) < 0)
-                            {
-                                warningmsg.Append(string.Format(
-                                    @"SP#: {0} SEQ#: {1} Roll#: {2} Dyelot: {3}'s balance: {4} is less than Adjust qty: {5}
-Balacne Qty is not enough!!
-",
-                                    drs["POID"].ToString(),
-                                    drs["seq"].ToString(),
-                                    drs["Roll"].ToString(),
-                                    drs["Dyelot"].ToString(),
-                                    drs["balance"].ToString(),
-                                    drs["Adjustqty"].ToString()));
-                            }
-                        }
-
-                        if (!MyUtility.Check.Empty(warningmsg.ToString()))
-                        {
-                            MyUtility.Msg.WarningBox(warningmsg.ToString());
-                            return;
-                        }
-
-                        #region update 先檢查WMS是否傳送成功
+                        #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
@@ -3712,8 +3500,9 @@ Balacne Qty is not enough!!
                         }
                         #endregion
 
+                        #region delete Data
                         string upcmd =
-                            @"
+                        @"
 declare @POID varchar(13)
 		, @seq1 varchar(3)
 		, @seq2 varchar(3)
@@ -3764,32 +3553,26 @@ inner join #tmp s on t.Ukey = s.Ukey
                             MyUtility.Msg.WarningBox("delete datas error!!");
                             return;
                         }
+                        #endregion
 
                         MyUtility.Msg.InfoBox("Delete successful");
-                        #endregion
                         #endregion
                         break;
                     case "P37":
                         #region ReturnReceipt_Detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable()))
-                        {
-                            return;
-                        }
 
-                        // 檢查庫存
+                        #region 檢查庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
                             return;
                         }
 
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_P37 in dtDistID.Rows)
+                        #endregion
+
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "ReturnReceipt_Detail"))
                         {
-                            if (!Prgs.ChkWMSLock(dr_P37["ID"].ToString(), "ReturnReceipt_Detail"))
-                            {
-                                return;
-                            }
+                            return;
                         }
                         #endregion
 
@@ -3938,33 +3721,25 @@ inner join #tmp s on t.ukey = s.ukey
                         transactionscope = null;
                         #endregion
                         break;
-
                     case "P31":
                     case "P32":
                         #region BorrowBack_detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable(), false))
+
+                        #region 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
                             return;
-                        }
-
-                        // 檢查庫存
-                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
-                        {
-                            return;
-                        }
-
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_P31 in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_P31["ID"].ToString(), "BorrowBack_Detail_To"))
-                            {
-                                return;
-                            }
                         }
                         #endregion
 
-                        #region update 先檢查WMS是否傳送成功
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "BorrowBack_Detail_From"))
+                        {
+                            return;
+                        }
+                        #endregion
+
+                        #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
@@ -4225,35 +4000,22 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P24":
                     case "P36":
                         #region SubTransfer_detail
-                        // 檢查庫存項Lock
-                        if (!this.ChkFty_Lock(upd_list.CopyToDataTable(), false))
+
+                        #region 檢查庫存
+                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
                             return;
-                        }
-
-                        // 檢查庫存
-                        if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), true))
-                        {
-                            return;
-                        }
-
-                        #region 檢查庫存項WMSLock
-                        foreach (DataRow dr_SubTransfer in dtDistID.Rows)
-                        {
-                            if (!Prgs.ChkWMSLock(dr_SubTransfer["ID"].ToString(), "SubTransfer_Detail_To"))
-                            {
-                                return;
-                            }
-
-                            // 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-                            if (!Prgs.ChkWMSCompleteTime(dr_SubTransfer["ID"].ToString(), "SubTransfer_Detail_To"))
-                            {
-                                return;
-                            }
                         }
                         #endregion
 
-                        #region update 先檢查WMS是否傳送成功
+                        #region 檢查資料有任一筆WMS已完成
+                        if (!Prgs.ChkWMSCompleteTime(upd_list.CopyToDataTable(), "SubTransfer_Detail_From"))
+                        {
+                            return;
+                        }
+                        #endregion
+
+                        #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
@@ -4765,44 +4527,6 @@ and fi.WMSLock = 1
 
         #region 共用Function
 
-        // Check FtyInventory 是否已經存在
-        private bool ChkFtyInventory_Exists(DataTable dt)
-        {
-            // 判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
-            List<string> listMsg = new List<string>();
-            List<string> listDyelot = new List<string>();
-            foreach (DataRow row in dt.Rows)
-            {
-                string poid = MyUtility.Convert.GetString(row["poid"]);
-                string seq1 = MyUtility.Convert.GetString(row["seq1"]);
-                string seq2 = MyUtility.Convert.GetString(row["seq2"]);
-                string roll = MyUtility.Convert.GetString(row["roll"]);
-                string dyelot = MyUtility.Convert.GetString(row["dyelot"]);
-                string fabricType = MyUtility.Convert.GetString(row["fabrictype"]);
-                string stockType = MyUtility.Convert.GetString(row["stockType"]);
-
-                // 判斷 物料 是否為 布，布料才需要 Roll &Dyelot
-                if (fabricType.ToUpper() == "F")
-                {
-                    // 判斷 在 FtyInventory 是否存在
-                    bool chkFtyInventory = PublicPrg.Prgs.ChkFtyInventory(poid, seq1, seq2, roll, dyelot, stockType);
-
-                    if (!chkFtyInventory)
-                    {
-                        listMsg.Add($"The Roll & Dyelot of <SP#>:{poid}, <Seq>:{seq1} {seq2}, <Roll>:{roll}, <Dyelot>:{dyelot} already exists.");
-                    }
-                }
-            }
-
-            if (listMsg.Count > 0)
-            {
-                DialogResult dr = MyUtility.Msg.WarningBox(listMsg.JoinToString(string.Empty).TrimStart());
-                return false;
-            }
-
-            return true;
-        }
-
         private bool ChkFty_Lock(DataTable dt, bool isConfirmed = true)
         {
             DualResult result;
@@ -5123,7 +4847,6 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
                 case "P34":
                 case "P35":
-                case "P45":
                     symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_Qty - t.QtyBefore)";
                     chk_sql = $@"
 
@@ -5397,6 +5120,51 @@ WHERE FTI.StockType='O'
                                           tmp["Dyelot"],
                                           tmp["FTYLobQty"],
                                           tmp["AdjustQty"]) + Environment.NewLine;
+                                }
+                            }
+
+                            if (!MyUtility.Check.Empty(ids))
+                            {
+                                MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                                return false;
+                            }
+                        }
+                    }
+
+                    break;
+
+                case "P45":
+                    symbol = isConfirmed ? "+ (d.Qty - d.QtyBefore)" : "- (t.Old_Qty - t.QtyBefore)";
+                    chk_sql = $@"
+Select  d.POID
+		,seq = concat(d.Seq1,'-',d.Seq2)
+		,d.Seq1
+		,d.Seq2
+		,d.Roll
+		,d.Dyelot
+		,balance = (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty)
+		,Adjustqty  = d.QtyBefore - d.QtyAfter
+		,[CheckQty] = (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) {symbol}
+from FtyInventory f WITH (NOLOCK) 
+inner join #tmp d on d.POID = f.POID and d.Roll = f.Roll and d.dyelot = f.dyelot and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
+where 1=1
+and f.StockType = 'O'
+";
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
+                    {
+                        this.ShowErr(chk_sql, result);
+                        return false;
+                    }
+                    else
+                    {
+                        if (datacheck.Rows.Count > 0)
+                        {
+                            string ids = string.Empty;
+                            foreach (DataRow tmp in datacheck.Rows)
+                            {
+                                if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) < 0)
+                                {
+                                    ids += $@"SP#: {tmp["poid"]} SEQ#:{tmp["Seq"]} Roll#:{tmp["Roll"]} Dyelot:{tmp["Dyelot"]}'s balance: {tmp["balance"]} is less than Adjust qty: {tmp["AdjustQty"]}" + Environment.NewLine + "Balacne Qty is not enough!!";
                                 }
                             }
 

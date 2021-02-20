@@ -493,9 +493,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #endregion
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "ReturnReceipt_Detail"))
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            if (dt != null)
             {
-                return;
+                if (!Prgs.ChkWMSCompleteTime(dt, "ReturnReceipt_Detail"))
+                {
+                    return;
+                }
             }
             #endregion
 
@@ -670,8 +674,8 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     // AutoWHACC WebAPI for Vstrong
                     if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                     {
-                        DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                        Task.Run(() => new Vstrong_AutoWHAccessory().SentReturnReceipt_Detail_New(dt, "New"))
+                        DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentReturnReceipt_Detail_New(dtDetail, "New"))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                     }
 

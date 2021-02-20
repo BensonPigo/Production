@@ -2280,7 +2280,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             StringBuilder sqlupd2_B = new StringBuilder();
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "Issue_Detail"))
             {
                 return;
             }
