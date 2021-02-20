@@ -5,11 +5,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
@@ -24,6 +22,8 @@ namespace Sci.Production.Quality
         private string FactoryID;
         private string Brand;
         private string Stage;
+        private List<DateTable> dateTables;
+        private List<CFAInspectionRecord> cFAInspectionRecords;
 
         /// <inheritdoc/>
         public R33(ToolStripMenuItem menuitem)
@@ -33,6 +33,8 @@ namespace Sci.Production.Quality
             this.AuditDate.Value1 = DateTime.Now;
             this.AuditDate.Value2 = DateTime.Now;
             this.comboStage.Text = "Staggered";
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -58,6 +60,8 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            this.dateTables = new List<DateTable>();
+            this.cFAInspectionRecords = new List<CFAInspectionRecord>();
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> paramList = new List<SqlParameter>();
             string where = string.Empty;
@@ -131,8 +135,8 @@ DROP TABLE #DateTable,#MainData1
                 return failResult;
             }
 
-            List<DateTable> dateTables = PublicPrg.DataTableToList.ConvertToClassList<DateTable>(this.tempDatas[0]).ToList();
-            List<CFAInspectionRecord> cFAInspectionRecords = PublicPrg.DataTableToList.ConvertToClassList<CFAInspectionRecord>(this.tempDatas[1]).ToList();
+            this.dateTables = PublicPrg.DataTableToList.ConvertToClassList<DateTable>(this.tempDatas[0]).ToList();
+            this.cFAInspectionRecords = PublicPrg.DataTableToList.ConvertToClassList<CFAInspectionRecord>(this.tempDatas[1]).ToList();
 
             return Result.True;
         }
@@ -154,13 +158,94 @@ DROP TABLE #DateTable,#MainData1
             Microsoft.Office.Interop.Excel.Worksheet perLine_Sheet = objApp.ActiveWorkbook.Worksheets[2];
 
             /*perFactory_Sheet*/
-            // 找出有哪些工廠，並複製出格子
-            // 找出有幾天，並複製出格子
 
+            // 找出有哪些工廠，並複製出格子
+            var factorys = this.cFAInspectionRecords.Select(o => o.FactoryID).Distinct();
+
+            int colIndex = 2; // 起始位置為B欄
+            foreach (var factory in factorys)
+            {
+                // 範本原本就有一個空格，因此第二個開始才要複製
+                if (colIndex > 2)
+                {
+                    string excelColumn = MyUtility.Excel.ConvertNumericToExcelColumn(colIndex);
+
+                    // 選擇要複製的
+                    Microsoft.Office.Interop.Excel.Range copyRange = perFactory_Sheet.Range["B:D"];
+
+                    // 選擇要被貼上的位置
+                    Microsoft.Office.Interop.Excel.Range pasteRange = perFactory_Sheet.Range["E:E"];
+
+                    // 選取要被複製的資料，然後貼上
+                    pasteRange.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, copyRange.Copy());
+                }
+
+                // 順便填入值
+                perFactory_Sheet.Cells[8, 2] = factory;
+
+                // 一次跳三欄因此+3
+                colIndex += 3;
+            }
+
+            // TOTAL TIMES PO INSPECTE 右邊要加總的欄未
+            int ftyCount = factorys.Count();
+            List<string> cols = new List<string>();
+            string ss = "=SUM(";
+            for (int i = 0; i <= ftyCount; i++)
+            {
+                int tOTALTIMESPOINSPECTED_Col = 2 + (i * 3);
+                ss += MyUtility.Excel.ConvertNumericToExcelColumn(tOTALTIMESPOINSPECTED_Col) + "#Row#";
+
+                if (i != ftyCount)
+                {
+                    ss += "+";
+                }
+                else
+                {
+                    ss += ")";
+                }
+            }
+
+            // 找出有幾天，並複製出格子
+            int rowIndex = 9; // 起始位置為第9列
+            foreach (var item in this.dateTables.OrderByDescending(o => o.Date))
+            {
+                if (rowIndex > 9)
+                {
+                    // 選擇要複製的
+                    Microsoft.Office.Interop.Excel.Range copyRange = perFactory_Sheet.Range["9:9"];
+
+                    // 選擇要被貼上的位置
+                    Microsoft.Office.Interop.Excel.Range pasteRange = perFactory_Sheet.Range["10:10"];
+
+                    // 選取要被複製的資料，然後貼上
+                    pasteRange.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, copyRange.Copy());
+                }
+
+                // 一次跳1列，因此+1
+                perFactory_Sheet.Cells[9, 1] = item.Date;
+                perFactory_Sheet.Cells[9, colIndex] = item.Date;
+                string s = string.Empty;
+
+                rowIndex += 1;
+            }
 
             /*perLine_Sheet*/
             // 找出有哪些工廠，並複製出格子
             // 找出有幾Line，並複製出格子
+
+            #region Save Excel
+            string strExcelName = Class.MicrosoftFile.GetName("QA_R33");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
+
 
             return true;
         }
