@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Newtonsoft.Json;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,6 +25,37 @@ namespace Sci.Production.Automation
         #region Reveive
 
         #endregion
+
+        public void SentReceive_Detail_New(DataTable dtDetail,string formName = "")
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 取得資料
+            DataTable dtMaster = this.GetReceiveData(dtDetail, formName, "New");
+
+            // 沒資料就return
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            // Confirm後要上鎖物料
+            if (formName == "P07" || formName == "P18")
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return;
+                }
+            }
+        }
+
 
         /// <summary>
         /// Receive_Detail

@@ -765,13 +765,12 @@ and t.Barcode = ''
                     #endregion
                     break;
                 case 99:
-                    #region 物料解鎖
+                    #region 物料上鎖
                     sqlcmd = @"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
-
 
 update t
 set WMSLock = 1
