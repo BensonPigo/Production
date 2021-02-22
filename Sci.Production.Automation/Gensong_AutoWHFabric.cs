@@ -16,8 +16,10 @@ namespace Sci.Production.Automation
         private static readonly string GensongSuppID = "3A0174";
         private static readonly string moduleName = "AutoWHFabric";
         private static readonly string apiThread = "SentReceiving_DetailToGensong";
-        private static readonly string suppAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
+        private static readonly string suppAPIThread = "pms/GS_WebServices";
+        private static readonly string SCIAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
         private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
+        private static readonly string URL = GetSupplierUrl(GensongSuppID, moduleName);
 
         /// <inheritdoc/>
         public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
@@ -54,8 +56,139 @@ namespace Sci.Production.Automation
                     return;
                 }
             }
+
+            #region 記錄Confirmed後有傳給WMS的資料
+            switch (formName)
+            {
+                case "P07":
+                    sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "P18":
+                    sqlcmd = @"
+update t
+set t.SentToWMS = 1
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+            #endregion
+
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "New");
+
+            // 將DataTable 轉成Json格式
+            string jsonBody = this.GetJsonBody(dtMaster, "Receiving_Detail");
+
+            // Call API傳送給WMS
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+        /// <summary>
+        /// Sent Receive_Detail Delete
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="formName">type</param>
+        /// <param name = "status" > Status </ param >
+        /// <param name = "isP99" > is P99 </ param >
+        /// <returns>bool</returns>
+        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Gensong_AutoWHFabric callMethod = new Gensong_AutoWHFabric();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.GetReceiveData(dtDetail, formName, status, isP99);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", string.Empty);
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                switch (formName)
+                {
+                    case "P07":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                    case "P18":
+                        sqlcmd = @"
+update t
+set t.SentToWMS = 0
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                        break;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Receive_Detail
@@ -109,7 +242,7 @@ namespace Sci.Production.Automation
         /// <summary>
         /// Issue_Detail To Gensong
         /// </summary>
-        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="dtDetail">Detail DataSource</param>e
         public void SentIssue_DetailToGensongAutoWHFabric(DataTable dtDetail)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
@@ -1611,6 +1744,13 @@ and exists(
 
         #endregion
 
+        private void SetAutoAutomationErrMsg(string apiThread, string type = "")
+        {
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = type == "New" ? suppAPIThread : suppAPIThread;
+            this.automationErrMsg.moduleName = moduleName;
+            this.automationErrMsg.suppID = GensongSuppID;
+        }
 
         private object CreateGensongStructure(string tableName, object structureID)
         {
