@@ -123,7 +123,8 @@ namespace Sci.Production.Warehouse
 	,[In Qty] = round(fi.InQty,2)
 	,[Out Qty] = round(fi.OutQty,2)
 	,[Adjust Qty] = round(fi.AdjustQty,2)
-	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)
+    ,[Return Qty] = round(fi.ReturnQty,2)
+	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2) - round(fi.ReturnQty,2)
 	,[Location] = f.MtlLocationID
     ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
@@ -198,8 +199,9 @@ namespace Sci.Production.Warehouse
 	,[In Qty] = round(mpd.InQty,2)
 	,[Out Qty] = round(mpd.OutQty,2)
 	,[Adjust Qty] = round(mpd.AdjustQty,2)
-	,[Balance Qty] = round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)
-	,[Bulk Qty] = (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.LInvQty,2)
+    ,[Return Qty] = round(mpd.ReturnQty,2)
+	,[Balance Qty] = round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2) - round(mpd.ReturnQty,2)
+	,[Bulk Qty] = (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.ReturnQty,2) - round(mpd.LInvQty,2)
 	,[Inventory Qty] = round(mpd.LInvQty,2)
 	,[Scrap Qty] = round(mpd.LObQty ,2)
 	,[Bulk Location] = mpd.ALocation
@@ -417,7 +419,7 @@ where 1=1
                     {
                         if (this.ST == "B")
                         {
-                            this.sqlcmd.Append(" and (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.LInvQty,2)>0");
+                            this.sqlcmd.Append(" and (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.ReturnQty,2) - round(mpd.LInvQty,2)>0");
                         }
                         else if (this.ST == "I")
                         {
@@ -435,11 +437,11 @@ where 1=1
             {
                 if (this._reportType == 0)
                 {
-                    this.sqlcmd.Append(" and (round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2))>0");
+                    this.sqlcmd.Append(" and (round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)) - round(fi.ReturnQty,2) > 0");
                 }
                 else
                 {
-                    this.sqlcmd.Append(" and ((round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0) or mpd.LInvQty >0 or mpd.LObQty >0)  ");
+                    this.sqlcmd.Append(" and ((round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2) - round(mpd.ReturnQty,2) > 0) or mpd.LInvQty >0 or mpd.LObQty >0)  ");
                 }
             }
 

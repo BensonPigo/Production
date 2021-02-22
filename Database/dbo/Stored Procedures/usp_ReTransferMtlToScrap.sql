@@ -9,7 +9,7 @@ begin
 			fi.Roll,
 			fi.Dyelot,
 			[Factory] = (select FactoryID from Orders with (nolock) where ID=fi.POID),
-			[Qty] = fi.InQty - fi.OutQty + fi.AdjustQty,
+			[Qty] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty,
 			[SubTransfer_DetailUkey] = sd.Ukey
 	into #updSubTransfer_Detail
 	from dbo.FtyInventory fi WITH (NOLOCK)

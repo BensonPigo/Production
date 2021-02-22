@@ -1,6 +1,3 @@
-USE [Production]
-GO
-
 -- =============================================
 -- Author:		<Willy>
 -- Create date: <2017/11/13>
@@ -8,7 +5,6 @@ GO
 -- =============================================
 CREATE PROCEDURE dbo.usp_RemoveScrapById
 	@ID varchar(13)
-	
 AS
 BEGIN	
 	SET NOCOUNT ON;
@@ -20,9 +16,9 @@ Select  d.POID
 		,d.Seq2
 		,d.Roll
 		,d.Dyelot
-		,balance = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+		,balance = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
 		,Adjustqty  = isnull(d.QtyBefore,0) - isnull(d.QtyAfter,0)
-		,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) +(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
+		,q = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + (isnull(d.QtyAfter,0) - isnull(d.QtyBefore,0))
 into #tmpAll
 from dbo.Adjust_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.dyelot = f.dyelot and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2

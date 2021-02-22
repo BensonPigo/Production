@@ -368,8 +368,8 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
 SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Seq1,AD2.Seq2,
         AD2.Roll,AD2.Dyelot,
-       [CheckQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty) + ( AD2.qtyafter - AD2.qtybefore ) , 
-       [FTYLobQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty),
+       [CheckQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) + ( AD2.qtyafter - AD2.qtybefore ) , 
+       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
        [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )       
 FROM    FtyInventory FTI
 inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
@@ -466,8 +466,8 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
 SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
         AD2.Seq1,AD2.Seq2,
         AD2.Roll,AD2.Dyelot,
-       [CheckQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty) - ( AD2.qtyafter - AD2.qtybefore ) , 
-       [FTYLobQty] = (FTI.InQty-FTI.OutQty+FTI.AdjustQty),
+       [CheckQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) - ( AD2.qtyafter - AD2.qtybefore ) , 
+       [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
        [AdjustQty]= (AD2.qtyafter - AD2.qtybefore )       
 FROM    FtyInventory FTI
 inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
@@ -570,11 +570,11 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
             string sqlcmd = string.Format(
                 @"
 SELECT 
-md.POID
-,md.Seq1
-,md.seq2
-,[FTYLobQty] = sum(FTI.InQty-FTI.OutQty+FTI.AdjustQty)
-FROM    FtyInventory FTI
+    md.POID
+    ,md.Seq1
+    ,md.seq2
+    ,[FTYLobQty] = sum(FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty)
+FROM FtyInventory FTI
 inner join Adjust_detail AD2 on FTI.POID=AD2.POID 
 and FTI.Seq1=AD2.Seq1
 and FTI.Seq2=AD2.Seq2 

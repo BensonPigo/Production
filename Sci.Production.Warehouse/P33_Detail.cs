@@ -51,7 +51,7 @@ namespace Sci.Production.Warehouse
 select t.poid
        , t.Seq1
        , t.Seq2
-	   , [BulkQty]= ISNULL(FTY.InQty-FTY.OutQty+ FTY.AdjustQty ,0)
+	   , [BulkQty]= ISNULL(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty, 0)
 	   , [BulkLocation]= ISNULL( Location.MtlLocationID ,'')
 	   , t.Qty
        , t.ID

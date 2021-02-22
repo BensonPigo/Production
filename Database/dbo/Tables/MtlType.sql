@@ -1,21 +1,25 @@
 ﻿CREATE TABLE [dbo].[MtlType] (
-    [ID]              VARCHAR (20)   CONSTRAINT [DF_MtlType_ID] DEFAULT ('') NOT NULL,
-    [FullName]        NVARCHAR (100) CONSTRAINT [DF_MtlType_FullName] DEFAULT ('') NULL,
-    [Type]            VARCHAR (1)    CONSTRAINT [DF_MtlType_Type] DEFAULT ('') NULL,
-    [Junk]            BIT            CONSTRAINT [DF_MtlType_Junk] DEFAULT ((0)) NULL,
-    [IrregularCost]   BIT            CONSTRAINT [DF_MtlType_IrregularCost] DEFAULT ((0)) NULL,
-    [CheckZipper]     BIT            CONSTRAINT [DF_MtlType_CheckZipper] DEFAULT ((0)) NULL,
-    [ProductionType]  VARCHAR (20)   CONSTRAINT [DF_MtlType_ProductionType] DEFAULT ('') NULL,
-    [OutputUnit]      VARCHAR (1)    CONSTRAINT [DF_MtlType_OutputUnit] DEFAULT ('') NULL,
-    [IsExtensionUnit] BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NOT NULL,
-    [IssueType]       VARCHAR (20)   CONSTRAINT [DF_MtlType_IssueType] DEFAULT ('') NULL,
-    [IsTrimCardOther] BIT            NULL,
-    [AddName]         VARCHAR (10)   CONSTRAINT [DF_MtlType_AddName] DEFAULT ('') NULL,
-    [AddDate]         DATETIME       NULL,
-    [EditName]        VARCHAR (10)   CONSTRAINT [DF_MtlType_EditName] DEFAULT ('') NULL,
-    [EditDate]        DATETIME       NULL,
+    [ID]                   VARCHAR (20)   CONSTRAINT [DF_MtlType_ID] DEFAULT ('') NOT NULL,
+    [FullName]             NVARCHAR (100) CONSTRAINT [DF_MtlType_FullName] DEFAULT ('') NULL,
+    [Type]                 VARCHAR (1)    CONSTRAINT [DF_MtlType_Type] DEFAULT ('') NULL,
+    [Junk]                 BIT            CONSTRAINT [DF_MtlType_Junk] DEFAULT ((0)) NULL,
+    [IrregularCost]        BIT            CONSTRAINT [DF_MtlType_IrregularCost] DEFAULT ((0)) NULL,
+    [CheckZipper]          BIT            CONSTRAINT [DF_MtlType_CheckZipper] DEFAULT ((0)) NULL,
+    [ProductionType]       VARCHAR (20)   CONSTRAINT [DF_MtlType_ProductionType] DEFAULT ('') NULL,
+    [OutputUnit]           VARCHAR (1)    CONSTRAINT [DF_MtlType_OutputUnit] DEFAULT ('') NULL,
+    [IsExtensionUnit]      BIT            CONSTRAINT [DF_MtlType_IsExtensionUnit] DEFAULT ((0)) NOT NULL,
+    [IssueType]            VARCHAR (20)   CONSTRAINT [DF_MtlType_IssueType] DEFAULT ('') NULL,
+    [IsTrimCardOther]      BIT            NULL,
+    [AddName]              VARCHAR (10)   CONSTRAINT [DF_MtlType_AddName] DEFAULT ('') NULL,
+    [AddDate]              DATETIME       NULL,
+    [EditName]             VARCHAR (10)   CONSTRAINT [DF_MtlType_EditName] DEFAULT ('') NULL,
+    [EditDate]             DATETIME       NULL,
+    [IsThread]             BIT            NULL,
+    [LossQtyCalculateType] VARCHAR (1)    NULL,
     CONSTRAINT [PK_MtlType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -80,4 +84,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlType', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O�_���u', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlType', @level2type = N'COLUMN', @level2name = N'IsThread';
 

@@ -130,8 +130,8 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID
 ,fi.seq2 Fromseq2
 ,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
 ,fi.roll FromRoll,fi.dyelot FromDyelot,fi.stocktype FromStockType,fi.Ukey as fromftyinventoryukey 
-,fi.InQty,fi.OutQty,fi.AdjustQty
-,fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
+,fi.InQty,fi.OutQty,fi.AdjustQty,fi.ReturnQty
+,fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty as balanceQty
 ,0.00 as qty
 ,cte.StockUnit
 ,isnull((
@@ -147,7 +147,7 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID
 , cte.ToFactoryID
 ,fi.roll ToRoll,fi.dyelot ToDyelot,'I' as [ToStockType]
 ,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I' and m.Junk !='1')t1 for xml path('')), 1, 1, '') as [ToLocation]
-,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by cte.ToFactoryID,fi.POID,fi.seq1,fi.seq2,fi.dyelot)
+,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over(partition by cte.ToFactoryID,fi.POID,fi.seq1,fi.seq2,fi.dyelot)
 ,dbo.getMtlDesc(fi.poid, fi.seq1, fi.seq2, 2, 0) as [description]
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on 
@@ -366,6 +366,7 @@ WHERE   StockType='{dr["tostocktype"]}'
                 .Numeric("inqty", header: "Stock" + Environment.NewLine + "In", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 6
                 .Numeric("outqty", header: "Stock" + Environment.NewLine + "Out", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 7
                 .Numeric("adjustqty", header: "Stock" + Environment.NewLine + "Adjust", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 8
+                .Numeric("ReturnQty", header: "Stock" + Environment.NewLine + "Return", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("balanceqty", header: "Stock" + Environment.NewLine + "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8)) // 9
                 .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out this.col_Qty) // 10
                 .Text("location", header: "From Location", iseditingreadonly: true) // 11

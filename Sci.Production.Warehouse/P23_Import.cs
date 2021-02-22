@@ -150,7 +150,7 @@ select  0 AS selected
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
-        , fi.InQty - fi.OutQty + fi.AdjustQty as balanceQty
+        , fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty as balanceQty
         , 0.00 as qty
         , StockUnit
         , [accu_qty] = isnull(( select inqty 
@@ -172,7 +172,7 @@ select  0 AS selected
         , fi.dyelot ToDyelot
         , 'B' as [ToStockType]
         , dbo.Getlocation(fi.ukey) as [ToLocation]
-        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
+        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 

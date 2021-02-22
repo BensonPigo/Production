@@ -251,6 +251,100 @@ namespace Sci.Production.Packing
             #endregion
         }
 
+        /// <inheritdoc/>
+        public DualResult PrintBarcodeOtherSize(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        {
+            DataTable printData;
+            DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
+            if (!result)
+            {
+                return result;
+            }
+            else if (printData == null || printData.Rows.Count == 0)
+            {
+                return new DualResult(false, "Data not found.");
+            }
+
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
+            object printFile;
+            Word._Document document;
+            Word.Table tables = null;
+
+            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_BarcodeOther.dotx";
+            document = winword.Documents.Add(ref printFile);
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                if (printData.Rows.Count > 1)
+                {
+                    for (int i = 1; i < printData.Rows.Count; i++)
+                    {
+                        winword.Selection.MoveDown();
+                        winword.Selection.InsertNewPage();
+                        winword.Selection.Paste();
+                    }
+                }
+
+                #endregion
+                #region 填入資料
+                for (int i = 0; i < printData.Rows.Count; i++)
+                {
+                    tables = table[i + 1];
+                    #region 準備資料
+                    string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                    string packingNo = "P/L#.: " + printData.Rows[i]["ID"];
+                    string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
+                    string poNo = "PO#.: " + printData.Rows[i]["PONo"].ToString();
+                    string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                    string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                    #endregion
+
+                    Bitmap oriBitmap = this.NewBarcode(barcode);
+                    Clipboard.SetImage(oriBitmap);
+                    tables.Cell(1, 1).Range.Paste();
+                    tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 20f;
+                    tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
+                    tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+
+                    tables.Cell(2, 1).Range.Text = packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
+                }
+                #endregion
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+
+                #region Save & Show Word
+                winword.Visible = true;
+                Marshal.ReleaseComObject(winword);
+                Marshal.ReleaseComObject(document);
+                Marshal.ReleaseComObject(table);
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                return new DualResult(false, "Export word error.", ex);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            return new DualResult(true);
+        }
+
         /// <summary>
         /// PrintQRcode
         /// </summary>
@@ -321,10 +415,10 @@ namespace Sci.Production.Packing
 
                         #region 準備資料
                         string barcode = printData.Rows[p]["ID"].ToString() + printData.Rows[p]["CTNStartNo"].ToString();
-                        string packingNo = "P/L#: " + printData.Rows[p]["ID"];
-                        string spNo = "SP#: " + printData.Rows[p]["OrderID"];
-                        string cartonNo = "CTN: " + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
-                        string poNo = "PO#: " + printData.Rows[p]["PONo"];
+                        string packingNo = "P/L#:" + printData.Rows[p]["ID"];
+                        string spNo = "SP#:" + printData.Rows[p]["OrderID"];
+                        string cartonNo = "CTN:" + printData.Rows[p]["CTNStartNo"] + " OF " + printData.Rows[p]["CtnQty"];
+                        string poNo = "PO#:" + printData.Rows[p]["PONo"];
                         string sizeQty = "Size/Qty:" + printData.Rows[p]["SizeCode"] + "/" + printData.Rows[p]["ShipQty"];
                         string custCTN = printData.Rows[p]["CustCTN"].ToString();
                         #endregion

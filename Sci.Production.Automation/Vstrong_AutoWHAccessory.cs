@@ -563,7 +563,7 @@ select lt2.Id
 ,lt2.StockType
 ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
     when 'False' then 'Delete' end
-,[Qty] = f.InQty - f.OutQty + f.AdjustQty
+,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id

@@ -468,7 +468,7 @@ WHERE 1=1
                 and fi.StockType = 'I' 
 	            and fid.MtlLocationID is not null 
                 and fi.Lock = 0
-                and fi.InQty - fi.OutQty + fi.AdjustQty > 0
+                and fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty > 0
     ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
     cross apply (
         select  sum(iif(i.type='2',i.qty,0-i.qty)) taipei_qty 
@@ -619,7 +619,7 @@ select  convert(bit,0) as selected
         , fi.Roll FromRoll
         , fi.Dyelot FromDyelot
         , fi.StockType FromStockType
-        , fi.InQty - fi.OutQty + fi.AdjustQty BalanceQty
+        , fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty BalanceQty
         , 0.00 as Qty
         , t.FactoryID  toFactoryID 
         , rtrim(t.poID) topoid
@@ -630,7 +630,7 @@ select  convert(bit,0) as selected
         ,'B' tostocktype 
         , dbo.Getlocation(fi.ukey) fromlocation
         , '' tolocation
-        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
+        , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.StockPOID,t.StockSeq1,t.StockSeq2,fi.Dyelot)
         , t.StockUnit
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.StockPOID 
@@ -639,7 +639,7 @@ inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.StockPOID
 inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
 where   fi.StockType = 'I' 
         and fi.Lock = 0
-        and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
+        and fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty > 0 
 order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
 
 drop table #tmp  {(!string.IsNullOrEmpty(invCfmDate_s) && !string.IsNullOrEmpty(invCfmDate_e) ? ",#tmpInvtrans" : string.Empty)}
@@ -975,7 +975,7 @@ from #tmp";
 select i2.ID
 ,[Barcode1] = f.Barcode
 ,[OriBarcode] = fbOri.Barcode
-,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[NewBarcode] = iif(f.Barcode ='',fbOri.Barcode,f.Barcode)
 ,[Poid] = i2.FromPOID
 ,[Seq1] = i2.FromSeq1
@@ -1045,7 +1045,7 @@ select f.Ukey
 ,[ToBarcode2] = isnull(Tofb.Barcode,'')
 ,[FromBarcode] = isnull(fromBarcode.Barcode,'')
 ,[FromBarcode2] = isnull(Fromfb.Barcode,'')
-,[ToBalanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[ToBalanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[FromBalanceQty] = fromBarcode.BalanceQty
 ,[NewBarcode] = ''
 ,[Poid] = i2.ToPOID
@@ -1068,7 +1068,7 @@ outer apply(
 )Tofb
 outer apply(
 	select f2.Barcode 
-	,BalanceQty = f2.InQty-f2.OutQty+f2.AdjustQty
+	,BalanceQty = f2.InQty - f2.OutQty + f2.AdjustQty - f2.ReturnQty
 	,f2.Ukey
 	from FtyInventory f2	
 	where f2.POID = i2.FromPOID

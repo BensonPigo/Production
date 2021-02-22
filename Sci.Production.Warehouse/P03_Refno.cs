@@ -43,7 +43,7 @@ Select  a.FtyGroup
         , a.sewinline
         , a.sewline
         , b.FinalETA
-        , md.inqty - md.outqty + md.adjustqty Balance
+        , md.inqty - md.outqty + md.adjustqty - md.ReturnQty Balance
         , b.stockunit 
         , md.BLocation
         , [LobQty] = isnull(md.LobQty,0)

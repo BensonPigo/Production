@@ -98,7 +98,7 @@ namespace Sci.Production.Warehouse
 ,b.StockUnit
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) [description]
 ,dbo.Getlocation(a.ukey) [location]
-,a.inqty-a.OutQty+a.AdjustQty qtybefore
+,a.inqty - a.OutQty + a.AdjustQty - a.ReturnQty qtybefore
 ,0.00 as QtyAfter
 from dbo.FtyInventory a WITH (NOLOCK) 
 inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.ID = a.POID and b.SEQ1 = a.Seq1 and b.SEQ2 = a.Seq2
@@ -120,7 +120,7 @@ inner join dbo.Factory f on f.ID=b.factoryID"));
             }
 
             strSQLCmd.Append(string.Format(
-                @" where a.lock=0 and a.InQty - a.OutQty + a.AdjustQty > 0 and a.StockType ='{1}' 
+                @" where a.lock=0 and a.InQty - a.OutQty + a.AdjustQty - a.ReturnQty > 0 and a.StockType ='{1}' 
 and f.MDivisionID='{0}' ", Env.User.Keyword, this.dr_master["stocktype"]));
 
             if (!MyUtility.Check.Empty(category))

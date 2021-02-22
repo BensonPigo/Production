@@ -156,6 +156,18 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtmulitOperation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtmulitOperation.Designer.cs">
+      <DependentUpon>TxtmulitOperation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TxtmulitMachineType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtmulitMachineType.Designer.cs">
+      <DependentUpon>TxtmulitMachineType.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtLocalSuppPMSDB.cs">
       <SubType>UserControl</SubType>
     </Compile>

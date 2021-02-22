@@ -487,7 +487,7 @@ Select  d.frompoid
         ,d.fromseq1
         ,d.fromseq2
         ,d.fromRoll,d.Qty
-        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        ,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
         ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID  
@@ -522,12 +522,12 @@ Select  d.frompoid
         ,d.fromseq2
         ,d.fromRoll
         ,d.Qty
-        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+        ,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
         ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID AND D.FromStockType = F.StockType 
     and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.fromDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -828,7 +828,7 @@ Select  d.topoid
         ,d.toseq2
         ,d.toRoll
         ,d.Qty
-        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        ,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
         ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
   on d.toPoId = f.PoId
@@ -867,7 +867,7 @@ Select  d.topoid
         ,d.toseq2
         ,d.toRoll
         ,d.Qty
-        ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        ,balanceQty = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
         ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
   on d.toPoId = f.PoId
@@ -876,7 +876,7 @@ from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK
   and d.toStocktype = f.StockType
   and d.toRoll = f.Roll
   and d.toDyelot = f.Dyelot
-where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result2);
@@ -1120,7 +1120,7 @@ where id = '{this.CurrentMaintain["id"]}'";
 select i2.ID
 ,[Barcode1] = f.Barcode
 ,[OriBarcode] = fbOri.Barcode
-,[balanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[NewBarcode] = iif(f.Barcode ='',fbOri.Barcode,f.Barcode)
 ,[Poid] = i2.FromPOID
 ,[Seq1] = i2.FromSeq1
@@ -1190,7 +1190,7 @@ select f.Ukey
 ,[ToBarcode2] = isnull(Tofb.Barcode,'')
 ,[FromBarcode] = isnull(fromBarcode.Barcode,'')
 ,[FromBarcode2] = isnull(Fromfb.Barcode,'')
-,[ToBalanceQty] = f.InQty-f.OutQty+f.AdjustQty
+,[ToBalanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[FromBalanceQty] = fromBarcode.BalanceQty
 ,[NewBarcode] = ''
 ,[Poid] = i2.ToPOID
@@ -1213,8 +1213,8 @@ outer apply(
 )Tofb
 outer apply(
 	select f2.Barcode 
-	,BalanceQty = f2.InQty-f2.OutQty+f2.AdjustQty
-	,f2.Ukey
+	    ,BalanceQty = f2.InQty - f2.OutQty + f2.AdjustQty - f2.ReturnQty
+	    ,f2.Ukey
 	from FtyInventory f2	
 	where f2.POID = i2.FromPOID
 	and f2.Seq1 = i2.FromSeq1 and f2.Seq2 = i2.FromSeq2

@@ -492,12 +492,12 @@ select po3.*
 into #deletePo3
 from PO_Supp_Detail po3
 outer apply(
-	select isnull(sum(InQty+OutQty+AdjustQty),0) ttlQty from FtyInventory 
+	select isnull(sum(InQty+OutQty+AdjustQty-ReturnQty),0) ttlQty from FtyInventory 
 	where POID=po3.ID and Seq1=po3.SEQ1 and Seq2=po3.SEQ2
 	and AdjustQty =0
 )fty
 outer apply(
-	select isnull(sum(InQty+OutQty+AdjustQty),0) ttlQty from MDivisionPoDetail  
+	select isnull(sum(InQty+OutQty+AdjustQty-ReturnQty),0) ttlQty from MDivisionPoDetail  
 	where POID=po3.ID and Seq1=po3.SEQ1 and Seq2=po3.SEQ2
 	and AdjustQty =0
 )MDPoDetail
@@ -676,6 +676,7 @@ SET
 	  , a.DWR = isnull(b.DWR,0)
       , a.RibItem           = b.RibItem 
 	  , a.Clima = b.Clima
+	  , a.BomTypeCalculateWeight = b.BomTypeCalculateWeight
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 -------------------------- INSERT INTO §ì
@@ -713,6 +714,7 @@ INSERT INTO Production.dbo.Fabric(
 	   , DWR
        , RibItem
 	   , Clima
+	   , BomTypeCalculateWeight
 )
 select 
       SCIRefno
@@ -748,6 +750,7 @@ select
 	  , isnull(DWR,0)
       , RibItem
 	  , Clima
+	  , BomTypeCalculateWeight
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 

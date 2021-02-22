@@ -303,6 +303,18 @@
     <Compile Include="P02_RepeatCheckList.Designer.cs">
       <DependentUpon>P02_RepeatCheckList.cs</DependentUpon>
     </Compile>
+    <Compile Include="R05.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R05.Designer.cs">
+      <DependentUpon>R05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R04.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R04.Designer.cs">
+      <DependentUpon>R04.cs</DependentUpon>
+    </Compile>
     <Compile Include="R03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -432,6 +444,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Print.resx">
       <DependentUpon>P03_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R05.resx">
+      <DependentUpon>R05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R04.resx">
+      <DependentUpon>R04.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>

@@ -56,9 +56,9 @@ select distinct 0 as selected
 		,FTI.Roll
 		,FTI.Dyelot
         ,[Description]=Fa.Description
-		,[QtyBefore]= FTI.InQty-FTI.OutQty+FTI.AdjustQty
+		,[QtyBefore]= FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty 
 		,[QtyAfter]= 0 
-        ,[AdjustQty]= 0-(FTI.InQty-FTI.OutQty+FTI.AdjustQty)
+        ,[AdjustQty]= 0-(FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty)
         ,[StockUnit] = PO3.StockUnit      
         ,[location]= dbo.Getlocation(FTI.Ukey)
         , '' reasonid

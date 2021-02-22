@@ -123,7 +123,8 @@ namespace Sci.Production.Warehouse
 			                                       ,a.StockUnit [StockUnit]
 			                                       ,i.OutQty [Released Qty]
 			                                       ,i.AdjustQty [Adjust Qty]
-			                                       ,i.InQty-i.OutQty+i.AdjustQty [Balance]
+                                                   ,i.ReturnQty [Return Qty]
+			                                       ,i.InQty-i.OutQty+i.AdjustQty-i.ReturnQty [Balance]
 			                                       ,format(i.LInvQty,'###,###,###.##') [Stock Qty]
 			                                       ,format(i.LObQty,'###,###,###.##') [Scrap Qty]
 			                                       ,i.ALocation [Bulk Location]
@@ -199,6 +200,7 @@ namespace Sci.Production.Warehouse
                                              , [StockUnit]  = l.UnitID
                                              , [Released Qty] = isnull(l.OutQty,0)
                                              , [Adjust Qty] =isnull( l.AdjustQty,0)
+                                             , [Return Qty] = 0
                                              , [Balance]  = isnull(InQty - OutQty + AdjustQty,0)
                                              , [Stock Qty] = '-'
                                              , [Scrap Qty] = '-'
@@ -250,6 +252,7 @@ namespace Sci.Production.Warehouse
 	                                                , [StockUnit] 
 	                                                , [Released Qty]
 	                                                , [Adjust Qty]
+                                                    , [Return Qty]
 	                                                , [Balance]
 	                                                , [Stock Qty]
 	                                                , [Scrap Qty]

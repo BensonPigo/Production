@@ -1,49 +1,52 @@
 ﻿CREATE TABLE [dbo].[CustCD] (
-    [BrandID]           VARCHAR (8)    CONSTRAINT [DF_CustCD_BrandID] DEFAULT ('') NOT NULL,
-    [Junk]              BIT            CONSTRAINT [DF_CustCD_Junk] DEFAULT ((0)) NULL,
-    [ID]                VARCHAR (16)   CONSTRAINT [DF_CustCD_ID] DEFAULT ('') NOT NULL,
-    [CountryID]         VARCHAR (2)    CONSTRAINT [DF_CustCD_CountryID] DEFAULT ('') NULL,
-    [City]              VARCHAR (16)   CONSTRAINT [DF_CustCD_City] DEFAULT ('') NULL,
-    [QuotaArea]         VARCHAR (5)    CONSTRAINT [DF_CustCD_QuotaArea] DEFAULT ('') NULL,
-    [ScanAndPack]       BIT            CONSTRAINT [DF_CustCD_ScanAndPack] DEFAULT ((0)) NULL,
-    [ZipperInsert]      VARCHAR (5)    CONSTRAINT [DF_CustCD_ZipperInsert] DEFAULT ('') NULL,
-    [SpecialCust]       BIT            CONSTRAINT [DF_CustCD_SpecialCust] DEFAULT ((0)) NULL,
-    [VasShas]           BIT            CONSTRAINT [DF_CustCD_VasShas] DEFAULT ((0)) NULL,
-    [Guid]              NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Guid] DEFAULT ('') NULL,
-    [Factories]         NVARCHAR (60)  CONSTRAINT [DF_CustCD_Factories] DEFAULT ('') NULL,
-    [PayTermARIDBulk]   VARCHAR (10)    CONSTRAINT [DF_CustCD_PayTermARIDBulk] DEFAULT ('') NULL,
-    [PayTermARIDSample] VARCHAR (10)    CONSTRAINT [DF_CustCD_PayTermARIDSample] DEFAULT ('') NULL,
-    [ProformaInvoice]   BIT            CONSTRAINT [DF_CustCD_ProformaInvoice] DEFAULT ((0)) NULL,
-    [BankIDSample]      VARCHAR (6)    CONSTRAINT [DF_CustCD_BankIDSample] DEFAULT ('') NULL,
-    [BankIDBulk]        VARCHAR (6)    CONSTRAINT [DF_CustCD_BankIDBulk] DEFAULT ('') NULL,
-    [BrandLabel]        NVARCHAR (MAX) CONSTRAINT [DF_CustCD_BrandLabel] DEFAULT ('') NULL,
-    [MarkFront]         NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkFront] DEFAULT ('') NULL,
-    [MarkBack]          NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkBack] DEFAULT ('') NULL,
-    [MarkLeft]          NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkLeft] DEFAULT ('') NULL,
-    [MarkRight]         NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkRight] DEFAULT ('') NULL,
-    [BillTo]            NVARCHAR (MAX) CONSTRAINT [DF_CustCD_BillTo] DEFAULT ('') NULL,
-    [ShipTo]            NVARCHAR (MAX) CONSTRAINT [DF_CustCD_ShipTo] DEFAULT ('') NULL,
-    [Consignee]         NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Consignee] DEFAULT ('') NULL,
-    [Notify]            NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Notify] DEFAULT ('') NULL,
-    [Anotify]           NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Anotify] DEFAULT ('') NULL,
-    [ShipRemark]        NVARCHAR (MAX) CONSTRAINT [DF_CustCD_ShipRemark] DEFAULT ('') NULL,
-    [Dest]              NVARCHAR (50)  CONSTRAINT [DF_CustCD_Dest] DEFAULT ('') NULL,
-    [AddName]           VARCHAR (10)   CONSTRAINT [DF_CustCD_AddName] DEFAULT ('') NULL,
-    [AddDate]           DATETIME       NULL,
-    [EditName]          VARCHAR (10)   CONSTRAINT [DF_CustCD_EditName] DEFAULT ('') NULL,
-    [EditDate]          DATETIME       NULL,
-    [Kit]               VARCHAR (6)    DEFAULT ('') NULL,
-    [BIRShipTo]         VARCHAR (300)  NULL,
-	[DiamondCustCD]		VARCHAR (10)  NULL,
-	[DiamondCity]		VARCHAR (100)  NULL,
-    [StickerCombinationUkey] BIGINT NULL, 
-    [StickerCombinationUkey_MixPack] BIGINT NULL, 
-    [Need3rdInspect] BIT CONSTRAINT [DF_CustCD_Need3rdInspect] NOT NULL DEFAULT ((0)), 
-    [QAEditName] VARCHAR(10) CONSTRAINT [DF_CustCD_QAEditName] NOT NULL DEFAULT (''), 
-    [QAEditDate] DATETIME NULL, 
-    [StampCombinationUkey] bigint NOT NULL CONSTRAINT [DF_CustCD_StampCombinationUkey] DEFAULT(0), 
+    [BrandID]                        VARCHAR (8)    CONSTRAINT [DF_CustCD_BrandID] DEFAULT ('') NOT NULL,
+    [Junk]                           BIT            CONSTRAINT [DF_CustCD_Junk] DEFAULT ((0)) NULL,
+    [ID]                             VARCHAR (16)   CONSTRAINT [DF_CustCD_ID] DEFAULT ('') NOT NULL,
+    [CountryID]                      VARCHAR (2)    CONSTRAINT [DF_CustCD_CountryID] DEFAULT ('') NULL,
+    [City]                           VARCHAR (16)   CONSTRAINT [DF_CustCD_City] DEFAULT ('') NULL,
+    [QuotaArea]                      VARCHAR (5)    CONSTRAINT [DF_CustCD_QuotaArea] DEFAULT ('') NULL,
+    [ScanAndPack]                    BIT            CONSTRAINT [DF_CustCD_ScanAndPack] DEFAULT ((0)) NULL,
+    [ZipperInsert]                   VARCHAR (5)    CONSTRAINT [DF_CustCD_ZipperInsert] DEFAULT ('') NULL,
+    [SpecialCust]                    BIT            CONSTRAINT [DF_CustCD_SpecialCust] DEFAULT ((0)) NULL,
+    [VasShas]                        BIT            CONSTRAINT [DF_CustCD_VasShas] DEFAULT ((0)) NULL,
+    [Guid]                           NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Guid] DEFAULT ('') NULL,
+    [Factories]                      NVARCHAR (60)  CONSTRAINT [DF_CustCD_Factories] DEFAULT ('') NULL,
+    [PayTermARIDBulk]                VARCHAR (10)   CONSTRAINT [DF_CustCD_PayTermARIDBulk] DEFAULT ('') NULL,
+    [PayTermARIDSample]              VARCHAR (10)   CONSTRAINT [DF_CustCD_PayTermARIDSample] DEFAULT ('') NULL,
+    [ProformaInvoice]                BIT            CONSTRAINT [DF_CustCD_ProformaInvoice] DEFAULT ((0)) NULL,
+    [BankIDSample]                   VARCHAR (6)    CONSTRAINT [DF_CustCD_BankIDSample] DEFAULT ('') NULL,
+    [BankIDBulk]                     VARCHAR (6)    CONSTRAINT [DF_CustCD_BankIDBulk] DEFAULT ('') NULL,
+    [BrandLabel]                     NVARCHAR (MAX) CONSTRAINT [DF_CustCD_BrandLabel] DEFAULT ('') NULL,
+    [MarkFront]                      NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkFront] DEFAULT ('') NULL,
+    [MarkBack]                       NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkBack] DEFAULT ('') NULL,
+    [MarkLeft]                       NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkLeft] DEFAULT ('') NULL,
+    [MarkRight]                      NVARCHAR (MAX) CONSTRAINT [DF_CustCD_MarkRight] DEFAULT ('') NULL,
+    [BillTo]                         NVARCHAR (MAX) CONSTRAINT [DF_CustCD_BillTo] DEFAULT ('') NULL,
+    [ShipTo]                         NVARCHAR (MAX) CONSTRAINT [DF_CustCD_ShipTo] DEFAULT ('') NULL,
+    [Consignee]                      NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Consignee] DEFAULT ('') NULL,
+    [Notify]                         NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Notify] DEFAULT ('') NULL,
+    [Anotify]                        NVARCHAR (MAX) CONSTRAINT [DF_CustCD_Anotify] DEFAULT ('') NULL,
+    [ShipRemark]                     NVARCHAR (MAX) CONSTRAINT [DF_CustCD_ShipRemark] DEFAULT ('') NULL,
+    [Dest]                           NVARCHAR (50)  CONSTRAINT [DF_CustCD_Dest] DEFAULT ('') NULL,
+    [AddName]                        VARCHAR (10)   CONSTRAINT [DF_CustCD_AddName] DEFAULT ('') NULL,
+    [AddDate]                        DATETIME       NULL,
+    [EditName]                       VARCHAR (10)   CONSTRAINT [DF_CustCD_EditName] DEFAULT ('') NULL,
+    [EditDate]                       DATETIME       NULL,
+    [Kit]                            VARCHAR (6)    DEFAULT ('') NULL,
+    [BIRShipTo]                      VARCHAR (300)  NULL,
+    [DiamondCustCD]                  VARCHAR (10)   DEFAULT ('') NULL,
+    [DiamondCity]                    VARCHAR (100)  DEFAULT ('') NULL,
+    [StickerCombinationUkey]         BIGINT         NULL,
+    [StickerCombinationUkey_MixPack] BIGINT         NULL,
+    [Need3rdInspect]                 BIT            DEFAULT ((0)) NOT NULL,
+    [QAEditName]                     VARCHAR (10)   DEFAULT ('') NOT NULL,
+    [QAEditDate]                     DATETIME       NULL,
+    [StampCombinationUkey]           BIGINT         NULL,
+    [HealthID]                       VARCHAR (10)   NULL,
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
+
+
 
 
 
@@ -184,49 +187,30 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Payment Term for Sample', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'PayTermARIDSample';
 GO
 
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單尺碼裝箱貼紙組合'
-, @level0type = N'SCHEMA', @level0name = N'dbo'
-, @level1type = N'TABLE', @level1name = N'CustCD'
-, @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ؽX�˽c�K�ȲզX', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey';
+
+
 GO
 ;
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'混尺碼裝箱貼紙組合'
-, @level0type = N'SCHEMA', @level0name = N'dbo'
-, @level1type = N'TABLE', @level1name = N'CustCD'
-, @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey_MixPack'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�V�ؽX�˽c�K�ȲզX', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StickerCombinationUkey_MixPack';
+
+
 GO
 ;
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'須要第三方檢驗',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CustCD',
-    @level2type = N'COLUMN',
-    @level2name = N'Need3rdInspect'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���n�ĤT������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'Need3rdInspect';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'QA 最後編輯日',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CustCD',
-    @level2type = N'COLUMN',
-    @level2name = N'QAEditDate'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QA �̫�s���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'QAEditDate';
+
+
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'QA 最後編輯人員',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'CustCD',
-    @level2type = N'COLUMN',
-    @level2name = N'QAEditName'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QA �̫�s��H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'QAEditName';
+
+
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'噴碼組合'
-	, @level0type = N'SCHEMA', @level0name = N'dbo'
-	, @level1type = N'TABLE', @level1name = N'CustCD'
-	, @level2type = N'COLUMN', @level2name = N'StampCombinationUkey';
-;
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�Q�X�զX', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CustCD', @level2type = N'COLUMN', @level2name = N'StampCombinationUkey';
+
+
 Go

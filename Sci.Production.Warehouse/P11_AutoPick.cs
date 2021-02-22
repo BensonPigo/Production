@@ -308,7 +308,7 @@ where   p.id = '{3}'
 --※顯示時，SizeSpec = Po_Supp_Detail.SizeSpec
 --※計算時，SizeSpec = #TmpPo_Supp_Detail.SizeSpec
 select  x.*
-        , [balanceqty] = isnull(Fty.InQty - Fty.OutQty + Fty.AdjustQty, 0)
+        , [balanceqty] = isnull(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty, 0)
         , ftyinventoryukey = Fty.Ukey 
         , Fty.StockType
         , Fty.Roll

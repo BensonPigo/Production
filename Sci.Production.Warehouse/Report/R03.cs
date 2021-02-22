@@ -219,7 +219,8 @@ select  F.MDivisionID
         ,PSD.StockUnit
         ,MDPD.OutQty
         ,MDPD.AdjustQty
-        ,MDPD.InQty - MDPD.OutQty + MDPD.AdjustQty balance
+        ,MDPD.ReturnQty
+        ,MDPD.InQty - MDPD.OutQty + MDPD.AdjustQty - MDPD.ReturnQty balance
         ,MDPD.ALocation
         ,MDPD.BLocation
         ,case PSD.FabricType 

@@ -159,6 +159,10 @@ namespace Sci.Production.Packing
             {
                 result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
             }
+            else if (this.radioBarcodePrintOther.Checked)
+            {
+                result = new PackingPrintBarcode().PrintBarcodeOtherSize(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+            }
             else if (this.radioQRcodePrint.Checked)
             {
                 result = new PackingPrintBarcode().PrintQRcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
@@ -696,6 +700,13 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = !this.radioCustCTN.Checked;
             this.checkBoxCountry.Checked = !this.radioCustCTN.Checked;
+        }
+
+        private void RadioBarcodePrintOther_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ControlPrintFunction(((Win.UI.RadioButton)sender).Checked);
+            this.checkBoxCountry.Enabled = this.radioBarcodePrintOther.Checked;
+            this.checkBoxCountry.Checked = this.radioBarcodePrintOther.Checked;
         }
     }
 }
