@@ -124,6 +124,7 @@ namespace Sci.Production.Warehouse
             }
 
             this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
+            this.grid1.RefreshEdit();
         }
 
         private void BtnFindNow_Click(object sender, EventArgs e)
