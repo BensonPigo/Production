@@ -1508,20 +1508,9 @@ where   f.lock=1
             #endregion 檢查庫存項WMSLock
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "TransferIn_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "TransferIn_Detail"))
             {
                 return;
-            }
-            #endregion
-
-            #region UnConfirmed 先檢查WMS是否傳送成功
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P18", "UnConfirmed"))
-                {
-                    return;
-                }
             }
             #endregion
 
@@ -1567,6 +1556,17 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
             }
 
             #endregion 檢查負數庫存
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P18", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
 
             #region -- 更新表頭狀態資料 --
 

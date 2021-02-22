@@ -2002,6 +2002,24 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
 
             #endregion 檢查負數庫存
 
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(dt, "Receiving_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P07", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
+
             #region 更新表頭狀態資料
 
             sqlupd3 = string.Format(
@@ -2086,24 +2104,6 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
             upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
 
-            #endregion
-
-            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Receiving_Detail"))
-            {
-                return;
-            }
-            #endregion
-
-            #region UnConfirmed 先檢查WMS是否傳送成功
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P07", "UnConfirmed"))
-                {
-                    return;
-                }
-            }
             #endregion
 
             sqlcmd4 = string.Format(

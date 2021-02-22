@@ -584,7 +584,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #endregion
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "Adjust_Detail"))
+            if (!Prgs.ChkWMSCompleteTime(dt, "Adjust_Detail"))
             {
                 return;
             }

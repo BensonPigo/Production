@@ -716,10 +716,15 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #endregion
 
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
-            if (!Prgs.ChkWMSCompleteTime(this.CurrentMaintain["id"].ToString(), "IssueReturn_Detail"))
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            if (dt != null)
             {
-                return;
+                if (!Prgs.ChkWMSCompleteTime(dt, "IssueReturn_Detail"))
+                {
+                    return;
+                }
             }
+
             #endregion
 
             #region 檢查負數庫存

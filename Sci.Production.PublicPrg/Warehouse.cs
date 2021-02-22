@@ -3853,10 +3853,10 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
         }
 
         /// <inheritdoc/>
-        public static bool ChkWMSCompleteTime(string id, string keyType)
+        public static bool ChkWMSCompleteTime(DataTable dtDetail, string keyType)
         {
             bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
-            if (!automation || MyUtility.Check.Empty(id) || MyUtility.Check.Empty(keyType))
+            if (!automation || MyUtility.Check.Empty(dtDetail) || MyUtility.Check.Empty(keyType))
             {
                 return false;
             }
@@ -3873,11 +3873,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.Receiving_Detail d  WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "TransferIn_Detail":
@@ -3886,11 +3885,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.TransferIn_Detail d  WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "TransferOut_Detail":
@@ -3899,11 +3897,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.TransferOut_Detail d  WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "IssueLack_Detail":
@@ -3912,11 +3909,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.IssueLack_Detail d  WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "Issue_Detail":
@@ -3925,11 +3921,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.Issue_Detail d  WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "Adjust_Detail":
@@ -3938,11 +3933,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.Adjust_Detail d  WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "SubTransfer_Detail_To":
@@ -3956,12 +3950,27 @@ Select
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.ToPoid and po3.seq1 = d.Toseq1 and po3.seq2 = d.Toseq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'
-";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "SubTransfer_Detail_From":
+                    sqlcmd = $@"
+Select 
+ [poid] = d.Frompoid
+,[seq1] = d.Fromseq1
+,[seq2] = d.Fromseq2
+,[Roll] = d.FromRoll
+,[Dyelot] = d.FromDyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "ReturnReceipt_Detail":
@@ -3970,11 +3979,10 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
 from dbo.returnreceipt_Detail d WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.Poid and po3.seq1 = d.seq1 and po3.seq2 = d.seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
 
                 case "BorrowBack_Detail_To":
@@ -3988,11 +3996,27 @@ Select
 from dbo.BorrowBack_Detail d WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.ToPOID and po3.seq1 = d.ToSeq1 and po3.seq2 = d.ToSeq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "BorrowBack_Detail_From":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.Frompoid
+,[seq1] = d.Fromseq1
+,[seq2] = d.Fromseq2
+,[Roll] = d.FromRoll
+,[Dyelot] = d.FromDyelot
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
                 case "IssueReturn_Detail":
                     sqlcmd = $@"
@@ -4005,15 +4029,14 @@ Select
 from dbo.IssueReturn_Detail d WITH (NOLOCK) 
 where d.CompleteTime is not null
 and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = d.POID and po3.seq1 = d.Seq1 and po3.seq2 = d.Seq2 
-	and po3.FabricType='A'
-)
-and d.Id = '{id}'";
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
                     break;
             }
 
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt)))
             {
                 MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return false;
@@ -4027,7 +4050,7 @@ and d.Id = '{id}'";
                         errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}." + Environment.NewLine;
                     }
 
-                    MyUtility.Msg.WarningBox("WMS system have finished it already, you can't unconfirm it." + Environment.NewLine + errmsg, "Warning");
+                    MyUtility.Msg.WarningBox("WMS system have finished it already, you cannot unconfirm it." + Environment.NewLine + errmsg, "Warning");
                     return false;
                 }
             }
