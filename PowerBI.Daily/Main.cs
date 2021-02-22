@@ -263,7 +263,7 @@ left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
 
             bool ByGroupStatus = Update_ByGroupID();
 
-            #region 確認每個SP都有寫進Log, 沒有的話就重新執行
+            #region 只要有任一Store Procedure沒都有寫進Log, or 錯誤訊息是DeadLock,就重新執行!
 
             DataTable dtReExec;
             string sqlReExec = $@"
@@ -287,6 +287,14 @@ where not exists(
 	and i.Name = t.FunctionName
 	and r.Region = t.RegionID
 )
+or exists(
+	select * from P_TransLog t
+	where t.TransCode = '{intHashCode}'
+	and t.Description like '%deadlock%'
+	and i.Name = t.FunctionName
+	and r.Region = t.RegionID
+)
+
 ";
 
             result = DBProxy.Current.Select("PBIReportData", sqlReExec, out dtReExec);
