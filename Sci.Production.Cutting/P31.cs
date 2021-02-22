@@ -317,19 +317,24 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            #region ISP20210219 檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除
+            #region ISP20210219 檢查此次有存檔CutRef是否有存在未來的日期，若有就刪除，已完成與這次維護的資料不刪除
             string sqlDeleteSameFutureCutRef = $@"
+declare @today date = getdate()
+
 delete  ssd
 from SpreadingSchedule ss
 inner join SpreadingSchedule_Detail ssd on ss.Ukey = ssd.SpreadingScheduleUkey
-where   exists (select 1 from	SpreadingSchedule s with(nolock)
+where   ss.EstCutDate <> @EstCutDate and
+		ss.EstCutDate >= @today and
+		ss.FactoryID = @FactoryID and
+		ss.CutCellID = @CutCellID  and
+        ssd.IsAGVArrived = 0 and
+        ssd.CutRef in (select  sd.CutRef from	SpreadingSchedule s with(nolock)
 						 inner join SpreadingSchedule_Detail sd with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
 						 where	s.EstCutDate = @EstCutDate and
-						 		s.FactoryID = @FactoryID and
-                                s.CutCellID = @CutCellID and
-                                s.EstCutDate < ss.EstCutDate and
-                                sd.CutRef = ssd.CutRef
-)
+                                s.FactoryID = @FactoryID and
+                                s.CutCellID = @CutCellID
+						)
 ";
             List<SqlParameter> listPar = new List<SqlParameter>();
             listPar.Add(new SqlParameter("@EstCutDate", this.CurrentMaintain["EstCutDate"]));

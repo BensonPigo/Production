@@ -89,7 +89,8 @@ RETURN
 			--排除未來已排SpreadingSchedule的資料
 			not exists (select 1 from	SpreadingSchedule ss with(nolock)
 											inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
-									where	ss.EstCutDate > @EstCutDate and
+									where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd')  and
+											ss.EstCutDate <> @EstCutDate and
 											ssd.CutRef = w.CutRef)
 		)
 		or
@@ -102,7 +103,8 @@ RETURN
 			--排除未來已排SpreadingSchedule的資料
 			not exists (select 1 from	SpreadingSchedule ss with(nolock)
 											inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
-									where	ss.EstCutDate > @EstCutDate and
+									where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd') and
+											ss.EstCutDate <> @EstCutDate and
 											ssd.CutRef = w.CutRef)
 		)
 	)
