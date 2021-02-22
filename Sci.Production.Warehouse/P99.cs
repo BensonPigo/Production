@@ -1215,17 +1215,18 @@ and t1.Status = 'Confirmed'
 
                                 // 計算差額, 用來更新庫存
                                 dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["stockqty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
-
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
-                                    return;
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1242,17 +1243,18 @@ and t1.Status = 'Confirmed'
 
                                 // 計算差額, 用來更新庫存
                                 dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
-
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
-                                    return;
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1268,17 +1270,18 @@ and t1.Status = 'Confirmed'
 
                                 // 計算差額, 用來更新庫存
                                 dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
-
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
-                                    return;
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1317,16 +1320,18 @@ and t1.Status = 'Confirmed'
                                     }
                                 }
 
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
-                                    return;
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1352,17 +1357,18 @@ and t1.Status = 'Confirmed'
 
                                 // 計算差額, 用來更新庫存
                                 dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
-
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
-                                    return;
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1382,17 +1388,18 @@ and t1.Status = 'Confirmed'
                                 // 計算差額, 用來更新庫存
                                 dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
                                 dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["qtybefore"]);
-
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    e.Cancel = true;
-                                    return;
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["Ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1418,15 +1425,18 @@ and t1.Status = 'Confirmed'
                                     dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["qtybefore"]);
                                 }
 
-                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
-                                if (!this.ChkFtyinventory_Balance(dt, true))
-                                {
-                                    // e.Cancel = true; // 依照原P43,balance Qty不足只提示
-                                }
-
                                 dr["Selected"] = "1";
-                                dr.EndEdit();
                             }
+
+                            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
+                            decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                            if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                            {
+                                dr["Selected"] = "0";
+                                e.Cancel = true;
+                            }
+
+                            dr.EndEdit();
                         }
                     };
                     break;
@@ -1459,16 +1469,18 @@ and t1.Status = 'Confirmed'
                                     }
 
                                     dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["qtybefore"]) - MyUtility.Convert.GetDecimal(dr["Qty"]);
-                                    DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
-                                    if (!this.ChkFtyinventory_Balance(dt, true))
-                                    {
-                                        e.Cancel = true;
-                                        return;
-                                    }
-
                                     dr["Selected"] = "1";
-                                    dr.EndEdit();
                                 }
+
+                                DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select($"ukey = '{dr["ukey"]}'").CopyToDataTable();
+                                decimal diffQty = MyUtility.Convert.GetDecimal(dt.Rows[0]["diffQty"]);
+                                if (!this.ChkFtyinventory_Balance(dt, diffQty >= 0, true))
+                                {
+                                    dr["Selected"] = "0";
+                                    e.Cancel = true;
+                                }
+
+                                dr.EndEdit();
                             }
                         }
                     };
@@ -2786,6 +2798,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                 string chk_sql = string.Empty;
                 DualResult result;
                 string strTable = string.Empty;
+                string strMainTable = string.Empty;
 
                 switch (this.strFunction)
                 {
@@ -2794,6 +2807,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P18":
                         #region Receive_Detail && TransferIn_Detail
                         strTable = (this.strFunction == "P18") ? "TransferIn_Detail" : "Receiving_Detail";
+                        strMainTable = (this.strFunction == "P18") ? "TransferIn" : "Receiving";
                         #region 檢查負庫存
                         if (!this.ChkFtyinventory_Balance(upd_list.CopyToDataTable(), false))
                         {
@@ -2895,9 +2909,16 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                         #region Delete data
                         string sqlcmd = $@" 
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
+
 delete t
 from {strTable} t
-inner join #tmp s on t.Ukey = s.Ukey ";
+inner join #tmp s on t.Ukey = s.Ukey 
+";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable result_upd_qty)))
                         {
                             this.ShowErr(result);
@@ -2990,6 +3011,7 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                     case "P33":
                         #region Issue_Detail
                         strTable = string.Empty;
+                        strMainTable = string.Empty;
                         switch (this.strFunction)
                         {
                             case "P11":
@@ -2997,12 +3019,15 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                             case "P13":
                             case "P33":
                                 strTable = "Issue_Detail";
+                                strMainTable = "Issue";
                                 break;
                             case "P15":
                                 strTable = "IssueLack_Detail";
+                                strMainTable = "IssueLack";
                                 break;
                             case "P19":
                                 strTable = "TransferOut_Detail";
+                                strMainTable = "TransferOut";
                                 break;
                             default:
                                 break;
@@ -3084,6 +3109,12 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         {
                             case "P11":
                                 sqlcmd = $@"
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
+
  delete t
  from Issue_Size t
  inner join #tmp s on t.Id = s.Id
@@ -3119,7 +3150,7 @@ and (sizeQty.qty != 0 or sizeQty.qty is not null)
 ";
                                 break;
                             case "P33":
-                                sqlcmd = @"
+                                sqlcmd = $@"
 -- 第三層
 delete t
 from Issue_Detail t
@@ -3159,25 +3190,54 @@ where exists(
 	and s.id = t.id
 )
 and (is2.qty != 0 or is2.qty is not null)
+
+-- 第一層
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
 ";
                                 break;
                             case "P15":
                                 sqlcmd = $@" 
 delete t
 from IssueLack_Detail t
-inner join #tmp s on t.Ukey = s.Ukey ";
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
+
+";
                                 break;
                             case "P19":
                                 sqlcmd = $@" 
 delete t
 from TransferOut_Detail t
-inner join #tmp s on t.Ukey = s.Ukey ";
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
+";
                                 break;
                             default:
                                 sqlcmd = $@" 
 delete t
 from Issue_detail t
-inner join #tmp s on t.Ukey = s.Ukey ";
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
+";
                                 break;
                         }
 
@@ -3310,7 +3370,14 @@ inner join #tmp s on t.Ukey = s.Ukey ";
                         sqlcmd = $@" 
 delete t
 from Adjust_detail t
-inner join #tmp s on t.Ukey = s.Ukey ";
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from Adjust t
+inner join #tmp s on t.ID = s.ID
+";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                         {
@@ -3460,7 +3527,14 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ";
                         sqlcmd = $@" 
 delete t
 from Adjust_detail t
-inner join #tmp s on t.Ukey = s.Ukey ";
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from Adjust t
+inner join #tmp s on t.ID = s.ID
+";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
                         {
@@ -3502,7 +3576,7 @@ inner join #tmp s on t.Ukey = s.Ukey ";
 
                         #region delete Data
                         string upcmd =
-                        @"
+                        $@"
 declare @POID varchar(13)
 		, @seq1 varchar(3)
 		, @seq2 varchar(3)
@@ -3546,6 +3620,12 @@ DEALLOCATE _cursor
 delete t
 from Adjust_detail t
 inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from Adjust t
+inner join #tmp s on t.ID = s.ID
 ";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, upcmd, out result_upd_qty)))
                         {
@@ -3647,6 +3727,11 @@ delete t
 from ReturnReceipt_Detail t
 inner join #tmp s on t.ukey = s.ukey
 
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from ReturnReceipt t
+inner join #tmp s on t.ID = s.ID
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -3857,6 +3942,12 @@ inner join #tmp s on t.ukey = s.ukey
 delete t
 from BorrowBack_Detail t
 inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from BorrowBack t
+inner join #tmp s on t.ID = s.ID
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4164,6 +4255,12 @@ inner join #tmp s on t.Ukey = s.Ukey
 delete t
 from SubTransfer_Detail t
 inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from SubTransfer t
+inner join #tmp s on t.ID = s.ID
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4630,21 +4727,23 @@ and f.Lock = 1
         /// 檢查正/負庫存
         /// </summary>
         /// <returns>bool</returns>
-        private bool ChkFtyinventory_Balance(DataTable dt, bool isConfirmed)
+        private bool ChkFtyinventory_Balance(DataTable dt, bool isConfirmed, bool isDetail = false)
         {
             string chk_sql = string.Empty;
             DualResult result;
 
             // 如果是Revise, 就用差異值來判斷, 因為通常Confirmed時庫存數量已被扣掉, 但現在做法是庫存並未扣除,所以只能用差異的去更新庫存
             // 如果是delete就扣除原本的數量就行
+            // 如果是表身Validating觸發, 判斷diffQty為負就用UnConfirmed檢查, 並且要用取正號diffQty去計算Balance
             string symbol = string.Empty;
+            string symbol2 = string.Empty;
             DataTable datacheck;
 
             switch (this.strFunction)
             {
                 case "P07":
                 case "P08":
-                    symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -4676,7 +4775,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than stock qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -4694,7 +4793,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
 
                 case "P18":
-                    symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -4726,7 +4825,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than In qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -4744,7 +4843,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
                 case "P11":
                 case "P33":
-                    symbol = isConfirmed ? "- (t.diffQty)" : "+ (t.Old_Qty)";
+                    symbol = isConfirmed ? "- (t.diffQty)" : isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
                     chk_sql = $@"
 
 select  distinct  f.poid
@@ -4776,7 +4875,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} " + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -4797,7 +4896,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                 case "P15":
                 case "P19":
                 case "P37":
-                    symbol = isConfirmed ? "- (t.diffQty)" : "+ (t.Old_Qty)";
+                    symbol = isConfirmed ? "- (t.diffQty)" : isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -4829,7 +4928,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -4847,7 +4946,8 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
                 case "P34":
                 case "P35":
-                    symbol = isConfirmed ? "+ (t.diffQty)" : "- (t.Old_Qty - t.QtyBefore)";
+                case "P45":
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty - t.QtyBefore)";
                     chk_sql = $@"
 
 select    f.poid
@@ -4879,7 +4979,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -4898,6 +4998,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
 
                 case "P31":
                 case "P32":
+                    symbol2 = isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty)";
                     symbol = isConfirmed ? @"
 on f.POID = t.FromPoId
 and t.FromSeq1 = f.Seq1 and t.FromSeq2 = f.Seq2
@@ -4905,13 +5006,13 @@ and t.FromRoll = f.Roll and t.FromDyelot = f.Dyelot
 and t.FromStockType = f.StockType
 where   1=1
 and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.diffQty) < 0)  
-" : @"
+" : $@"
 on f.POID = t.ToPoId
 and t.ToSeq1 = f.Seq1 and t.ToSeq2 = f.Seq2
 and t.ToRoll = f.Roll and t.ToDyelot = f.Dyelot
 and t.ToStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.Old_Qty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)  {symbol2} < 0)  
 ";
                     chk_sql = $@"
 
@@ -4939,7 +5040,7 @@ inner join #tmp t
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than issue qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} " + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -4961,6 +5062,7 @@ inner join #tmp t
                 case "P24":
                 case "P36":
                     #region Bulk Balance
+                    symbol2 = isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
                     symbol = isConfirmed ? @"
 on f.POID = t.FromPoId
 and t.FromSeq1 = f.Seq1 and t.FromSeq2 = f.Seq2
@@ -4969,13 +5071,13 @@ and t.FromStockType = f.StockType
 where   1=1
 and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.diffQty) < 0)  
 and t.Qty > 0
-" : @"
-on f.POID = t.ToPoId
+" : $@"
+on f.POID = t.FromPoId
 and t.FromSeq1 = f.Seq1 and t.FromSeq2 = f.Seq2
 and t.FromRoll = f.Roll and t.FromDyelot = f.Dyelot
 and t.FromStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) + (t.Old_Qty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol2} < 0)  
 and t.Qty < 0
 ";
                     chk_sql = $@"
@@ -5004,7 +5106,7 @@ inner join #tmp t
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -5021,6 +5123,7 @@ inner join #tmp t
                     #endregion
 
                     #region Inventory balacne
+                    symbol2 = isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty)";
                     symbol = isConfirmed ? @"
 on f.POID = t.ToPoId
 and t.ToSeq1 = f.Seq1 and t.ToSeq2 = f.Seq2
@@ -5029,13 +5132,13 @@ and t.ToStockType = f.StockType
 where   1=1
 and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) + (t.diffQty) < 0)  
 and t.Qty < 0
-" : @"
+" : $@"
 on f.POID = t.ToPoId
 and t.ToSeq1 = f.Seq1 and t.ToSeq2 = f.Seq2
 and t.ToRoll = f.Roll and t.ToDyelot = f.Dyelot
 and t.ToStockType = f.StockType
 where   1=1
-and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) - (t.old_Qty) < 0)  
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol2} < 0)  
 ";
                     chk_sql = $@"
 
@@ -5063,7 +5166,7 @@ inner join #tmp t
                             foreach (DataRow tmp in datacheck.Rows)
                             {
                                 ids += string.Format(
-                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine,
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
                                     tmp["poid"],
                                     tmp["seq1"],
                                     tmp["seq2"],
@@ -5082,20 +5185,20 @@ inner join #tmp t
                     break;
 
                 case "P43":
-                    symbol = isConfirmed ? "+ (AD2.diffQty)" : "- (t.Old_Qty - t.QtyBefore)";
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty - t.QtyBefore)";
                     chk_sql = $@"
-SELECT AD2.poid, [Seq]= AD2.Seq1+' '+AD2.Seq2,
-        AD2.Seq1,AD2.Seq2,
-        AD2.Roll,AD2.Dyelot,
+SELECT t.poid, [Seq]= t.Seq1+' '+t.Seq2,
+        t.Seq1,t.Seq2,
+        t.Roll,t.Dyelot,
        [CheckQty] =  (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty) {symbol} , 
        [FTYLobQty] = (FTI.InQty - FTI.OutQty + FTI.AdjustQty - FTI.ReturnQty),
-       [AdjustQty]= (AD2.qty - AD2.qtybefore )       
+       [AdjustQty]= (t.qty - t.qtybefore )       
 FROM    FtyInventory FTI
-inner join #tmp AD2 on FTI.POID=AD2.POID 
-and FTI.Seq1=AD2.Seq1
-and FTI.Seq2=AD2.Seq2 
-and FTI.Roll=AD2.Roll
-and FTI.Dyelot = AD2.Dyelot
+inner join #tmp t on FTI.POID=t.POID 
+and FTI.Seq1=t.Seq1
+and FTI.Seq2=t.Seq2 
+and FTI.Roll=t.Roll
+and FTI.Dyelot = t.Dyelot
 WHERE FTI.StockType='O' 
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -5113,58 +5216,13 @@ WHERE FTI.StockType='O'
                                 if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) < 0)
                                 {
                                     ids += string.Format(
-                                          "SP#: {0} SEQ#:{1} Roll#:{2} Dyelot:{3}'s balance: {4} is less than Adjust qty: {5}" + Environment.NewLine + "Balacne Qty is not enough!!",
+                                          "SP#: {0} SEQ#:{1} Roll#:{2} Dyelot:{3}'s balance: {4}" + Environment.NewLine,
                                           tmp["poid"],
                                           tmp["Seq"],
                                           tmp["Roll"],
                                           tmp["Dyelot"],
                                           tmp["FTYLobQty"],
                                           tmp["AdjustQty"]) + Environment.NewLine;
-                                }
-                            }
-
-                            if (!MyUtility.Check.Empty(ids))
-                            {
-                                MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-                                return false;
-                            }
-                        }
-                    }
-
-                    break;
-
-                case "P45":
-                    symbol = isConfirmed ? "+ (d.Qty - d.QtyBefore)" : "- (t.Old_Qty - t.QtyBefore)";
-                    chk_sql = $@"
-Select  d.POID
-		,seq = concat(d.Seq1,'-',d.Seq2)
-		,d.Seq1
-		,d.Seq2
-		,d.Roll
-		,d.Dyelot
-		,balance = (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty)
-		,Adjustqty  = d.QtyBefore - d.QtyAfter
-		,[CheckQty] = (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) {symbol}
-from FtyInventory f WITH (NOLOCK) 
-inner join #tmp d on d.POID = f.POID and d.Roll = f.Roll and d.dyelot = f.dyelot and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
-where 1=1
-and f.StockType = 'O'
-";
-                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
-                    {
-                        this.ShowErr(chk_sql, result);
-                        return false;
-                    }
-                    else
-                    {
-                        if (datacheck.Rows.Count > 0)
-                        {
-                            string ids = string.Empty;
-                            foreach (DataRow tmp in datacheck.Rows)
-                            {
-                                if (MyUtility.Convert.GetDecimal(tmp["CheckQty"]) < 0)
-                                {
-                                    ids += $@"SP#: {tmp["poid"]} SEQ#:{tmp["Seq"]} Roll#:{tmp["Roll"]} Dyelot:{tmp["Dyelot"]}'s balance: {tmp["balance"]} is less than Adjust qty: {tmp["AdjustQty"]}" + Environment.NewLine + "Balacne Qty is not enough!!";
                                 }
                             }
 
