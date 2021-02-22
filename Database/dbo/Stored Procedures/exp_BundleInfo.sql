@@ -179,9 +179,9 @@ select	ob.Id		  ,
 
  SET XACT_ABORT ON
  BEGIN TRANSACTION
-	delete [RFID_Middle].[RFID].dbo.Orders
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Orders
 	
-	insert into [RFID_Middle].[RFID].dbo.Orders(ID	  ,
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Orders(ID	  ,
 												BrandID		  ,
 												ProgramID	  ,
 												StyleID		  ,
@@ -227,8 +227,8 @@ select	ob.Id		  ,
 					MDivisionID
 			from #tmp_order
 
-	delete [RFID_Middle].[RFID].dbo.Bundle
-	insert into [RFID_Middle].[RFID].dbo.Bundle(ID			 ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Bundle
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Bundle(ID			 ,
 												POID			 ,
 												MDivisionid	 ,
 												Sizecode		 ,
@@ -282,8 +282,8 @@ select	ob.Id		  ,
 						IsEXCESS
 				from #tmp_bundle
 
-	delete [RFID_Middle].[RFID].dbo.Bundle_Detail
-	insert into [RFID_Middle].[RFID].dbo.Bundle_Detail(	BundleNo		 ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail(	BundleNo		 ,
 														Id			 ,
 														BundleGroup	 ,
 														Patterncode	 ,
@@ -315,8 +315,8 @@ select	ob.Id		  ,
 						Tone
 				from	#tmp_bundle_detail
 
-	delete [RFID_Middle].[RFID].dbo.Bundle_Detail_Allpart
-	insert into [RFID_Middle].[RFID].dbo.Bundle_Detail_Allpart(	ID			,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail_Allpart
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail_Allpart(	ID			,
 																Patterncode	,
 																PatternDesc	,
 																parts		,
@@ -332,8 +332,8 @@ select	ob.Id		  ,
 						Location
 				from #tmp_Bundle_Detail_Allpart
 
-	delete [RFID_Middle].[RFID].dbo.Bundle_Detail_Art
-	insert into [RFID_Middle].[RFID].dbo.Bundle_Detail_Art(	Bundleno			  ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail_Art
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail_Art(	Bundleno			  ,
 															SubprocessId		  ,
 															PatternCode			  ,
 															ID					  ,
@@ -349,8 +349,8 @@ select	ob.Id		  ,
 						NoBundleCardAfterSubprocess
 				from #tmp_Bundle_Detail_Art
 
-	delete [RFID_Middle].[RFID].dbo.Bundle_Detail_Order
-	insert into [RFID_Middle].[RFID].dbo.Bundle_Detail_Order(	Ukey		,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail_Order
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Bundle_Detail_Order(	Ukey		,
 																ID		,
 																BundleNo	,
 																OrderID	,
@@ -362,8 +362,8 @@ select	ob.Id		  ,
 						Qty
 				from #tmp_Bundle_Detail_Order
 
-	delete [RFID_Middle].[RFID].dbo.Machine
-	insert into [RFID_Middle].[RFID].dbo.Machine(ID				  ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Machine
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Machine(ID				  ,
 												 MachineBrandID	  ,
 												 RFIDCardNo		  ,
 												 Status)
@@ -373,8 +373,8 @@ select	ob.Id		  ,
 						Status
 				from #tmp_Machine
 
-	delete [RFID_Middle].[RFID].dbo.Order_BOA
-	insert into	[RFID_Middle].[RFID].dbo.Order_BOA(	Id		  ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Order_BOA
+	insert into	[RFID_Middle].[PMS_TO_RFID].dbo.Order_BOA(	Id		  ,
 													Ukey	  ,
 													Refno	  ,
 													SCIRefno  ,
@@ -386,8 +386,8 @@ select	ob.Id		  ,
 						SuppID
 				from #tmp_boa
 
-	delete [RFID_Middle].[RFID].dbo.Order_BOF
-	insert into [RFID_Middle].[RFID].dbo.Order_BOF(	Id			,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Order_BOF
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Order_BOF(	Id			,
 													FabricCode	,
 													Refno		,
 													SCIRefno	,
@@ -399,8 +399,8 @@ select	ob.Id		  ,
 						SuppID
 				from #tmp_bof
 
-	delete [RFID_Middle].[RFID].dbo.Order_Qty
-	insert into [RFID_Middle].[RFID].dbo.Order_Qty(	ID		  ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Order_Qty
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Order_Qty(	ID		  ,
 													Article	  ,
 													SizeCode	  ,
 													Qty		  ,
@@ -412,8 +412,8 @@ select	ob.Id		  ,
 						OriQty
 				from #tmp_order_Qty
 
-	delete [RFID_Middle].[RFID].dbo.SubProcess
-	insert into [RFID_Middle].[RFID].dbo.SubProcess(Id			  ,
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess(Id			  ,
 													ArtworkTypeId ,
 													IsRFIDProcess ,
 													Junk)
