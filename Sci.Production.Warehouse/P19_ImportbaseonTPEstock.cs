@@ -123,8 +123,7 @@ namespace Sci.Production.Warehouse
                 }
             }
 
-            DataRow mainDr = this.grid1.GetDataRow(this.grid1.SelectedRows[0].Index);
-            mainDr["TotalTransfer"] = totalTransfer;
+            this.grid1.SelectedRows[0].Cells["TotalTransfer"].Value = totalTransfer;
         }
 
         private void BtnFindNow_Click(object sender, EventArgs e)
