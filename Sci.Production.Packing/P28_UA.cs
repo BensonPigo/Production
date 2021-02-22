@@ -6,6 +6,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Sci.Production.Packing
         private List<Packing_ExcelData> Packing_ExcelDatas = new List<Packing_ExcelData>();
         private List<Item_ExcelData> Item_ExcelDatas = new List<Item_ExcelData>();
         private List<PackingListCandidate_Datasource> PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
+        private List<Result> ConfirmMsg = new List<Result>();
 
         /// <inheritdoc/>
         public P28_UA()
@@ -56,6 +58,7 @@ namespace Sci.Production.Packing
 
                     string fileName = MyUtility.Convert.GetString(dr["FileName"]);
                     string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+                    string orderNumber = MyUtility.Convert.GetString(dr["OrderNumber"]);
 
                     if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).Any())
                     {
@@ -79,6 +82,7 @@ namespace Sci.Production.Packing
 
                     var selectedData = item.GetSelecteds();
                     dr["PackingListID"] = selectedData[0]["PackingList ID"].ToString();
+                    this.Packing_ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.OrderNumber == orderNumber).ToList().ForEach(o => o.PackingListID = selectedData[0]["PackingList ID"].ToString());
                     dr["OverWrite"] = false;
                 }
             };
@@ -97,6 +101,7 @@ namespace Sci.Production.Packing
 
                     string fileName = MyUtility.Convert.GetString(dr["FileName"]);
                     string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+                    string orderNumber = MyUtility.Convert.GetString(dr["OrderNumber"]);
 
                     if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).Any())
                     {
@@ -119,6 +124,7 @@ namespace Sci.Production.Packing
 
                     var selectedData = item.GetSelecteds();
                     dr["PackingListID"] = selectedData[0]["PackingList ID"].ToString();
+                    this.Packing_ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.OrderNumber == orderNumber).ToList().ForEach(o => o.PackingListID = selectedData[0]["PackingList ID"].ToString());
                     dr["OverWrite"] = false;
                 }
             };
@@ -130,12 +136,14 @@ namespace Sci.Production.Packing
                 string newvalue = e.FormattedValue.ToString();
                 string fileName = MyUtility.Convert.GetString(dr["FileName"]);
                 string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+                string orderNumber = MyUtility.Convert.GetString(dr["OrderNumber"]);
 
                 if (this.EditMode && oldvalue.ToUpper() != newvalue.ToUpper())
                 {
                     if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID && o.PackingList_Candidate.Any(x => x == newvalue)).Any() && newvalue != string.Empty)
                     {
                         dr["PackingListID"] = oldvalue;
+                        this.Packing_ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.OrderNumber == orderNumber).ToList().ForEach(o => o.PackingListID = oldvalue);
                         this.GetInfoByPackingList(dr);
                         dr.EndEdit();
                         MyUtility.Msg.WarningBox("Data not found");
@@ -144,6 +152,7 @@ namespace Sci.Production.Packing
                     else
                     {
                         dr["PackingListID"] = newvalue;
+                        this.Packing_ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.OrderNumber == orderNumber).ToList().ForEach(o => o.PackingListID = newvalue);
                         dr.EndEdit();
                     }
                 }
@@ -193,6 +202,13 @@ namespace Sci.Production.Packing
               .CheckBox("ExistsSSCC", header: "Cust CTN#" + Environment.NewLine + "already exists", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: false)
               .CheckBox("Overwrite", header: "Overwrite", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: true, settings: col_Overwrite)
               ;
+
+            this.Helper.Controls.Grid.Generator(this.gridErrorMsg)
+              .Text("OrderNumber", header: "Order Number", width: Widths.AnsiChars(13), iseditingreadonly: true)
+              .Date("ShipDate", header: "Ship. Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
+              .Text("Result", header: "Result", width: Widths.AnsiChars(10));
+
+            this.gridErrorMsg.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         private void BtnAddPackingFile_Click(object sender, EventArgs e)
@@ -517,6 +533,7 @@ namespace Sci.Production.Packing
             try
             {
                 this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
+                this.ConfirmMsg = new List<Result>();
 
                 // 將所有Excel資料分群組
                 List<Packing_ExcelData> groupDatas = this.Packing_ExcelDatas
@@ -576,7 +593,14 @@ namespace Sci.Production.Packing
                 DataTable dt = (DataTable)this.BindingSourceMatch.DataSource;
                 var needUpdateFile = dt.AsEnumerable()
                     .Where(o => (MyUtility.Convert.GetBool(o["ExistsSSCC"]) && MyUtility.Convert.GetBool(o["Overwrite"])) || !MyUtility.Convert.GetBool(o["ExistsSSCC"]))
-                    .Select(o => new { Filename = MyUtility.Convert.GetString(o["Filename"]), PackingListID = MyUtility.Convert.GetString(o["PackingListID"]) }).Distinct();
+                    .Select(o => new
+                    {
+                        Filename = MyUtility.Convert.GetString(o["Filename"]),
+                        PackingListID = MyUtility.Convert.GetString(o["PackingListID"]),
+                        OrderNumber = MyUtility.Convert.GetString(o["OrderNumber"]),
+                        ShipDate = MyUtility.Convert.GetDate(o["ShipDate"]).Value.ToShortDateString(),
+                        Overwrite = MyUtility.Convert.GetBool(o["Overwrite"]),
+                    }).Distinct();
 
                 var packingIds = needUpdateFile.Select(o => o.PackingListID).JoinToString(",");
 
@@ -584,6 +608,8 @@ namespace Sci.Production.Packing
                 foreach (var item in needUpdateFile)
                 {
                     string packingListID = item.PackingListID;
+                    bool isOverwrtie = item.Overwrite;
+
                     this.Packing_ExcelDatas.Where(o => o.FileName == item.Filename && o.PackingListID == packingListID).ToList().ForEach(o =>
                     {
                         o.PackingListID = packingListID;
@@ -596,6 +622,14 @@ namespace Sci.Production.Packing
                     if (r)
                     {
                         packingFileDt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == item.Filename).FirstOrDefault()["Result"] = "Success";
+
+                        Result msgResult = new Result()
+                        {
+                            OrderNumber = item.OrderNumber,
+                            ShipDate = item.ShipDate,
+                            ResultMsg = isOverwrtie ? "Overwrite success" : "Upload success",
+                        };
+                        this.ConfirmMsg.Add(msgResult);
 
                         #region ISP20201607 資料交換 - Gensong
 
@@ -625,7 +659,7 @@ namespace Sci.Production.Packing
             }
             finally
             {
-                MyUtility.Msg.InfoBox("Finish!!");
+                this.ShowConfirmMsg();
                 this.HideWaitMessage();
                 this.btnMapping.PerformClick();
             }
@@ -644,6 +678,7 @@ where ID = '{packingListID}' AND CustCTN != ''
             bool existsSSCC = MyUtility.Check.Seek(cmd);
 
             current["ExistsSSCC"] = existsSSCC;
+
             current.EndEdit();
 
             return current;
@@ -1046,6 +1081,65 @@ AND (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
             return true;
         }
 
+        private bool CollectErrorMsg(Packing_ExcelData excelData)
+        {
+            bool result = true;
+            List<MatchGridData> matchGridDatas = new List<MatchGridData>();
+
+            string chjSql = string.Empty;
+
+            chjSql = $"SELECT 1 FROM PackingList_Detail WITH(NOLOCK) WHERE ID != '{excelData.PackingListID}' AND CustCTN = '{excelData.HandlingUnitID}' ";
+
+            if (MyUtility.Check.Seek(chjSql))
+            {
+                Result r = new Result()
+                {
+                    OrderNumber = excelData.OrderNumber,
+                    ShipDate = excelData.ShipDate,
+                    ResultMsg = "Exists Cust CTN.",
+                };
+
+                this.ConfirmMsg.Add(r);
+                result = false;
+            }
+
+            return result;
+        }
+
+        private void ShowConfirmMsg()
+        {
+            if (!this.ConfirmMsg.Any())
+            {
+                return;
+            }
+
+            DataTable dt = new DataTable();
+            dt.ColumnsStringAdd("OrderNumber");
+            dt.ColumnsStringAdd("ShipDate");
+            dt.ColumnsStringAdd("Result");
+
+            foreach (Result r in this.ConfirmMsg)
+            {
+                DataRow dr = dt.NewRow();
+                dr["OrderNumber"] = r.OrderNumber;
+                dr["ShipDate"] = r.ShipDate;
+                dr["Result"] = r.ResultMsg;
+                dt.Rows.Add(dr);
+            }
+
+            dt = dt.AsEnumerable()
+                .OrderBy(o => MyUtility.Convert.GetString(o["OrderNumber"]))
+                .CopyToDataTable();
+
+            this.BindingSourceMsgGrid.DataSource = dt;
+
+            var m = MyUtility.Msg.ShowMsgGrid(this.gridErrorMsg, "Please check below message.", "Result");
+            m.Width = 850;
+            m.grid1.Columns[2].Width = 600;
+            m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            m.TopMost = true;
+        }
+
         /// <summary>
         /// 更新DB
         /// </summary>
@@ -1063,6 +1157,14 @@ AND (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 
             foreach (var excelData in everyCarton)
             {
+                // 錯誤訊息收集
+                bool isOK = this.CollectErrorMsg(excelData);
+
+                if (!isOK)
+                {
+                    return new DualResult(false);
+                }
+
                 if (excelData.CTnType == "1")
                 {
                     string tmp = $@"SELECT [PackingListID]='{excelData.PackingListID}',[OrderID]='{excelData.OrderID}',[SizeCode]='{excelData.SizeCode}',[ShipQty]='{excelData.ShipQty}',[CartonBarcode]='{excelData.HandlingUnitID}'";
@@ -1455,6 +1557,19 @@ DROP TABLE #tmp ,#tmpPackingList_Detail
 
             /// <inheritdoc/>
             public List<string> PackingList_Candidate { get; set; }
+        }
+
+        /// <inheritdoc/>
+        public class Result
+        {
+            /// <inheritdoc/>
+            public string OrderNumber { get; set; }
+
+            /// <inheritdoc/>
+            public string ShipDate { get; set; }
+
+            /// <inheritdoc/>
+            public string ResultMsg { get; set; }
         }
 
         private void GridMatch_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

@@ -6,6 +6,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Sci.Production.Packing
     public partial class P28_Nike : Sci.Win.Tems.QueryForm
     {
         private List<ExcelData> ExcelDatas = new List<ExcelData>();
+        private List<Result> ConfirmMsg = new List<Result>();
         private List<PackingListCandidate_Datasource> PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
 
         /// <inheritdoc/>
@@ -49,6 +51,7 @@ namespace Sci.Production.Packing
 
                     string fileName = MyUtility.Convert.GetString(dr["FileName"]);
                     string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+                    string pLPOItemTotalCartons = MyUtility.Convert.GetString(dr["PLPOItemTotalCartons"]);
 
                     if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).Any())
                     {
@@ -73,6 +76,8 @@ namespace Sci.Production.Packing
                     var selectedData = item.GetSelecteds();
                     dr["PackingListID"] = selectedData[0]["PackingList ID"].ToString();
                     dr["OverWrite"] = false;
+                    this.ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.PLPOItemTotalCartons == pLPOItemTotalCartons).ToList().ForEach(o => o.PackingListID = selectedData[0]["PackingList ID"].ToString());
+                    dr.EndEdit();
                 }
             };
 
@@ -90,6 +95,7 @@ namespace Sci.Production.Packing
 
                     string fileName = MyUtility.Convert.GetString(dr["FileName"]);
                     string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+                    string pLPOItemTotalCartons = MyUtility.Convert.GetString(dr["PLPOItemTotalCartons"]);
 
                     if (!this.PackingListCandidate_Datasources.Where(o => o.FileName == fileName && o.OrderID == orderID).Any())
                     {
@@ -113,6 +119,8 @@ namespace Sci.Production.Packing
                     var selectedData = item.GetSelecteds();
                     dr["PackingListID"] = selectedData[0]["PackingList ID"].ToString();
                     dr["OverWrite"] = false;
+                    this.ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.PLPOItemTotalCartons == pLPOItemTotalCartons).ToList().ForEach(o => o.PackingListID = selectedData[0]["PackingList ID"].ToString());
+                    dr.EndEdit();
                 }
             };
 
@@ -123,6 +131,7 @@ namespace Sci.Production.Packing
                 string newvalue = e.FormattedValue.ToString();
                 string fileName = MyUtility.Convert.GetString(dr["FileName"]);
                 string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+                string pLPOItemTotalCartons = MyUtility.Convert.GetString(dr["PLPOItemTotalCartons"]);
 
                 if (this.EditMode && oldvalue.ToUpper() != newvalue.ToUpper())
                 {
@@ -130,6 +139,7 @@ namespace Sci.Production.Packing
                     {
                         dr["PackingListID"] = oldvalue;
                         this.GetInfoByPackingList(dr);
+                        this.ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.PLPOItemTotalCartons == pLPOItemTotalCartons).ToList().ForEach(o => o.PackingListID = oldvalue);
                         dr.EndEdit();
                         MyUtility.Msg.WarningBox("Data not found");
                         return;
@@ -137,6 +147,7 @@ namespace Sci.Production.Packing
                     else
                     {
                         dr["PackingListID"] = newvalue;
+                        this.ExcelDatas.Where(o => o.FileName == fileName && o.OrderID == orderID && o.PLPOItemTotalCartons == pLPOItemTotalCartons).ToList().ForEach(o => o.PackingListID = newvalue);
                         dr.EndEdit();
                     }
                 }
@@ -181,6 +192,14 @@ namespace Sci.Production.Packing
               .CheckBox("ExistsSSCC", header: "Cust CTN#" + Environment.NewLine + "already exists", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: false)
               .CheckBox("Overwrite", header: "Overwrite", trueValue: 1, falseValue: 0, width: Widths.AnsiChars(5), iseditable: true, settings: col_Overwrite)
               ;
+
+            this.Helper.Controls.Grid.Generator(this.gridErrorMsg)
+              .Text("PONumber", header: "PONumber", width: Widths.AnsiChars(13), iseditingreadonly: true)
+              .Text("POItem", header: "POItem", width: Widths.AnsiChars(13), iseditingreadonly: true)
+              .Text("PLPOItemTotalCartons", header: "PLPOItem" + Environment.NewLine + "TotalCartons", width: Widths.AnsiChars(13), iseditingreadonly: true)
+              .Text("Result", header: "Result", width: Widths.AnsiChars(10));
+
+            this.gridErrorMsg.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
         }
 
         /// <inheritdoc/>
@@ -374,9 +393,12 @@ namespace Sci.Production.Packing
         private void BtnMapping_Click(object sender, EventArgs e)
         {
             this.BindingSourceMatch.DataSource = null;
+            this.ConfirmMsg = new List<Result>();
 
             try
             {
+                this.ShowWaitMessage("Mapping...");
+
                 this.PackingListCandidate_Datasources = new List<PackingListCandidate_Datasource>();
 
                 List<ExcelData> groupDatas = this.ExcelDatas
@@ -436,6 +458,10 @@ namespace Sci.Production.Packing
             catch (Exception ex)
             {
                 this.ShowErr(ex);
+            }
+            finally
+            {
+                this.HideWaitMessage();
             }
         }
 
@@ -656,7 +682,15 @@ DROP TABLE #tmp
                 DataTable dt = (DataTable)this.BindingSourceMatch.DataSource;
                 var needUpdateFile = dt.AsEnumerable()
                     .Where(o => (MyUtility.Convert.GetBool(o["ExistsSSCC"]) && MyUtility.Convert.GetBool(o["Overwrite"])) || !MyUtility.Convert.GetBool(o["ExistsSSCC"]))
-                    .Select(o => new { Filename = MyUtility.Convert.GetString(o["Filename"]), PackingListID = MyUtility.Convert.GetString(o["PackingListID"]) }).Distinct();
+                    .Select(o => new
+                    {
+                        Filename = MyUtility.Convert.GetString(o["Filename"]),
+                        PONumber = MyUtility.Convert.GetString(o["PONumber"]),
+                        POItem = MyUtility.Convert.GetString(o["POItem"]),
+                        PLPOItemTotalCartons = MyUtility.Convert.GetString(o["PLPOItemTotalCartons"]),
+                        PackingListID = MyUtility.Convert.GetString(o["PackingListID"]),
+                        Overwrite = MyUtility.Convert.GetBool(o["Overwrite"]),
+                    }).Distinct();
 
                 var packingIds = needUpdateFile.Select(o => o.PackingListID).JoinToString(",");
 
@@ -664,6 +698,8 @@ DROP TABLE #tmp
                 foreach (var item in needUpdateFile)
                 {
                     string packingListID = item.PackingListID;
+                    bool isOverwrtie = item.Overwrite;
+
                     this.ExcelDatas.Where(o => o.FileName == item.Filename && o.PackingListID == packingListID).ToList().ForEach(o =>
                     {
                         o.PackingListID = packingListID;
@@ -676,6 +712,15 @@ DROP TABLE #tmp
                     if (r)
                     {
                         fileDt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == item.Filename).FirstOrDefault()["Result"] = "Success";
+
+                        Result msgResult = new Result()
+                        {
+                            PONumber = item.PONumber,
+                            POItem = item.POItem,
+                            PLPOItemTotalCartons = item.PLPOItemTotalCartons,
+                            ResultMsg = isOverwrtie ? "Overwrite success" : "Upload success",
+                        };
+                        this.ConfirmMsg.Add(msgResult);
 
                         #region ISP20201607 資料交換 - Gensong
 
@@ -705,7 +750,7 @@ DROP TABLE #tmp
             }
             finally
             {
-                MyUtility.Msg.InfoBox("Finish!!");
+                this.ShowConfirmMsg();
                 this.HideWaitMessage();
                 this.btnMapping.PerformClick();
             }
@@ -739,6 +784,14 @@ DROP TABLE #tmp
 
             foreach (var excelData in everyCarton)
             {
+                // 錯誤訊息收集
+                bool isOK = this.CollectErrorMsg(excelData);
+
+                if (!isOK)
+                {
+                    return new DualResult(false);
+                }
+
                 string tmp = $@"SELECT [PackingListID]='{excelData.PackingListID}',[OrderID]='{excelData.OrderID}',[Article]='{excelData.Article}',[SizeCode]='{excelData.SizeCode}',[ShipQty]='{excelData.ShipQty}',[CartonBarcode]='{excelData.CartonBarcode}'";
 
                 tmpTable += tmp + Environment.NewLine;
@@ -831,6 +884,69 @@ DROP TABLE #tmp ,#tmpPackingList_Detail
                     return new DualResult(true);
                 }
             }
+        }
+
+        private bool CollectErrorMsg(ExcelData excelData)
+        {
+            bool result = true;
+            List<MatchGridData> matchGridDatas = new List<MatchGridData>();
+
+            string chjSql = string.Empty;
+
+            chjSql = $"SELECT 1 FROM PackingList_Detail WITH(NOLOCK) WHERE ID != '{excelData.PackingListID}' AND CustCTN = '{excelData.CartonBarcode}' ";
+
+            if (MyUtility.Check.Seek(chjSql))
+            {
+                Result r = new Result()
+                {
+                    PONumber = excelData.PONumber,
+                    POItem = excelData.POItem,
+                    PLPOItemTotalCartons = excelData.PLPOItemTotalCartons,
+                    ResultMsg = "Exists Cust CTN.",
+                };
+
+                this.ConfirmMsg.Add(r);
+                result = false;
+            }
+
+            return result;
+        }
+
+        private void ShowConfirmMsg()
+        {
+            if (!this.ConfirmMsg.Any())
+            {
+                return;
+            }
+
+            DataTable dt = new DataTable();
+            dt.ColumnsStringAdd("PONumber");
+            dt.ColumnsStringAdd("POItem");
+            dt.ColumnsStringAdd("PLPOItemTotalCartons");
+            dt.ColumnsStringAdd("Result");
+
+            foreach (Result r in this.ConfirmMsg)
+            {
+                DataRow dr = dt.NewRow();
+                dr["PONumber"] = r.PONumber;
+                dr["POItem"] = r.POItem;
+                dr["PLPOItemTotalCartons"] = r.PLPOItemTotalCartons;
+                dr["Result"] = r.ResultMsg;
+                dt.Rows.Add(dr);
+            }
+
+            dt = dt.AsEnumerable()
+                .OrderBy(o => MyUtility.Convert.GetString(o["PONumber"]))
+                .OrderBy(o => MyUtility.Convert.GetString(o["POItem"]))
+                .CopyToDataTable();
+
+            this.BindingSourceMsgGrid.DataSource = dt;
+
+            var m = MyUtility.Msg.ShowMsgGrid(this.gridErrorMsg, "Please check below message.", "Result");
+            m.Width = 850;
+            m.grid1.Columns[3].Width = 600;
+            m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            m.TopMost = true;
         }
 
         /// <inheritdoc/>
@@ -984,6 +1100,22 @@ DROP TABLE #tmp ,#tmpPackingList_Detail
             /// 對應Excel的ItemQuantity
             /// </summary>
             public string ShipQty { get; set; }
+        }
+
+        /// <inheritdoc/>
+        public class Result
+        {
+            /// <inheritdoc/>
+            public string PONumber { get; set; }
+
+            /// <inheritdoc/>
+            public string POItem { get; set; }
+
+            /// <inheritdoc/>
+            public string PLPOItemTotalCartons { get; set; }
+
+            /// <inheritdoc/>
+            public string ResultMsg { get; set; }
         }
 
         /// <inheritdoc/>

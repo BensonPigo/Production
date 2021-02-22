@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridFile = new Sci.Win.UI.Grid();
@@ -49,11 +50,13 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnConfirm = new Sci.Win.UI.Button();
             this.panel6 = new Sci.Win.UI.Panel();
+            this.gridErrorMsg = new Sci.Win.UI.Grid();
             this.label2 = new System.Windows.Forms.Label();
             this.btnMapping = new Sci.Win.UI.Button();
             this.panel4 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.BindingSourceMsgGrid = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -67,6 +70,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.BindingSourceMatch)).BeginInit();
             this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridErrorMsg)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BindingSourceMsgGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -276,6 +281,7 @@
             // 
             // panel6
             // 
+            this.panel6.Controls.Add(this.gridErrorMsg);
             this.panel6.Controls.Add(this.label2);
             this.panel6.Controls.Add(this.btnMapping);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
@@ -283,6 +289,38 @@
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(566, 47);
             this.panel6.TabIndex = 3;
+            // 
+            // gridErrorMsg
+            // 
+            this.gridErrorMsg.AllowUserToAddRows = false;
+            this.gridErrorMsg.AllowUserToDeleteRows = false;
+            this.gridErrorMsg.AllowUserToResizeRows = false;
+            this.gridErrorMsg.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridErrorMsg.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridErrorMsg.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridErrorMsg.DataSource = this.BindingSourceMsgGrid;
+            this.gridErrorMsg.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridErrorMsg.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridErrorMsg.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridErrorMsg.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridErrorMsg.Location = new System.Drawing.Point(478, 15);
+            this.gridErrorMsg.Name = "gridErrorMsg";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridErrorMsg.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridErrorMsg.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridErrorMsg.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridErrorMsg.RowTemplate.Height = 24;
+            this.gridErrorMsg.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridErrorMsg.ShowCellToolTips = false;
+            this.gridErrorMsg.Size = new System.Drawing.Size(49, 16);
+            this.gridErrorMsg.TabIndex = 12;
+            this.gridErrorMsg.Visible = false;
             // 
             // label2
             // 
@@ -349,6 +387,8 @@
             this.panel7.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridErrorMsg)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BindingSourceMsgGrid)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -378,5 +418,7 @@
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel3;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private Win.UI.Grid gridErrorMsg;
+        private Win.UI.ListControlBindingSource BindingSourceMsgGrid;
     }
 }
