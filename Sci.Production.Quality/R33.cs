@@ -88,7 +88,12 @@ namespace Sci.Production.Quality
 
             sqlCmd.Append($@"
 /*1. 逐日表*/
-CREATE Table #DateTable  (Date Date null)
+CREATE Table #DateTable  (
+      Date Date null
+    , TotalInspectQty int null
+    , TotalPassQty int null
+    , PassRate numeric(5,2)
+)
 DECLARE @StartDate  date = @AuditDate1;
 DECLARE @EndDate  date = @AuditDate2;
 DECLARE @DayCount as int = (SELECT DATEDIFF(DAY,@StartDate,@EndDate));
@@ -105,6 +110,7 @@ SELECT * FROM #DateTable
 
 /*2. CFAInspectionRecord明細資料*/
 
+----取得所有檢驗紀錄
 SELECT c.*,co.OrderID,co.SEQ, co.Carton ,co.Ukey
 INTO #MainData1
 FROm CFAInspectionRecord  c
@@ -116,17 +122,44 @@ AND Stage='Staggered'
 AND Status='Confirmed'
 {where}
 
+----每個工廠的假日可能不同，因此不能存放在逐日表
 SELECT [IsHoliday] = CAST( IIF(h.HolidayDate IS NULL , 0 , 1 ) as bit)
+,[IsSunday]=CAST( IIF(DATENAME(DW, AuditDate) = 'Sunday', 1, 0) as bit)
 ,AuditDate
 ,Result
 ,MDivisionid
 ,c.FactoryID
 ,SewingLineID,Shift,InspectQty,DefectQty
+INTO #AllData
 FROM CFAInspectionRecord c
 LEFT JOIN Holiday h ON c.FactoryID = h.FactoryID AND c.AuditDate = h.HolidayDate
 WHERE c.ID IN (SELECT ID FROM #MainData1)
 
-DROP TABLE #DateTable,#MainData1
+----將by 日期計算的數值更改上去
+UPDATE t
+SET t.TotalInspectQty = total.TotalInspectQty
+,t.TotalPassQty = pass.TotalInspectQty
+,t.PassRate = (pass.TotalInspectQty * 1.0) / (total.TotalInspectQty * 1.0)
+FROM #DateTable t
+LEFT JOIN (
+	SELECT AuditDate,[TotalInspectQty] = SUM(InspectQty)
+	FROM #AllData
+	GROUP BY AuditDate
+)total ON t.Date = total.AuditDate
+LEFT JOIN (
+	SELECT AuditDate,[TotalInspectQty] = SUM(InspectQty)
+	FROM #AllData
+	WHERE Result = 'Pass'
+	GROUP BY AuditDate
+)pass ON t.Date = pass.AuditDate
+
+SELECT * FROM #DateTable
+SELECT * FROM #AllData
+
+SELECT * FROM #DateTable
+SELECT * FROM #AllData
+
+DROP TABLE #DateTable,#MainData1,#AllData
 ");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), paramList, out this.tempDatas);
             if (!result)
