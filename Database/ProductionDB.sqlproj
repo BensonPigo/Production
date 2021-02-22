@@ -2579,6 +2579,7 @@
     <Build Include="dbo\Stored Procedures\Cutting_Report_QtyBreakdown.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_Report_FabColorCombination.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_Report_AccColorCombination.sql" />
+    <Build Include="dbo\Stored Procedures\exp_BundleInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
