@@ -61,6 +61,10 @@
     <LangVersion>7</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bytescout.BarCodeReader, Version=11.3.0.2004, Culture=neutral, PublicKeyToken=f7dd1bd9d40a50eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Bytescout.BarCodeReader.dll</HintPath>
+    </Reference>
     <Reference Include="commons-logging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\_Dll\commons-logging.dll</HintPath>
     </Reference>
@@ -540,6 +544,24 @@
     <Compile Include="P27_Generate.Designer.cs">
       <DependentUpon>P27_Generate.cs</DependentUpon>
     </Compile>
+    <Compile Include="P28.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P28.Designer.cs">
+      <DependentUpon>P28.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P28_Nike.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P28_Nike.Designer.cs">
+      <DependentUpon>P28_Nike.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P28_UA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P28_UA.Designer.cs">
+      <DependentUpon>P28_UA.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -760,6 +782,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P27_Generate.resx">
       <DependentUpon>P27_Generate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P28.resx">
+      <DependentUpon>P28.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P28_Nike.resx">
+      <DependentUpon>P28_Nike.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P28_UA.resx">
+      <DependentUpon>P28_UA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>

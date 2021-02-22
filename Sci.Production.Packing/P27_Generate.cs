@@ -178,7 +178,7 @@ OUTER APPLY(
 	FROM ShippingMarkCombination s
 	WHERE s.BrandID=p.BrandID AND s.Category='HTML' AND IsDefault = 1
 )comb
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 {where}
 
 
@@ -200,7 +200,7 @@ OUTER APPLY(
 	FROM  #base b
 	WHERE  b.ID = p.ID AND SettingOK = 1
 )CompleteCtn
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 {where}
 {where_include}
 
@@ -285,7 +285,7 @@ OUTER APPLY(
 	FROM ShippingMarkCombination s
 	WHERE s.BrandID=p.BrandID AND s.Category='HTML' AND IsDefault = 1
 )comb
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
 
 
