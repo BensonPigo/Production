@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
@@ -424,14 +425,7 @@ drop table #tmp,#tmp2";
                 w2.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
             }
 
-            if (this.garmentTb.Rows.Count > 0)
-            {
-                this.garmentarRC = this.garmentTb.Select(w2.ToString()).CopyToDataTable();
-            }
-            else
-            {
-                this.garmentarRC = this.garmentTb.Clone();
-            }
+            this.garmentarRC = this.garmentTb.Select(w2.ToString()).TryCopyToDataTable(this.garmentTb);
         }
 
         /// <summary>
