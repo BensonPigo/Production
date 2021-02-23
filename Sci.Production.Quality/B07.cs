@@ -10,6 +10,7 @@ namespace Sci.Production.Quality
     {
         private readonly Hashtable ht = new Hashtable();
 
+        /// <inheritdoc/>OK
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -58,14 +59,14 @@ namespace Sci.Production.Quality
             return base.ClickSave();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>OK
         protected override void ClickLocate()
         {
             base.ClickLocate();
             this.OnDetailEntered();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>  OK
         protected override void OnDetailEntered()
         {
             if (this.CurrentMaintain.Empty())
@@ -91,7 +92,7 @@ namespace Sci.Production.Quality
             base.OnDetailEntered();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>OK
         protected override void ClickNewAfter()
         {
             this.txtbrand.ReadOnly = false;
@@ -99,13 +100,14 @@ namespace Sci.Production.Quality
             base.ClickNewAfter();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>OK
         protected override bool ClickEditBefore()
         {
             this.txtbrand.ReadOnly = true;
             return base.ClickEditBefore();
         }
 
+        /// <inheritdoc/>OK
         private void RadioOption1_CheckedChanged(object sender, EventArgs e)
         {
             if (this.radioOption1.Checked)

@@ -43,14 +43,14 @@
             this.radioForWeftWarp = new Sci.Win.UI.RadioButton();
             this.label4 = new Sci.Win.UI.Label();
             this.radioPanel3 = new Sci.Win.UI.RadioPanel();
+            this.SkewnessOption3 = new Sci.Win.UI.RadioButton();
             this.SkewnessOption1 = new Sci.Win.UI.RadioButton();
             this.SkewnessOption2 = new Sci.Win.UI.RadioButton();
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtSkewnessFormula = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.SkewnessOption3 = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -70,14 +70,14 @@
             // detailcont
             // 
             this.detailcont.Controls.Add(this.radioPanel3);
+            this.detailcont.Controls.Add(this.radioPanel2);
+            this.detailcont.Controls.Add(this.radioPanel1);
             this.detailcont.Controls.Add(this.pictureBox1);
-            this.detailcont.Controls.Add(this.textBox1);
+            this.detailcont.Controls.Add(this.txtSkewnessFormula);
             this.detailcont.Controls.Add(this.label5);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.label7);
             this.detailcont.Controls.Add(this.btnMoistureStandardList);
-            this.detailcont.Controls.Add(this.radioPanel2);
-            this.detailcont.Controls.Add(this.radioPanel1);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.txtFormula);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -94,7 +94,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(712, 285);
+            this.browse.Size = new System.Drawing.Size(712, 464);
             // 
             // tabs
             // 
@@ -263,6 +263,20 @@
             this.radioPanel3.ReadOnly = true;
             this.radioPanel3.Size = new System.Drawing.Size(279, 28);
             this.radioPanel3.TabIndex = 11;
+            this.radioPanel3.ValueChanged += new System.EventHandler(this.RadioPanel3_ValueChanged);
+            // 
+            // SkewnessOption3
+            // 
+            this.SkewnessOption3.AutoCheck = false;
+            this.SkewnessOption3.AutoSize = true;
+            this.SkewnessOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.SkewnessOption3.Location = new System.Drawing.Point(173, 2);
+            this.SkewnessOption3.Name = "SkewnessOption3";
+            this.SkewnessOption3.Size = new System.Drawing.Size(76, 21);
+            this.SkewnessOption3.TabIndex = 2;
+            this.SkewnessOption3.Text = "Option3";
+            this.SkewnessOption3.UseVisualStyleBackColor = true;
+            this.SkewnessOption3.Value = "2";
             // 
             // SkewnessOption1
             // 
@@ -300,16 +314,16 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
             // 
-            // textBox1
+            // txtSkewnessFormula
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox1.IsSupportEditMode = false;
-            this.textBox1.Location = new System.Drawing.Point(164, 219);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(246, 23);
-            this.textBox1.TabIndex = 12;
+            this.txtSkewnessFormula.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSkewnessFormula.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSkewnessFormula.IsSupportEditMode = false;
+            this.txtSkewnessFormula.Location = new System.Drawing.Point(164, 219);
+            this.txtSkewnessFormula.Name = "txtSkewnessFormula";
+            this.txtSkewnessFormula.ReadOnly = true;
+            this.txtSkewnessFormula.Size = new System.Drawing.Size(246, 23);
+            this.txtSkewnessFormula.TabIndex = 12;
             // 
             // label5
             // 
@@ -334,19 +348,6 @@
             this.label7.Size = new System.Drawing.Size(131, 23);
             this.label7.TabIndex = 13;
             this.label7.Text = "Skewness Option";
-            // 
-            // SkewnessOption3
-            // 
-            this.SkewnessOption3.AutoCheck = false;
-            this.SkewnessOption3.AutoSize = true;
-            this.SkewnessOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.SkewnessOption3.Location = new System.Drawing.Point(173, 2);
-            this.SkewnessOption3.Name = "SkewnessOption3";
-            this.SkewnessOption3.Size = new System.Drawing.Size(76, 21);
-            this.SkewnessOption3.TabIndex = 2;
-            this.SkewnessOption3.Text = "Option3";
-            this.SkewnessOption3.UseVisualStyleBackColor = true;
-            this.SkewnessOption3.Value = "2";
             // 
             // B10
             // 
@@ -401,7 +402,7 @@
         private Win.UI.RadioButton SkewnessOption1;
         private Win.UI.RadioButton SkewnessOption2;
         private Win.UI.PictureBox pictureBox1;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtSkewnessFormula;
         private Win.UI.Label label5;
         private Win.UI.Label label6;
         private Win.UI.Label label7;
