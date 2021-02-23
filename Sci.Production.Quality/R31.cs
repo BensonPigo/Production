@@ -685,21 +685,12 @@ SELECT need.Stage
 	,need.*
 FROM #NeedCkeck need
 WHERE need.Stage = 'Final'
-AND (	
-		SELECT COUNT(DISTINCT data)
-		FROM dbo.SplitString((
-						SELECt TOP 1  cfoq.Carton
-						FROM #CFAInspectionRecord  cr
-						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-						WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Pass'
-						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
-						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
-		),',')
-) != 
-(SELECT COUNT( DISTINCT CTNStartNo)
-FROM #PackingList_Detail  
-WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
----- 成功數 != 總箱數，表示尚未檢驗成功
+AND NOT EXISTS (	
+	SELECT *
+	FROM #CFAInspectionRecord a
+	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = 'Final' AND a.Status='Confirmed' AND a.Result = 'Pass'
+) 
 
 
 ";
@@ -753,21 +744,12 @@ SELECT need.Stage
 	,need.*
 FROM #NeedCkeck need
 WHERE need.Stage = '3rd Party'
-AND (	
-		SELECT COUNT(DISTINCT data)
-		FROM dbo.SplitString((
-						SELECt TOP 1  cfoq.Carton
-						FROM #CFAInspectionRecord  cr
-						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-						WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed' AND cr.Result = 'Pass'
-						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
-						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
-		),',')
-) != 
-(SELECT COUNT( DISTINCT CTNStartNo)
-FROM #PackingList_Detail  
-WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
----- 成功數 != 總箱數，表示尚未檢驗成功
+AND NOT EXISTS (	
+	SELECT *
+	FROM #CFAInspectionRecord a
+	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = '3rd Party' AND a.Status='Confirmed' AND a.Result = 'Pass'
+) 
 
 ";
                     outstandingWHERE.Add(stageSql);
