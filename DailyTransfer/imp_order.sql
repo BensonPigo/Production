@@ -615,7 +615,8 @@ else
 				t.HangerPack = s.HangerPack,
 				t.DelayCode = s.DelayCode,
 				t.DelayDesc = s.DelayDesc,
-				t.CDCodeNew = s.CDCodeNew
+				t.CDCodeNew = s.CDCodeNew,
+				t.SizeUnitWeight = s.SizeUnitWeight
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -648,7 +649,7 @@ else
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
-			, CDCodeNew
+			, CDCodeNew				, SizeUnitWeight
 		) values (
 			s.ID					, s.BrandID				, s.ProgramID			, s.StyleID				, s.SeasonID 
 			, s.ProjectID			, s.Category			, s.OrderTypeID			, s.BuyMonth			, s.Dest 
@@ -680,7 +681,7 @@ else
 			, s.ForecastCategory	, s.OnSiteSample		, s.PulloutCmplDate		, isnull (s.NeedProduction, 0)		, isnull (s.KeepPanels, 0)
 			, isnull (s.IsBuyBack, 0), isnull (s.BuyBackReason, '')		, isnull (s.IsBuyBackCrossArticle, 0) , isnull (s.IsBuyBackCrossSizeCode, 0)
 			, s.KpiEachConsCheck	, s.CMPLTDATE			, s.HangerPack			,s.DelayCode			,s.DelayDesc
-			, s.CDCodeNew
+			, s.CDCodeNew			, s.SizeUnitWeight
 		)
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
@@ -939,6 +940,23 @@ else
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
 	
+		----------------Order_SizeTol------------------------------
+		Merge Production.dbo.Order_SizeTol as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_SizeTol a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+		on t.ID=s.ID and t.SizeGroup = s.SizeGroup and t.SizeItem = s.SizeItem
+		when matched then 
+			update set 			
+				t.Lower	= s.Lower,
+				t.Upper	= s.Upper
+		when not matched by Target then
+			insert (
+				Id		, SizeItem		, SizeGroup		, Lower		, Upper
+			) values (
+				s.Id		, s.SizeItem		, s.SizeGroup		, s.Lower		, s.Upper
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
+			delete;
+
 		-------------Order_SizeSpec--------------------------------尺寸表 Size Spec(存尺寸碼)
 		Merge Production.dbo.Order_SizeSpec as t
 		Using (select a.* from Trade_To_Pms.dbo.Order_SizeSpec a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s

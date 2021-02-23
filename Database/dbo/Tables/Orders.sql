@@ -177,6 +177,7 @@
     [CMPLTDATE] DATE NULL, 
     [HangerPack] BIT NULL DEFAULT ((0)), 
     [CDCodeNew] VARCHAR(5) NULL, 
+    [SizeUnitWeight] VARCHAR(8) NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
