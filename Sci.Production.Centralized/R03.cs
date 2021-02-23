@@ -457,6 +457,11 @@ alter table #tmp alter column A  varchar(15)
 alter table #tmp alter column B  varchar(8)
 alter table #tmp alter column E  varchar(100)
 
+select A,B,E,F,OutputDate = max(OutputDate)
+into #tmp_MaxOutputDate
+from #tmp 
+group by A,B,E,F
+
 select A,B,C,D,E,F
 ,G=sum(QARate)
 ,H=sum(TotalCPUOut),I=sum(TotalManHour)
@@ -471,11 +476,19 @@ select A,B,C,D,E,F
 																	where t.A = #tmp.A
                                                                     and t.B = #tmp.B
                                                                     and t.E = #tmp.E
+                                                                    and t.F = #tmp.F
+																	and exists (select 1 from #tmp_MaxOutputDate t2
+																				where t2.A = t.A 
+																				and t2.B = t.B 
+																				and t2.E = t.E
+																				and t2.F = t.F
+																				and t2.OutputDate = t.OutputDate)
 																	FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
                                                                end))
                 from #tmp a where   a.A = #tmp.A and 
                                     a.B = #tmp.B and
-                                    a.E = #tmp.E 
+                                    a.E = #tmp.E and
+                                    a.F = #tmp.F
                 group by a.FactoryID FOR XML PATH(''))
         ,1,1,'') 
 from #tmp 
@@ -592,6 +605,11 @@ FROM #tmpz  ",
                 sqlcmd = @"
 alter table #tmp alter column B  varchar(13)
 
+select B,C,D,H,I,OutputDate = max(OutputDate)
+into #tmp_MaxOutputDate
+from #tmp 
+group by B,C,D,H,I
+
 select A,B,C,D,E,F,G,H,I,J
 ,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
 ,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
@@ -604,6 +622,15 @@ select A,B,C,D,E,F,G,H,I,J
 							where t.C = #tmp.C
 							and t.D = #tmp.D
 							and t.H = #tmp.H
+                            and t.I = #tmp.I
+                            and t.B = #tmp.B
+							and exists (select 1 from #tmp_MaxOutputDate t2
+										where t2.C = t.C
+										and t2.D = t.D 
+										and t2.H = t.H
+										and t2.I = t.I
+										and t2.B = t.B
+										and t2.OutputDate = t.OutputDate)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
@@ -631,7 +658,13 @@ order by A,B,C,D,G";
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E,F,G,H,I,J
+                sqlcmd = @"
+select B,E,I,J,OutputDate = max(OutputDate)
+into #tmp_MaxOutputDate
+from #tmp 
+group by B,E,I,J
+
+select A,B,C,D,E,F,G,H,I,J
 ,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
 ,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
 ,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
@@ -643,6 +676,13 @@ order by A,B,C,D,G";
 							where t.B = #tmp.B
 							and t.E = #tmp.E
 							and t.I = #tmp.I
+							and t.J = #tmp.J
+							and exists (select 1 from #tmp_MaxOutputDate t2
+										where t2.B = t.B
+										and t2.E = t.E 
+										and t2.I = t.I
+										and t2.J = t.J
+										and t2.OutputDate = t.OutputDate)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
