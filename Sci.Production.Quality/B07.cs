@@ -26,7 +26,7 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>OK
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.txtbrand.Text))
@@ -47,7 +47,7 @@ namespace Sci.Production.Quality
             return base.ClickSaveBefore();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> OK
         protected override Ict.DualResult ClickSave()
         {
             DataRow dr;

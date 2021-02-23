@@ -98,9 +98,31 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            this.txtSkewnessFormula.Text = this.CurrentMaintain["ID"].ToString() == "1" ? this.SkewnessHt["Formula1"].ToString() : this.SkewnessHt["Formula2"].ToString();
-            this.pictureBox1.ImageLocation = this.CurrentMaintain["ID"].ToString() == "1" ? this.SkewnessHt["Picture1"].ToString() : this.SkewnessHt["Picture2"].ToString();
+            string skewnessOption = this.CurrentMaintain["SkewnessOption"].ToString();
 
+            string formula = string.Empty;
+            switch (skewnessOption)
+            {
+                case "1":
+                    formula = this.SkewnessHt["Formula1"].ToString();
+                    this.SkewnessOption1.Checked = true;
+                    this.pictureBox1.ImageLocation = this.SkewnessHt["Picture1"].ToString();
+                    break;
+                case "2":
+                    formula = this.SkewnessHt["Formula2"].ToString();
+                    this.SkewnessOption2.Checked = true;
+                    this.pictureBox1.ImageLocation = this.SkewnessHt["Picture2"].ToString();
+                    break;
+                case "3":
+                    formula = this.SkewnessHt["Formula3"].ToString();
+                    this.SkewnessOption3.Checked = true;
+                    this.pictureBox1.ImageLocation = this.SkewnessHt["Picture3"].ToString();
+                    break;
+                default:
+                    break;
+            }
+
+            this.txtSkewnessFormula.Text = formula;
             if (this.EditMode)
             {
                 this.radioPanel3.ReadOnly = false;
@@ -143,19 +165,25 @@ namespace Sci.Production.Quality
 
         private void RadioPanel3_ValueChanged(object sender, EventArgs e)
         {
+
             string formula = string.Empty;
-            switch (this.radioPanel1.Value)
+            //string skewnessOption = MyUtility.Check.Empty(this.CurrentMaintain) ? "1" : this.CurrentMaintain["SkewnessOption"].ToString();
+            //this.radioPanel3.Value = skewnessOption;
+            switch (this.radioPanel3.Value)
             {
                 case "1":
                     formula = this.SkewnessHt["Formula1"].ToString();
+                    //this.SkewnessOption1.Checked = true;
                     this.pictureBox1.ImageLocation = this.SkewnessHt["Picture1"].ToString();
                     break;
                 case "2":
                     formula = this.SkewnessHt["Formula2"].ToString();
+                    //this.SkewnessOption2.Checked = true;
                     this.pictureBox1.ImageLocation = this.SkewnessHt["Picture2"].ToString();
                     break;
                 case "3":
                     formula = this.SkewnessHt["Formula3"].ToString();
+                    //this.SkewnessOption3.Checked = true;
                     this.pictureBox1.ImageLocation = this.SkewnessHt["Picture3"].ToString();
                     break;
                 default:

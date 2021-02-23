@@ -257,7 +257,7 @@
             this.radioPanel3.Controls.Add(this.SkewnessOption3);
             this.radioPanel3.Controls.Add(this.SkewnessOption1);
             this.radioPanel3.Controls.Add(this.SkewnessOption2);
-            this.radioPanel3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.radioPanel3.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SkewnessOption", true));
             this.radioPanel3.Location = new System.Drawing.Point(164, 185);
             this.radioPanel3.Name = "radioPanel3";
             this.radioPanel3.ReadOnly = true;
@@ -276,7 +276,7 @@
             this.SkewnessOption3.TabIndex = 2;
             this.SkewnessOption3.Text = "Option3";
             this.SkewnessOption3.UseVisualStyleBackColor = true;
-            this.SkewnessOption3.Value = "2";
+            this.SkewnessOption3.Value = "3";
             // 
             // SkewnessOption1
             // 
@@ -360,7 +360,7 @@
             this.IsSupportPrint = false;
             this.Name = "B10";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B10. Brand";
+            this.Text = "B10. QA Brand Setting";
             this.WorkAlias = "QABrandSetting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
