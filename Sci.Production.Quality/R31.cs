@@ -589,7 +589,7 @@ SELECT need.Stage
 								FROM #PackingList_Detail pd
 								WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
 								AND pd.StaggeredCFAInspectionRecordID = ''
-								AND NOT EXISTS(
+								AND EXISTS(
 									SELECT 1
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
@@ -609,7 +609,7 @@ SELECT need.Stage
 								FROM #PackingList_Detail pd
 								WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
 								AND pd.StaggeredCFAInspectionRecordID = ''
-								AND NOT EXISTS(
+								AND EXISTS(
 									SELECT 1
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
@@ -651,7 +651,7 @@ SELECT need.Stage
 		SELECt TOP 1  cfoq.Carton
 		FROM #CFAInspectionRecord  cr
 		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-		WHERE cr.Stage = 'Final' AND cr.Status='Confirmed'
+		WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 		AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 	)
@@ -661,7 +661,7 @@ SELECT need.Stage
 						SELECt TOP 1  cfoq.Carton
 						FROM #CFAInspectionRecord  cr
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-						WHERE cr.Stage = 'Final' AND cr.Status='Confirmed'
+						WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 		),',')
@@ -695,7 +695,7 @@ SELECT need.Stage
 		SELECt TOP 1 cfoq.Carton
 		FROM #CFAInspectionRecord  cr
 		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-		WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed'
+		WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 		AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 	)
@@ -705,7 +705,7 @@ SELECT need.Stage
 						SELECt TOP 1 cfoq.Carton
 						FROM #CFAInspectionRecord  cr
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-						WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed'
+						WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 		),',')
@@ -753,6 +753,11 @@ WHERE need.Stage = '3rd Party'
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{template}"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, template, 1, false, null, objApp); // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+
+            objSheets.Columns[3].ColumnWidth = 12;
+            objSheets.Columns[4].ColumnWidth = 12;
+            objSheets.Columns[5].ColumnWidth = 12;
+            objSheets.Columns[6].ColumnWidth = 12;
 
             // 客製化欄位，記得設定this.IsSupportCopy = true
             // this.CreateCustomizedExcel(ref objSheets);
