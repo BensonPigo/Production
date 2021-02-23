@@ -219,6 +219,10 @@ with tmp1stData as (
 	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, OutputDate = Max(t.OutputDate)
 	from tmp1stData t
 	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID
+),tmp1LineMaxOutputDatePOID as (
+	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, OutputDate = Max(t.OutputDate)
+	from tmp1stData t
+	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID
 ),tmp2ndData as (
     Select  ProgramID
             , StyleID
@@ -562,18 +566,21 @@ select  POID
 																						and t.BrandID = tmp4thData.BrandID
 																						and t.StyleDesc = tmp4thData.StyleDesc
                                                                                         and t.SeasonID = tmp4thData.SeasonID
-                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
+                                                                                        and t.POID = tmp4thData.POID
+                                                                                        and exists( select 1 from tmp1LineMaxOutputDatePOID t2 
                                                                                                      where t2.OutputDate = t.OutputDate 
                                                                                                      and t2.StyleID = t.StyleID
                                                                                                      and t2.BrandID = t.BrandID 
                                                                                                      and t2.StyleDesc = t.StyleDesc
-																									 and t2.SeasonID = t.SeasonID)
+																									 and t2.SeasonID = t.SeasonID
+																									 and t2.POID = t.POID)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
 											a.BrandID = tmp4thData.BrandID and
 											a.StyleDesc = tmp4thData.StyleDesc and 
-											a.SeasonID = tmp4thData.SeasonID
+											a.SeasonID = tmp4thData.SeasonID and
+											a.POID = tmp4thData.POID
 						group by a.FactoryID FOR XML PATH(''))
 				,1,1,'') 
 from tmp4thData

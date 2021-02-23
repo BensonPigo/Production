@@ -605,10 +605,10 @@ FROM #tmpz  ",
                 sqlcmd = @"
 alter table #tmp alter column B  varchar(13)
 
-select C,D,H,I,OutputDate = max(OutputDate)
+select B,C,D,H,I,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by C,D,H,I
+group by B,C,D,H,I
 
 select A,B,C,D,E,F,G,H,I,J
 ,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
@@ -623,11 +623,13 @@ select A,B,C,D,E,F,G,H,I,J
 							and t.D = #tmp.D
 							and t.H = #tmp.H
                             and t.I = #tmp.I
+                            and t.B = #tmp.B
 							and exists (select 1 from #tmp_MaxOutputDate t2
 										where t2.C = t.C
 										and t2.D = t.D 
 										and t2.H = t.H
 										and t2.I = t.I
+										and t2.B = t.B
 										and t2.OutputDate = t.OutputDate)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
