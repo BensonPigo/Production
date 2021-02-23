@@ -46,6 +46,7 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(445, 19);
+            this.print.Visible = false;
             // 
             // toexcel
             // 
@@ -105,12 +106,13 @@
             this.comboStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStage.FormattingEnabled = true;
             this.comboStage.IsSupportUnselect = true;
-            this.comboStage.Items.AddRange(new object[] {
-            "",
-            "Inline",
-            "Staggered",
-            "Final",
-            "3rd party"});
+            //this.comboStage.Items.AddRange(new object[] {
+            //"",
+            //"Inline",
+            //"Staggered",
+            //"Final",
+            //"3rd party"});
+            this.comboStage.Items.AddRange(new object[] {"Staggered"});
             this.comboStage.Location = new System.Drawing.Point(128, 175);
             this.comboStage.Name = "comboStage";
             this.comboStage.OldText = "";
@@ -215,6 +217,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(546, 269);
             this.Controls.Add(this.groupBox1);
+            this.IsSupportPrint = false;
             this.Name = "R33";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R33. CFA insp. Final and inline Pass rate summary";
