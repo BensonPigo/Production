@@ -174,29 +174,47 @@ WHERE Issue_DetailUkey IN ({ukeys})
                 new SqlParameter("@ID", id),
             };
             string sqlcmd = @"
-select t.POID,
-	    t.seq1+ '-' +t.seq2 as SEQ,
+select id.POID,
+	    id.seq1 +  '-'  + id.seq2 as SEQ,
         p.Scirefno,
 	    p.seq1,
 	    p.seq2,
-	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll) 
-			    AND(p.seq1 = lag(p.seq1,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll))
-			    AND(p.seq2 = lag(p.seq2,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll))) 
+	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
+			    AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+			    AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
 			    ,''
-                ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0)),
-        MDesc = iif(FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
-	    t.Roll,
-	    t.Dyelot,
-	    t.Qty,
+                ,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)),
+        MDesc = iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
+	    id.Roll,
+	    id.Dyelot,
+	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-	    [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
-from dbo.Issue_Detail t WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-left join FtyInventory FI on t.poid = fi.poid and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.Dyelot = fi.Dyelot
-    and t.roll = fi.roll and t.stocktype = fi.stocktype
-where t.id= @ID
-order by t.POID,SEQ, t.Dyelot,t.Roll
+	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1,id.seq2 )
+		,[RecvKG] = iif(rd.ActualQty <> id.Qty, '', cast(cast(iif(ISNULL(rd.Weight,0) > 0, rd.Weight, rd.ActualWeight) as decimal(18,2)) as varchar(20)))
+from dbo.Issue_Detail id WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= id.poid and p.SEQ1 = id.Seq1 and p.seq2 = id.Seq2
+left join FtyInventory fi WITH (NOLOCK) on id.POID = fi.POID
+						and id.Seq1 = fi.Seq1 
+						and id.Seq2 = fi.Seq2
+						and id.Dyelot = fi.Dyelot
+						and id.Roll = fi.Roll 
+						and id.StockType = fi.StockType
+Outer apply (
+	select [Weight] = SUM(rd.Weight)
+		, [ActualWeight] = SUM(rd.ActualWeight)
+		, [ActualQty] = SUM(rd.ActualQty)
+	from Receiving_Detail rd WITH (NOLOCK) 
+	where fi.POID = rd.PoId
+	and fi.Seq1 = rd.Seq1
+	and fi.Seq2 = rd.Seq2 
+	and fi.Dyelot = rd.Dyelot
+	and fi.Roll = rd.Roll
+	and fi.StockType = rd.StockType
+	and p.FabricType = 'F'
+)rd
+where id.id= @ID
+order by id.POID,SEQ, id.Dyelot,id.Roll
 ";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
             if (!result)
@@ -224,6 +242,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                     DYELOT = row1["Dyelot"].ToString().Trim(),
                     QTY = row1["Qty"].ToString().Trim(),
                     TotalQTY = row1["Total"].ToString().Trim(),
+                    RecvKG = row1["RecvKG"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;

@@ -21,5 +21,7 @@
         public string QTY { get; set; }
 
         public string TotalQTY { get; set; }
+
+        public string RecvKG { get; set; }
     }
 }
