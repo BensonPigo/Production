@@ -318,7 +318,7 @@ Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
     ,balanceQty = f.balanceQty
 from dbo.TransferOut_Detail d WITH (NOLOCK)
 outer apply(
-	select balanceQty = sum(isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.OutQty,0))
+	select balanceQty = sum(isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0))
 	from FtyInventory f WITH (NOLOCK)
     where d.PoId = f.PoId and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 )f
