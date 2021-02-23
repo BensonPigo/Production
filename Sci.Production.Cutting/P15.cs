@@ -355,7 +355,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 dr.EndEdit();
                 this.SynchronizeMain(0, "PatternCode");
                 this.Calpart();
-                this.CheckNotMain(dr);
+                Prgs.CheckNotMain(dr, this.GarmentTb);
             };
             patterncell.CellValidating += (s, e) =>
             {
@@ -391,7 +391,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 dr.EndEdit();
                 this.SynchronizeMain(0, "PatternCode");
                 this.Calpart();
-                this.CheckNotMain(dr);
+                Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
             DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings
@@ -404,7 +404,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 dr["PatternDesc"] = e.FormattedValue;
                 dr.EndEdit();
                 this.SynchronizeMain(0, "patternDesc");
-                this.CheckNotMain(dr);
+                Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
@@ -454,7 +454,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
 
                 dr["PostSewingSubProcess_String"] = string.Join("+", recordPS);
                 dr.EndEdit();
-                this.CheckNotMain(dr);
+                Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
             DataGridViewGeneratorNumericColumnSettings partQtyCell = new DataGridViewGeneratorNumericColumnSettings();
@@ -861,7 +861,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
         {
             if (MyUtility.Check.Empty(this.txtCutRef.Text) && MyUtility.Check.Empty(this.dateEstCutDate.Value) && MyUtility.Check.Empty(this.txtPOID.Text))
             {
-                MyUtility.Msg.WarningBox("[CutRef#] or [Est. Cut Date] or [PO ID] can’t be empty!!");
+                MyUtility.Msg.WarningBox("[CutRef#] or [Est. Cut Date] or [PO ID] can't be empty!!");
                 return false;
             }
 
@@ -928,17 +928,16 @@ outer apply(
     WHERE OCC.id = w.id
 	and OCC.patternpanel = wd.patternpanel
 	and DD.[type] = 'FabricKind'
-
 )FabricKind
 where o.mDivisionid = '{this.keyWord}' 
 and isnull(w.CutRef,'') <> ''
 {where}
 order by o.poid,w.estcutdate,w.Fabriccombo,w.cutno
 ";
-            DualResult query_dResult = DBProxy.Current.Select(null, query_cmd, out this.CutRefTb);
-            if (!query_dResult)
+            DualResult result = DBProxy.Current.Select(null, query_cmd, out this.CutRefTb);
+            if (!result)
             {
-                this.ShowErr(query_dResult);
+                this.ShowErr(result);
                 return;
             }
 
@@ -1120,10 +1119,10 @@ inner join FtyStyleInnovationCombineSubprocess f with(NOLOCK)
 
 drop table #tmp, #msfa
 ";
-            query_dResult = DBProxy.Current.Select(null, distru_cmd, out DataTable[] rightUpDt);
-            if (!query_dResult)
+            result = DBProxy.Current.Select(null, distru_cmd, out DataTable[] rightUpDt);
+            if (!result)
             {
-                this.ShowErr(query_dResult);
+                this.ShowErr(result);
                 return;
             }
 
@@ -1142,10 +1141,10 @@ Where isnull(w.CutRef,'') <> ''
 and o.mDivisionid = '{this.keyWord}'
 {where}
 ";
-            query_dResult = DBProxy.Current.Select(null, sizeRatio, out this.SizeRatioTb);
-            if (!query_dResult)
+            result = DBProxy.Current.Select(null, sizeRatio, out this.SizeRatioTb);
+            if (!result)
             {
-                this.ShowErr(query_dResult);
+                this.ShowErr(result);
                 return;
             }
 
@@ -1435,7 +1434,7 @@ order by ArticleGroup";
                 else
                 {
                     // 取得哪些 annotation 是次要
-                    List<string> notMainList = this.GetNotMain(dr, this.GarmentTb.Select());
+                    List<string> notMainList = Prgs.GetNotMain(dr, this.GarmentTb.Select());
                     string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
 
                     // Annotation
@@ -2869,77 +2868,6 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             }
 
             return sum;
-        }
-
-        private List<string> GetNotMain(DataRow dr, DataRow[] drs)
-        {
-            List<string> annList = new List<string>();
-            if (MyUtility.Convert.GetBool(dr["Main"]))
-            {
-                return annList;
-            }
-
-            string[] ann = MyUtility.Convert.GetString(dr["annotation"]).Split('+'); // 剖析Annotation 不去除數字 EX:AT01
-
-            // 每一筆 Annotation 去回找是否有標記主裁片
-            foreach (string item in ann)
-            {
-                string anno = Regex.Replace(item, @"[\d]", string.Empty);
-
-                // 判斷此 Annotation 在Cutting B01 是否為 IsBoundedProcess
-                string sqlcmd = $@"select 1 from Subprocess with(nolock) where id = '{anno}' and IsBoundedProcess =1 ";
-                bool isBoundedProcess = MyUtility.Check.Seek(sqlcmd);
-
-                // 是否有主裁片存在
-                bool hasMain = drs.AsEnumerable().
-                    Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
-
-                if (isBoundedProcess && hasMain)
-                {
-                    annList.Add(anno); // 去除字串中數字並加入List
-                }
-            }
-
-            return annList;
-        }
-
-        private void CheckNotMain(DataRow dr)
-        {
-            // 1.先判斷 PatternCode + PatternDesc 是否存在 GarmentTb
-            // 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 GarmentTb 內的資料
-            // 3.判斷是否為次要裁
-            DataRow[] drs = this.GarmentTb.Select($"PatternCode='{dr["PatternCode"]}'and PatternDesc = '{dr["PatternDesc"]}'");
-            if (drs.Length == 0)
-            {
-                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
-                dr.EndEdit();
-                return;
-            }
-
-            DataRow dr1 = drs[0]; // 找到也只會有一筆
-            string[] ann = Regex.Replace(dr1["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation 去除字串中數字
-            string[] anns = dr["art"].ToString().Split('+'); // 剖析Annotation, 已經是去除數字
-
-            // 兩個陣列內容要完全一樣，不管順序
-            if (!this.CompareArr(ann, anns))
-            {
-                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
-                dr.EndEdit();
-                return;
-            }
-
-            List<string> notMainList = this.GetNotMain(dr1, this.GarmentTb.Select()); // 帶入未去除數字的annotation資料
-            string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
-            dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
-            dr.EndEdit();
-        }
-
-        private bool CompareArr(string[] arr1, string[] arr2)
-        {
-            var q = from a in arr1 join b in arr2 on a equals b select a;
-            bool flag = arr1.Length == arr2.Length && q.Count() == arr1.Length;
-
-            return flag; // 內容相同返回true,反之返回false。
         }
     }
 }

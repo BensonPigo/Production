@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
 
         private DataTable artTb;
         private DataTable sizeTb;
-        private DataTable garmentTb;
+        private DataTable GarmentTb;
         private DataTable f_codeTb;
         private DataTable garmentarRC;
 
@@ -46,14 +46,14 @@ namespace Sci.Production.Cutting
         private DataTable bundle_Detail_Qty;
 
         private bool ByToneGenerate;
-        private bool noneShellchk_ReadOnly;
+        private bool isShell;
 
         /// <inheritdoc/>
-        public P10_Generate(DataRow maindr, DataTable bundle_Detail, DataTable bundle_Detail_allpart, DataTable bundle_Detail_Qty, DataTable bundle_Detail_Art, DataTable bundle_Detail_CombineSubprocess, bool noneShellchk_ReadOnly)
+        public P10_Generate(DataRow maindr, DataTable bundle_Detail, DataTable bundle_Detail_allpart, DataTable bundle_Detail_Qty, DataTable bundle_Detail_Art, DataTable bundle_Detail_CombineSubprocess, bool isShell)
         {
             this.InitializeComponent();
             this.ByToneGenerate = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
-            this.noneShellchk_ReadOnly = noneShellchk_ReadOnly;
+            this.isShell = isShell;
 
             #region 準備要處理的table 和原本的table
             this.maindatarow = maindr;
@@ -168,7 +168,7 @@ group by sizeCode",
             }
 
             // GarmentList
-            Prgs.GetGarmentListTable(maindr["cutref"].ToString(), this.maindatarow["poid"].ToString(), sizeGroup, out this.garmentTb);
+            Prgs.GetGarmentListTable(maindr["cutref"].ToString(), this.maindatarow["poid"].ToString(), sizeGroup, out this.GarmentTb);
 
             // ArticleGroup
             string patidsql;
@@ -219,8 +219,12 @@ order by ArticleGroup", patternukey);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.chkCombineSubprocess.Checked = this.bundle_Detail_CombineSubprocess.Rows.Count > 0;
-            this.chkNoneShellNoCreateAllParts.ReadOnly = this.noneShellchk_ReadOnly;
+            this.chkNoneShellNoCreateAllParts.ReadOnly = !this.isShell;
+            if (MyUtility.Check.Seek("select AutoGenerateByTone,IsCombineSubProcess,IsNoneShellNoCreateAllParts from SYSTEM", out DataRow sysDr))
+            {
+                this.chkCombineSubprocess.Checked = MyUtility.Convert.GetBool(sysDr["IsCombineSubProcess"]);
+                this.chkNoneShellNoCreateAllParts.Checked = MyUtility.Convert.GetBool(sysDr["IsNoneShellNoCreateAllParts"]) && !this.isShell;
+            }
         }
 
         /// <summary>
@@ -238,9 +242,9 @@ order by ArticleGroup", patternukey);
                 w.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
             }
 
-            this.garmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
-            this.garmentTb.Columns.Add("IsMain", typeof(bool));
-            DataRow[] garmentar = this.garmentTb.Select(w.ToString());
+            this.GarmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
+            this.GarmentTb.Columns.Add("IsMain", typeof(bool));
+            DataRow[] garmentar = this.GarmentTb.Select(w.ToString());
             Prgs.SetCombineSubprocessGroup_IsMain(garmentar);
 
             foreach (DataRow dr in garmentar)
@@ -261,7 +265,7 @@ order by ArticleGroup", patternukey);
                 else
                 {
                     // 取得哪些 annotation 是次要
-                    List<string> notMainList = this.GetNotMain(dr, this.garmentTb.Select());
+                    List<string> notMainList = Prgs.GetNotMain(dr, this.GarmentTb.Select());
                     string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
 
                     // Annotation
@@ -347,7 +351,7 @@ order by ArticleGroup", patternukey);
             this.patternTbOri.Rows.Add(pdr);
 
             this.garmentarRC = null;
-            this.garmentarRC = this.garmentTb.Clone();
+            this.garmentarRC = this.GarmentTb.Clone();
             foreach (DataRow gdr in garmentar)
             {
                 this.garmentarRC.ImportRow(gdr);
@@ -424,7 +428,7 @@ drop table #tmp,#tmp2";
 
             foreach (DataRow dr in this.allpartTb.Rows)
             {
-                DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", dr["PatternCode"]));
+                DataRow[] adr = this.GarmentTb.Select(string.Format("PatternCode='{0}'", dr["PatternCode"]));
                 if (adr.Length > 0)
                 {
                     dr["annotation"] = adr[0]["annotation"];
@@ -440,7 +444,7 @@ drop table #tmp,#tmp2";
                     w.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["PatternPanel"]));
                 }
 
-                DataRow[] garmentar = this.garmentTb.Select(w.ToString());
+                DataRow[] garmentar = this.GarmentTb.Select(w.ToString());
                 foreach (DataRow dr in garmentar)
                 {
                     bool f = false;
@@ -472,7 +476,7 @@ drop table #tmp,#tmp2";
                 w2.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
             }
 
-            this.garmentarRC = this.garmentTb.Select(w2.ToString()).TryCopyToDataTable(this.garmentTb);
+            this.garmentarRC = this.GarmentTb.Select(w2.ToString()).TryCopyToDataTable(this.GarmentTb);
         }
 
         private void Grid_setup()
@@ -550,7 +554,7 @@ drop table #tmp,#tmp2";
                     dr.EndEdit();
                     this.SynchronizeMain(0, "PatternCode");
                     this.CalculateParts();
-                    this.CheckNotMain(dr);
+                    Prgs.CheckNotMain(dr, this.GarmentTb);
                 }
             };
             patterncell.CellValidating += (s, e) =>
@@ -595,7 +599,7 @@ drop table #tmp,#tmp2";
 
                 dr.EndEdit();
                 this.SynchronizeMain(0, "PatternCode");
-                this.CheckNotMain(dr);
+                Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
             patternDesc.CellValidating += (s, e) =>
@@ -604,7 +608,7 @@ drop table #tmp,#tmp2";
                 dr["PatternDesc"] = e.FormattedValue;
                 dr.EndEdit();
                 this.SynchronizeMain(0, "patternDesc");
-                this.CheckNotMain(dr);
+                Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
             subcell.EditingMouseDown += (s, e) =>
@@ -660,7 +664,7 @@ drop table #tmp,#tmp2";
                         this.artTb.Rows.Add(ndr);
                     }
 
-                    this.CheckNotMain(dr);
+                    Prgs.CheckNotMain(dr, this.GarmentTb);
                 }
             };
             postSewingSubProcess_String.EditingMouseDown += (s, e) =>
@@ -1015,7 +1019,7 @@ drop table #tmp,#tmp2";
             ndr["isPair"] = selectartDr["isPair"];
 
             // Annotation
-            DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["PatternCode"]));
+            DataRow[] adr = this.GarmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["PatternCode"]));
             if (adr.Length > 0)
             {
                 ndr["annotation"] = adr[0]["annotation"];
@@ -1973,69 +1977,6 @@ drop table #tmp,#tmp2";
         {
             this.listControlBindingSource1.DataSource = null;
             this.Dispose();
-        }
-
-        private List<string> GetNotMain(DataRow dr, DataRow[] drs)
-        {
-            List<string> annList = new List<string>();
-            if (MyUtility.Convert.GetBool(dr["Main"]))
-            {
-                return annList;
-            }
-
-            string[] ann = MyUtility.Convert.GetString(dr["annotation"]).Split('+'); // 剖析Annotation 不去除數字 EX:AT01
-
-            // 每一筆 Annotation 去回找是否有標記主裁片
-            foreach (string item in ann)
-            {
-                string anno = Regex.Replace(item, @"[\d]", string.Empty);
-
-                // 判斷此 Annotation 在Cutting B01 是否為 IsBoundedProcess
-                string sqlcmd = $@"select 1 from Subprocess with(nolock) where id = '{anno}' and IsBoundedProcess =1 ";
-                bool isBoundedProcess = MyUtility.Check.Seek(sqlcmd);
-
-                // 是否有主裁片存在
-                bool hasMain = drs.AsEnumerable().
-                    Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
-
-                if (isBoundedProcess && hasMain)
-                {
-                    annList.Add(anno); // 去除字串中數字並加入List
-                }
-            }
-
-            return annList;
-        }
-
-        private void CheckNotMain(DataRow dr)
-        {
-            // 1.先判斷 PatternCode + PatternDesc 是否存在 garmentarRC (為 garmentTb 篩選後)
-            // 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 garmentarRC 內的資料
-            // 3.判斷是否為次要裁
-            DataRow[] drs = this.garmentarRC.Select($"PatternCode='{dr["PatternCode"]}'and PatternDesc = '{dr["PatternDesc"]}'");
-            if (drs.Length == 0)
-            {
-                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
-                dr.EndEdit();
-                return;
-            }
-
-            DataRow dr1 = drs[0]; // 找到也只會有一筆
-            string[] ann = Regex.Replace(dr1["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation 去除字串中數字
-            string[] anns = dr["art"].ToString().Split('+'); // 剖析Annotation, 已經是去除數字
-
-            // 兩個陣列內容要完全一樣，不管順序
-            if (!Prgs.CompareArr(ann, anns))
-            {
-                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
-                dr.EndEdit();
-                return;
-            }
-
-            List<string> notMainList = this.GetNotMain(dr1, this.garmentTb.Select()); // 帶入未去除數字的annotation資料
-            string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
-            dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
-            dr.EndEdit();
         }
 
         private void ChkCombineSubprocess_CheckedChanged(object sender, EventArgs e)

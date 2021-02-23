@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -12,6 +13,76 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+        /// <summary>
+        /// 取得哪些 annotation 是次要
+        /// </summary>
+        /// <inheritdoc/>
+        public static List<string> GetNotMain(DataRow dr, DataRow[] drs)
+        {
+            List<string> annList = new List<string>();
+            if (MyUtility.Convert.GetBool(dr["Main"]))
+            {
+                return annList;
+            }
+
+            string[] ann = MyUtility.Convert.GetString(dr["annotation"]).Split('+'); // 剖析Annotation 不去除數字 EX:AT01
+
+            // 每一筆 Annotation 去回找是否有標記主裁片
+            foreach (string item in ann)
+            {
+                string anno = Regex.Replace(item, @"[\d]", string.Empty);
+
+                // 判斷此 Annotation 在Cutting B01 是否為 IsBoundedProcess
+                string sqlcmd = $@"select 1 from Subprocess with(nolock) where id = '{anno}' and IsBoundedProcess =1 ";
+                bool isBoundedProcess = MyUtility.Check.Seek(sqlcmd);
+
+                // 是否有主裁片存在
+                bool hasMain = drs.AsEnumerable().
+                    Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
+
+                if (isBoundedProcess && hasMain)
+                {
+                    annList.Add(anno); // 去除字串中數字並加入List
+                }
+            }
+
+            return annList;
+        }
+
+        /// <summary>
+        /// 1.先判斷 PatternCode + PatternDesc 是否存在 GarmentTb
+        /// 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 GarmentTb 內的資料
+        /// 3.判斷是否為次要裁
+        /// </summary>
+        /// <inheritdoc/>
+        public static void CheckNotMain(DataRow dr, DataTable garmentTb)
+        {
+            DataRow[] drs = garmentTb.Select($"PatternCode='{dr["PatternCode"]}'and PatternDesc = '{dr["PatternDesc"]}'");
+            if (drs.Length == 0)
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+
+            DataRow dr1 = drs[0]; // 找到也只會有一筆
+            string[] ann = Regex.Replace(dr1["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation 去除字串中數字
+            string[] anns = dr["art"].ToString().Split('+'); // 剖析Annotation, 已經是去除數字
+
+            // 兩個陣列內容要完全一樣，不管順序
+            if (!Prgs.CompareArr(ann, anns))
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+
+            List<string> notMainList = Prgs.GetNotMain(dr1, garmentTb.Select()); // 帶入未去除數字的annotation資料
+            string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
+            dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
+            dr.EndEdit();
+        }
+
         /// <summary>
         /// 尚未解析前<相同的 annotation>，須有一個為左下Grid代表。
         /// 原本是 Main 直接標記為 IsMain
