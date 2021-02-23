@@ -1443,14 +1443,9 @@ drop table #tmp,#tmp2";
                 {
                     foreach (DataRow dr2 in this.patternTb.Rows)
                     {
-                        if (dr2["Parts"] == DBNull.Value)
+                        if (MyUtility.Check.Empty(dr2["Parts"]))
                         {
                             continue;
-                        }
-
-                        if (Convert.ToInt32(dr2["Parts"]) == 0)
-                        {
-                            continue;  // 若Parts=0，則不需產生資料至Bundle card明細
                         }
 
                         DataRow nDetail = bundle_detail_tmp.NewRow();
@@ -1731,7 +1726,13 @@ drop table #tmp,#tmp2";
            *有資料就加總右下Parts數量
            *並且新增一個AllPart在左下 並填上AllPart總數量
            */
-            DataTable allpartTb_Copy = this.allpartTb.Copy();
+            string filterAllPart = string.Empty;
+            if (this.chkCombineSubprocess.Checked)
+            {
+                filterAllPart = "CombineSubprocessGroup = 0";
+            }
+
+            DataTable allpartTb_Copy = this.allpartTb.Select(filterAllPart).TryCopyToDataTable(this.allpartTb);
             allpartTb_Copy.AcceptChanges();
             if (!MyUtility.Check.Empty(allpartTb_Copy) && allpartTb_Copy.Rows.Count > 0)
             {
@@ -2055,6 +2056,7 @@ drop table #tmp,#tmp2";
             this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
 
             this.ChangeDefault();
+            this.DeleteAllpartsDatas();
         }
 
         private void ChkNoneShellNoCreateAllParts_CheckedChanged(object sender, EventArgs e)
