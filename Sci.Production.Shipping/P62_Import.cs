@@ -1,14 +1,10 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -68,11 +64,15 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            DataTable dt;
+            string where = string.Empty;
+            if (!MyUtility.Check.Empty(this.txtCustCD.Text))
+            {
+                where += $@"and g.CustCDID = '{this.txtCustCD.Text}'";
+            }
+
             string sqlcmd = $@"
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
-Declare @CustCD varchar(16) = '{this.dr_master["CustCDID"]}'
 
 select selected = 0 
 , [INVNo] = g.id
@@ -115,6 +115,7 @@ select selected = 0
 ,[Forwarder] = g.Forwarder
 ,[SONo] = g.SONo
 ,[Remark] = g.Remark
+,g.CustCDID
 from GMTBooking g
 inner join PackingList p on g.ID = p.INVNo
 inner join PackingList_Detail pd on pd.id = p.id
@@ -142,11 +143,11 @@ outer apply(
 	group by OrderID
 )POPrice
 where 1=1
-and g.CustCDID = @CustCD
 and g.ShipModeID = @ShipMode
 and g.NonDeclare =0
 and (kd_status.status = 'New' or kd_status.Status is null)
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
+{where}
 ";
             #region Where
             if (!MyUtility.Check.Empty(this.dr_master["Buyer"]))
@@ -208,7 +209,7 @@ and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=
             sqlcmd += @" group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo";
 
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
+            if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt))
             {
                 this.listControlBindingSource1.DataSource = dt;
             }
@@ -241,9 +242,7 @@ and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=
                     && row["INVNo"].EqualString(tmp["INVNo"].ToString()) && row["OrderID"].EqualString(tmp["OrderID"])).ToArray();
                 if (findrow.Length == 0)
                 {
-                    tmp.AcceptChanges();
-                    tmp.SetAdded();
-                    this.dt_detail.ImportRow(tmp);
+                    this.dt_detail.ImportRowAdded(tmp);
                 }
             }
 

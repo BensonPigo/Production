@@ -6,7 +6,6 @@
     [Shipper]    VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Shipper] DEFAULT ('') NULL,
     [Buyer]      VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Buyer] DEFAULT ('') NULL,
     [ShipModeID] VARCHAR (10)  CONSTRAINT [DF_KHExportDeclaration_ShipModeID] DEFAULT ('') NULL,
-    [CustCDID]   VARCHAR (16)  CONSTRAINT [DF_KHExportDeclaration_CustCDID] DEFAULT ('') NULL,
     [Dest]       VARCHAR (2)   CONSTRAINT [DF_KHExportDeclaration_Dest] DEFAULT ('') NULL,
     [Forwarder]  VARCHAR (8)   CONSTRAINT [DF_KHExportDeclaration_Forwarder] DEFAULT ('') NULL,
     [ExportPort] VARCHAR (20)  CONSTRAINT [DF_KHExportDeclaration_ExportPort] DEFAULT ('') NULL,
@@ -60,7 +59,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'目的地',
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CustCD', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration', @level2type = N'COLUMN', @level2name = N'CustCDID';
+
 
 
 GO

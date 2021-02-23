@@ -36,7 +36,6 @@
             this.labShipper = new Sci.Win.UI.Label();
             this.labBuyer = new Sci.Win.UI.Label();
             this.labDestination = new Sci.Win.UI.Label();
-            this.labCustCD = new Sci.Win.UI.Label();
             this.labShipmode = new Sci.Win.UI.Label();
             this.labDeclaration = new Sci.Win.UI.Label();
             this.labForwarder = new Sci.Win.UI.Label();
@@ -52,7 +51,6 @@
             this.comboShipper = new Sci.Win.UI.ComboBox();
             this.txtbuyer = new Sci.Production.Class.Txtbuyer();
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
-            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtDeclaration = new Sci.Win.UI.TextBox();
             this.txtForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
@@ -99,7 +97,6 @@
             this.masterpanel.Controls.Add(this.txtForwarder);
             this.masterpanel.Controls.Add(this.txtDeclaration);
             this.masterpanel.Controls.Add(this.txtcountry);
-            this.masterpanel.Controls.Add(this.txtcustcd);
             this.masterpanel.Controls.Add(this.txtshipmode);
             this.masterpanel.Controls.Add(this.txtbuyer);
             this.masterpanel.Controls.Add(this.comboShipper);
@@ -115,7 +112,6 @@
             this.masterpanel.Controls.Add(this.labForwarder);
             this.masterpanel.Controls.Add(this.labDeclaration);
             this.masterpanel.Controls.Add(this.labDestination);
-            this.masterpanel.Controls.Add(this.labCustCD);
             this.masterpanel.Controls.Add(this.labShipmode);
             this.masterpanel.Controls.Add(this.labBuyer);
             this.masterpanel.Controls.Add(this.labShipper);
@@ -134,7 +130,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.labBuyer, 0);
             this.masterpanel.Controls.SetChildIndex(this.labShipmode, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labCustCD, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDestination, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDeclaration, 0);
             this.masterpanel.Controls.SetChildIndex(this.labForwarder, 0);
@@ -150,7 +145,6 @@
             this.masterpanel.Controls.SetChildIndex(this.comboShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbuyer, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtshipmode, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtcustcd, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtDeclaration, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtForwarder, 0);
@@ -233,7 +227,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(30, 177);
+            this.label1.Location = new System.Drawing.Point(30, 149);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 23);
             this.label1.TabIndex = 56;
@@ -273,19 +267,11 @@
             // 
             // labDestination
             // 
-            this.labDestination.Location = new System.Drawing.Point(30, 149);
+            this.labDestination.Location = new System.Drawing.Point(30, 121);
             this.labDestination.Name = "labDestination";
             this.labDestination.Size = new System.Drawing.Size(107, 23);
             this.labDestination.TabIndex = 61;
             this.labDestination.Text = "Destination";
-            // 
-            // labCustCD
-            // 
-            this.labCustCD.Location = new System.Drawing.Point(30, 121);
-            this.labCustCD.Name = "labCustCD";
-            this.labCustCD.Size = new System.Drawing.Size(107, 23);
-            this.labCustCD.TabIndex = 60;
-            this.labCustCD.Text = "CustCD";
             // 
             // labShipmode
             // 
@@ -458,22 +444,11 @@
             this.txtshipmode.TabIndex = 2;
             this.txtshipmode.UseFunction = null;
             // 
-            // txtcustcd
-            // 
-            this.txtcustcd.BackColor = System.Drawing.Color.White;
-            this.txtcustcd.BrandObjectName = null;
-            this.txtcustcd.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "custCDID", true));
-            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(140, 122);
-            this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(113, 23);
-            this.txtcustcd.TabIndex = 77;
-            // 
             // txtcountry
             // 
             this.txtcountry.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Dest", true));
             this.txtcountry.DisplayBox1Binding = "";
-            this.txtcountry.Location = new System.Drawing.Point(140, 150);
+            this.txtcountry.Location = new System.Drawing.Point(140, 122);
             this.txtcountry.Name = "txtcountry";
             this.txtcountry.Size = new System.Drawing.Size(232, 22);
             this.txtcountry.TabIndex = 3;
@@ -587,10 +562,10 @@
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(140, 177);
+            this.editRemark.Location = new System.Drawing.Point(140, 149);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(461, 23);
+            this.editRemark.Size = new System.Drawing.Size(450, 23);
             this.editRemark.TabIndex = 4;
             // 
             // btnBatchImport
@@ -754,7 +729,6 @@
         private Win.UI.Label labForwarder;
         private Win.UI.Label labDeclaration;
         private Win.UI.Label labDestination;
-        private Win.UI.Label labCustCD;
         private Win.UI.Label labShipmode;
         private Win.UI.Label labBuyer;
         private Win.UI.Label labShipper;
@@ -765,7 +739,6 @@
         private Win.UI.NumericBox numTtlDeclNW;
         private Win.UI.Label labelNotApprove;
         private Class.Txtcountry txtcountry;
-        private Class.Txtcustcd txtcustcd;
         private Class.Txtshipmode txtshipmode;
         private Class.Txtbuyer txtbuyer;
         private Win.UI.ComboBox comboShipper;

@@ -40,6 +40,7 @@
             this.labInvNo = new Sci.Win.UI.Label();
             this.labDecDate = new Sci.Win.UI.Label();
             this.labETD = new Sci.Win.UI.Label();
+            this.chkEx = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -218,9 +219,21 @@
             this.labETD.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labETD.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // chkEx
+            // 
+            this.chkEx.AutoSize = true;
+            this.chkEx.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkEx.Location = new System.Drawing.Point(12, 135);
+            this.chkEx.Name = "chkEx";
+            this.chkEx.Size = new System.Drawing.Size(297, 21);
+            this.chkEx.TabIndex = 99;
+            this.chkEx.Text = "Excludes None Export Declaration Invoice#";
+            this.chkEx.UseVisualStyleBackColor = true;
+            // 
             // R62
             // 
-            this.ClientSize = new System.Drawing.Size(590, 173);
+            this.ClientSize = new System.Drawing.Size(590, 197);
+            this.Controls.Add(this.chkEx);
             this.Controls.Add(this.labETD);
             this.Controls.Add(this.labDecDate);
             this.Controls.Add(this.txtInvNo2);
@@ -236,12 +249,6 @@
             this.Name = "R62";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R62. KH Export Declaration Report";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.dateDecDate, 0);
             this.Controls.SetChildIndex(this.dateETD, 0);
             this.Controls.SetChildIndex(this.labDecNo, 0);
@@ -254,6 +261,13 @@
             this.Controls.SetChildIndex(this.txtInvNo2, 0);
             this.Controls.SetChildIndex(this.labDecDate, 0);
             this.Controls.SetChildIndex(this.labETD, 0);
+            this.Controls.SetChildIndex(this.chkEx, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -273,5 +287,6 @@
         private Win.UI.Label labInvNo;
         private Win.UI.Label labDecDate;
         private Win.UI.Label labETD;
+        private Win.UI.CheckBox chkEx;
     }
 }

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict;
+﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tems;
+using System;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -48,9 +44,11 @@ select ked2.*
 ,[DiffGW] = ked2.WeightKg - ked2.ActWeightKg
 ,[TtlFOB] = ked2.POPrice * ked2.ShipModeSeqQty
 ,[StyleID] = s.ID
+,g.CustCDID
 from KHExportDeclaration_Detail ked2
 left join Style s on ked2.StyleUkey = s.Ukey
 left join orders o on o.ID = ked2.OrderID
+left join GMTBooking g on g.ID = ked2.INVNo
 where ked2.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
@@ -94,6 +92,7 @@ where ked2.id = '{masterID}'
            .Text("PoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Text("INVNo", header: "Invoice No", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Date("ETD", header: "ETD", width: Widths.AnsiChars(12), iseditingreadonly: true)
+           .Text("CustCDID", header: "CustCD", width: Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
            .Numeric("CTNQty", header: "CTN", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
@@ -203,12 +202,11 @@ where id = '{this.CurrentMaintain["ID"]}'
         protected override bool ClickSaveBefore()
         {
             // 表頭檢查
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Buyer"]) || MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["CustCDID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Dest"]) ||
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Buyer"]) || MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]) || MyUtility.Check.Empty(this.CurrentMaintain["Dest"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Cdate"]) || MyUtility.Check.Empty(this.CurrentMaintain["DeclareNo"]) ||
                 MyUtility.Check.Empty(this.CurrentMaintain["Forwarder"]) || MyUtility.Check.Empty(this.CurrentMaintain["ExportPort"]))
             {
-                MyUtility.Msg.WarningBox(@"<Buyer>, <Shipmode>, <CustCD>, <Destination>, <Declaration Date>, < Declaration#>, <Forwarder>, <Loading> cannot be empty.");
+                MyUtility.Msg.WarningBox(@"<Buyer>, <Shipmode>, <Destination>, <Declaration Date>, < Declaration#>, <Forwarder>, <Loading> cannot be empty.");
                 return false;
             }
 
@@ -219,7 +217,6 @@ where id = '{this.CurrentMaintain["ID"]}'
                 return false;
             }
 
-            string sqlcmd = string.Empty;
             foreach (DataRow dr in this.DetailDatas)
             {
                 // <Local Invoice No.>、<N.W.>、<G.W.>、<HS Code>不能為空
@@ -245,7 +242,7 @@ where id = '{this.CurrentMaintain["ID"]}'
                 }
 
                 // 判斷表身[Invoice NO.]的Shipper和表頭的Shipper不相同
-                sqlcmd = $@"select * from GMTBooking where ID = '{dr["INVNo"]}' and Shipper <> '{this.CurrentMaintain["Shipper"]}'";
+                string sqlcmd = $@"select * from GMTBooking where ID = '{dr["INVNo"]}' and Shipper <> '{this.CurrentMaintain["Shipper"]}'";
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The <Shipper> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [Shipper]");
@@ -265,14 +262,6 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Seek(sqlcmd))
                 {
                     MyUtility.Msg.WarningBox($@"The <Shipmode> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [Shipmode]");
-                    return false;
-                }
-
-                // 判斷表身[Invoice NO.]的CustCDID和表頭CustCD相同
-                sqlcmd = $@"select * from GMTBooking where ID = '{dr["INVNo"]}' and CustCDID <> '{this.CurrentMaintain["CustCDID"]}'";
-                if (MyUtility.Check.Seek(sqlcmd))
-                {
-                    MyUtility.Msg.WarningBox($@"The <CustCD> of <Invoice NO.>: {dr["INVNo"]} is not belong to this [CustCD]");
                     return false;
                 }
 
@@ -355,7 +344,6 @@ where id = '{this.CurrentMaintain["ID"]}'
             this.txtDeclaration.ReadOnly = isNewStatus ? false : readOnly;
             this.txtbuyer.ReadOnly = readOnly;
             this.txtshipmode.ReadOnly = readOnly;
-            this.txtcustcd.ReadOnly = readOnly;
             this.txtForwarder.TextBox1.ReadOnly = isNewStatus ? false : readOnly;
             this.txtLoadingPort.ReadOnly = readOnly;
             this.btnBatchImport.Enabled = isNewStatus ? true : false;
@@ -366,10 +354,9 @@ where id = '{this.CurrentMaintain["ID"]}'
 
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["custCDID"]) ||
-                MyUtility.Check.Empty(this.CurrentMaintain["shipModeID"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["shipModeID"]))
             {
-                MyUtility.Msg.WarningBox("[CustCD], [Shipmode] cannot be empty!");
+                MyUtility.Msg.WarningBox("[Shipmode] cannot be empty!");
                 return;
             }
 
@@ -398,9 +385,8 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain) && this.EditMode && !MyUtility.Check.Empty(this.CurrentMaintain["ExportPort"]))
             {
-                DataRow dr;
                 string sqlcmd = $@"select ID, Name from Port where CountryID ='KH' and Junk =0 and id ='{this.CurrentMaintain["ExportPort"]}'";
-                if (!MyUtility.Check.Seek(sqlcmd, out dr))
+                if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
                     MyUtility.Msg.WarningBox("Cannot find this [Loading (Port)].");
                     e.Cancel = true;

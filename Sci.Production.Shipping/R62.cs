@@ -26,6 +26,7 @@ namespace Sci.Production.Shipping
         private string strDecNo2;
         private string strInvNo1;
         private string strInvNo2;
+        private bool ex;
 
         /// <inheritdoc/>
         public R62(ToolStripMenuItem menuitem)
@@ -46,6 +47,7 @@ namespace Sci.Production.Shipping
             this.strDecNo2 = this.txtDecNo2.Text;
             this.strInvNo1 = this.txtInvNo1.Text;
             this.strInvNo2 = this.txtInvNo2.Text;
+            this.ex = this.chkEx.Checked;
 
             if (MyUtility.Check.Empty(this.dateDecDate1) && MyUtility.Check.Empty(this.dateDecDate2) &&
                 MyUtility.Check.Empty(this.dateETD1) && MyUtility.Check.Empty(this.dateETD1))
@@ -60,6 +62,12 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
+            string where = " left join ";
+            if (this.ex)
+            {
+                where = " inner join ";
+            }
+
             string sqlcmd = $@"
 select [Shipper] = kd.Shipper 
      , [Buyer] = kd.Buyer 
@@ -83,13 +91,13 @@ select [Shipper] = kd.Shipper
      , [Declaration#] = kd.DeclareNo 
      , [Declaration Date] = kd.CDate 
      , [ETD] = kdd.ETD 
-     , [Customer CD] = kd.CustCDID 
+     , [Customer CD] = g.CustCDID 
      , [Destination] = kd.Dest 
      , [Shipmode] = kd.ShipModeID 
      , [Forwarder] = kd.Forwarder 
      , [Port of loading] = kd.ExportPort 
 	 , [Dest] = kd.Dest
-	 , [Continent] = c.Continent
+	 , [Continent] = c.Continent+'-'+c.NameEN
      , [Export without declaration] = (case when g.NonDeclare = 1 then 'Y' else 'N' end) 
 	 , [NW] = kdd.NetKg
 	 , [GW] = kdd.WeightKg
@@ -97,12 +105,14 @@ select [Shipper] = kd.Shipper
 	 , [Act GW] = kdd.ActWeightKg
 	 , [Diff NW] = kdd.NetKg - kdd.ActNetKg
 	 , [Diff GW] = kdd.WeightKg - kdd.ActWeightKg
-  from KHExportDeclaration kd
- inner join KHExportDeclaration_Detail kdd on kd.id=kdd.id
- inner join GMTBooking g on kdd.Invno=g.id
- inner join orders o on o.id=kdd.orderid
- left join Country c on c.ID = kd.Dest
- where 1=1
+from GMTBooking g
+{where} KHExportDeclaration_Detail kdd on kdd.Invno=g.id
+{where} KHExportDeclaration kd on kd.id=kdd.id 
+left join PackingList pl on pl.INVNo = g.ID
+left join PackingList_Detail pld on pld.ID = pl.ID
+left join Orders o on o.ID = pld.OrderID
+left join Country c on c.ID = kd.Dest
+where 1=1
 ";
             #region where
             if (!MyUtility.Check.Empty(this.dateDecDate1) && !MyUtility.Check.Empty(this.dateDecDate2))

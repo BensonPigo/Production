@@ -51,6 +51,8 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtCustCD = new Sci.Win.UI.TextBox();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -95,6 +97,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtCustCD);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtSP2);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txtSP1);
@@ -113,7 +117,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(973, 100);
+            this.groupBox1.Size = new System.Drawing.Size(973, 110);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             // 
@@ -274,7 +278,7 @@
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuery.Location = new System.Drawing.Point(856, 22);
+            this.btnQuery.Location = new System.Drawing.Point(856, 32);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(90, 30);
             this.btnQuery.TabIndex = 8;
@@ -296,16 +300,34 @@
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid1.Location = new System.Drawing.Point(0, 100);
+            this.grid1.Location = new System.Drawing.Point(0, 110);
             this.grid1.Name = "grid1";
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(973, 357);
+            this.grid1.Size = new System.Drawing.Size(973, 347);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(25, 80);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(80, 23);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "CustCD";
+            // 
+            // txtCustCD
+            // 
+            this.txtCustCD.BackColor = System.Drawing.Color.White;
+            this.txtCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustCD.Location = new System.Drawing.Point(109, 80);
+            this.txtCustCD.MaxLength = 13;
+            this.txtCustCD.Name = "txtCustCD";
+            this.txtCustCD.Size = new System.Drawing.Size(160, 23);
+            this.txtCustCD.TabIndex = 16;
             // 
             // P62_Import
             // 
@@ -351,5 +373,7 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtInvNo1;
         private Win.UI.Label labInvno;
+        private Win.UI.TextBox txtCustCD;
+        private Win.UI.Label label2;
     }
 }
