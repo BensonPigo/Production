@@ -373,7 +373,10 @@ select    st0.Orderid
 		, bunIO.InComing
 		, bunIO.OutGoing
 		, m=iif (st0.IsRFIDDefault = 1, st0.QtyBySet, st0.QtyBySubprocess)
-		, NoBundleCardAfterSubprocess=case when st0.SubprocessId = 'Loading' Or st0.SubprocessId = 'SEWINGLINE' then isnull(x.NoBundleCardAfterSubprocess,0) else 0 end
+
+        --ISP20210230 確認後不用特別指定 Loading,Sewingline
+        --其它Subprocess若是Main(主裁片)，其Bundleno之下不會有NoBundleCardAfterSubprocess
+		, NoBundleCardAfterSubprocess = isnull(x.NoBundleCardAfterSubprocess,0)
 		, PostSewingSubProcess_SL =iif(isnull(Bundle_Art.PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0)
 				, bunDQty = bunD.Qty
 		, st0.IsLackPatternPanel

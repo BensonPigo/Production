@@ -265,7 +265,13 @@ namespace Sci.Production.Subcon
             if (this.CurrentMaintain["category"].ToString().ToUpper().TrimEnd().Equals("CARTON"))
             {
                 DataTable resulttb;
-                string check_sql = $@"select a.RequestId,a.OrderId,a.Refno 
+                string check_sql = $@"
+ALTER TABLE #TmpSource ALTER COLUMN RequestId VARCHAR(13)
+ALTER TABLE #TmpSource ALTER COLUMN OrderId VARCHAR(13)
+ALTER TABLE #TmpSource ALTER COLUMN Refno VARCHAR(21)
+ALTER TABLE #TmpSource ALTER COLUMN Qty numeric(8,2)
+
+select a.RequestId,a.OrderId,a.Refno 
 from #TmpSource a 
 outer apply(
 	select qty   = sum(qty)                    

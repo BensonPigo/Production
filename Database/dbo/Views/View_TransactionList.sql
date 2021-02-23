@@ -194,8 +194,8 @@ FROM              dbo.RequestCrossM a INNER JOIN
 WHERE          a.Type = 'G'
 UNION ALL
 SELECT          'ReturnReceipt' tbname, '', a.Status, a.EditDate, b.Id, b.MDivisionID, b.PoId, b.seq1, b.seq2, b.Roll, b.Dyelot, 
-                            0 AS inqty, 0.0 AS outqty, 0.0 AS adjustqty, iif(b.StockType = 'B', 0 - b.Qty, 0.0) AS AInqty, 0.00 AOutqty, 
-                            0.00 AS AAdjuqtQty, iif(b.StockType = 'I', 0 - b.Qty, 0.0) AS BInqty, 0.00 BOutqty, 0.00 AS BAdjuqtQty, 0.0 AS CInqty, 
+                            0 AS inqty, 0.0 AS outqty, 0.0 AS adjustqty, 0.0 AS AInqty, 0.00 AOutqty, 
+                            0.00 AS AAdjuqtQty, 0.00 AS BInqty, 0.00 BOutqty, 0.00 AS BAdjuqtQty, 0.0 AS CInqty, 
                             0.00 COutqty, 0.00 CAdjuqtQty
 							, [ReturnQty] = b.Qty
 							, [AReturnQty] = iif(b.StockType = 'B', b.Qty, 0.00)

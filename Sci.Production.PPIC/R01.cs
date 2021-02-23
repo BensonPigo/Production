@@ -1251,6 +1251,12 @@ select  s.SewingLineID
                         ) a for xml path('')
                     ), '') as Remark
             ,o.FtyGroup
+	        ,[CDCodeNew] = o.CDCodeNew
+	        ,[ProductType] = sty.ProductType
+	        ,[FabricType] = sty.FabricType
+	        ,[Lining] = sty.Lining
+	        ,[Gender] = sty.Gender
+	        ,[Construction] = sty.Construction
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
     inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
@@ -1272,6 +1278,19 @@ select  s.SewingLineID
 		    FOR XML PATH('')
 		),1,1,'')
 	)InspctDate
+    Outer apply (
+	    SELECT s.[ID]
+		    , ProductType = r2.Name
+		    , FabricType = r1.Name
+		    , Lining
+		    , Gender
+		    , Construction = d1.Name
+	    FROM Style s WITH(NOLOCK)
+	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	    where s.Ukey = o.StyleUkey
+    )sty
     where 1=1
 ");
             #endregion
@@ -1435,6 +1454,12 @@ select  SewingLineID
         , IIF(Article = '', '', SUBSTRING(Article, 1, LEN(Article) - 1)) as Article
         , SizeCode
         , CdCodeID
+	    , CDCodeNew
+	    , ProductType
+	    , FabricType
+	    , Lining
+	    , Gender
+	    , Construction
         , StyleID
         , Qty
         , AlloQty
@@ -1536,6 +1561,12 @@ select  s.SewingLineID
 			,s.ID
             ,o.FtyGroup
 			,[FirststCuttingOutputDate] = FirststCuttingOutputDate.Date
+	        ,[CDCodeNew] = o.CDCodeNew
+	        ,[ProductType] = sty.ProductType
+	        ,[FabricType] = sty.FabricType
+	        ,[Lining] = sty.Lining
+	        ,[Gender] = sty.Gender
+	        ,[Construction] = sty.Construction
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
@@ -1557,6 +1588,19 @@ select  s.SewingLineID
 		FOR XML PATH('')
 		),1,1,'')
 	)InspctDate
+    Outer apply (
+	    SELECT s.[ID]
+		    , ProductType = r2.Name
+		    , FabricType = r1.Name
+		    , Lining
+		    , Gender
+		    , Construction = d1.Name
+	    FROM Style s WITH(NOLOCK)
+	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	    where s.Ukey = o.StyleUkey
+    )sty
     where 1 = 1 
 ");
             #endregion
@@ -1770,6 +1814,12 @@ select  SewingLineID
         , ComboType, Article 
         , SizeCode
         , CdCodeID
+	    , CDCodeNew
+	    , ProductType
+	    , FabricType
+	    , Lining
+	    , Gender
+	    , Construction
         , StyleID
         , Qty
         , AlloQty

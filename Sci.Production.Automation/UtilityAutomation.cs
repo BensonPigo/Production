@@ -175,12 +175,14 @@ namespace Sci.Production.Automation
             return requestHeaders;
         }
 
-        /// SendWebAPI for WM_Auto delete/Revise Only
+
+        /// <summary>
+        /// Send WebAPI To Auto W/H
         /// </summary>
-        /// <param name="baseUrl">Base Url</param>
-        /// <param name="requestUri">Request Url</param>
-        /// <param name="jsonBody">Json Body</param>
-        /// <param name="automationErrMsg">Automation Err Msg</param>
+        /// <param name="baseUrl">baseUrl</param>
+        /// <param name="requestUri">requestUri</param>
+        /// <param name="jsonBody">jsonBody</param>
+        /// <param name="automationErrMsg">automationErrMsg</param>
         /// <returns>DualResult</returns>
         public static DualResult WH_Auto_SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
         {
@@ -202,10 +204,10 @@ namespace Sci.Production.Automation
                 SaveAutomationCheckMsg(automationErrMsg);
             }
 
-            //return result;
+            return result;
 
-             MyUtility.Msg.InfoBox("Send Web API to VS");
-             return new DualResult(true);
+            // MyUtility.Msg.InfoBox("Send Web API to VS");
+            // return new DualResult(true);
         }
 
         /// <summary>

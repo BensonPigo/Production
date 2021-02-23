@@ -40,6 +40,7 @@ WITH PackingListDetail as(
 		,pd.CustCtn
 		,pd.RefNo
 		,pd.SCICtnNo
+        ,[SortCTNStartNo] = (RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6))
 	FROM PackingList_Detail pd
 	INNER JOIN ShippingMarkStamp a  ON pd.ID = a.PackingListID
 	INNER JOIN ShippingMarkStamp_Detail b ON a.PackingListID = b.PackingListID  AND b.SCICtnNo = pd.SCICtnNo
@@ -69,6 +70,7 @@ SELECT pd.OrderID
     , b.Width
     , b.Length
     , [HTMLFile]=IIF(b.FilePath <> '' AND b.FileName <> '' ,1 ,0 )
+    , pd.SortCTNStartNo
 FROm ShippingMarkStamp a
 INNER JOIN ShippingMarkStamp_Detail b ON a.PackingListID = b.PackingListID
 INNER JOIN PackingListDetail pd ON pd.ID = a.PackingListID AND b.SCICtnNo = pd.SCICtnNo
@@ -100,7 +102,7 @@ OUTER APPLY(
 	),1,1,'')
 )SizeCode
 WHERE a.PackingListID = '{masterID}'
-ORDER BY CAST(pd.CTNStartNo as int)
+ORDER BY pd.SortCTNStartNo
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }

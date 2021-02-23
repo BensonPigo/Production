@@ -187,7 +187,7 @@ OUTER APPLY(
 	FROM ShippingMarkCombination s
 	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1 AND IsMixPack = IsMixed.Val
 )comb
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 {where}
 
 SELECT DISTINCT
@@ -225,7 +225,7 @@ OUTER APPLY(
 	FROM PackingList_Detail pdd
 	WHERE pdd.ID = pd.ID AND pdd.ReceiveDate IS NOT NULL 
 )CtnInClog
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 {where}
 {where_include}
 
@@ -346,7 +346,7 @@ OUTER APPLY(
 	FROM ShippingMarkCombination s
 	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1 AND IsMixPack = IsMixed.Val
 )comb
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
 
 SELECT b.*
@@ -387,7 +387,7 @@ FROM PackingList p WITH(NOLOCK)
 INNER JOIN PackingList_Detail pd WITH(NOLOCK) ON p.ID = pd.ID
 INNER JOIN Orders o WITH(NOLOCK) ON o.ID = pd.OrderID
 LEFT JOIN Pullout pu WITH(NOLOCK) ON p.PulloutID = pu.ID
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked') OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
 --AND pd.ReceiveDate IS NOT NULL
 
@@ -535,7 +535,7 @@ OUTER APPLY(
 	FROM ShippingMarkCombination s
 	WHERE s.BrandID=p.BrandID AND s.Category='PIC' AND IsDefault = 1 AND IsMixPack = IsMixed.Val
 )comb
-WHERE  (pu.Status != 'New' OR pu.Status IS NULL)
+WHERE  (pu.Status NOT IN ('Confirmed', 'Locked')OR pu.Status IS NULL)
 AND p.ID IN ('{packingListIDs.JoinToString("','")}')
 
 

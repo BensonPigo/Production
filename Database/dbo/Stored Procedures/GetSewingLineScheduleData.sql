@@ -39,7 +39,13 @@ declare  @APSListWorkDay TABLE(
 	[OrderID] [varchar](13) NOT NULL,
 	[LNCSERIALNumber] [int] NULL,
 	[ComboType] [varchar](1) NULL,
-	[SwitchTime] [int] NULL
+	[SwitchTime] [int] NULL,
+	[CDCodeNew] [varchar](5) NULL,
+	[ProductType] [nvarchar](500) NULL,
+	[FabricType] [nvarchar](500) NULL,
+	[Lining] [varchar](20) NULL,
+	[Gender] [varchar](10) NULL,
+	[Construction] [nvarchar](50) NULL
 )
 insert into @APSListWorkDay
 select
@@ -65,12 +71,31 @@ select
 	s.OrderID,
 	s.LNCSERIALNumber,
     s.ComboType,
-	s.SwitchTime
+	s.SwitchTime,
+	[CDCodeNew] = o.CDCodeNew,
+	[ProductType] = sty.ProductType,
+	[FabricType] = sty.FabricType,
+	[Lining] = sty.Lining,
+	[Gender] = sty.Gender,
+	[Construction] = sty.Construction
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
+Outer apply (
+	SELECT s.[ID]
+		, ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.Ukey = o.StyleUkey
+)sty
 where 1 = 1  
 and (convert(date, s.Inline) >= @Inline  or (@Inline  between convert(date,s.Inline) and convert(date,s.Offline)) or @Inline is null)
 and (convert(date,s.Offline) <= @Offline or (@Offline between convert(date,s.Inline) and convert(date,s.Offline)) or @Offline is null) 
@@ -102,7 +127,13 @@ group by	s.APSNo ,
 			s.ComboType,
 			o.StyleUkey,
 			s.LNCSERIALNumber,
-			s.SwitchTime
+			s.SwitchTime,
+			o.CDCodeNew,
+			sty.ProductType,
+			sty.FabricType,
+			sty.Lining,
+			sty.Gender,
+			sty.Construction
 
 declare @APSList TABLE(
 	[APSNo] [int] NULL,
@@ -116,7 +147,13 @@ declare @APSList TABLE(
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
 	[TotalSewingTime] int NULL,
-	[AlloQty] [int] NULL
+	[AlloQty] [int] NULL,
+	[CDCodeNew] [varchar](5) NULL,
+	[ProductType] [nvarchar](500) NULL,
+	[FabricType] [nvarchar](500) NULL,
+	[Lining] [varchar](20) NULL,
+	[Gender] [varchar](10) NULL,
+	[Construction] [nvarchar](50) NULL
 )
 insert into @APSList
 select 
@@ -131,7 +168,13 @@ select
     max(OriEff) as OriEff,
     SewLineEff,
 	[TotalSewingTime]=iif(count(1) = 0, 0, SUM(TotalSewingTime) / count(1)),
-	AlloQty = sum(AlloQty)
+	AlloQty = sum(AlloQty),
+	CDCodeNew,
+	ProductType,
+	FabricType,
+	Lining,
+	Gender,
+	Construction
 from @APSListWorkDay
 group by APSNo,
 		 MDivisionID,
@@ -141,7 +184,13 @@ group by APSNo,
 		 Offline,
 		 LearnCurveID,
 		 Sewer,
-         SewLineEff
+         SewLineEff,
+		 CDCodeNew,
+		 ProductType,
+		 FabricType,
+		 Lining,
+		 Gender,
+		 Construction
 
 --取得OrderQty by APSNo
 declare @APSOrderQty TABLE(
@@ -318,7 +367,7 @@ o.MTLExport,
 o.KPILETA,
 o.MTLETA,
 [Artwork] = o.StyleID+'('  +oa.Artwork + ')',
-InspDate = InspctDate.Val,
+o.InspDate,
 o.Category,
 o.SCIDelivery,
 o.BuyerDelivery,
@@ -337,11 +386,6 @@ OUTER APPLY(
 	INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 	where wd2.OrderID =o.ID
 )FirststCuttingOutputDate
-OUTER APPLY(
-	select [Val]=MAX(CFAFinalInspectDate)
-	from Order_QtyShip oq
-	WHERE ID = o.id
-)InspctDate
 where exists( select 1 from @APSList where APSNo = s.APSNo)
 
 --填入資料串連欄位 by APSNo
@@ -385,7 +429,13 @@ declare @APSMain TABLE(
 	[OriEff] [numeric](5, 2) NULL,
 	[SewLineEff] [numeric](5, 2) NULL,
 	[TotalSewingTime] int NULL,
-	[BrandID] [nvarchar](500) NULL
+	[BrandID] [nvarchar](500) NULL,
+	[CDCodeNew] [varchar](5) NULL,
+	[ProductType] [nvarchar](500) NULL,
+	[FabricType] [nvarchar](500) NULL,
+	[Lining] [varchar](20) NULL,
+	[Gender] [varchar](10) NULL,
+	[Construction] [nvarchar](50) NULL
 )
 insert into @APSMain
 select
@@ -428,7 +478,13 @@ select
 	OriEff,
 	SewLineEff,
 	TotalSewingTime,
-	[BrandID] = BrandID.val
+	[BrandID] = BrandID.val,
+	al.CDCodeNew,
+	al.ProductType,
+	al.FabricType,
+	al.Lining,
+	al.Gender,
+	al.Construction
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -853,6 +909,12 @@ select
 	[Colorway]=apm.Colorway,
 	[ColorwayCount]=apm.ColorwayCnt,
 	[CDCode]=apm.CDCode,
+	[CDCodeNew] = apm.CDCodeNew,
+	[ProductType] = apm.ProductType,
+	[FabricType] = apm.FabricType,
+	[Lining] = apm.Lining,
+	[Gender] = apm.Gender,
+	[Construction] = apm.Construction,
 	[ProductionFamilyID]=apm.ProductionFamilyID,
 	[Style]=apm.Style,
 	[StyleCount]=apm.StyleCnt,

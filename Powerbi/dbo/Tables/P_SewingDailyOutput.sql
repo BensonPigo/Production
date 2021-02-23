@@ -43,6 +43,12 @@
     [Rate]                    NUMERIC (10, 2) CONSTRAINT [DF__P_SewingDa__Rate__70499252] DEFAULT ((0)) NULL,
     [SewingReasonDesc]        NVARCHAR (1000) CONSTRAINT [DF__P_SewingD__Sewin__7231DAC4] DEFAULT ('') NULL,
     [SciDelivery]             DATE            NULL,
+    [CDCodeNew] VARCHAR(5) NULL, 
+    [ProductType] NVARCHAR(500) NULL, 
+    [FabricType] NVARCHAR(500) NULL, 
+    [Lining] VARCHAR(20) NULL, 
+    [Gender] VARCHAR(10) NULL, 
+    [Construction] NVARCHAR(50) NULL,
     CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC, [MDivisionID] ASC)
 );
 

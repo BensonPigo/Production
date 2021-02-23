@@ -53,6 +53,7 @@
             this.panel7 = new Sci.Win.UI.Panel();
             this.panel6 = new Sci.Win.UI.Panel();
             this.btnConfirm = new Sci.Win.UI.Button();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -233,6 +234,7 @@
             this.gridMatch.Size = new System.Drawing.Size(688, 548);
             this.gridMatch.TabIndex = 0;
             this.gridMatch.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridMatch_CellMouseUp);
+            this.gridMatch.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridMatch_ColumnHeaderMouseClick);
             // 
             // panel9
             // 
@@ -322,6 +324,10 @@
             this.btnConfirm.UseVisualStyleBackColor = true;
             this.btnConfirm.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker_DoWork);
+            // 
             // P26
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -375,5 +381,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.ListControlBindingSource listControlBindingSource3;
         private Win.UI.Grid gridErrorMsg;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }

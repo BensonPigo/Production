@@ -11,7 +11,7 @@ CREATE PROCEDURE [dbo].[P_ImportSewingLineScheduleData]
 AS
 BEGIN
 
-	SET NOCOUNT ON;
+	SET NOCOUNT ON
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
@@ -80,7 +80,13 @@ SET
 	t.BrandID =  s.BrandID,
 	t.Orig_WorkHourPerDay =  s.Orig_WorkHourPerDay,
 	t.New_SwitchTime =  s.New_SwitchTime,
-	t.FirststCuttingOutputDate =  s.FirststCuttingOutputDate
+	t.FirststCuttingOutputDate =  s.FirststCuttingOutputDate,
+	t.CDCodeNew = s.CDCodeNew,
+	t.ProductType = s.ProductType,
+	t.FabricType = s.FabricType,
+	t.Lining = s.Lining,
+	t.Gender = s.Gender,
+	t.Construction = s.Construction
 from P_SewingLineSchedule t
 inner join #Final s on t.APSNo=s.APSNo  
    AND t.SewingDay=s.SewingDay 
@@ -96,14 +102,16 @@ insert into P_SewingLineSchedule
       ,[CPU] ,[WorkHourPerDay] ,[StardardOutputPerHour] ,[Efficienycy] ,[ScheduleEfficiency] ,[LineEfficiency]
       ,[LearningCurve] ,[SewingInline] ,[SewingOffline] ,[PFRemark] ,[MTLComplete] ,[KPILETA]
       ,[MTLETA] ,[ArtworkType] ,[InspectionDate] ,[Remarks]  ,[CuttingOutput],[SewingOutput]
-      ,[ScannedQty] ,[ClogQty] ,[Sewer] ,[SewingCPU],[BrandID],[Orig_WorkHourPerDay],[New_SwitchTime],[FirststCuttingOutputDate])
+      ,[ScannedQty] ,[ClogQty] ,[Sewer] ,[SewingCPU],[BrandID],[Orig_WorkHourPerDay],[New_SwitchTime],[FirststCuttingOutputDate]
+	  ,[CDCodeNew] ,[ProductType] ,[FabricType] ,[Lining] ,[Gender] ,[Construction])
 select s.APSNo,	s.SewingLineID,	s.SewingDay,	s.SewingStartTime,	s.SewingEndTime,	s.MDivisionID,
 	s.FactoryID,	s.PO,	s.POCount,	s.SP,	s.SPCount,	s.EarliestSCIdelivery,	s.LatestSCIdelivery,	s.EarliestBuyerdelivery,
 	s.LatestBuyerdelivery,	s.Category,	s.Colorway,	s.ColorwayCount,	s.CDCode,	s.ProductionFamilyID,	s.Style,	s.StyleCount,
 	s.OrderQty,	s.AlloQty,	s.StardardOutputPerDay,	s.CPU,	s.New_WorkHourPerDay,	s.StardardOutputPerHour,	s.Efficienycy,	s.ScheduleEfficiency,
 	s.LineEfficiency,	s.LearningCurve,	s.SewingInline,	s.SewingOffline,	s.PFRemark,	s.MTLComplete,	s.KPILETA,	s.MTLETA,
 	s.ArtworkType,	s.InspectionDate,	s.Remarks,	s.CuttingOutput,	s.SewingOutput,	s.ScannedQty,	s.ClogQty,
-	s.Sewer,	s.SewingCPU,	s.BrandID,	s.Orig_WorkHourPerDay,	s.New_SwitchTime,	s.FirststCuttingOutputDate	
+	s.Sewer,	s.SewingCPU,	s.BrandID,	s.Orig_WorkHourPerDay,	s.New_SwitchTime,	s.FirststCuttingOutputDate,
+	s.CDCodeNew , s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction
 from #Final s
 where not exists(
 	select 1 from P_SewingLineSchedule t 
