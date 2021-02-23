@@ -708,6 +708,25 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "IssueReturn_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            if (dt != null)
+            {
+                if (!Prgs.ChkWMSCompleteTime(dt, "IssueReturn_Detail"))
+                {
+                    return;
+                }
+            }
+
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
@@ -786,13 +805,14 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #region 更新庫存位置  ftyinventory_detail.MtlLocationID
 
+            // 增加判斷條件WMSLock=0,才能更新MtlLocation
             DataTable locationTable;
             sqlcmd = $@"
 Select d.poid ,d.seq1 ,d.seq2 ,d.Roll ,d.Dyelot ,d.StockType ,[ToLocation]=d.Location
 from dbo.IssueReturn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
-where f.lock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
+where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             DBProxy.Current.Select(null, sqlcmd, out locationTable);
 
             var data_Fty_26F = (from b in locationTable.AsEnumerable()
@@ -951,6 +971,12 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
+            }
+            #endregion
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "IssueReturn_Detail"))
+            {
+                return;
             }
             #endregion
 

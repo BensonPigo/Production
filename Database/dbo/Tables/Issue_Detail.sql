@@ -13,6 +13,7 @@
     [ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL,
     [IsQMS] BIT NOT NULL DEFAULT 0, 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
     CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
 );

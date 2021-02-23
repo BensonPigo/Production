@@ -22,6 +22,7 @@
     [ToCTNNo]              VARCHAR (10)    NULL,
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SubTransfer_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

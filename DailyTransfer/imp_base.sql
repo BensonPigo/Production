@@ -975,8 +975,8 @@ UPDATE a
 SET  
       -- a.ID	    =b.ID	
       -- a.MDivisionID	      =b.MDivisionID	
-      --a.Junk	      =b.Junk //20210128 remark by Dyson, Est restore data is Feb.22
-	   a.NameCH	      =b.NameCH	
+      a.Junk	      =b.Junk
+	  ,a.NameCH	      =b.NameCH	
       ,a.CountryID	      =b.CountryID		
       ,a.AddressCH	      =b.AddressCH	
       ,a.CurrencyID	      =b.CurrencyID	

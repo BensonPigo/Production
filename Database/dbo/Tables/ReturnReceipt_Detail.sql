@@ -11,6 +11,7 @@
     [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_ReturnReceipt_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ReturnReceipt_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

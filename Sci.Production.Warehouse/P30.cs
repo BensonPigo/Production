@@ -1004,8 +1004,8 @@ and i2.id = '{dr["ID"]}'
             // AutoWHAccessory WebAPI for Vstrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_DetailToVstrongAutoWHAccessory(dtMaster, true))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dtMaster, "New"))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             // Create後Btn失效，需重新Qurey才能再使用。
