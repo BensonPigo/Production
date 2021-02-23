@@ -69,11 +69,11 @@ namespace Sci.Production.Shipping
             }
 
             string sqlcmd = $@"
-select [Shipper] = kd.Shipper 
-     , [Buyer] = kd.Buyer 
+select [Shipper] = g.Shipper 
+     , [Buyer] = b.BuyerID 
      , [FTY] = o.ftygroup 
      , [Status] = kd.status 
-     , [Inv#] = kdd.INVNo 
+     , [Inv#] = g.id 
      , [PO] = o.CustPONo
 	 , [SP] = o.ID
      , [Style] = o.StyleID  
@@ -90,13 +90,12 @@ select [Shipper] = kd.Shipper
      , [CO Date] = kdd.CODate 
      , [Declaration#] = kd.DeclareNo 
      , [Declaration Date] = kd.CDate 
-     , [ETD] = kdd.ETD 
+     , [ETD] = g.ETD 
      , [Customer CD] = g.CustCDID 
-     , [Destination] = kd.Dest 
-     , [Shipmode] = kd.ShipModeID 
-     , [Forwarder] = kd.Forwarder 
+     , [Shipmode] = g.ShipModeID 
+     , [Forwarder] = g.Forwarder 
      , [Port of loading] = kd.ExportPort 
-	 , [Dest] = kd.Dest
+	 , [Dest] = g.Dest
 	 , [Continent] = c.Continent+'-'+c.NameEN
      , [Export without declaration] = (case when g.NonDeclare = 1 then 'Y' else 'N' end) 
 	 , [NW] = kdd.NetKg
@@ -109,8 +108,9 @@ from GMTBooking g
 {where} KHExportDeclaration_Detail kdd on kdd.Invno=g.id
 {where} KHExportDeclaration kd on kd.id=kdd.id 
 left join PackingList pl on pl.INVNo = g.ID
-left join PackingList_Detail pld on pld.ID = pl.ID
+outer apply(select distinct pld.OrderID from PackingList_Detail pld where pld.ID = pl.ID)pld
 left join Orders o on o.ID = pld.OrderID
+left join Brand b on b.ID = o.BrandID
 left join Country c on c.ID = kd.Dest
 where 1=1
 ";
@@ -122,7 +122,7 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.dateETD1) && !MyUtility.Check.Empty(this.dateETD2))
             {
-                sqlcmd += $@"   and kd.ETD between '{((DateTime)this.dateETD1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETD2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+                sqlcmd += $@"   and g.ETD between '{((DateTime)this.dateETD1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETD2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.strDecNo1))
@@ -137,15 +137,15 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.strInvNo1))
             {
-                sqlcmd += $@" and kdd.INVNo >= '{this.strInvNo1}'" + Environment.NewLine;
+                sqlcmd += $@" and g.id >= '{this.strInvNo1}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.strInvNo2))
             {
-                sqlcmd += $@" and kdd.INVNo <= '{this.strInvNo2}'" + Environment.NewLine;
+                sqlcmd += $@" and g.id <= '{this.strInvNo2}'" + Environment.NewLine;
             }
 
-            sqlcmd += @" order by kd.CDate, kd.DeclareNo, kdd.INVNo  ";
+            sqlcmd += @" order by kd.CDate, kd.DeclareNo, g.id  ";
 
             #endregion
 
