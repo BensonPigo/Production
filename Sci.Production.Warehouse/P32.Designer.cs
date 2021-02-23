@@ -47,6 +47,7 @@
             this.labelEstReturnDate = new Sci.Win.UI.Label();
             this.dateEstReturnDate = new Sci.Win.UI.DateBox();
             this.txtBorrowID = new Sci.Win.UI.TextBox();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +64,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.txtBorrowID);
             this.masterpanel.Controls.Add(this.labelEstReturnDate);
             this.masterpanel.Controls.Add(this.labelBorrowID);
@@ -101,6 +103,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelBorrowID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelEstReturnDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtBorrowID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -351,6 +354,17 @@
             this.txtBorrowID.TabIndex = 0;
             this.txtBorrowID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBorrowID_Validating);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(522, 144);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 71;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P32
             // 
             this.ApvChkValue = "New";
@@ -369,6 +383,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P32";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P32. Return Borrowing Material";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -414,5 +429,6 @@
         private Win.UI.Label labelEstReturnDate;
         private Win.UI.Label labelBorrowID;
         private Win.UI.TextBox txtBorrowID;
+        private Win.UI.Button btnCallP99;
     }
 }

@@ -44,6 +44,7 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -92,6 +94,7 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -318,6 +321,17 @@
             this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
             this.btnPrintFabricSticker.Click += new System.EventHandler(this.BtnPrintFabricSticker_Click);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(522, 144);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 66;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P23
             // 
             this.ApvChkValue = "New";
@@ -335,6 +349,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P23";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P23. Transfer Inventory to Bulk";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -377,5 +392,6 @@
         private Win.UI.Label label1;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnPrintFabricSticker;
+        private Win.UI.Button btnCallP99;
     }
 }

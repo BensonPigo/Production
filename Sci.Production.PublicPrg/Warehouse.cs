@@ -764,6 +764,273 @@ and t.Barcode = ''
 
                     #endregion
                     break;
+                case 99:
+                    #region 物料解鎖
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+
+
+update t
+set WMSLock = 1
+from FtyInventory t
+where exists(
+    select *from #TmpSource s
+    where t.POID = s.POID
+    and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+    and t.StockType = s.StockType
+)
+";
+                    #endregion
+                    break;
+            }
+
+            return sqlcmd;
+        }
+
+        public static string UpdateFtyInventory_IO_P99(int type)
+        {
+            string sqlcmd = string.Empty;
+            switch (type)
+            {
+                case 2:
+                    #region 更新 inqty
+                    sqlcmd = $@"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+select s.*,psdseq1=psd.seq1
+into #tmpS11
+from #tmpS1 s
+left join PO_Supp_Detail psd on psd.id = s.poid and psd.seq1 = s.seq1 and psd.seq2 = s.seq2
+
+merge dbo.FtyInventory as target
+using #tmpS11 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set inqty = isnull(inqty,0.00) + s.qty;
+";
+
+                    sqlcmd += @"drop table #tmpS1, #tmpS11; 
+                                drop table #TmpSource;";
+                    #endregion
+                    break;
+                case 4:
+                    #region 更新OutQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty;
+
+drop table #tmpS1;
+drop table #TmpSource;";
+                    #endregion
+                    break;
+                case 6:
+                    #region 更新OutQty with Location
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set outqty = isnull(outqty,0.00) + s.qty;";
+                    sqlcmd += @"drop table #tmpS1;
+                                drop table #TmpSource;";
+                    #endregion
+                    break;
+                case 8:
+                    #region 更新AdjustQty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+
+select poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, ''))) ,[qty] = sum(qty), dyelot = isnull(dyelot, '')
+into #tmpS1
+from #TmpSource
+group by poid, seq1, seq2, stocktype, RTRIM(LTRIM(isnull(roll, ''))) ,isnull(dyelot, '')
+
+merge dbo.FtyInventory as target
+using #tmpS1 as s
+    on target.poid = s.poid and target.seq1 = s.seq1 
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
+when matched then
+    update
+    set adjustqty = isnull(adjustqty,0.00) + s.qty;
+
+drop table #tmpS1 
+drop table #TmpSource;";
+                    #endregion
+                    break;
+            }
+
+            return sqlcmd;
+        }
+
+        /// <summary>
+        /// for update P99 only
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="encoded"></param>
+        /// <param name="sqlConn"></param>
+        /// <returns></returns>
+        public static string UpdateMPoDetail_P99(int type, bool encoded)
+        {
+            string sqlcmd = string.Empty;
+            switch (type)
+            {
+                case 2:
+                    #region -- Case 2 InQty --
+                    if (encoded)
+                    {
+                        sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+alter table #TmpSource alter column stocktype varchar(1)
+
+merge dbo.mdivisionpodetail as target
+using  #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
+when matched then
+	update 
+	set target.inqty = isnull(target.inqty,0.00) + src.qty ;
+";
+                    }
+                    else
+                    {
+                        sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t
+set t.inqty = isnull(t.inqty,0.00) + s.qty
+from mdivisionpodetail t 
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2;";
+                    }
+
+                    sqlcmd += @";drop Table #TmpSource";
+                    #endregion
+                    break;
+                case 4:
+                    #region -- Case 4 OutQty -- 合併
+                    sqlcmd = @"
+                    alter table #TmpSource alter column poid varchar(20)
+                    alter table #TmpSource alter column seq1 varchar(3)
+                    alter table #TmpSource alter column seq2 varchar(3)
+                    
+                    update t
+                    set t.OutQty = isnull(t.OutQty,0.00) + s.qty
+                    from mdivisionpodetail t 
+                    inner join #TmpSource s
+                    on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
+
+                    drop Table #TmpSource;";
+                    #endregion
+                    break;
+                case 8:
+                    #region -- Case 8 LInvQty --
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+merge dbo.mdivisionpodetail as target
+using #TmpSource as src
+on target.poid = src.poid and target.seq1=src.seq1 and target.seq2=src.seq2
+when matched then
+update
+";
+                    if (encoded)
+                    {
+                        sqlcmd += @"
+set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty 
+";
+                    }
+                    else
+                    {
+                        sqlcmd += @" set target.LInvQty = isnull(target.LInvQty,0.00) + src.qty;";
+                    }
+
+                    sqlcmd += @";drop Table #TmpSource";
+                    #endregion
+                    break;
+                case 16:
+                    #region -- LObQty --
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t 
+set t.LObQty = isnull(t.LObQty,0.00) + s.qty
+from mdivisionpodetail t
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
+
+;drop Table #TmpSource";
+                    #endregion
+                    break;
+                case 32:
+                    #region -- AdjustQty --
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t 
+set t.AdjustQty = isnull(t.AdjustQty,0.00) + s.qty
+from mdivisionpodetail t 
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
+
+;drop Table #TmpSource";
+                    #endregion
+                    break;
             }
 
             return sqlcmd;
@@ -1698,10 +1965,12 @@ where    psd.ID = '{material["poid"]}'
 Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
     ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
     ,f.Dyelot
-from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
 on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
-where f.lock=1 and d.Id = '{0}'", dr["id"]);
+where f.lock=1 
+and d.Id = '{0}'", dr["id"]);
                 if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
@@ -1720,6 +1989,13 @@ where f.lock=1 and d.Id = '{0}'", dr["id"]);
                         return false;
                     }
                 }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(dr["id"].ToString(), "SubTransfer_Detail_From"))
+            {
+                return false;
             }
             #endregion
 
@@ -1992,6 +2268,13 @@ where   f.lock=1
 
                     return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
                 }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(subTransfer_ID, "SubTransfer_Detail_From"))
+            {
+                return new DualResult(false, "Material WMS Locked!!");
             }
             #endregion
 
@@ -2376,7 +2659,8 @@ from dbo.SubTransfer_Detail d WITH (NOLOCK)
 inner join FtyInventory f WITH (NOLOCK) 
     on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
        and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
-where f.lock=1 and d.Id = '{0}'", subTransfer_ID);
+where f.lock=1 
+and d.Id = '{0}'", subTransfer_ID);
                 if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
                     return result2;
@@ -2395,6 +2679,13 @@ where f.lock=1 and d.Id = '{0}'", subTransfer_ID);
                         return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
                     }
                 }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(subTransfer_ID, "SubTransfer_Detail_From"))
+            {
+                return new DualResult(false, "Material WMS Locked!!");
             }
             #endregion
 
@@ -3561,6 +3852,495 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
 
             return new DualResult(true);
         }
+
+        /// <inheritdoc/>
+        public static bool ChkWMSCompleteTime(DataTable dtDetail, string keyType)
+        {
+            bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+            if (!automation || MyUtility.Check.Empty(dtDetail) || MyUtility.Check.Empty(keyType))
+            {
+                return false;
+            }
+
+            string sqlcmd = string.Empty;
+            string errmsg = string.Empty;
+            DualResult result;
+            DataTable dt;
+            switch (keyType)
+            {
+                case "Receiving_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.Receiving_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "TransferIn_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.TransferIn_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "TransferOut_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.TransferOut_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "IssueLack_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.IssueLack_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "Issue_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.Issue_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "Adjust_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.Adjust_Detail d  WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "SubTransfer_Detail_To":
+                    sqlcmd = $@"
+Select 
+ [poid] = d.topoid
+,[seq1] = d.toseq1
+,[seq2] = d.toseq2
+,[Roll] = d.toRoll
+,[Dyelot] = d.toDyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "SubTransfer_Detail_From":
+                    sqlcmd = $@"
+Select 
+ [poid] = d.Frompoid
+,[seq1] = d.Fromseq1
+,[seq2] = d.Fromseq2
+,[Roll] = d.FromRoll
+,[Dyelot] = d.FromDyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "ReturnReceipt_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Dyelot
+from dbo.returnreceipt_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "BorrowBack_Detail_To":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.topoid
+,[seq1] = d.toseq1
+,[seq2] = d.toseq2
+,[Roll] = d.toRoll
+,[Dyelot] = d.toDyelot
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+
+                case "BorrowBack_Detail_From":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.Frompoid
+,[seq1] = d.Fromseq1
+,[seq2] = d.Fromseq2
+,[Roll] = d.FromRoll
+,[Dyelot] = d.FromDyelot
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+                case "IssueReturn_Detail":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.poid
+,[seq1] = d.seq1
+,[seq2] = d.seq2
+,[Roll] = d.Roll
+,[Dyelot] = d.Dyelot
+from dbo.IssueReturn_Detail d WITH (NOLOCK) 
+where d.CompleteTime is not null
+and exists(
+	select 1 
+    from #tmp s
+	where s.ukey = d.ukey
+)";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+            else
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in dt.Rows)
+                    {
+                        errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]}." + Environment.NewLine;
+                    }
+
+                    MyUtility.Msg.WarningBox("WMS system have finished it already, you cannot unconfirm it." + Environment.NewLine + errmsg, "Warning");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+            /// <inheritdoc/>
+        public static bool ChkWMSLock(string id, string keyType)
+        {
+            bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+            if (!automation || MyUtility.Check.Empty(id) || MyUtility.Check.Empty(keyType))
+            {
+                return false;
+            }
+
+            string sqlcmd = string.Empty;
+            string errmsg = string.Empty;
+            DualResult result;
+            DataTable dt;
+            switch (keyType)
+            {
+                case "Receiving_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+from dbo.Receiving_Detail d  WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 
+and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot 
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'";
+                    break;
+                case "Issue_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+from dbo.Issue_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.POID = f.POID  AND D.StockType = F.StockType
+and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot 
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "IssueLack_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+from dbo.IssueLack_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 
+and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "IssueReturn_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+from dbo.IssueReturn_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 
+and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where f.WMSLock = 1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "TransferIn_Detail":
+                    sqlcmd = $@"
+Select d.poid, d.seq1, d.seq2, d.Roll, d.Qty
+, balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0),f.Dyelot
+from dbo.TransferIn_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) on  d.PoId = f.PoId
+and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType
+and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where f.WMSLock = 1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "TransferOut_Detail":
+                    sqlcmd = $@"
+Select d.poid, d.seq1, d.seq2, d.Roll, d.Qty
+, balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0),f.Dyelot
+from dbo.TransferOut_Detail d WITH(NOLOCK)
+inner join FtyInventory f WITH(NOLOCK) on d.PoId = f.PoId
+and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType
+and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+where f.WMSLock = 1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "SubTransfer_Detail_To":
+                    sqlcmd = $@"
+Select 
+ [poid] = d.topoid
+,[seq1] = d.toseq1
+,[seq2] = d.toseq2
+,[Roll] = d.toRoll
+,[Dyelot] = d.toDyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on  d.toPoId = f.PoId
+and d.toSeq1 = f.Seq1
+and d.toSeq2 = f.seq2
+and d.toStocktype = f.StockType
+and d.toRoll = f.Roll
+and d.toDyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "SubTransfer_Detail_From":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.frompoid 
+,[seq1] = d.fromseq1
+,[seq2] = d.fromseq2
+,[Roll] = d.fromRoll
+,f.Dyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK, INDEX(MdID_POSeq))
+on d.FromPOID = f.POID and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 
+AND D.FromStockType = F.StockType and d.FromDyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'
+";
+                    break;
+
+                case "BorrowBack_Detail_From":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.frompoid 
+,[seq1] = d.fromseq1
+,[seq2] = d.fromseq2
+,[Roll] = d.fromRoll
+,f.Dyelot
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID  
+  AND D.FromStockType = F.StockType and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 
+and d.FromSeq2 = f.Seq2 and d.fromDyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'";
+                    break;
+
+                case "BorrowBack_Detail_To":
+                    sqlcmd = $@"
+Select  
+ [poid] = d.topoid
+,[seq1] = d.toseq1
+,[seq2] = d.toseq2
+,[Roll] = d.toRoll
+,[Dyelot] = d.toDyelot
+from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
+on d.toPoId = f.PoId and d.toSeq1 = f.Seq1 and d.toSeq2 = f.seq2
+and d.toStocktype = f.StockType and d.toRoll = f.Roll and d.toDyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'";
+                    break;
+
+                case "Issue_Summary":
+                    sqlcmd = $@"
+SELECT d.POID,d.Seq1,d.Seq2,d.Roll,d.Dyelot
+FROM Issue i
+INNER JOIN Issue_Summary s ON i.ID = s.ID 
+INNER JOIN Issue_Detail d ON s.id=d.id AND s.Ukey = d.Issue_SummaryUkey
+INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
+INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
+WHERE i.Id = '{id}' 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+AND  f.WMSLock = 1 ";
+                    break;
+                case "Adjust_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+from dbo.Adjust_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK)
+on d.POID = f.POID  AND D.StockType = F.StockType
+and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'";
+                    break;
+
+                case "ReturnReceipt_Detail":
+                    sqlcmd = $@"
+Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
+from dbo.returnreceipt_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 
+and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
+where f.WMSLock = 1 
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail po3
+	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
+	and po3.FabricType='A'
+)
+and d.Id = '{id}'";
+                    break;
+            }
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+            else
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in dt.Rows)
+                    {
+                        errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} is locked!!" + Environment.NewLine;
+                    }
+
+                    MyUtility.Msg.WarningBox("Material Locked cause from WMS system not received below material yet." + Environment.NewLine + errmsg, "Warning");
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 
     /// <inheritdoc/>
@@ -3584,5 +4364,30 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
 
         /// <inheritdoc/>
         public string Location { get; set; }
+    }
+
+    /// <inheritdoc/>
+    public class Prgs_FtyInventoryData
+    {
+        /// <inheritdoc/>
+        public string Poid { get; set; }
+
+        /// <inheritdoc/>
+        public string Seq1 { get; set; }
+
+        /// <inheritdoc/>
+        public string Seq2 { get; set; }
+
+        /// <inheritdoc/>
+        public string Roll { get; set; }
+
+        /// <inheritdoc/>
+        public string Dyelot { get; set; }
+
+        /// <inheritdoc/>
+        public string Stocktype { get; set; }
+
+        /// <inheritdoc/>
+        public decimal Qty { get; set; }
     }
 }

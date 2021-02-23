@@ -12,6 +12,7 @@
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     [Remark] NVARCHAR(60) NOT NULL DEFAULT (''), 
     [CompleteTime] DATETIME NULL, 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_IssueLack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

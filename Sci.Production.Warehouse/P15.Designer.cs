@@ -53,6 +53,7 @@
             this.labelSubconName = new Sci.Win.UI.Label();
             this.displayBoxShift = new Sci.Win.UI.DisplayBox();
             this.txtLocalSupp1 = new Sci.Production.Class.TxtLocalSupp();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -69,6 +70,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.displayBoxShift);
             this.masterpanel.Controls.Add(this.labelSubconName);
@@ -119,6 +121,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -420,11 +423,23 @@
             // txtLocalSupp1
             // 
             this.txtLocalSupp1.DisplayBox1Binding = "";
+            this.txtLocalSupp1.IsFactory = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(765, 45);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(230, 23);
             this.txtLocalSupp1.TabIndex = 75;
             this.txtLocalSupp1.TextBox1Binding = "";
+            // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(513, 144);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 76;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
             // P15
             // 
@@ -499,5 +514,6 @@
         private Win.UI.Label labelshift;
         private Win.UI.DisplayBox displayBoxShift;
         private Class.TxtLocalSupp txtLocalSupp1;
+        private Win.UI.Button btnCallP99;
     }
 }

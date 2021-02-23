@@ -73,6 +73,7 @@
             this.txtMtlLocation1 = new Sci.Production.Class.TxtMtlLocation(this.components);
             this.btnUpdateLocation = new Sci.Win.UI.Button();
             this.comboStockType = new Sci.Win.UI.ComboBox();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -90,6 +91,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.comboStockType);
             this.masterpanel.Controls.Add(this.btnUpdateLocation);
             this.masterpanel.Controls.Add(this.txtMtlLocation1);
@@ -174,6 +176,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtMtlLocation1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -683,6 +686,17 @@
             this.comboStockType.TabIndex = 69;
             this.comboStockType.SelectedValueChanged += new System.EventHandler(this.ComboStockType_SelectedValueChanged);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(461, 121);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 70;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P07
             // 
             this.ApvChkValue = "New";
@@ -773,5 +787,6 @@
         private Class.TxtMtlLocation txtMtlLocation1;
         private Win.UI.Label lbLocation;
         private Win.UI.ComboBox comboStockType;
+        private Win.UI.Button btnCallP99;
     }
 }

@@ -327,6 +327,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "SubTransfer_Detail_From"))
+            {
+                return;
+            }
+            #endregion
+
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(
@@ -585,6 +592,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "SubTransfer_Detail_To"))
+            {
+                return;
             }
             #endregion
 

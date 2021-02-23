@@ -16,6 +16,7 @@
     [CombineBarcode] VARCHAR NULL, 
     [Unoriginal] BIT NULL, 
     [ActualWeight] NUMERIC(7, 2) CONSTRAINT [DF_TransferIn_Detail_ActualWeight] NOT NULL DEFAULT ((0)), 
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

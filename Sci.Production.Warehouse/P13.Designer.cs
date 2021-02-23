@@ -46,6 +46,7 @@
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             this.txtwhseReason = new Sci.Production.Class.TxtwhseReason();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,6 +63,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.labelReason);
@@ -98,6 +100,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labelReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -336,6 +339,7 @@
             // 
             this.txtwhseReason.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "whseReasonID", true));
             this.txtwhseReason.DisplayBox1Binding = "";
+            this.txtwhseReason.IsSupportJunk = true;
             this.txtwhseReason.Location = new System.Drawing.Point(96, 43);
             this.txtwhseReason.Name = "txtwhseReason";
             this.txtwhseReason.Size = new System.Drawing.Size(386, 27);
@@ -344,6 +348,17 @@
             this.txtwhseReason.Type = "IR";
             this.txtwhseReason.Leave += new System.EventHandler(this.TxtwhseReason_Leave);
             this.txtwhseReason.Validated += new System.EventHandler(this.TxtwhseReason_Validated);
+            // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(519, 146);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 66;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
             // P13
             // 
@@ -407,5 +422,6 @@
         private Class.TxtwhseReason txtwhseReason;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnPrintFabricSticker;
+        private Win.UI.Button btnCallP99;
     }
 }
