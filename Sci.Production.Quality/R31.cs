@@ -316,23 +316,6 @@ o.MDivisionID
 					, 'N/A' 
 					, CAST( CAST(ROUND((TtlCtn.Val *1.0 / TtlCtn.Val * 100),0) as int)  as varchar)  
 				)
-
---,oq.CFAFinalInspectResult
---,[CFAIs3rdInspect] = IIF(oq.CFAIs3rdInspect = 1, 'Y','N')
---,oq.CFA3rdInspectResult 
---,oq.Qty
---,[StaggeredOutput] = ISNULL(StaggeredOutput.Val,0)
---,[CMPoutput] = ISNULL(CMPoutput.Val,0)
---,[CMPOutput%] = IIF(
---						oq.Qty = 0 OR CMPoutput.Val =  'N/A' 
---						, 'N/A' 
---						, Cast(  CAST(  ROUND( CAST( ISNULL(CMPoutput.Val,0) as int) * 1.0  / oq.Qty * 100 ,0) as int)  as varchar)  
---					)
---,[ClogReceivedQty] =IIF(o.Category ='S' ,'N/A'  ,Cast( ISNULL(ClogReceivedQty.Val,0) as varchar)  )
---,[ClogReceivedQty%]=IIF( oq.Qty = 0 OR o.Category ='S' 
---						,'N/A' 
---						,Cast(CAST(  ROUND( (CAST( ISNULL(ClogReceivedQty.Val,0) as int) * 1.0 / oq.Qty * 100 ),0) as int)  as varchar)  
---					)
 ,[Last carton received date] = LastReceived.Val
 ,oq.CFAFinalInspectDate
 ,oq.CFA3rdInspectDate
@@ -477,14 +460,19 @@ WHERE 1=1
                 #endregion
 
                 sqlCmd.Append($@"
-
-----有哪些Stage要檢驗Outstanding
-SELECT DISTINCT c.Stage,t.*
+----戴上要檢驗的Stage帽子
+SELECT DISTINCT [Stage]='Staggered',t.*
 INTO #NeedCkeck
 FROM  #tmp t 
-LEFT JOIN CFAInspectionRecord_OrderSEQ co ON t.Id = co.OrderID AND t.Seq = co.SEQ
-LEFT JOIN CFAInspectionRecord c ON c.ID = co.ID 
-WHERE c.Stage IN ('Staggered','Final','3rd Party') AND c.Status = 'Confirmed'
+UNION 
+SELECT DISTINCT [Stage]='Final',t.*
+FROM  #tmp t 
+UNION 
+SELECT DISTINCT [Stage]='3rd party',t.*
+FROM  #tmp t 
+INNER JOIN Order_QtyShip oq ON oq.Id = t.Id AND oq.Seq = t.Seq
+WHERE oq.CFAIs3rdInspect = 1
+
 
 ----取出需要的資料
 SELECT *
@@ -525,28 +513,28 @@ WHERE ID IN(
 /*-----Staggered-----*/
 SELECT need.Stage
 	,[InspResult]=CASE WHEN EXISTS(
-						-- Result  - Fail的情況
+								-- Result  - Fail的情況
+								SELECT 1
+								FROM #NeedCkeck a
+								INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
+								INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
+								INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
+								WHERE cf.Stage = 'Staggered' AND a.Category != 'Sample' AND cf.Result = 'Fail' AND cf.Status ='Confirmed'
+								AND a.Id = need.Id AND a.Seq = need.Seq
+							)
+						THEN 'Fail'	
+					WHEN NOT EXISTS(
+						-- Result  -  空白的情況
 						SELECT 1
 						FROM #NeedCkeck a
 						INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
-						LEFT JOIN #CFAInspectionRecord cf ON cf.ID = pd.StaggeredCFAInspectionRecordID
-						WHERE a.Stage = 'Staggered' AND a.Category != 'Sample'
-						AND (pd.StaggeredCFAInspectionRecordID  != '' AND cf.Result = 'Fail' AND cf.Status ='Confirmed')
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
+						INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
+						WHERE cf.Stage = 'Staggered' AND a.Category != 'Sample' AND  cf.Status ='Confirmed'
 						AND a.Id = need.Id AND a.Seq = need.Seq
 					)
-			 THEN 'Fail'
-		WHEN EXISTS(
-					-- Result  - 空白的情況
-					SELECT 1
-					FROM #NeedCkeck a
-					INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
-					LEFT JOIN #CFAInspectionRecord cf ON cf.ID = pd.StaggeredCFAInspectionRecordID
-					WHERE a.Stage = 'Staggered' AND a.Category != 'Sample'
-					AND pd.StaggeredCFAInspectionRecordID  = ''
-					AND a.Id = need.Id AND a.Seq = need.Seq
-				)
 			 THEN ''
-		ELSE 'Pass'
+		ELSE ''
 		END
 	,[Not yet insp Ctn#]=(SELECT STUFF((
 								SELECT DISTINCT ','+CTNStartNo
@@ -594,7 +582,7 @@ SELECT need.Stage
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Status='Fail'
+									AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result='Fail'
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -614,7 +602,7 @@ SELECT need.Stage
 									FROM #CFAInspectionRecord cf
 									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Status='Fail'
+									AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result='Fail'
 									AND (	
 											cfo.Carton = pd.CTNStartNo
 										OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -625,6 +613,28 @@ SELECT need.Stage
 	,need.*
 FROM #NeedCkeck need
 WHERE need.Stage = 'Staggered' AND need.Category != 'Sample'	
+AND (
+		SELECT COUNT(DISTINCT CTNStartNo)
+		FROM #PackingList_Detail pd
+		WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
+		AND EXISTS(
+			SELECT 1
+			FROM #CFAInspectionRecord cf
+			INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+			WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+			AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result='Pass'
+			AND (	
+					cfo.Carton = pd.CTNStartNo
+				OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+				OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+				OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+			)
+        )
+) != 
+(SELECT COUNT( DISTINCT CTNStartNo)
+FROM #PackingList_Detail  
+WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
+
 ";
                     outstandingWHERE.Add(stageSql);
                 }
@@ -635,16 +645,22 @@ WHERE need.Stage = 'Staggered' AND need.Category != 'Sample'
 
 /*-----Final-----*/
 SELECT need.Stage
-	,[InspResult]=IIF( EXISTS(
-						--Final Result  - 沒有單箱被抓出來檢驗的問題，因此直接搬用Order_QtyShip.CFAFinalInspectResult
+	,[InspResult]=CASE WHEN NOT EXISTS(
+						SELECT 1 
+						FROM #CFAInspectionRecord cr 
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cfoq.OrderID = need.ID AND cfoq.Seq = need.Seq AND cr.Stage = 'Final' AND cr.Status = 'Confirmed' ) 
+					THEN ''
+					WHEN EXISTS(						
 						SELECT 1
 						FROM #NeedCkeck a
 						INNER JOIN Order_QtyShip oq ON oq.ID = a.Id ANd oq.Seq =a.Seq
 						WHERE a.Stage = 'Final' 
-						AND oq.CFAFinalInspectResult = 'Fail'
+						AND oq.CFAFinalInspectResult  != 'Pass'
 						AND a.Id = need.Id AND a.Seq = need.Seq
-					)
-			 , 'Fail','')
+					)THEN 'Fail'
+					ELSE ''
+					END
 	,[Not yet insp Ctn#]=NULL
 	,[Not yet insp ctn]=NULL
 	,[Fail Ctn#]=(
@@ -669,6 +685,23 @@ SELECT need.Stage
 	,need.*
 FROM #NeedCkeck need
 WHERE need.Stage = 'Final'
+AND (	
+		SELECT COUNT(DISTINCT data)
+		FROM dbo.SplitString((
+						SELECt TOP 1  cfoq.Carton
+						FROM #CFAInspectionRecord  cr
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Pass'
+						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
+						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+		),',')
+) != 
+(SELECT COUNT( DISTINCT CTNStartNo)
+FROM #PackingList_Detail  
+WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
+---- 成功數 != 總箱數，表示尚未檢驗成功
+
+
 ";
                     outstandingWHERE.Add(stageSql);
                 }
@@ -679,23 +712,30 @@ WHERE need.Stage = 'Final'
 
 /*-----3rd Party-----*/
 SELECT need.Stage
-	,[InspResult]=IIF( EXISTS(
-						--3rd Party Result  - 沒有單箱被抓出來檢驗的問題，因此直接搬用Order_QtyShip.CFAFinalInspectResult 
+	,[InspResult]=CASE WHEN NOT EXISTS(
+						SELECT 1 
+						FROM #CFAInspectionRecord cr 
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cfoq.OrderID = need.ID AND cfoq.Seq = need.Seq AND cr.Stage = '3rd Party' AND cr.Status = 'Confirmed' 
+					)
+					THEN ''  ----沒有檢驗紀錄 = 空白
+					WHEN EXISTS(						
 						SELECT 1
 						FROM #NeedCkeck a
 						INNER JOIN Order_QtyShip oq ON oq.ID = a.Id ANd oq.Seq =a.Seq
 						WHERE a.Stage = '3rd Party'  AND oq.CFAIs3rdInspect = 1
-						AND oq.CFAFinalInspectResult  != 'Pass'
+						AND oq.CFA3rdInspectResult  != 'Pass'
 						AND a.Id = need.Id AND a.Seq = need.Seq
-					)
-			 , 'Fail','')
+					)THEN 'Fail'
+					ELSE ''
+					END
 	,[Not yet insp Ctn#]=NULL
 	,[Not yet insp ctn]=NULL	
 	,[Fail Ctn#]=(
 		SELECt TOP 1 cfoq.Carton
 		FROM #CFAInspectionRecord  cr
 		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-		WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+		WHERE cr.Stage = '3rd party' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 		AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 	)
@@ -713,6 +753,22 @@ SELECT need.Stage
 	,need.*
 FROM #NeedCkeck need
 WHERE need.Stage = '3rd Party'
+AND (	
+		SELECT COUNT(DISTINCT data)
+		FROM dbo.SplitString((
+						SELECt TOP 1  cfoq.Carton
+						FROM #CFAInspectionRecord  cr
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cr.Stage = '3rd Party' AND cr.Status='Confirmed' AND cr.Result = 'Pass'
+						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
+						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+		),',')
+) != 
+(SELECT COUNT( DISTINCT CTNStartNo)
+FROM #PackingList_Detail  
+WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
+---- 成功數 != 總箱數，表示尚未檢驗成功
+
 ";
                     outstandingWHERE.Add(stageSql);
                 }
