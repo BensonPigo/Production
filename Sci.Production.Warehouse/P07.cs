@@ -1920,15 +1920,20 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["exportid"], this.Curre
                 }
             }
 
-            // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric(true);
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
 
             // AutoWH ACC WebAPI for VStrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Detail_New(dtDetail, "P07"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Detail_New(dtDetail, "P07"))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -2010,10 +2015,19 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
             #endregion
 
             #region UnConfirmed 先檢查WMS是否傳送成功
+
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P07", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(dtDetail, "P07", "UnConfirmed"))
                 {
                     return;
                 }
@@ -2212,86 +2226,9 @@ END", Env.User.UserID, this.CurrentMaintain["exportid"], this.CurrentMaintain["i
 
             transactionscope.Dispose();
             transactionscope = null;
-
-            // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric(false);
         }
 
-        /// <summary>
-        ///  AutoWHFabric WebAPI for Gensong
-        /// </summary>
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
-        {
-            DataTable dtDetail = new DataTable();
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-SELECT [ID] = rd.id
-,[InvNo] = r.InvNo
-,[PoId] = rd.Poid
-,[Seq1] = rd.Seq1
-,[Seq2] = rd.Seq2
-,[Refno] = po3.Refno
-,[ColorID] = Color.Value
-,[Roll] = rd.Roll
-,[Dyelot] = rd.Dyelot
-,[StockUnit] = rd.StockUnit
-,[StockQty] = rd.StockQty
-,[PoUnit] = rd.PoUnit
-,[ShipQty] = rd.ShipQty
-,[Weight] = rd.Weight
-,[StockType] = rd.StockType
-,[Ukey] = rd.Ukey
-,[IsInspection] = convert(bit, 0)
-,[ETA] = r.ETA
-,[WhseArrival] = r.WhseArrival
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-,[Barcode] = Barcode.value
-FROM Production.dbo.Receiving_Detail rd
-inner join Production.dbo.Receiving r on rd.id = r.id
-inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
-	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
-left join Production.dbo.FtyInventory f on f.POID = rd.PoId
-	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
-	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
-	and f.StockType = rd.StockType
-LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
-OUTER APPLY(
- SELECT [Value]=
-	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN po3.SuppColor
-		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
-	 END
-)Color
-outer apply(
-	select value = min(fb.Barcode)
-	from FtyInventory_Barcode fb 
-	where fb.Ukey = f.Ukey
-)Barcode
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
-	and FabricType='F'
-)
-and r.id = '{this.CurrentMaintain["id"]}'
-
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-        }
-
-        // 寫明細撈出的sql command
-
+        /// 寫明細撈出的sql command
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {

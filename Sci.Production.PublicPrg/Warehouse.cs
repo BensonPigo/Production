@@ -4418,7 +4418,7 @@ where exists(
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
                     break;
-                case "P37":
+                case "ReturnReceipt":
                     sqlcmd = $@"
 update t
 set t.SentToWMS = {toWMS}
@@ -4428,7 +4428,7 @@ where exists(
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
                     break;
-                case "Borrow":
+                case "BorrowBack":
                     sqlcmd = $@"
 update t
 set t.SentToWMS = {toWMS}
