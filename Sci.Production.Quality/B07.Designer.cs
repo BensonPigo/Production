@@ -181,11 +181,13 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Image = null;
             this.pictureBox1.Location = new System.Drawing.Point(182, 153);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(157, 133);
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
             // 
             // radioPanel1
             // 
@@ -208,6 +210,7 @@
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
             this.Name = "B07";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B07.Skewness Option";
             this.WorkAlias = "SkewnessOption";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
