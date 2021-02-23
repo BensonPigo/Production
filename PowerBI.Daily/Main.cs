@@ -564,6 +564,7 @@ END CATCH";
             //// Log to DB with retry
             for (int i = 0; i < this.Logger_Retry; i++)
             {
+                string cmd = string.Empty;
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@functionName", task.Name));
                 pars.Add(new SqlParameter("@Description", task.DualResult.ToString()));
@@ -573,8 +574,17 @@ END CATCH";
                 pars.Add(new SqlParameter("@TransCode", intHashCode));
                 pars.Add(new SqlParameter("@GroupID", task.GroupID));
 
-                string cmd = @"insert into P_TransLog(functionName,Description,StartTime,EndTime,RegionID,TransCode,GroupID) 
+                if (MyUtility.Check.Seek("select * from P_TransLog where TransCode = @TransCode and RegionID = @RegionID and FunctionName = @functionName ",pars))
+                {
+                    cmd = $@"update P_TransLog set StartTime = @StartTime,EndTime = @EndTime,Description = @Description where TransCode = @TransCode and RegionID = @RegionID and FunctionName = @functionName";
+                }
+                else
+                {
+                    cmd = @"insert into P_TransLog(functionName,Description,StartTime,EndTime,RegionID,TransCode,GroupID) 
                         values(@functionName,@Description,@StartTime,@EndTime,@RegionID,@TransCode,@GroupID)";
+                }
+
+                
 
                 DualResult result;
                 if (result = DBProxy.Current.Execute("", cmd, pars))
