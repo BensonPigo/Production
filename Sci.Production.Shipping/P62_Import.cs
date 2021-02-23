@@ -206,7 +206,7 @@ and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=
             }
             #endregion
 
-            sqlcmd += @" group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo";
+            sqlcmd += @" group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID";
 
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt))
