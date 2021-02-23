@@ -4340,6 +4340,114 @@ and d.Id = '{id}'";
 
             return true;
         }
+
+        public static bool SentToWMS(DataTable dtMain, bool isConfirmed, string tableName)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            int toWMS = isConfirmed ? 1 : 0;
+            switch (tableName)
+            {
+                case "Receiving":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "TransferIn":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "Issue":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Issue_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "IssueLack":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from IssueLack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "TransferOut":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from TransferOut_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "Adjust":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Adjust_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "SubTransfer":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from SubTransfer_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "P37":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from ReturnReceipt_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "Borrow":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from BorrowBack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMain, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+
+            return true;
+        }
     }
 
     /// <inheritdoc/>

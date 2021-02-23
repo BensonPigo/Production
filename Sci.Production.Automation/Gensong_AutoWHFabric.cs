@@ -25,10 +25,12 @@ namespace Sci.Production.Automation
         public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
 
         #region Reveive
-
-        #endregion
-
-        public void SentReceive_Detail_New(DataTable dtDetail,string formName = "")
+        /// <summary>
+        /// Sent Receive Detail New
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="formName">formName</param>
+        public void SentReceive_Detail_New(DataTable dtDetail, string formName = "")
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -61,24 +63,10 @@ namespace Sci.Production.Automation
             switch (formName)
             {
                 case "P07":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from Receiving_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "Receiving");
                     break;
                 case "P18":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from TransferIn_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "TransferIn");
                     break;
             }
 
@@ -159,24 +147,10 @@ where exists(
                 switch (formName)
                 {
                     case "P07":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from Receiving_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                        PublicPrg.Prgs.SentToWMS(dtMaster, false, "Receiving");
                         break;
                     case "P18":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from TransferIn_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                        PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferIn");
                         break;
                 }
 
@@ -189,8 +163,9 @@ where exists(
 
             return true;
         }
+        #endregion
 
-        /// <summary>
+                /// <summary>
         /// Receive_Detail
         /// </summary>
         /// <param name="dtDetail">Detail DataSource</param>
@@ -239,6 +214,8 @@ where exists(
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
+
+
         /// <summary>
         /// Issue_Detail To Gensong
         /// </summary>
@@ -281,6 +258,146 @@ where exists(
 
             SendWebAPI(GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
         }
+
+
+        #region Issue
+        /// <summary>
+        /// Sent Receive Detail New
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="formName">formName</param>
+        public void SentIssue_Detail_New(DataTable dtDetail, string formName = "")
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 取得資料
+            DataTable dtMaster = this.GetIssueData(dtDetail, formName, "New");
+
+            // 沒資料就return
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            #region 記錄Confirmed後有傳給WMS的資料
+            switch (formName)
+            {
+                case "P10":
+                case "P13":
+                case "P62":
+                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "Issue");
+                    break;
+                case "P16":
+                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "IssueLack");
+                    break;
+                case "P19":
+                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "TransferOut");
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
+            #endregion
+
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "New");
+
+            // 將DataTable 轉成Json格式
+            string jsonBody = this.GetJsonBody(dtMaster, "Receiving_Detail");
+
+            // Call API傳送給WMS
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// Sent Receive_Detail Delete
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="formName">type</param>
+        /// <param name = "status" > Status </ param >
+        /// <param name = "isP99" > is P99 </ param >
+        /// <returns>bool</returns>
+        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+            string sqlcmd = string.Empty;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Gensong_AutoWHFabric callMethod = new Gensong_AutoWHFabric();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.GetReceiveData(dtDetail, formName, status, isP99);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", string.Empty);
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                switch (formName)
+                {
+                    case "P07":
+                        PublicPrg.Prgs.SentToWMS(dtMaster, false, "Receiving");
+                        break;
+                    case "P18":
+                        PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferIn");
+                        break;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
+
+
 
         /// <summary>
         /// WHClose To Gensong
