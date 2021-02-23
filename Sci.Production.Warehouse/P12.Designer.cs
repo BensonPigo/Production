@@ -42,6 +42,7 @@
             this.btnClearQtyIsEmpty = new Sci.Win.UI.Button();
             this.labelRemark = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.btnClearQtyIsEmpty);
@@ -86,6 +88,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnClearQtyIsEmpty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -288,6 +291,17 @@
             this.editRemark.Size = new System.Drawing.Size(658, 51);
             this.editRemark.TabIndex = 1;
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(519, 115);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 66;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P12
             // 
             this.ApvChkValue = "New";
@@ -305,6 +319,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P12";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P12. Issue Packing Material";
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "id";
@@ -345,5 +360,6 @@
         private Win.UI.Button btnClearQtyIsEmpty;
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
+        private Win.UI.Button btnCallP99;
     }
 }

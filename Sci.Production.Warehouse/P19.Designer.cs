@@ -47,6 +47,7 @@
             this.txtFromFactory = new Sci.Win.UI.TextBox();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             this.btnImportonTPE = new Sci.Win.UI.Button();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +64,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnImportonTPE);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.txtFromFactory);
@@ -81,7 +83,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 201);
+            this.masterpanel.Size = new System.Drawing.Size(972, 201);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -101,11 +103,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtFromFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportonTPE, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 201);
-            this.detailpanel.Size = new System.Drawing.Size(892, 148);
+            this.detailpanel.Size = new System.Drawing.Size(972, 276);
             // 
             // gridicon
             // 
@@ -120,7 +123,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 148);
+            this.detailgridcont.Size = new System.Drawing.Size(972, 276);
             // 
             // detail2
             // 
@@ -133,6 +136,19 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(972, 515);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(972, 477);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 477);
+            this.detailbtm.Size = new System.Drawing.Size(972, 38);
             // 
             // browse
             // 
@@ -207,7 +223,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(892, 201);
+            this.shapeContainer1.Size = new System.Drawing.Size(972, 201);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -348,6 +364,17 @@
             this.btnImportonTPE.UseVisualStyleBackColor = true;
             this.btnImportonTPE.Click += new System.EventHandler(this.BtnImportonTPE_Click);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(525, 165);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 66;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P19
             // 
             this.ApvChkValue = "New";
@@ -410,5 +437,6 @@
         private Win.UI.TextBox txtFromFactory;
         private Win.UI.Button btnPrintFabricSticker;
         private Win.UI.Button btnImportonTPE;
+        private Win.UI.Button btnCallP99;
     }
 }
