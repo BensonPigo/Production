@@ -827,8 +827,6 @@ Select
     , FabricKind.FabricKindID
     , o.StyleUkey
 	, w.MDivisionId
-    , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
-    , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
 from  workorder w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
@@ -893,6 +891,8 @@ Select
 	, startno = 0
 	, o.StyleUkey
     , byTone = cast((select AutoGenerateByTone from system)as int)
+    , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
+    , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
 from workorder w WITH (NOLOCK) 
 inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
@@ -1275,7 +1275,7 @@ and wd.orderid = 'EXCESS'
                 return;
             }
 
-            var articleSizeTb_tmp = this.ArticleSizeTb.Select(string.Format("Ukey ='{0}' and Fabriccombo = '{1}'", selectDr_Cutref["Ukey"], selectDr_Cutref["Fabriccombo"]));
+            var articleSizeTb_tmp = this.ArticleSizeTb.Select($"Ukey ='{selectDr_Cutref["Ukey"]}' and Fabriccombo = '{selectDr_Cutref["Fabriccombo"]}'");
             if (articleSizeTb_tmp.Any())
             {
                 this.ArticleSizeTb_View = articleSizeTb_tmp.CopyToDataTable();
@@ -1304,8 +1304,8 @@ and wd.orderid = 'EXCESS'
             this.chkTone.Checked = this.numTone.Value > 0;
             this.label_TotalQty.Text = this.qtyTb.Compute("Sum(Qty)", string.Format("iden={0}", selectDr_Artsize["iden"])).ToString();
 
-            this.chkCombineSubprocess.Checked = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubProcess"]);
-            this.chkNoneShellNoCreateAllParts.Checked = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsNoneShellNoCreateAllParts"]);
+            this.chkCombineSubprocess.Checked = MyUtility.Convert.GetBool(this.gridArticleSize.CurrentDataRow["IsCombineSubProcess"]);
+            this.chkNoneShellNoCreateAllParts.Checked = MyUtility.Convert.GetBool(this.gridArticleSize.CurrentDataRow["IsNoneShellNoCreateAllParts"]);
             this.chkNoneShellNoCreateAllParts.ReadOnly = MyUtility.Convert.GetString(this.gridCutRef.CurrentDataRow["FabricKindID"]) == "1";
 
             this.ChangeLabelTotalCutOutputValue();
@@ -1501,10 +1501,10 @@ and wd.orderid = 'EXCESS'
                         #endregion
                     }
 
-                    bool IsPair = MyUtility.Convert.GetBool(chdr["IsPair"]);
+                    bool isPair = MyUtility.Convert.GetBool(chdr["IsPair"]);
                     if (this.patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}' and iden = '{chdr["iden"]}'").Count() > 0)
                     {
-                        IsPair = MyUtility.Convert.GetBool(this.patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}' and iden = '{chdr["iden"]}'")[0]["IsPair"]);
+                        isPair = MyUtility.Convert.GetBool(this.patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}' and iden = '{chdr["iden"]}'")[0]["IsPair"]);
                     }
 
                     // 新增PatternTb
@@ -1519,7 +1519,7 @@ and wd.orderid = 'EXCESS'
                     ndr2["art"] = "EMB";
                     ndr2["poid"] = chdr["poid"];
                     ndr2["Cutref"] = chdr["cutref"];
-                    ndr2["IsPair"] = IsPair;
+                    ndr2["IsPair"] = isPair;
                     this.patternTb.Rows.Add(ndr2);
                     chdr.Delete();
                 }
@@ -2688,13 +2688,13 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
                 return;
             }
 
-            if (MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubprocess", DataRowVersion.Original]) == this.chkCombineSubprocess.Checked)
+            if (MyUtility.Convert.GetBool(this.gridArticleSize.CurrentDataRow["IsCombineSubprocess", DataRowVersion.Original]) == this.chkCombineSubprocess.Checked)
             {
                 return;
             }
 
-            this.gridCutRef.CurrentDataRow["IsCombineSubprocess"] = this.chkCombineSubprocess.Checked;
-            this.gridCutRef.CurrentDataRow.AcceptChanges();
+            this.gridArticleSize.CurrentDataRow["IsCombineSubprocess"] = this.chkCombineSubprocess.Checked;
+            this.gridArticleSize.CurrentDataRow.AcceptChanges();
             this.ChangeDefault();
             this.DeleteAllpartsDatas();
         }
@@ -2706,19 +2706,19 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
 
         private void ChangeDefault()
         {
-            if (this.CutRefTb == null || this.gridCutRef.CurrentDataRow == null)
+            if (this.CutRefTb == null || this.gridCutRef.CurrentDataRow == null || this.gridArticleSize.CurrentDataRow == null)
             {
                 return;
             }
 
-            long ukey = (long)this.gridCutRef.CurrentDataRow["ukey"];
-            this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["ukey"] == ukey).Delete();
-            this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["ukey"] == ukey).Delete();
+            long iden = (long)this.gridArticleSize.CurrentDataRow["iden"];
+            this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["iden"] == iden).Delete();
+            this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["iden"] == iden).Delete();
             this.patternTb.AcceptChanges();
             this.allpartTb.AcceptChanges();
             DataTable pdt = this.patternTb.Clone();
-            DataTable adt = this.allpartTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.allpartTb);
-            DataTable xdt = this.patternTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.patternTb);
+            DataTable adt = this.allpartTbOri.Select($"iden = {iden}").TryCopyToDataTable(this.allpartTb);
+            DataTable xdt = this.patternTbOri.Select($"iden = {iden}").TryCopyToDataTable(this.patternTb);
 
             if (!this.chkCombineSubprocess.Checked)
             {
@@ -2743,7 +2743,7 @@ inner join Bundle b with (nolock) on bd.ID = b.ID
         {
             if (MyUtility.Convert.GetString(this.gridCutRef.CurrentDataRow["FabricKind"]) != "1" && this.chkNoneShellNoCreateAllParts.Checked)
             {
-                this.allpartTb.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}  and CombineSubprocessGroup = 0").Delete();
+                this.allpartTb.Select($"iden = {this.gridArticleSize.CurrentDataRow["iden"]}  and CombineSubprocessGroup = 0").Delete();
                 this.allpartTb.AcceptChanges();
                 this.Calpart();
             }
