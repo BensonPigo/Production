@@ -13,6 +13,41 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         /// <summary>
+        /// 尚未解析前<相同的 annotation>，須有一個為左下Grid代表。
+        /// 原本是 Main 直接標記為 IsMain
+        /// 若無Main 則以 seq 最小為 IsMain
+        /// IsMain 最後要寫入 Bundle_Detail_CombineSubprocess.IsMain / FtyStyleInnovationCombineSubprocess.IsMain
+        /// </summary>
+        /// <inheritdoc/>
+        public static void SetCombineSubprocessGroup_IsMain(DataRow[] garmentar)
+        {
+            var annotationList = garmentar.Where(w => !MyUtility.Check.Empty(w["annotation"]))
+                .Select(s => MyUtility.Convert.GetString(s["annotation"])).Distinct().ToList();
+            var x = garmentar.Where(w => !MyUtility.Check.Empty(w["annotation"]));
+
+            garmentar.AsEnumerable().ToList().ForEach(f => f["IsMain"] = f["Main"]);
+            foreach (string annotation in annotationList)
+            {
+                var x2 = x.Where(w => MyUtility.Convert.GetString(w["annotation"]) == annotation);
+                var x3 = x2.OrderBy(o => MyUtility.Convert.GetString(o["Seq"])).FirstOrDefault();
+                if (!x2.Where(w => MyUtility.Convert.GetBool(w["Main"])).Any() && x3 != null)
+                {
+                    x3["IsMain"] = true;
+                }
+            }
+
+            int combineSubprocessGroup = 1;
+            foreach (string annotation in annotationList)
+            {
+                x.Where(w => MyUtility.Convert.GetString(w["annotation"]) == annotation
+                        && MyUtility.Check.Empty(w["CombineSubprocessGroup"]))
+                    .ToList()
+                    .ForEach(f => f["CombineSubprocessGroup"] = combineSubprocessGroup);
+                combineSubprocessGroup++;
+            }
+        }
+
+        /// <summary>
         /// 取得最新 SubCutNo
         /// </summary>
         /// <param name="cutRef">cutRef</param>

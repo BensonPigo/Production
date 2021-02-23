@@ -2572,8 +2572,8 @@
     <Build Include="dbo\Tables\ReplacementLocalItem_Detail.sql" />
     <Build Include="dbo\Tables\ReplacementLocalItemReason.sql" />
     <Build Include="dbo\Functions\CheckShippingMarkStampSetting.sql" />
-    <Build Include="dbo\Tables\FtyStyleInnovationComebineSubprocess.sql" />
-    <Build Include="dbo\Tables\Bundle_Detail_ComebineSubprocess.sql" />
+    <Build Include="dbo\Tables\FtyStyleInnovationCombineSubprocess.sql" />
+    <Build Include="dbo\Tables\Bundle_Detail_CombineSubprocess.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

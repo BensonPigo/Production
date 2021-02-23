@@ -60,11 +60,13 @@
             this.displayPatternPanel = new Sci.Win.UI.DisplayBox();
             this.labelTotalParts = new Sci.Win.UI.Label();
             this.numTotalParts = new Sci.Win.UI.NumericBox();
-            this.label6 = new Sci.Win.UI.Label();
             this.grid_Size = new Sci.Win.UI.Grid();
             this.chkTone = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
             this.numTone = new Sci.Win.UI.NumericBox();
+            this.chkCombineSubprocess = new Sci.Win.UI.CheckBox();
+            this.chkNoneShellNoCreateAllParts = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid_qty)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grid_art)).BeginInit();
@@ -119,7 +121,7 @@
             this.grid_art.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid_art.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid_art.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid_art.Location = new System.Drawing.Point(7, 238);
+            this.grid_art.Location = new System.Drawing.Point(7, 246);
             this.grid_art.Name = "grid_art";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -134,9 +136,10 @@
             this.grid_art.RowTemplate.Height = 24;
             this.grid_art.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid_art.ShowCellToolTips = false;
-            this.grid_art.Size = new System.Drawing.Size(496, 208);
+            this.grid_art.Size = new System.Drawing.Size(496, 234);
             this.grid_art.TabIndex = 1;
             this.grid_art.TabStop = false;
+            this.grid_art.SelectionChanged += new System.EventHandler(this.Grid_art_SelectionChanged);
             // 
             // art_contextMenuStrip
             // 
@@ -173,7 +176,7 @@
             this.grid_allpart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid_allpart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid_allpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid_allpart.Location = new System.Drawing.Point(553, 238);
+            this.grid_allpart.Location = new System.Drawing.Point(553, 246);
             this.grid_allpart.Name = "grid_allpart";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -188,7 +191,7 @@
             this.grid_allpart.RowTemplate.Height = 24;
             this.grid_allpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid_allpart.ShowCellToolTips = false;
-            this.grid_allpart.Size = new System.Drawing.Size(498, 208);
+            this.grid_allpart.Size = new System.Drawing.Size(498, 234);
             this.grid_allpart.TabIndex = 2;
             this.grid_allpart.TabStop = false;
             // 
@@ -216,7 +219,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(885, 453);
+            this.btnOK.Location = new System.Drawing.Point(886, 486);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 30);
             this.btnOK.TabIndex = 9;
@@ -226,7 +229,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(971, 453);
+            this.btnCancel.Location = new System.Drawing.Point(972, 486);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 10;
@@ -236,7 +239,7 @@
             // 
             // btnGarment
             // 
-            this.btnGarment.Location = new System.Drawing.Point(9, 453);
+            this.btnGarment.Location = new System.Drawing.Point(10, 486);
             this.btnGarment.Name = "btnGarment";
             this.btnGarment.Size = new System.Drawing.Size(111, 30);
             this.btnGarment.TabIndex = 8;
@@ -247,7 +250,7 @@
             // button_RighttoLeft
             // 
             this.button_RighttoLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_RighttoLeft.Location = new System.Drawing.Point(509, 357);
+            this.button_RighttoLeft.Location = new System.Drawing.Point(509, 399);
             this.button_RighttoLeft.Name = "button_RighttoLeft";
             this.button_RighttoLeft.Size = new System.Drawing.Size(38, 30);
             this.button_RighttoLeft.TabIndex = 7;
@@ -258,7 +261,7 @@
             // button_LefttoRight
             // 
             this.button_LefttoRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_LefttoRight.Location = new System.Drawing.Point(509, 288);
+            this.button_LefttoRight.Location = new System.Drawing.Point(509, 296);
             this.button_LefttoRight.Name = "button_LefttoRight";
             this.button_LefttoRight.Size = new System.Drawing.Size(38, 30);
             this.button_LefttoRight.TabIndex = 6;
@@ -354,7 +357,7 @@
             // 
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label3.Location = new System.Drawing.Point(9, 205);
+            this.label3.Location = new System.Drawing.Point(10, 194);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(163, 23);
             this.label3.TabIndex = 59;
@@ -363,7 +366,7 @@
             // 
             // labelPatternPanel
             // 
-            this.labelPatternPanel.Location = new System.Drawing.Point(171, 205);
+            this.labelPatternPanel.Location = new System.Drawing.Point(12, 217);
             this.labelPatternPanel.Name = "labelPatternPanel";
             this.labelPatternPanel.Size = new System.Drawing.Size(93, 23);
             this.labelPatternPanel.TabIndex = 60;
@@ -373,14 +376,14 @@
             // 
             this.displayPatternPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPatternPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPatternPanel.Location = new System.Drawing.Point(266, 205);
+            this.displayPatternPanel.Location = new System.Drawing.Point(107, 217);
             this.displayPatternPanel.Name = "displayPatternPanel";
             this.displayPatternPanel.Size = new System.Drawing.Size(52, 23);
             this.displayPatternPanel.TabIndex = 4;
             // 
             // labelTotalParts
             // 
-            this.labelTotalParts.Location = new System.Drawing.Point(320, 205);
+            this.labelTotalParts.Location = new System.Drawing.Point(161, 217);
             this.labelTotalParts.Name = "labelTotalParts";
             this.labelTotalParts.Size = new System.Drawing.Size(82, 23);
             this.labelTotalParts.TabIndex = 62;
@@ -391,7 +394,7 @@
             this.numTotalParts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalParts.IsSupportEditMode = false;
-            this.numTotalParts.Location = new System.Drawing.Point(404, 205);
+            this.numTotalParts.Location = new System.Drawing.Point(245, 217);
             this.numTotalParts.Minimum = new decimal(new int[] {
             0,
             0,
@@ -411,17 +414,6 @@
             0,
             0,
             0});
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label6.Location = new System.Drawing.Point(517, 205);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(163, 23);
-            this.label6.TabIndex = 64;
-            this.label6.Text = "All Parts Detail";
-            this.label6.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // grid_Size
             // 
@@ -503,14 +495,52 @@
             0,
             0});
             // 
+            // chkCombineSubprocess
+            // 
+            this.chkCombineSubprocess.AutoSize = true;
+            this.chkCombineSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCombineSubprocess.Location = new System.Drawing.Point(216, 193);
+            this.chkCombineSubprocess.Name = "chkCombineSubprocess";
+            this.chkCombineSubprocess.Size = new System.Drawing.Size(162, 21);
+            this.chkCombineSubprocess.TabIndex = 113;
+            this.chkCombineSubprocess.Text = "Combine SubProcess";
+            this.chkCombineSubprocess.UseVisualStyleBackColor = true;
+            this.chkCombineSubprocess.CheckedChanged += new System.EventHandler(this.ChkCombineSubprocess_CheckedChanged);
+            // 
+            // chkNoneShellNoCreateAllParts
+            // 
+            this.chkNoneShellNoCreateAllParts.AutoSize = true;
+            this.chkNoneShellNoCreateAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNoneShellNoCreateAllParts.Location = new System.Drawing.Point(733, 194);
+            this.chkNoneShellNoCreateAllParts.Name = "chkNoneShellNoCreateAllParts";
+            this.chkNoneShellNoCreateAllParts.Size = new System.Drawing.Size(216, 21);
+            this.chkNoneShellNoCreateAllParts.TabIndex = 114;
+            this.chkNoneShellNoCreateAllParts.Text = "None Shell No Create AllParts";
+            this.chkNoneShellNoCreateAllParts.UseVisualStyleBackColor = true;
+            this.chkNoneShellNoCreateAllParts.CheckedChanged += new System.EventHandler(this.ChkNoneShellNoCreateAllParts_CheckedChanged);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label5.Location = new System.Drawing.Point(509, 194);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(221, 23);
+            this.label5.TabIndex = 115;
+            this.label5.Text = "All Parts Detail";
+            this.label5.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
             // P10_Generate
             // 
-            this.ClientSize = new System.Drawing.Size(1064, 489);
+            this.ClientSize = new System.Drawing.Size(1064, 528);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.chkNoneShellNoCreateAllParts);
+            this.Controls.Add(this.chkCombineSubprocess);
             this.Controls.Add(this.numTone);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.chkTone);
             this.Controls.Add(this.grid_Size);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.numTotalParts);
             this.Controls.Add(this.labelTotalParts);
             this.Controls.Add(this.displayPatternPanel);
@@ -569,7 +599,6 @@
         private Win.UI.DisplayBox displayPatternPanel;
         private Win.UI.Label labelTotalParts;
         private Win.UI.NumericBox numTotalParts;
-        private Win.UI.Label label6;
         private Win.UI.Grid grid_Size;
         private Win.UI.ContextMenuStrip art_contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem insertIntoRecordToolStripMenuItem;
@@ -581,5 +610,8 @@
         private Win.UI.CheckBox chkTone;
         private Win.UI.Label label1;
         private Win.UI.NumericBox numTone;
+        private Win.UI.CheckBox chkCombineSubprocess;
+        private Win.UI.CheckBox chkNoneShellNoCreateAllParts;
+        private Win.UI.Label label5;
     }
 }

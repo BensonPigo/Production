@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
@@ -20,54 +21,66 @@ namespace Sci.Production.Cutting
     public partial class P10_Generate : Win.Subs.Base
     {
         private DataRow maindatarow;
+        private DataTable allpartTbOri;
+        private DataTable patternTbOri;
         private DataTable allpartTb;
         private DataTable patternTb;
+
         private DataTable artTb;
         private DataTable sizeTb;
         private DataTable garmentTb;
-        private DataTable detailTb;
-        private DataTable alltmpTb;
-        private DataTable bundle_detail_artTb;
-        private DataTable qtyTb;
-        private DataTable detailTb2;
-        private DataTable alltmpTb2;
-        private DataTable bundle_detail_artTb2;
-        private DataTable qtyTb2;
         private DataTable f_codeTb;
         private DataTable garmentarRC;
-        private bool ByToneGenerate;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="P10_Generate"/> class.
-        /// </summary>
-        /// <param name="maindr">Main Data Row</param>
-        /// <param name="table_bundle_Detail">Detail Table</param>
-        /// <param name="bundle_Detail_allpart_Tb">All Temp Table</param>
-        /// <param name="bundle_Detail_Art_Tb">Bundle Detail_Art Table</param>
-        /// <param name="bundle_Detail_Qty_Tb">Bundle Detail_Qty Table</param>
-        public P10_Generate(DataRow maindr, DataTable table_bundle_Detail, DataTable bundle_Detail_allpart_Tb, DataTable bundle_Detail_Art_Tb, DataTable bundle_Detail_Qty_Tb)
+        // 不論新增/編輯，複製一份Load後的資料，用在勾選ComBine/取消ComBine塞回資料用
+        private DataTable bundle_Detail_T;
+        private DataTable bundle_Detail_allpart_T;
+        private DataTable bundle_Detail_Art_T;
+        private DataTable bundle_Detail_Qty_T;
+        private DataTable bundle_Detail_CombineSubprocess_T;
+
+        private DataTable bundle_Detail;
+        private DataTable bundle_Detail_allpart;
+        private DataTable bundle_Detail_Art;
+        private DataTable bundle_Detail_CombineSubprocess;
+        private DataTable bundle_Detail_Qty;
+
+        private bool ByToneGenerate;
+        private bool noneShellchk_ReadOnly;
+
+        /// <inheritdoc/>
+        public P10_Generate(DataRow maindr, DataTable bundle_Detail, DataTable bundle_Detail_allpart, DataTable bundle_Detail_Qty, DataTable bundle_Detail_Art, DataTable bundle_Detail_CombineSubprocess, bool noneShellchk_ReadOnly)
         {
-            this.ByToneGenerate = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
             this.InitializeComponent();
+            this.ByToneGenerate = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
+            this.noneShellchk_ReadOnly = noneShellchk_ReadOnly;
+
             #region 準備要處理的table 和原本的table
-            this.detailTb = table_bundle_Detail.Copy();
-            this.alltmpTb = bundle_Detail_allpart_Tb.Copy();
-            this.bundle_detail_artTb = bundle_Detail_Art_Tb.Copy();
-            this.qtyTb = bundle_Detail_Qty_Tb.Copy();
             this.maindatarow = maindr;
 
-            this.detailTb2 = table_bundle_Detail;
-            this.alltmpTb2 = bundle_Detail_allpart_Tb;
-            this.bundle_detail_artTb2 = bundle_Detail_Art_Tb;
-            this.qtyTb2 = bundle_Detail_Qty_Tb;
+            this.bundle_Detail_T = bundle_Detail.Copy();
+            this.bundle_Detail_allpart_T = bundle_Detail_allpart.Copy();
+            this.bundle_Detail_Qty_T = bundle_Detail_Qty.Copy();
+            this.bundle_Detail_Art_T = bundle_Detail_Art.Copy();
+            this.bundle_Detail_CombineSubprocess_T = bundle_Detail_CombineSubprocess.Copy();
+
+            this.bundle_Detail = bundle_Detail;
+            this.bundle_Detail_allpart = bundle_Detail_allpart;
+            this.bundle_Detail_Qty = bundle_Detail_Qty;
+            this.bundle_Detail_Art = bundle_Detail_Art;
+            this.bundle_Detail_CombineSubprocess = bundle_Detail_CombineSubprocess;
             #endregion
 
             #region 取tabel的結構
-            string cmd_st = "Select 0 as Sel, PatternCode ,Location ,PatternDesc, '' as annotation,parts,IsPair from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
-            DBProxy.Current.Select(null, cmd_st, out this.allpartTb);
-            string pattern_cmd = "Select patternCode,PatternDesc ,Location ,Parts,'' as art,0 AS parts,IsPair,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
+            string pattern_cmd = "Select top 0 PatternCode, PatternDesc ,Location , Parts,art = '', parts = 0, isPair, NoBundleCardAfterSubprocess_String='', PostSewingSubProcess_String='', isMain = cast(0 as bit), CombineSubprocessGroup = cast(0 as tinyint) from Bundle_Detail WITH (NOLOCK)"; // 左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out this.patternTb);
-            string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
+            this.patternTbOri = this.patternTb.Clone();
+
+            string cmd_st = "Select top 0 sel = cast(0 as bit), PatternCode, Location, PatternDesc, annotation = '', parts, isPair, isMain = cast(0 as bit), CombineSubprocessGroup = cast(0 as tinyint) from Bundle_detail_allpart WITH (NOLOCK)";
+            DBProxy.Current.Select(null, cmd_st, out this.allpartTb);
+            this.allpartTbOri = this.allpartTb.Clone();
+
+            string cmd_art = "Select top 0 PatternCode, subprocessid, NoBundleCardAfterSubprocess_String = '', PostSewingSubProcess_String = '' from Bundle_detail_art WITH (NOLOCK)";
             DBProxy.Current.Select(null, cmd_art, out this.artTb);
             #endregion
 
@@ -110,7 +123,7 @@ group by sizeCode",
 
             #region 左上qtyTb
             this.numNoOfBundle.Value = (decimal)maindr["Qty"];
-            if (!MyUtility.Check.Empty(this.maindatarow["cutref"]) && this.qtyTb.Rows.Count == 0)
+            if (!MyUtility.Check.Empty(this.maindatarow["cutref"]) && this.bundle_Detail_Qty_T.Rows.Count == 0)
             {
                 int j = 1;
                 foreach (DataRow dr in this.sizeTb.Rows)
@@ -120,18 +133,18 @@ group by sizeCode",
                         break;
                     }
 
-                    DataRow row = this.qtyTb.NewRow();
+                    DataRow row = this.bundle_Detail_Qty_T.NewRow();
                     row["No"] = j;
                     row["SizeCode"] = dr["SizeCode"];
                     row["Qty"] = dr["Qty"];
-                    this.qtyTb.Rows.Add(row);
+                    this.bundle_Detail_Qty_T.Rows.Add(row);
                     j++;
                 }
             }
             else
             {
                 int j = 1;
-                foreach (DataRow dr in this.qtyTb.Rows)
+                foreach (DataRow dr in this.bundle_Detail_Qty_T.Rows)
                 {
                     dr["No"] = j;
                     j++;
@@ -141,9 +154,9 @@ group by sizeCode",
 
             #region 準備GarmentList & ArticleGroup
             string sizes = string.Empty;
-            if (this.qtyTb != null)
+            if (this.bundle_Detail_Qty_T != null)
             {
-                var sizeList = this.qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                var sizeList = this.bundle_Detail_Qty_T.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
                 sizes = "'" + string.Join("','", sizeList) + "'";
             }
 
@@ -176,35 +189,45 @@ order by ArticleGroup", patternukey);
             // 計算左上TotalQty
             this.CalsumQty();
 
-            // if (detailTb.Rows.Coun!= 0 && maindatarow.RowState!=DataRowState.Added)
-            int detailTbCnt = this.detailTb.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count();
-            if (detailTbCnt > 0)
+            int detailTbCnt = this.bundle_Detail_T.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count();
+
+            // patternTbOri,allpartTbOri 從 Garment 準備資料
+            this.ProcessOriDatas();
+
+            if (detailTbCnt > 0 || this.bundle_Detail_CombineSubprocess.Rows.Count > 0)
             {
                 this.Exist_Table_Query();
             }
             else
             {
-                this.Noexist_Table_Query();
+                this.chkTone.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select AutoGenerateByTone from System"));
+                if (this.chkTone.Checked)
+                {
+                    this.numTone.Value = 1;
+                }
+
+                this.patternTb = this.patternTbOri.Copy();
+                this.allpartTb = this.allpartTbOri.Copy();
             }
 
             this.Grid_setup();
-            this.CalAllPart();
-            this.Caltotalpart();
-
+            this.CalculateParts();
             this.displayPatternPanel.Text = maindr["PatternPanel"].ToString();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.chkCombineSubprocess.Checked = this.bundle_Detail_CombineSubprocess.Rows.Count > 0;
+            this.chkNoneShellNoCreateAllParts.ReadOnly = this.noneShellchk_ReadOnly;
         }
 
         /// <summary>
         /// 第一次產生時需全部重新撈值
         /// </summary>
-        public void Noexist_Table_Query()
+        private void ProcessOriDatas()
         {
-            this.chkTone.Checked = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select AutoGenerateByTone from System"));
-            if (this.chkTone.Checked)
-            {
-                this.numTone.Value = 1;
-            }
-
             // 找出相同PatternPanel 的subprocessid
             // allpart 數量
             int npart = 0;
@@ -215,19 +238,24 @@ order by ArticleGroup", patternukey);
                 w.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
             }
 
+            this.garmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
+            this.garmentTb.Columns.Add("IsMain", typeof(bool));
             DataRow[] garmentar = this.garmentTb.Select(w.ToString());
+            Prgs.SetCombineSubprocessGroup_IsMain(garmentar);
+
             foreach (DataRow dr in garmentar)
             {
                 // 若無ANNOTATion直接寫入All Parts
                 if (MyUtility.Check.Empty(dr["annotation"]))
                 {
-                    DataRow ndr = this.allpartTb.NewRow();
+                    DataRow ndr = this.allpartTbOri.NewRow();
                     ndr["PatternCode"] = dr["PatternCode"];
                     ndr["PatternDesc"] = dr["PatternDesc"];
                     ndr["Location"] = dr["Location"];
                     ndr["parts"] = MyUtility.Convert.GetInt(dr["alone"]) + (MyUtility.Convert.GetInt(dr["DV"]) * 2) + (MyUtility.Convert.GetInt(dr["Pair"]) * 2);
                     ndr["isPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
-                    this.allpartTb.Rows.Add(ndr);
+                    ndr["CombineSubprocessGroup"] = 0;
+                    this.allpartTbOri.Rows.Add(ndr);
                     npart = npart + MyUtility.Convert.GetInt(dr["alone"]) + (MyUtility.Convert.GetInt(dr["DV"]) * 2) + (MyUtility.Convert.GetInt(dr["Pair"]) * 2);
                 }
                 else
@@ -250,66 +278,73 @@ order by ArticleGroup", patternukey);
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
                                 int count = (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
+                                bool ismain = MyUtility.Convert.GetBool(dr["isMain"]);
                                 for (int i = 0; i < count; i++)
                                 {
-                                    DataRow ndr2 = this.patternTb.NewRow();
+                                    DataRow ndr2 = this.patternTbOri.NewRow();
                                     ndr2["PatternCode"] = dr["PatternCode"];
                                     ndr2["PatternDesc"] = dr["PatternDesc"];
                                     ndr2["Location"] = dr["Location"];
                                     ndr2["Parts"] = 1;
                                     ndr2["art"] = art;
-                                    ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
+                                    ndr2["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                                    ndr2["isMain"] = ismain && i == 0;
+                                    ndr2["CombineSubprocessGroup"] = dr["CombineSubprocessGroup"];
                                     ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
-                                    this.patternTb.Rows.Add(ndr2);
+                                    this.patternTbOri.Rows.Add(ndr2);
                                 }
                             }
                             else
                             {
-                                DataRow ndr2 = this.patternTb.NewRow();
+                                DataRow ndr2 = this.patternTbOri.NewRow();
                                 ndr2["PatternCode"] = dr["PatternCode"];
                                 ndr2["PatternDesc"] = dr["PatternDesc"];
                                 ndr2["Location"] = dr["Location"];
                                 ndr2["art"] = art;
                                 ndr2["Parts"] = dr["alone"];
-                                ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
+                                ndr2["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                                ndr2["isMain"] = dr["isMain"];
+                                ndr2["CombineSubprocessGroup"] = dr["CombineSubprocessGroup"];
                                 ndr2["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
-                                this.patternTb.Rows.Add(ndr2);
+                                this.patternTbOri.Rows.Add(ndr2);
                             }
                         }
                         else
                         {
-                            DataRow ndr = this.allpartTb.NewRow();
+                            DataRow ndr = this.allpartTbOri.NewRow();
                             ndr["PatternCode"] = dr["PatternCode"];
                             ndr["PatternDesc"] = dr["PatternDesc"];
                             ndr["Annotation"] = dr["Annotation"];
                             ndr["Location"] = dr["Location"];
                             ndr["parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                             npart = npart + Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
-                            ndr["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
-                            this.allpartTb.Rows.Add(ndr);
+                            ndr["isPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
+                            this.allpartTbOri.Rows.Add(ndr);
                         }
                     }
                     else
                     {
-                        DataRow ndr = this.allpartTb.NewRow();
+                        DataRow ndr = this.allpartTbOri.NewRow();
                         ndr["PatternCode"] = dr["PatternCode"];
                         ndr["PatternDesc"] = dr["PatternDesc"];
                         ndr["Annotation"] = dr["Annotation"];
                         ndr["Location"] = dr["Location"];
                         ndr["parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                         npart = npart + Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
-                        ndr["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
-                        this.allpartTb.Rows.Add(ndr);
+                        ndr["isPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
+                        ndr["CombineSubprocessGroup"] = 0;
+                        this.allpartTbOri.Rows.Add(ndr);
                     }
                     #endregion
                 }
             }
 
-            DataRow pdr = this.patternTb.NewRow(); // 預設要有ALLPARTS
+            DataRow pdr = this.patternTbOri.NewRow(); // 預設要有ALLPARTS
             pdr["PatternCode"] = "ALLPARTS";
             pdr["PatternDesc"] = "All Parts";
             pdr["parts"] = npart;
-            this.patternTb.Rows.Add(pdr);
+            pdr["CombineSubprocessGroup"] = 0;
+            this.patternTbOri.Rows.Add(pdr);
 
             this.garmentarRC = null;
             this.garmentarRC = this.garmentTb.Clone();
@@ -322,16 +357,16 @@ order by ArticleGroup", patternukey);
         /// <summary>
         /// 當bundle_allPart, bundle_art 存在時的對應資料
         /// </summary>
-        public void Exist_Table_Query()
+        private void Exist_Table_Query()
         {
             this.chkTone.Checked = this.ByToneGenerate;
 
             // 用來當判斷條件的DataTable,避免DetailTB dataRow被刪除後無法用index撈出資料
-            DataTable detailAccept = this.detailTb.Copy();
+            DataTable detailAccept = this.bundle_Detail_T.Copy();
             detailAccept.AcceptChanges();
             string bundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
             int seq = 0;
-            this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
+            this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
 
             // 將Bundle_Detial_Art distinct PatternCode,
             string sqlCmd = $@"
@@ -342,15 +377,15 @@ group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Locatio
 
 union all
 select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq=min(tmpSeq)
-from #tmp where BundleGroup='{bundleGroup}' and IsPair = 1
+from #tmp where BundleGroup='{bundleGroup}' and isPair = 1
 group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 
-select *
+select *,isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint) 
 from #tmp2
 order by tmpSeq,iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
 
 drop table #tmp,#tmp2";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq", sqlCmd, out DataTable tmp);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.bundle_Detail_T, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq", sqlCmd, out DataTable tmp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -358,9 +393,13 @@ drop table #tmp,#tmp2";
             }
 
             // 需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
-            MyUtility.Tool.ProcessWithDatatable(this.detailTb, "PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", "Select distinct PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String from #tmp WHERE PatternCode<>'ALLPARTS'", out this.artTb);
+            result = MyUtility.Tool.ProcessWithDatatable(this.bundle_Detail_T, "PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String", "Select distinct PatternCode,SubProcessid,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,CombineSubprocessGroup = cast(0 as tinyint)  from #tmp WHERE PatternCode <> 'ALLPARTS'", out this.artTb);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
-            // foreach (DataRow dr in tmp.Select("BundleNO<>''"))
             foreach (DataRow dr in tmp.Rows)
             {
                 DataRow ndr = this.patternTb.NewRow();
@@ -375,10 +414,17 @@ drop table #tmp,#tmp2";
                 this.patternTb.Rows.Add(ndr);
             }
 
-            MyUtility.Tool.ProcessWithDatatable(this.alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation,isPair,Location", "Select distinct sel,PatternCode,PatternDesc,parts,annotation,isPair,Location from #tmp", out this.allpartTb);
+            #region 右下區塊資料
+            result = MyUtility.Tool.ProcessWithDatatable(this.bundle_Detail_allpart_T, string.Empty, "Select distinct sel = cast(sel as bit), PatternCode, PatternDesc, parts, annotation, isPair, Location, isMain = cast(0 as bit), CombineSubprocessGroup = cast(0 as tinyint) from #tmp", out this.allpartTb);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             foreach (DataRow dr in this.allpartTb.Rows)
             {
-                DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", dr["patternCode"]));
+                DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", dr["PatternCode"]));
                 if (adr.Length > 0)
                 {
                     dr["annotation"] = adr[0]["annotation"];
@@ -400,7 +446,7 @@ drop table #tmp,#tmp2";
                     bool f = false;
                     foreach (DataRow drp in this.patternTb.Rows)
                     {
-                        if (dr["patternCode"].ToString() == drp["patternCode"].ToString())
+                        if (dr["PatternCode"].ToString() == drp["PatternCode"].ToString())
                         {
                             f = true;
                         }
@@ -412,10 +458,12 @@ drop table #tmp,#tmp2";
                         ndr["PatternCode"] = dr["PatternCode"];
                         ndr["PatternDesc"] = dr["PatternDesc"];
                         ndr["parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
+                        ndr["CombineSubprocessGroup"] = 0;
                         this.allpartTb.Rows.Add(ndr);
                     }
                 }
             }
+            #endregion
 
             StringBuilder w2 = new StringBuilder();
             w2.Append("1 = 0");
@@ -424,20 +472,10 @@ drop table #tmp,#tmp2";
                 w2.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
             }
 
-            if (this.garmentTb.Rows.Count > 0)
-            {
-                this.garmentarRC = this.garmentTb.Select(w2.ToString()).CopyToDataTable();
-            }
-            else
-            {
-                this.garmentarRC = this.garmentTb.Clone();
-            }
+            this.garmentarRC = this.garmentTb.Select(w2.ToString()).TryCopyToDataTable(this.garmentTb);
         }
 
-        /// <summary>
-        /// Grid Setup
-        /// </summary>
-        public void Grid_setup()
+        private void Grid_setup()
         {
             DataGridViewGeneratorNumericColumnSettings noCell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings qtyCell = new DataGridViewGeneratorNumericColumnSettings();
@@ -510,8 +548,8 @@ drop table #tmp,#tmp2";
                     dr["art"] = art;
                     dr["parts"] = 1;
                     dr.EndEdit();
-                    this.CalAllPart();
-                    this.Caltotalpart();
+                    this.SynchronizeMain(0, "PatternCode");
+                    this.CalculateParts();
                     this.CheckNotMain(dr);
                 }
             };
@@ -556,6 +594,7 @@ drop table #tmp,#tmp2";
                 }
 
                 dr.EndEdit();
+                this.SynchronizeMain(0, "PatternCode");
                 this.CheckNotMain(dr);
             };
 
@@ -564,6 +603,7 @@ drop table #tmp,#tmp2";
                 DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
                 dr["PatternDesc"] = e.FormattedValue;
                 dr.EndEdit();
+                this.SynchronizeMain(0, "patternDesc");
                 this.CheckNotMain(dr);
             };
 
@@ -594,11 +634,6 @@ drop table #tmp,#tmp2";
                     string[] arts = MyUtility.Convert.GetString(dr["art"]).Split('+');
                     string[] pssps = MyUtility.Convert.GetString(dr["PostSewingSubProcess_String"]).Split('+');
 
-                    // string nbcass = MyUtility.Convert.GetString(dr["NoBundleCardAfterSubprocess_String"]);
-                    // if (!arts.Contains(nbcass))
-                    // {
-                    //    dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
-                    // }
                     List<string> recordPS = new List<string>();
                     foreach (var item in arts)
                     {
@@ -716,8 +751,7 @@ drop table #tmp,#tmp2";
                 string newvalue = e.FormattedValue.ToString();
                 dr["Parts"] = newvalue;
                 dr.EndEdit();
-                this.CalAllPart();
-                this.Caltotalpart();
+                this.CalculateParts();
             };
             isPair.CellValidating += (s, e) =>
             {
@@ -725,13 +759,13 @@ drop table #tmp,#tmp2";
                 if (MyUtility.Convert.GetString(dr["PatternCode"]).ToUpper() != "ALLPARTS")
                 {
                     bool ispair = MyUtility.Convert.GetBool(e.FormattedValue);
-                    dr["IsPair"] = ispair;
+                    dr["isPair"] = ispair;
                     dr.EndEdit();
                     if (this.patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'").Count() > 0)
                     {
                         foreach (DataRow item in this.patternTb.Select($@"PatternCode = '{dr["PatternCode"]}'"))
                         {
-                            item["IsPair"] = ispair;
+                            item["isPair"] = ispair;
                         }
                     }
                 }
@@ -764,8 +798,8 @@ drop table #tmp,#tmp2";
                     dr["Annotation"] = sele.GetSelecteds()[0]["Annotation"].ToString();
                     dr["parts"] = 1;
                     dr.EndEdit();
-                    this.CalAllPart();
-                    this.Caltotalpart();
+                    this.SynchronizeMain(1, "PatternCode");
+                    this.CalculateParts();
                 }
             };
 
@@ -786,7 +820,7 @@ drop table #tmp,#tmp2";
                 else
                 {
                     MyUtility.Msg.WarningBox(string.Format("<CutPart: {0} >  can't found!", e.FormattedValue));
-                    dr["Sel"] = 0;
+                    dr["sel"] = 0;
                     dr["PatternCode"] = string.Empty;
                     dr["PatternDesc"] = string.Empty;
                     dr["Annotation"] = string.Empty;
@@ -794,8 +828,8 @@ drop table #tmp,#tmp2";
                 }
 
                 dr.EndEdit();
-                this.CalAllPart();
-                this.Caltotalpart();
+                this.SynchronizeMain(1, "PatternCode");
+                this.CalculateParts();
             };
 
             partsCell2.CellValidating += (s, e) =>
@@ -805,14 +839,25 @@ drop table #tmp,#tmp2";
                 string newvalue = e.FormattedValue.ToString();
                 dr["Parts"] = newvalue;
                 dr.EndEdit();
-                this.CalAllPart();
-                this.Caltotalpart();
+                this.CalculateParts();
             };
 
+            DataGridViewGeneratorTextColumnSettings patternDesc2 = new DataGridViewGeneratorTextColumnSettings
+            {
+                CharacterCasing = CharacterCasing.Normal,
+            };
+            patternDesc2.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid_allpart.GetDataRow(e.RowIndex);
+                dr["PatternDesc"] = e.FormattedValue;
+                dr.EndEdit();
+                this.SynchronizeMain(1, "PatternDesc");
+                this.CalculateParts();
+            };
             #endregion
 
             // 左上
-            this.listControlBindingSource1.DataSource = this.qtyTb;
+            this.listControlBindingSource1.DataSource = this.bundle_Detail_Qty_T;
             this.grid_qty.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid_qty)
             .Numeric("No", header: "No", width: Widths.AnsiChars(4), integer_places: 5, settings: noCell)
@@ -830,7 +875,7 @@ drop table #tmp,#tmp2";
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1)
-            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
+            .CheckBox("isPair", header: "isPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
             .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: postSewingSubProcess_String)
             .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: noBundleCardAfterSubprocess_String)
             ;
@@ -843,14 +888,14 @@ drop table #tmp,#tmp2";
             this.grid_allpart.DataSource = this.allpartTb;
             this.grid_allpart.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.Helper.Controls.Grid.Generator(this.grid_allpart)
-            .CheckBox("Sel", header: "Chk", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+            .CheckBox("sel", header: "Chk", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell2)
-            .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13))
+            .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13), settings: patternDesc2)
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell2)
-            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
-            this.grid_allpart.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            .CheckBox("isPair", header: "isPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
+            this.grid_allpart.Columns["sel"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid_allpart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid_allpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid_allpart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
@@ -875,7 +920,7 @@ drop table #tmp,#tmp2";
         private void QtyTb_serial()
         {
             int serial = 1;
-            foreach (DataRow dr in this.qtyTb.Rows)
+            foreach (DataRow dr in this.bundle_Detail_Qty_T.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
@@ -888,12 +933,12 @@ drop table #tmp,#tmp2";
         /// <summary>
         /// 分配Qty
         /// </summary>
-        public void CalQty()
+        private void CalQty()
         {
             foreach (DataRow dr in this.sizeTb.Rows)
             {
                 double totalCutQty = Convert.ToDouble(dr["Qty"]);
-                DataRow[] qtyarry = this.qtyTb.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), string.Empty);
+                DataRow[] qtyarry = this.bundle_Detail_Qty_T.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), string.Empty);
                 double rowcount = qtyarry.Length;
                 Prgs.AverageNumeric(qtyarry, "Qty", (int)totalCutQty, true);
             }
@@ -904,17 +949,17 @@ drop table #tmp,#tmp2";
         /// <summary>
         /// Cal sum Qty
         /// </summary>
-        public void CalsumQty()
+        private void CalsumQty()
         {
-            if (this.qtyTb.Rows.Count > 0)
+            if (this.bundle_Detail_Qty_T.Rows.Count > 0)
             {
-                this.displayTotalQty.Value = Convert.ToInt32(this.qtyTb.Compute("sum(Qty)", string.Empty));
+                this.displayTotalQty.Value = Convert.ToInt32(this.bundle_Detail_Qty_T.Compute("sum(Qty)", string.Empty));
             }
         }
 
         private void Button_Qty_Click(object sender, EventArgs e)
         {
-            if (this.qtyTb.Rows.Count != 0)
+            if (this.bundle_Detail_Qty_T.Rows.Count != 0)
             {
                 DataRow selectSizeDr = ((DataRowView)this.grid_Size.GetSelecteds(SelectedSort.Index)[0]).Row;
                 DataRow selectQtyeDr = ((DataRowView)this.grid_qty.GetSelecteds(SelectedSort.Index)[0]).Row;
@@ -970,7 +1015,7 @@ drop table #tmp,#tmp2";
             ndr["isPair"] = selectartDr["isPair"];
 
             // Annotation
-            DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["patternCode"]));
+            DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["PatternCode"]));
             if (adr.Length > 0)
             {
                 ndr["annotation"] = adr[0]["annotation"];
@@ -1006,8 +1051,7 @@ drop table #tmp,#tmp2";
                 }
             }
 
-            this.CalAllPart();
-            this.Caltotalpart();
+            this.CalculateParts();
         }
 
         private void Button_RighttoLeft_Click(object sender, EventArgs e)
@@ -1015,31 +1059,23 @@ drop table #tmp,#tmp2";
             this.grid_allpart.ValidateControl();
             this.grid_art.ValidateControl();
             this.grid_qty.ValidateControl();
-            if (this.patternTb.Rows.Count == 0)
+            if (this.patternTb.Rows.Count == 0 || this.grid_allpart.RowCount == 0)
             {
                 return;
             }
 
-            if (this.grid_allpart.RowCount == 0)
+            string filter = "sel = 1";
+            if (this.chkCombineSubprocess.Checked)
             {
-                return;
+                filter += " and (IsMain <> 1 or CombineSubprocessGroup = 0)";
             }
 
-            DataRow[] checkdr = this.allpartTb.Select("sel=1");
+            DataRow[] checkdr = this.allpartTb.Select(filter);
             #region 確認有勾選
             if (checkdr.Length > 0)
             {
                 foreach (DataRow chdr in checkdr)
                 {
-                    string art = string.Empty;
-                    string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation
-                    if (ann.Length > 0)
-                    {
-                        #region 算Subprocess
-                        art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out bool lallpart);
-                        #endregion
-                    }
-
                     bool isPair = MyUtility.Convert.GetBool(chdr["isPair"]);
                     if (this.patternTb.Select($@"PatternCode = '{chdr["PatternCode"]}'").Count() > 0)
                     {
@@ -1054,51 +1090,48 @@ drop table #tmp,#tmp2";
                     ndr2["Parts"] = chdr["Parts"];
                     ndr2["art"] = "EMB";
                     ndr2["isPair"] = isPair;
-
+                    ndr2["isMain"] = true;
+                    int max = this.patternTb.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["CombineSubprocessGroup"]));
+                    ndr2["CombineSubprocessGroup"] = max + 1;
                     this.patternTb.Rows.Add(ndr2);
-                    chdr.Delete(); // 刪除
+                    if (this.chkCombineSubprocess.Checked)
+                    {
+                        chdr["CombineSubprocessGroup"] = max + 1;
+                        chdr["isMain"] = true;
+                    }
+                    else
+                    {
+                        chdr.Delete();
+                    }
                 }
             }
-            else if (checkdr.Length == 0)
-            {
-                MyUtility.Msg.WarningBox("Please select data !!");
-            }
             #endregion
-            this.CalAllPart();
-            this.Caltotalpart();
-        }
-
-        /// <summary>
-        /// 計算total part
-        /// </summary>
-        public void Caltotalpart()
-        {
-            if (this.patternTb.Rows.Count > 0)
-            {
-                this.numTotalParts.Value = Convert.ToDecimal(this.patternTb.Compute("Sum(Parts)", "Parts IS NOT NULL"));
-            }
+            this.CalculateParts();
         }
 
         /// <summary>
         /// 計算all part
         /// </summary>
-        public void CalAllPart()
+        private void CalculateParts()
         {
-            int allpart = 0;
-            if (this.allpartTb.AsEnumerable().Count(row => row.RowState != DataRowState.Deleted) > 0)
+            string filter_ALLPARTS = $"CombineSubprocessGroup = 0";
+            DataRow[] allpartdr = this.patternTb.Select($"PatternCode='ALLPARTS' and {filter_ALLPARTS}");
+            int allpart = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", filter_ALLPARTS));
+            if (allpartdr.Length > 0)
             {
-                allpart = this.allpartTb.AsEnumerable()
-                   .Where(row => row.RowState != DataRowState.Deleted)
-                   .Sum(row => row["Parts"] == null || row["Parts"] == DBNull.Value ? 0 : Convert.ToInt32(row["Parts"]));
+                allpartdr[0]["Parts"] = allpart;
             }
 
-            DataRow[] dr = this.patternTb.Select("PatternCode='ALLPARTS'");
-            if (dr.Length > 0)
+            if (this.chkCombineSubprocess.Checked)
             {
-                dr[0]["Parts"] = allpart;
+                foreach (DataRow dr in this.patternTb.Rows)
+                {
+                    string fg = $"CombineSubprocessGroup = {dr["CombineSubprocessGroup"]}";
+                    dr["Parts"] = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", fg));
+                }
             }
 
-            if (dr.Length == 0 && allpart > 0)
+            if (allpartdr.Length == 0 && allpart > 0)
             {
                 DataRow drAll = this.patternTb.NewRow();
                 drAll["PatternCode"] = "ALLPARTS";
@@ -1107,12 +1140,71 @@ drop table #tmp,#tmp2";
                 drAll["parts"] = allpart;
                 this.patternTb.Rows.Add(drAll);
             }
+
+            this.numTotalParts.Value = MyUtility.Convert.GetInt(this.patternTb.Compute("Sum(Parts)", string.Empty));
+        }
+
+        private void SynchronizeMain(int type, string columnName)
+        {
+            // tpye = 0 左同步到右， type = 1 右同步到左
+            DataRow dr = this.grid_art.CurrentDataRow;
+            if (!this.chkCombineSubprocess.Checked || MyUtility.Convert.GetString(dr["PatternCode"]) == "ALLPARTS")
+            {
+                return;
+            }
+
+            try
+            {
+                if (type == 0)
+                {
+                    DataRow[] adrs = this.allpartTb.Select($"CombineSubprocessGroup = {dr["CombineSubprocessGroup"]} and isMain = 1");
+                    if (adrs.Length == 0)
+                    {
+                        return;
+                    }
+
+                    DataRow adr = adrs[0];
+                    adr["PatternDesc"] = dr["PatternDesc"];
+                    if (columnName == "PatternCode")
+                    {
+                        adr["PatternCode"] = dr["PatternCode"];
+                        adr["Parts"] = dr["Parts"];
+                        adr["Location"] = dr["Location"];
+                        adr["isPair"] = dr["isPair"];
+                        dr["isPair"] = false;
+                    }
+                }
+
+                if (type == 1 && MyUtility.Convert.GetBool(this.grid_allpart.CurrentDataRow["isMain"]))
+                {
+                    DataRow adr = this.grid_allpart.CurrentDataRow;
+                    dr["PatternDesc"] = adr["PatternDesc"];
+                    dr["PatternCode"] = adr["PatternCode"];
+                    dr["Location"] = adr["Location"];
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
         }
 
         private void InsertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.patternTb.Rows.Add();
             this.grid_art.ValidateControl();
+            DataRow ndr = this.patternTb.NewRow();
+            int max = this.patternTb.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["CombineSubprocessGroup"]));
+            ndr["CombineSubprocessGroup"] = max + 1;
+            ndr["isMain"] = true;
+            this.patternTb.Rows.Add(ndr);
+
+            if (this.chkCombineSubprocess.Checked)
+            {
+                DataRow adr = this.allpartTb.NewRow();
+                adr["CombineSubprocessGroup"] = max + 1;
+                adr["isMain"] = true;
+                this.allpartTb.Rows.Add(adr);
+            }
         }
 
         private void NumNoOfBundle_Validating(object sender, CancelEventArgs e)
@@ -1124,13 +1216,13 @@ drop table #tmp,#tmp2";
                 return;
             }
 
-            if (this.qtyTb.Rows.Count == 0)
+            if (this.bundle_Detail_Qty_T.Rows.Count == 0)
             {
                 for (int i = 0; i < newvalue; i++)
                 {
-                    DataRow ndr = this.qtyTb.NewRow();
+                    DataRow ndr = this.bundle_Detail_Qty_T.NewRow();
                     ndr["Qty"] = 0;
-                    this.qtyTb.Rows.Add(ndr);
+                    this.bundle_Detail_Qty_T.Rows.Add(ndr);
                 }
 
                 this.QtyTb_serial();
@@ -1144,7 +1236,7 @@ drop table #tmp,#tmp2";
 
                     if (!MyUtility.Check.Empty(newvalue))
                     {
-                        this.qtyTb.Clear();
+                        this.bundle_Detail_Qty_T.Clear();
                     }
 
                     int count = 0;
@@ -1152,9 +1244,9 @@ drop table #tmp,#tmp2";
                     {
                         if (count < newvalue)
                         {
-                            DataRow ndr = this.qtyTb.NewRow();
+                            DataRow ndr = this.bundle_Detail_Qty_T.NewRow();
                             ndr["SizeCode"] = dr["SizeCode"];
-                            this.qtyTb.Rows.Add(ndr);
+                            this.bundle_Detail_Qty_T.Rows.Add(ndr);
                             count++;
                         }
                     }
@@ -1164,9 +1256,9 @@ drop table #tmp,#tmp2";
                     {
                         for (int i = 0; i < newvalue - count; i++)
                         {
-                            DataRow ndr = this.qtyTb.NewRow();
+                            DataRow ndr = this.bundle_Detail_Qty_T.NewRow();
                             ndr["SizeCode"] = sizeCode;
-                            this.qtyTb.Rows.Add(ndr);
+                            this.bundle_Detail_Qty_T.Rows.Add(ndr);
                         }
                     }
 
@@ -1175,20 +1267,20 @@ drop table #tmp,#tmp2";
                 }
                 else
                 {
-                    DataTable qtytmp = this.qtyTb.Copy();
-                    this.qtyTb.Clear();
+                    DataTable qtytmp = this.bundle_Detail_Qty_T.Copy();
+                    this.bundle_Detail_Qty_T.Clear();
                     int count = 0;
                     foreach (DataRow dr in qtytmp.Rows)
                     {
                         if (count < newvalue)
                         {
-                            DataRow ndr = this.qtyTb.NewRow();
+                            DataRow ndr = this.bundle_Detail_Qty_T.NewRow();
                             ndr[0] = dr[0];
                             ndr[1] = dr[1];
                             ndr[2] = dr[2];
                             ndr[3] = dr[3];
                             ndr[4] = dr[4];
-                            this.qtyTb.Rows.Add(ndr);
+                            this.bundle_Detail_Qty_T.Rows.Add(ndr);
                             count++;
                         }
                     }
@@ -1198,9 +1290,9 @@ drop table #tmp,#tmp2";
                     {
                         for (int i = 0; i < newvalue - (int)this.numNoOfBundle.OldValue; i++)
                         {
-                            DataRow ndr = this.qtyTb.NewRow();
+                            DataRow ndr = this.bundle_Detail_Qty_T.NewRow();
                             ndr["Qty"] = 0;
-                            this.qtyTb.Rows.Add(ndr);
+                            this.bundle_Detail_Qty_T.Rows.Add(ndr);
                         }
                     }
 
@@ -1223,14 +1315,21 @@ drop table #tmp,#tmp2";
                 return;
             }
 
+            if (this.chkCombineSubprocess.Checked)
+            {
+                this.allpartTb.Select($"CombineSubprocessGroup = {this.grid_art.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
+            }
+
             selectartDr.Delete();
-            this.Caltotalpart();
+            this.CalculateParts();
         }
 
         private void Allpart_insert_Click(object sender, EventArgs e)
         {
-            this.allpartTb.NewRow();
-            this.allpartTb.Rows.Add();
+            DataRow ndr = this.allpartTb.NewRow();
+            ndr["CombineSubprocessGroup"] = this.chkCombineSubprocess.Checked ? this.grid_art.CurrentDataRow["CombineSubprocessGroup"] : 0;
+            ndr["isMain"] = false;
+            this.allpartTb.Rows.Add(ndr);
         }
 
         private void Allpart_delete_Click(object sender, EventArgs e)
@@ -1240,21 +1339,29 @@ drop table #tmp,#tmp2";
                 return;
             }
 
-            DataRow selectartDr = ((DataRowView)this.grid_allpart.GetSelecteds(SelectedSort.Index)[0]).Row;
-            selectartDr.Delete();
-            this.CalAllPart();
-            this.Caltotalpart();
+            if (this.chkCombineSubprocess.Checked && MyUtility.Convert.GetBool(this.grid_allpart.CurrentDataRow["isMain"]))
+            {
+                // 刪除右下資料,若點選是 isMain 那筆,則這組全部刪除
+                this.allpartTb.Select($"CombineSubprocessGroup = {this.grid_art.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
+                this.grid_art.CurrentDataRow.Delete();
+            }
+            else
+            {
+                this.grid_allpart.CurrentDataRow.Delete();
+            }
+
+            this.CalculateParts();
         }
 
         private void OK_button_Click(object sender, EventArgs e)
         {
+            this.grid_art.ValidateControl();
             if (this.numTone.Value > this.numNoOfBundle.Value)
             {
                 MyUtility.Msg.WarningBox("Generate by Tone can not greater than No of Bunde");
                 return;
             }
 
-            DataTable at = this.artTb.Copy();
             #region 判斷Pattern的Artwork  不可為空
             DataRow[] findr = this.patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", string.Empty);
             if (findr.Length > 0)
@@ -1271,7 +1378,7 @@ drop table #tmp,#tmp2";
                 return;
             }
             #endregion
-            #region 檢查 如果IsPair =✔, 加總相同的Cut Part的Parts, 必需>0且可以被2整除
+            #region 檢查 如果isPair =✔, 加總相同的Cut Part的Parts, 必需>0且可以被2整除
             var samePairCt = this.patternTb.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["isPair"]))
                 .GroupBy(g => new { CutPart = g["PatternCode"] })
                 .Select(s => new { s.Key.CutPart, Parts = s.Sum(i => MyUtility.Convert.GetDecimal(i["Parts"])) }).ToList();
@@ -1279,12 +1386,11 @@ drop table #tmp,#tmp2";
             {
                 var mp = samePairCt.Where(w => w.Parts % 2 != 0).ToList();
                 string msg = @"The following bundle is pair, but parts is not pair, please check Cut Part parts";
-                DataTable dt = this.ToDataTable(mp);
+                DataTable dt = ListToDataTable.ToDataTable(mp);
                 MyUtility.Msg.ShowMsgGrid(dt, msg: msg, caption: "Warning");
                 return;
             }
             #endregion
-
             #region 判斷AllPartDetail的CutPart  不可為空
             bool isEmptyAllPartDetailCutPart = this.allpartTb.AsEnumerable()
                                                 .Where(s =>
@@ -1305,12 +1411,33 @@ drop table #tmp,#tmp2";
             }
             #endregion
 
-            DataTable bundle_detail_tmp = this.detailTb.Clone();
+            if (this.chkCombineSubprocess.Checked)
+            {
+                string styleUkey = MyUtility.GetValue.Lookup("Styleukey", this.maindatarow["poid"].ToString(), "Orders", "ID");
+                foreach (DataRow drs in this.allpartTb.Select("CombineSubprocessGroup > 0"))
+                {
+                    DataRow newFtyCombineRow = P10.FtyStyleInnovationCombineSubprocess.NewRow();
+                    newFtyCombineRow["MDivisionID"] = Sci.Env.User.Keyword;
+                    newFtyCombineRow["StyleUkey"] = styleUkey;
+                    newFtyCombineRow["FabricCombo"] = this.maindatarow["PatternPanel"];
+                    newFtyCombineRow["Article"] = this.maindatarow["Article"];
+                    newFtyCombineRow["PatternCode"] = drs["PatternCode"];
+                    newFtyCombineRow["PatternDesc"] = drs["PatternDesc"];
+                    newFtyCombineRow["Location"] = drs["Location"];
+                    newFtyCombineRow["Parts"] = drs["Parts"];
+                    newFtyCombineRow["IsPair"] = drs["IsPair"];
+                    newFtyCombineRow["IsMain"] = drs["IsMain"];
+                    newFtyCombineRow["CombineSubprocessGroup"] = drs["CombineSubprocessGroup"];
+                    P10.FtyStyleInnovationCombineSubprocess.Rows.Add(newFtyCombineRow);
+                }
+            }
+
+            DataTable bundle_detail_tmp = this.bundle_Detail_T.Clone();
             int bundlegroup = Convert.ToInt32(this.maindatarow["startno"]);
             int printGroup = 1;
             int ukey = 1;
             this.grid_qty.ValidateControl();
-            foreach (DataRow dr in this.qtyTb.Rows)
+            foreach (DataRow dr in this.bundle_Detail_Qty_T.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
@@ -1329,12 +1456,13 @@ drop table #tmp,#tmp2";
                         DataRow nDetail = bundle_detail_tmp.NewRow();
                         nDetail["PatternCode"] = dr2["PatternCode"];
                         nDetail["PatternDesc"] = dr2["PatternDesc"];
-                        nDetail["Location"] = dr2["Location"];
+                        nDetail["Location"] = MyUtility.Convert.GetString(dr2["Location"]);
                         nDetail["Parts"] = dr2["Parts"];
                         nDetail["Qty"] = dr["Qty"];
                         nDetail["SizeCode"] = dr["SizeCode"];
                         nDetail["bundlegroup"] = bundlegroup;
                         nDetail["printGroup"] = printGroup;
+                        nDetail["CombineSubprocessGroup"] = dr2["CombineSubprocessGroup"];
                         nDetail["ukey1"] = ukey;
                         nDetail["isPair"] = dr2["isPair"];
 
@@ -1355,8 +1483,9 @@ drop table #tmp,#tmp2";
                 }
             }
 
-            this.alltmpTb.Clear();
-            this.bundle_detail_artTb.Clear();
+            this.bundle_Detail_allpart_T.Clear();
+            this.bundle_Detail_Art_T.Clear();
+            this.bundle_Detail_CombineSubprocess_T.Clear();
             bundle_detail_tmp.Columns.Add("ran", type: typeof(int));
             bundle_detail_tmp.AsEnumerable().ToList().ForEach(r => r["ran"] = 0);
 
@@ -1365,7 +1494,7 @@ drop table #tmp,#tmp2";
             int detailRow = 0;
             int tmpRow = bundle_detail_tmp.Rows.Count;
             bool notYetInsertAllPart = true;
-            foreach (DataRow dr in this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+            foreach (DataRow dr in this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
             {
                 if (j < tmpRow)
                 {
@@ -1387,7 +1516,7 @@ drop table #tmp,#tmp2";
                     dr["printGroup"] = tmpdr["printGroup"];
                     dr["PatternCode"] = tmpdr["PatternCode"];
                     dr["PatternDesc"] = tmpdr["PatternDesc"];
-                    dr["Location"] = tmpdr["Location"];
+                    dr["Location"] = MyUtility.Convert.GetString(tmpdr["Location"]);
                     dr["subprocessid"] = tmpdr["subprocessid"];
                     dr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
                     dr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
@@ -1396,48 +1525,71 @@ drop table #tmp,#tmp2";
                     dr["SizeCode"] = tmpdr["SizeCode"];
                     dr["ukey1"] = tmpdr["ukey1"];
                     dr["isPair"] = tmpdr["isPair"];
+                    dr["CombineSubprocessGroup"] = tmpdr["CombineSubprocessGroup"];
+
                     j++;
+
                     if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                     {
-                        foreach (DataRow aldr in this.allpartTb.Rows)
+                        string fa = string.Empty;
+                        if (this.chkCombineSubprocess.Checked)
+                        {
+                            fa = "CombineSubprocessGroup = 0";
+                        }
+
+                        foreach (DataRow aldr in this.allpartTb.Select(fa))
                         {
                             if (aldr.RowState == DataRowState.Deleted)
                             {
                                 continue;
                             }
 
-                            if (aldr["Parts"] == DBNull.Value)
+                            if (MyUtility.Check.Empty(aldr["Parts"]))
                             {
                                 continue;
                             }
 
-                            if (Convert.ToInt32(aldr["Parts"]) == 0)
-                            {
-                                continue;
-                            }
-
-                            DataRow allpart_ndr = this.alltmpTb.NewRow();
+                            DataRow allpart_ndr = this.bundle_Detail_allpart_T.NewRow();
                             allpart_ndr["PatternCode"] = aldr["PatternCode"];
                             allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                            allpart_ndr["Location"] = aldr["Location"];
+                            allpart_ndr["Location"] = MyUtility.Convert.GetString(aldr["Location"]);
                             allpart_ndr["Parts"] = aldr["Parts"];
                             allpart_ndr["ukey1"] = dr["ukey1"];
-                            allpart_ndr["ispair"] = aldr["ispair"];
-                            this.alltmpTb.Rows.Add(allpart_ndr);
+                            allpart_ndr["isPair"] = aldr["isPair"];
+                            this.bundle_Detail_allpart_T.Rows.Add(allpart_ndr);
                         }
 
                         notYetInsertAllPart = false;
                     }
                     else
                     {
-                        DataRow art_ndr = this.bundle_detail_artTb.NewRow();
+                        // bundle_Detail_Art_T
+                        DataRow art_ndr = this.bundle_Detail_Art_T.NewRow();
                         art_ndr["Bundleno"] = dr["Bundleno"];
                         art_ndr["PatternCode"] = dr["PatternCode"];
                         art_ndr["Subprocessid"] = dr["subprocessid"];
                         art_ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
                         art_ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
                         art_ndr["ukey1"] = dr["ukey1"];
-                        this.bundle_detail_artTb.Rows.Add(art_ndr);
+                        this.bundle_Detail_Art_T.Rows.Add(art_ndr);
+
+                        // bundle_Detail_CombineSubprocess_T
+                        if (this.chkCombineSubprocess.Checked)
+                        {
+                            foreach (DataRow aldr in this.allpartTb.Select($"CombineSubprocessGroup > 0 and CombineSubprocessGroup = '{tmpdr["CombineSubprocessGroup"]}'"))
+                            {
+                                DataRow newdr = this.bundle_Detail_CombineSubprocess_T.NewRow();
+                                newdr["Bundleno"] = dr["Bundleno"];
+                                newdr["PatternCode"] = aldr["PatternCode"];
+                                newdr["PatternDesc"] = aldr["PatternDesc"];
+                                newdr["Parts"] = aldr["Parts"];
+                                newdr["Location"] = MyUtility.Convert.GetString(aldr["Location"]);
+                                newdr["IsPair"] = aldr["IsPair"];
+                                newdr["IsMain"] = aldr["IsMain"];
+                                newdr["ukey1"] = tmpdr["ukey1"];
+                                this.bundle_Detail_CombineSubprocess_T.Rows.Add(newdr);
+                            }
+                        }
                     }
                 }
                 else
@@ -1451,26 +1603,26 @@ drop table #tmp,#tmp2";
 
             // 判斷當前表身的筆數(排除掉已刪除的Row)
             DataTable dtCount;
-            if (this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() > 0)
+            if (this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().Count() > 0)
             {
-                dtCount = this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
+                dtCount = this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).CopyToDataTable();
             }
             else
             {
-                dtCount = this.detailTb.Clone();
+                dtCount = this.bundle_Detail_T.Clone();
             }
 
             dtCount.AcceptChanges();
-            int detailrow = this.detailTb.Rows.Count;
+            int detailrow = this.bundle_Detail_T.Rows.Count;
             int deleteCnt = dtCount.Rows.Count - tmpRow;
             for (int i = 1; i <= deleteCnt; i++)
             {
-                this.detailTb.Rows[detailrow - i].Delete();
+                this.bundle_Detail_T.Rows[detailrow - i].Delete();
             }
 
             // 表示新增的比較多需要Insert
             bundle_detail_tmp.AsEnumerable().ToList().ForEach(f => f["ran"] = 0);
-            foreach (DataRow dr in this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+            foreach (DataRow dr in this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
             {
                 DataRow[] oridrs = bundle_detail_tmp.Select($"PatternCode = '{dr["PatternCode"]}' and sizecode = '{dr["sizecode"]}' and Qty = '{dr["Qty"]}' and ran = 0");
                 if (oridrs.Length == 0)
@@ -1491,7 +1643,7 @@ drop table #tmp,#tmp2";
             {
                 for (int i = 0; i < tmpRow - j; i++)
                 {
-                    DataRow ndr = this.detailTb.NewRow();
+                    DataRow ndr = this.bundle_Detail_T.NewRow();
                     DataRow tmpdr = bundle_detail_tmp.Select("ran = 0")[0];
                     tmpdr["ran"] = 1;
                     ndr["bundlegroup"] = tmpdr["bundlegroup"];
@@ -1501,54 +1653,74 @@ drop table #tmp,#tmp2";
                     ndr["subprocessid"] = tmpdr["subprocessid"];
                     ndr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
                     ndr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
-                    ndr["Location"] = tmpdr["Location"];
+                    ndr["Location"] = MyUtility.Convert.GetString(tmpdr["Location"]);
                     ndr["Parts"] = tmpdr["Parts"];
                     ndr["Qty"] = tmpdr["Qty"];
                     ndr["SizeCode"] = tmpdr["SizeCode"];
                     ndr["ukey1"] = tmpdr["ukey1"];
                     ndr["isPair"] = tmpdr["isPair"];
-                    this.detailTb.Rows.Add(ndr);
+                    ndr["CombineSubprocessGroup"] = tmpdr["CombineSubprocessGroup"];
+
+                    this.bundle_Detail_T.Rows.Add(ndr);
                     if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                     {
-                        foreach (DataRow aldr in this.allpartTb.Rows)
+                        string fa = string.Empty;
+                        if (this.chkCombineSubprocess.Checked)
+                        {
+                            fa = "CombineSubprocessGroup = 0";
+                        }
+
+                        foreach (DataRow aldr in this.allpartTb.Select(fa))
                         {
                             if (aldr.RowState == DataRowState.Deleted)
                             {
                                 continue;
                             }
 
-                            if (aldr["Parts"] == DBNull.Value)
+                            if (MyUtility.Check.Empty(aldr["Parts"]))
                             {
                                 continue;
                             }
 
-                            if (Convert.ToInt32(aldr["Parts"]) == 0)
-                            {
-                                continue;
-                            }
-
-                            DataRow allpart_ndr = this.alltmpTb.NewRow();
-
+                            DataRow allpart_ndr = this.bundle_Detail_allpart_T.NewRow();
                             allpart_ndr["PatternCode"] = aldr["PatternCode"];
                             allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                            allpart_ndr["Location"] = aldr["Location"];
+                            allpart_ndr["Location"] = MyUtility.Convert.GetString(aldr["Location"]);
                             allpart_ndr["Parts"] = aldr["Parts"];
                             allpart_ndr["ukey1"] = tmpdr["ukey1"];
                             allpart_ndr["isPair"] = aldr["isPair"];
-                            this.alltmpTb.Rows.Add(allpart_ndr);
+                            this.bundle_Detail_allpart_T.Rows.Add(allpart_ndr);
                         }
 
                         notYetInsertAllPart = false;
                     }
                     else
                     {
-                        DataRow art_ndr = this.bundle_detail_artTb.NewRow();
+                        // bundle_Detail_Art_T
+                        DataRow art_ndr = this.bundle_Detail_Art_T.NewRow();
                         art_ndr["PatternCode"] = tmpdr["PatternCode"];
                         art_ndr["Subprocessid"] = tmpdr["subprocessid"];
                         art_ndr["NoBundleCardAfterSubprocess_String"] = tmpdr["NoBundleCardAfterSubprocess_String"];
                         art_ndr["PostSewingSubProcess_String"] = tmpdr["PostSewingSubProcess_String"];
                         art_ndr["ukey1"] = tmpdr["ukey1"];
-                        this.bundle_detail_artTb.Rows.Add(art_ndr);
+                        this.bundle_Detail_Art_T.Rows.Add(art_ndr);
+
+                        // bundle_Detail_CombineSubprocess_T
+                        if (this.chkCombineSubprocess.Checked)
+                        {
+                            foreach (DataRow aldr in this.allpartTb.Select($"CombineSubprocessGroup > 0 and CombineSubprocessGroup = '{tmpdr["CombineSubprocessGroup"]}'"))
+                            {
+                                DataRow newdr = this.bundle_Detail_CombineSubprocess_T.NewRow();
+                                newdr["PatternCode"] = aldr["PatternCode"];
+                                newdr["PatternDesc"] = aldr["PatternDesc"];
+                                newdr["Parts"] = aldr["Parts"];
+                                newdr["Location"] = MyUtility.Convert.GetString(aldr["Location"]);
+                                newdr["IsPair"] = aldr["IsPair"];
+                                newdr["IsMain"] = aldr["IsMain"];
+                                newdr["ukey1"] = tmpdr["ukey1"];
+                                this.bundle_Detail_CombineSubprocess_T.Rows.Add(newdr);
+                            }
+                        }
                     }
                 }
             }
@@ -1569,21 +1741,22 @@ drop table #tmp,#tmp2";
                     parts += MyUtility.Convert.GetDecimal(allpartTb_Copy.Rows[i]["Parts"]);
                 }
 
-                DataRow[] allPart = this.detailTb.Select("PatternCode='ALLPARTS'");
+                DataRow[] allPart = this.bundle_Detail_T.Select("PatternCode='ALLPARTS'");
                 if (!MyUtility.Check.Empty(parts))
                 {
                     if (allPart.Length == 0)
                     {
-                        DataTable dtMax = this.detailTb.Copy();
+                        DataTable dtMax = this.bundle_Detail_T.Copy();
                         dtMax.AcceptChanges();
-                        MyUtility.Tool.ProcessWithDatatable(dtMax, @"BundleGroup,printGroup,SizeCode,qty", @"select distinct BundleGroup,printGroup,SizeCode,qty from #tmp", out DataTable dtAllPart);
+                        DataView view = new DataView(dtMax);
+                        DataTable dtAllPart = view.ToTable(true, "BundleGroup", "printGroup", "SizeCode", "qty");
                         if (dtAllPart.Rows.Count > 0)
                         {
                             for (int i = 0; i < dtAllPart.Rows.Count; i++)
                             {
                                 List<int> ukey1 = dtMax.AsEnumerable().Select(numb => numb.Field<int>("ukey1")).Distinct().ToList();
                                 int maxUkey = ukey1.Max();
-                                DataRow drAll = this.detailTb.NewRow();
+                                DataRow drAll = this.bundle_Detail_T.NewRow();
                                 drAll["PatternCode"] = "ALLPARTS";
                                 drAll["PatternDesc"] = "All Parts";
                                 drAll["Qty"] = dtAllPart.Rows[i]["qty"].ToString();
@@ -1592,13 +1765,14 @@ drop table #tmp,#tmp2";
                                 drAll["BundleGroup"] = dtAllPart.Rows[i]["BundleGroup"].ToString();
                                 drAll["printGroup"] = dtAllPart.Rows[i]["printGroup"].ToString();
                                 drAll["ukey1"] = maxUkey + 1;
-                                this.detailTb.Rows.Add(drAll);
+                                this.bundle_Detail_T.Rows.Add(drAll);
                             }
                         }
-                        else if (this.detailTb2 != null && this.detailTb2.Rows.Count > 0)
+                        else if (this.bundle_Detail != null && this.bundle_Detail.Rows.Count > 0)
                         {
-                            MyUtility.Tool.ProcessWithDatatable(this.detailTb2, @"BundleGroup,printGroup,SizeCode,qty", @"select distinct BundleGroup,printGroup,SizeCode,qty from #tmp", out dtAllPart);
-                            DataRow drAll = this.detailTb.NewRow();
+                            DataView view2 = new DataView(this.bundle_Detail);
+                            dtAllPart = view2.ToTable(true, "BundleGroup", "printGroup", "SizeCode", "qty");
+                            DataRow drAll = this.bundle_Detail_T.NewRow();
                             drAll["PatternCode"] = "ALLPARTS";
                             drAll["PatternDesc"] = "All Parts";
                             drAll["Qty"] = dtAllPart.Rows[0]["qty"].ToString();
@@ -1607,45 +1781,44 @@ drop table #tmp,#tmp2";
                             drAll["BundleGroup"] = dtAllPart.Rows[0]["BundleGroup"].ToString();
                             drAll["printGroup"] = dtAllPart.Rows[0]["printGroup"].ToString();
                             drAll["ukey1"] = 1;
-                            this.detailTb.Rows.Add(drAll);
+                            this.bundle_Detail_T.Rows.Add(drAll);
                         }
                     }
                 }
             }
             #endregion
 
-            this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["Tone"] = string.Empty);
+            this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["Tone"] = string.Empty);
 
             #region Generate by Tone 有勾選再處理一次
             if (this.chkTone.Checked && this.numTone.Value > 0 && this.numNoOfBundle.Value > 0)
             {
                 int seq = 0;
-                this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
+                this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToList().ForEach(f => f["tmpSeq"] = seq++);
                 int bundlegroupS = Convert.ToInt32(this.maindatarow["startno"]);
                 int tone = MyUtility.Convert.GetInt(this.numTone.Value);
                 DataTable dtDetail = new DataTable();
                 DataTable dtAllPart = new DataTable();
-                DataTable dtAllPart2 = this.detailTb.Clone();
-                DataTable dtArt = this.bundle_detail_artTb.Copy();
-                this.bundle_detail_artTb.Clear();
+                DataTable dtAllPart2 = this.bundle_Detail_T.Clone();
+                DataTable dtArt = this.bundle_Detail_Art_T.Copy();
+                this.bundle_Detail_Art_T.Clear();
+                DataTable dtCombine = this.bundle_Detail_CombineSubprocess_T.Copy();
+                this.bundle_Detail_CombineSubprocess_T.Clear();
 
-                int na = this.detailTb.Select("PatternCode <> 'AllParts'").Length;
-                int a = this.detailTb.Select("PatternCode = 'AllParts'").Length;
+                int na = this.bundle_Detail_T.Select("PatternCode <> 'AllParts'").Length;
+                int a = this.bundle_Detail_T.Select("PatternCode = 'AllParts'").Length;
                 if (na > 0)
                 {
-                    dtDetail = this.detailTb.Select("PatternCode <> 'AllParts'").OrderBy(o => MyUtility.Convert.GetLong(o["tmpSeq"])).CopyToDataTable();
+                    dtDetail = this.bundle_Detail_T.Select("PatternCode <> 'AllParts'").OrderBy(o => MyUtility.Convert.GetLong(o["tmpSeq"])).CopyToDataTable();
                     dtDetail.Columns.Add("tmpNum", typeof(int));
                 }
 
                 if (a > 0)
                 {
-                    dtAllPart = this.detailTb.Select("PatternCode = 'AllParts'").CopyToDataTable();
+                    dtAllPart = this.bundle_Detail_T.Select("PatternCode = 'AllParts'").CopyToDataTable();
                 }
 
-                for (int i = this.detailTb.Rows.Count - 1; i >= 0; i--)
-                {
-                    this.detailTb.Rows[i].Delete();
-                }
+                this.bundle_Detail_T.Clear();
 
                 int ukeytone = 1;
                 if (na > 0)
@@ -1663,26 +1836,36 @@ drop table #tmp,#tmp2";
                             tmpNum++;
 
                             DataTable dtCopyArt = dtArt.Copy();
-                            DataRow artdr = dtCopyArt.Select($"Ukey1 = {item["Ukey1"]}")[0];
+                            string fukey = $"Ukey1 = {item["Ukey1"]}";
+                            DataRow artdr = dtCopyArt.Select(fukey)[0];
                             artdr["BundleNo"] = string.Empty;
                             artdr["Ukey1"] = ukeytone;
                             item["Ukey1"] = ukeytone;
-                            this.bundle_detail_artTb.ImportRow(artdr);
+                            this.bundle_Detail_Art_T.ImportRow(artdr);
+                            if (this.chkCombineSubprocess.Checked)
+                            {
+                                DataTable dtCopyCombine = dtCombine.Copy();
+                                DataRow combinedr = dtCopyCombine.Select(fukey)[0];
+                                combinedr["BundleNo"] = string.Empty;
+                                combinedr["Ukey1"] = ukeytone;
+                                this.bundle_Detail_CombineSubprocess_T.ImportRow(combinedr);
+                            }
+
                             ukeytone++;
                         }
 
-                        this.detailTb.Merge(dtCopy);
+                        this.bundle_Detail_T.Merge(dtCopy);
                     }
 
                     // 重分每一筆拆的Qty
                     int tmpNumF = 0;
-                    for (int i = 0; i < this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Count() / tone; i++, tmpNumF++)
+                    for (int i = 0; i < this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Count() / tone; i++, tmpNumF++)
                     {
-                        DataRow[] drD = this.detailTb.Select($"tmpNum={tmpNumF}").AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToArray();
+                        DataRow[] drD = this.bundle_Detail_T.Select($"tmpNum={tmpNumF}").AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).ToArray();
                         Prgs.AverageNumeric(drD, "Qty", MyUtility.Convert.GetInt(drD[0]["Qty"]), true);
                     }
 
-                    this.detailTb.Columns.Remove("tmpNum");
+                    this.bundle_Detail_T.Columns.Remove("tmpNum");
                 }
 
                 // 處理All Part筆數
@@ -1710,9 +1893,9 @@ drop table #tmp,#tmp2";
                         int upallqty = 0;
                         for (int i = da.Count() - 1; i >= 0; i--)
                         {
-                            int qty = this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted &&
+                            int qty = this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted &&
                                MyUtility.Convert.GetInt(w["PrintGroup"]) >= MyUtility.Convert.GetInt(da[i]["PrintGroup"])).
-                               Sum(s => MyUtility.Convert.GetInt(s["Qty"])) / this.patternTb.Select($"patternCode <> 'Allparts'").Count();
+                               Sum(s => MyUtility.Convert.GetInt(s["Qty"])) / this.patternTb.Select($"PatternCode <> 'Allparts'").Count();
                             da[i]["qty"] = qty - upallqty;
                             upallqty = qty;
                         }
@@ -1733,10 +1916,10 @@ drop table #tmp,#tmp2";
                         ukeytone++;
                     }
 
-                    this.detailTb.Merge(dtAllPart2);
+                    this.bundle_Detail_T.Merge(dtAllPart2);
                 }
 
-                foreach (DataRow dr in this.detailTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                foreach (DataRow dr in this.bundle_Detail_T.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                 {
                     dr["BundleNo"] = string.Empty;
                     dr.AcceptChanges();
@@ -1749,24 +1932,24 @@ drop table #tmp,#tmp2";
             }
             #endregion
 
-            DataRow[] art_dr = this.bundle_detail_artTb.Select("PatternCode = 'ALLPARTS'");
-            for (int i = art_dr.Count() - 1; i >= 0; i--)
-            {
-                art_dr[i].Delete();
-            }
+            this.bundle_Detail_Art_T.Select("PatternCode = 'ALLPARTS'").Delete();
+
             #region 把處理好的資料塞回上層Table
-            this.detailTb2.Clear();
-            this.alltmpTb2.Clear();
-            this.bundle_detail_artTb2.Clear();
-            this.qtyTb2.Clear();
+            this.bundle_Detail.Clear();
+            this.bundle_Detail_allpart.Clear();
+            this.bundle_Detail_Qty.Clear();
+            this.bundle_Detail_Art.Clear();
+            this.bundle_Detail_CombineSubprocess.Clear();
+
             this.maindatarow["Qty"] = this.numNoOfBundle.Value;
-            this.detailTb2.Merge(this.detailTb);
-            this.alltmpTb2.Merge(this.alltmpTb);
-            this.bundle_detail_artTb2.Merge(this.bundle_detail_artTb);
-            this.qtyTb2.Merge(this.qtyTb);
-            #endregion
+            this.bundle_Detail.Merge(this.bundle_Detail_T);
+            this.bundle_Detail_allpart.Merge(this.bundle_Detail_allpart_T);
+            this.bundle_Detail_Qty.Merge(this.bundle_Detail_Qty_T);
+            this.bundle_Detail_Art.Merge(this.bundle_Detail_Art_T);
+            this.bundle_Detail_CombineSubprocess.Merge(this.bundle_Detail_CombineSubprocess_T);
 
             this.maindatarow["ByToneGenerate"] = this.chkTone.Checked;
+            #endregion
 
             this.Close();
         }
@@ -1788,6 +1971,7 @@ drop table #tmp,#tmp2";
         private void P10_Generate_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.listControlBindingSource1.DataSource = null;
+            this.Dispose();
         }
 
         private List<string> GetNotMain(DataRow dr, DataRow[] drs)
@@ -1840,7 +2024,7 @@ drop table #tmp,#tmp2";
             string[] anns = dr["art"].ToString().Split('+'); // 剖析Annotation, 已經是去除數字
 
             // 兩個陣列內容要完全一樣，不管順序
-            if (!CompareArr(ann, anns))
+            if (!Prgs.CompareArr(ann, anns))
             {
                 dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
                 dr.EndEdit();
@@ -1853,78 +2037,81 @@ drop table #tmp,#tmp2";
             dr.EndEdit();
         }
 
-        /// <summary>
-        /// Compare Arr
-        /// </summary>
-        /// <param name="arr1">arr1</param>
-        /// <param name="arr2">arr2</param>
-        /// <returns>bool</returns>
-        public static bool CompareArr(string[] arr1, string[] arr2)
+        private void ChkCombineSubprocess_CheckedChanged(object sender, EventArgs e)
         {
-            var q = from a in arr1 join b in arr2 on a equals b select a;
-            bool flag = arr1.Length == arr2.Length && q.Count() == arr1.Length;
-
-            return flag; // 內容相同返回true,反之返回false。
-        }
-
-        private DataTable ToDataTable<T>(List<T> items)
-        {
-            var tb = new DataTable(typeof(T).Name);
-
-            PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            foreach (PropertyInfo prop in props)
+            if (this.bundle_Detail_T.Rows.Count > 0 && this.bundle_Detail_CombineSubprocess_T.Rows.Count == 0 && this.chkCombineSubprocess.Checked)
             {
-                Type t = GetCoreType(prop.PropertyType);
-                tb.Columns.Add(prop.Name, t);
+                DialogResult result = MyUtility.Msg.QuestionBox("Warning: This bundle doesn't include combine subprocess. The bundle information will follow pattern room.");
+                if (result == DialogResult.No)
+                {
+                    this.chkCombineSubprocess.Checked = false;
+                    return;
+                }
             }
 
-            foreach (T item in items)
+            this.button_LefttoRight.Enabled = !this.chkCombineSubprocess.Checked;
+            this.grid_allpart.Columns["Annotation"].Visible = !this.chkCombineSubprocess.Checked;
+            this.grid_art.Columns["isPair"].Visible = !this.chkCombineSubprocess.Checked;
+            this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
+
+            this.ChangeDefault();
+        }
+
+        private void ChkNoneShellNoCreateAllParts_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ChangeDefault();
+            this.DeleteAllpartsDatas();
+        }
+
+        private void DeleteAllpartsDatas()
+        {
+            if (this.chkNoneShellNoCreateAllParts.Checked)
             {
-                var values = new object[props.Length];
-
-                for (int i = 0; i < props.Length; i++)
-                {
-                    values[i] = props[i].GetValue(item, null);
-                }
-
-                tb.Rows.Add(values);
+                this.allpartTb.Select($"CombineSubprocessGroup = 0").Delete();
+                this.allpartTb.AcceptChanges();
+                this.CalculateParts();
             }
-
-            return tb;
         }
 
-        /// <summary>
-        /// Is Nullable
-        /// </summary>
-        /// <param name="t">Type</param>
-        /// <returns>bool</returns>
-        public static bool IsNullable(Type t)
+        private void ChangeDefault()
         {
-            return !t.IsValueType || (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
-        }
+            this.patternTb.Clear();
+            this.allpartTb.Clear();
+            DataTable pdt = this.patternTb.Clone();
+            DataTable xdt = this.patternTbOri.Copy();
+            DataTable adt = this.allpartTbOri.Copy();
 
-        /// <summary>
-        /// Return underlying type if type is Nullable otherwise return the type
-        /// </summary>
-        /// <param name="t">t</param>
-        /// <returns>Type</returns>
-        public static Type GetCoreType(Type t)
-        {
-            if (t != null && IsNullable(t))
+            if (!this.chkCombineSubprocess.Checked)
             {
-                if (!t.IsValueType)
-                {
-                    return t;
-                }
-                else
-                {
-                    return Nullable.GetUnderlyingType(t);
-                }
+                pdt = xdt;
             }
             else
             {
-                return t;
+                pdt = xdt.Select($"isMain = 1").TryCopyToDataTable(this.patternTb);
+                pdt.AsEnumerable().ToList().ForEach(f => f["isPair"] = false);
+                pdt.ImportRow(xdt.Select($"PatternCode = 'ALLPARTS'").FirstOrDefault());
+
+                DataTable psdt = xdt.Select($"PatternCode <> 'ALLPARTS'").TryCopyToDataTable(this.patternTb);
+                psdt.AsEnumerable().ToList().ForEach(f => this.allpartTb.ImportRow(f));
+            }
+
+            this.patternTb.Merge(pdt);
+            this.allpartTb.Merge(adt);
+            this.CalculateParts();
+        }
+
+        private void Grid_art_SelectionChanged(object sender, EventArgs e)
+        {
+            this.allpartTb.DefaultView.RowFilter = string.Empty;
+            if (this.grid_art.CurrentDataRow == null || !this.chkCombineSubprocess.Checked)
+            {
+                return;
+            }
+
+            if (this.chkCombineSubprocess.Checked)
+            {
+                string filter = $"CombineSubprocessGroup = {this.grid_art.CurrentDataRow["CombineSubprocessGroup"]}";
+                this.allpartTb.DefaultView.RowFilter = filter;
             }
         }
     }

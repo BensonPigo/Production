@@ -176,7 +176,7 @@ namespace Sci.Production.Cutting
             public bool IsMain { get; set; }
 
             /// <inheritdoc/>
-            public int ComebineSubprocessGroup { get; set; }
+            public int CombineSubprocessGroup { get; set; }
         }
     }
 }
