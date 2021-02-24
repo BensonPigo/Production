@@ -190,8 +190,17 @@ select id.POID,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1,id.seq2 )
-		,[RecvKG] = iif(rd.ActualQty <> id.Qty, '', cast(cast(iif(ISNULL(rd.Weight,0) > 0, rd.Weight, rd.ActualWeight) as decimal(18,2)) as varchar(20)))
+	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1, id.seq2)
+		,[RecvKG] = case when rd.ActualQty is not null 
+						then case when rd.ActualQty <> id.Qty
+								then ''
+								else cast(iif(ISNULL(rd.Weight,0) > 0, rd.Weight, rd.ActualWeight) as varchar(20))
+							 end
+						else case when td.ActualQty <> id.Qty
+								then ''
+								else cast(iif(ISNULL(td.Weight,0) > 0, td.Weight, td.ActualWeight) as varchar(20))
+							 end							
+					end
 from dbo.Issue_Detail id WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= id.poid and p.SEQ1 = id.Seq1 and p.seq2 = id.Seq2
 left join FtyInventory fi WITH (NOLOCK) on id.POID = fi.POID
@@ -213,6 +222,19 @@ Outer apply (
 	and fi.StockType = rd.StockType
 	and p.FabricType = 'F'
 )rd
+Outer apply (
+	select [Weight] = SUM(td.Weight)
+		, [ActualWeight] = SUM(td.ActualWeight)
+		, [ActualQty] = SUM(td.Qty)
+	from TransferIn_Detail td WITH (NOLOCK) 
+	where fi.POID = td.PoId
+	and fi.Seq1 = td.Seq1
+	and fi.Seq2 = td.Seq2 
+	and fi.Dyelot = td.Dyelot
+	and fi.Roll = td.Roll
+	and fi.StockType = td.StockType
+	and p.FabricType = 'F'
+)td
 where id.id= @ID
 order by id.POID,SEQ, id.Dyelot,id.Roll
 ";
