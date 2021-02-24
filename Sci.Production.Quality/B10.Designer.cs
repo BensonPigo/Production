@@ -65,7 +65,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(712, 464);
+            this.detail.Size = new System.Drawing.Size(712, 441);
             // 
             // detailcont
             // 
@@ -85,11 +85,11 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtbrand);
-            this.detailcont.Size = new System.Drawing.Size(712, 426);
+            this.detailcont.Size = new System.Drawing.Size(712, 403);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 426);
+            this.detailbtm.Location = new System.Drawing.Point(0, 403);
             this.detailbtm.Size = new System.Drawing.Size(712, 38);
             // 
             // browse
@@ -98,7 +98,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(720, 493);
+            this.tabs.Size = new System.Drawing.Size(720, 470);
             // 
             // radioPanel1
             // 
@@ -351,7 +351,7 @@
             // 
             // B10
             // 
-            this.ClientSize = new System.Drawing.Size(720, 526);
+            this.ClientSize = new System.Drawing.Size(720, 503);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
             this.IsDeleteOnBrowse = false;
