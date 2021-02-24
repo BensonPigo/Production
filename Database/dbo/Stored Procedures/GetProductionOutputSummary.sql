@@ -15,8 +15,8 @@ CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 	@IncludeCancelOrder bit = 0,
 	@IsFtySide bit = 0,
 	@IsPowerBI bit =0,
-	@IsByCMPLockDate bit = 0
-	
+	@IsByCMPLockDate bit = 0,
+	@DailyLockDate varchar(10) = ''
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -242,7 +242,11 @@ Declare @tmpSewingOutput Table(
 insert into @tmpSewingOutput(OrderId, OutputDate, QAQty)
 select	sdd.OrderId,
 		s.OutputDate,
-		(isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100)
+		isnull(
+				sum(
+					iif( (s.LockDate = @DailyLockDate or @DailyLockDate = ''), isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate), 0)
+				   )
+		,0) / 100
 from SewingOutput_Detail_Detail sdd with (nolock)
 inner join SewingOutput s with (nolock) on s.ID = sdd.ID
 inner join Orders o with(nolock) on o.ID = sdd.OrderId

@@ -50,6 +50,8 @@
             this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.chkCMPLockDate = new Sci.Win.UI.CheckBox();
+            this.dateDailyLock = new Sci.Win.UI.DateBox();
+            this.label8 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -97,7 +99,7 @@
             0,
             0});
             this.numYear.Name = "numYear";
-            this.numYear.Size = new System.Drawing.Size(80, 23);
+            this.numYear.Size = new System.Drawing.Size(80, 24);
             this.numYear.TabIndex = 97;
             this.numYear.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.numYear.Value = new decimal(new int[] {
@@ -115,7 +117,7 @@
             this.cmbDate.Location = new System.Drawing.Point(123, 202);
             this.cmbDate.Name = "cmbDate";
             this.cmbDate.OldText = "";
-            this.cmbDate.Size = new System.Drawing.Size(267, 24);
+            this.cmbDate.Size = new System.Drawing.Size(267, 26);
             this.cmbDate.TabIndex = 102;
             // 
             // chkOrder
@@ -126,7 +128,7 @@
             this.chkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkOrder.Location = new System.Drawing.Point(123, 232);
             this.chkOrder.Name = "chkOrder";
-            this.chkOrder.Size = new System.Drawing.Size(68, 21);
+            this.chkOrder.Size = new System.Drawing.Size(69, 22);
             this.chkOrder.TabIndex = 103;
             this.chkOrder.Text = "Order ";
             this.chkOrder.UseVisualStyleBackColor = true;
@@ -139,7 +141,7 @@
             this.chkForecast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkForecast.Location = new System.Drawing.Point(123, 259);
             this.chkForecast.Name = "chkForecast";
-            this.chkForecast.Size = new System.Drawing.Size(86, 21);
+            this.chkForecast.Size = new System.Drawing.Size(90, 22);
             this.chkForecast.TabIndex = 104;
             this.chkForecast.Text = "Forecast ";
             this.chkForecast.UseVisualStyleBackColor = true;
@@ -152,7 +154,7 @@
             this.chkFtyLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkFtyLocalOrder.Location = new System.Drawing.Point(123, 286);
             this.chkFtyLocalOrder.Name = "chkFtyLocalOrder";
-            this.chkFtyLocalOrder.Size = new System.Drawing.Size(125, 21);
+            this.chkFtyLocalOrder.Size = new System.Drawing.Size(129, 22);
             this.chkFtyLocalOrder.TabIndex = 105;
             this.chkFtyLocalOrder.Text = "Fty Local Order";
             this.chkFtyLocalOrder.UseVisualStyleBackColor = true;
@@ -163,9 +165,9 @@
             this.chkExcludeSampleFactory.Checked = true;
             this.chkExcludeSampleFactory.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludeSampleFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(9, 343);
+            this.chkExcludeSampleFactory.Location = new System.Drawing.Point(9, 372);
             this.chkExcludeSampleFactory.Name = "chkExcludeSampleFactory";
-            this.chkExcludeSampleFactory.Size = new System.Drawing.Size(178, 21);
+            this.chkExcludeSampleFactory.Size = new System.Drawing.Size(187, 22);
             this.chkExcludeSampleFactory.TabIndex = 106;
             this.chkExcludeSampleFactory.Text = "Exclude Sample Factory";
             this.chkExcludeSampleFactory.UseVisualStyleBackColor = true;
@@ -232,7 +234,7 @@
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(123, 83);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(80, 23);
+            this.txtbrand1.Size = new System.Drawing.Size(80, 24);
             this.txtbrand1.TabIndex = 98;
             // 
             // comboFtyZone
@@ -249,7 +251,7 @@
             this.comboFtyZone.Name = "comboFtyZone";
             this.comboFtyZone.OldText = "";
             this.comboFtyZone.SelectTable = "Factory";
-            this.comboFtyZone.Size = new System.Drawing.Size(80, 24);
+            this.comboFtyZone.Size = new System.Drawing.Size(80, 26);
             this.comboFtyZone.TabIndex = 114;
             // 
             // radioMonthly
@@ -259,7 +261,7 @@
             this.radioMonthly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioMonthly.Location = new System.Drawing.Point(9, 2);
             this.radioMonthly.Name = "radioMonthly";
-            this.radioMonthly.Size = new System.Drawing.Size(122, 21);
+            this.radioMonthly.Size = new System.Drawing.Size(127, 22);
             this.radioMonthly.TabIndex = 115;
             this.radioMonthly.TabStop = true;
             this.radioMonthly.Text = "Monthly Report";
@@ -271,7 +273,7 @@
             this.radioSemiMonthly.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioSemiMonthly.Location = new System.Drawing.Point(9, 27);
             this.radioSemiMonthly.Name = "radioSemiMonthly";
-            this.radioSemiMonthly.Size = new System.Drawing.Size(158, 21);
+            this.radioSemiMonthly.Size = new System.Drawing.Size(166, 22);
             this.radioSemiMonthly.TabIndex = 116;
             this.radioSemiMonthly.TabStop = true;
             this.radioSemiMonthly.Text = "Semi-monthly Report";
@@ -286,7 +288,7 @@
             this.comboMDivision.Location = new System.Drawing.Point(123, 111);
             this.comboMDivision.Name = "comboMDivision";
             this.comboMDivision.OldText = "";
-            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.Size = new System.Drawing.Size(80, 26);
             this.comboMDivision.TabIndex = 117;
             // 
             // comboFactory
@@ -300,7 +302,7 @@
             this.comboFactory.Location = new System.Drawing.Point(123, 173);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.Size = new System.Drawing.Size(80, 26);
             this.comboFactory.TabIndex = 118;
             // 
             // chkIncludeCancelOrder
@@ -309,9 +311,9 @@
             this.chkIncludeCancelOrder.Checked = true;
             this.chkIncludeCancelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(9, 370);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(9, 399);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
-            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(162, 22);
             this.chkIncludeCancelOrder.TabIndex = 119;
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
@@ -320,18 +322,35 @@
             // 
             this.chkCMPLockDate.AutoSize = true;
             this.chkCMPLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkCMPLockDate.Location = new System.Drawing.Point(9, 316);
+            this.chkCMPLockDate.Location = new System.Drawing.Point(9, 345);
             this.chkCMPLockDate.Name = "chkCMPLockDate";
-            this.chkCMPLockDate.Size = new System.Drawing.Size(197, 21);
+            this.chkCMPLockDate.Size = new System.Drawing.Size(210, 22);
             this.chkCMPLockDate.TabIndex = 120;
             this.chkCMPLockDate.Text = "By CMP Monthly Lock Date";
             this.chkCMPLockDate.UseVisualStyleBackColor = true;
             // 
+            // dateDailyLock
+            // 
+            this.dateDailyLock.Location = new System.Drawing.Point(123, 314);
+            this.dateDailyLock.Name = "dateDailyLock";
+            this.dateDailyLock.Size = new System.Drawing.Size(130, 24);
+            this.dateDailyLock.TabIndex = 125;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(9, 314);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(111, 23);
+            this.label8.TabIndex = 124;
+            this.label8.Text = "Daily Lock Date";
+            // 
             // R05
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 420);
+            this.ClientSize = new System.Drawing.Size(591, 458);
+            this.Controls.Add(this.dateDailyLock);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.chkCMPLockDate);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.comboFactory);
@@ -383,6 +402,8 @@
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkCMPLockDate, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.dateDailyLock, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -412,5 +433,7 @@
         private Class.ComboFactory comboFactory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkCMPLockDate;
+        private Win.UI.DateBox dateDailyLock;
+        private Win.UI.Label label8;
     }
 }
