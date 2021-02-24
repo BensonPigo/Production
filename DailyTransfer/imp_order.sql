@@ -1287,7 +1287,7 @@ else
 			select a.* 
 			from Trade_To_Pms.dbo.Order_BOA_Matching a With (NoLock)
 			inner join #Torder b on a.id = b.id
-		) as s on t.[Order_BOAUkey] = s.[Order_BOAUkey]
+		) as s on t.[Order_BOAUkey] = s.[Order_BOAUkey] and t.Seq = s.Seq
 		when matched then
 			update set
 				 t.[ID]				=s.[ID]
@@ -1309,7 +1309,7 @@ else
 			select a.* 
 			from Trade_To_Pms.dbo.Order_BOA_Matching_Detail a With (NoLock)
 			inner join #Torder b on a.id = b.id
-		) as s on t.[Order_BOAUkey] = s.[Order_BOAUkey]
+		) as s on t.[Order_BOAUkey] = s.[Order_BOAUkey] and t.Seq = s.Seq  and t.SizeCode = s.SizeCode 
 		when matched then
 			update set
 				 t.[ID]			   = s.[ID]
