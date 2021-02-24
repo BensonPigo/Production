@@ -622,7 +622,7 @@ AND (
 			FROM #CFAInspectionRecord cf
 			INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
 			WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-			AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result='Pass'
+			AND cf.Stage='Staggered' AND cf.Status='Confirmed' AND cf.Result!='Pass'
 			AND (	
 					cfo.Carton = pd.CTNStartNo
 				OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
@@ -689,7 +689,7 @@ AND NOT EXISTS (
 	SELECT *
 	FROM #CFAInspectionRecord a
 	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = 'Final' AND a.Status='Confirmed' AND a.Result = 'Pass'
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = 'Final' AND a.Status='Confirmed' AND a.Result != 'Pass'
 ) 
 
 
@@ -748,7 +748,7 @@ AND NOT EXISTS (
 	SELECT *
 	FROM #CFAInspectionRecord a
 	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = '3rd Party' AND a.Status='Confirmed' AND a.Result = 'Pass'
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = '3rd Party' AND a.Status='Confirmed' AND a.Result != 'Pass'
 ) 
 
 ";
