@@ -201,7 +201,7 @@ outer apply (
             and m.seq2 = a.seq2 
             and StockType = 'I' 
 ) x
-where b.InputQty > 0 ", sqlBuyerDelivery));
+where (b.InputQty <> 0 or c.LInvQty <> 0) ", sqlBuyerDelivery));
             }
             else
             {
@@ -266,7 +266,7 @@ outer apply (
             and m.seq2 = a.seq2 
             and StockType = 'I' 
 ) x
-where b.InputQty> 0"));
+where (b.InputQty <> 0 or c.LInvQty <> 0)"));
             }
 
             #region --- 條件組合  ---
