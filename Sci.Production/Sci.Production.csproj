@@ -1846,6 +1846,7 @@
     <Content Include="Resources\CTN.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\QA_Skewness3.png" />
     <Content Include="TECBaseU.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
