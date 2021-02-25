@@ -104,7 +104,7 @@ namespace Sci.Production.Warehouse
 
             string sqlcmd = $@"
 select [head] = i.FactoryID + ' Kanban Card'
-	, [JITDate] = ''
+	, [JITDate] = iif(i.Status = 'Confirmed', Format(i.IssueDate, 'dd-MMM'), '')
 	, [Line] = ''
 	, o.ID
 	, o.StyleID
@@ -126,7 +126,8 @@ outer apply (
 	select SizeCode = stuff((
 		select concat('/', ib.SizeCode)
 		from Issue_Breakdown ib 
-		left join order_sizecode os on ib.OrderID = os.Id and ib.SizeCode = os.SizeCode
+        inner join Orders o  with (nolock) on o.ID = ib.OrderID
+		left join order_sizecode os on o.POID = os.Id and ib.SizeCode = os.SizeCode
 		where ib.Id = i.id
 		group by ib.SizeCode, os.Seq
 		order by os.Seq
@@ -137,7 +138,8 @@ outer apply (
 	select Qty = stuff((
 		select concat('/', sum(ib.Qty))
 		from Issue_Breakdown ib 
-		left join order_sizecode os on ib.OrderID = os.Id and ib.SizeCode = os.SizeCode
+        inner join Orders o  with (nolock) on o.ID = ib.OrderID
+		left join order_sizecode os on o.POID = os.Id and ib.SizeCode = os.SizeCode
 		where ib.Id = i.id
 		group by ib.SizeCode, os.Seq
 		order by os.Seq
@@ -194,6 +196,7 @@ where i.Type = 'B'
                     worksheet1.get_Range("A1:D8").Copy();
                     worksheet1.get_Range(string.Format("{0}{1}:{2}{3}", cEn1, r1, cEn2, r2)).PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     worksheet1.Cells[r1, c1] = row["head"].ToString();
+                    worksheet1.Cells[r1 + 1, c1 + 1] = row["JITDate"].ToString();
                     worksheet1.Cells[r1 + 3, c1 + 1] = row["ID"].ToString();
                     worksheet1.Cells[r1 + 4, c1 + 1] = row["StyleID"].ToString();
                     worksheet1.Cells[r1 + 5, c1 + 1] = row["Article"].ToString();
@@ -251,15 +254,16 @@ where i.Type = 'B'
 
             List<P11_PrintKarbanCard_PrintData> printDataList = this.printData.AsEnumerable().Select((dr, index)
                 => new P11_PrintKarbanCard_PrintData()
-            {
-                Idx = MyUtility.Convert.GetInt(dr["Idx"]),
-                Head = dr["head"].ToString(),
-                ID = dr["ID"].ToString(),
-                StyleID = dr["StyleID"].ToString(),
-                Article = dr["Article"].ToString(),
-                SizeCode = dr["SizeCode"].ToString(),
-                Qty = dr["Qty"].ToString(),
-            }).ToList();
+                {
+                    Idx = MyUtility.Convert.GetInt(dr["Idx"]),
+                    Head = dr["head"].ToString(),
+                    JITDate = dr["JITDate"].ToString(),
+                    ID = dr["ID"].ToString(),
+                    StyleID = dr["StyleID"].ToString(),
+                    Article = dr["Article"].ToString(),
+                    SizeCode = dr["SizeCode"].ToString(),
+                    Qty = dr["Qty"].ToString(),
+                }).ToList();
 
             report.ReportDataSource = printDataList;
 

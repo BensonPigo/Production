@@ -195,14 +195,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Ref">
+                    <Textbox Name="JITDate">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!JITDate.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -213,7 +213,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Ref</rd:DefaultName>
+                      <rd:DefaultName>JITDate</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -861,7 +861,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Left>0.60854cm</Left>
         <Height>5.08cm</Height>
-        <Width>7.62cm</Width>
+        <Width>7.62001cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1068,7 +1068,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Fields!JITDate.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -1093,6 +1093,7 @@
                       </Style>
                     </Textbox>
                     <ColSpan>3</ColSpan>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -1789,6 +1790,10 @@
         <Field Name="Idx">
           <DataField>Idx</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="JITDate">
+          <DataField>JITDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Qty">
           <DataField>Qty</DataField>
