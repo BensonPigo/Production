@@ -157,6 +157,12 @@ namespace Sci.Production.PPIC
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CdCodeID", header: "CD#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("CDCodeNew", header: "New CD Code", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("ProductType", header: "ProductType", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Lining", header: "Lining", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Gender", header: "Gender", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Construction", header: "Construction", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderTypeID", header: "Order Type", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: true)
                 .Numeric("CPU", header: "CPU", decimal_places: 3, iseditingreadonly: true)
@@ -284,19 +290,38 @@ namespace Sci.Production.PPIC
                 @"with tmpData
 as
 (select o.ID,o.StyleID,o.BrandID,o.SciDelivery,o.BuyerDelivery,o.CdCodeID,
- o.OrderTypeID,o.Qty,(o.CPU*o.CPUFactor) as CPU,o.SewLine,o.SewInLine,o.SewOffLine,o.CutReadyDate,
- o.LETA,o.SewRemark,isnull((o.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle)),o.MRHandle) as MR,
- isnull((o.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.SMR)),o.SMR) as SMR,
- (select min(s.OutputDate) from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as ActSewInLine,
- (select max(s.OutputDate) from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as tmpActSewOffLine,
- (select min(a.QAQty) from (select ComboType,sum(QAQty) as QAQty from SewingOutput_Detail WITH (NOLOCK) where OrderId = o.ID group by ComboType) a) as SewOutQty,
- (select '['+CAST(a.Abbreviation as nvarchar)+'],' from (
- select distinct at.Abbreviation from Order_Artwork oa WITH (NOLOCK) ,ArtworkType at WITH (NOLOCK) 
- where at.IsSubprocess = 1
- and oa.ID = o.ID
- and oa.ArtworkTypeID = at.ID) a
- for xml path('')) as tmpArtworkType,o.CuttingSP
+     o.OrderTypeID,o.Qty,(o.CPU*o.CPUFactor) as CPU,o.SewLine,o.SewInLine,o.SewOffLine,o.CutReadyDate,
+     o.LETA,o.SewRemark,isnull((o.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.MRHandle)),o.MRHandle) as MR,
+     isnull((o.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = o.SMR)),o.SMR) as SMR,
+     (select min(s.OutputDate) from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as ActSewInLine,
+     (select max(s.OutputDate) from SewingOutput s WITH (NOLOCK) , SewingOutput_Detail sd WITH (NOLOCK) where sd.OrderId = o.ID and sd.ID = s.ID and sd.QAQty > 0) as tmpActSewOffLine,
+     (select min(a.QAQty) from (select ComboType,sum(QAQty) as QAQty from SewingOutput_Detail WITH (NOLOCK) where OrderId = o.ID group by ComboType) a) as SewOutQty,
+     (select '['+CAST(a.Abbreviation as nvarchar)+'],' from (
+        select distinct at.Abbreviation from Order_Artwork oa WITH (NOLOCK) ,ArtworkType at WITH (NOLOCK) 
+         where at.IsSubprocess = 1
+         and oa.ID = o.ID
+         and oa.ArtworkTypeID = at.ID) a
+         for xml path('')) as tmpArtworkType
+    ,o.CuttingSP
+	,o.CDCodeNew
+	,sty.ProductType
+	,sty.FabricType
+	,sty.Lining
+	,sty.Gender
+	,sty.Construction
  from Orders o WITH (NOLOCK) 
+ Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.Ukey = o.StyleUkey
+ )sty
  where o.Finished = 0 and o.category in ('B','S')
  and o.IsForecast = 0
  and o.FtyGroup = '{0}'", Env.User.Factory));
@@ -533,7 +558,7 @@ where o.ID in ({0})",
             DataTable excelTable;
             try
             {
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "SCIDelivery,BuyerDelivery,ID,BrandID,StyleID,CdCodeID,OrderTypeID,Qty,CPU,SewLine,SewInLine,SewOffLine,CutReadyDate,LETA,ActSewInLine,ActSewOffLine,ArtworkType,SewRemark,MR,SMR", "select * from #tmp", out excelTable);
+                MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "SCIDelivery,BuyerDelivery,ID,BrandID,StyleID,CdCodeID,CDCodeNew,ProductType,FabricType,Lining,Gender,Construction,OrderTypeID,Qty,CPU,SewLine,SewInLine,SewOffLine,CutReadyDate,LETA,ActSewInLine,ActSewOffLine,ArtworkType,SewRemark,MR,SMR", "select * from #tmp", out excelTable);
             }
             catch (Exception ex)
             {

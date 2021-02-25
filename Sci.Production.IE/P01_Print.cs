@@ -19,6 +19,7 @@ namespace Sci.Production.IE
         private string machineID;
         private decimal efficiency;
         private DataTable printData;
+        private DataTable dtcustcd;
         private DataTable artworkType;
 
         /// <summary>
@@ -72,9 +73,26 @@ and TimeStudy_Detail.ID = {0}",
         /// <param name="e">e</param>
         /// <returns>DualResult</returns>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
-
         {
-            this.custcdID = MyUtility.GetValue.Lookup(string.Format("select CdCodeID from Style WITH (NOLOCK) where ID = '{0}' and SeasonID = '{1}' and BrandID = '{2}'", MyUtility.Convert.GetString(this.masterData["StyleID"]), MyUtility.Convert.GetString(this.masterData["SeasonID"]), MyUtility.Convert.GetString(this.masterData["BrandID"])));
+            string sqlCmd = string.Format(
+                @"
+	SELECT s.CdCodeID
+        , s.CDCodeNew
+		, ProductType = r2.Name
+		, FabricType = r1.Name
+		, s.Lining
+		, s.Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+    where s.ID = '{0}' and s.SeasonID = '{1}' and s.BrandID = '{2}'",
+                MyUtility.Convert.GetString(this.masterData["StyleID"]),
+                MyUtility.Convert.GetString(this.masterData["SeasonID"]),
+                MyUtility.Convert.GetString(this.masterData["BrandID"]));
+            DBProxy.Current.Select(null, sqlCmd, out this.dtcustcd);
+
             this.machineID = MyUtility.GetValue.Lookup(string.Format(
                 @"select CONCAT(b.Machine,', ') from (
 select MachineTypeID+'*'+CONVERT(varchar,cnt) as Machine from (
@@ -83,8 +101,6 @@ FOR XML PATH('')", MyUtility.Convert.GetString(this.masterData["ID"]),
                 MyUtility.Check.Empty(this.artworktype) ? string.Empty : " and m.ArtworkTypeID = '" + this.artworktype + "'"));
 
             string ietmsUKEY = MyUtility.GetValue.Lookup($@"select i.Ukey from IETMS i WITH (NOLOCK) where  i.ID = '{this.masterData["IETMSID"]}' and i.Version='{this.masterData["IETMSversion"]}'");
-
-            string sqlCmd = string.Empty;
             sqlCmd = $@"
 select 
     seq = '0',
@@ -250,6 +266,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
             return Ict.Result.True;
         }
+
         /// <summary>
         /// 產生Excel
         /// </summary>
@@ -315,11 +332,35 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
                 return false;
             }
 
+            string cdcodeID = string.Empty;
+            string cdCodeNew = string.Empty;
+            string productType = string.Empty;
+            string fabricType = string.Empty;
+            string lining = string.Empty;
+            string gender = string.Empty;
+            string construction = string.Empty;
+            if (this.dtcustcd.Rows.Count > 0)
+            {
+                cdcodeID = this.dtcustcd.Rows[0]["CdCodeID"].ToString();
+                cdCodeNew = this.dtcustcd.Rows[0]["CDCodeNew"].ToString();
+                productType = this.dtcustcd.Rows[0]["ProductType"].ToString();
+                fabricType = this.dtcustcd.Rows[0]["FabricType"].ToString();
+                lining = this.dtcustcd.Rows[0]["Lining"].ToString();
+                gender = this.dtcustcd.Rows[0]["Gender"].ToString();
+                construction = this.dtcustcd.Rows[0]["Construction"].ToString();
+            }
+
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Cells[1, 1] = string.Format("Factory GSD - {0}", MyUtility.Convert.GetString(this.masterData["Phase"]));
             worksheet.Cells[3, 2] = MyUtility.Convert.GetString(this.masterData["StyleID"]);
             worksheet.Cells[3, 5] = MyUtility.Convert.GetString(this.masterData["SeasonID"]);
-            worksheet.Cells[3, 7] = this.custcdID;
+            worksheet.Cells[3, 7] = cdcodeID;
+            worksheet.Cells[2, 7] = cdCodeNew;
+            worksheet.Cells[2, 8] = "Product Type:" + productType;
+            worksheet.Cells[2, 9] = "Fabric Type:" + fabricType;
+            worksheet.Cells[3, 8] = "Lining:" + lining;
+            worksheet.Cells[3, 9] = "Gender:" + gender;
+            worksheet.Cells[2, 12] = construction;
             worksheet.Cells[3, 12] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 14] = MyUtility.Convert.GetString(this.efficiency) + "%";
             worksheet.Columns[3].ColumnWidth = 18.4;

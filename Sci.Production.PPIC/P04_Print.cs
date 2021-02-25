@@ -45,13 +45,25 @@ namespace Sci.Production.PPIC
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlCmd = string.Format(
-                @"select s.ID,s.SeasonID,s.BrandID,s.ProgramID,s.Model,s.Description,s.StyleName,
-s.CdCodeID,s.SizePage,s.GMTLT,s.CareCode,s.SizeUnit,s.CPU,s.Gender,s.CTNQty,
-IIF(s.Phase = '1','Sample',IIF(s.Phase = '2','Bulk','')) as Phase,
-isnull((select ID + '-' + Name from TPEPass1 WITH (NOLOCK) where ID = IIF(s.Phase = '1',s.SampleSMR,IIF(s.Phase = '2',s.BulkSMR,''))),'') as SMR,
-isnull((select ID + '-' + Name from TPEPass1 WITH (NOLOCK) where ID = IIF(s.Phase = '1',s.SampleMRHandle,IIF(s.Phase = '2',s.BulkMRHandle,''))),'') as Handle,
-isnull((select ID + '-' + Name from Pass1 WITH (NOLOCK) where ID = s.LocalMR),'') as LocalMR,s.Processes,s.UKey
+                @"
+select s.ID,s.SeasonID,s.BrandID,s.ProgramID,s.Model,s.Description,s.StyleName,
+    s.CdCodeID,s.SizePage,s.GMTLT,s.CareCode,s.SizeUnit,s.CPU,s.Gender,s.CTNQty,
+    IIF(s.Phase = '1','Sample',IIF(s.Phase = '2','Bulk','')) as Phase,
+    isnull((select ID + '-' + Name from TPEPass1 WITH (NOLOCK) where ID = IIF(s.Phase = '1',s.SampleSMR,IIF(s.Phase = '2',s.BulkSMR,''))),'') as SMR,
+    isnull((select ID + '-' + Name from TPEPass1 WITH (NOLOCK) where ID = IIF(s.Phase = '1',s.SampleMRHandle,IIF(s.Phase = '2',s.BulkMRHandle,''))),'') as Handle,
+    isnull((select ID + '-' + Name from Pass1 WITH (NOLOCK) where ID = s.LocalMR),'') as LocalMR
+	, s.Processes
+	, s.UKey
+	, s.CDCodeNew
+	, ProductType = r2.Name
+	, FabricType = r1.Name
+	, s.Lining
+	, s.Gender
+	, Construction = d1.Name
 from Style s WITH (NOLOCK) 
+left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
 where 1 = 1 {0} {1} {2} {3} {4}",
                 MyUtility.Check.Empty(this.style1) ? string.Empty : "and s.ID >= '" + this.style1 + "'",
                 MyUtility.Check.Empty(this.style2) ? string.Empty : "and s.ID <= '" + this.style2 + "'",
@@ -163,18 +175,24 @@ left join ATData a2 on a2.FakeID = st.Seq+'Pri'";
                 objArray[0, 5] = dr["Description"];
                 objArray[0, 6] = dr["StyleName"];
                 objArray[0, 7] = dr["CdCodeID"];
-                objArray[0, 8] = dr["SizePage"];
-                objArray[0, 9] = dr["GMTLT"];
-                objArray[0, 10] = dr["CareCode"];
-                objArray[0, 11] = dr["SizeUnit"];
-                objArray[0, 12] = dr["CPU"];
-                objArray[0, 13] = dr["Gender"];
-                objArray[0, 14] = dr["CTNQty"];
-                objArray[0, 15] = dr["Phase"];
-                objArray[0, 16] = dr["SMR"];
-                objArray[0, 17] = dr["Handle"];
-                objArray[0, 18] = dr["LocalMR"];
-                objArray[0, 19] = dr["Processes"];
+                objArray[0, 8] = dr["CDCodeNew"];
+                objArray[0, 9] = dr["ProductType"];
+                objArray[0, 10] = dr["FabricType"];
+                objArray[0, 11] = dr["Lining"];
+                objArray[0, 12] = dr["Gender"];
+                objArray[0, 13] = dr["Construction"];
+                objArray[0, 14] = dr["SizePage"];
+                objArray[0, 15] = dr["GMTLT"];
+                objArray[0, 16] = dr["CareCode"];
+                objArray[0, 17] = dr["SizeUnit"];
+                objArray[0, 18] = dr["CPU"];
+                objArray[0, 19] = dr["Gender"];
+                objArray[0, 20] = dr["CTNQty"];
+                objArray[0, 21] = dr["Phase"];
+                objArray[0, 22] = dr["SMR"];
+                objArray[0, 23] = dr["Handle"];
+                objArray[0, 24] = dr["LocalMR"];
+                objArray[0, 25] = dr["Processes"];
 
                 // 先清空Subprocess值
                 for (int i = this.printData.Columns.Count; i < lastCol; i++)

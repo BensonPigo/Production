@@ -120,9 +120,23 @@ namespace Sci.Production.Planning
             StringBuilder sqlCmd = new StringBuilder();
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             sqlCmd.Append(string.Format($@"
-SELECT o.FtyGroup,o.Styleid,o.SeasonID,o.CdCodeID,o.Qty,o.CPU,o.category,o.StyleUkey,o.id
+SELECT o.FtyGroup
+	,o.Styleid
+	,o.SeasonID
+	,o.CdCodeID
+	,o.Qty
+	,o.CPU
+	,o.Category
+	,o.StyleUkey
+	,o.ID
     ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
     ,oa.Article,o.brandid
+	,o.CDCodeNew
+	,sty.ProductType
+	,sty.FabricType
+	,sty.Lining
+	,sty.Gender
+	,sty.Construction
 into #tmpo
 FROM Orders o WITH (NOLOCK)
 outer apply(
@@ -131,6 +145,18 @@ outer apply(
 					where oa.id=o.ID
 					for xml path('')),1,1,'')
 ) oa
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.Ukey = o.StyleUkey
+)sty
 where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID and f.IsProduceFty = 0)
 {whereIncludeCancelOrder} "));
             #region --- 條件組合  ---
@@ -180,8 +206,20 @@ where not exists (select 1 from Factory f WITH (NOLOCK) where f.ID = o.FactoryID
             #endregion
 
             sqlCmd.Append(string.Format(@"
-select distinct o.FtyGroup,o.Styleid,oa.Article,oa.Brand,
-o.SeasonID,o.CdCodeID,o.CPU,TQty = sum(o.Qty),TCPU = sum(o.CPU*o.Qty)
+select o.FtyGroup
+	,o.Styleid
+	,oa.Article
+	,oa.Brand
+	,o.SeasonID
+	,o.CdCodeID
+	,o.CPU,TQty = sum(o.Qty)
+	,TCPU = sum(o.CPU * o.Qty)
+	,o.CDCodeNew
+	,o.ProductType
+	,o.FabricType
+	,o.Lining
+	,o.Gender
+	,o.Construction
 into #tmpol
 from #tmpo o
 outer apply(
@@ -196,6 +234,7 @@ outer apply(
            
 ) oa
 group by o.FtyGroup,o.Styleid,oa.Article,oa.Brand,o.SeasonID,o.CdCodeID,o.CPU
+	, o.CDCodeNew, o.ProductType, o.FabricType, o.Lining, o.Gender, o.Construction
 --
 select 
 	o.StyleID
@@ -283,6 +322,12 @@ select o.FtyGroup
 	   , o.Brand
 	   , o.SeasonID
 	   , o.CdCodeID
+	   , o.CDCodeNew
+	   , o.ProductType
+	   , o.FabricType
+	   , o.Lining
+	   , o.Gender
+	   , o.Construction
 	   , CPU = format(o.CPU,'0.00')
 	   , o.TQty
 	   , TCPU = format(o.TCPU,'0.00')
@@ -421,7 +466,7 @@ drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
                 }
                 #endregion
 
-                objSheets.Cells[3, 13 + i] = strArtworkType;
+                objSheets.Cells[3, 19 + i] = strArtworkType;
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
