@@ -194,7 +194,8 @@ order by ArticleGroup", patternukey);
             // patternTbOri,allpartTbOri 從 Garment 準備資料
             this.ProcessOriDatas();
 
-            if (detailTbCnt > 0 || this.bundle_Detail_CombineSubprocess.Rows.Count > 0)
+            // 有表身 & 沒 combine 才從前面帶入
+            if (detailTbCnt > 0 && this.bundle_Detail_CombineSubprocess.Rows.Count == 0)
             {
                 this.Exist_Table_Query();
             }
@@ -516,7 +517,7 @@ drop table #tmp,#tmp2";
             #region 左下grid
             patterncell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -559,7 +560,7 @@ drop table #tmp,#tmp2";
             };
             patterncell.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 string patcode = e.FormattedValue.ToString();
                 string oldvalue = dr["PatternCode"].ToString();
                 if (oldvalue == patcode)
@@ -604,7 +605,7 @@ drop table #tmp,#tmp2";
 
             patternDesc.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 dr["PatternDesc"] = e.FormattedValue;
                 dr.EndEdit();
                 this.SynchronizeMain(0, "patternDesc");
@@ -613,7 +614,7 @@ drop table #tmp,#tmp2";
 
             subcell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -669,7 +670,7 @@ drop table #tmp,#tmp2";
             };
             postSewingSubProcess_String.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -697,7 +698,7 @@ drop table #tmp,#tmp2";
             };
             postSewingSubProcess_String.CellFormatting += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -709,7 +710,7 @@ drop table #tmp,#tmp2";
             };
             noBundleCardAfterSubprocess_String.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -737,7 +738,7 @@ drop table #tmp,#tmp2";
             };
             noBundleCardAfterSubprocess_String.CellFormatting += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -750,7 +751,7 @@ drop table #tmp,#tmp2";
 
             partsCell1.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Parts"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 dr["Parts"] = newvalue;
@@ -759,7 +760,7 @@ drop table #tmp,#tmp2";
             };
             isPair.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid_art.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetString(dr["PatternCode"]).ToUpper() != "ALLPARTS")
                 {
                     bool ispair = MyUtility.Convert.GetBool(e.FormattedValue);
@@ -871,9 +872,9 @@ drop table #tmp,#tmp2";
             this.grid_qty.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             // 左下
-            this.grid_art.DataSource = this.patternTb;
-            this.grid_art.IsEditingReadOnly = false;
-            this.Helper.Controls.Grid.Generator(this.grid_art)
+            this.gridPattern.DataSource = this.patternTb;
+            this.gridPattern.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridPattern)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15), settings: patternDesc)
             .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -883,10 +884,10 @@ drop table #tmp,#tmp2";
             .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: postSewingSubProcess_String)
             .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: noBundleCardAfterSubprocess_String)
             ;
-            this.grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid_art.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
 
             // 右下
             this.grid_allpart.DataSource = this.allpartTb;
@@ -996,14 +997,14 @@ drop table #tmp,#tmp2";
         private void Button_LefttoRight_Click(object sender, EventArgs e)
         {
             this.grid_allpart.ValidateControl();
-            this.grid_art.ValidateControl();
+            this.gridPattern.ValidateControl();
             this.grid_qty.ValidateControl();
-            if (MyUtility.Check.Empty(this.grid_art.DataSource) || this.grid_art.Rows.Count == 0)
+            if (MyUtility.Check.Empty(this.gridPattern.DataSource) || this.gridPattern.Rows.Count == 0)
             {
                 return;
             }
 
-            DataRow selectartDr = ((DataRowView)this.grid_art.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectartDr = ((DataRowView)this.gridPattern.GetSelecteds(SelectedSort.Index)[0]).Row;
             string pattern = selectartDr["PatternCode"].ToString();
             if (pattern == "ALLPARTS")
             {
@@ -1061,7 +1062,7 @@ drop table #tmp,#tmp2";
         private void Button_RighttoLeft_Click(object sender, EventArgs e)
         {
             this.grid_allpart.ValidateControl();
-            this.grid_art.ValidateControl();
+            this.gridPattern.ValidateControl();
             this.grid_qty.ValidateControl();
             if (this.patternTb.Rows.Count == 0 || this.grid_allpart.RowCount == 0)
             {
@@ -1151,7 +1152,7 @@ drop table #tmp,#tmp2";
         private void SynchronizeMain(int type, string columnName)
         {
             // tpye = 0 左同步到右， type = 1 右同步到左
-            DataRow dr = this.grid_art.CurrentDataRow;
+            DataRow dr = this.gridPattern.CurrentDataRow;
             if (!this.chkCombineSubprocess.Checked || MyUtility.Convert.GetString(dr["PatternCode"]) == "ALLPARTS")
             {
                 return;
@@ -1195,7 +1196,7 @@ drop table #tmp,#tmp2";
 
         private void InsertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.grid_art.ValidateControl();
+            this.gridPattern.ValidateControl();
             DataRow ndr = this.patternTb.NewRow();
             int max = this.patternTb.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["CombineSubprocessGroup"]));
             ndr["CombineSubprocessGroup"] = max + 1;
@@ -1307,12 +1308,12 @@ drop table #tmp,#tmp2";
 
         private void DeleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.grid_art.Rows.Count == 0)
+            if (this.gridPattern.Rows.Count == 0)
             {
                 return;
             }
 
-            DataRow selectartDr = ((DataRowView)this.grid_art.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectartDr = ((DataRowView)this.gridPattern.GetSelecteds(SelectedSort.Index)[0]).Row;
             if (selectartDr["PatternCode"].ToString() == "ALLPARTS")
             {
                 MyUtility.Msg.WarningBox("Please remove all right grid's parts to instead of removeing ALLPARTS directly!");
@@ -1321,7 +1322,7 @@ drop table #tmp,#tmp2";
 
             if (this.chkCombineSubprocess.Checked)
             {
-                this.allpartTb.Select($"CombineSubprocessGroup = {this.grid_art.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
+                this.allpartTb.Select($"CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
             }
 
             selectartDr.Delete();
@@ -1330,15 +1331,20 @@ drop table #tmp,#tmp2";
 
         private void Allpart_insert_Click(object sender, EventArgs e)
         {
+            if (this.gridPattern.CurrentDataRow == null || this.IschkNonShellAllPart())
+            {
+                return;
+            }
+
             DataRow ndr = this.allpartTb.NewRow();
-            ndr["CombineSubprocessGroup"] = this.chkCombineSubprocess.Checked ? this.grid_art.CurrentDataRow["CombineSubprocessGroup"] : 0;
+            ndr["CombineSubprocessGroup"] = this.chkCombineSubprocess.Checked ? this.gridPattern.CurrentDataRow["CombineSubprocessGroup"] : 0;
             ndr["isMain"] = false;
             this.allpartTb.Rows.Add(ndr);
         }
 
         private void Allpart_delete_Click(object sender, EventArgs e)
         {
-            if (this.grid_allpart.Rows.Count == 0)
+            if (this.grid_allpart.Rows.Count == 0 || this.IschkNonShellAllPart())
             {
                 return;
             }
@@ -1346,8 +1352,8 @@ drop table #tmp,#tmp2";
             if (this.chkCombineSubprocess.Checked && MyUtility.Convert.GetBool(this.grid_allpart.CurrentDataRow["isMain"]))
             {
                 // 刪除右下資料,若點選是 isMain 那筆,則這組全部刪除
-                this.allpartTb.Select($"CombineSubprocessGroup = {this.grid_art.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
-                this.grid_art.CurrentDataRow.Delete();
+                this.allpartTb.Select($"CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
+                this.gridPattern.CurrentDataRow.Delete();
             }
             else
             {
@@ -1357,9 +1363,20 @@ drop table #tmp,#tmp2";
             this.CalculateParts();
         }
 
+        private bool IschkNonShellAllPart()
+        {
+            if ((this.chkNoneShellNoCreateAllParts.Checked && MyUtility.Convert.GetInt(this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]) == 0) ||
+                (this.chkNoneShellNoCreateAllParts.Checked && !this.chkCombineSubprocess.Checked))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private void OK_button_Click(object sender, EventArgs e)
         {
-            this.grid_art.ValidateControl();
+            this.gridPattern.ValidateControl();
             if (this.numTone.Value > this.numNoOfBundle.Value)
             {
                 MyUtility.Msg.WarningBox("Generate by Tone can not greater than No of Bunde");
@@ -1842,18 +1859,23 @@ drop table #tmp,#tmp2";
 
                             DataTable dtCopyArt = dtArt.Copy();
                             string fukey = $"Ukey1 = {item["Ukey1"]}";
-                            DataRow artdr = dtCopyArt.Select(fukey)[0];
-                            artdr["BundleNo"] = string.Empty;
-                            artdr["Ukey1"] = ukeytone;
+                            foreach (DataRow aarr in dtCopyArt.Select(fukey))
+                            {
+                                aarr["BundleNo"] = string.Empty;
+                                aarr["Ukey1"] = ukeytone;
+                                this.bundle_Detail_Art_T.ImportRow(aarr);
+                            }
+
                             item["Ukey1"] = ukeytone;
-                            this.bundle_Detail_Art_T.ImportRow(artdr);
                             if (this.chkCombineSubprocess.Checked)
                             {
                                 DataTable dtCopyCombine = dtCombine.Copy();
-                                DataRow combinedr = dtCopyCombine.Select(fukey)[0];
-                                combinedr["BundleNo"] = string.Empty;
-                                combinedr["Ukey1"] = ukeytone;
-                                this.bundle_Detail_CombineSubprocess_T.ImportRow(combinedr);
+                                foreach (DataRow cbdr in dtCopyCombine.Select(fukey))
+                                {
+                                    cbdr["BundleNo"] = string.Empty;
+                                    cbdr["Ukey1"] = ukeytone;
+                                    this.bundle_Detail_CombineSubprocess_T.ImportRow(cbdr);
+                                }
                             }
 
                             ukeytone++;
@@ -1993,7 +2015,7 @@ drop table #tmp,#tmp2";
 
             this.button_LefttoRight.Enabled = !this.chkCombineSubprocess.Checked;
             this.grid_allpart.Columns["Annotation"].Visible = !this.chkCombineSubprocess.Checked;
-            this.grid_art.Columns["isPair"].Visible = !this.chkCombineSubprocess.Checked;
+            this.gridPattern.Columns["isPair"].Visible = !this.chkCombineSubprocess.Checked;
             this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
 
             this.ChangeDefault();
@@ -2046,14 +2068,14 @@ drop table #tmp,#tmp2";
         private void Grid_art_SelectionChanged(object sender, EventArgs e)
         {
             this.allpartTb.DefaultView.RowFilter = string.Empty;
-            if (this.grid_art.CurrentDataRow == null || !this.chkCombineSubprocess.Checked)
+            if (this.gridPattern.CurrentDataRow == null || !this.chkCombineSubprocess.Checked)
             {
                 return;
             }
 
             if (this.chkCombineSubprocess.Checked)
             {
-                string filter = $"CombineSubprocessGroup = {this.grid_art.CurrentDataRow["CombineSubprocessGroup"]}";
+                string filter = $"CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}";
                 this.allpartTb.DefaultView.RowFilter = filter;
             }
         }

@@ -381,8 +381,7 @@ WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date_where.ToString("yyyy/MM/dd")}'
 AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
-            DataTable dt2;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt2);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt2);
 
             // 開始組合時間軸
             for (int day1 = 0; day1 <= leadtime; day1++)
@@ -439,8 +438,7 @@ WHERE HolidayDate >= '{date1.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date2.ToString("yyyy/MM/dd")}'
 AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
-            DataTable dt2;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt2);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt2);
 
             int days = (int)(date2.Date - date1.Date).TotalDays;
             for (int day1 = 0; day1 <= days; day1++)
@@ -481,8 +479,7 @@ outer apply(select * from [dbo].[getDailystdq](s.APSNo))x
 WHERE OrderID IN ('{orderIDs.JoinToString("','")}')
 and x.APSNo is not null
 ";
-            DataTable tmpDt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out tmpDt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable tmpDt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -508,7 +505,6 @@ and x.APSNo is not null
         /// <returns>DataTable</returns>
         public static DataTable GetCuttingTapeData(string cuttingID)
         {
-            DataTable[] dt;
             string sqlcmd = $@"
 declare @CuttingSP varchar(13) = '{cuttingID}'
 
@@ -551,7 +547,7 @@ where o.CuttingSP = @CuttingSP and o.Junk = 0
 order by o.SewInLine
 ";
 
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -671,10 +667,6 @@ order by o.SewInLine
         /// <returns>List<GarmentQty></returns>
         public static List<GarmentQty> GetCutPlanQty(List<string> orderIDs)
         {
-            DataTable headDt;
-            DataTable tmpDt;
-            DualResult result;
-
             // 取得該訂單的組成
             #region 取得by SP, Size 應該完成的 FabricPanelCode
             string tmpCmd = $@"
@@ -697,7 +689,7 @@ AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and 
 --AND o.id='20032468LL004'
 ";
 
-            result = DBProxy.Current.Select(null, tmpCmd, out headDt);
+            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable headDt);
             var headList = headDt.AsEnumerable()
                 .Select(s => new
                 {
@@ -737,7 +729,7 @@ GROUP BY WOD.OrderID
 		,EstCutDate.EstCutDate
 ORDER BY WOD.OrderID
 ";
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
 
             var cutList = tmpDt.AsEnumerable()
                 .Select(s => new
@@ -828,8 +820,6 @@ ORDER BY WOD.OrderID
         public static List<FabricPanelCodeCutPlanQty> GetSPFabricPanelCodeList(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
-            DataTable tmpDt;
-            DualResult result;
             #region SQL
             string tmpCmd = $@"
 SELECT DISTINCT 
@@ -847,7 +837,7 @@ order by o.ID,cons.FabricPanelCode
 ";
             #endregion
 
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -870,8 +860,6 @@ order by o.ID,cons.FabricPanelCode
         public static List<FabricPanelCodeCutPlanQty> GetCutPlanQty_byFabricPanelCode(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
-            DataTable tmpDt;
-            DualResult result;
             #region SQL
             string tmpCmd = $@"
 SELECT  WOD.OrderID
@@ -894,7 +882,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 ";
             #endregion
 
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -944,8 +932,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
-            string annotationStr;
-            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out annotationStr);
+            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out string annotationStr);
             if (leadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
@@ -964,7 +951,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             } // 10%
 
             List<GarmentQty> garmentList = GetCutPlanQty(allOrder);
-            processInt = processInt + 5;
+            processInt += 5;
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
@@ -1104,7 +1091,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                 if (bw != null)
                 {
-                    processInt = processInt + pc;
+                    processInt += pc;
                     if (bw.CancellationPending == true)
                     {
                         return null;
@@ -1178,8 +1165,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
-            string annotationStr;
-            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out annotationStr);
+            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out string annotationStr);
             if (leadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
@@ -1200,7 +1186,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<FabricPanelCodeCutPlanQty> sPFabricPanelCodeList = GetSPFabricPanelCodeList(allOrder); // 基底用來跑主迴圈 SP + FabricPanelCode
 
             List<FabricPanelCodeCutPlanQty> cutPlanQtyList = GetCutPlanQty_byFabricPanelCode(allOrder);
-            processInt = processInt + 5;
+            processInt += 5;
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
@@ -1339,7 +1325,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                 if (bw != null)
                 {
-                    processInt = processInt + pc;
+                    processInt += pc;
                     if (bw.CancellationPending == true)
                     {
                         return null;
@@ -2068,11 +2054,6 @@ order by WOD.OrderID,EstCutDate.EstCutDate
         public static List<LeadTime> GetLeadTimeList(List<string> orderIDs, out string annotationStr)
         {
             List<LeadTime> leadTimeList = new List<LeadTime>();
-
-            DataTable poID_dt;
-            DataTable garmentTb;
-            DataTable leadTime_dt;
-            DualResult result;
             annotationStr = string.Empty;
 
             string cmd = $@"
@@ -2091,7 +2072,7 @@ INNER JOIN Orders b ON a.OrderID= b.ID
 
 drop table #OrderList
 ";
-            result = DBProxy.Current.Select(null, cmd, out poID_dt);
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable poID_dt);
             if (!result)
             {
                 return null;
@@ -2106,7 +2087,7 @@ drop table #OrderList
                 string mDivisionID = dr["MDivisionID"].ToString();
                 string factoryID = dr["FactoryID"].ToString();
 
-                GetGarmentListTable(string.Empty, pOID, string.Empty, out garmentTb);
+                GetGarmentListTable(string.Empty, pOID, string.Empty, out DataTable garmentTb);
 
                 List<string> annotationList = garmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
 
@@ -2120,8 +2101,7 @@ drop table #OrderList
                         for (int i = 0; i <= item.Length - 1; i++)
                         {
                             // 排除掉數字
-                            int x = 0;
-                            if (!int.TryParse(item[i].ToString(), out x))
+                            if (!int.TryParse(item[i].ToString(), out int x))
                             {
                                 input += item[i].ToString();
                             }
@@ -2157,7 +2137,7 @@ WHERE Subprocess.IDs = '{annotationStr1}'
 and s.MDivisionID = '{mDivisionID}'
 and s.FactoryID = '{factoryID}'
 ";
-                result = DBProxy.Current.Select(null, chk_LeadTime, out leadTime_dt);
+                result = DBProxy.Current.Select(null, chk_LeadTime, out DataTable leadTime_dt);
                 if (!result)
                 {
                     return null;

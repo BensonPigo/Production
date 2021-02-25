@@ -69,7 +69,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
-            this.gridCutpart = new Sci.Win.UI.Grid();
+            this.gridPattern = new Sci.Win.UI.Grid();
             this.art_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.insertIntoRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -122,7 +122,7 @@
             this.splitContainer8.Panel1.SuspendLayout();
             this.splitContainer8.Panel2.SuspendLayout();
             this.splitContainer8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPattern)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer9)).BeginInit();
             this.splitContainer9.Panel1.SuspendLayout();
@@ -613,6 +613,7 @@
             // 
             // chkNoneShellNoCreateAllParts
             // 
+            this.chkNoneShellNoCreateAllParts.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.chkNoneShellNoCreateAllParts.AutoSize = true;
             this.chkNoneShellNoCreateAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoneShellNoCreateAllParts.Location = new System.Drawing.Point(861, 4);
@@ -625,6 +626,7 @@
             // 
             // chkCombineSubprocess
             // 
+            this.chkCombineSubprocess.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.chkCombineSubprocess.AutoSize = true;
             this.chkCombineSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkCombineSubprocess.Location = new System.Drawing.Point(423, 4);
@@ -666,7 +668,7 @@
             // 
             // splitContainer8.Panel1
             // 
-            this.splitContainer8.Panel1.Controls.Add(this.gridCutpart);
+            this.splitContainer8.Panel1.Controls.Add(this.gridPattern);
             // 
             // splitContainer8.Panel2
             // 
@@ -675,22 +677,22 @@
             this.splitContainer8.SplitterDistance = 570;
             this.splitContainer8.TabIndex = 0;
             // 
-            // gridCutpart
+            // gridPattern
             // 
-            this.gridCutpart.AllowUserToAddRows = false;
-            this.gridCutpart.AllowUserToDeleteRows = false;
-            this.gridCutpart.AllowUserToResizeRows = false;
-            this.gridCutpart.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridCutpart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridCutpart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridCutpart.ContextMenuStrip = this.art_contextMenuStrip;
-            this.gridCutpart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridCutpart.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridCutpart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridCutpart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCutpart.Location = new System.Drawing.Point(0, 0);
-            this.gridCutpart.Name = "gridCutpart";
+            this.gridPattern.AllowUserToAddRows = false;
+            this.gridPattern.AllowUserToDeleteRows = false;
+            this.gridPattern.AllowUserToResizeRows = false;
+            this.gridPattern.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPattern.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPattern.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPattern.ContextMenuStrip = this.art_contextMenuStrip;
+            this.gridPattern.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridPattern.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPattern.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPattern.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPattern.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPattern.Location = new System.Drawing.Point(0, 0);
+            this.gridPattern.Name = "gridPattern";
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -698,16 +700,16 @@
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridCutpart.RowTemplate.Height = 24;
-            this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutpart.ShowCellToolTips = false;
-            this.gridCutpart.Size = new System.Drawing.Size(570, 280);
-            this.gridCutpart.TabIndex = 80;
-            this.gridCutpart.TabStop = false;
-            this.gridCutpart.SelectionChanged += new System.EventHandler(this.GridCutpart_SelectionChanged);
+            this.gridPattern.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridPattern.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPattern.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPattern.RowTemplate.Height = 24;
+            this.gridPattern.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPattern.ShowCellToolTips = false;
+            this.gridPattern.Size = new System.Drawing.Size(570, 280);
+            this.gridPattern.TabIndex = 80;
+            this.gridPattern.TabStop = false;
+            this.gridPattern.SelectionChanged += new System.EventHandler(this.GridCutpart_SelectionChanged);
             // 
             // art_contextMenuStrip
             // 
@@ -954,7 +956,7 @@
             this.splitContainer8.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer8)).EndInit();
             this.splitContainer8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPattern)).EndInit();
             this.art_contextMenuStrip.ResumeLayout(false);
             this.splitContainer9.Panel1.ResumeLayout(false);
             this.splitContainer9.Panel2.ResumeLayout(false);
@@ -1000,7 +1002,7 @@
         private System.Windows.Forms.SplitContainer splitContainer8;
         private System.Windows.Forms.SplitContainer splitContainer9;
         private Win.UI.Label label1;
-        private Win.UI.Grid gridCutpart;
+        private Win.UI.Grid gridPattern;
         private Win.UI.Button btn_RighttoLeft;
         private Win.UI.Button btn_LefttoRight;
         private Win.UI.Grid gridAllPart;

@@ -322,7 +322,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             DataGridViewGeneratorTextColumnSettings patterncell = new DataGridViewGeneratorTextColumnSettings();
             patterncell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS" || e.Button != MouseButtons.Right)
                 {
                     return;
@@ -359,7 +359,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             };
             patterncell.CellValidating += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 string patcode = e.FormattedValue.ToString();
                 if (dr["PatternCode"].ToString() == patcode)
                 {
@@ -394,13 +394,10 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
-            DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings
-            {
-                CharacterCasing = CharacterCasing.Normal,
-            };
+            DataGridViewGeneratorTextColumnSettings patternDesc = new DataGridViewGeneratorTextColumnSettings { CharacterCasing = CharacterCasing.Normal };
             patternDesc.CellValidating += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 dr["PatternDesc"] = e.FormattedValue;
                 dr.EndEdit();
                 this.SynchronizeMain(0, "patternDesc");
@@ -410,7 +407,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
             subcell.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -464,7 +461,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             };
             partQtyCell.CellValidating += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Parts"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 dr["Parts"] = newvalue;
@@ -475,7 +472,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             DataGridViewGeneratorCheckBoxColumnSettings isPair = new DataGridViewGeneratorCheckBoxColumnSettings();
             isPair.CellValidating += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetString(dr["PatternCode"]).ToUpper() == "ALLPARTS")
                 {
                     return;
@@ -490,7 +487,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             DataGridViewGeneratorTextColumnSettings postSewingSubProcess_String = new DataGridViewGeneratorTextColumnSettings();
             postSewingSubProcess_String.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -520,7 +517,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             };
             postSewingSubProcess_String.CellFormatting += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -534,7 +531,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             DataGridViewGeneratorTextColumnSettings noBundleCardAfterSubprocess_String = new DataGridViewGeneratorTextColumnSettings();
             noBundleCardAfterSubprocess_String.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     return;
@@ -564,7 +561,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             };
             noBundleCardAfterSubprocess_String.CellFormatting += (s, e) =>
             {
-                DataRow dr = this.gridCutpart.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridPattern.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(dr["art"]) || dr["PatternCode"].ToString() == "ALLPARTS")
                 {
                     e.CellStyle.BackColor = Color.White;
@@ -576,8 +573,8 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             };
             #endregion
             #region 左下 gridCutpart
-            this.gridCutpart.IsEditingReadOnly = false;
-            this.Helper.Controls.Grid.Generator(this.gridCutpart)
+            this.gridPattern.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridPattern)
                 .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
                 .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15), settings: patternDesc)
                 .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(5))
@@ -587,13 +584,13 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: postSewingSubProcess_String)
                 .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: noBundleCardAfterSubprocess_String)
                 ;
-            this.gridCutpart.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            this.gridCutpart.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
-            this.gridCutpart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridCutpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridCutpart.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
-            this.gridCutpart.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridCutpart.Columns["IsPair"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            this.gridPattern.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
+            this.gridPattern.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
+            this.gridPattern.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["IsPair"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region 右下 gridAllPart 事件
@@ -632,10 +629,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 this.Calpart();
             };
 
-            DataGridViewGeneratorTextColumnSettings patternDesc2 = new DataGridViewGeneratorTextColumnSettings
-            {
-                CharacterCasing = CharacterCasing.Normal,
-            };
+            DataGridViewGeneratorTextColumnSettings patternDesc2 = new DataGridViewGeneratorTextColumnSettings { CharacterCasing = CharacterCasing.Normal };
             patternDesc2.CellValidating += (s, e) =>
             {
                 DataRow dr = this.gridAllPart.GetDataRow(e.RowIndex);
@@ -784,7 +778,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
         private void SynchronizeMain(int type, string columnName)
         {
             // tpye = 0 左同步到右， type = 1 右同步到左
-            DataRow dr = this.gridCutpart.CurrentDataRow;
+            DataRow dr = this.gridPattern.CurrentDataRow;
             if (!this.chkCombineSubprocess.Checked || MyUtility.Convert.GetString(dr["PatternCode"]) == "ALLPARTS")
             {
                 return;
@@ -850,7 +844,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             this.ArticleSizeTb = null;
             this.ExcessTb = null;
             this.SizeRatioTb = null;
-            this.gridCutpart.DataSource = null;
+            this.gridPattern.DataSource = null;
             this.gridAllPart.DataSource = null;
             this.gridQty.DataSource = null;
             this.gridArticleSize.DataSource = null;
@@ -1167,7 +1161,7 @@ and o.mDivisionid = '{this.keyWord}'
             this.gridCutRef.DataSource = this.CutRefTb; // 左上
             this.gridQty.DataSource = this.qtyTb; // 中上
             this.gridArticleSize.DataSource = this.ArticleSizeTb; // 右上
-            this.gridCutpart.DataSource = this.patternTb; // 左下
+            this.gridPattern.DataSource = this.patternTb; // 左下
             this.gridAllPart.DataSource = this.allpartTb; // 右下
 
             this.GridAutoResizeColumns();
@@ -1503,6 +1497,7 @@ order by ArticleGroup";
                             ndr["Parts"] = Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                             npart = npart + Convert.ToInt32(dr["alone"]) + (Convert.ToInt32(dr["DV"]) * 2) + (Convert.ToInt32(dr["Pair"]) * 2);
                             ndr["isPair"] = MyUtility.Convert.GetInt(dr["Pair"]) == 1;
+                            ndr["CombineSubprocessGroup"] = 0;
                             this.allpartTbOri.Rows.Add(ndr);
                         }
                     }
@@ -1541,7 +1536,7 @@ order by ArticleGroup";
         }
         #endregion
 
-        #region 上方2個 Grid RowChange
+        #region Grid RowChange
         private void GridCutRef_SelectionChanged(object sender, EventArgs e)
         {
             if (this.gridCutRef.CurrentDataRow == null)
@@ -1575,7 +1570,7 @@ order by ArticleGroup";
 
         private void GridCutpart_SelectionChanged(object sender, EventArgs e)
         {
-            if (this.gridCutpart.CurrentDataRow == null)
+            if (this.gridPattern.CurrentDataRow == null)
             {
                 return;
             }
@@ -1583,7 +1578,7 @@ order by ArticleGroup";
             string filter = $"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}";
             if (this.chkCombineSubprocess.Checked)
             {
-                filter += $" and CombineSubprocessGroup = {this.gridCutpart.CurrentDataRow["CombineSubprocessGroup"]}";
+                filter += $" and CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}";
             }
 
             this.allpartTb.DefaultView.RowFilter = filter;
@@ -1715,7 +1710,7 @@ order by ArticleGroup";
             this.gridCutRef.AutoResizeColumns();
             this.gridQty.AutoResizeColumns();
             this.gridArticleSize.AutoResizeColumns();
-            this.gridCutpart.AutoResizeColumns();
+            this.gridPattern.AutoResizeColumns();
             this.gridAllPart.AutoResizeColumns();
         }
 
@@ -1724,7 +1719,7 @@ order by ArticleGroup";
             this.gridCutRef.ValidateControl();
             this.gridArticleSize.ValidateControl();
             this.gridQty.ValidateControl();
-            this.gridCutpart.ValidateControl();
+            this.gridPattern.ValidateControl();
             this.gridAllPart.ValidateControl();
         }
 
@@ -1776,7 +1771,7 @@ order by ArticleGroup";
                 return;
             }
 
-            DataRow selectartDr = ((DataRowView)this.gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
+            DataRow selectartDr = ((DataRowView)this.gridPattern.GetSelecteds(SelectedSort.Index)[0]).Row;
             string pattern = selectartDr["PatternCode"].ToString();
             if (pattern == "ALLPARTS")
             {
@@ -1920,6 +1915,7 @@ order by ArticleGroup";
                 DataTable cdt = drs.CopyToDataTable();
                 drs.Delete();
                 this.patternTb.Merge(cdt);
+                this.patternTb.AcceptChanges();
             }
 
             this.Calpart();
@@ -1982,27 +1978,32 @@ order by ArticleGroup";
         private void DeleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Gridvalid();
-            if (this.gridCutpart.CurrentDataRow["PatternCode"].ToString() == "ALLPARTS")
+            if (this.gridPattern.CurrentDataRow["PatternCode"].ToString() == "ALLPARTS")
             {
                 return;
             }
 
             if (this.chkCombineSubprocess.Checked)
             {
-                this.allpartTb.Select($"Ukey = {this.gridCutpart.CurrentDataRow["Ukey"]} and CombineSubprocessGroup = {this.gridCutpart.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
+                this.allpartTb.Select($"Ukey = {this.gridPattern.CurrentDataRow["Ukey"]} and CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
             }
 
-            this.gridCutpart.CurrentDataRow.Delete();
+            this.gridPattern.CurrentDataRow.Delete();
             this.Calpart();
         }
 
         private void Allpart_insert_Click(object sender, EventArgs e)
         {
             this.Gridvalid();
+            if (this.gridPattern.CurrentDataRow == null || this.IschkNonShellAllPart())
+            {
+                return;
+            }
+
             DataRow ndr = this.allpartTb.NewRow();
             ndr["cutref"] = this.gridCutRef.CurrentDataRow["cutref"];
             ndr["ukey"] = this.gridCutRef.CurrentDataRow["ukey"];
-            ndr["CombineSubprocessGroup"] = this.chkCombineSubprocess.Checked ? this.gridCutpart.CurrentDataRow["CombineSubprocessGroup"] : 0;
+            ndr["CombineSubprocessGroup"] = this.chkCombineSubprocess.Checked ? this.gridPattern.CurrentDataRow["CombineSubprocessGroup"] : 0;
             ndr["isMain"] = false;
             this.allpartTb.Rows.Add(ndr);
         }
@@ -2010,7 +2011,7 @@ order by ArticleGroup";
         private void Allpart_delete_Click(object sender, EventArgs e)
         {
             this.Gridvalid();
-            if (this.gridAllPart.CurrentDataRow == null)
+            if (this.gridAllPart.CurrentDataRow == null || this.IschkNonShellAllPart())
             {
                 return;
             }
@@ -2018,8 +2019,8 @@ order by ArticleGroup";
             if (this.chkCombineSubprocess.Checked && MyUtility.Convert.GetBool(this.gridAllPart.CurrentDataRow["isMain"]))
             {
                 // 刪除右下資料,若點選是 isMain 那筆,則這組全部刪除
-                this.allpartTb.Select($"Ukey = {this.gridCutpart.CurrentDataRow["Ukey"]} and CombineSubprocessGroup = {this.gridCutpart.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
-                this.gridCutpart.CurrentDataRow.Delete();
+                this.allpartTb.Select($"Ukey = {this.gridPattern.CurrentDataRow["Ukey"]} and CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}").Delete();
+                this.gridPattern.CurrentDataRow.Delete();
             }
             else
             {
@@ -2063,13 +2064,24 @@ order by ArticleGroup";
                 row["SizeCode"] = string.Empty;
             }
         }
+
+        private bool IschkNonShellAllPart()
+        {
+            if ((this.chkNoneShellNoCreateAllParts.Checked && MyUtility.Convert.GetInt(this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]) == 0) ||
+                (this.chkNoneShellNoCreateAllParts.Checked && !this.chkCombineSubprocess.Checked))
+            {
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
         private void ChkCombineSubprocess_CheckedChanged(object sender, EventArgs e)
         {
             this.btn_LefttoRight.Enabled = !this.chkCombineSubprocess.Checked;
             this.gridAllPart.Columns["Annotation"].Visible = !this.chkCombineSubprocess.Checked;
-            this.gridCutpart.Columns["IsPair"].Visible = !this.chkCombineSubprocess.Checked;
+            this.gridPattern.Columns["IsPair"].Visible = !this.chkCombineSubprocess.Checked;
             this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
             if (this.gridCutRef.CurrentDataRow == null)
             {
@@ -2090,7 +2102,6 @@ order by ArticleGroup";
 
         private void ChkNoneShellNoCreateAllParts_CheckedChanged(object sender, EventArgs e)
         {
-            this.gridAllPart.Enabled = !this.chkNoneShellNoCreateAllParts.Checked;
             if (this.gridCutRef.CurrentDataRow == null)
             {
                 return;
