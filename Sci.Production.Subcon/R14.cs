@@ -277,6 +277,7 @@ namespace Sci.Production.Subcon
                 ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
                 ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
                 ,aa.StyleID
+				,aa.SeasonID
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,[SMR]=dbo.getTPEPass1(aa.SMR) 
@@ -392,6 +393,7 @@ namespace Sci.Production.Subcon
                 ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
                 ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
                 ,aa.StyleID
+				,aa.SeasonID
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,[SMR]= dbo.getTPEPass1(aa.SMR) 
