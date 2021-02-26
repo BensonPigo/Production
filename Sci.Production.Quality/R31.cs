@@ -689,7 +689,7 @@ AND NOT EXISTS (
 	SELECT *
 	FROM #CFAInspectionRecord a
 	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = 'Final' AND a.Status='Confirmed' AND a.Result != 'Pass'
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = 'Final' AND a.Status='Confirmed' AND (a.Result = 'Pass' OR a.Result='Fail but release')
 ) 
 
 
@@ -748,7 +748,7 @@ AND NOT EXISTS (
 	SELECT *
 	FROM #CFAInspectionRecord a
 	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = '3rd Party' AND a.Status='Confirmed' AND a.Result != 'Pass'
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = '3rd Party' AND a.Status='Confirmed' AND (a.Result = 'Pass' OR a.Result='Fail but release')
 ) 
 
 ";
