@@ -822,6 +822,7 @@ where Junk = 0";
             base.ClickNewAfter();
             this.CurrentMaintain["Phase"] = "Estimate";
             this.CurrentMaintain["Version"] = "01";
+            this.CurrentMaintain["Status"] = "New";
         }
 
         /// <summary>
@@ -830,6 +831,12 @@ where Junk = 0";
         /// <returns>bool</returns>
         protected override bool ClickCopyBefore()
         {
+            if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("please confirm data before copy.");
+                return false;
+            }
+
             P01_Copy callNextForm = new P01_Copy(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == DialogResult.OK)
@@ -860,12 +867,32 @@ where Junk = 0";
             this.CurrentMaintain["ID"] = 0;
         }
 
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            base.ClickEditBefore();
+            if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("please unconfirm to edit it.");
+                this.HideRows();
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// ClickDeleteBefore()
         /// </summary>
         /// <returns>bool</returns>
         protected override bool ClickDeleteBefore()
         {
+            if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("please unconfirm to delete it.");
+                return false;
+            }
+
             if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput_Detail WITH (NOLOCK) where OrderId in (select ID from Orders WITH (NOLOCK) where StyleID = '{0}' and BrandID = '{1}' and SeasonID = '{2}')", this.CurrentMaintain["StyleID"].ToString(), this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["SeasonID"].ToString())))
             {
                 MyUtility.Msg.WarningBox("Sewing output > 0, can't be deleted!!");
@@ -1412,6 +1439,7 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
+                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
@@ -1475,6 +1503,7 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
+                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
