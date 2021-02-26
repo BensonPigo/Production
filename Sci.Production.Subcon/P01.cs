@@ -21,12 +21,12 @@ namespace Sci.Production.Subcon
         /// <summary>
         ///  異常價格視窗Grid的異動後DataSource，僅提供P01新增模式下使用
         /// </summary>
-        public static DataTable Tmp_ModifyTable { get; set; }
+        public DataTable Tmp_ModifyTable { get; set; }
 
         /// <summary>
         ///  異常價格視窗Grid的異動前DataSource，僅提供P01新增模式下使用
         /// </summary>
-        public static DataTable Tmp_OriginDT_FromDB { get; set; }
+        public DataTable Tmp_OriginDT_FromDB { get; set; }
 
         private string artworkunit;
         private bool isNeedPlanningB03Quote = false;
@@ -346,16 +346,17 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            if (P01.Tmp_ModifyTable != null && P01.Tmp_OriginDT_FromDB != null)
+
+            if (this.Tmp_ModifyTable != null && this.Tmp_OriginDT_FromDB != null)
             {
                 // 新增模式下的異常價格紀錄寫入DB，是在這裡執行，內容與 P01_IrregularPriceReason 一樣
                 StringBuilder sql = new StringBuilder();
 
                 // ModifyTable 去掉 OriginDT_FromDB，剩下的不是新增就是修改
-                var insert_Or_Update = Tmp_ModifyTable.AsEnumerable().Except(Tmp_OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
+                var insert_Or_Update = this.Tmp_ModifyTable.AsEnumerable().Except(this.Tmp_OriginDT_FromDB.AsEnumerable(), DataRowComparer.Default).Where(o => o.Field<string>("SubconReasonID").Trim() != string.Empty);
 
                 // 抓出ReasonID為空的出來刪除
-                var delete = Tmp_ModifyTable.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
+                var delete = this.Tmp_ModifyTable.AsEnumerable().Where(o => o.Field<string>("SubconReasonID").Trim() == string.Empty);
 
                 foreach (var item in delete)
                 {
@@ -405,9 +406,43 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
                     }
                 }
 
-                P01.Tmp_ModifyTable = null;
-                P01.Tmp_OriginDT_FromDB = null;
+                this.Tmp_ModifyTable = null;
+                this.Tmp_OriginDT_FromDB = null;
             }
+
+            #region 重新檢查此單的POID(包含刪除)是否有IrregularPrice的資料，若沒有就將ArtworkPO_IrregularPrice刪除
+            DataTable dtCheck = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                DataRow drCheck = dtCheck.NewRow();
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    drCheck["ArtworkTypeID"] = dr["ArtworkTypeID", DataRowVersion.Original];
+                    drCheck["OrderID"] = dr["OrderID", DataRowVersion.Original];
+                    drCheck["POID"] = dr["POID", DataRowVersion.Original];
+                    drCheck["PoQty"] = 0;
+                    drCheck["Price"] = 0;
+                    drCheck["Amount"] = 0;
+                }
+                else
+                {
+                    drCheck["ArtworkTypeID"] = dr["ArtworkTypeID"];
+                    drCheck["OrderID"] = dr["OrderID"];
+                    drCheck["POID"] = dr["POID"];
+                    drCheck["PoQty"] = dr["PoQty"];
+                    drCheck["Price"] = dr["Price"];
+                    drCheck["Amount"] = dr["Amount"];
+                }
+
+                dtCheck.Rows.Add(drCheck);
+            }
+
+            DualResult resultDeleteArtworkPO = this.DeleteArtworkPO_IrregularPrice(dtCheck);
+            if (!resultDeleteArtworkPO)
+            {
+                return resultDeleteArtworkPO;
+            }
+            #endregion
 
             #region update ArtworkReq_Detail.ArtworkPOID
             DualResult updateArtworkReq_DetailResult;
@@ -551,7 +586,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 }
             }
 
-            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas, this);
 
             // 取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
             this.ShowWaitMessage("Data Loading...");
@@ -1047,7 +1082,7 @@ where  apd.id = '{this.CurrentMaintain["id"]}' and apd.ukey = '{this.CurrentDeta
                 }
             }
 
-            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas, this);
             frm.ShowDialog(this);
 
             // 畫面關掉後，再檢查一次有無價格異常
@@ -1056,23 +1091,80 @@ where  apd.id = '{this.CurrentMaintain["id"]}' and apd.ukey = '{this.CurrentDeta
 
             bool has_Irregular_Price = false;
 
-            // 新增模式使用不同function
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
-            {
-                has_Irregular_Price = frm.Check_Irregular_Price_Without_PO(false);
-            }
-            else
-            {
-                has_Irregular_Price = frm.Check_Irregular_Price(false);
-            }
+            has_Irregular_Price = frm.Check_Irregular_Price(false);
 
-            this.IrregularPriceReason_ReasonNullCount = frm.ReasonNullCount;
+            this.IrregularPriceReason_ReasonNullCount = frm.reasonNullCount;
             this.HideWaitMessage();
 
             if (has_Irregular_Price)
             {
                 this.btnIrrPriceReason.ForeColor = Color.Red;
             }
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDeletePost()
+        {
+            #region 重新檢查此單的POID(包含刪除)是否有IrregularPrice的資料，若沒有就將ArtworkPO_IrregularPrice刪除
+            DataTable dtDelete = this.DetailDatas.CopyToDataTable();
+
+            foreach (DataRow item in dtDelete.Rows)
+            {
+                item["PoQty"] = 0;
+                item["Amount"] = 0;
+                item["Price"] = 0;
+            }
+
+            DualResult result = this.DeleteArtworkPO_IrregularPrice(dtDelete);
+            if (!result)
+            {
+                return result;
+            }
+            #endregion
+
+            return base.ClickDeletePost();
+        }
+
+        private DualResult DeleteArtworkPO_IrregularPrice(DataTable dtCheckDetail)
+        {
+            if (dtCheckDetail.Rows.Count == 0)
+            {
+                return new DualResult(true);
+            }
+
+            var frm = new P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, dtCheckDetail, this);
+            DataTable dtIrregularPriceReason_Real;
+            DualResult result = frm.GetIrregularPriceReason_Real(out dtIrregularPriceReason_Real);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            var listIrregularPricePOID = dtIrregularPriceReason_Real.AsEnumerable()
+                        .Select(s => s["POID"].ToString())
+                        .Distinct();
+
+            var listDetailPOID = dtCheckDetail.AsEnumerable()
+                        .Select(s => s["POID"].ToString())
+                        .Distinct();
+
+            var listNeedDeletePOID = listDetailPOID.Where(s => !listIrregularPricePOID.Contains(s));
+
+            if (listNeedDeletePOID.Any())
+            {
+                string sqlDelete = $@"delete ArtworkPO_IrregularPrice 
+                                        where ArtworkTypeID = '{this.CurrentMaintain["ArtworkTypeID"]}' and
+                                              POID in ({listNeedDeletePOID.Select(s => $"'{s}'").JoinToString(",")})";
+
+                result = DBProxy.Current.Execute(null, sqlDelete);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return new DualResult(true);
         }
 
         private void BtnBatchApprove_Click(object sender, EventArgs e)
@@ -1199,23 +1291,15 @@ where id = '{spNo}' and Category = 'S'
                 }
             }
 
-            var irregularPriceReason = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas);
+            var irregularPriceReason = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain, detailDatas, this);
 
-            P01.Tmp_ModifyTable = null;
+            this.Tmp_ModifyTable = null;
 
             // P01_IrregularPriceReason.tmp_IrregularPriceReason_List.Clear();
             bool has_Irregular_Price = false;
+            has_Irregular_Price = irregularPriceReason.Check_Irregular_Price(false);
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
-            {
-                has_Irregular_Price = irregularPriceReason.Check_Irregular_Price_Without_PO(false);
-            }
-            else
-            {
-                has_Irregular_Price = irregularPriceReason.Check_Irregular_Price(false);
-            }
-
-            this.IrregularPriceReason_ReasonNullCount = irregularPriceReason.ReasonNullCount;
+            this.IrregularPriceReason_ReasonNullCount = irregularPriceReason.reasonNullCount;
             this.HideWaitMessage();
 
             if (has_Irregular_Price)

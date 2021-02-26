@@ -224,6 +224,10 @@ VALUES ('{orderID}','{artworkType}',{standardQty},{reqQty},'{subconReasonID}',GE
             this.btnClose.Text = this.EditMode ? "Undo" : "Close";
         }
 
+        /// <summary>
+        /// GetData
+        /// </summary>
+        /// <returns>DataTable</returns>
         public DataTable GetData()
         {
             string sqlcmd = string.Empty;

@@ -324,7 +324,10 @@ namespace Sci.Production.Subcon
                 ,[local_percentage]=CASE WHEN y.order_amt = 0 THEN NULL
                                    ELSE round(z.localap_amt / y.order_amt,2) 
                                    END
-                ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
+                ,[Responsible_Reason]=IIF(  IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' or (x.ap_amt + z.localap_amt) <= y.order_amt,
+                                            '',
+                                            ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')
+                                         ) 
                 
                 from #tmp as t
                 left join orders aa on aa.id = t.POID
@@ -412,7 +415,10 @@ namespace Sci.Production.Subcon
                                            (x.ap_amt / y.order_qty) / (y.order_amt / y.order_qty)
                                         ,2) 
                                END
-                ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
+                ,[Responsible_Reason]=IIF(  IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' or x.ap_amt <= y.order_amt,
+                                            '',
+                                            ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')
+                                         ) 
 
                 from #tmp as t
                 left join orders aa on aa.id = t.POID
