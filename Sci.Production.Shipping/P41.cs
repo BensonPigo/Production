@@ -659,24 +659,21 @@ BEGIN
 	FETCH NEXT FROM cursor_consumption INTO @consumptioncustomsp,@consumptionremindqty
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		IF @consumptionremindqty > @ttlshipqty
-			BEGIN
-				select @cursorbalance = BalanceQty from @tempCustomSP where CustomSP = @consumptioncustomsp
-				IF @cursorbalance is not null
-					BEGIN
-						IF @cursorbalance >= @ttlshipqty
-							BEGIN
-								SET @customsp = @consumptioncustomsp
-								BREAK
-							END
-					END
-				ELSE
-					BEGIN
-						INSERT @tempCustomSP (CustomSP,BalanceQty) VALUES (@consumptioncustomsp,@consumptionremindqty - @ttlshipqty)
-						SET @customsp = @consumptioncustomsp
-						BREAK
-					END
-			END
+		select @cursorbalance = BalanceQty from @tempCustomSP where CustomSP = @consumptioncustomsp
+		IF @cursorbalance is not null
+		BEGIN
+			IF @cursorbalance >= @ttlshipqty
+				BEGIN
+					SET @customsp = @consumptioncustomsp
+					BREAK
+				END
+		END
+		ELSE
+		BEGIN
+			INSERT @tempCustomSP (CustomSP,BalanceQty) VALUES (@consumptioncustomsp,@consumptionremindqty - @ttlshipqty)
+			SET @customsp = @consumptioncustomsp
+			BREAK
+		END
 		FETCH NEXT FROM cursor_consumption INTO @consumptioncustomsp,@consumptionremindqty
 	END
 	CLOSE cursor_consumption
