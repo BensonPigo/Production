@@ -194,11 +194,11 @@ select id.POID,
 		,[RecvKG] = case when rd.ActualQty is not null 
 						then case when rd.ActualQty <> id.Qty
 								then ''
-								else cast(iif(ISNULL(rd.Weight,0) > 0, rd.Weight, rd.ActualWeight) as varchar(20))
+								else cast(iif(ISNULL(rd.ActualWeight,0) > 0, rd.ActualWeight, rd.Weight) as varchar(20))
 							 end
 						else case when td.ActualQty <> id.Qty
 								then ''
-								else cast(iif(ISNULL(td.Weight,0) > 0, td.Weight, td.ActualWeight) as varchar(20))
+								else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
 							 end							
 					end
 from dbo.Issue_Detail id WITH (NOLOCK) 
