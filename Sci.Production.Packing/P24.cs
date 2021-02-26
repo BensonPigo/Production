@@ -89,6 +89,9 @@ SELECT pd.OrderID
     , b.FromBottom
     , b.Width
     , b.Length
+    , b.CtnHeight
+    , b.IsOverCtnHt
+    , b.NotAutomate
     ,local_file_type=''
     ,FileSourcePath=''
     ,FileAction=''
@@ -154,6 +157,9 @@ ORDER BY pd.SortCTNStartNo
             .Numeric("FromBottom", header: "From Bottom (mm)", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Width", header: "Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Length", header: "Length", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("CtnHeight", header: "Carton Height", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .CheckBox("IsOverCtnHt", header: "Is Over Carton Height", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("NotAutomate", header: "Not to Automate", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("ShippingMark", header: "Shipping Mark", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("HTMLFile", header: "HTML File", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .Button("Upload", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnUpload)
@@ -1256,6 +1262,9 @@ SELECT DISTINCT
 	,b.IsHorizontal
 	,b.FromRight
 	,b.FromBottom
+	,a.CtnHeight
+	,b.IsOverCtnHt
+	,b.NotAutomate
 	,c.Width
 	,c.Length
 	,[Image]=NULL
@@ -1339,6 +1348,9 @@ SELECT DISTINCT
 	,b.IsHorizontal
 	,b.FromRight
 	,b.FromBottom
+	,a.CtnHeight
+	,b.IsOverCtnHt
+	,b.NotAutomate
 	,c.Width
 	,c.Length
 	,[Image]=NULL

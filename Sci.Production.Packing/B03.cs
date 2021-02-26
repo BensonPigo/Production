@@ -84,7 +84,7 @@ WHERE Type ='PMS_ShipMarkCategory'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-
+            this.btnReloadSticker.Enabled = this.EditMode && !this.IsDetailInserting;
             this.txtStickerComb.Text = MyUtility.GetValue.Lookup($@"
 SELECT ID
 FROM ShippingMarkCombination WITH(NOLOCK)
@@ -101,6 +101,8 @@ WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
 
 "));
 
+            this.disCtnHeight.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CTNHeight"]);
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML")
             {
                 this.chkIsMixPack.Enabled = false;
@@ -113,10 +115,16 @@ WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
             if (this.IsDetailInserting)
             {
                 this.comboCategory.ReadOnly = false;
+                this.txtbrand1.ReadOnly = false;
+                this.txtStickerComb.ReadOnly = false;
+                this.txtCTNRefno.ReadOnly = false;
             }
             else
             {
                 this.comboCategory.ReadOnly = true;
+                this.txtbrand1.ReadOnly = true;
+                this.txtStickerComb.ReadOnly = true;
+                this.txtCTNRefno.ReadOnly = true;
             }
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain))
@@ -150,6 +158,8 @@ ORDER BY b.Seq
         {
             DataGridViewGeneratorComboBoxColumnSettings sideComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings stickerSizeCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings fromBottomCell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings isHorizontalCell = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             // sideComboCell
             Dictionary<string, string> side = new Dictionary<string, string>();
@@ -173,6 +183,30 @@ ORDER BY b.Seq
             stickerSizeCell.DataSource = new BindingSource(size, null);
             stickerSizeCell.ValueMember = "Key";
             stickerSizeCell.DisplayMember = "Value";
+
+            fromBottomCell.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow currentRow = this.detailgrid.GetDataRow(e.RowIndex);
+                    currentRow["FromBottom"] = e.FormattedValue;
+                    this.CaculateCtnHeight(ref currentRow);
+
+                    currentRow.EndEdit();
+                }
+            };
+
+            isHorizontalCell.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow currentRow = this.detailgrid.GetDataRow(e.RowIndex);
+                    currentRow["IsHorizontal"] = e.FormattedValue;
+                    this.CaculateCtnHeight(ref currentRow);
+
+                    currentRow.EndEdit();
+                }
+            };
 
             // 避免選了Junk
             stickerSizeCell.CellValidating += (s, e) =>
@@ -199,6 +233,8 @@ AND Junk = 1
                         currentRow["StickerSizeID"] = currentStickerSizeID;
                     }
 
+                    this.CaculateCtnHeight(ref currentRow);
+
                     currentRow.EndEdit();
                 }
             };
@@ -209,10 +245,12 @@ AND Junk = 1
                 .CheckBox("IsSSCC", header: "SSCC", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
                 .ComboBox("Side", header: "Side", width: Widths.AnsiChars(10), settings: sideComboCell)
                 .Numeric("FromRight", header: "From Right (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
-                .Numeric("FromBottom", header: "From Bottom  (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false)
+                .Numeric("FromBottom", header: "From Bottom  (mm)", width: Widths.AnsiChars(4), decimal_places: 0, iseditingreadonly: false, settings: fromBottomCell)
                 .ComboBox("StickerSizeID", header: "Mark Size", width: Widths.AnsiChars(20), settings: stickerSizeCell)
                 .CheckBox("Is2Side", header: "Is 2 Side", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .CheckBox("IsHorizontal", header: "Is Horizontal", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("IsHorizontal", header: "Is Horizontal", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0,settings: isHorizontalCell)
+                .CheckBox("IsOverCtnHt", header: "Is Over Carton Height", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+                .CheckBox("NotAutomate", header: "Not to Automate", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             ;
             return base.OnGridSetup();
         }
@@ -293,7 +331,38 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
                     MyUtility.Msg.WarningBox("Mark Size cannot be empty.");
                     return false;
                 }
+
             }
+
+            DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow current in currentDt.Rows)
+            {
+                bool isHorizontal = MyUtility.Convert.GetBool(current["IsHorizontal"]);
+                string stickerSizeID = MyUtility.Convert.GetString(current["StickerSizeID"]);
+                decimal ctnHeight = MyUtility.Convert.GetDecimal(this.disCtnHeight.Value);
+                decimal fromBottom = MyUtility.Convert.GetDecimal(current["FromBottom"]);
+                decimal width = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Width FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+                decimal leghth = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Length FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+                bool isOverCtnH = false;
+                bool notAutomate = false;
+
+                if (isHorizontal)
+                {
+                    isOverCtnH = (fromBottom + width) > ctnHeight;
+                }
+                else
+                {
+                    isOverCtnH = (fromBottom + leghth) > ctnHeight;
+                }
+
+                notAutomate = isOverCtnH;
+
+                current["IsOverCtnHt"] = isOverCtnH;
+                current["NotAutomate"] = notAutomate;
+            }
+
+            this.CurrentMaintain["CTNHeight"] = this.disCtnHeight.Value;
 
             return base.ClickSaveBefore();
         }
@@ -448,9 +517,57 @@ AND Junk=0";
                 if (!MyUtility.Check.Seek($"Select 1 from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' and RefNo = '{textValue}'"))
                 {
                     this.txtCTNRefno.Text = string.Empty;
+                    this.CurrentMaintain["CtnHeight"] = 0;
                     MyUtility.Msg.WarningBox(string.Format("< RefNo : {0} > not found!!!", textValue));
                     return;
                 }
+                else
+                {
+                    string cmd = $@"
+SELECT CASE WHEN CtnUnit = 'Inch' THEN CtnHeight * 25.4
+            WHEN CtnUnit = 'MM' THEN CtnHeight * 1
+            ELSE CtnHeight 
+        END
+FROM LocalItem
+WHERE RefNo='{textValue}'
+";
+                    decimal height = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(cmd));
+
+                    this.disCtnHeight.Value = height;
+                }
+            }
+
+            if (MyUtility.Check.Empty(textValue))
+            {
+                this.disCtnHeight.Value = 0;
+            }
+
+            DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow current in currentDt.Rows)
+            {
+                bool isHorizontal = MyUtility.Convert.GetBool(current["IsHorizontal"]);
+                string stickerSizeID = MyUtility.Convert.GetString(current["StickerSizeID"]);
+                decimal ctnHeight = MyUtility.Convert.GetDecimal(this.disCtnHeight.Value);
+                decimal fromBottom = MyUtility.Convert.GetDecimal(current["FromBottom"]);
+                decimal width = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Width FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+                decimal leghth = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Length FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+                bool isOverCtnH = false;
+                bool notAutomate = false;
+
+                if (isHorizontal)
+                {
+                    isOverCtnH = (fromBottom + width) > ctnHeight;
+                }
+                else
+                {
+                    isOverCtnH = (fromBottom + leghth) > ctnHeight;
+                }
+
+                notAutomate = isOverCtnH;
+
+                current["IsOverCtnHt"] = isOverCtnH;
+                current["NotAutomate"] = notAutomate;
             }
         }
 
@@ -506,6 +623,76 @@ WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
             }
         }
 
+        private void ReloadtDetail()
+        {
+            string cmd = $@"
+SELECT c.ID,b.Seq,c.IsSSCC ,a.IsMixPack ,c.Ukey
+FROM ShippingMarkCombination a
+INNER JOIN ShippingMarkCombination_Detail b ON a.Ukey = b.ShippingMarkCombinationUkey
+INNER JOIN ShippingMarkType c ON b.ShippingMarkTypeUkey = c.Ukey
+WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+";
+
+            DataTable dt;
+
+            // 取得最新資料
+            DualResult r = DBProxy.Current.Select(null, cmd, out dt);
+
+            if (!r)
+            {
+                this.ShowErr(r);
+                return;
+            }
+
+            DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
+
+            // 新資料更新到現有資料
+            foreach (DataRow lastDr in dt.Rows)
+            {
+                if (currentDt.AsEnumerable().Where(o => MyUtility.Convert.GetInt(o["ShippingMarkTypeUkey"]) == MyUtility.Convert.GetInt(lastDr["Ukey"])).Any())
+                {
+                    // 目前已經存在的：只需要更新 Seq, SSCC
+                    foreach (DataRow nowRow in this.DetailDatas.Where(o => MyUtility.Convert.GetInt(o["ShippingMarkTypeUkey"]) == MyUtility.Convert.GetInt(lastDr["Ukey"])))
+                    {
+                        nowRow["Seq"] = lastDr["Seq"];
+                        nowRow["IsSSCC"] = lastDr["IsSSCC"];
+                    }
+                }
+                else
+                {
+                    // 目前不存在的：新增資料
+
+                    DataRow ndr = currentDt.NewRow();
+
+                    ndr["ShippingMarkTypeUkey"] = lastDr["Ukey"];
+                    ndr["ShippingMarkTypeID"] = lastDr["ID"];
+                    ndr["Seq"] = lastDr["Seq"];
+                    ndr["IsSSCC"] = lastDr["IsSSCC"];
+                    ndr["Side"] = "A";
+                    currentDt.Rows.Add(ndr);
+                }
+            }
+
+            // 現有資料一筆一筆回去檢查最新資料，如果最新資料沒有，則把該資料刪除
+            foreach (DataRow current in this.DetailDatas)
+            {
+                if (!dt.AsEnumerable().Where(o => MyUtility.Convert.GetInt(o["Ukey"]) == MyUtility.Convert.GetInt(current["ShippingMarkTypeUkey"])).Any())
+                {
+                    current.Delete();
+                }
+            }
+
+            // 表示B06表身是空的
+            if (dt.Rows.Count == 0)
+            {
+                this.chkIsMixPack.Checked = false;
+            }
+            else
+            {
+                this.chkIsMixPack.Checked = MyUtility.Convert.GetBool(dt.Rows[0]["IsMixPack"]);
+            }
+        }
+
         private void TxtCTNRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("Select RefNo  from LocalItem WITH (NOLOCK) where Junk = 0 and Category='CARTON' ", null, this.txtCTNRefno.Text);
@@ -514,6 +701,47 @@ WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
             if (returnResult == DialogResult.Cancel)
             {
                 return;
+            }
+
+            string cmd = $@"
+            SELECT CASE WHEN CtnUnit = 'Inch' THEN CtnHeight * 25.4
+            			WHEN CtnUnit = 'MM' THEN CtnHeight * 1
+            			ELSE CtnHeight 
+            		END
+            FROM LocalItem
+            WHERE RefNo='{item.GetSelectedString()}'
+            ";
+
+            decimal height = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(cmd));
+
+            this.disCtnHeight.Value = height;
+
+            DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow current in currentDt.Rows)
+            {
+                bool isHorizontal = MyUtility.Convert.GetBool(current["IsHorizontal"]);
+                string stickerSizeID = MyUtility.Convert.GetString(current["StickerSizeID"]);
+                decimal ctnHeight = MyUtility.Convert.GetDecimal(this.disCtnHeight.Value);
+                decimal fromBottom = MyUtility.Convert.GetDecimal(current["FromBottom"]);
+                decimal width = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Width FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+                decimal leghth = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Length FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+                bool isOverCtnH = false;
+                bool notAutomate = false;
+
+                if (isHorizontal)
+                {
+                    isOverCtnH = (fromBottom + width) > ctnHeight;
+                }
+                else
+                {
+                    isOverCtnH = (fromBottom + leghth) > ctnHeight;
+                }
+
+                notAutomate = isOverCtnH;
+
+                current["IsOverCtnHt"] = isOverCtnH;
+                current["NotAutomate"] = notAutomate;
             }
 
             this.txtCTNRefno.Text = item.GetSelectedString();
@@ -563,6 +791,8 @@ WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
                 this.detailgrid.Columns["IsSSCC"].Visible = false;
                 this.detailgrid.Columns["Is2Side"].Visible = false;
                 this.detailgrid.Columns["IsHorizontal"].Visible = false;
+                this.detailgrid.Columns["IsOverCtnHt"].Visible = false;
+                this.detailgrid.Columns["NotAutomate"].Visible = false;
             }
 
             if (category == "PIC")
@@ -570,7 +800,48 @@ WHERE a.Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
                 this.detailgrid.Columns["IsSSCC"].Visible = true;
                 this.detailgrid.Columns["Is2Side"].Visible = true;
                 this.detailgrid.Columns["IsHorizontal"].Visible = true;
+                this.detailgrid.Columns["IsOverCtnHt"].Visible = true;
+                this.detailgrid.Columns["NotAutomate"].Visible = true;
             }
+        }
+
+        private void BtnReloadSticker_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.ReloadtDetail();
+                MyUtility.Msg.InfoBox("Finish!");
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
+        }
+
+        private void CaculateCtnHeight(ref DataRow current)
+        {
+            bool isHorizontal = MyUtility.Convert.GetBool(current["IsHorizontal"]);
+            string stickerSizeID = MyUtility.Convert.GetString(current["StickerSizeID"]);
+            decimal ctnHeight = MyUtility.Convert.GetDecimal(this.disCtnHeight.Value);
+            decimal fromBottom = MyUtility.Convert.GetDecimal(current["FromBottom"]);
+            decimal width = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Width FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+            decimal leghth = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"SELECT Length FROM StickerSize WHERE ID = '{stickerSizeID}'"));
+            bool isOverCtnH = false;
+            bool notAutomate = false;
+
+            if (isHorizontal)
+            {
+                isOverCtnH = (fromBottom + width) > ctnHeight;
+            }
+            else
+            {
+                isOverCtnH = (fromBottom + leghth) > ctnHeight;
+            }
+
+            notAutomate = isOverCtnH;
+
+            current["IsOverCtnHt"] = isOverCtnH;
+            current["NotAutomate"] = notAutomate;
         }
     }
 }

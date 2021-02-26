@@ -69,6 +69,7 @@ SELECT pd.OrderID
     , b.FromBottom
     , b.Width
     , b.Length
+    , b.NotAutomate
     , [HTMLFile]=IIF(b.FilePath <> '' AND b.FileName <> '' ,1 ,0 )
     , pd.SortCTNStartNo
 FROm ShippingMarkStamp a
@@ -130,6 +131,7 @@ ORDER BY pd.SortCTNStartNo
             .Numeric("Width", header: "Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Length", header: "Length", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .CheckBox("HTMLFile", header: "HTMLFile", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("NotAutomate", header: "Not to Automate", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             ;
             #region 關閉排序功能
             for (int i = 0; i < this.detailgrid.ColumnCount; i++)

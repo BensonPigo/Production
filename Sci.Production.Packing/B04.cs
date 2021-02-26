@@ -51,6 +51,37 @@ namespace Sci.Production.Packing
         }
 
         /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            string cmd = $@"
+
+select   b.ShippingMarkPictureUkey
+	    ,b.ShippingMarkTypeUkey
+	    ,[Horizontal]=b.FromBottom + c.Width 
+	    ,[NotHorizontal]=b.FromBottom + c.Length 
+	    ,[IsOverCtnHt]= CASE WHEN b.IsHorizontal = 1 THEN IIF( b.FromBottom + c.Width > a.CtnHeight , 1, 0)
+					 	     WHEN b.IsHorizontal = 0 THEN IIF( b.FromBottom + c.Length > a.CtnHeight , 1, 0)
+					    ELSE 0
+					    END
+INTO #tmp
+from ShippingMarkPicture a
+inner join ShippingMarkPicture_Detail b on a.Ukey = b.ShippingMarkPictureUkey
+inner join StickerSize c on b.StickerSizeID = c.ID
+WHERE c.ID = {this.CurrentMaintain["ID"]} 
+
+UPDATE t
+SET t.IsOverCtnHt = s.IsOverCtnHt ,t.NotAutomate = s.IsOverCtnHt
+FROM ShippingMarkPicture_Detail t
+INNER JOIN #tmp s ON t.ShippingMarkPictureUkey = s.ShippingMarkPictureUkey AND t.ShippingMarkTypeUkey = s.ShippingMarkTypeUkey
+
+DROP TABLE #tmp
+";
+
+            DBProxy.Current.Execute(null, cmd);
+            base.ClickSaveAfter();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickJunk()
         {
             base.ClickJunk();
