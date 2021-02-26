@@ -686,10 +686,10 @@ FROM #tmpz  ",
                 sqlcmd = @"
 alter table #tmp alter column POID  varchar(13)
 
-select POID,StyleID,BrandID,StyleDesc,SeasonID,OutputDate = max(OutputDate)
+select POID,StyleID,BrandID,StyleDesc,SeasonID,FtyZone,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by POID,StyleID,BrandID,StyleDesc,SeasonID
+group by POID,StyleID,BrandID,StyleDesc,SeasonID,FtyZone
 
 select FtyZone
     , POID
@@ -721,17 +721,19 @@ select FtyZone
 							and t.StyleDesc = #tmp.StyleDesc
                             and t.SeasonID = #tmp.SeasonID
                             and t.POID = #tmp.POID
+                            and t.FtyZone = #tmp.FtyZone
 							and exists (select 1 from #tmp_MaxOutputDate t2
 										where t2.StyleID = t.StyleID
 										and t2.BrandID = t.BrandID 
 										and t2.StyleDesc = t.StyleDesc
 										and t2.SeasonID = t.SeasonID
 										and t2.POID = t.POID
-										and t2.OutputDate = t.OutputDate)
+										and t2.OutputDate = t.OutputDate
+                                        and t2.FtyZone = t.FtyZone)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY FtyZone,POID,StyleID,BrandID,CdCodeID,CDDesc,ProductionFamilyID,StyleDesc,SeasonID,ProgramID 
+Group BY FtyZone,POID,StyleID,BrandID,CdCodeID,CDDesc,ProductionFamilyID,StyleDesc,SeasonID,ProgramID
 	, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 order by FtyZone,POID,StyleID,BrandID,ProductionFamilyID";
 
@@ -763,10 +765,10 @@ FROM #tmpz ", strSQL);
                 }
 
                 sqlcmd = @"
-select StyleID,BrandID,StyleDesc,SeasonID,OutputDate = max(OutputDate)
+select StyleID,BrandID,StyleDesc,SeasonID,FactoryID,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by StyleID,BrandID,StyleDesc,SeasonID
+group by StyleID,BrandID,StyleDesc,SeasonID,FactoryID
 
 select ProgramID
     , StyleID
@@ -797,12 +799,14 @@ select ProgramID
 							and t.BrandID = #tmp.BrandID
 							and t.StyleDesc = #tmp.StyleDesc
 							and t.SeasonID = #tmp.SeasonID
+							and t.FactoryID = #tmp.FactoryID
 							and exists (select 1 from #tmp_MaxOutputDate t2
 										where t2.StyleID = t.StyleID
 										and t2.BrandID = t.BrandID 
 										and t2.StyleDesc = t.StyleDesc
 										and t2.SeasonID = t.SeasonID
-										and t2.OutputDate = t.OutputDate)
+										and t2.OutputDate = t.OutputDate
+										and t2.FactoryID = t.FactoryID)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 

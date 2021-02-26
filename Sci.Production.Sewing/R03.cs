@@ -216,17 +216,13 @@ with tmp1stData as (
 	from tmp1stData
 	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone,ActManPower
 ),tmp1LineMaxOutputDate as (
-	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, OutputDate = Max(t.OutputDate)
-	from tmp1stData t
-	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID
-),tmp1LineMaxOutputDatePOID as (
-	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, OutputDate = Max(t.OutputDate)
-	from tmp1stData t
-	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID
-),tmp1LineMaxOutputDateFactoryID as (
 	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FactoryID, OutputDate = Max(t.OutputDate)
 	from tmp1stData t
 	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FactoryID
+),tmp1LineMaxOutputDatePOID as (
+	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FactoryID, OutputDate = Max(t.OutputDate)
+	from tmp1stData t
+	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FactoryID
 ),tmp2ndData as (
     Select  ProgramID
             , StyleID
@@ -449,7 +445,7 @@ select  StyleID
 																						and t.StyleDesc = tmp4thData.StyleDesc
                                                                                         and t.SeasonID = tmp4thData.SeasonID
                                                                                         and t.FactoryID = tmp4thData.FactoryID
-                                                                                        and exists( select 1 from tmp1LineMaxOutputDateFactoryID t2 
+                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
                                                                                                      where t2.OutputDate = t.OutputDate 
                                                                                                      and t2.StyleID = t.StyleID
                                                                                                      and t2.BrandID = t.BrandID 
@@ -606,6 +602,7 @@ Order by BrandID, FtyZone, FactoryID, CdCodeID",
                 @"
 {0}tmp4thData as (
     select  POID
+            , FactoryID
             , StyleID
             , BrandID
             , CdCodeID
@@ -623,7 +620,7 @@ Order by BrandID, FtyZone, FactoryID, CdCodeID",
             , SUM(TotalCPU) AS TtlCPU
             , SUM(TtlManhour) AS TtlManhour
     from tmp3rdData
-    group by POID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID
+    group by POID, FactoryID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID
              , ProgramID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 )
 select  POID
@@ -655,20 +652,23 @@ select  POID
 																						and t.StyleDesc = tmp4thData.StyleDesc
                                                                                         and t.SeasonID = tmp4thData.SeasonID
                                                                                         and t.POID = tmp4thData.POID
+                                                                                        and t.FactoryID = tmp4thData.FactoryID
                                                                                         and exists( select 1 from tmp1LineMaxOutputDatePOID t2 
                                                                                                      where t2.OutputDate = t.OutputDate 
                                                                                                      and t2.StyleID = t.StyleID
                                                                                                      and t2.BrandID = t.BrandID 
                                                                                                      and t2.StyleDesc = t.StyleDesc
 																									 and t2.SeasonID = t.SeasonID
-																									 and t2.POID = t.POID)
+																									 and t2.POID = t.POID
+																									 and t2.FactoryID = t.FactoryID)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
 											a.BrandID = tmp4thData.BrandID and
 											a.StyleDesc = tmp4thData.StyleDesc and 
 											a.SeasonID = tmp4thData.SeasonID and
-											a.POID = tmp4thData.POID
+											a.POID = tmp4thData.POID and
+                                            a.FactoryID = tmp4thData.FactoryID
 						group by a.FactoryID FOR XML PATH(''))
 				,1,1,'') 
 from tmp4thData
@@ -700,10 +700,11 @@ Order by POID, StyleID, BrandID, CdCodeID, SeasonID",
             , CDDesc
             , StyleDesc
             , SeasonID
+            , FactoryID
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
     from tmp3rdData
-    group by ProgramID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID
+    group by ProgramID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID, FactoryID
            , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 )
 select  ProgramID
@@ -733,18 +734,21 @@ select  ProgramID
 																						and t.BrandID = tmp4thData.BrandID
 																						and t.StyleDesc = tmp4thData.StyleDesc
                                                                                         and t.SeasonID = tmp4thData.SeasonID
+                                                                                        and t.FactoryID = tmp4thData.FactoryID
                                                                                         and exists( select 1 from tmp1LineMaxOutputDate t2 
                                                                                                      where t2.OutputDate = t.OutputDate 
                                                                                                      and t2.StyleID = t.StyleID
                                                                                                      and t2.BrandID = t.BrandID 
                                                                                                      and t2.StyleDesc = t.StyleDesc
-																									 and t2.SeasonID = t.SeasonID)
+																									 and t2.SeasonID = t.SeasonID
+																									 and t2.FactoryID = t.FactoryID)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
 											a.BrandID = tmp4thData.BrandID and
 											a.StyleDesc = tmp4thData.StyleDesc and 
-											a.SeasonID = tmp4thData.SeasonID
+											a.SeasonID = tmp4thData.SeasonID and 
+                                            a.FactoryID = tmp4thData.FactoryID
 						group by a.FactoryID FOR XML PATH(''))
 				,1,1,'') 
 from tmp4thData
