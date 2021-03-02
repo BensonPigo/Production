@@ -198,6 +198,23 @@ order by case when ld.No = '' then 1
                 this.numCPUPC.Value = 0;
             }
 
+            string styleVersion = MyUtility.GetValue.Lookup($@"
+select version 
+from TimeStudy
+where StyleID = '{this.CurrentMaintain["StyleID"]}'
+and SeasonID= '{this.CurrentMaintain["SeasonID"]}'
+and ComboType = '{this.CurrentMaintain["ComboType"]}'
+and BrandID = '{this.CurrentMaintain["BrandID"]}'
+");
+            if (styleVersion != this.CurrentMaintain["TimeStudyVersion"].ToString() && this.EditMode == false)
+            {
+                this.labVersionWarning.Visible = true;
+            }
+            else
+            {
+                this.labVersionWarning.Visible = false;
+            }
+
             this.CalculateValue(0);
             this.SaveCalculateValue();
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]);
@@ -1530,7 +1547,7 @@ select ID = null
                           then 2
                           when left(ld.No, 1) = 'P' then 3
                           else 4 end
-from LineMapping_Detail ld WITH (NOLOCK) 
+from LineMapping_Detail ld WITH (NOLOCK)
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
 outer apply (
@@ -1593,6 +1610,8 @@ order by case when ld.No = '' then 1
                 this.CurrentMaintain["TotalCycle"] = callNextForm.P03CopyLineMapping["TotalCycle"].ToString();
                 this.CurrentMaintain["HighestGSD"] = callNextForm.P03CopyLineMapping["HighestGSD"].ToString();
                 this.CurrentMaintain["HighestCycle"] = callNextForm.P03CopyLineMapping["HighestCycle"].ToString();
+                this.CurrentMaintain["TimeStudyPhase"] = callNextForm.P03CopyLineMapping["TimeStudyPhase"].ToString();
+                this.CurrentMaintain["TimeStudyVersion"] = callNextForm.P03CopyLineMapping["TimeStudyVersion"].ToString();
                 this.CalculateValue(0);
                 this.ComputeTaktTime();
             }
@@ -1632,6 +1651,12 @@ where t.StyleID = s.ID
             if (!MyUtility.Check.Seek(sqlCmd, out timeStudy))
             {
                 MyUtility.Msg.WarningBox("Fty GSD data not found!!");
+                return;
+            }
+
+            if (!timeStudy["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("P01. Factory GSD need to confirm first before import to P03");
                 return;
             }
 
@@ -1721,7 +1746,7 @@ select ID = null
 	   ,[IsGroupHeader] = cast(iif(SUBSTRING(td.OperationID, 1, 2) = '--', 1, 0) as bit)
 	   ,[IsSewingOperation] = cast(isnull(show.IsDesignatedArea, 0) as bit)
        ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 0)) as bit)
-from TimeStudy_Detail td WITH (NOLOCK) 
+from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 outer apply (
 	select IsShowinIEP03 = iif(f.IsProduceFty = 0 or f.Junk = 1, 0, atf.IsShowinIEP03)
@@ -1893,6 +1918,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing'
             this.CurrentMaintain["TotalCycle"] = sumSMV;
             this.CurrentMaintain["HighestGSD"] = maxSMV;
             this.CurrentMaintain["HighestCycle"] = maxSMV;
+            this.CurrentMaintain["TimeStudyPhase"] = timeStudy["phase"];
+            this.CurrentMaintain["TimeStudyVersion"] = timeStudy["version"];
             this.CalculateValue(0);
             this.ComputeTaktTime();
             this.Distable();

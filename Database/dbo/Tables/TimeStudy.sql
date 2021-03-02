@@ -15,6 +15,7 @@
     [OldKey]          VARCHAR (13) CONSTRAINT [DF_TimeStudy_OldKey] DEFAULT ('') NULL,
     [IETMSID]         VARCHAR (10) CONSTRAINT [DF_TimeStudy_IETMSID] DEFAULT ('') NULL,
     [IETMSVersion]    VARCHAR (3)  CONSTRAINT [DF_TimeStudy_IETMSVersion] DEFAULT ('') NULL,
+    [Status]          VARCHAR(15)  CONSTRAINT [DF_TimeStudy_Status] DEFAULT ('') NOT NULL , 
     CONSTRAINT [PK_TimeStudy] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [ComboType] ASC, [BrandID] ASC)
 );
 
@@ -82,3 +83,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TimeStudy', @level2type = N'COLUMN', @level2name = N'OldKey';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'狀態',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy',
+    @level2type = N'COLUMN',
+    @level2name = N'Status'

@@ -26,6 +26,8 @@ CREATE TABLE [dbo].[LineMapping] (
     [AddDate]          DATETIME       NULL,
     [EditName]         VARCHAR (10)   CONSTRAINT [DF_LineMapping_EditName] DEFAULT ('') NULL,
     [EditDate]         DATETIME       NULL,
+    [TimeStudyPhase]   VARCHAR(10)    CONSTRAINT [DF_LineMapping_TimeStudyPhase] DEFAULT ('') NOT NULL, 
+    [TimeStudyVersion] VARCHAR(2)     CONSTRAINT [DF_LineMapping_TimeStudyVersion] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED ([StyleID] ASC, [SeasonID] ASC, [BrandID] ASC, [StyleUKey] ASC, [Version] ASC)
 );
 
@@ -149,3 +151,22 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LineMapping', @level2type = N'COLUMN', @level2name = N'ID';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Fty GSD的 Phase',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'TimeStudyPhase'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Fty GSD的 version',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'TimeStudyVersion'

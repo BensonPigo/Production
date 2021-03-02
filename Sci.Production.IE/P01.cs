@@ -215,9 +215,10 @@ order by td.Seq",
         {
             base.OnDetailEntered();
             this.GenCD(null, null);  // 撈CD Code
+            bool isConfirmed = this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed");
             bool canEdit = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. Factory GSD", "CanEdit");
-            this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
-            this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit;
+            this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
+            this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
             this.btnHistory.Enabled = !this.EditMode && this.CurrentMaintain != null;
             this.btnStdGSDList.Enabled = !this.EditMode && this.CurrentMaintain != null;
             this.btnArtSum.Enabled = this.CurrentMaintain != null;
@@ -821,6 +822,7 @@ where Junk = 0";
             base.ClickNewAfter();
             this.CurrentMaintain["Phase"] = "Estimate";
             this.CurrentMaintain["Version"] = "01";
+            this.CurrentMaintain["Status"] = "New";
         }
 
         /// <summary>
@@ -829,6 +831,12 @@ where Junk = 0";
         /// <returns>bool</returns>
         protected override bool ClickCopyBefore()
         {
+            if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("please confirm data before copy.");
+                return false;
+            }
+
             P01_Copy callNextForm = new P01_Copy(this.CurrentMaintain);
             DialogResult result = callNextForm.ShowDialog(this);
             if (result == DialogResult.OK)
@@ -859,12 +867,32 @@ where Junk = 0";
             this.CurrentMaintain["ID"] = 0;
         }
 
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            base.ClickEditBefore();
+            if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("please unconfirm to edit it.");
+                this.HideRows();
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// ClickDeleteBefore()
         /// </summary>
         /// <returns>bool</returns>
         protected override bool ClickDeleteBefore()
         {
+            if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            {
+                MyUtility.Msg.WarningBox("please unconfirm to delete it.");
+                return false;
+            }
+
             if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput_Detail WITH (NOLOCK) where OrderId in (select ID from Orders WITH (NOLOCK) where StyleID = '{0}' and BrandID = '{1}' and SeasonID = '{2}')", this.CurrentMaintain["StyleID"].ToString(), this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["SeasonID"].ToString())))
             {
                 MyUtility.Msg.WarningBox("Sewing output > 0, can't be deleted!!");
@@ -1192,6 +1220,42 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             return base.ClickPrint();
         }
 
+        /// <inheritdoc/>
+        protected override void ClickConfirm()
+        {
+            string sqlcmd = $@"
+update t 
+    set t.Status = 'Confirmed', 
+        t.EditName = '{Env.User.UserID}', 
+        t.EditDate = Getdate()
+from TimeStudy t 
+where StyleID = '{this.CurrentMaintain["StyleID"]}' 
+and SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
+and ComboType = '{this.CurrentMaintain["ComboType"]}' 
+and BrandID = '{this.CurrentMaintain["BrandID"]}'";
+
+            DBProxy.Current.Execute("Production", sqlcmd);
+            base.ClickConfirm();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            string sqlcmd = $@"
+update t 
+    set t.Status = 'New', 
+        t.EditName = '{Env.User.UserID}', 
+        t.EditDate = Getdate()
+from TimeStudy t 
+where StyleID = '{this.CurrentMaintain["StyleID"]}' 
+and SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
+and ComboType = '{this.CurrentMaintain["ComboType"]}' 
+and BrandID = '{this.CurrentMaintain["BrandID"]}'";
+
+            DBProxy.Current.Execute("Production", sqlcmd);
+            base.ClickUnconfirm();
+        }
+
         // Style PopUp
         private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -1375,6 +1439,7 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
+                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
@@ -1438,6 +1503,7 @@ where ID = {0}",
                         if (result)
                         {
                             transactionScope.Complete();
+                            this.CurrentMaintain["Status"] = "New";
                         }
                         else
                         {
