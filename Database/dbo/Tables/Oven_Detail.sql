@@ -16,8 +16,12 @@
     [ResultChange]  VARCHAR (5)   NULL,
     [ResultStain]   VARCHAR (5)   NULL,
     [SubmitDate]    DATE          NULL,
+    [Temperature]   INT           CONSTRAINT [DF_Oven_Detail_Temperature] DEFAULT ((0)) NOT NULL,
+    [Time]          INT           CONSTRAINT [DF_Oven_Detail_Time] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Oven_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OvenGroup] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 
@@ -80,4 +84,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Oven_Detail', @level2type = N'COLUMN', @level2name = N'SEQ1';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'烘箱時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Oven_Detail', @level2type = N'COLUMN', @level2name = N'Time';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'烘箱溫度', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Oven_Detail', @level2type = N'COLUMN', @level2name = N'Temperature';
 
