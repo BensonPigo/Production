@@ -430,11 +430,11 @@ select  StyleID
         , CDDesc
         , StyleDesc
         , SeasonID
-        , TtlQty
-        , TtlCPU
-        , TtlManhour
-        , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
-        , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
+        , TtlQty = SUM(TtlQty)
+        , TtlCPU = SUM(TtlCPU)
+        , TtlManhour = SUM(TtlManhour)
+        , PPH = SUM(IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)))
+        , EFF = SUM(IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour * 3600/ 1400)*100, 2)))
 		, [Remark] = Stuff((select concat('/', a.FactoryID + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
 																	   when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
 																	   else concat((Stuff((
@@ -444,7 +444,7 @@ select  StyleID
 																						and t.BrandID = tmp4thData.BrandID
 																						and t.StyleDesc = tmp4thData.StyleDesc
                                                                                         and t.SeasonID = tmp4thData.SeasonID
-                                                                                        and t.FactoryID = tmp4thData.FactoryID
+                                                                                        and t.FactoryID = a.FactoryID
                                                                                         and exists( select 1 from tmp1LineMaxOutputDate t2 
                                                                                                      where t2.OutputDate = t.OutputDate 
                                                                                                      and t2.StyleID = t.StyleID
@@ -457,11 +457,12 @@ select  StyleID
 						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
 											a.BrandID = tmp4thData.BrandID and
 											a.StyleDesc = tmp4thData.StyleDesc and
-                                            a.SeasonID = tmp4thData.SeasonID and
-                                            a.FactoryID = tmp4thData.FactoryID
+                                            a.SeasonID = tmp4thData.SeasonID 
 						group by a.FactoryID FOR XML PATH(''))
 				,1,1,'') 
 from tmp4thData
+GROUP by StyleID, ModularParent, CPUAdjusted, BrandID, CdCodeID, CDCodeNew
+	    , ProductType, FabricType, Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID
 Order by StyleID, SeasonID",
                 sqlCmd.ToString());
 

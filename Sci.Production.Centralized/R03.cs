@@ -524,7 +524,7 @@ select StyleID,BrandID,CDCodeID
                                                                     and t.BrandID = #tmp.BrandID
                                                                     and t.StyleDesc = #tmp.StyleDesc
                                                                     and t.SeasonID = #tmp.SeasonID
-                                                                    and t.FactoryID = #tmp.FactoryID
+                                                                    and t.FactoryID = a.FactoryID
 																	and exists (select 1 from #tmp_MaxOutputDate t2
 																				where t2.StyleID = t.StyleID 
 																				and t2.BrandID = t.BrandID 
@@ -537,12 +537,11 @@ select StyleID,BrandID,CDCodeID
                 from #tmp a where   a.StyleID = #tmp.StyleID and 
                                     a.BrandID = #tmp.BrandID and
                                     a.StyleDesc = #tmp.StyleDesc and
-                                    a.SeasonID = #tmp.SeasonID and 
-                                    a.FactoryID = #tmp.FactoryID
+                                    a.SeasonID = #tmp.SeasonID
                 group by a.FactoryID FOR XML PATH(''))
         ,1,1,'') 
 from #tmp 
-Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,CDDesc,StyleDesc,SeasonID,ModularParent,CPUAdjusted,FactoryID
+Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,CDDesc,StyleDesc,SeasonID,ModularParent,CPUAdjusted
 order by StyleID, BrandID, CDCodeID, StyleDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData4o, string.Empty, sqlcmd, out this.gdtData4);
