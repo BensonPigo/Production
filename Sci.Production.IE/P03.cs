@@ -1396,9 +1396,7 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                 Env.User.Keyword));
         }
 
-        /// <summary>
-        /// ClickConfirm
-        /// </summary>
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -1421,12 +1419,12 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             this.ComputeTaktTime();
 
             string lBRTarget = this.FindTarget("LBR");
-            string lLERTarget = this.FindTarget("LLER");
+            string lLERTarget = this.FindTarget("EFF.");
             bool checkLBR = !MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(this.numLBR.Value) < Convert.ToDecimal(lBRTarget);
-            bool checkLLER = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numLLER.Value) < Convert.ToDecimal(lLERTarget);
+            bool checkEFF = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numEffieiency.Value) < Convert.ToDecimal(lLERTarget);
             string notHitReasonID = string.Empty;
 
-            if (checkLBR || checkLLER)
+            if (checkLBR || checkEFF)
             {
                 StringBuilder msg = new StringBuilder();
                 if (checkLBR)
@@ -1434,9 +1432,9 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                     msg.Append("LBR is lower than target.\r\n");
                 }
 
-                if (checkLLER)
+                if (checkEFF)
                 {
-                    msg.Append("LLER is lower than target.\r\n");
+                    msg.Append("Efficiency is lower than target.\r\n");
                 }
 
                 MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");

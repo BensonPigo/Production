@@ -107,27 +107,45 @@ namespace Sci.Production.IE
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select lm.FactoryID,
-	   lm.StyleID,
-	   lm.ComboType,
-	   lm.SeasonID,
-	   lm.BrandID,
-	   lm.Version,
-	   lm.SewingLineID,
-       lm.Team,
-       lm.CurrentOperators,
-       lm.StandardOutput,
-       lm.TaktTime,
-       lm.TotalGSD,
-       lm.TotalCycle,
-	   IIF(lm.HighestCycle = 0,0,Round(3600.0/lm.HighestCycle,2)) as EOLR,
-	   IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
-	   IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
-	   IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
-	   IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
-	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,lm.AddDate,
-	   isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,lm.EditDate
+select
+	lm.FactoryID,
+	lm.StyleID,
+	lm.ComboType,
+	lm.SeasonID,
+	lm.BrandID,
+	lm.Version,
+	lm.SewingLineID,
+	lm.Team,
+	lm.CurrentOperators,
+	lm.StandardOutput,
+	lm.TaktTime,
+	lm.TotalGSD,
+	lm.TotalCycle,
+	IIF(lm.HighestCycle = 0,0,Round(3600.0/lm.HighestCycle,2)) as EOLR,
+	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalGSD)/lm.HighestCycle/lm.CurrentOperators) as Eff,
+	EffTarget = EffTarget.Target,
+	IIF(lm.HighestCycle*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.HighestCycle/lm.CurrentOperators) as LB,
+	LinebalancingTarget.Target,
+	NotHitTargetReason = (select Description from IEReason i where i.ID = lm.IEReasonID and Type = 'LM'),
+	IIF(lm.TaktTime*lm.CurrentOperators = 0,0,CONVERT(DECIMAL,lm.TotalCycle)/lm.TaktTime/lm.CurrentOperators) as LLEF,
+	IIF(lm.HighestCycle * lm.CurrentOperators = 0,0,(ROUND(3600.0/lm.HighestCycle, 2) * (select isnull(CPU,0) from Style WITH (NOLOCK) where lm.BrandID = BrandID and lm.StyleID = ID and lm.SeasonID = SeasonID)/lm.CurrentOperators)) as PPH,
+	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.AddName),'') as CreateBy,lm.AddDate,
+	isnull((select Name from Pass1 WITH (NOLOCK) where ID = lm.EditName),'') as EditBy,lm.EditDate
 from LineMapping lm WITH (NOLOCK) 
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate > lm.Editdate and c. Type ='EFF.'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)EffTarget
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate > lm.Editdate and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
 ");
             if (!MyUtility.Check.Empty(this.inline1) || !MyUtility.Check.Empty(this.inline2))
             {
@@ -210,40 +228,7 @@ inner join(
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
-
-            // 填內容值
-            int intRowsStart = 2;
-            object[,] objArray = new object[1, 22];
-            foreach (DataRow dr in this.printData.Rows)
-            {
-                objArray[0, 0] = dr["FactoryID"];
-                objArray[0, 1] = dr["StyleID"];
-                objArray[0, 2] = dr["ComboType"];
-                objArray[0, 3] = dr["SeasonID"];
-                objArray[0, 4] = dr["BrandID"];
-                objArray[0, 5] = dr["Version"];
-                objArray[0, 6] = dr["SewingLineID"];
-                objArray[0, 7] = dr["Team"];
-                objArray[0, 8] = dr["CurrentOperators"];
-                objArray[0, 9] = dr["StandardOutput"];
-                objArray[0, 10] = dr["TaktTime"];
-                objArray[0, 11] = dr["TotalGSD"];
-                objArray[0, 12] = dr["TotalCycle"];
-                objArray[0, 13] = dr["EOLR"];
-                objArray[0, 14] = dr["Eff"];
-                objArray[0, 15] = dr["LB"];
-                objArray[0, 16] = dr["LLEF"];
-                objArray[0, 17] = dr["PPH"];
-                objArray[0, 18] = dr["CreateBy"];
-                objArray[0, 19] = dr["AddDate"];
-                objArray[0, 20] = dr["EditBy"];
-                objArray[0, 21] = dr["EditDate"];
-
-                worksheet.Range[string.Format("A{0}:V{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
-            }
-
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "IE_R01_LineMappingList.xltx", 1, false, null, excel);
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
             this.HideWaitMessage();
@@ -255,7 +240,6 @@ inner join(
             workbook.Close();
             excel.Quit();
             Marshal.ReleaseComObject(excel);
-            Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(workbook);
 
             strExcelName.OpenFile();
