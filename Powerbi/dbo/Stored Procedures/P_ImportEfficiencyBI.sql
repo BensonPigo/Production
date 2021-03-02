@@ -46,11 +46,6 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
     ,o.SciDelivery
 	,[CDCodeNew] = o.CDCodeNew
-	,[ProductType] = sty.ProductType
-	,[FabricType] = sty.FabricType
-	,[Lining] = sty.Lining
-	,[Gender] = sty.Gender
-	,[Construction] = sty.Construction
 into #tmpSewingDetail
 from ['+@LinkServerName+'].Production.dbo.System WITH (NOLOCK),['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -70,19 +65,6 @@ outer apply
 		for xml path('''')
 	),1,1,'''')
 )sr
-Outer apply (
-	SELECT s.[ID]
-		, ProductType = r2.Name
-		, FabricType = r1.Name
-		, Lining
-		, Gender
-		, Construction = d1.Name
-	FROM ['+@LinkServerName+'].Production.dbo.Style s WITH(NOLOCK)
-	left join ['+@LinkServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
-	left join ['+@LinkServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
-	left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
-	where s.Ukey = o.StyleUkey
-)sty
 outer apply( select BrandID from ['+@LinkServerName+'].Production.dbo.orders o1 WITH (NOLOCK) where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from ['+@LinkServerName+'].Production.dbo.Style WITH (NOLOCK) where id = o.StyleID and SeasonID = o.SeasonID and BrandID != ''SUBCON-I'') StyleBrand
 where 1=1 
@@ -123,11 +105,11 @@ select distinct ID
     ,SubconInSisterFty
     ,SewingReasonDesc
 	,CDCodeNew
-	,ProductType
-	,FabricType
-	,Lining
-	,Gender
-	,Construction
+	,[ProductType] = sty.ProductType
+	,[FabricType] = sty.FabricType
+	,[Lining] = sty.Lining
+	,[Gender] = sty.Gender
+	,[Construction] = sty.Construction
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -135,7 +117,20 @@ outer apply(
 	from ['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK)
 	where s.ID = t.ID
 )s
-
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM ['+@LinkServerName+'].Production.dbo.Style s WITH(NOLOCK)
+	left join ['+@LinkServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
+	left join ['+@LinkServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
+	left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
+	where s.ID = t.OrderStyle 
+	and s.SeasonID = t.OrderSeason 
+	and s.BrandID = t.OrderBrandID
+)sty
 
 select distinct s.SewingLineID,s.FactoryID,[OrderStyle] = o.StyleID, [MockupStyle] = mo.StyleID,s.OutputDate
 into #tmp_s1
