@@ -162,7 +162,8 @@ select	ob.Id			,
 		ob.FabricCode	,
 		ob.Refno		,
 		ob.SCIRefno	,
-		ob.SuppID
+		ob.SuppID,
+		ob.Ukey
  into #tmp_bof
  from Order_BOF ob with(nolock)
  where id in (select poid from #tmp_order)
@@ -388,11 +389,13 @@ select	ob.Id		  ,
 
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.Order_BOF
 	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Order_BOF(	Id			,
+													Ukey	  ,
 													FabricCode	,
 													Refno		,
 													SCIRefno	,
 													SuppID)
 				select	Id			,
+						Ukey	  ,
 						FabricCode	,
 						Refno		,
 						SCIRefno	,
