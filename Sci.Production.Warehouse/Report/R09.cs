@@ -43,7 +43,7 @@ namespace Sci.Production.Warehouse
             DataTable factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) ", out factory);
             this.txtMdivision.Text = Env.User.Keyword;
-            MyUtility.Tool.SetupCombox(this.comboFilterCondition, 1, 1, "Actual Inventory Qty < Taipei system,Inventory In  < Taipei InputQty,");
+            MyUtility.Tool.SetupCombox(this.comboFilterCondition, 1, 1, "Actual Inventory Qty < Taipei system,Actual Inventory Qty ≠ Taipei system,Inventory In  < Taipei InputQty,");
             this.comboFilterCondition.SelectedIndex = 0;
         }
 
@@ -118,175 +118,38 @@ namespace Sci.Production.Warehouse
             #endregion
 
             StringBuilder sqlCmd = new StringBuilder();
-            if (!MyUtility.Check.Empty(this.buyerDelivery1) || !MyUtility.Check.Empty(this.buyerDelivery2))
-            {
-                string sqlBuyerDelivery = string.Empty;
-                if (!MyUtility.Check.Empty(this.buyerDelivery1))
-                {
-                    sqlBuyerDelivery += string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("d"));
-                }
 
-                if (!MyUtility.Check.Empty(this.buyerDelivery2))
-                {
-                    sqlBuyerDelivery += (MyUtility.Check.Empty(sqlBuyerDelivery) ? string.Empty : " and ") + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d"));
-                }
-
-                sqlCmd.Append(string.Format(
-                    @"
-;with cte as 
-(
-	select poid 
-    from dbo.orders o WITH (NOLOCK) 
-	where {0} 
-    group by POID
-)
-select  distinct 
-        FactoryID           = orders.FactoryID,
-        SP					= a.POID, 
-        SEQ					= concat(a.seq1, ' ', a.seq2),  
-		OrderType			= orders.OrderTypeID,
-        ETA					= b.ShipETA,
-        REF					= A.Refno, 
-        MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
-        PurchaseUnit		= B.StockUnit,
-        Color				= B.ColorID, 
-		Size				= B.SizeSpec, 
-        StockLocation		= C.BLocation, 
-        ShipQty				= Round((isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * v.RateValue, 2),
-        ArrivedQty			= isnull(C.InQty, 0), 
-        ReleasedQty			= isnull(C.OutQty, 0), 
-        AdjustQty			= isnull(C.AdjustQty, 0),
-        ReturnQty			= isnull(C.ReturnQty, 0),
-        StockInQty			= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) ,
-        StockAllocatedQty	= Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) , 
-        StockBalanceQty		= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) -Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) ,
-        InQty				= isnull(x.InQty, 0), 
-        OutQty				= isnull(x.OutQty, 0), 
-        AdjustQty			= isnull(x.AdjustQty, 0),
-        ReturnQty			= isnull(x.ReturnQty, 0),
-        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0) - isnull(x.ReturnQty, 0)
-from cte
-inner join Inventory a WITH (NOLOCK) on a.POID = cte.POID 
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
-inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2
-inner join Orders orders on c.poid = orders.id
-inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
-outer apply (select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)) v
-outer apply(
-	select qty = sum(i.qty)
-	from Invtrans i WITH (NOLOCK) 
-	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = '1' or(i.type = '4' and i.qty >0))
-)InsQty14
-outer apply(
-	select qty = sum(i.qty)
-	from Invtrans i WITH (NOLOCK) 
-	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = '6' or(i.type = '4' and i.qty < 0))
-)InsQty46
-outer apply(
-	select qty = sum(i.qty)
-	from Invtrans i WITH (NOLOCK) 
-	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = '2' or i.type = '5')
-)InsQty25
-outer apply (
-    select  isnull(sum(m.InQty),0.00) InQty
-            , isnull(sum(m.OutQty),0.00) OutQty
-            , isnull(sum(m.AdjustQty),0.00) AdjustQty 
-            , isnull(sum(m.ReturnQty),0.00) ReturnQty 
-    from dbo.FtyInventory m WITH (NOLOCK) 
-    where   m.POID = a.POID 
-            and m.seq1 = a.seq1 
-            and m.seq2 = a.seq2 
-            and StockType = 'I' 
-) x
-where (b.InputQty <> 0 or c.LInvQty <> 0) ", sqlBuyerDelivery));
-            }
-            else
+            string whereStart = string.Empty;
+            if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(@"
-select  distinct 
-        FactoryID           = orders.FactoryID,
-        SP					= a.POID, 
-        SEQ					= concat(a.seq1, ' ', a.seq2),  
-		OrderType			= orders.OrderTypeID,
-        ETA					= b.ShipETA,
-        REF					= A.Refno, 
-        MtlType				= iif(A.FabricType='F','Fabric',iif(a.FabricType = 'A','Accessory',a.fabrictype)), 
-        PurchaseUnit		= B.StockUnit,
-        Color				= B.ColorID, 
-		Size				= B.SizeSpec, 
-        StockLocation		= C.BLocation, 
-        ShipQty				= Round((isnull(B.ShipQty, 0) + isnull(B.ShipFOC, 0)) * v.RateValue, 2),
-        ArrivedQty			= isnull(C.InQty, 0), 
-        ReleasedQty			= isnull(C.OutQty, 0), 
-        AdjustQty			= isnull(C.AdjustQty, 0),
-        ReturnQty			= isnull(C.ReturnQty, 0),
-        StockInQty			= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) ,
-        StockAllocatedQty	= Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) , 
-        StockBalanceQty		= Round(isnull(InsQty14.qty,0) * v.RateValue, 2) -Round((isnull(InsQty25.qty,0) - isnull(InsQty46.qty,0)) * v.RateValue, 2) ,
-        InQty				= isnull(x.InQty, 0), 
-        OutQty				= isnull(x.OutQty, 0), 
-        AdjustQty			= isnull(x.AdjustQty, 0),
-        ReturnQty			= isnull(x.ReturnQty, 0),
-        BalanceQty			= isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0) - isnull(x.ReturnQty, 0)
-from Inventory a WITH (NOLOCK) 
-inner join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID and b.seq1 = a.seq1 and b.seq2 = a.Seq2
-inner join MDivisionPoDetail c WITH (NOLOCK) on c.POID = a.POID and c.seq1 = a.seq1 and c.seq2 = a.Seq2 
-inner join Orders orders on c.poid = orders.id
-inner join Factory d WITH (NOLOCK) on orders.FactoryID = d.id
-outer apply (select RateValue = dbo.GetUnitRate(b.POUnit, b.StockUnit)) v
-outer apply(
-	select qty = sum(i.qty)
-	from Invtrans i WITH (NOLOCK) 
-	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = '1' or(i.type = '4' and i.qty >0))
-)InsQty14
-outer apply(
-	select qty = sum(i.qty)
-	from Invtrans i WITH (NOLOCK) 
-	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = '6' or(i.type = '4' and i.qty < 0))
-)InsQty46
-outer apply(
-	select qty = sum(i.qty)
-	from Invtrans i WITH (NOLOCK) 
-	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = '2' or i.type = '5')
-)InsQty25
-outer apply (
-    select  isnull(sum(m.InQty),0.00) InQty
-            , isnull(sum(m.OutQty),0.00) OutQty
-            , isnull(sum(m.AdjustQty),0.00) AdjustQty 
-            , isnull(sum(m.ReturnQty),0.00) ReturnQty 
-    from dbo.FtyInventory m WITH (NOLOCK) 
-    where   m.POID = a.POID 
-            and m.seq1 = a.seq1 
-            and m.seq2 = a.seq2 
-            and StockType = 'I' 
-) x
-where (b.InputQty <> 0 or c.LInvQty <> 0)"));
+                whereStart += "and" + string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("d"));
             }
 
-            #region --- 條件組合  ---
+            if (!MyUtility.Check.Empty(this.buyerDelivery2))
+            {
+                whereStart += "and" + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d"));
+            }
+
             if (!MyUtility.Check.Empty(this.deadline1) || !MyUtility.Check.Empty(this.deadline2))
             {
+                whereStart += " and exists(select 1 from Inventory inv with (nolock) where inv.POID = o.POID ";
                 if (!MyUtility.Check.Empty(this.deadline1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= a.deadline", Convert.ToDateTime(this.deadline1).ToString("d")));
+                    whereStart += string.Format(@" and '{0}' <= inv.deadline", Convert.ToDateTime(this.deadline1).ToString("d"));
                 }
 
                 if (!MyUtility.Check.Empty(this.deadline2))
                 {
-                    sqlCmd.Append(string.Format(@" and a.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("d")));
+                    whereStart += string.Format(@" and inv.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("d"));
                 }
+
+                whereStart += ")";
             }
 
             if (!MyUtility.Check.Empty(this.spno1) && !MyUtility.Check.Empty(this.spno2))
             {
                 // 若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料
-                sqlCmd.Append(" and a.Poid >= @spno1 and a.Poid <= @spno2");
+                whereStart += " and o.Poid >= @spno1 and o.Poid <= @spno2";
                 sp_spno1.Value = this.spno1.PadRight(10, '0');
                 sp_spno2.Value = this.spno2.PadRight(10, 'Z');
                 cmds.Add(sp_spno1);
@@ -295,49 +158,50 @@ where (b.InputQty <> 0 or c.LInvQty <> 0)"));
             else if (!MyUtility.Check.Empty(this.spno1))
             {
                 // 只有 sp1 輸入資料
-                sqlCmd.Append(" and a.Poid like @spno1 ");
+                whereStart += " and o.Poid like @spno1 ";
                 sp_spno1.Value = this.spno1 + "%";
                 cmds.Add(sp_spno1);
             }
             else if (!MyUtility.Check.Empty(this.spno2))
             {
                 // 只有 sp2 輸入資料
-                sqlCmd.Append(" and a.Poid like @spno2 ");
+                whereStart += " and o.Poid like @spno2 ";
                 sp_spno2.Value = this.spno2 + "%";
                 cmds.Add(sp_spno2);
             }
 
-            if (!MyUtility.Check.Empty(this.eta1) || !MyUtility.Check.Empty(this.eta2))
-            {
-                if (!MyUtility.Check.Empty(this.eta1))
-                {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= b.ShipEta", Convert.ToDateTime(this.eta1).ToString("d")));
-                }
-
-                if (!MyUtility.Check.Empty(this.eta2))
-                {
-                    sqlCmd.Append(string.Format(@" and b.ShipEta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d")));
-                }
-            }
-
             if (!MyUtility.Check.Empty(this.mdivision))
             {
-                sqlCmd.Append(" and d.mdivisionid = @MDivision");
+                whereStart += " and f.mdivisionid = @MDivision";
                 sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(" and orders.FactoryID = @Factory");
+                whereStart += " and o.FactoryID = @Factory";
                 sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
+            }
+
+            string whereFinal = string.Empty;
+            if (!MyUtility.Check.Empty(this.eta1) || !MyUtility.Check.Empty(this.eta2))
+            {
+                if (!MyUtility.Check.Empty(this.eta1))
+                {
+                    whereFinal += string.Format(@" and '{0}' <= psd.ShipEta", Convert.ToDateTime(this.eta1).ToString("d"));
+                }
+
+                if (!MyUtility.Check.Empty(this.eta2))
+                {
+                    whereFinal += string.Format(@" and psd.ShipEta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d"));
+                }
             }
 
             if (!MyUtility.Check.Empty(this.refno1) && !MyUtility.Check.Empty(this.refno2))
             {
                 // Refno 兩個都輸入則尋找 Refno1 - Refno2 區間的資料
-                sqlCmd.Append(" and b.refno >= @refno1 and b.refno <= @refno2");
+                whereFinal += " and psd.refno >= @refno1 and psd.refno <= @refno2";
                 sp_refno1.Value = this.refno1;
                 sp_refno2.Value = this.refno2;
                 cmds.Add(sp_refno1);
@@ -346,29 +210,231 @@ where (b.InputQty <> 0 or c.LInvQty <> 0)"));
             else if (!MyUtility.Check.Empty(this.refno1))
             {
                 // 只輸入 Refno1
-                sqlCmd.Append(" and b.refno like @refno1");
+                whereFinal += " and psd.refno like @refno1";
                 sp_refno1.Value = this.refno1 + "%";
                 cmds.Add(sp_refno1);
             }
             else if (!MyUtility.Check.Empty(this.refno2))
             {
                 // 只輸入 Refno2
-                sqlCmd.Append(" and b.refno like @refno2");
+                whereFinal += " and psd.refno like @refno2";
                 sp_refno2.Value = this.refno2 + "%";
                 cmds.Add(sp_refno2);
             }
 
             if (this.filterIndex == 0)
             {
-                // sqlCmd.Append(" and c.linvQty < (B.InputQty - B.OutputQty) * ISNULL(v.RateValue, 1)");
-                sqlCmd.Append(" and Round((isnull(B.InputQty, 0) - isnull(B.OutputQty, 0)) * isnull(v.RateValue, 1), 2) > isnull(x.InQty, 0) - isnull(x.OutQty, 0) + isnull(x.AdjustQty, 0) - isnull(x.ReturnQty, 0)");
+                whereFinal += " and sl.FtyBalance  < sl.TPEBalance";
             }
 
             if (this.filterIndex == 1)
             {
-                sqlCmd.Append(" and x.InQty < Round(B.InputQty * isnull(v.RateValue, 1), 2)");
+                whereFinal += " and sl.FtyBalance  <> sl.TPEBalance";
             }
-            #endregion
+
+            if (this.filterIndex == 2)
+            {
+                whereFinal += " and mpd.InQty < Round(psd.InputQty * isnull(v.RateValue, 1), 2)";
+            }
+
+            sqlCmd.Append($@"
+declare @stock table 
+(
+	POID varchar(13)
+)
+
+insert into @stock
+select poid 
+    from dbo.orders o WITH (NOLOCK) 
+    inner join Factory f WITH (NOLOCK) on o.FactoryID = f.id
+	where 1 = 1 {whereStart}
+    group by POID
+
+/*
+	TPE Current Stock
+*/
+select	FactoryID
+		, POID
+		, Seq1
+		, Seq2 
+		, Qty = Sum (Qty)
+into #TPEIn
+from (
+	-- Type 1, 4 --
+	select FactoryID = f.FTYGroup
+			, POID = inv.InventoryPOID
+			, Seq1 = inv.InventorySeq1
+			, Seq2 = inv.InventorySeq2
+			, inv.Type
+			, inv.Qty
+	from @stock s
+	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	inner join Factory f on inv.FactoryID = f.ID
+	where	( 
+				inv.Type = 1 
+				or (inv.Type = 4 and Qty > 0)
+			)
+			and f.IsProduceFty = 1
+	union all
+
+	-- Type 3 --
+	select FactoryID = f.FTYGroup
+			, POID = inv.InventoryPOID
+			, Seq1 = inv.InventorySeq1
+			, Seq2 = inv.InventorySeq2
+			, inv.Type
+			, inv.Qty
+	from @stock s
+	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	inner join Factory f on inv.TransferFactory = f.ID
+	where	inv.Type = 3
+			and f.IsProduceFty = 1
+) TPEInQty
+group by FactoryID, POID, Seq1, Seq2 
+
+select	FactoryID
+		, POID
+		, Seq1
+		, Seq2 
+		, Qty = Sum (Qty)
+into #TPEAllocated
+from (
+	-- Type 2, 3, 5 --
+	select FactoryID = f.ID
+			, POID = inv.InventoryPOID
+			, Seq1 = inv.InventorySeq1
+			, Seq2 = inv.InventorySeq2
+			, inv.Type
+			, inv.Qty
+	from @stock s
+	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	inner join Factory f on inv.FactoryID = f.ID
+	where	inv.Type in ('2', '3', '5')
+			and f.IsProduceFty = 1
+	union all
+
+	-- Type 4, 6 --
+	select FactoryID = f.ID
+			, POID = inv.InventoryPOID
+			, Seq1 = inv.InventorySeq1
+			, Seq2 = inv.InventorySeq2
+			, inv.Type
+			, Qty = 0 - inv.Qty
+	from @stock s
+	inner join Invtrans inv on s.POID = inv.InventoryPOID
+	inner join Factory f on inv.FactoryID = f.ID
+	where	(
+				inv.Type = 6 
+				or (inv.Type = 4 and Qty < 0)
+			)
+			and f.IsProduceFty = 1
+) TPEAllocatedQty
+group by FactoryID, POID, Seq1, Seq2 
+
+select FactoryID = iif (ti.FactoryID is not null, ti.FactoryID, ta.FactoryID)
+		, POID = iif (ti.FactoryID is not null, ti.POID, ta.POID)
+		, Seq1 = iif (ti.FactoryID is not null, ti.Seq1, ta.Seq1)
+		, Seq2 = iif (ti.FactoryID is not null, ti.Seq2, ta.Seq2)
+		, InQty = isnull (ti.Qty, 0)
+		, AllocatedQty = isnull (ta.Qty, 0)
+into #TPECurrentStock
+from #TPEIn ti
+full outer join #TPEAllocated ta on ti.FactoryID = ta.FactoryID
+									and ti.POID = ta.POID
+									and ti.Seq1 = ta.Seq1
+									and ti.Seq2 = ta.Seq2
+
+------------------------------------------------------------------
+/*
+	Factory Current Stock
+*/
+
+select	FactoryID = o.FactoryID
+		, fi.POID
+		, fi.Seq1
+		, fi.Seq2
+		, InQty = Sum (InQty)
+		, OutQty = Sum (OutQty)
+		, AdjustQty = Sum (AdjustQty)
+		, ReturnQty = Sum (ReturnQty)
+into #FtyCurrentStock
+from @stock s
+inner join FtyInventory fi on s.POID = fi.POID
+inner join Orders o on fi.POID = o.ID
+where fi.StockType = 'I'
+group by o.FactoryID, fi.POID, fi.Seq1, fi.Seq2
+
+
+------------------------------------------------------------------
+/*
+	Comparise
+*/
+
+select  FactoryID = iif (tcs.FactoryID is not null, tcs.FactoryID, fcs.FactoryID)
+		, POID = iif (tcs.FactoryID is not null, tcs.POID, fcs.POID)
+		, Seq1 = iif (tcs.FactoryID is not null, tcs.Seq1, fcs.Seq1)
+		, Seq2 = iif (tcs.FactoryID is not null, tcs.Seq2, fcs.Seq2)
+		, TPEInQty = isnull (tcs.InQty, 0)
+		, TPEAllocatedQty = isnull (tcs.AllocatedQty, 0)
+		, TPEBalance = isnull (tcs.InQty, 0) - isnull (tcs.AllocatedQty, 0)
+		, FtyInQty = isnull (fcs.InQty, 0)
+		, FtyOutQty = isnull (fcs.OutQty, 0)
+		, FtyAdjustQty = isnull (fcs.AdjustQty, 0)
+		, FtyReturnQty = isnull (fcs.ReturnQty, 0)
+		, FtyBalance = isnull (fcs.InQty, 0) - isnull (fcs.OutQty, 0) + isnull (fcs.AdjustQty, 0) - isnull (fcs.ReturnQty, 0)
+into #StockList
+from #TPECurrentStock tcs
+full outer join #FtyCurrentStock fcs on tcs.FactoryID = fcs.FactoryID
+										and tcs.POID = fcs.POID
+										and tcs.Seq1 = fcs.Seq1
+										and tcs.Seq2 = fcs.Seq2
+------------------------------------------------------------------
+/*
+	Final
+*/
+
+select	FactoryID = sl.FactoryID
+		, SP = sl.POID
+		, Seq = Concat (sl.Seq1, ' ', sl.Seq2)
+		, OrderType = o.OrderTypeID
+		, ETA = psd.ShipETA
+		, REF = psd.Refno
+		, MtlType = iif(psd.FabricType='F','Fabric',iif(psd.FabricType = 'A','Accessory',psd.fabrictype))
+		, PurchaseUnit = psd.StockUnit
+		, Color = psd.ColorID
+		, Size = psd.SizeSpec
+		, StockLocation = isnull (mpd.BLocation, '')
+		, ShipQty = Round((isnull(psd.ShipQty, 0) + isnull(psd.ShipFOC, 0)) * v.RateValue, 2)
+		, ArrivedQty = isnull (mpd.InQty, 0)
+		, ReleaseQty = isnull (mpd.OutQty, 0)
+		, AdjustQty = isnull (mpd.AdjustQty, 0)
+		, ReturnQty = isnull (mpd.ReturnQty, 0)
+		, StockInQty = sl.TPEInQty * v.RateValue
+		, StockAllocatedQty = sl.TPEAllocatedQty * v.RateValue
+		, StockBalance = sl.TPEBalance * v.RateValue
+		, InQty = sl.FtyInQty
+		, OutQty = sl.FtyOutQty
+		, AdjustQty = sl.FtyAdjustQty
+		, ReturnQty = sl.FtyReturnQty
+		, BalanceQty = sl.FtyBalance
+		, v.RateValue
+from #StockList sl
+left join PO_Supp_Detail psd on sl.POID = psd.ID
+								and sl.Seq1 = psd.SEQ1
+								and sl.Seq2 = psd.SEQ2
+left join Orders o on sl.POID = o.ID
+left join MDivisionPoDetail mpd on sl.POID = mpd.POID
+									and sl.Seq1 = mpd.Seq1
+									and sl.Seq2 = mpd.Seq2
+outer apply (
+	select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
+) v
+where   (sl.TPEBalance <> 0 or sl.TPEInQty <> 0 or sl.FtyBalance <> 0) 
+        {whereFinal}
+------------------------------------------------------------------
+drop table #TPEIn, #TPEAllocated, #TPECurrentStock, #FtyCurrentStock, #StockList
+
+");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
