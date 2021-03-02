@@ -362,7 +362,7 @@ namespace Sci.Production.Packing
                             if (msg != "ZPL mapping multiple Packing List." && msg != "SSCC mapping multiple Packing List." && msg != "SSCC not updated in Packing List yet." && msg != "Could not find SSCC.")
                             {
                                 // 解析失敗：Result寫入訊息
-                                msg = "Analysis failed.";
+                                // msg = "Analysis failed.";
                             }
 
                             DataRow newDr = this.Grid_SelectedFile_Dt.NewRow();
@@ -1149,8 +1149,8 @@ DRop TABLE #tmp
 
             cmd = $@"
 SELECT 1
-FROM ShippingMarkPic a
-INNER JOIN ShippingMarkPic_Detail b ON a.Ukey = b.ShippingMarkPicUkey
+FROM ShippingMarkPic a WITH(NOLOCK)
+INNER JOIN ShippingMarkPic_Detail b WITH(NOLOCK) ON a.Ukey = b.ShippingMarkPicUkey
 WHERE a.PackingListID = '{packingListID}'
 ";
             bool stickerAlreadyExisted = MyUtility.Check.Seek(cmd);
