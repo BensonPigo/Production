@@ -1296,12 +1296,26 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             if (this.EditMode)
             {
                 string sqlCmd = $"SELECT DISTINCT ID FROM SewingLine WITH(NOLOCK) WHERE FactoryID = '{Sci.Env.User.Factory}'";
-                Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlCmd, "ID", "10", this.txtSewingLine.Text, null, null, null);
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.OK)
+
+                if (this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) == "Staggered")
                 {
-                    this.txtSewingLine.Text = item.GetSelectedString();
-                    this.CurrentMaintain["SewingLineID"] = item.GetSelectedString();
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "ID", "10", this.txtSewingLine.Text, null, null, null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        this.txtSewingLine.Text = item.GetSelectedString();
+                        this.CurrentMaintain["SewingLineID"] = item.GetSelectedString();
+                    }
+                }
+                else
+                {
+                    Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlCmd, "ID", "10", this.txtSewingLine.Text, null, null, null);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        this.txtSewingLine.Text = item.GetSelectedString();
+                        this.CurrentMaintain["SewingLineID"] = item.GetSelectedString();
+                    }
                 }
             }
         }
@@ -1311,6 +1325,13 @@ DELETE FROM CFAInspectionRecord_OrderSEQ WHERE ID = '{this.CurrentMaintain["ID"]
             if (this.EditMode && this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Any())
             {
                 List<string> lines = this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList();
+
+                if (this.CurrentMaintain != null && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) == "Staggered")
+                {
+                    lines.Clear();
+                    lines.Add(this.txtSewingLine.Text.Split(',').Where(o => !MyUtility.Check.Empty(o)).Distinct().ToList().FirstOrDefault());
+                }
+
                 List<string> errorLines = new List<string>();
                 foreach (var line in lines)
                 {
@@ -1631,6 +1652,7 @@ AND CTNStartNo = @CTNStartNo
                 this.topCarton = string.Empty;
                 this.txtInspectedCarton.Text = string.Empty;
                 this.CurrentMaintain["FirstInspection"] = false;
+                this.CurrentMaintain["SewingLineID"] = string.Empty;
 
                 foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
                 {
