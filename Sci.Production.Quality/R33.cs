@@ -264,7 +264,7 @@ DROP TABLE #DateTable,#MainData1,#AllData
 
                     // 若沒有這天的檢驗資料，則另外判斷該天是否為假日
                     bool isHoliday = false;
-                    if (!currentDatas.Any(o => o.IsHoliday))
+                    if (!currentDatas.Any(o => o.IsHoliday && o.FactoryID == factory))
                     {
                         string c = $@"SELECT 1 FROM Holiday WHERE FactoryID='{factory}' AND HolidayDate='{item.Date.ToShortDateString()}' ";
                         isHoliday = MyUtility.Check.Seek(c);
