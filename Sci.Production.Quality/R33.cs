@@ -272,27 +272,27 @@ DROP TABLE #DateTable,#MainData1,#AllData
 
                     // Cell顏色是否改變的判斷
                     string name = string.Empty;
-                    if ((currentDatas.Any(o => o.IsHoliday && o.FactoryID == factory) && item.Date.DayOfWeek.ToString() != "Sunday") || isHoliday)
+                    if (item.Date.DayOfWeek.ToString() == "Sunday")
                     {
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx);
-                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
+                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(255, 0, 0);
 
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx + 1);
-                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
+                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(255, 0, 0);
 
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx + 2);
-                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
+                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(255, 0, 0);
                     }
-                    else if (item.Date.DayOfWeek.ToString() == "Sunday")
+                    else if ((currentDatas.Any(o => o.IsHoliday && o.FactoryID == factory) && item.Date.DayOfWeek.ToString() != "Sunday") || isHoliday)
                     {
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx);
-                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(255, 0, 0);
+                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
 
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx + 1);
-                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(255, 0, 0);
+                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
 
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx + 2);
-                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(255, 0, 0);
+                        perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
                     }
                     else
                     {
