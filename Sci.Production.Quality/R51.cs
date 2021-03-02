@@ -149,6 +149,8 @@ outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveD
 
             this.Sqlcmd.Append($@"
 select
+    SR.FactoryID,
+    SR.SubProLocationID,
 	Convert(date,SR.AddDate) as AddDate,
     SR.Shift,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
@@ -197,6 +199,8 @@ Where 1=1
 UNION
 
 select
+    SR.FactoryID,
+    SR.SubProLocationID,
 	Convert(date,SR.AddDate) as AddDate,
     SR.Shift,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
