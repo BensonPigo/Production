@@ -147,6 +147,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(865, 425);
+            this.IsDeleteOnBrowse = false;
+            this.IsSupportClip = false;
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportPrint = false;
             this.Name = "B17";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B17. Sub-Process Process Location";
