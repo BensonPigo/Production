@@ -10,6 +10,11 @@ using System.Runtime.InteropServices;
 using System.Data.SqlClient;
 using Sci.Win.UI;
 using System.Drawing;
+using Microsoft.Office.Interop.Excel;
+using DataTable = System.Data.DataTable;
+using System.Configuration;
+using System.Net.Mail;
+using System.IO;
 
 namespace Sci.Production.PublicPrg
 {
@@ -3406,5 +3411,224 @@ where ID = '{currentMaintain["INVNo"]}'";
             return result;
         }
         #endregion
+
+        /// <summary>
+        /// Running change 查詢
+        /// </summary>
+        /// <param name="custCDID">custCDID</param>
+        /// <param name="brandID">brandID</param>
+        /// <param name="stickerCombinationUkey">stickerCombinationUkey</param>
+        /// <param name="stickerCombinationUkey_MixPack">stickerCombinationUkey_MixPack</param>
+        /// <param name="stampCombinationUkey">stampCombinationUkey</param>
+        /// <returns>List<DataTable></returns>
+        public static List<DataTable> CustCD_RunningChange(string custCDID, string brandID, long stickerCombinationUkey, long stickerCombinationUkey_MixPack, long stampCombinationUkey)
+        {
+            DataTable custpono;
+            DataTable custCD_Detail;
+            List<DataTable> result = new List<DataTable>();
+
+            string cmd = $@"
+SELECT STUFF((
+	SELECT ',' + ChangeType
+	FROM (
+		SELECT [ChangeType]=IIF( EXISTS(
+		select 1
+		from CustCD
+		where id='{custCDID}' AND (ISNULL(StickerCombinationUkey,0) != {stickerCombinationUkey}  or ISNULL(StickerCombinationUkey_MixPack,0) != {stickerCombinationUkey_MixPack})
+		),'Sticker','')
+		UNION
+		SELECT [ChangeType]=IIF( EXISTS(
+		select 1
+		from CustCD
+		where id='{custCDID}' AND ISNULL(StampCombinationUkey ,0) != {stampCombinationUkey}
+		),'Stamp','')
+	) a
+	WHERE ChangeType != ''
+	FOR XML PATH('')
+),1,1,'')
+";
+            string strChangeType = MyUtility.GetValue.Lookup(cmd);
+            List<string> chageTypes = strChangeType.Split(',').ToList();
+
+            // 根據Category，判斷需要列出哪些CustPONo
+            string categorySql = string.Empty;
+
+            foreach (var type in chageTypes)
+            {
+                if (type == "Sticker")
+                {
+                    categorySql += "inner join ShippingMarkPic a on a.PackingListID = p.ID";
+                }
+
+                if (type == "Stamp")
+                {
+                    categorySql += "inner join ShippingMarkStamp b on b.PackingListID = p.ID";
+                }
+            }
+
+            cmd = $@"
+select DISTINCT p.*
+INTO #PackingList
+from PackingList p
+LEFT JOIN Pullout pu ON p.PulloutID = pu.ID
+where CustCDID='{custCDID}' AND BrandID = '{brandID}'
+AND (pu.Status IS NULL OR pu.Status = 'New')
+
+select distinct o.CustPONo
+from #PackingList p
+{categorySql}
+inner join PackingList_Detail pd on p.id = pd.ID
+inner join Orders o on o.ID = pd.OrderID
+
+drop table #PackingList
+
+";
+
+            // 準備Basic B11 Sheet的資料
+            DBProxy.Current.Select(null, cmd, out custpono);
+            result.Add(custpono);
+
+            cmd = $@"
+select 
+	 BrandID, ID
+	,StickerCombinationUkey
+	,StickerCombinationUkey_MixPack
+	,StampCombinationUkey
+	,[NewStickerCombinationUkey] = {(stickerCombinationUkey == 0 ? "NULL" : stickerCombinationUkey.ToString())}
+	,[NewStickerCombinationUkey_MixPack] = {(stickerCombinationUkey_MixPack == 0 ? "NULL" : stickerCombinationUkey_MixPack.ToString())}
+	,[NewStampCombinationUkey] = {(stampCombinationUkey == 0 ? "NULL" : stampCombinationUkey.ToString())}
+from CustCD
+where id='{custCDID}'
+
+";
+            DBProxy.Current.Select(null, cmd, out custCD_Detail);
+            result.Add(custCD_Detail);
+
+            return result;
+        }
+
+        public static void SendRunningChange(List<DataTable> datas, string changeType)
+        {
+            string totalFile;
+            List<string> totalFileList = new List<string>();
+            List<string> excelFiles = new List<string>();
+
+            // 附件報表處理
+            DataTable poDatatable = datas[0];
+            DataTable data = datas[1];
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\RunningChange.xltx"); // 預先開啟excel app
+
+            Worksheet poWorkSheet = (Worksheet)objApp.ActiveWorkbook.Worksheets[1];
+            Worksheet worksheet2 = (Worksheet)objApp.ActiveWorkbook.Worksheets[2];
+            //string r = string.Empty;
+
+            MyUtility.Excel.CopyToXls(poDatatable, null, "RunningChange.xltx", headerRow: 1, excelApp: objApp, wSheet: poWorkSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+
+            MyUtility.Excel.CopyToXls(data, null, "RunningChange.xltx", headerRow: 1, excelApp: objApp, wSheet: worksheet2, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+
+            poWorkSheet.Activate();
+
+            #region Save Excel
+            string excelFile = "RunningChange";
+            excelFiles.Add(excelFile);
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            excelFiles.Add(excelFile);
+            workbook.SaveAs(excelFile);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);
+
+            #endregion
+            DataTable mailToInfo;
+            string sqlcmd = $@"SELECT * FROM MailTo WHERE ID='102' ";
+            DualResult result = DBProxy.Current.Select("Machine", sqlcmd, out mailToInfo);
+
+            string toAddress = mailToInfo.Rows[0]["ToAddress"].ToString();
+            string cCAddress = mailToInfo.Rows[0]["CcAddress"].ToString();
+            string subject = mailToInfo.Rows[0]["Subject"].ToString();
+            string content = mailToInfo.Rows[0]["Content"].ToString() + $" - {changeType}";
+            totalFile = excelFiles.JoinToString(",");
+            totalFileList = excelFiles;
+
+            string mailServer;//"Mail.sportscity.com.tw";
+            string eMailID; //"foxpro";
+            string eMailPwd; //"orpxof";
+            ushort? SmtpPort = null; //25;
+            string sendFrom;
+
+            mailServer = ConfigurationManager.AppSettings["mailserver_ip"];//"Mail.sportscity.com.tw";
+            eMailID = ConfigurationManager.AppSettings["mailserver_account"]; //"foxpro";
+            eMailPwd = ConfigurationManager.AppSettings["mailserver_password"]; //"orpxof";
+            SmtpPort = (ushort?)Convert.ToInt32(ConfigurationManager.AppSettings["mailserver_port"]); //25;
+            sendFrom = ConfigurationManager.AppSettings["MailSendFrom"];
+
+            Sci.DB.TransferPms transferPMS = new Sci.DB.TransferPms();
+            transferPMS.SetSMTP(mailServer, SmtpPort, eMailID, eMailPwd);
+
+
+            bool IsTestMail = true;//  Convert.ToBoolean(ConfigurationManager.AppSettings["IsTestMail"]);
+                                   //string TestMail = ConfigurationManager.AppSettings["TestMail"].ToString();
+
+            if (!MyUtility.Check.Empty(toAddress))
+            {
+                var mail = new MailMessage();
+
+                mail.IsBodyHtml = true;
+                mail.Subject = subject;
+
+                var altView = AlternateView.CreateAlternateViewFromString(
+                    content, null, System.Net.Mime.MediaTypeNames.Text.Html);
+
+                mail.AlternateViews.Add(altView);
+
+                foreach (var it in totalFileList)
+                {
+                    using (FileStream fileStream = new FileStream(
+                        it,
+                        FileMode.Open,
+                        FileAccess.Read,
+                        FileShare.ReadWrite))
+                    {
+                        try
+                        {
+                            var ms = new MemoryStream();
+                            fileStream.CopyTo(ms);
+                            fileStream.Flush();
+                            ms.Flush();
+                            ms.Position = 0;
+                            mail.Attachments.Add(new Attachment(ms, System.IO.Path.GetFileName(it)));
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+
+                foreach (var item in toAddress.Split(';'))
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        mail.To.Add(item);
+                    }
+                }
+
+                foreach (var item in cCAddress.Split(';'))
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        mail.CC.Add(item);
+                    }
+                }
+
+                mail.From = new MailAddress(sendFrom);
+
+                SmtpClient smtp = new SmtpClient(mailServer);
+                smtp.Credentials = new NetworkCredential(eMailID, eMailPwd);//寄信帳密
+
+                smtp.Send(mail);
+            }
+        }
     }
 }

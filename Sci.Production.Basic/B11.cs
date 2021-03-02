@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Basic
 {
@@ -97,7 +98,20 @@ AND Ukey = '{this.CurrentMaintain["StampCombinationUkey"]}'
 AND Category = 'HTML'
 AND Junk = 0
 ");
+            Prgs.CustCD_RunningChange(
+                this.CurrentMaintain["BrandID"].ToString(),
+                this.CurrentMaintain["BrandID"].ToString(),
+                MyUtility.Convert.GetLong(this.CurrentMaintain["BrandID"]),
+                MyUtility.Convert.GetLong(this.CurrentMaintain["BrandID"]),
+                MyUtility.Convert.GetLong(this.CurrentMaintain["BrandID"]));
+
             this.oldStampComb = this.txtStampComb.Text;
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            return base.ClickSaveBefore();
         }
 
         private void BtnShippingMark_Click(object sender, EventArgs e)
