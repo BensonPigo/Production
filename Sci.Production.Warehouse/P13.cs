@@ -174,29 +174,69 @@ WHERE Issue_DetailUkey IN ({ukeys})
                 new SqlParameter("@ID", id),
             };
             string sqlcmd = @"
-select t.POID,
-	    t.seq1+ '-' +t.seq2 as SEQ,
+select id.POID,
+	    id.seq1 +  '-'  + id.seq2 as SEQ,
         p.Scirefno,
 	    p.seq1,
 	    p.seq2,
-	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll) 
-			    AND(p.seq1 = lag(p.seq1,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll))
-			    AND(p.seq2 = lag(p.seq2,1,'')over (order by t.POID,p.seq1,p.seq2, t.Dyelot,t.Roll))) 
+	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll) 
+			    AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))
+			    AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2, id.Dyelot,id.Roll))) 
 			    ,''
-                ,dbo.getMtlDesc(t.poid,t.seq1,t.seq2,2,0)),
-        MDesc = iif(FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
-	    t.Roll,
-	    t.Dyelot,
-	    t.Qty,
+                ,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)),
+        MDesc = iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),
+	    id.Roll,
+	    id.Dyelot,
+	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-	    [Total]=sum(t.Qty) OVER (PARTITION BY t.POID ,t.seq1,t.seq2 )            
-from dbo.Issue_Detail t WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
-left join FtyInventory FI on t.poid = fi.poid and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 and t.Dyelot = fi.Dyelot
-    and t.roll = fi.roll and t.stocktype = fi.stocktype
-where t.id= @ID
-order by t.POID,SEQ, t.Dyelot,t.Roll
+	    [Total]=sum(id.Qty) OVER (PARTITION BY id.POID ,id.seq1, id.seq2)
+		,[RecvKG] = case when rd.ActualQty is not null 
+						then case when rd.ActualQty <> id.Qty
+								then ''
+								else cast(iif(ISNULL(rd.ActualWeight,0) > 0, rd.ActualWeight, rd.Weight) as varchar(20))
+							 end
+						else case when td.ActualQty <> id.Qty
+								then ''
+								else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
+							 end							
+					end
+from dbo.Issue_Detail id WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= id.poid and p.SEQ1 = id.Seq1 and p.seq2 = id.Seq2
+left join FtyInventory fi WITH (NOLOCK) on id.POID = fi.POID
+						and id.Seq1 = fi.Seq1 
+						and id.Seq2 = fi.Seq2
+						and id.Dyelot = fi.Dyelot
+						and id.Roll = fi.Roll 
+						and id.StockType = fi.StockType
+Outer apply (
+	select [Weight] = SUM(rd.Weight)
+		, [ActualWeight] = SUM(rd.ActualWeight)
+		, [ActualQty] = SUM(rd.ActualQty)
+	from Receiving_Detail rd WITH (NOLOCK) 
+	where fi.POID = rd.PoId
+	and fi.Seq1 = rd.Seq1
+	and fi.Seq2 = rd.Seq2 
+	and fi.Dyelot = rd.Dyelot
+	and fi.Roll = rd.Roll
+	and fi.StockType = rd.StockType
+	and p.FabricType = 'F'
+)rd
+Outer apply (
+	select [Weight] = SUM(td.Weight)
+		, [ActualWeight] = SUM(td.ActualWeight)
+		, [ActualQty] = SUM(td.Qty)
+	from TransferIn_Detail td WITH (NOLOCK) 
+	where fi.POID = td.PoId
+	and fi.Seq1 = td.Seq1
+	and fi.Seq2 = td.Seq2 
+	and fi.Dyelot = td.Dyelot
+	and fi.Roll = td.Roll
+	and fi.StockType = td.StockType
+	and p.FabricType = 'F'
+)td
+where id.id= @ID
+order by id.POID,SEQ, id.Dyelot,id.Roll
 ";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
             if (!result)
@@ -224,6 +264,7 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                     DYELOT = row1["Dyelot"].ToString().Trim(),
                     QTY = row1["Qty"].ToString().Trim(),
                     TotalQTY = row1["Total"].ToString().Trim(),
+                    RecvKG = row1["RecvKG"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
@@ -363,6 +404,15 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
                 this.btnPrintFabricSticker.Enabled = false;
             }
 
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
+
             this.DetailGridColVisibleByReason();
         }
 
@@ -440,6 +490,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
+            {
+                return;
             }
             #endregion
 
@@ -563,7 +620,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToVstrong_AutoWH_ACC(true);
+
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_Detail_New(dtDetail, "P13", "New"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         /// <inheritdoc/>
@@ -624,6 +688,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             }
             #endregion
 
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查負數庫存
 
             sqlcmd = string.Format(
@@ -658,6 +729,24 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             }
 
             #endregion 檢查負數庫存
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(dt, "Issue_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P13", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
 
             #region 更新表頭狀態資料
             sqlupd3 = $@"update Issue set status='New', editname = '{Env.User.UserID}' , editdate = GETDATE() where id = '{this.CurrentMaintain["id"]}'";
@@ -744,7 +833,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
@@ -1055,69 +1143,9 @@ Where a.id = '{0}'", masterID);
             }
         }
 
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
+        private void BtnCallP99_Click(object sender, EventArgs e)
         {
-            // AutoWHACC WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = new DataTable();
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-select distinct 
- [Id] = i2.Id 
-,[Type] = i.Type
-,[PoId] = i2.POID
-,[Seq1] = i2.Seq1
-,[Seq2] = i2.Seq2
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
-,[SizeCode] = po3.SizeSpec
-,[StockType] = i2.StockType
-,[Qty] = i2.Qty
-,[StockPOID] = po3.StockPOID
-,[StockSeq1] = po3.StockSeq1
-,[StockSeq2] = po3.StockSeq2
-,[Ukey] = i2.ukey
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-,CmdTime = GetDate()
-from Production.dbo.Issue_Detail i2
-inner join Production.dbo.Issue i on i2.Id=i.Id
-left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
-	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
-    and f.StockType = i2.StockType
-left join PO_Supp_Detail po3 on po3.ID = i2.POID
-	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
-LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
-LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
-where i.Type = 'D'
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
-	and FabricType='A'
-)
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)
-and i.id = '{this.CurrentMaintain["ID"]}'
-
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P13", this);
         }
     }
 }

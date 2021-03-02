@@ -142,6 +142,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTableToList.cs" />
     <Compile Include="DllInvoke.cs" />
     <Compile Include="ExcelExtension.cs" />
     <Compile Include="ExcelPrg.cs" />

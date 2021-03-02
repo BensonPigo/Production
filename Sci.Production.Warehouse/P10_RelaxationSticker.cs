@@ -53,19 +53,12 @@ Sel = 0
  , Dyelot = isd.Dyelot
  , Refno = isnull (psd.Refno, '')
  , Color = isnull (psd.ColorID, '')
- , Qty = StockList.Qty
+ , Qty = isd.Qty
 from Issue_Detail isd
 left join Orders o on o.ID=isd.POID
 left join Po_Supp_Detail psd on isd.POID = psd.ID
  and isd.Seq1 = psd.SEQ1
  and isd.Seq2 = psd.SEQ2
-outer apply(
-    select SUM(FI.InQty) AS Qty 
-    from FtyInventory fi 
-    where fi.POID=isd.POID and fi.Seq1= isd.Seq1 and fi.Seq2 = isd.Seq2 
-    and fi.Roll = isd.Roll and fi.Dyelot = isd.Dyelot
-    and StockType in ('B','I')
-) as StockList
 where isd.ID = '{this.strIssueID}'
 order by RowNo
 ";

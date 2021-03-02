@@ -22,6 +22,7 @@
     [OriQty]               NUMERIC (11, 2) NULL,
     [CompleteTime]         DATETIME        NULL,
     [ToLocation]           VARCHAR (200)   NULL,
+    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_BorrowBack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

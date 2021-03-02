@@ -325,6 +325,7 @@ select distinct t.FactoryID
     ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
     ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
     ,aa.StyleID
+    ,aa.SeasonID
     ,cc.BuyerID
     ,aa.BrandID 
     ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr  

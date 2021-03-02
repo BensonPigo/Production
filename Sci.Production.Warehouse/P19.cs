@@ -213,6 +213,15 @@ namespace Sci.Production.Warehouse
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -307,6 +316,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
                 }
+            }
+            #endregion
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "TransferOut_Detail"))
+            {
+                return;
             }
             #endregion
 
@@ -464,7 +480,14 @@ having f.balanceQty - sum(d.Qty) < 0
             // 要在confirmed 後才能取得當前Balance
             this.FtyBarcodeData(true);
             this.SentToGensong_AutoWHFabric(true);
-            this.SentToVstrong_AutoWH_ACC(true);
+
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_Detail_New(dtDetail, "P19", "New"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         /// <inheritdoc/>
@@ -561,6 +584,31 @@ having f.balanceQty + sum(d.Qty) < 0
             }
 
             #endregion 檢查負數庫存
+
+            #region 檢查庫存項WMSLock
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "TransferOut_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+            if (!Prgs.ChkWMSCompleteTime(dt, "TransferOut_Detail"))
+            {
+                return;
+            }
+            #endregion
+
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P19", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
 
             #region 更新表頭狀態資料
 
@@ -691,7 +739,6 @@ having f.balanceQty + sum(d.Qty) < 0
             // 要在unconfirmed 後才能取得當前Balance
             this.FtyBarcodeData(false);
             this.SentToGensong_AutoWHFabric(false);
-            this.SentToVstrong_AutoWH_ACC(false);
         }
 
         // 寫明細撈出的sql command
@@ -825,71 +872,6 @@ Where a.id = '{0}'", masterID);
             var frm = new P19_ImportbaseonTPEstock(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
-        }
-
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            // AutoWHACC WebAPI for Vstrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtDetail = new DataTable();
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-select distinct 
- [Id] = i2.Id 
-,[Type] = ''
-,[PoId] = i2.POID
-,[Seq1] = i2.Seq1
-,[Seq2] = i2.Seq2
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
-,[SizeCode] = po3.SizeSpec
-,[StockType] = i2.StockType
-,[Qty] = i2.Qty
-,[StockPOID] = po3.StockPOID
-,[StockSeq1] = po3.StockSeq1
-,[StockSeq2] = po3.StockSeq2
-,[Ukey] = i2.ukey
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-,CmdTime = GetDate()
-from Production.dbo.TransferOut_Detail i2
-inner join Production.dbo.TransferOut i on i2.Id=i.Id
-left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
-	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
-    and f.StockType = i2.StockType
-left join PO_Supp_Detail po3 on po3.ID = i2.POID
-	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
-LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
-LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
-	and FabricType='A'
-)
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)
-and i.id = '{this.CurrentMaintain["ID"]}'
-
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssue_DetailToVstrongAutoWHAccessory(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
         }
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
@@ -1062,6 +1044,11 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
                     return;
                 }
             }
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P19", this);
         }
     }
 }
