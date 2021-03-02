@@ -103,16 +103,12 @@
             // comboStage
             // 
             this.comboStage.BackColor = System.Drawing.Color.White;
+            this.comboStage.Enabled = false;
             this.comboStage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStage.FormattingEnabled = true;
             this.comboStage.IsSupportUnselect = true;
-            //this.comboStage.Items.AddRange(new object[] {
-            //"",
-            //"Inline",
-            //"Staggered",
-            //"Final",
-            //"3rd party"});
-            this.comboStage.Items.AddRange(new object[] {"Staggered"});
+            this.comboStage.Items.AddRange(new object[] {
+            "Staggered"});
             this.comboStage.Location = new System.Drawing.Point(128, 175);
             this.comboStage.Name = "comboStage";
             this.comboStage.OldText = "";
