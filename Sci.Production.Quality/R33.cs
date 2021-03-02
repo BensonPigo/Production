@@ -262,9 +262,17 @@ DROP TABLE #DateTable,#MainData1,#AllData
                     perFactory_Sheet.Cells[9, ftyIdx + 1] = totalPass;
                     perFactory_Sheet.Cells[9, ftyIdx + 2] = passRate;
 
+                    // 若沒有這天的檢驗資料，則另外判斷該天是否為假日
+                    bool isHoliday = false;
+                    if (!currentDatas.Any(o => o.IsHoliday))
+                    {
+                        string c = $@"SELECT 1 FROM Holiday WHERE FactoryID='{factory}' AND HolidayDate='{item.Date.ToShortDateString()}' ";
+                        isHoliday = MyUtility.Check.Seek(c);
+                    }
+
                     // Cell顏色是否改變的判斷
                     string name = string.Empty;
-                    if (currentDatas.Any(o => o.IsHoliday) && item.Date.DayOfWeek.ToString() != "Sunday")
+                    if ((currentDatas.Any(o => o.IsHoliday && o.FactoryID == factory) && item.Date.DayOfWeek.ToString() != "Sunday") || isHoliday)
                     {
                         name = MyUtility.Excel.ConvertNumericToExcelColumn(ftyIdx);
                         perFactory_Sheet.get_Range($"{name}9:{name}9").Interior.Color = Color.FromArgb(0, 176, 240);
