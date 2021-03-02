@@ -117,7 +117,20 @@ this.ID);
                     this.radioOption3.Checked = true;
                 }
 
-                this.pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? this.ht["Picture1"].ToString() : this.ht["Picture2"].ToString();
+                switch (this.radioPanel1.Value.ToString())
+                {
+                    case "1":
+                        this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
+                        break;
+                    case "2":
+                        this.pictureBox1.ImageLocation = this.ht["Picture2"].ToString();
+                        break;
+                    case "3":
+                        this.pictureBox1.ImageLocation = this.ht["Picture3"].ToString();
+                        break;
+                    default:
+                        break;
+                }
             }
             else
             {
@@ -1147,18 +1160,19 @@ this.ID);
                     }
                 }
 
-                List<SqlParameter> spamOption = new List<SqlParameter>();
-                string updateOptionID =
-                @"update FIR_Laboratory
+            }
+
+            List<SqlParameter> spamOption = new List<SqlParameter>();
+            string updateOptionID =
+            @"update FIR_Laboratory
                 set SkewnessOptionID=@OptionID
                 where id=@ID";
-                spamOption.Add(new SqlParameter("@id", this.ID));
-                spamOption.Add(new SqlParameter("@OptionID", this.radioPanel1.Value));
-                upResult = DBProxy.Current.Execute(null, updateOptionID, spamOption);
-                if (!upResult)
-                {
-                    return upResult;
-                }
+            spamOption.Add(new SqlParameter("@id", this.ID));
+            spamOption.Add(new SqlParameter("@OptionID", this.radioPanel1.Value));
+            upResult = DBProxy.Current.Execute(null, updateOptionID, spamOption);
+            if (!upResult)
+            {
+                return upResult;
             }
 
             return upResult;
@@ -1446,7 +1460,7 @@ this.ID);
 
             if (this.radioOption1.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
             {
-                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"])))
                 {
                     decimal skewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
                     dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
@@ -1460,7 +1474,7 @@ this.ID);
 
             if (this.radioOption2.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value && dr["SkewnessTest3"] != DBNull.Value && dr["SkewnessTest4"] != DBNull.Value))
             {
-                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]) != 0)
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"])))
                 {
                     decimal skewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
                     dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
@@ -1474,7 +1488,7 @@ this.ID);
 
             if (this.radioOption3.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
             {
-                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["SkewnessTest2"])))
                 {
                     decimal skewnessRate = Math.Abs((decimal)dr["SkewnessTest1"] / (decimal)dr["SkewnessTest2"]) * 100;
                     dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
@@ -1559,7 +1573,7 @@ this.ID);
             this.GridView_Visable();
             if (!((DataTable)this.gridbs.DataSource).Empty() && ((DataTable)this.gridbs.DataSource).Rows.Count > 0)
             {
-                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
                 {
                     this.CalSkeValue(dr);
                 }
