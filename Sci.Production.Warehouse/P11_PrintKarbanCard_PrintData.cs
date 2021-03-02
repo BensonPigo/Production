@@ -14,6 +14,11 @@
         public string Head { get; set; }
 
         /// <summary>
+        /// JITDate
+        /// </summary>
+        public string JITDate { get; set; }
+
+        /// <summary>
         /// ID
         /// </summary>
         public string ID { get; set; }
