@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelPOSMR = new Sci.Win.UI.Label();
@@ -74,19 +74,11 @@
             this.label16 = new Sci.Win.UI.Label();
             this.dateVoucherDate = new Sci.Win.UI.DateBox();
             this.gridReplacement = new System.Windows.Forms.DataGridView();
-            this.txttpeuserPCHandle = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuserPCSMR = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuserConfirmby = new Sci.Production.Class.Txttpeuser();
-            this.txtuserPPICFactorymgr = new Sci.Production.Class.Txtuser();
-            this.txtuserPreparedby = new Sci.Production.Class.Txtuser();
-            this.txttpeuserPOHandle = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
             this.label7 = new Sci.Win.UI.Label();
             this.dateLockDate = new Sci.Win.UI.DateBox();
             this.btnBatch = new Sci.Win.UI.Button();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
-            this.txtdropdownlist1 = new Sci.Production.Class.Txtdropdownlist();
             this.label10 = new Sci.Win.UI.Label();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             this.label11 = new Sci.Win.UI.Label();
@@ -94,8 +86,16 @@
             this.btnBatchReCalculateResponsibilityDeptAmt = new Sci.Win.UI.Button();
             this.lbCompletedShow = new Sci.Win.UI.Label();
             this.displayCompleteDate = new Sci.Win.UI.DisplayBox();
-            this.txttpeuserCompleteName = new Sci.Production.Class.Txttpeuser();
             this.lbCompleted = new Sci.Win.UI.Label();
+            this.txttpeuserCompleteName = new Sci.Production.Class.Txttpeuser();
+            this.txtdropdownlist1 = new Sci.Production.Class.Txtdropdownlist();
+            this.txttpeuserPCHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserPCSMR = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserConfirmby = new Sci.Production.Class.Txttpeuser();
+            this.txtuserPPICFactorymgr = new Sci.Production.Class.Txtuser();
+            this.txtuserPreparedby = new Sci.Production.Class.Txtuser();
+            this.txttpeuserPOHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserPOSMR = new Sci.Production.Class.Txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -298,7 +298,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(976, 587);
+            this.browse.Size = new System.Drawing.Size(976, 624);
             // 
             // tabs
             // 
@@ -671,6 +671,7 @@
             // numTotalUS
             // 
             this.numTotalUS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalUS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TTLUS", true));
             this.numTotalUS.DecimalPlaces = 2;
             this.numTotalUS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.numTotalUS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
@@ -810,6 +811,7 @@
             this.gridReplacement.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridReplacement.AutoGenerateColumns = false;
             this.gridReplacement.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridReplacement.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridReplacement.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -817,85 +819,19 @@
             this.gridReplacement.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReplacement.Location = new System.Drawing.Point(3, 6);
             this.gridReplacement.Name = "gridReplacement";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReplacement.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReplacement.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReplacement.RowTemplate.Height = 24;
             this.gridReplacement.Size = new System.Drawing.Size(970, 107);
             this.gridReplacement.TabIndex = 54;
-            // 
-            // txttpeuserPCHandle
-            // 
-            this.txttpeuserPCHandle.DisplayBox1Binding = "";
-            this.txttpeuserPCHandle.DisplayBox2Binding = "";
-            this.txttpeuserPCHandle.Location = new System.Drawing.Point(504, 86);
-            this.txttpeuserPCHandle.Name = "txttpeuserPCHandle";
-            this.txttpeuserPCHandle.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserPCHandle.TabIndex = 10;
-            // 
-            // txttpeuserPCSMR
-            // 
-            this.txttpeuserPCSMR.DisplayBox1Binding = "";
-            this.txttpeuserPCSMR.DisplayBox2Binding = "";
-            this.txttpeuserPCSMR.Location = new System.Drawing.Point(504, 59);
-            this.txttpeuserPCSMR.Name = "txttpeuserPCSMR";
-            this.txttpeuserPCSMR.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserPCSMR.TabIndex = 8;
-            // 
-            // txttpeuserConfirmby
-            // 
-            this.txttpeuserConfirmby.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "TPECFMName", true));
-            this.txttpeuserConfirmby.DisplayBox1Binding = "";
-            this.txttpeuserConfirmby.DisplayBox2Binding = "";
-            this.txttpeuserConfirmby.Location = new System.Drawing.Point(124, 166);
-            this.txttpeuserConfirmby.Name = "txttpeuserConfirmby";
-            this.txttpeuserConfirmby.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserConfirmby.TabIndex = 15;
-            // 
-            // txtuserPPICFactorymgr
-            // 
-            this.txtuserPPICFactorymgr.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
-            this.txtuserPPICFactorymgr.DisplayBox1Binding = "";
-            this.txtuserPPICFactorymgr.Location = new System.Drawing.Point(124, 139);
-            this.txtuserPPICFactorymgr.Name = "txtuserPPICFactorymgr";
-            this.txtuserPPICFactorymgr.Size = new System.Drawing.Size(302, 23);
-            this.txtuserPPICFactorymgr.TabIndex = 2;
-            this.txtuserPPICFactorymgr.TextBox1Binding = "";
-            // 
-            // txtuserPreparedby
-            // 
-            this.txtuserPreparedby.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApplyName", true));
-            this.txtuserPreparedby.DisplayBox1Binding = "";
-            this.txtuserPreparedby.Location = new System.Drawing.Point(124, 112);
-            this.txtuserPreparedby.Name = "txtuserPreparedby";
-            this.txtuserPreparedby.Size = new System.Drawing.Size(302, 23);
-            this.txtuserPreparedby.TabIndex = 1;
-            this.txtuserPreparedby.TextBox1Binding = "";
-            // 
-            // txttpeuserPOHandle
-            // 
-            this.txttpeuserPOHandle.DisplayBox1Binding = "";
-            this.txttpeuserPOHandle.DisplayBox2Binding = "";
-            this.txttpeuserPOHandle.Location = new System.Drawing.Point(124, 85);
-            this.txttpeuserPOHandle.Name = "txttpeuserPOHandle";
-            this.txttpeuserPOHandle.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserPOHandle.TabIndex = 9;
-            // 
-            // txttpeuserPOSMR
-            // 
-            this.txttpeuserPOSMR.DisplayBox1Binding = "";
-            this.txttpeuserPOSMR.DisplayBox2Binding = "";
-            this.txttpeuserPOSMR.Location = new System.Drawing.Point(124, 58);
-            this.txttpeuserPOSMR.Name = "txttpeuserPOSMR";
-            this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserPOSMR.TabIndex = 7;
             // 
             // label7
             // 
@@ -947,22 +883,6 @@
             this.label9.Size = new System.Drawing.Size(140, 23);
             this.label9.TabIndex = 167;
             this.label9.Text = "Transfer Responsible";
-            // 
-            // txtdropdownlist1
-            // 
-            this.txtdropdownlist1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "TransferResponsible", true));
-            this.txtdropdownlist1.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtdropdownlist1.FormattingEnabled = true;
-            this.txtdropdownlist1.IsSupportUnselect = true;
-            this.txtdropdownlist1.Location = new System.Drawing.Point(148, 243);
-            this.txtdropdownlist1.Name = "txtdropdownlist1";
-            this.txtdropdownlist1.OldText = "";
-            this.txtdropdownlist1.ReadOnly = true;
-            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
-            this.txtdropdownlist1.TabIndex = 168;
-            this.txtdropdownlist1.Type = "Replacement.T";
             // 
             // label10
             // 
@@ -1045,6 +965,14 @@
             this.displayCompleteDate.Size = new System.Drawing.Size(140, 23);
             this.displayCompleteDate.TabIndex = 208;
             // 
+            // lbCompleted
+            // 
+            this.lbCompleted.Location = new System.Drawing.Point(5, 192);
+            this.lbCompleted.Name = "lbCompleted";
+            this.lbCompleted.Size = new System.Drawing.Size(115, 23);
+            this.lbCompleted.TabIndex = 206;
+            this.lbCompleted.Text = "Completed";
+            // 
             // txttpeuserCompleteName
             // 
             this.txttpeuserCompleteName.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "CompleteName", true));
@@ -1055,13 +983,87 @@
             this.txttpeuserCompleteName.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserCompleteName.TabIndex = 207;
             // 
-            // lbCompleted
+            // txtdropdownlist1
             // 
-            this.lbCompleted.Location = new System.Drawing.Point(5, 192);
-            this.lbCompleted.Name = "lbCompleted";
-            this.lbCompleted.Size = new System.Drawing.Size(115, 23);
-            this.lbCompleted.TabIndex = 206;
-            this.lbCompleted.Text = "Completed";
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlist1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "TransferResponsible", true));
+            this.txtdropdownlist1.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(148, 243);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.OldText = "";
+            this.txtdropdownlist1.ReadOnly = true;
+            this.txtdropdownlist1.Size = new System.Drawing.Size(121, 24);
+            this.txtdropdownlist1.TabIndex = 168;
+            this.txtdropdownlist1.Type = "Replacement.T";
+            // 
+            // txttpeuserPCHandle
+            // 
+            this.txttpeuserPCHandle.DisplayBox1Binding = "";
+            this.txttpeuserPCHandle.DisplayBox2Binding = "";
+            this.txttpeuserPCHandle.Location = new System.Drawing.Point(504, 86);
+            this.txttpeuserPCHandle.Name = "txttpeuserPCHandle";
+            this.txttpeuserPCHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPCHandle.TabIndex = 10;
+            // 
+            // txttpeuserPCSMR
+            // 
+            this.txttpeuserPCSMR.DisplayBox1Binding = "";
+            this.txttpeuserPCSMR.DisplayBox2Binding = "";
+            this.txttpeuserPCSMR.Location = new System.Drawing.Point(504, 59);
+            this.txttpeuserPCSMR.Name = "txttpeuserPCSMR";
+            this.txttpeuserPCSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPCSMR.TabIndex = 8;
+            // 
+            // txttpeuserConfirmby
+            // 
+            this.txttpeuserConfirmby.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "TPECFMName", true));
+            this.txttpeuserConfirmby.DisplayBox1Binding = "";
+            this.txttpeuserConfirmby.DisplayBox2Binding = "";
+            this.txttpeuserConfirmby.Location = new System.Drawing.Point(124, 166);
+            this.txttpeuserConfirmby.Name = "txttpeuserConfirmby";
+            this.txttpeuserConfirmby.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserConfirmby.TabIndex = 15;
+            // 
+            // txtuserPPICFactorymgr
+            // 
+            this.txtuserPPICFactorymgr.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApvName", true));
+            this.txtuserPPICFactorymgr.DisplayBox1Binding = "";
+            this.txtuserPPICFactorymgr.Location = new System.Drawing.Point(124, 139);
+            this.txtuserPPICFactorymgr.Name = "txtuserPPICFactorymgr";
+            this.txtuserPPICFactorymgr.Size = new System.Drawing.Size(302, 23);
+            this.txtuserPPICFactorymgr.TabIndex = 2;
+            this.txtuserPPICFactorymgr.TextBox1Binding = "";
+            // 
+            // txtuserPreparedby
+            // 
+            this.txtuserPreparedby.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ApplyName", true));
+            this.txtuserPreparedby.DisplayBox1Binding = "";
+            this.txtuserPreparedby.Location = new System.Drawing.Point(124, 112);
+            this.txtuserPreparedby.Name = "txtuserPreparedby";
+            this.txtuserPreparedby.Size = new System.Drawing.Size(302, 23);
+            this.txtuserPreparedby.TabIndex = 1;
+            this.txtuserPreparedby.TextBox1Binding = "";
+            // 
+            // txttpeuserPOHandle
+            // 
+            this.txttpeuserPOHandle.DisplayBox1Binding = "";
+            this.txttpeuserPOHandle.DisplayBox2Binding = "";
+            this.txttpeuserPOHandle.Location = new System.Drawing.Point(124, 85);
+            this.txttpeuserPOHandle.Name = "txttpeuserPOHandle";
+            this.txttpeuserPOHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPOHandle.TabIndex = 9;
+            // 
+            // txttpeuserPOSMR
+            // 
+            this.txttpeuserPOSMR.DisplayBox1Binding = "";
+            this.txttpeuserPOSMR.DisplayBox2Binding = "";
+            this.txttpeuserPOSMR.Location = new System.Drawing.Point(124, 58);
+            this.txttpeuserPOSMR.Name = "txttpeuserPOSMR";
+            this.txttpeuserPOSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserPOSMR.TabIndex = 7;
             // 
             // P08
             // 
