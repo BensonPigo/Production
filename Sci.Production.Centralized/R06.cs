@@ -539,7 +539,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                         objArray[0, intIndex_C] = dt.Rows[intIndex_Row][intIndex_C];
                     }
 
-                    objSheets.Range[$"A{intIndex_Row + rownum}:{Sci.Production.Prg.PrivUtils.GetPosition(intColumns)}{intIndex_Row + rownum}"].Value2 = objArray;
+                    objSheets.Range[$"A{intIndex_Row + rownum}:{Sci.Production.Prg.PrivUtilsPMS.GetPosition(intColumns)}{intIndex_Row + rownum}"].Value2 = objArray;
                 }
 
                 // 比較差異, 並新增一行資料填入差異數值
@@ -551,7 +551,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                         objSheets.Cells[intRowsCount + 2, i] = "TTL Diff:";
                         for (int cc = i; cc < intColumns; cc++)
                         {
-                            string c_Name = Sci.Production.Prg.PrivUtils.GetPosition(cc + 1);
+                            string c_Name = Sci.Production.Prg.PrivUtilsPMS.GetPosition(cc + 1);
                             if (intRowsCount <= 1)
                             {
                                 objSheets.Cells[intRowsCount + 2, cc + 1] = $"={c_Name}{2}";
@@ -567,13 +567,13 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
                 }
 
                 // 畫線
-                objSheets.Range[$"A1:{PrivUtils.GetPosition(intColumns)}1"].Font.Bold = true;
-                objSheets.Range[$"A1:{PrivUtils.GetPosition(intColumns)}1"].Interior.ColorIndex = 43; // 底色為綠色
-                objSheets.Range[$"A1:{PrivUtils.GetPosition(intColumns)}{intRowsCount + 2}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                objSheets.Range[$"A1:{PrivUtilsPMS.GetPosition(intColumns)}1"].Font.Bold = true;
+                objSheets.Range[$"A1:{PrivUtilsPMS.GetPosition(intColumns)}1"].Interior.ColorIndex = 43; // 底色為綠色
+                objSheets.Range[$"A1:{PrivUtilsPMS.GetPosition(intColumns)}{intRowsCount + 2}"].Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
                 // 欄寬調整
-                objSheets.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                objSheets.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                objSheets.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                objSheets.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
 
                 // 刪除不必要的column(相減為0或空值資料)
                 for (int j = intColumns; j > 0; j--)

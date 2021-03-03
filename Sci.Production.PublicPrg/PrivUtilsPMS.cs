@@ -12,7 +12,7 @@ namespace Sci.Production.Prg
     /// <summary>
     /// PrivUtils
     /// </summary>
-    public static class PrivUtils
+    public static class PrivUtilsPMS
     {
         private const string CELLs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

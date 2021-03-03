@@ -169,7 +169,7 @@
     <Compile Include="P06.designer.cs">
       <DependentUpon>P06.cs</DependentUpon>
     </Compile>
-    <Compile Include="PrivUtils.cs" />
+    <Compile Include="PrivUtilsReportPMS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P05.cs">
       <SubType>Form</SubType>
