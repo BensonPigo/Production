@@ -56,6 +56,7 @@
             this.lblDept = new Sci.Win.UI.Label();
             this.displayDept = new Sci.Win.UI.DisplayBox();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,6 +73,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.displayDept);
             this.masterpanel.Controls.Add(this.lblDept);
@@ -128,6 +130,7 @@
             this.masterpanel.Controls.SetChildIndex(this.lblDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayDept, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -463,6 +466,17 @@
             this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
             this.btnPrintFabricSticker.Click += new System.EventHandler(this.BtnPrintFabricSticker_Click);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(527, 150);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.TabIndex = 83;
+            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P16
             // 
             this.ApvChkValue = "New";
@@ -539,5 +553,6 @@
         private Win.UI.DisplayBox displayDept;
         private Win.UI.Label lblDept;
         private Win.UI.Button btnPrintFabricSticker;
+        private Win.UI.Button btnCallP99;
     }
 }
