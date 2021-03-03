@@ -328,7 +328,7 @@ union all
 		, issuedate
 		, a.id
 		, [name] = 'P37. Return Receiving Material'
-		, [inqty] = sum(-Qty)
+		, [inqty] = 0
 		, [released] = 0
 		, [adjust] = 0
         , [ReturnQty] = b.Qty
