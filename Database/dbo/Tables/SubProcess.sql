@@ -19,6 +19,7 @@
     [IsSubprocessInspection] BIT NOT NULL DEFAULT ((0)), 
     [InsDashboardDefectRate] NUMERIC(5, 2) CONSTRAINT [DF_SubProcess_InsDashboardDefectRate] NOT NULL DEFAULT ((0)), 
     [InsDashboardRFT] NUMERIC(5, 2) CONSTRAINT [DF_SubProcess_InsDashboardRFT] NOT NULL DEFAULT ((0)), 
+    [IsComputeRepairedTime] BIT  CONSTRAINT [DF_SubProcess_IsComputeRepairedTime] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
