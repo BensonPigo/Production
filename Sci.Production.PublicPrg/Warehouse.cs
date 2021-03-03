@@ -3859,7 +3859,7 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
             bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
             if (!automation || MyUtility.Check.Empty(dtDetail) || MyUtility.Check.Empty(keyType))
             {
-                return false;
+                return true;
             }
 
             string sqlcmd = string.Empty;
@@ -4065,7 +4065,7 @@ and exists(
             bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
             if (!automation || MyUtility.Check.Empty(id) || MyUtility.Check.Empty(keyType))
             {
-                return false;
+                return true;
             }
 
             string sqlcmd = string.Empty;
