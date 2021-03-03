@@ -141,7 +141,8 @@ where exists (select 1 from #tmp_bundle_detail tmp where b.id=tmp.id)
 select	Id			  ,
 		ArtworkTypeId ,
 		IsRFIDProcess ,
-		Junk
+		Junk,
+		InOutRule
  into #tmp_SubProcess
  from SubProcess with(nolock) 
 
@@ -419,11 +420,13 @@ select	ob.Id		  ,
 	insert into [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess(Id			  ,
 													ArtworkTypeId ,
 													IsRFIDProcess ,
-													Junk)
+													Junk,
+													InOutRule)
 				select	Id			  ,
 						ArtworkTypeId ,
 						IsRFIDProcess ,
-						Junk
+						Junk,
+						InOutRule
 				from #tmp_SubProcess
 
  commit
