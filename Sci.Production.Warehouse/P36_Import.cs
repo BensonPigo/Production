@@ -273,8 +273,9 @@ WHERE   StockType='{0}'
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 5
                 .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 6
                 .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 7
-                .Numeric("Qty", header: "Transfer" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 8
-                .Text("tolocation", header: "Location", iseditingreadonly: false, settings: ts2, width: Widths.AnsiChars(20)) // 9
+                .Numeric("Qty", header: "Transfer" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))
+                .Text("tolocation", header: "To Inventory\r\nLocation", iseditingreadonly: false, settings: ts2, width: Widths.AnsiChars(20))
+                .Text("location", header: "From Scrap\r\nLocation", iseditingreadonly: true, settings: ts2, width: Widths.AnsiChars(20))
                ;
 
             this.gridImport.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;

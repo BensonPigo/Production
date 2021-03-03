@@ -874,9 +874,10 @@ a.id
 ,a.ToStockType
 ,a.ToLocation
 ,a.ukey
+,location = dbo.Getlocation(c.ukey)
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 
-and p1.SEQ2 = a.FromSeq2
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = p1.id and c.seq1 = p1.seq1 and c.seq2  = p1.seq2 and c.stocktype = 'O'  
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
