@@ -32,19 +32,15 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.txtScifactoryToFactory = new Sci.Production.Class.Txtscifactory();
-            this.labelToFactory = new Sci.Win.UI.Label();
-            this.txtScifactoryFromFactory = new Sci.Production.Class.Txtscifactory();
             this.btnQuery = new Sci.Win.UI.Button();
-            this.labelFromFactory = new Sci.Win.UI.Label();
-            this.txtSPNo = new Sci.Win.UI.TextBox();
-            this.labelSPNo = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtTransferInNo = new Sci.Win.UI.TextBox();
+            this.lbTransferInNo = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -70,45 +66,14 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.txtScifactoryToFactory);
-            this.panel3.Controls.Add(this.labelToFactory);
-            this.panel3.Controls.Add(this.txtScifactoryFromFactory);
+            this.panel3.Controls.Add(this.lbTransferInNo);
+            this.panel3.Controls.Add(this.txtTransferInNo);
             this.panel3.Controls.Add(this.btnQuery);
-            this.panel3.Controls.Add(this.labelFromFactory);
-            this.panel3.Controls.Add(this.txtSPNo);
-            this.panel3.Controls.Add(this.labelSPNo);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(720, 45);
             this.panel3.TabIndex = 2;
-            // 
-            // txtScifactoryToFactory
-            // 
-            this.txtScifactoryToFactory.BackColor = System.Drawing.Color.White;
-            this.txtScifactoryToFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtScifactoryToFactory.Location = new System.Drawing.Point(468, 11);
-            this.txtScifactoryToFactory.Name = "txtScifactoryToFactory";
-            this.txtScifactoryToFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtScifactoryToFactory.TabIndex = 2;
-            // 
-            // labelToFactory
-            // 
-            this.labelToFactory.Lines = 0;
-            this.labelToFactory.Location = new System.Drawing.Point(394, 11);
-            this.labelToFactory.Name = "labelToFactory";
-            this.labelToFactory.Size = new System.Drawing.Size(70, 23);
-            this.labelToFactory.TabIndex = 6;
-            this.labelToFactory.Text = "To Factory";
-            // 
-            // txtScifactoryFromFactory
-            // 
-            this.txtScifactoryFromFactory.BackColor = System.Drawing.Color.White;
-            this.txtScifactoryFromFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtScifactoryFromFactory.Location = new System.Drawing.Point(292, 11);
-            this.txtScifactoryFromFactory.Name = "txtScifactoryFromFactory";
-            this.txtScifactoryFromFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtScifactoryFromFactory.TabIndex = 1;
             // 
             // btnQuery
             // 
@@ -119,33 +84,6 @@
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
-            // 
-            // labelFromFactory
-            // 
-            this.labelFromFactory.Lines = 0;
-            this.labelFromFactory.Location = new System.Drawing.Point(201, 11);
-            this.labelFromFactory.Name = "labelFromFactory";
-            this.labelFromFactory.Size = new System.Drawing.Size(87, 23);
-            this.labelFromFactory.TabIndex = 2;
-            this.labelFromFactory.Text = "From Factory";
-            // 
-            // txtSPNo
-            // 
-            this.txtSPNo.BackColor = System.Drawing.Color.White;
-            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo.Location = new System.Drawing.Point(45, 11);
-            this.txtSPNo.Name = "txtSPNo";
-            this.txtSPNo.Size = new System.Drawing.Size(120, 23);
-            this.txtSPNo.TabIndex = 0;
-            // 
-            // labelSPNo
-            // 
-            this.labelSPNo.Lines = 0;
-            this.labelSPNo.Location = new System.Drawing.Point(4, 11);
-            this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(37, 23);
-            this.labelSPNo.TabIndex = 0;
-            this.labelSPNo.Text = "SP#";
             // 
             // panel4
             // 
@@ -207,9 +145,31 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(720, 417);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // txtTransferInNo
+            // 
+            this.txtTransferInNo.BackColor = System.Drawing.Color.White;
+            this.txtTransferInNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTransferInNo.Location = new System.Drawing.Point(109, 12);
+            this.txtTransferInNo.Name = "txtTransferInNo";
+            this.txtTransferInNo.Size = new System.Drawing.Size(140, 23);
+            this.txtTransferInNo.TabIndex = 4;
+            // 
+            // lbTransferInNo
+            // 
+            this.lbTransferInNo.Location = new System.Drawing.Point(4, 12);
+            this.lbTransferInNo.Name = "lbTransferInNo";
+            this.lbTransferInNo.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbTransferInNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lbTransferInNo.Size = new System.Drawing.Size(102, 23);
+            this.lbTransferInNo.TabIndex = 6;
+            this.lbTransferInNo.Text = "Transfer In No.";
+            this.lbTransferInNo.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.lbTransferInNo.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P04_ImportTransferIn
             // 
@@ -221,8 +181,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P04_ImportTransferIn";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Import Data - Transfer In";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -240,17 +200,13 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Button btnQuery;
-        private Win.UI.Label labelFromFactory;
-        private Win.UI.TextBox txtSPNo;
-        private Win.UI.Label labelSPNo;
         private Win.UI.Panel panel4;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnImport;
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridImport;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Class.Txtscifactory txtScifactoryToFactory;
-        private Win.UI.Label labelToFactory;
-        private Class.Txtscifactory txtScifactoryFromFactory;
+        private Win.UI.TextBox txtTransferInNo;
+        private Win.UI.Label lbTransferInNo;
     }
 }

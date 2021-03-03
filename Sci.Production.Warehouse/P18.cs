@@ -1,22 +1,22 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
-using System.Reflection;
-using Microsoft.Reporting.WinForms;
-using System.Data.SqlClient;
-using Sci.Win;
-using Sci.Production.Automation;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Warehouse
 {
@@ -1009,8 +1009,6 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             }
         }
 
-        // Confirm
-
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
@@ -1019,6 +1017,27 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             {
                 MyUtility.Msg.WarningBox("Arrive WH Date cannot be empty");
                 this.dateIssueDate.Focus();
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
+            {
+                MyUtility.Msg.WarningBox("Invoive# cannot be empty!!");
+                return;
+            }
+
+            // InvNo 需要存在 Shipping_P04
+            string sqlcmd = $@"select top 1 * from FtyExport where InvNo = '{this.CurrentMaintain["InvNo"]}' order by adddate desc";
+            if (!MyUtility.Check.Seek(sqlcmd, out DataRow ftyExportdr))
+            {
+                MyUtility.Msg.WarningBox("Please notify the Shipping team to create Shipping_P04 before click confirm.");
+                return;
+            }
+
+            // [表頭].[Arrive W/H Date]需要>=[FtyExport].[PortArrival]
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["IssueDate"]) < MyUtility.Convert.GetDate(ftyExportdr["PortArrival"]))
+            {
+                MyUtility.Msg.WarningBox("[Wharehouse_P18].[Arrive W/H Date] cannot be earlier than [Shipping_P04].[Arrive Port Date]");
                 return;
             }
 
@@ -1033,7 +1052,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
             string upd_MD_8T = string.Empty;
             string upd_Fty_2T = string.Empty;
             StringBuilder sqlupd2 = new StringBuilder();
-            string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
+            string sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
 
@@ -1403,6 +1422,15 @@ when matched then
                         return;
                     }
 
+                    string issueDate = ((DateTime)this.CurrentMaintain["IssueDate"]).ToString("yyyy/MM/dd");
+                    sqlcmd = $@"update FtyExport set WhseArrival = '{issueDate}' where INVNo = '{this.CurrentMaintain["INVNo"]}'";
+                    if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(sqlcmd, result);
+                        return;
+                    }
+
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Confirmed successful");
@@ -1428,8 +1456,6 @@ when matched then
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
-
-        // Unconfirm
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
