@@ -118,7 +118,7 @@ select  operation = case a.type
         ,bulkSP = iif((a.type='2' or a.type='6') , a.seq70poid+'-'+a.seq70seq1+'-'+a.seq70seq2 
                                                  , a.InventoryPOID+'-'+a.InventorySeq1+'-'+a.InventorySeq2) 
 		,[OrderType]=orders.OrderTypeID
-		,[FabricType]=FabricType.Name
+		,[Material Type]=concat(FabricType.Name, '-' + a.MtlTypeID)
         ,bulkProjectID = (select ProjectID 
                           from dbo.orders WITH (NOLOCK) 
                           where id = iif((a.type='2' or a.type='6') , a.seq70poid    
@@ -135,7 +135,12 @@ select  operation = case a.type
         ,cuttingInline = (select min(cutting.CutInLine) 
                           from Cutting WITH (NOLOCK) 
                           where id = a.InventoryPOID) 
-        ,bulkFactory = iif((a.type='2' or a.type='6') and BulkFty1.FactoryID is null, a.TransferFactory, BulkFty1.FactoryID)
+        ,[Bulk Fty] =
+            case when a.TransferFactory <> '' then a.TransferFactory 
+                 when exists(select 1 from orders o where o.poid = a.poid) then a.poid
+                 when exists(select 1 from orders o where o.poid = a.InventoryPOID) then a.InventoryPOID
+                 else ''
+            end
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
         ,productionQty = Round(dbo.GetUnitQty(d.POUnit, d.StockUnit, (isnull(d.NETQty,0.000) + isnull(d.LossQty,0.000))), 2)
         ,bulkBalance = case a.type
