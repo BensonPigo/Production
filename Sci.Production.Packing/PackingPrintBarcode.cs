@@ -309,13 +309,13 @@ namespace Sci.Production.Packing
                     #endregion
 
                     Bitmap oriBitmap = this.NewBarcode(barcode);
-                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 145));
+                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 230));
 
                     Clipboard.SetImage(resized);
                     tables.Cell(1, 1).Range.Paste();
                     tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 20f;
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
-                    tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+                    tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapBehind;
 
                     tables.Cell(2, 1).Range.Text = packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
                 }
