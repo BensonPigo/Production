@@ -542,6 +542,7 @@ where ad.Id='{0}'
         {
             #region -- Current Qty Vaild 判斷 --
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings adjustqty = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -556,17 +557,34 @@ where ad.Id='{0}'
                 {
                     if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
                     {
-                        dr["qtyafter"] = 0;
-                        return;
+                        dr["QtyAfter"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["AdjustQty"]);
+                        e.Cancel = true;
                     }
                     else
                     {
-                        dr["qtyafter"] = e.FormattedValue;
-                        dr["adjustqty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
+                        dr["QtyAfter"] = e.FormattedValue;
+                        dr["AdjustQty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
                     }
                 }
             };
 
+            adjustqty.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) < 0)
+                    {
+                        dr["AdjustQty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
+                        e.Cancel = true;
+                    }
+                    else
+                    {
+                        dr["AdjustQty"] = e.FormattedValue;
+                        dr["QtyAfter"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["AdjustQty"]);
+                    }
+                }
+            };
             #endregion
 
             #region -- Reason ID 右鍵開窗 --
@@ -654,7 +672,7 @@ where ad.Id='{0}'
             .Text("Description", header: "Description", width: Widths.AnsiChars(8), iseditingreadonly: true) // 4
             .Numeric("QtyBefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 4
             .Numeric("QtyAfter", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: 0, settings: ns) // 5
-            .Numeric("adjustqty", header: "Remove Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
+            .Numeric("AdjustQty", header: "Remove Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: 0, settings: adjustqty) // 6
             .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 7
             .Text("Location", header: "Location", iseditingreadonly: true) // 7
             .Text("reasonid", header: "Reason ID", settings: ts) // 8
@@ -663,6 +681,7 @@ where ad.Id='{0}'
             #endregion 欄位設定
             this.detailgrid.Columns["qtyafter"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["adjustqty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Import
