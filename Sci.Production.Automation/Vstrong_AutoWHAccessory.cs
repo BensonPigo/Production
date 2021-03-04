@@ -1057,9 +1057,6 @@ where exists(
                 return;
             }
 
-            string apiThread = "SentLocationTransToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread);
-
             string sqlcmd = $@"
 select lt2.Id
 ,lt2.POID
@@ -1067,6 +1064,11 @@ select lt2.Id
 ,lt2.Seq2
 ,lt2.FromLocation
 ,lt2.ToLocation
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (f.POID, f.seq1, f.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[SizeCode] = po3.SizeSpec
+,[MtlType] = Fabric.MtlTypeID
 ,lt2.Ukey
 ,lt2.StockType
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
@@ -1075,6 +1077,10 @@ select lt2.Id
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
 left join FtyInventory f on lt2.FtyInventoryUkey = f.ukey
+left join PO_Supp_Detail po3 on po3.ID = lt2.POID and po3.SEQ1 = lt2.Seq1
+    and po3.SEQ2 = lt2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo = Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 where 1=1
 and exists(
     select 1
@@ -1128,15 +1134,14 @@ where exists(
 
             #endregion
 
-            // 呼叫同個Class裡的Method,需要先new物件才行
-            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
-            callMethod.SetAutoAutomationErrMsg("SentLocationTrans_DetailToVstrong", "New");
+            string apiThread = "SentLocationTrans_DetailToVstrong";
+            this.SetAutoAutomationErrMsg(apiThread, "New");
 
             // 將DataTable 轉成Json格式
-            string jsonBody = callMethod.GetJsonBody(dtMaster, "LocationTrans_Detail");
+            string jsonBody = this.GetJsonBody(dt, "LocationTrans_Detail");
 
             // Call API傳送給WMS
-            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg);
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
@@ -1364,6 +1369,11 @@ and exists(
                        ToSeq2 = dr["ToSeq2"].ToString(),
                        ToStockType = dr["ToStockType"].ToString(),
                        ToLocation = dr["ToLocation"].ToString(),
+                       Refno = dr["Refno"].ToString(),
+                       StockUnit = dr["StockUnit"].ToString(),
+                       Color = dr["Color"].ToString(),
+                       SizeCode = dr["SizeCode"].ToString(),
+                       MtlType = dr["MtlType"].ToString(),
                        Qty = (decimal)dr["Qty"],
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
@@ -1380,6 +1390,11 @@ and exists(
                        Seq2 = s["Seq2"].ToString(),
                        FromLocation = s["FromLocation"].ToString(),
                        ToLocation = s["ToLocation"].ToString(),
+                       Refno = s["Refno"].ToString(),
+                       StockUnit = s["StockUnit"].ToString(),
+                       Color = s["Color"].ToString(),
+                       SizeCode = s["SizeCode"].ToString(),
+                       MtlType = s["MtlType"].ToString(),
                        Qty = (decimal)s["Qty"],
                        Ukey = (long)s["Ukey"],
                        StockType = s["StockType"].ToString(),
@@ -1840,6 +1855,11 @@ select distinct
 ,[FromLocation] = Fromlocation.listValue
 ,bb2.ToPOID,bb2.ToSeq1,bb2.ToSeq2,bb2.ToStockType
 ,[ToLocation] = bb2.ToLocation
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (fi.POID, fi.seq1, fi.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[SizeCode] = po3.SizeSpec
+,[MtlType] = Fabric.MtlTypeID
 ,[Qty] = {strQty}
 ,bb2.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
@@ -1849,6 +1869,10 @@ inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
 {strBody}
 left join FtyInventory FI on bb2.FromPoid = Fi.Poid and bb2.FromSeq1 = Fi.Seq1 and bb2.FromSeq2 = Fi.Seq2 
     and bb2.FromRoll = Fi.Roll and bb2.FromDyelot = Fi.Dyelot and bb2.FromStockType = FI.StockType
+left join PO_Supp_Detail po3 on po3.ID = bb2.FromPOID and po3.SEQ1 = bb2.FromSeq1
+    and po3.SEQ2 = bb2.FromSeq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select listValue = Stuff((
 			select concat(',',FromLocation)
