@@ -361,140 +361,6 @@ ORDER BY b.Seq
                 }
             }
 
-            #region Running Change資料準備
-            bool ischange = false;
-            string c = $@"select 1 
-from ShippingMarkCombination 
-where Ukey = {this.CurrentMaintain["Ukey"]} 
-AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? "1" : "0")} 
-";
-
-            string newPIC = $@"
-	select ID 
-	from ShippingMarkCombination
-	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
-	AND Category='PIC'
-	AND IsDefault =1 
-	AND IsMixPack = 0
-";
-            string newPIC_Mix = $@"
-	select ID 
-	from ShippingMarkCombination
-	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
-	AND Category='PIC'
-	AND IsDefault =1 
-	AND IsMixPack = 1
-";
-            string newHtml = $@"
-	select ID 
-	from ShippingMarkCombination
-	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
-	AND Category='HTML'
-	AND IsDefault =1 
-	AND IsMixPack = 0
-";
-
-            // 找不到代表改變了
-            if (!MyUtility.Check.Seek(c))
-            {
-                // 因為沒有取消勾選IsDefault這件事，因此新資料直接取現在Ukey即可
-                if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
-                {
-                    if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
-                    {
-                        newPIC = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
-                    }
-                    else
-                    {
-                        newPIC_Mix = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
-                    }
-
-                    ischange = true;
-                }
-                else
-                {
-                    newHtml = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
-                }
-
-                ischange = true;
-            }
-
-            c = $@"
-select [BrandID]='{this.CurrentMaintain["BrandID"]}'
-,[OriPIC] = (
-	select ID 
-	from ShippingMarkCombination
-	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
-	AND Category='PIC'
-	AND IsDefault = 1 
-	AND IsMixPack = 0
-)
-,[OriPIC_Mix] = (
-	select ID 
-	from ShippingMarkCombination
-	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
-	AND Category='PIC'
-	AND IsDefault =1 
-	AND IsMixPack = 1
-)
-,[OriHTML]=(
-	select ID 
-	from ShippingMarkCombination
-	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
-	AND Category='HTML'
-	AND IsDefault =1 
-	AND IsMixPack = 0
-)
-,[NewPIC] = (
-    {newPIC}
-)
-,[NewPIC_Mix] = (
-    {newPIC_Mix}
-)
-,[NewHTML]=(
-    {newHtml}
-)
-
-";
-            DataTable defaultData;
-            DBProxy.Current.Select(null, c, out defaultData);
-
-            #endregion
-
-            bool isDetailChange = false;
-
-            // 逐一判斷資料有無修改過
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                int ukey = MyUtility.Convert.GetInt(dr["ShippingMarkCombinationUkey"]);
-                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
-                int shippingMarkTypeID = MyUtility.Convert.GetInt(dr["shippingMarkTypeID"]);
-                c = $@"
-
-----如果表身原本有資料，但現在的表身與之不同 > 表身有修改
-----如果表身原本沒資料，現在有資料 > 表身有修改
-
-IF EXISTS(  
-    select 1
-    from ShippingMarkCombination_Detail 
-    WHERE ShippingMarkCombinationUkey = {ukey}
-    AND Seq = {seq}
-    AND ShippingMarkTypeUkey = {shippingMarkTypeID}
-) OR
-NOT EXISTS(
-	select 1
-	from ShippingMarkCombination_Detail 
-	WHERE ShippingMarkCombinationUkey =  {ukey}
-)
-SELECT 1 
-
-";
-                if (MyUtility.Check.Seek(c))
-                {
-                    isDetailChange = true;
-                }
-            }
-
             // Category為PIC
             if (this.CurrentMaintain["Category"].ToString() == "PIC")
             {
@@ -612,6 +478,154 @@ Please check to continue process.");
                     }
                 }
             }
+
+            #region Running Change資料準備
+            bool ischange = false;
+            string c = $@"select 1 
+from ShippingMarkCombination 
+where Ukey = {this.CurrentMaintain["Ukey"]} 
+AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? "1" : "0")} 
+";
+
+            string newPIC = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+";
+            string newPIC_Mix = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 1
+";
+            string newHtml = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='HTML'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+";
+
+            // 找不到代表改變了
+            if (!MyUtility.Check.Seek(c))
+            {
+                // 因為沒有取消勾選IsDefault這件事，因此新資料直接取現在Ukey即可
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
+                {
+                    if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+                    {
+                        newPIC = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                    }
+                    else
+                    {
+                        newPIC_Mix = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                    }
+
+                    ischange = true;
+                }
+                else
+                {
+                    newHtml = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                }
+
+                ischange = true;
+            }
+
+            c = $@"
+select [BrandID]='{this.CurrentMaintain["BrandID"]}'
+,[OriPIC] = (
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault = 1 
+	AND IsMixPack = 0
+)
+,[OriPIC_Mix] = (
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 1
+)
+,[OriHTML]=(
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='HTML'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+)
+,[NewPIC] = (
+    {newPIC}
+)
+,[NewPIC_Mix] = (
+    {newPIC_Mix}
+)
+,[NewHTML]=(
+    {newHtml}
+)
+
+";
+            DataTable defaultData;
+            DBProxy.Current.Select(null, c, out defaultData);
+
+            bool isDetailChange = false;
+
+            // 逐一判斷資料有無修改過
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                int ukey = MyUtility.Convert.GetInt(dr["ShippingMarkCombinationUkey"]);
+                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                int shippingMarkTypeUkey = MyUtility.Convert.GetInt(dr["shippingMarkTypeUkey"]);
+                c = $@"
+
+----如果表身原本有資料，但現在的表身與之不同 > 表身有修改
+----如果表身原本沒資料，現在有資料 > 表身有修改
+
+IF EXISTS(  
+    select 1
+    from ShippingMarkCombination_Detail 
+    WHERE ShippingMarkCombinationUkey = {ukey}
+    AND Seq = {seq}
+    AND ShippingMarkTypeUkey = {shippingMarkTypeUkey}
+) OR
+NOT EXISTS(
+	select 1
+	from ShippingMarkCombination_Detail 
+	WHERE ShippingMarkCombinationUkey =  {ukey}
+)
+SELECT 1 
+
+
+IF NOT EXISTS(  
+    select 1
+    from ShippingMarkCombination_Detail 
+    WHERE ShippingMarkCombinationUkey = {ukey}
+    AND Seq = {seq}
+    AND ShippingMarkTypeUkey = {shippingMarkTypeUkey}
+) OR
+EXISTS(
+	select 1
+	from ShippingMarkCombination_Detail 
+	WHERE ShippingMarkCombinationUkey =  {ukey}
+)
+SELECT 1 
+
+";
+                if (MyUtility.Check.Seek(c))
+                {
+                    isDetailChange = true;
+                }
+            }
+            #endregion
 
             if (ischange || isDetailChange)
             {

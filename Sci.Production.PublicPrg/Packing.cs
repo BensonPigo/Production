@@ -3838,30 +3838,35 @@ FROM ShippingMarkCombination a
 inner join ShippingMarkCombination_Detail b on a.Ukey = b.ShippingMarkCombinationUkey
 where Ukey = {shippingMarkCombinationUkey}
 
-SELECT * FROM (
+select * from #OriDetail
+select * from #NewDetail
+
+/*SELECT * FROM (
 	select BrandID
 		,Category
 		,ShippingMarkCombination
 		,IsMixPack
 		,OriSeq
 		,OriShippingMarkType
-		,[NewSeq]=(select NewSeq from #NewDetail n WHERE n.NewSeq = o.OriSeq)
-		,[NewShippingMarkType]=(select NewShippingMarkType from #NewDetail n WHERE n.NewSeq = o.OriSeq)
+		,[NewSeq]=(select NewSeq from #NewDetail n WHERE n.NewSeq != o.OriSeq AND n.NewShippingMarkType = o.OriShippingMarkType)
+		,[NewShippingMarkType]=(select NewShippingMarkType from #NewDetail n WHERE n.NewSeq != o.OriSeq AND n.NewShippingMarkType = o.OriShippingMarkType)
 	from #OriDetail o
+	WHERE NOT EXISTS( SELECT 1 FROM #NewDetail n WHERE o.OriSeq = n.NewSeq AND o.OriShippingMarkType = n.NewShippingMarkType)
 	UNION
 	select BrandID
 		,Category
 		,ShippingMarkCombination
 		,IsMixPack
-		,[OriSeq]=(select OriSeq from #OriDetail o WHERE n.NewSeq = o.OriSeq)
-		,[OriShippingMarkType]=(select OriShippingMarkType from #OriDetail o WHERE n.NewSeq = o.OriSeq)
+		,[OriSeq]=(select OriSeq from #OriDetail o WHERE n.NewSeq != o.OriSeq AND n.NewShippingMarkType = o.OriShippingMarkType)
+		,[OriShippingMarkType]=(select OriShippingMarkType from #OriDetail o WHERE n.NewSeq != o.OriSeq AND n.NewShippingMarkType = o.OriShippingMarkType)
 		,NewSeq
 		,NewShippingMarkType
 	from #NewDetail n
+	WHERE NOT EXISTS( SELECT 1 FROM #OriDetail o WHERE o.OriSeq = n.NewSeq AND o.OriShippingMarkType = n.NewShippingMarkType)
 ) a
 where ISNULL(OriSeq,0) != ISNULL(NewSeq,0) or OriShippingMarkType != NewShippingMarkType
-Order by NewSeq
-
+Order by ISNULL(NewSeq,999)
+*/
 DROP TABLE #NewDetail,#OriDetail
 
 
@@ -3873,20 +3878,99 @@ DROP TABLE #NewDetail,#OriDetail
                 cmd = " SELECT '' ";
             }
             #endregion
-            DBProxy.Current.Select(null, cmd, out b06_Detail);
-            result.Add(b06_Detail);
+
+            DataTable[] b06_Details;
+            DBProxy.Current.Select(null, cmd, out b06_Details);
+
+            int rowCount = b06_Details[0].Rows.Count > b06_Details[1].Rows.Count ? b06_Details[0].Rows.Count : b06_Details[1].Rows.Count;
+            DataTable final = b06_Details[0].Clone();
+
+            for (int i = 0; i <= rowCount - 1; i++)
+            {
+                string brindID = string.Empty;
+                string categorys = string.Empty;
+                string shippingMarkCombination = string.Empty;
+                string isMixPacks = string.Empty;
+                string oriSeq = string.Empty;
+                string oriShippingMarkType = string.Empty;
+                string newSeq = string.Empty;
+                string newShippingMarkType = string.Empty;
+
+                // 通用欄位
+                if (i <= b06_Details[0].Rows.Count - 1)
+                {
+                    brindID = b06_Details[0].Rows[0]["BrandID"].ToString();
+                    categorys = b06_Details[0].Rows[0]["category"].ToString();
+                    shippingMarkCombination = b06_Details[0].Rows[0]["shippingMarkCombination"].ToString();
+                    isMixPacks = b06_Details[0].Rows[0]["isMixPack"].ToString();
+                }
+                else
+                {
+                    brindID = b06_Details[1].Rows[0]["BrandID"].ToString();
+                    categorys = b06_Details[1].Rows[0]["category"].ToString();
+                    shippingMarkCombination = b06_Details[1].Rows[0]["shippingMarkCombination"].ToString();
+                    isMixPacks = b06_Details[1].Rows[0]["isMixPack"].ToString();
+                }
+
+                // ori
+                if (i <= b06_Details[0].Rows.Count - 1)
+                {
+                    oriSeq = MyUtility.Convert.GetString(b06_Details[0].Rows[i]["oriSeq"]);
+                    oriShippingMarkType = MyUtility.Convert.GetString(b06_Details[0].Rows[i]["oriShippingMarkType"]);
+                }
+
+                // new
+                if (i <= b06_Details[1].Rows.Count - 1)
+                {
+                    newSeq = MyUtility.Convert.GetString(b06_Details[1].Rows[i]["newSeq"]);
+                    newShippingMarkType = MyUtility.Convert.GetString(b06_Details[1].Rows[i]["newShippingMarkType"]);
+                }
+
+                DataRow dr = final.NewRow();
+                dr["BrandID"] = brindID;
+                dr["Category"] = categorys;
+                dr["ShippingMarkCombination"] = shippingMarkCombination;
+                dr["IsMixPack"] = isMixPacks;
+
+                if (MyUtility.Convert.GetInt(oriSeq) == 0)
+                {
+                    dr["oriSeq"] = DBNull.Value;
+                }
+                else
+                {
+                    dr["oriSeq"] = MyUtility.Convert.GetInt(oriSeq);
+                }
+
+                dr["oriShippingMarkType"] = oriShippingMarkType;
+                dr["newSeq"] = MyUtility.Convert.GetInt(newSeq);
+
+                if (MyUtility.Convert.GetInt(newSeq) == 0)
+                {
+                    dr["newSeq"] = DBNull.Value;
+                }
+                else
+                {
+                    dr["newSeq"] = MyUtility.Convert.GetInt(newSeq);
+                }
+
+                dr["newShippingMarkType"] = newShippingMarkType;
+
+                final.Rows.Add(dr);
+            }
+
+            result.Add(final);
 
             string deleteColumn = string.Empty;
 
-            if (tables[1].Rows.Count > 0 && b06_Detail.Rows.Count > 0)
+            if (tables[1].Rows.Count > 0 && final.Rows.Count > 0)
             {
                 deleteColumn = string.Empty;
             }
-            else if (tables[1].Rows.Count > 0 && b06_Detail.Rows.Count == 0)
+            else if (tables[1].Rows.Count > 0 && final.Rows.Count == 0)
             {
                 deleteColumn = "Right";
             }
-            else if (tables[1].Rows.Count == 0 && b06_Detail.Rows.Count > 0)
+            else if (tables[1].Rows.Count == 0 && final.Rows.Count > 0)
             {
                 deleteColumn = "Left";
             }
@@ -4169,11 +4253,14 @@ DROP TABLE #NewDetail,#OriDetail
             string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
             excelFiles.Add(excelFile);
             xl.Save(excelFile);
-            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
-            //workbook.SaveAs(excelFile);
-            workbook.Close();
-            excel.Quit();
-            Marshal.ReleaseComObject(excel);
+            //Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            ////workbook.SaveAs(excelFile);
+            //workbook.Close();
+            //excel.Quit();
+            //Marshal.ReleaseComObject(excel);
+            xl.FinishSave();
+            //excel.Quit();
+            //Marshal.ReleaseComObject(excel);
 
             #endregion
 
