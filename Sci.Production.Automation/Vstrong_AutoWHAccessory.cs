@@ -1134,15 +1134,14 @@ where exists(
 
             #endregion
 
-            // 呼叫同個Class裡的Method,需要先new物件才行
-            Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
-            callMethod.SetAutoAutomationErrMsg("SentLocationTrans_DetailToVstrong", "New");
+            string apiThread = "SentLocationTrans_DetailToVstrong";
+            this.SetAutoAutomationErrMsg(apiThread, "New");
 
             // 將DataTable 轉成Json格式
-            string jsonBody = callMethod.GetJsonBody(dt, "LocationTrans_Detail");
+            string jsonBody = this.GetJsonBody(dt, "LocationTrans_Detail");
 
             // Call API傳送給WMS
-            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg);
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
         }
 
         /// <summary>
