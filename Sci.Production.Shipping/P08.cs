@@ -11,6 +11,7 @@ using Sci.Production.PublicPrg;
 using Sci.Win;
 using System.Reflection;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -176,6 +177,7 @@ where sd.ID = '{0}'", masterID);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.RefreshIsFreightForwarder();
 
             // ChangeCombo2DataSource();
             #region set comboBox2 DataSource
@@ -1000,17 +1002,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Share Expense
         private void BtnShareExpense_Click(object sender, EventArgs e)
         {
-            bool apflag = false;
-            DataTable dt;
-            DBProxy.Current.Select(null, $@"SELECT IsFreightForwarder FROM LocalSupp WHERE ID = '{this.CurrentMaintain["LocalSuppID"].ToString()}'", out dt);
-            foreach (DataRow dr in dt.Rows)
-            {
-                apflag = MyUtility.Convert.GetBool(dr["IsFreightForwarder"]);
-            }
-
-            dt.Dispose();
-
-            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, apflag);
+            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, this.checkIsFreightForwarder.Checked);
             callNextForm.ShowDialog(this);
         }
 
@@ -1208,6 +1200,60 @@ Non SP# Sample/Mock-up
         {
             this.IncludeFoundryRefresh(this.txtBLNo.Text);
 
+            #region ISP20210237 check [GB#]and[WK#]and[FTY WK#]
+            if (this.checkIsFreightForwarder.Checked)
+            {
+                string sqlBLNoCheck = $@"
+if  not exists (select  1
+                from GMTBooking with (nolock) where BLno = @BLno or BL2no = @BLno
+                union all
+                select  1
+                from Export with (nolock) where BLno = @BLno
+                union all
+                select  1
+                from FtyExport with (nolock) where BLno = @BLno )
+begin
+    select  [Code] = 'P05.',
+            [Manual] = 'P05. Garment Booking',
+            [Abbr.] = 'GB#',
+            [Field] = '[BL/MAWB No.]or[FCR/BL/HAWB]',
+            [Descriptions] = 'If the [BL/MAWB No.]or[FCR/BL/HAWB] in GB# is entered incorrectly,
+please go to Trade/Garment Export/P04. Garment Invoice Data Iaintain to modify it.'
+    union all
+    select  [Code] = 'P03.',
+            [Manual] = 'P03. Import Schedule',
+            [Abbr.] = 'WK#',
+            [Field] = '[B/L#]',
+            [Descriptions] = 'If the [B/L#] in WK# is entered incorrectly, please contact TPE Shipping to modify it.'
+    union all
+    select  [Code] = 'P04.',
+            [Manual] = 'P04. Raw Material Shipment',
+            [Abbr.] = 'FTY WK#',
+            [Field] = '[B/L(AWB) No.]',
+            [Descriptions] = 'If the [B/L (AWB) No.] in FTY WK# is entered incorrectly,
+pleasse go to PMS/Shipping/P04. Raw Material Shipment Data Maintain to modify it.'
+end         
+";
+                DataTable resultBLNoCheck;
+                List<SqlParameter> listPar = new List<SqlParameter>();
+                listPar.Add(new SqlParameter("@BLno", this.txtBLNo.Text));
+                DualResult result = DBProxy.Current.Select(null, sqlBLNoCheck, listPar, out resultBLNoCheck);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (resultBLNoCheck != null)
+                {
+                    string errMsg = @"The B/L# you entered cannot be found in the below data, please first check whether the B/L# is correct,
+You can complete Account Payment only after the corresponding Number is updated, Thank You.";
+                    MyUtility.Msg.ShowMsgGrid(resultBLNoCheck, errMsg);
+                    return;
+                }
+            }
+            #endregion
+
             if (this.comboType.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
             {
                 return;
@@ -1257,12 +1303,29 @@ Non SP# Sample/Mock-up
                 this.txtcurrency.ReadOnly = true;
                 this.txtcurrency.IsSupportEditMode = false;
             }
+
+            this.RefreshIsFreightForwarder();
         }
 
         private void BtnIncludeFoundryRatio_Click(object sender, EventArgs e)
         {
             P08_IncludeFoundryRatio form = new P08_IncludeFoundryRatio(this.CurrentMaintain);
             form.ShowDialog();
+        }
+
+        private void RefreshIsFreightForwarder()
+        {
+            DataRow drResult;
+            bool isExists = MyUtility.Check.Seek($@"SELECT IsFreightForwarder FROM LocalSupp WHERE ID = '{this.CurrentMaintain["LocalSuppID"].ToString()}'", out drResult);
+
+            if (isExists)
+            {
+                this.checkIsFreightForwarder.Checked = MyUtility.Convert.GetBool(drResult["IsFreightForwarder"]);
+            }
+            else
+            {
+                this.checkIsFreightForwarder.Checked = false;
+            }
         }
     }
 }

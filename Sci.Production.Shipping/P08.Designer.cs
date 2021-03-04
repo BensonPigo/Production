@@ -89,6 +89,7 @@
             this.txtSisFtyAPID = new Sci.Win.UI.TextBox();
             this.txtcurrency = new Sci.Production.Class.Txtcurrency();
             this.btnIncludeFoundryRatio = new Sci.Win.UI.Button();
+            this.checkIsFreightForwarder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -105,6 +106,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkIsFreightForwarder);
             this.masterpanel.Controls.Add(this.btnIncludeFoundryRatio);
             this.masterpanel.Controls.Add(this.txtcurrency);
             this.masterpanel.Controls.Add(this.txtSisFtyAPID);
@@ -228,11 +230,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSisFtyAPID, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcurrency, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnIncludeFoundryRatio, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkIsFreightForwarder, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 241);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 287);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 285);
             // 
             // gridicon
             // 
@@ -245,15 +248,16 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 287);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 285);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Location = new System.Drawing.Point(4, 27);
+            this.detail2.Size = new System.Drawing.Size(892, 385);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 339);
             // 
             // detailpanel2
             // 
@@ -261,20 +265,22 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 566);
+            this.detail.Location = new System.Drawing.Point(4, 27);
+            this.detail.Size = new System.Drawing.Size(1000, 564);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 528);
+            this.detailcont.Size = new System.Drawing.Size(1000, 526);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 528);
+            this.detailbtm.Location = new System.Drawing.Point(0, 526);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 566);
+            this.browse.Location = new System.Drawing.Point(4, 27);
+            this.browse.Size = new System.Drawing.Size(1000, 564);
             // 
             // tabs
             // 
@@ -282,12 +288,12 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(350, 24);
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(502, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Size = new System.Drawing.Size(350, 24);
             // 
             // lbleditby
             // 
@@ -356,7 +362,7 @@
             this.displayNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayNo.Location = new System.Drawing.Point(95, 5);
             this.displayNo.Name = "displayNo";
-            this.displayNo.Size = new System.Drawing.Size(112, 23);
+            this.displayNo.Size = new System.Drawing.Size(112, 24);
             this.displayNo.TabIndex = 0;
             // 
             // dateDate
@@ -364,7 +370,7 @@
             this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDate", true));
             this.dateDate.Location = new System.Drawing.Point(491, 5);
             this.dateDate.Name = "dateDate";
-            this.dateDate.Size = new System.Drawing.Size(99, 23);
+            this.dateDate.Size = new System.Drawing.Size(99, 24);
             this.dateDate.TabIndex = 13;
             // 
             // comboType
@@ -377,7 +383,7 @@
             this.comboType.Location = new System.Drawing.Point(95, 30);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
-            this.comboType.Size = new System.Drawing.Size(100, 24);
+            this.comboType.Size = new System.Drawing.Size(100, 26);
             this.comboType.TabIndex = 2;
             this.comboType.SelectedIndexChanged += new System.EventHandler(this.ComboType_SelectedIndexChanged);
             // 
@@ -390,7 +396,7 @@
             this.comboType2.Location = new System.Drawing.Point(198, 30);
             this.comboType2.Name = "comboType2";
             this.comboType2.OldText = "";
-            this.comboType2.Size = new System.Drawing.Size(203, 24);
+            this.comboType2.Size = new System.Drawing.Size(203, 26);
             this.comboType2.TabIndex = 3;
             this.comboType2.SelectedIndexChanged += new System.EventHandler(this.ComboType2_SelectedIndexChanged);
             // 
@@ -402,7 +408,7 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(95, 206);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(308, 23);
+            this.txtRemark.Size = new System.Drawing.Size(308, 24);
             this.txtRemark.TabIndex = 12;
             // 
             // txtInvoice
@@ -412,7 +418,7 @@
             this.txtInvoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInvoice.Location = new System.Drawing.Point(95, 106);
             this.txtInvoice.Name = "txtInvoice";
-            this.txtInvoice.Size = new System.Drawing.Size(185, 23);
+            this.txtInvoice.Size = new System.Drawing.Size(185, 24);
             this.txtInvoice.TabIndex = 7;
             // 
             // labelCurrency
@@ -477,7 +483,7 @@
             0,
             0});
             this.numAmount.ReadOnly = true;
-            this.numAmount.Size = new System.Drawing.Size(76, 23);
+            this.numAmount.Size = new System.Drawing.Size(76, 24);
             this.numAmount.TabIndex = 15;
             this.numAmount.Value = new decimal(new int[] {
             0,
@@ -509,7 +515,7 @@
             0,
             0,
             0});
-            this.numVATRate.Size = new System.Drawing.Size(47, 23);
+            this.numVATRate.Size = new System.Drawing.Size(47, 24);
             this.numVATRate.TabIndex = 16;
             this.numVATRate.Value = new decimal(new int[] {
             0,
@@ -531,7 +537,7 @@
             0,
             0});
             this.numVAT.ReadOnly = true;
-            this.numVAT.Size = new System.Drawing.Size(76, 23);
+            this.numVAT.Size = new System.Drawing.Size(76, 24);
             this.numVAT.TabIndex = 17;
             this.numVAT.Value = new decimal(new int[] {
             0,
@@ -552,7 +558,7 @@
             0,
             0});
             this.numTotal.ReadOnly = true;
-            this.numTotal.Size = new System.Drawing.Size(75, 23);
+            this.numTotal.Size = new System.Drawing.Size(75, 24);
             this.numTotal.TabIndex = 18;
             this.numTotal.Value = new decimal(new int[] {
             0,
@@ -567,7 +573,7 @@
             this.txtBLNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBLNo.Location = new System.Drawing.Point(95, 131);
             this.txtBLNo.Name = "txtBLNo";
-            this.txtBLNo.Size = new System.Drawing.Size(174, 23);
+            this.txtBLNo.Size = new System.Drawing.Size(174, 24);
             this.txtBLNo.TabIndex = 8;
             this.txtBLNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBLNo_Validating);
             // 
@@ -610,7 +616,7 @@
             this.dateApvDate.Location = new System.Drawing.Point(699, 5);
             this.dateApvDate.Name = "dateApvDate";
             this.dateApvDate.ReadOnly = true;
-            this.dateApvDate.Size = new System.Drawing.Size(128, 23);
+            this.dateApvDate.Size = new System.Drawing.Size(128, 24);
             this.dateApvDate.TabIndex = 22;
             // 
             // displayVoucherNo
@@ -620,7 +626,7 @@
             this.displayVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayVoucherNo.Location = new System.Drawing.Point(698, 31);
             this.displayVoucherNo.Name = "displayVoucherNo";
-            this.displayVoucherNo.Size = new System.Drawing.Size(168, 23);
+            this.displayVoucherNo.Size = new System.Drawing.Size(168, 24);
             this.displayVoucherNo.TabIndex = 23;
             // 
             // btnShareExpense
@@ -649,16 +655,16 @@
             this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
             this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayM.Location = new System.Drawing.Point(333, 56);
+            this.displayM.Location = new System.Drawing.Point(227, 4);
             this.displayM.Name = "displayM";
-            this.displayM.Size = new System.Drawing.Size(72, 23);
+            this.displayM.Size = new System.Drawing.Size(50, 24);
             this.displayM.TabIndex = 5;
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(279, 56);
+            this.labelM.Location = new System.Drawing.Point(208, 5);
             this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(51, 23);
+            this.labelM.Size = new System.Drawing.Size(18, 23);
             this.labelM.TabIndex = 99;
             this.labelM.Text = "M";
             // 
@@ -682,7 +688,7 @@
             this.comboFactory1.Location = new System.Drawing.Point(333, 5);
             this.comboFactory1.Name = "comboFactory1";
             this.comboFactory1.OldText = "";
-            this.comboFactory1.Size = new System.Drawing.Size(66, 24);
+            this.comboFactory1.Size = new System.Drawing.Size(66, 26);
             this.comboFactory1.TabIndex = 1;
             // 
             // txtSserAccountant
@@ -744,7 +750,7 @@
             this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disExVoucherID.Location = new System.Drawing.Point(698, 81);
             this.disExVoucherID.Name = "disExVoucherID";
-            this.disExVoucherID.Size = new System.Drawing.Size(148, 23);
+            this.disExVoucherID.Size = new System.Drawing.Size(148, 24);
             this.disExVoucherID.TabIndex = 25;
             // 
             // labReason
@@ -762,7 +768,7 @@
             this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtReason.Location = new System.Drawing.Point(95, 181);
             this.txtReason.Name = "txtReason";
-            this.txtReason.Size = new System.Drawing.Size(75, 23);
+            this.txtReason.Size = new System.Drawing.Size(75, 24);
             this.txtReason.TabIndex = 10;
             this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReason_PopUp);
             this.txtReason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtReason_Validating);
@@ -775,7 +781,7 @@
             this.txtReasonDesc.Location = new System.Drawing.Point(173, 181);
             this.txtReasonDesc.Name = "txtReasonDesc";
             this.txtReasonDesc.ReadOnly = true;
-            this.txtReasonDesc.Size = new System.Drawing.Size(228, 23);
+            this.txtReasonDesc.Size = new System.Drawing.Size(228, 24);
             this.txtReasonDesc.TabIndex = 11;
             // 
             // lbVesselName
@@ -793,7 +799,7 @@
             this.disVesselName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.disVesselName.Location = new System.Drawing.Point(95, 156);
             this.disVesselName.Name = "disVesselName";
-            this.disVesselName.Size = new System.Drawing.Size(174, 23);
+            this.disVesselName.Size = new System.Drawing.Size(174, 24);
             this.disVesselName.TabIndex = 9;
             // 
             // label2
@@ -811,7 +817,7 @@
             this.txtVoucherDate.Location = new System.Drawing.Point(699, 56);
             this.txtVoucherDate.Name = "txtVoucherDate";
             this.txtVoucherDate.ReadOnly = true;
-            this.txtVoucherDate.Size = new System.Drawing.Size(130, 23);
+            this.txtVoucherDate.Size = new System.Drawing.Size(130, 24);
             this.txtVoucherDate.TabIndex = 24;
             // 
             // label3
@@ -844,7 +850,7 @@
             0,
             0});
             this.numericBoxShareAmtFactory.ReadOnly = true;
-            this.numericBoxShareAmtFactory.Size = new System.Drawing.Size(92, 23);
+            this.numericBoxShareAmtFactory.Size = new System.Drawing.Size(92, 24);
             this.numericBoxShareAmtFactory.TabIndex = 19;
             this.numericBoxShareAmtFactory.Value = new decimal(new int[] {
             0,
@@ -866,7 +872,7 @@
             0,
             0});
             this.numericBoxShareAmt.ReadOnly = true;
-            this.numericBoxShareAmt.Size = new System.Drawing.Size(92, 23);
+            this.numericBoxShareAmt.Size = new System.Drawing.Size(92, 24);
             this.numericBoxShareAmt.TabIndex = 20;
             this.numericBoxShareAmt.Value = new decimal(new int[] {
             0,
@@ -906,7 +912,7 @@
             0,
             0,
             0});
-            this.numericBox1.Size = new System.Drawing.Size(92, 23);
+            this.numericBox1.Size = new System.Drawing.Size(92, 24);
             this.numericBox1.TabIndex = 21;
             this.numericBox1.Value = new decimal(new int[] {
             0,
@@ -922,7 +928,7 @@
             this.chkIncludeFoundry.Location = new System.Drawing.Point(642, 160);
             this.chkIncludeFoundry.Name = "chkIncludeFoundry";
             this.chkIncludeFoundry.ReadOnly = true;
-            this.chkIncludeFoundry.Size = new System.Drawing.Size(128, 21);
+            this.chkIncludeFoundry.Size = new System.Drawing.Size(131, 22);
             this.chkIncludeFoundry.TabIndex = 103;
             this.chkIncludeFoundry.Text = "Include Foundry";
             this.chkIncludeFoundry.UseVisualStyleBackColor = true;
@@ -942,7 +948,7 @@
             this.txtSisFtyAPID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSisFtyAPID.Location = new System.Drawing.Point(728, 181);
             this.txtSisFtyAPID.Name = "txtSisFtyAPID";
-            this.txtSisFtyAPID.Size = new System.Drawing.Size(100, 23);
+            this.txtSisFtyAPID.Size = new System.Drawing.Size(100, 24);
             this.txtSisFtyAPID.TabIndex = 105;
             // 
             // txtcurrency
@@ -954,7 +960,7 @@
             this.txtcurrency.Location = new System.Drawing.Point(493, 30);
             this.txtcurrency.Name = "txtcurrency";
             this.txtcurrency.ReadOnly = true;
-            this.txtcurrency.Size = new System.Drawing.Size(48, 23);
+            this.txtcurrency.Size = new System.Drawing.Size(48, 24);
             this.txtcurrency.TabIndex = 14;
             // 
             // btnIncludeFoundryRatio
@@ -966,6 +972,19 @@
             this.btnIncludeFoundryRatio.Text = "...";
             this.btnIncludeFoundryRatio.UseVisualStyleBackColor = true;
             this.btnIncludeFoundryRatio.Click += new System.EventHandler(this.BtnIncludeFoundryRatio_Click);
+            // 
+            // checkIsFreightForwarder
+            // 
+            this.checkIsFreightForwarder.AutoSize = true;
+            this.checkIsFreightForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkIsFreightForwarder.IsSupportEditMode = false;
+            this.checkIsFreightForwarder.Location = new System.Drawing.Point(266, 56);
+            this.checkIsFreightForwarder.Name = "checkIsFreightForwarder";
+            this.checkIsFreightForwarder.ReadOnly = true;
+            this.checkIsFreightForwarder.Size = new System.Drawing.Size(119, 22);
+            this.checkIsFreightForwarder.TabIndex = 107;
+            this.checkIsFreightForwarder.Text = "Is Freight Fwd";
+            this.checkIsFreightForwarder.UseVisualStyleBackColor = true;
             // 
             // P08
             // 
@@ -1066,5 +1085,6 @@
         private Win.UI.Label lbSisFtyAPID;
         private Class.Txtcurrency txtcurrency;
         private Win.UI.Button btnIncludeFoundryRatio;
+        private Win.UI.CheckBox checkIsFreightForwarder;
     }
 }
