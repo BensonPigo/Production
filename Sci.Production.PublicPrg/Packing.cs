@@ -3772,12 +3772,15 @@ WHERe pd.ID IN (
 select [BrandID]='{defaultData.Rows[0]["BrandID"]}'
 ,[OriPIC] = '{defaultData.Rows[0]["OriPIC"]}'
 ,[OriPIC_Mix] = '{defaultData.Rows[0]["OriPIC_Mix"]}'
-,[OldHTML] = '{defaultData.Rows[0]["OldHTML"]}'
+,[OriHTML] = '{defaultData.Rows[0]["OriHTML"]}'
 ,[NewPIC] = '{defaultData.Rows[0]["NewPIC"]}'
 ,[NewPIC_Mix] = '{defaultData.Rows[0]["NewPIC_Mix"]}'
 ,[NewHTML] = '{defaultData.Rows[0]["NewHTML"]}'
 WHERE @IsDefaultChange = 1
-DROP TABLE #CustCD";
+
+DROP TABLE #CustCD,#CustPONo
+
+";
             #endregion
 
             DBProxy.Current.Select(null, cmd, out tables);
@@ -3822,6 +3825,19 @@ SELECT [BrandID]='{brandID}'
                 cmd = $@"
 {tmpTable}
 
+SELECT [BrandID]='{brandID}'
+	,[Category]='{category}'
+	,[ShippingMarkCombination]=(select ID from ShippingMarkCombination where Ukey = {shippingMarkCombinationUkey})
+	,[IsMixPack]= '{strIsMixPack}'
+	,[OriSeq]=b.Seq
+	,[OriShippingMarkType]=(select ID from ShippingMarkType where Ukey = b.ShippingMarkTypeUkey) 
+	,[NewSeq] = NULL
+	,[NewShippingMarkType] = (select ID from ShippingMarkType where Ukey = 0)
+INTO #OriDetail
+FROM ShippingMarkCombination a
+inner join ShippingMarkCombination_Detail b on a.Ukey = b.ShippingMarkCombinationUkey
+where Ukey = {shippingMarkCombinationUkey}
+
 SELECT * FROM (
 	select BrandID
 		,Category
@@ -3843,6 +3859,7 @@ SELECT * FROM (
 		,NewShippingMarkType
 	from #NewDetail n
 ) a
+where ISNULL(OriSeq,0) != ISNULL(NewSeq,0) or OriShippingMarkType != NewShippingMarkType
 Order by NewSeq
 
 DROP TABLE #NewDetail,#OriDetail
@@ -4113,13 +4130,6 @@ DROP TABLE #NewDetail,#OriDetail
             MyUtility.Excel.CopyToXls(poDatatable, null, "RunningChange.xltx", headerRow: 1, excelApp: excel, wSheet: custPoSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
             xl.DicDatas.Add("##SheetData", xdt_All);
 
-            // 填入資料
-            dataSheet.Cells[4, 1] = sheetData_Left.Rows[0]["OriPIC"].ToString();
-            dataSheet.Cells[4, 2] = sheetData_Left.Rows[0]["OriPIC_Mix"].ToString();
-            dataSheet.Cells[4, 3] = sheetData_Left.Rows[0]["OriHTML"].ToString();
-            dataSheet.Cells[5, 1] = sheetData_Left.Rows[0]["NewPIC"].ToString();
-            dataSheet.Cells[5, 2] = sheetData_Left.Rows[0]["NewPIC_Mix"].ToString();
-            dataSheet.Cells[5, 3] = sheetData_Left.Rows[0]["NewHTML"].ToString();
 
             // 刪除不用的欄位
             if (deleteColumn == "Left")
@@ -4129,10 +4139,28 @@ DROP TABLE #NewDetail,#OriDetail
             else if (deleteColumn == "Right")
             {
                 dataSheet.GetRanges("D:K").EntireColumn.Delete();
+
+                // 填入資料
+                dataSheet.Cells[1, 1] = $"{ sheetData_Left.Rows[0]["BrandID"].ToString()} Default Combination";
+                dataSheet.Cells[4, 1] = sheetData_Left.Rows[0]["OriPIC"].ToString();
+                dataSheet.Cells[4, 2] = sheetData_Left.Rows[0]["OriPIC_Mix"].ToString();
+                dataSheet.Cells[4, 3] = sheetData_Left.Rows[0]["OriHTML"].ToString();
+                dataSheet.Cells[5, 1] = sheetData_Left.Rows[0]["NewPIC"].ToString();
+                dataSheet.Cells[5, 2] = sheetData_Left.Rows[0]["NewPIC_Mix"].ToString();
+                dataSheet.Cells[5, 3] = sheetData_Left.Rows[0]["NewHTML"].ToString();
             }
             else
             {
                 // 全部保留
+
+                // 填入資料
+                dataSheet.Cells[1, 1] = $"{ sheetData_Left.Rows[0]["BrandID"].ToString()} Default Combination";
+                dataSheet.Cells[4, 1] = sheetData_Left.Rows[0]["OriPIC"].ToString();
+                dataSheet.Cells[4, 2] = sheetData_Left.Rows[0]["OriPIC_Mix"].ToString();
+                dataSheet.Cells[4, 3] = sheetData_Left.Rows[0]["OriHTML"].ToString();
+                dataSheet.Cells[5, 1] = sheetData_Left.Rows[0]["NewPIC"].ToString();
+                dataSheet.Cells[5, 2] = sheetData_Left.Rows[0]["NewPIC_Mix"].ToString();
+                dataSheet.Cells[5, 3] = sheetData_Left.Rows[0]["NewHTML"].ToString();
             }
 
             custPoSheet.Activate();
@@ -4140,8 +4168,9 @@ DROP TABLE #NewDetail,#OriDetail
             #region Save Excel
             string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
             excelFiles.Add(excelFile);
+            xl.Save(excelFile);
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
-            workbook.SaveAs(excelFile);
+            //workbook.SaveAs(excelFile);
             workbook.Close();
             excel.Quit();
             Marshal.ReleaseComObject(excel);

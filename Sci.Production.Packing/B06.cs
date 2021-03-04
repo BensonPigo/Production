@@ -362,7 +362,7 @@ ORDER BY b.Seq
             }
 
             #region Running Change資料準備
-
+            bool ischange = false;
             string c = $@"select 1 
 from ShippingMarkCombination 
 where Ukey = {this.CurrentMaintain["Ukey"]} 
@@ -408,11 +408,15 @@ AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? 
                     {
                         newPIC_Mix = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
                     }
+
+                    ischange = true;
                 }
                 else
                 {
                     newHtml = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
                 }
+
+                ischange = true;
             }
 
             c = $@"
@@ -433,7 +437,7 @@ select [BrandID]='{this.CurrentMaintain["BrandID"]}'
 	AND IsDefault =1 
 	AND IsMixPack = 1
 )
-,[OldHTML]=(
+,[OriHTML]=(
 	select ID 
 	from ShippingMarkCombination
 	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
@@ -462,14 +466,28 @@ select [BrandID]='{this.CurrentMaintain["BrandID"]}'
             // 逐一判斷資料有無修改過
             foreach (DataRow dr in this.DetailDatas)
             {
-                int ukey = MyUtility.Convert.GetInt(dr["Seq"]);
+                int ukey = MyUtility.Convert.GetInt(dr["ShippingMarkCombinationUkey"]);
                 int seq = MyUtility.Convert.GetInt(dr["Seq"]);
                 int shippingMarkTypeID = MyUtility.Convert.GetInt(dr["shippingMarkTypeID"]);
                 c = $@"
-select 1
-from ShippingMarkCombination_Detail WHERE ShippingMarkCombinationUkey = {ukey}
-AND Seq = {seq}
-AND ShippingMarkTypeUkey = {shippingMarkTypeID}
+
+----如果表身原本有資料，但現在的表身與之不同 > 表身有修改
+----如果表身原本沒資料，現在有資料 > 表身有修改
+
+IF EXISTS(  
+    select 1
+    from ShippingMarkCombination_Detail 
+    WHERE ShippingMarkCombinationUkey = {ukey}
+    AND Seq = {seq}
+    AND ShippingMarkTypeUkey = {shippingMarkTypeID}
+) OR
+NOT EXISTS(
+	select 1
+	from ShippingMarkCombination_Detail 
+	WHERE ShippingMarkCombinationUkey =  {ukey}
+)
+SELECT 1 
+
 ";
                 if (MyUtility.Check.Seek(c))
                 {
@@ -595,7 +613,10 @@ Please check to continue process.");
                 }
             }
 
-            Prgs.ShippingMarkCombination_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), isDetailChange, defaultData);
+            if (ischange || isDetailChange)
+            {
+                Prgs.ShippingMarkCombination_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), isDetailChange, defaultData);
+            }
 
             return true;
         }
