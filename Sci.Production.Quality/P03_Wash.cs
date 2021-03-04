@@ -35,6 +35,7 @@ namespace Sci.Production.Quality
             string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Resources\");
             this.ht.Add("Picture1", path + "QA_Skewness1.png");
             this.ht.Add("Picture2", path + "QA_Skewness2.png");
+            this.ht.Add("Picture3", path + "QA_Skewness3.png");
         }
 
         // 編輯事件觸發
@@ -101,14 +102,35 @@ this.ID);
                 {
                     this.radioOption1.Checked = true;
                     this.radioOption2.Checked = false;
+                    this.radioOption3.Checked = false;
                 }
-                else
+                else if (fir_dr["SkewnessOptionID"].ToString() == "2")
                 {
                     this.radioOption1.Checked = false;
                     this.radioOption2.Checked = true;
+                    this.radioOption3.Checked = false;
+                }
+                else if (fir_dr["SkewnessOptionID"].ToString() == "3")
+                {
+                    this.radioOption1.Checked = false;
+                    this.radioOption2.Checked = false;
+                    this.radioOption3.Checked = true;
                 }
 
-                this.pictureBox1.ImageLocation = this.radioPanel1.Value.ToString() == "1" ? this.ht["Picture1"].ToString() : this.ht["Picture2"].ToString();
+                switch (this.radioPanel1.Value.ToString())
+                {
+                    case "1":
+                        this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
+                        break;
+                    case "2":
+                        this.pictureBox1.ImageLocation = this.ht["Picture2"].ToString();
+                        break;
+                    case "3":
+                        this.pictureBox1.ImageLocation = this.ht["Picture3"].ToString();
+                        break;
+                    default:
+                        break;
+                }
             }
             else
             {
@@ -875,7 +897,7 @@ this.ID);
                 this.grid.Columns[17].Visible = false;
                 this.grid.Columns[18].Visible = false;
             }
-            else
+            else if (this.radioOption2.Checked)
             {
                 this.grid.Columns[15].HeaderText = "AA’";
                 this.grid.Columns[16].HeaderText = "DD’";
@@ -883,6 +905,13 @@ this.ID);
                 this.grid.Columns[18].HeaderText = "CD";
                 this.grid.Columns[17].Visible = true;
                 this.grid.Columns[18].Visible = true;
+            }
+            else if (this.radioOption3.Checked)
+            {
+                this.grid.Columns[15].HeaderText = "AA’";
+                this.grid.Columns[16].HeaderText = "AB";
+                this.grid.Columns[17].Visible = false;
+                this.grid.Columns[18].Visible = false;
             }
         }
 
@@ -1131,18 +1160,19 @@ this.ID);
                     }
                 }
 
-                List<SqlParameter> spamOption = new List<SqlParameter>();
-                string updateOptionID =
-                @"update FIR_Laboratory
+            }
+
+            List<SqlParameter> spamOption = new List<SqlParameter>();
+            string updateOptionID =
+            @"update FIR_Laboratory
                 set SkewnessOptionID=@OptionID
                 where id=@ID";
-                spamOption.Add(new SqlParameter("@id", this.ID));
-                spamOption.Add(new SqlParameter("@OptionID", this.radioPanel1.Value));
-                upResult = DBProxy.Current.Execute(null, updateOptionID, spamOption);
-                if (!upResult)
-                {
-                    return upResult;
-                }
+            spamOption.Add(new SqlParameter("@id", this.ID));
+            spamOption.Add(new SqlParameter("@OptionID", this.radioPanel1.Value));
+            upResult = DBProxy.Current.Execute(null, updateOptionID, spamOption);
+            if (!upResult)
+            {
+                return upResult;
             }
 
             return upResult;
@@ -1314,8 +1344,11 @@ this.ID);
             string[] columnNames = new string[]
             {
                 "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Vertical_Average", "Horizontalrate",
-                "VerticalTest1", "VerticalTest2", "VerticalTest3", "Vertical_Average", "VerticalRate", "SkewnessTest1", "SkewnessTest2", "SkewnessRate", "InspDate", "Inspector", "Inspector", "Remark", "Last update",
+                "VerticalTest1", "VerticalTest2", "VerticalTest3", "Vertical_Average", "VerticalRate", "SkewnessTest1", "SkewnessTest2", "SkewnessTest3", "SkewnessTest4", "SkewnessRate", "InspDate", "Inspector", "Inspector", "Remark", "Last update",
             };
+
+            string skewnessOption = this.radioPanel1.Value;
+
             var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, this.grid.Columns.Count) as object[,];
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -1365,8 +1398,43 @@ this.ID);
             excelSheets.Cells[4, 8] = this.txtsupplierSupp.DisplayBox1.Text.ToString();
             excelSheets.Cells[4, 10] = this.checkNA.Value.ToString();
 
+            // SkewnessOption欄位名稱改變
+            switch (skewnessOption)
+            {
+                case "1":
+                    excelSheets.Cells[5, 16] = "AC";
+                    excelSheets.Cells[5, 17] = "BD";
+                    break;
+                case "2":
+                    excelSheets.Cells[5, 16] = "AA’";
+                    excelSheets.Cells[5, 17] = "DD’";
+                    excelSheets.Cells[5, 18] = "AB";
+                    excelSheets.Cells[5, 19] = "CD";
+                    break;
+                case "3":
+                    excelSheets.Cells[5, 16] = "AA’";
+                    excelSheets.Cells[5, 17] = "AB";
+                    break;
+                default:
+                    break;
+            }
+
+            // 只有2 有4欄，因此1和3藏起來
+            if (skewnessOption != "2")
+            {
+                excelSheets.get_Range("R:R").EntireColumn.Hidden = true;
+                excelSheets.get_Range("S:S").EntireColumn.Hidden = true;
+            }
+
             excel.Cells.EntireColumn.AutoFit();    // 自動欄寬
-            excel.Cells.EntireRow.AutoFit();       ////自動欄高
+            excel.Cells.EntireRow.AutoFit();      ////自動欄高
+
+            // 只有2 有4欄，因此1和3藏起來
+            if (skewnessOption != "2")
+            {
+                excelSheets.get_Range("R:R").EntireColumn.Hidden = true;
+                excelSheets.get_Range("S:S").EntireColumn.Hidden = true;
+            }
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Quality_P03_Wash_Test");
@@ -1392,7 +1460,7 @@ this.ID);
 
             if (this.radioOption1.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
             {
-                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"]) != 0)
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["SkewnessTest1"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest2"])))
                 {
                     decimal skewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] - (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"])) * 2 * 100;
                     dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
@@ -1406,9 +1474,23 @@ this.ID);
 
             if (this.radioOption2.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value && dr["SkewnessTest3"] != DBNull.Value && dr["SkewnessTest4"] != DBNull.Value))
             {
-                if (MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"]) != 0)
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["SkewnessTest3"]) + MyUtility.Convert.GetDecimal(dr["SkewnessTest4"])))
                 {
                     decimal skewnessRate = (Math.Abs((decimal)dr["SkewnessTest1"] + (decimal)dr["SkewnessTest2"]) / ((decimal)dr["SkewnessTest3"] + (decimal)dr["SkewnessTest4"])) * 100;
+                    dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
+                }
+                else
+                {
+                    dr["SkewnessRate"] = 0;
+                    return;
+                }
+            }
+
+            if (this.radioOption3.Checked && (dr["SkewnessTest1"] != DBNull.Value && dr["SkewnessTest2"] != DBNull.Value))
+            {
+                if (!MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(dr["SkewnessTest2"])))
+                {
+                    decimal skewnessRate = Math.Abs((decimal)dr["SkewnessTest1"] / (decimal)dr["SkewnessTest2"]) * 100;
                     dr["SkewnessRate"] = Math.Round(skewnessRate, 2);
                 }
                 else
@@ -1473,19 +1555,25 @@ this.ID);
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            if (this.radioPanel1.Value.ToString() == "1")
+            switch (this.radioPanel1.Value.ToString())
             {
-                this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
-            }
-            else
-            {
-                this.pictureBox1.ImageLocation = this.ht["Picture2"].ToString();
+                case "1":
+                    this.pictureBox1.ImageLocation = this.ht["Picture1"].ToString();
+                    break;
+                case "2":
+                    this.pictureBox1.ImageLocation = this.ht["Picture2"].ToString();
+                    break;
+                case "3":
+                    this.pictureBox1.ImageLocation = this.ht["Picture3"].ToString();
+                    break;
+                default:
+                    break;
             }
 
             this.GridView_Visable();
             if (!((DataTable)this.gridbs.DataSource).Empty() && ((DataTable)this.gridbs.DataSource).Rows.Count > 0)
             {
-                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+                foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
                 {
                     this.CalSkeValue(dr);
                 }

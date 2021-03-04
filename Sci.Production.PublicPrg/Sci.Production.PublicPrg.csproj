@@ -142,12 +142,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTableToList.cs" />
     <Compile Include="DllInvoke.cs" />
     <Compile Include="ExcelExtension.cs" />
     <Compile Include="ExcelPrg.cs" />
     <Compile Include="BundleRFCard.cs" />
     <Compile Include="BundleRFCardUSB.cs" />
-    <Compile Include="DataTableToList.cs" />
     <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
     <Compile Include="Exts.cs" />
@@ -158,7 +158,7 @@
     <Compile Include="Thread.cs" />
     <Compile Include="Planning.cs" />
     <Compile Include="PPIC.cs" />
-    <Compile Include="PrivUtils.cs" />
+    <Compile Include="PrivUtilsPMS.cs" />
     <Compile Include="Shipping.cs" />
     <Compile Include="System.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
