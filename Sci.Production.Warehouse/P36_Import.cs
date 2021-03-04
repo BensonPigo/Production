@@ -82,7 +82,7 @@ select  selected = 0
         , todyelot = c.Dyelot
         , toFactoryID = Orders.FactoryID
         , toStocktype = 'I' 
-        , tolocation = '' 
+        , tolocation = dbo.[Getlocation_Intersection] (c.ukey,'I')
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join dbo.Orders on c.Poid = Orders.id

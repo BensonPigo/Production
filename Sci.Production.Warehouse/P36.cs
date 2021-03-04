@@ -272,14 +272,15 @@ WHERE   StockType='{0}'
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
-            .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
-            .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
-            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
-            .Text("ToLocation", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)) // 7
+                .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+                .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
+                .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
+                .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
+                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
+                .Text("ToLocation", header: "To Inventory\r\nLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30))
+                .Text("location", header: "From Scrap\r\nLocation", iseditingreadonly: true, settings: ts2, width: Widths.AnsiChars(20))
             ;
             #endregion 欄位設定
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
