@@ -8,7 +8,8 @@
 		EditDate Datetime NULL,
 		EditName varchar(10) NOT NULL CONSTRAINT [DF_QABrandSetting_EditName] DEFAULT (''),
 		CrockingTestOption tinyint  NOT NULL CONSTRAINT [DF_QABrandSetting_CrockingTestOption] DEFAULT (0),
-	 CONSTRAINT [PK_QABrandSetting] PRIMARY KEY CLUSTERED 
+		SkewnessOption Varchar(1) NOT NULL CONSTRAINT [DF_QABrandSetting_SkewnessOption] DEFAULT '1',
+    CONSTRAINT [PK_QABrandSetting] PRIMARY KEY CLUSTERED 
 	(
 		BrandID ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

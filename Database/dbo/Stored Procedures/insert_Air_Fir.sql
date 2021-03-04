@@ -147,11 +147,11 @@ when not matched by source and t.ReceivingID=@ID then
 RAISERROR('insert_Air_Fir - Starts',0,0)
 MERGE dbo.fir_laboratory AS t 
 using(SELECT a.*, 
-             Isnull(c.ID, '1') AS SkewnessOptionID 
+             Isnull(c.SkewnessOption, '1') AS SkewnessOptionID 
       FROM   dbo.fir a 
              LEFT JOIN po b 
                     ON a.poid = b.id 
-             LEFT JOIN skewnessoption c 
+             LEFT JOIN QABrandSetting c 
                     ON c.brandid = b.brandid AND Junk=0
       WHERE  a.id IN (SELECT id 
                       FROM   @tempFir)) AS s 

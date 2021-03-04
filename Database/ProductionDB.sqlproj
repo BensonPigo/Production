@@ -2175,7 +2175,6 @@
     </Build>
     <Build Include="dbo\Tables\Artworktype_Detail.sql" />
     <Build Include="dbo\Functions\getDailystdq.sql" />
-    <Build Include="dbo\Tables\SkewnessOption.sql" />
     <Build Include="dbo\Stored Procedures\Update_PassFunction.sql" />
     <Build Include="dbo\Functions\GetStockUnitBySPSeq.sql" />
     <Build Include="dbo\Tables\Order_SizeSpec_OrderCombo.sql" />

@@ -65,6 +65,7 @@
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.labinspector = new Sci.Win.UI.Label();
             this.txtWashInspector = new Sci.Win.UI.TextBox();
+            this.radioOption3 = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -154,7 +155,7 @@
             // dateLastInspectionDate
             // 
             this.dateLastInspectionDate.IsSupportEditMode = false;
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(610, 96);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(610, 125);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
             this.dateLastInspectionDate.Size = new System.Drawing.Size(155, 23);
@@ -163,7 +164,7 @@
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.IsSupportEditMode = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(610, 67);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(610, 96);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(155, 23);
@@ -312,7 +313,7 @@
             // 
             // labelLastInspectionDate
             // 
-            this.labelLastInspectionDate.Location = new System.Drawing.Point(475, 96);
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(475, 125);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(132, 23);
             this.labelLastInspectionDate.TabIndex = 200;
@@ -320,7 +321,7 @@
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Location = new System.Drawing.Point(475, 67);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(475, 96);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(132, 23);
             this.labelArriveWHDate.TabIndex = 199;
@@ -408,12 +409,13 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioOption3);
             this.radioPanel1.Controls.Add(this.radioOption1);
             this.radioPanel1.Controls.Add(this.radioOption2);
             this.radioPanel1.Location = new System.Drawing.Point(669, 4);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;
-            this.radioPanel1.Size = new System.Drawing.Size(96, 57);
+            this.radioPanel1.Size = new System.Drawing.Size(96, 86);
             this.radioPanel1.TabIndex = 219;
             this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
@@ -455,9 +457,9 @@
             // 
             // labinspector
             // 
-            this.labinspector.Location = new System.Drawing.Point(475, 125);
+            this.labinspector.Location = new System.Drawing.Point(187, 124);
             this.labinspector.Name = "labinspector";
-            this.labinspector.Size = new System.Drawing.Size(132, 23);
+            this.labinspector.Size = new System.Drawing.Size(103, 23);
             this.labinspector.TabIndex = 221;
             this.labinspector.Text = "Wash Inspector";
             // 
@@ -466,11 +468,24 @@
             this.txtWashInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtWashInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtWashInspector.IsSupportEditMode = false;
-            this.txtWashInspector.Location = new System.Drawing.Point(610, 125);
+            this.txtWashInspector.Location = new System.Drawing.Point(293, 124);
             this.txtWashInspector.Name = "txtWashInspector";
             this.txtWashInspector.ReadOnly = true;
             this.txtWashInspector.Size = new System.Drawing.Size(155, 23);
             this.txtWashInspector.TabIndex = 222;
+            // 
+            // radioOption3
+            // 
+            this.radioOption3.AutoCheck = false;
+            this.radioOption3.AutoSize = true;
+            this.radioOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.radioOption3.Location = new System.Drawing.Point(9, 58);
+            this.radioOption3.Name = "radioOption3";
+            this.radioOption3.Size = new System.Drawing.Size(76, 21);
+            this.radioOption3.TabIndex = 8;
+            this.radioOption3.Text = "Option3";
+            this.radioOption3.UseVisualStyleBackColor = true;
+            this.radioOption3.Value = "3";
             // 
             // P03_Wash
             // 
@@ -512,6 +527,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P03_Wash";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Wash Test";
             this.WorkAlias = "FIR_Laboratory_Wash";
             this.Controls.SetChildIndex(this.btmcont, 0);
@@ -600,5 +616,6 @@
         private Win.UI.PictureBox pictureBox1;
         private Win.UI.Label labinspector;
         private Win.UI.TextBox txtWashInspector;
+        private Win.UI.RadioButton radioOption3;
     }
 }
