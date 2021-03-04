@@ -841,6 +841,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
         {
             if (this.btnSave.Text == "Edit")
             {
+                if (this.Apflag)
+                {
+                    MyUtility.Msg.WarningBox("This supplier is freight forwarder, Cannot edit this share expense.");
+                    return;
+                }
+
                 this.EditMode = true;
             }
             else
