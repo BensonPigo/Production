@@ -309,7 +309,9 @@ namespace Sci.Production.Packing
                     #endregion
 
                     Bitmap oriBitmap = this.NewBarcode(barcode);
-                    Clipboard.SetImage(oriBitmap);
+                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 145));
+
+                    Clipboard.SetImage(resized);
                     tables.Cell(1, 1).Range.Paste();
                     tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 20f;
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
@@ -595,10 +597,11 @@ namespace Sci.Production.Packing
                 Type = BarcodeType.CODE128,
                 Data = strBarcode,
                 Format = ImageFormat.Bmp,
-                X = 4,
+                X = 3,
                 Y = 160,
-                TextFont = new Font("Arial", 18f, FontStyle.Regular),
-                Resolution = 600,
+                TextFont = new Font("Arial", 20f, FontStyle.Regular),
+                Resolution = 900,
+                LeftMargin = -30,
             };
             code.drawBarcode("c#-barcode.Bmp");
             return code.drawBarcode();
