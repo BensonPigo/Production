@@ -496,6 +496,11 @@ outer apply(
 )ToBarcode
 where 1=1
 and exists(
+    select 1 from Production.dbo.PO_Supp_Detail
+    where id = bb2.ToPOID and seq1=bb2.ToSeq1 and seq2=bb2.ToSeq2
+    and FabricType='F'
+)
+and exists(
 	select 1
 	from MtlLocation ml 
 	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
