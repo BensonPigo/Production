@@ -50,11 +50,11 @@ namespace Sci.Production.Centralized
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            this.Text = PrivUtils.GetVersion(this.Text);
+            this.Text = PrivUtilsPMS.GetVersion(this.Text);
             this.print.Visible = false;
             this.numericUpDown1.Value = Convert.ToInt32(DateTime.Today.ToString("yyyy"));
             this.gdclYear = Convert.ToInt32(DateTime.Today.ToString("yyyy"));
-            this.Text = PrivUtils.GetVersion(this.Text);
+            this.Text = PrivUtilsPMS.GetVersion(this.Text);
         }
 
         /// <inheritdoc/>
@@ -476,11 +476,11 @@ WHERE 1 = 0 ";
                     }
                 }
                 #region Export Sum Data
-                string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+                string strPath = PrivUtilsPMS.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
                 this.temfile = strPath + @"\Centralized_R02.CPULoadingReport.xltm";
 
                 string[] aryHeaders = new string[] { "Factory", "Data", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Total" };
-                if (!(result = PrivUtils.Excels.CreateExcel(this.temfile, out this.excel)))
+                if (!(result = PrivUtilsPMS.Excels.CreateExcel(this.temfile, out this.excel)))
                 {
                     return result;
                 }
@@ -519,11 +519,11 @@ WHERE 1 = 0 ";
                     }
                 }
 
-                wsSheet.Range[string.Format("B:{0}", PrivUtils.GetPosition(aryHeaders.Length))].WrapText = false;
-                wsSheet.get_Range(string.Format("B:{0}", PrivUtils.GetPosition(aryHeaders.Length))).EntireColumn.AutoFit();
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(aryHeaders.Length))].HorizontalAlignment = Constants.xlCenter;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
+                wsSheet.Range[string.Format("B:{0}", PrivUtilsPMS.GetPosition(aryHeaders.Length))].WrapText = false;
+                wsSheet.get_Range(string.Format("B:{0}", PrivUtilsPMS.GetPosition(aryHeaders.Length))).EntireColumn.AutoFit();
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(aryHeaders.Length))].HorizontalAlignment = Constants.xlCenter;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
                 #endregion Export Sum Data
 
                 if (this.checkBox1.Checked)
@@ -673,8 +673,8 @@ WHERE 1 = 0 ";
                     }
                 }
 
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].Value2 = objArray;
-                wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].NumberFormatLocal = "@";
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray;
+                wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].NumberFormatLocal = "@";
                 wsSheet.Range[string.Format("B:B")].NumberFormatLocal = "yyyy/m/d"; // "yyyy/MM/dd";
                 if (intDetailType == 0)
                 {
@@ -693,21 +693,21 @@ WHERE 1 = 0 ";
                 }
 
                 // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
-                PrivUtils.Excels.SetFormat(wsSheet, rownum);
+                PrivUtilsPMS.Excels.SetFormat(wsSheet, rownum);
                 int ii = 0, jj = 0;
                 int intRowsCountT = intRowsCount; // 用於筆數超過一頁(65536)
                 for (int i = 0; i < intRowsCountT; i += 1)
                 {
                     DataRow dr = dtData.Rows[i];
-                    if (i > 0 && (rownum + ii + jj) % PrivUtils.GetPageNum() == 0)
+                    if (i > 0 && (rownum + ii + jj) % PrivUtilsPMS.GetPageNum() == 0)
                     {
-                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtils.GetPosition(intColumns))].Value2 = objArray;
+                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray;
 
                         // 欄寬調整
-                        wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                        wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].Interior.Color = 13434828; // 10092441;
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
+                        wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                        wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].Interior.Color = 13434828; // 10092441;
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                         ii = 0;
                         jj = 0;
@@ -727,10 +727,10 @@ WHERE 1 = 0 ";
                         wsSheet.Name = strSheetName + " " + intSheetIndex_0.ToString();
 
                         // 欄寬調整
-                        wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                        wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].Interior.Color = 13434828; // 10092441;
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
+                        wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                        wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].Interior.Color = 13434828; // 10092441;
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                         // 欄位 title
                         for (int intIndex_0 = 0; intIndex_0 < intColumns; intIndex_0++)
@@ -745,8 +745,8 @@ WHERE 1 = 0 ";
                             }
                         }
 
-                        wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].Value2 = objArray;
-                        wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].NumberFormatLocal = "@";
+                        wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray;
+                        wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].NumberFormatLocal = "@";
                         wsSheet.Range[string.Format("B:B")].NumberFormatLocal = "yyyy/m/d"; // "yyyy/MM/dd";
                         if (intDetailType == 0)
                         {
@@ -765,7 +765,7 @@ WHERE 1 = 0 ";
                         }
 
                         // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
-                        PrivUtils.Excels.SetFormat(wsSheet, rownum);
+                        PrivUtilsPMS.Excels.SetFormat(wsSheet, rownum);
                     }
 
                     for (int k = 0; k < intColumns; k++)
@@ -792,23 +792,23 @@ WHERE 1 = 0 ";
                         ii = 0;
                         object[,] objArray1 = new object[33000, intColumns]; // 每列匯入欄位區間
                         objArray1 = objArray;
-                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtils.GetPosition(intColumns))].Value2 = objArray1;
+                        wsSheet.Range[string.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray1;
                     }
 
                     ii++;
                 }
 
                 intRowsCount = ii; // 實際寫入筆數
-                wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtils.GetPosition(intColumns))].Value2 = objArray;
+                wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray;
 
                 // 欄寬調整
-                wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].Interior.Color = 13434828; // 10092441;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
+                wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].Interior.Color = 13434828; // 10092441;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(intColumns))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                 // 欄位Focus
-                PrivUtils.Excels.SetPosition_Focus(wsSheet, rownum);
+                PrivUtilsPMS.Excels.SetPosition_Focus(wsSheet, rownum);
                 #endregion
                 intSheetindex = intsheet + 1;
             }
@@ -1042,11 +1042,11 @@ where   orders.Category NOT IN ('G','A')
                     }
                 }
                 #region Export Sum Data
-                string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+                string strPath = PrivUtilsPMS.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
                 this.temfile = strPath + @"\Centralized-R02.CPULoadingReport.xltm";
 
                 string[] aryHeaders = new string[] { "Factory", "Data", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "Total" };
-                if (!(result = PrivUtils.Excels.CreateExcel(this.temfile, out this.excel)))
+                if (!(result = PrivUtilsPMS.Excels.CreateExcel(this.temfile, out this.excel)))
                 {
                     return result;
                 }
@@ -1085,8 +1085,8 @@ where   orders.Category NOT IN ('G','A')
                     }
                 }
 
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
-                wsSheet.Range[string.Format("A1:{0}1", PrivUtils.GetPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(aryHeaders.Length))].Interior.Color = 13434828; // 10092441;
+                wsSheet.Range[string.Format("A1:{0}1", PrivUtilsPMS.GetPosition(aryHeaders.Length))].AutoFilter(1, Type.Missing, XlAutoFilterOperator.xlFilterValues);
 
                 #endregion Export Sum Data
 
@@ -1110,7 +1110,7 @@ where   orders.Category NOT IN ('G','A')
                     }
 
                     // 欄位Format 主要針對儲存格格式設定過日期,數值,文字,但未設定到位置之範例檔
-                    PrivUtils.Excels.SetFormat(wsSheet, rownum);
+                    PrivUtilsPMS.Excels.SetFormat(wsSheet, rownum);
                     int intsheet = 2;
                     if (this.excel.Workbooks[1].Worksheets.Count <= 1)
                     {
@@ -1129,13 +1129,13 @@ where   orders.Category NOT IN ('G','A')
                     for (int i = 0; i < intRowsCountT; i += 1)
                     {
                         DataRow dr = dtData.Rows[i];
-                        if (i > 0 && (rownum + ii + jj) % PrivUtils.GetPageNum() == 0)
+                        if (i > 0 && (rownum + ii + jj) % PrivUtilsPMS.GetPageNum() == 0)
                         {
-                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtils.GetPosition(intColumns))].Value2 = objArray;
+                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + ii - 1, PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray;
 
                             // 欄寬調整
-                            wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                            wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                            wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                            wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                             ii = 0;
                             Worksheet wsSheet_o = this.excel.ActiveWorkbook.Worksheets[intsheet];
                             ((Worksheet)wsSheet_o).Select();
@@ -1145,7 +1145,7 @@ where   orders.Category NOT IN ('G','A')
                             wsSheet = this.excel.ActiveWorkbook.Worksheets[intsheet];
                             wsSheet.Name = "Detail Sheet. " + (intsheet - 1).ToString();
                             ((Worksheet)wsSheet).Select();
-                            Range formatRange1 = wsSheet.get_Range(string.Format("A{0}:{2}{1}", rownum, PrivUtils.GetPageNum() - 1, PrivUtils.GetPosition(intColumns)));
+                            Range formatRange1 = wsSheet.get_Range(string.Format("A{0}:{2}{1}", rownum, PrivUtilsPMS.GetPageNum() - 1, PrivUtilsPMS.GetPosition(intColumns)));
                             formatRange1.Select();
                             formatRange1.Delete(XlDeleteShiftDirection.xlShiftUp);
                         }
@@ -1168,19 +1168,19 @@ where   orders.Category NOT IN ('G','A')
                             ii = 0;
                             object[,] objArray1 = new object[33000, intColumns]; // 每列匯入欄位區間
                             objArray1 = objArray;
-                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtils.GetPosition(intColumns))].Value2 = objArray1;
+                            wsSheet.Range[string.Format("A{0}:{2}{1}", rownumjj, rownum + jj - 1, PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray1;
                         }
                     }
 
                     intRowsCount = ii; // 實際寫入筆數
-                    wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtils.GetPosition(intColumns))].Value2 = objArray;
+                    wsSheet.Range[string.Format("A{0}:{2}{1}", rownum + jj, rownum + jj + intRowsCount - 1, PrivUtilsPMS.GetPosition(intColumns))].Value2 = objArray;
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
 
                     // 欄位Focus
-                    PrivUtils.Excels.SetPosition_Focus(wsSheet, rownum);
+                    PrivUtilsPMS.Excels.SetPosition_Focus(wsSheet, rownum);
                     #endregion
                 }
 

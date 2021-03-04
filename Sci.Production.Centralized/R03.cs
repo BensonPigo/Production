@@ -74,7 +74,7 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            this.Text = PrivUtils.GetVersion(this.Text);
+            this.Text = PrivUtilsPMS.GetVersion(this.Text);
             DualResult result;
             base.OnFormLoaded();
             this.comboDropDownListCategory.SelectedIndex = 0;
@@ -718,12 +718,12 @@ order by A,B,C,D,E,F,H";
         {
             string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
             DualResult result = Ict.Result.True;
-            string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+            string strPath = PrivUtilsPMS.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             this.temfile = strPath + @"\Centralized-R03.Prod. Efficiency Analysis Report.xltx";
 
             try
             {
-                if (!(result = PrivUtils.Excels.CreateExcel(this.temfile, out this.excel)))
+                if (!(result = PrivUtilsPMS.Excels.CreateExcel(this.temfile, out this.excel)))
                 {
                     return result;
                 }
@@ -749,8 +749,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 1.   By Factory
 
@@ -771,8 +771,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 2.   By Brand
 
@@ -793,8 +793,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 3.   By Brand-Factory
 
@@ -815,8 +815,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 4.   By Style
 
@@ -837,8 +837,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 5.   By CD
 
@@ -859,8 +859,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 6.   By Factory Line
 
@@ -881,8 +881,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 7.   By Brand-Factory-CD
 
@@ -903,8 +903,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 8.   By PO Combo
 
@@ -925,8 +925,8 @@ order by A,B,C,D,E,F,H";
                     }
 
                     // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtils.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtils.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
+                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
                 }
                 #endregion 9.   By Program
 
