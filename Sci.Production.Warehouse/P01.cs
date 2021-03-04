@@ -585,7 +585,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                     row["Type"] = "D";
                     row["Status"] = "Confirmed";
                     dtMain.Rows.Add(row);
-                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, true))
+                    Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
                 #endregion

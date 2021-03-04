@@ -20,8 +20,8 @@ namespace Sci.Production.Warehouse
                 {
                     form.Activate();
                     P99 activateForm = (P99)form;
-                    activateForm.Initl(false);
                     activateForm.SetFilter(transID, formName);
+                    activateForm.Initl(false);
                     activateForm.Query();
                     return true;
                 }

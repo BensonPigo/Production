@@ -39,6 +39,8 @@
             this.displayDesc = new Sci.Win.UI.DisplayBox();
             this.labelDesc = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
             this.displaySizeSpec = new Sci.Win.UI.DisplayBox();
             this.labelSizeSpec = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
@@ -53,8 +55,6 @@
             this.labelAccuIssue = new Sci.Win.UI.Label();
             this.labelBalanceQty = new Sci.Win.UI.Label();
             this.btnAutoPick = new Sci.Win.UI.Button();
-            this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
-            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -206,6 +206,23 @@
             this.groupBox1.TabIndex = 110;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Isse Item";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(230, 29);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 114;
+            this.label1.Text = "SCIRefno";
+            // 
+            // displaySCIRefno
+            // 
+            this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displaySCIRefno.Location = new System.Drawing.Point(308, 29);
+            this.displaySCIRefno.Name = "displaySCIRefno";
+            this.displaySCIRefno.Size = new System.Drawing.Size(220, 23);
+            this.displaySCIRefno.TabIndex = 115;
             // 
             // displaySizeSpec
             // 
@@ -408,23 +425,6 @@
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
-            // 
-            // displaySCIRefno
-            // 
-            this.displaySCIRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySCIRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySCIRefno.Location = new System.Drawing.Point(308, 29);
-            this.displaySCIRefno.Name = "displaySCIRefno";
-            this.displaySCIRefno.Size = new System.Drawing.Size(220, 23);
-            this.displaySCIRefno.TabIndex = 115;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(230, 29);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 114;
-            this.label1.Text = "SCIRefno";
             // 
             // P10_Detail
             // 
