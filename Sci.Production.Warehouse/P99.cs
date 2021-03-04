@@ -625,6 +625,7 @@ inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
 where 1=1
+and po3.FabricType='A'
 and t1.Status = 'Confirmed'
 ";
                     break;
@@ -661,6 +662,7 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.Dyelot = f.Dyelot 
 									and t2.StockType = f.StockType
 where 1=1
+and po3.FabricType='F'
 and t1.Status = 'Confirmed'
 ";
                     break;
@@ -4822,7 +4824,10 @@ and fi.WMSLock = 1
                 sqlcmd += $@" and (r.ID = '{this.txtReceivingID.Text}' or TD.ID = '{this.txtReceivingID.Text}')";
             }
 
-            sqlcmd += $@" and pd.FabricType = '{this.comboMaterialType_Sheet2.SelectedValue.ToString()}'";
+            if (!MyUtility.Check.Empty(this.comboMaterialType_Sheet2.SelectedValue))
+            {
+                sqlcmd += $@" and pd.FabricType = '{this.comboMaterialType_Sheet2.SelectedValue.ToString()}'";
+            }
 
             this.ShowWaitMessage("Data Loading....");
             DualResult result;

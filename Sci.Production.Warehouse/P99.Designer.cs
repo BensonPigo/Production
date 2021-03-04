@@ -36,6 +36,7 @@
             this.gridUpdate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
+            this.labMaterialType2 = new Sci.Win.UI.Label();
             this.comboMaterialType_Sheet1 = new System.Windows.Forms.ComboBox();
             this.labSPNo = new Sci.Win.UI.Label();
             this.labFunction = new Sci.Win.UI.Label();
@@ -69,7 +70,6 @@
             this.btnClose1 = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labMaterialType2 = new Sci.Win.UI.Label();
             this.tabControl1.SuspendLayout();
             this.TabPage_UpdateCommand.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -170,6 +170,20 @@
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(1046, 114);
             this.panel6.TabIndex = 0;
+            // 
+            // labMaterialType2
+            // 
+            this.labMaterialType2.Location = new System.Drawing.Point(426, 38);
+            this.labMaterialType2.Name = "labMaterialType2";
+            this.labMaterialType2.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labMaterialType2.RectStyle.BorderWidth = 1F;
+            this.labMaterialType2.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labMaterialType2.RectStyle.ExtBorderWidth = 1F;
+            this.labMaterialType2.Size = new System.Drawing.Size(111, 23);
+            this.labMaterialType2.TabIndex = 15;
+            this.labMaterialType2.Text = "Material Type";
+            this.labMaterialType2.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labMaterialType2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // comboMaterialType_Sheet1
             // 
@@ -549,20 +563,6 @@
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
-            // 
-            // labMaterialType2
-            // 
-            this.labMaterialType2.Location = new System.Drawing.Point(426, 38);
-            this.labMaterialType2.Name = "labMaterialType2";
-            this.labMaterialType2.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labMaterialType2.RectStyle.BorderWidth = 1F;
-            this.labMaterialType2.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labMaterialType2.RectStyle.ExtBorderWidth = 1F;
-            this.labMaterialType2.Size = new System.Drawing.Size(111, 23);
-            this.labMaterialType2.TabIndex = 15;
-            this.labMaterialType2.Text = "Material Type";
-            this.labMaterialType2.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labMaterialType2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P99
             // 
