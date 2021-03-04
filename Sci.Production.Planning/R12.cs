@@ -331,7 +331,7 @@ order by tmpData2.OrderID";
             string temfile = string.Empty, title = string.Empty;
             DualResult result = Ict.Result.True;
 
-            string strPath = PrivUtils.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
+            string strPath = PrivUtilsReportPMS.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
             temfile = strPath + @"\Planning_R12.Matrix.xltx";
 
             SaveXltReportCls sxrc = new SaveXltReportCls(temfile)

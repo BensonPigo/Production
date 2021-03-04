@@ -59,7 +59,7 @@ namespace Sci.Production.Planning
         {
             base.OnFormLoaded();
 
-            this.Text = PrivUtils.GetVersion(this.Text);
+            this.Text = PrivUtilsReportPMS.GetVersion(this.Text);
 
             if (this.IsFormClosed)
             {
