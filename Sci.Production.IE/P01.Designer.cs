@@ -68,6 +68,18 @@
             this.label3 = new Sci.Win.UI.Label();
             this.numTotalSMV = new Sci.Win.UI.NumericBox();
             this.gridIcon1 = new Sci.Win.UI.GridIcon();
+            this.lbCDCodeNew = new Sci.Win.UI.Label();
+            this.lbGender = new Sci.Win.UI.Label();
+            this.lbProductType = new Sci.Win.UI.Label();
+            this.displayGender = new Sci.Win.UI.DisplayBox();
+            this.displayCDCodeNew = new Sci.Win.UI.DisplayBox();
+            this.displayProductType = new Sci.Win.UI.DisplayBox();
+            this.displayFabricType = new Sci.Win.UI.DisplayBox();
+            this.lbFabricType = new Sci.Win.UI.Label();
+            this.displayConstruction = new Sci.Win.UI.DisplayBox();
+            this.lbConstruction = new Sci.Win.UI.Label();
+            this.displayLining = new Sci.Win.UI.DisplayBox();
+            this.lbLining = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -86,6 +98,18 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayLining);
+            this.masterpanel.Controls.Add(this.lbLining);
+            this.masterpanel.Controls.Add(this.displayConstruction);
+            this.masterpanel.Controls.Add(this.lbConstruction);
+            this.masterpanel.Controls.Add(this.displayFabricType);
+            this.masterpanel.Controls.Add(this.lbFabricType);
+            this.masterpanel.Controls.Add(this.displayProductType);
+            this.masterpanel.Controls.Add(this.displayCDCodeNew);
+            this.masterpanel.Controls.Add(this.displayGender);
+            this.masterpanel.Controls.Add(this.lbProductType);
+            this.masterpanel.Controls.Add(this.lbGender);
+            this.masterpanel.Controls.Add(this.lbCDCodeNew);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.numTotalSMV);
             this.masterpanel.Controls.Add(this.label2);
@@ -156,6 +180,18 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalSMV, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbCDCodeNew, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbGender, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbProductType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayGender, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCDCodeNew, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayProductType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbFabricType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayFabricType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbConstruction, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayConstruction, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbLining, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayLining, 0);
             // 
             // detailpanel
             // 
@@ -299,7 +335,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(335, 4);
+            this.labelStatus.Location = new System.Drawing.Point(290, 4);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(54, 23);
             this.labelStatus.TabIndex = 10;
@@ -312,7 +348,7 @@
             this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStatus.FormattingEnabled = true;
             this.comboStatus.IsSupportUnselect = true;
-            this.comboStatus.Location = new System.Drawing.Point(393, 3);
+            this.comboStatus.Location = new System.Drawing.Point(348, 3);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(118, 24);
@@ -320,7 +356,7 @@
             // 
             // labelVersion
             // 
-            this.labelVersion.Location = new System.Drawing.Point(337, 35);
+            this.labelVersion.Location = new System.Drawing.Point(481, 4);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(52, 23);
             this.labelVersion.TabIndex = 12;
@@ -328,9 +364,9 @@
             // 
             // labelCD
             // 
-            this.labelCD.Location = new System.Drawing.Point(337, 64);
+            this.labelCD.Location = new System.Drawing.Point(183, 33);
             this.labelCD.Name = "labelCD";
-            this.labelCD.Size = new System.Drawing.Size(52, 23);
+            this.labelCD.Size = new System.Drawing.Size(99, 23);
             this.labelCD.TabIndex = 13;
             this.labelCD.Text = "CD#";
             // 
@@ -347,7 +383,7 @@
             this.displayVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayVersion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Version", true));
             this.displayVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayVersion.Location = new System.Drawing.Point(393, 35);
+            this.displayVersion.Location = new System.Drawing.Point(537, 4);
             this.displayVersion.Name = "displayVersion";
             this.displayVersion.Size = new System.Drawing.Size(39, 23);
             this.displayVersion.TabIndex = 8;
@@ -356,9 +392,9 @@
             // 
             this.displayCD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCD.Location = new System.Drawing.Point(393, 64);
+            this.displayCD.Location = new System.Drawing.Point(285, 33);
             this.displayCD.Name = "displayCD";
-            this.displayCD.Size = new System.Drawing.Size(70, 23);
+            this.displayCD.Size = new System.Drawing.Size(103, 23);
             this.displayCD.TabIndex = 9;
             // 
             // numTotalSewingTimePc
@@ -432,7 +468,7 @@
             // 
             // btnArtSum
             // 
-            this.btnArtSum.Location = new System.Drawing.Point(379, 91);
+            this.btnArtSum.Location = new System.Drawing.Point(378, 118);
             this.btnArtSum.Name = "btnArtSum";
             this.btnArtSum.Size = new System.Drawing.Size(80, 30);
             this.btnArtSum.TabIndex = 14;
@@ -442,7 +478,7 @@
             // 
             // btnSketch
             // 
-            this.btnSketch.Location = new System.Drawing.Point(308, 91);
+            this.btnSketch.Location = new System.Drawing.Point(307, 118);
             this.btnSketch.Name = "btnSketch";
             this.btnSketch.Size = new System.Drawing.Size(68, 30);
             this.btnSketch.TabIndex = 13;
@@ -453,7 +489,7 @@
             // btnCopyFromStyleStdGSD
             // 
             this.btnCopyFromStyleStdGSD.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopyFromStyleStdGSD.Location = new System.Drawing.Point(248, 122);
+            this.btnCopyFromStyleStdGSD.Location = new System.Drawing.Point(247, 149);
             this.btnCopyFromStyleStdGSD.Name = "btnCopyFromStyleStdGSD";
             this.btnCopyFromStyleStdGSD.Size = new System.Drawing.Size(211, 30);
             this.btnCopyFromStyleStdGSD.TabIndex = 12;
@@ -497,7 +533,7 @@
             // 
             // labelApplyNo
             // 
-            this.labelApplyNo.Location = new System.Drawing.Point(580, 4);
+            this.labelApplyNo.Location = new System.Drawing.Point(602, 4);
             this.labelApplyNo.Name = "labelApplyNo";
             this.labelApplyNo.Size = new System.Drawing.Size(67, 23);
             this.labelApplyNo.TabIndex = 26;
@@ -505,7 +541,7 @@
             // 
             // labelApplyVersion
             // 
-            this.labelApplyVersion.Location = new System.Drawing.Point(580, 35);
+            this.labelApplyVersion.Location = new System.Drawing.Point(602, 33);
             this.labelApplyVersion.Name = "labelApplyVersion";
             this.labelApplyVersion.Size = new System.Drawing.Size(89, 23);
             this.labelApplyVersion.TabIndex = 27;
@@ -516,7 +552,7 @@
             this.displayApplyNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApplyNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IETMSID", true));
             this.displayApplyNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApplyNo.Location = new System.Drawing.Point(651, 4);
+            this.displayApplyNo.Location = new System.Drawing.Point(673, 4);
             this.displayApplyNo.Name = "displayApplyNo";
             this.displayApplyNo.Size = new System.Drawing.Size(100, 23);
             this.displayApplyNo.TabIndex = 10;
@@ -526,7 +562,7 @@
             this.displayApplyVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApplyVersion.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IETMSVersion", true));
             this.displayApplyVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApplyVersion.Location = new System.Drawing.Point(673, 35);
+            this.displayApplyVersion.Location = new System.Drawing.Point(695, 33);
             this.displayApplyVersion.Name = "displayApplyVersion";
             this.displayApplyVersion.Size = new System.Drawing.Size(27, 23);
             this.displayApplyVersion.TabIndex = 11;
@@ -549,7 +585,7 @@
             this.labVersionWarning.AutoSize = true;
             this.labVersionWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
-            this.labVersionWarning.Location = new System.Drawing.Point(464, 67);
+            this.labVersionWarning.Location = new System.Drawing.Point(636, 117);
             this.labVersionWarning.Name = "labVersionWarning";
             this.labVersionWarning.Size = new System.Drawing.Size(329, 16);
             this.labVersionWarning.TabIndex = 4;
@@ -557,7 +593,7 @@
             // 
             // btnCIPF
             // 
-            this.btnCIPF.Location = new System.Drawing.Point(248, 91);
+            this.btnCIPF.Location = new System.Drawing.Point(247, 118);
             this.btnCIPF.Name = "btnCIPF";
             this.btnCIPF.Size = new System.Drawing.Size(57, 30);
             this.btnCIPF.TabIndex = 29;
@@ -571,7 +607,7 @@
             this.ui_pnlBatchUpdate.Controls.Add(this.txtInsertPosition);
             this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnBatchDelete);
             this.ui_pnlBatchUpdate.Controls.Add(this.ui_btnBatchCopy);
-            this.ui_pnlBatchUpdate.Location = new System.Drawing.Point(467, 91);
+            this.ui_pnlBatchUpdate.Location = new System.Drawing.Point(466, 118);
             this.ui_pnlBatchUpdate.Name = "ui_pnlBatchUpdate";
             this.ui_pnlBatchUpdate.Size = new System.Drawing.Size(164, 60);
             this.ui_pnlBatchUpdate.TabIndex = 169;
@@ -668,6 +704,108 @@
             this.gridIcon1.TabIndex = 3;
             this.gridIcon1.Text = "gridIcon1";
             // 
+            // lbCDCodeNew
+            // 
+            this.lbCDCodeNew.Location = new System.Drawing.Point(183, 62);
+            this.lbCDCodeNew.Name = "lbCDCodeNew";
+            this.lbCDCodeNew.Size = new System.Drawing.Size(99, 23);
+            this.lbCDCodeNew.TabIndex = 173;
+            this.lbCDCodeNew.Text = "CD Code(new)";
+            // 
+            // lbGender
+            // 
+            this.lbGender.Location = new System.Drawing.Point(183, 91);
+            this.lbGender.Name = "lbGender";
+            this.lbGender.Size = new System.Drawing.Size(99, 23);
+            this.lbGender.TabIndex = 174;
+            this.lbGender.Text = "Gender";
+            // 
+            // lbProductType
+            // 
+            this.lbProductType.Location = new System.Drawing.Point(391, 33);
+            this.lbProductType.Name = "lbProductType";
+            this.lbProductType.Size = new System.Drawing.Size(87, 23);
+            this.lbProductType.TabIndex = 175;
+            this.lbProductType.Text = "Product Type ";
+            // 
+            // displayGender
+            // 
+            this.displayGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGender.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGender.Location = new System.Drawing.Point(285, 91);
+            this.displayGender.Name = "displayGender";
+            this.displayGender.Size = new System.Drawing.Size(103, 23);
+            this.displayGender.TabIndex = 176;
+            // 
+            // displayCDCodeNew
+            // 
+            this.displayCDCodeNew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCDCodeNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCDCodeNew.Location = new System.Drawing.Point(285, 62);
+            this.displayCDCodeNew.Name = "displayCDCodeNew";
+            this.displayCDCodeNew.Size = new System.Drawing.Size(103, 23);
+            this.displayCDCodeNew.TabIndex = 177;
+            // 
+            // displayProductType
+            // 
+            this.displayProductType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayProductType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayProductType.Location = new System.Drawing.Point(481, 33);
+            this.displayProductType.Name = "displayProductType";
+            this.displayProductType.Size = new System.Drawing.Size(118, 23);
+            this.displayProductType.TabIndex = 178;
+            // 
+            // displayFabricType
+            // 
+            this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricType.Location = new System.Drawing.Point(481, 62);
+            this.displayFabricType.Name = "displayFabricType";
+            this.displayFabricType.Size = new System.Drawing.Size(118, 23);
+            this.displayFabricType.TabIndex = 180;
+            // 
+            // lbFabricType
+            // 
+            this.lbFabricType.Location = new System.Drawing.Point(391, 62);
+            this.lbFabricType.Name = "lbFabricType";
+            this.lbFabricType.Size = new System.Drawing.Size(87, 23);
+            this.lbFabricType.TabIndex = 179;
+            this.lbFabricType.Text = "Fabric Type";
+            // 
+            // displayConstruction
+            // 
+            this.displayConstruction.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayConstruction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayConstruction.Location = new System.Drawing.Point(481, 91);
+            this.displayConstruction.Name = "displayConstruction";
+            this.displayConstruction.Size = new System.Drawing.Size(118, 23);
+            this.displayConstruction.TabIndex = 182;
+            // 
+            // lbConstruction
+            // 
+            this.lbConstruction.Location = new System.Drawing.Point(391, 91);
+            this.lbConstruction.Name = "lbConstruction";
+            this.lbConstruction.Size = new System.Drawing.Size(87, 23);
+            this.lbConstruction.TabIndex = 181;
+            this.lbConstruction.Text = "Construction";
+            // 
+            // displayLining
+            // 
+            this.displayLining.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayLining.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayLining.Location = new System.Drawing.Point(673, 59);
+            this.displayLining.Name = "displayLining";
+            this.displayLining.Size = new System.Drawing.Size(103, 23);
+            this.displayLining.TabIndex = 184;
+            // 
+            // lbLining
+            // 
+            this.lbLining.Location = new System.Drawing.Point(602, 59);
+            this.lbLining.Name = "lbLining";
+            this.lbLining.Size = new System.Drawing.Size(67, 23);
+            this.lbLining.TabIndex = 183;
+            this.lbLining.Text = "Lining";
+            // 
             // P01
             // 
             this.ApvChkValue = "New";
@@ -754,5 +892,17 @@
         private Win.UI.Label label3;
         private Win.UI.NumericBox numTotalSMV;
         private Win.UI.GridIcon gridIcon1;
+        private Win.UI.DisplayBox displayCDCodeNew;
+        private Win.UI.DisplayBox displayGender;
+        private Win.UI.Label lbProductType;
+        private Win.UI.Label lbGender;
+        private Win.UI.Label lbCDCodeNew;
+        private Win.UI.DisplayBox displayConstruction;
+        private Win.UI.Label lbConstruction;
+        private Win.UI.DisplayBox displayFabricType;
+        private Win.UI.Label lbFabricType;
+        private Win.UI.DisplayBox displayProductType;
+        private Win.UI.DisplayBox displayLining;
+        private Win.UI.Label lbLining;
     }
 }

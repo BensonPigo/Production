@@ -389,6 +389,12 @@ select
 	[Style] = C.STYLEID,
     c.BuyerDelivery ,
 	[CDCode] = C.CDCODEID,
+    C.CDCodeNew,
+	sty.ProductType,
+	sty.FabricType,
+	sty.Lining,
+	sty.Gender,
+	sty.Construction,
 	[Team] = A.TEAM,
 	[Shift] = A.SHIFT,
 	[Line] = A.SEWINGLINEID,
@@ -408,7 +414,18 @@ Outer Apply (
 	FROM SewingLine WITH (NOLOCK) 
 	WHERE FactoryID = A.FactoryID AND ID = A.SewinglineID
 ) E
-
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.Ukey = C.StyleUkey
+)sty
 WHERE 1=1
 ");
                 #region Append畫面上的條件
@@ -958,11 +975,11 @@ drop table #tmpall
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
                 int count = this.printData.Rows.Count;
-                objSheets.Cells[count + 3, 11] = "Total RFT (%):";
-                objSheets.Cells[count + 3, 12] = string.Format(@"=ROUND((SUM(K2:K{0})-SUM(L2:L{0}))/SUM(K2:K{0})*100,2) &"" %""", count + 1);
+                objSheets.Cells[count + 3, 20] = "Total RFT (%):";
+                objSheets.Cells[count + 3, 21] = string.Format(@"=ROUND((SUM(S2:S{0})-SUM(T2:T{0}))/SUM(S2:S{0})*100,2) &"" %""", count + 1);
 
-                objSheets.Cells[count + 3, 14] = "Total QC:";
-                objSheets.Cells[count + 3, 15] = string.Format(@"=SUM(O2:O{0})", count + 1);
+                objSheets.Cells[count + 3, 22] = "Total QC:";
+                objSheets.Cells[count + 3, 23] = string.Format(@"=SUM(W2:W{0})", count + 1);
 
                 // objSheets.get_Range(string.Format("L:L{0}", count + 3), Type.Missing).NumberFormat = "0.00%";
                 objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬

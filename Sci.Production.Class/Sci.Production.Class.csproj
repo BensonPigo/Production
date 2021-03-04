@@ -86,6 +86,36 @@
     <Compile Include="ComboDropDownList.Designer.cs">
       <DependentUpon>ComboDropDownList.cs</DependentUpon>
     </Compile>
+    <Compile Include="ComboFabricType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboFabricType.Designer.cs">
+      <DependentUpon>ComboFabricType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboConstruction.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboConstruction.Designer.cs">
+      <DependentUpon>ComboConstruction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboGender.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboGender.Designer.cs">
+      <DependentUpon>ComboGender.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboLining.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboLining.Designer.cs">
+      <DependentUpon>ComboLining.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboProductType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboProductType.Designer.cs">
+      <DependentUpon>ComboProductType.cs</DependentUpon>
+    </Compile>
     <Compile Include="ComboFtyZone.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -686,6 +716,21 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ComboFabricType.resx">
+      <DependentUpon>ComboFabricType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboConstruction.resx">
+      <DependentUpon>ComboConstruction.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboGender.resx">
+      <DependentUpon>ComboGender.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboLining.resx">
+      <DependentUpon>ComboLining.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComboProductType.resx">
+      <DependentUpon>ComboProductType.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ComboFtyZone.resx">
       <DependentUpon>ComboFtyZone.cs</DependentUpon>
     </EmbeddedResource>
