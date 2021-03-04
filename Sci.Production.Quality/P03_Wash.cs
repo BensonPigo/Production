@@ -1344,7 +1344,7 @@ this.ID);
             string[] columnNames = new string[]
             {
                 "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Vertical_Average", "Horizontalrate",
-                "VerticalTest1", "VerticalTest2", "VerticalTest3", "Vertical_Average", "VerticalRate", "SkewnessTest1", "SkewnessTest3", "SkewnessTest4", "SkewnessTest2", "SkewnessRate", "InspDate", "Inspector", "Inspector", "Remark", "Last update",
+                "VerticalTest1", "VerticalTest2", "VerticalTest3", "Vertical_Average", "VerticalRate", "SkewnessTest1", "SkewnessTest2", "SkewnessTest3", "SkewnessTest4", "SkewnessRate", "InspDate", "Inspector", "Inspector", "Remark", "Last update",
             };
 
             string skewnessOption = this.radioPanel1.Value;
