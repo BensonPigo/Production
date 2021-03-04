@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Win.Tools;
+using Sci.Win.UI;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 using System.Linq;
-using Sci.Win.Tools;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -46,9 +47,9 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-             this.DetailSelectCommand = string.Format(
-                 @"select ed.*,isnull(o.FactoryID,'') as FactoryID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            this.DetailSelectCommand = string.Format(
+                @"select ed.*,isnull(o.FactoryID,'') as FactoryID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
 (left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp WITH (NOLOCK) where ID = ed.SuppID),(select AbbEN from Supp WITH (NOLOCK) where ID = ed.SuppID))) as Supp,
 ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as Description,
 (case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
@@ -56,7 +57,7 @@ from FtyExport_Detail ed WITH (NOLOCK)
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 where ed.ID = '{0}'", masterID);
-             return base.OnDetailSelectCommandPrepare(e);
+            return base.OnDetailSelectCommandPrepare(e);
         }
 
         /// <inheritdoc/>
@@ -260,6 +261,32 @@ where ed.ID = '{0}'", masterID);
                 {
                     this.txtBLAWBNo.Focus();
                     MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
+                    return false;
+                }
+            }
+
+            // 如果[Type] =['Transfer in'], 如果該單據的[Invoice No.]與其他張的[FtyExport].[InvNo] 不能有相同的值
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "2")
+            {
+                sqlCmd = $@"
+select ID
+from FtyExport
+where id <> '{this.CurrentMaintain["id"]}'
+and INVNo = '{this.CurrentMaintain["INVNo"]}'
+";
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                if (dt.Rows.Count > 0)
+                {
+                    string msg = "[Invoice No.] Repeat, please check the Shipping_P04 ID below.";
+                    MsgGridForm m = new MsgGridForm(dt, msg, "Warning");
+                    m.grid1.Columns[0].Width = 160;
+                    m.ShowDialog(this);
                     return false;
                 }
             }
@@ -589,7 +616,7 @@ where f.ID = '{this.CurrentMaintain["ID"].ToString()}'
             b09.ShowDialog(this);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             this.SendMail();
         }
