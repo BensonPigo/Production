@@ -360,7 +360,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[2, 9] = "Fabric Type:" + fabricType;
             worksheet.Cells[3, 8] = "Lining:" + lining;
             worksheet.Cells[3, 9] = "Gender:" + gender;
-            worksheet.Cells[2, 12] = construction;
+            worksheet.Cells[2, 11] = "Construction:" + construction;
             worksheet.Cells[3, 12] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 14] = MyUtility.Convert.GetString(this.efficiency) + "%";
             worksheet.Columns[3].ColumnWidth = 18.4;
