@@ -638,6 +638,7 @@ select [Selected] = 0 --0
 , t2.PoId
 , t2.Seq1
 , t2.Seq2
+, t2.StockType
 , seq = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)
 , t2.Roll
 , t2.Dyelot
@@ -1143,6 +1144,7 @@ select  [Selected] = 0 --0
 		, [CompleteTime] = t2.CompleteTime
 	,po3.FabricType
 	,t2.POID,t2.Seq1,t2.Seq2,t2.Roll,t2.Dyelot
+    , t2.StockType
 	,s.Ukey
 	,s.Id
 	,[Ttl_Qty] = s.Qty
