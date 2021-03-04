@@ -137,8 +137,8 @@ select  operation = case a.type
                           where id = a.InventoryPOID) 
         ,[Bulk Fty] =
             case when a.TransferFactory <> '' then a.TransferFactory 
-                 when exists(select 1 from orders o where o.poid = a.poid) then (select FactoryID from orders o where o.poid = a.poid)
-                 when exists(select 1 from orders o where o.poid = a.InventoryPOID) then (select FactoryID from orders o where o.poid = a.InventoryPOID)
+                 when exists(select 1 from orders o where o.id = a.poid) then (select FactoryID from orders o where o.id = a.poid)
+                 when exists(select 1 from orders o where o.id = a.InventoryPOID) then (select FactoryID from orders o where o.id = a.InventoryPOID)
                  else ''
             end
         ,Factory_ArrivedQty = iif((a.type='1' or a.type='4') ,e.InQty, 0.00) 
