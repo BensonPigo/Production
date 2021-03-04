@@ -7,6 +7,8 @@ using Sci.Data;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Linq;
+using Sci.Production.PublicPrg;
+
 
 namespace Sci.Production.Packing
 {
@@ -359,6 +361,122 @@ ORDER BY b.Seq
                 }
             }
 
+            #region Running Change資料準備
+
+            string c = $@"select 1 
+from ShippingMarkCombination 
+where Ukey = {this.CurrentMaintain["Ukey"]} 
+AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? "1" : "0")} 
+";
+
+            string newPIC = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+";
+            string newPIC_Mix = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 1
+";
+            string newHtml = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='HTML'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+";
+
+            // 找不到代表改變了
+            if (!MyUtility.Check.Seek(c))
+            {
+                // 因為沒有取消勾選IsDefault這件事，因此新資料直接取現在Ukey即可
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
+                {
+                    if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+                    {
+                        newPIC = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                    }
+                    else
+                    {
+                        newPIC_Mix = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                    }
+                }
+                else
+                {
+                    newHtml = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                }
+            }
+
+            c = $@"
+select [BrandID]='{this.CurrentMaintain["BrandID"]}'
+,[OriPIC] = (
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault = 1 
+	AND IsMixPack = 0
+)
+,[OriPIC_Mix] = (
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 1
+)
+,[OldHTML]=(
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='HTML'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+)
+,[NewPIC] = (
+    {newPIC}
+)
+,[NewPIC_Mix] = (
+    {newPIC_Mix}
+)
+,[NewHTML]=(
+    {newHtml}
+)
+
+";
+            DataTable defaultData;
+            DBProxy.Current.Select(null, c, out defaultData);
+
+            #endregion
+
+            bool isDetailChange = false;
+
+            // 逐一判斷資料有無修改過
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                int ukey = MyUtility.Convert.GetInt(dr["Seq"]);
+                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                int shippingMarkTypeID = MyUtility.Convert.GetInt(dr["shippingMarkTypeID"]);
+                c = $@"
+select 1
+from ShippingMarkCombination_Detail WHERE ShippingMarkCombinationUkey = {ukey}
+AND Seq = {seq}
+AND ShippingMarkTypeUkey = {shippingMarkTypeID}
+";
+                if (MyUtility.Check.Seek(c))
+                {
+                    isDetailChange = true;
+                }
+            }
+
             // Category為PIC
             if (this.CurrentMaintain["Category"].ToString() == "PIC")
             {
@@ -399,6 +517,7 @@ Please check to continue process.");
                                 this.ShowErr(r);
                                 return false;
                             }
+
                         }
                         else
                         {
@@ -475,6 +594,8 @@ Please check to continue process.");
                     }
                 }
             }
+
+            Prgs.ShippingMarkCombination_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), isDetailChange, defaultData);
 
             return true;
         }

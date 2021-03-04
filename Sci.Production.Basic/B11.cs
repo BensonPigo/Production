@@ -98,12 +98,6 @@ AND Ukey = '{this.CurrentMaintain["StampCombinationUkey"]}'
 AND Category = 'HTML'
 AND Junk = 0
 ");
-            Prgs.CustCD_RunningChange(
-                this.CurrentMaintain["BrandID"].ToString(),
-                this.CurrentMaintain["BrandID"].ToString(),
-                MyUtility.Convert.GetLong(this.CurrentMaintain["BrandID"]),
-                MyUtility.Convert.GetLong(this.CurrentMaintain["BrandID"]),
-                MyUtility.Convert.GetLong(this.CurrentMaintain["BrandID"]));
 
             this.oldStampComb = this.txtStampComb.Text;
         }
@@ -111,6 +105,12 @@ AND Junk = 0
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            Prgs.CustCD_RunningChange(
+                 this.CurrentMaintain["ID"].ToString(),
+                 this.CurrentMaintain["BrandID"].ToString(),
+                 MyUtility.Convert.GetLong(this.CurrentMaintain["stickerCombinationUkey"]),
+                 MyUtility.Convert.GetLong(this.CurrentMaintain["stickerCombinationUkey_MixPack"]),
+                 MyUtility.Convert.GetLong(this.CurrentMaintain["stampCombinationUkey"]));
             return base.ClickSaveBefore();
         }
 

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
@@ -194,6 +195,16 @@ WHERE Type='Pms_LocalItem_UnPack'
                     this.numWeightofAxle.Focus();
                     return false;
                 }
+            }
+
+            string chk = $@"select Ctnheight from LocalItem where RefNo='{this.CurrentMaintain["Refno"]}' AND CtnHeight = {this.CurrentMaintain["CtnHeight"]} AND Ctnwidth = {this.CurrentMaintain["Ctnwidth"]} ";
+
+            if (!MyUtility.Check.Seek(chk))
+            {
+                Prgs.LocalItem_RunningChange(
+                     this.CurrentMaintain["Refno"].ToString(),
+                     MyUtility.Convert.GetDecimal(this.CurrentMaintain["CtnHeight"]),
+                     MyUtility.Convert.GetDecimal(this.CurrentMaintain["CtnWidth"]));
             }
 
             return base.ClickSaveBefore();
