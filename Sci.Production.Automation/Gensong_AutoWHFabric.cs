@@ -17,8 +17,8 @@ namespace Sci.Production.Automation
         private static readonly string moduleName = "AutoWHFabric";
         private static readonly string suppAPIThread = "pms/GS_WebServices";
         private static readonly string SCIAPIThread = "Api/GensongAutoWHFabric/SentDataByApiTag";
-        private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
         private static readonly string URL = GetSupplierUrl(GensongSuppID, moduleName);
+        private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
         /// <inheritdoc/>
         public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
@@ -60,10 +60,18 @@ namespace Sci.Production.Automation
             switch (formName)
             {
                 case "P07":
-                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "Receiving");
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Receiving"))
+                    {
+                        return;
+                    }
+
                     break;
                 case "P18":
-                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "TransferIn");
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "TransferIn"))
+                    {
+                        return;
+                    }
+
                     break;
             }
             #endregion
@@ -136,11 +144,29 @@ namespace Sci.Production.Automation
                 switch (formName)
                 {
                     case "P07":
-                        PublicPrg.Prgs.SentToWMS(dtMaster, false, "Receiving");
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Receiving"))
+                        {
+                            return false;
+                        }
+
                         break;
                     case "P18":
-                        PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferIn");
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferIn"))
+                        {
+                            return false;
+                        }
+
                         break;
+                }
+            }
+
+            // UnConfirm後要解鎖物料
+            if (formName == "P07" || formName == "P18")
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, false), out DataTable dt, "#TmpSource")))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    return false;
                 }
             }
 
@@ -176,13 +202,25 @@ namespace Sci.Production.Automation
                 case "P10":
                 case "P13":
                 case "P62":
-                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "Issue");
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Issue"))
+                    {
+                        return;
+                    }
+
                     break;
                 case "P16":
-                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "IssueLack");
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "IssueLack"))
+                    {
+                        return;
+                    }
+
                     break;
                 case "P19":
-                    PublicPrg.Prgs.SentToWMS(dtDetail, true, "TransferOut");
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "TransferOut"))
+                    {
+                        return;
+                    }
+
                     break;
             }
 
@@ -220,6 +258,11 @@ namespace Sci.Production.Automation
 
             // 取得資料
             DataTable dtMaster = callMethod.GetIssueData(dtDetail, formName, status, isP99);
+
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                dtMaster = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"])).CopyToDataTable();
+            }
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -260,13 +303,25 @@ namespace Sci.Production.Automation
                     case "P10":
                     case "P13":
                     case "P62":
-                        PublicPrg.Prgs.SentToWMS(dtDetail, false, "Issue");
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Issue"))
+                        {
+                            return false;
+                        }
+
                         break;
                     case "P16":
-                        PublicPrg.Prgs.SentToWMS(dtDetail, false, "IssueLack");
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "IssueLack"))
+                        {
+                            return false;
+                        }
+
                         break;
                     case "P19":
-                        PublicPrg.Prgs.SentToWMS(dtDetail, false, "TransferOut");
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferOut"))
+                        {
+                            return false;
+                        }
+
                         break;
                 }
             }
@@ -328,7 +383,10 @@ namespace Sci.Production.Automation
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            PublicPrg.Prgs.SentToWMS(dtDetail, true, "SubTransfer");
+            if (!PublicPrg.Prgs.SentToWMS(dtDetail, true, "SubTransfer"))
+            {
+                return;
+            }
 
             #endregion
 
@@ -398,7 +456,10 @@ namespace Sci.Production.Automation
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                PublicPrg.Prgs.SentToWMS(dtDetail, false, "SubTransfer");
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "SubTransfer"))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -596,7 +657,10 @@ select distinct
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            PublicPrg.Prgs.SentToWMS(dtDetail, true, "BorrowBack");
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "BorrowBack"))
+            {
+                return;
+            }
 
             #endregion
 
@@ -665,7 +729,10 @@ select distinct
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                PublicPrg.Prgs.SentToWMS(dtDetail, false, "BorrowBack");
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "BorrowBack"))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -696,8 +763,10 @@ select distinct
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            PublicPrg.Prgs.SentToWMS(dtDetail, true, "ReturnReceipt");
-
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "ReturnReceipt"))
+            {
+                return;
+            }
             #endregion
 
             this.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong", "New");
@@ -765,7 +834,10 @@ select distinct
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                PublicPrg.Prgs.SentToWMS(dtDetail, false, "ReturnReceipt");
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "ReturnReceipt"))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -841,7 +913,10 @@ and exists(
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            PublicPrg.Prgs.SentToWMS(dtDetail, true, "LocationTrans");
+            if (!PublicPrg.Prgs.SentToWMS(dtDetail, true, "LocationTrans"))
+            {
+                return;
+            }
 
             #endregion
 
@@ -878,7 +953,10 @@ and exists(
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            PublicPrg.Prgs.SentToWMS(dtDetail, true, "Adjust");
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Adjust"))
+            {
+                return;
+            }
 
             #endregion
 
@@ -947,7 +1025,10 @@ and exists(
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                PublicPrg.Prgs.SentToWMS(dtDetail, false, "Adjust");
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Adjust"))
+                {
+                    return false;
+                }
             }
 
             return true;

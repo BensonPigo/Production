@@ -19,8 +19,8 @@ namespace Sci.Production.Automation
         private static readonly string moduleName = "AutoWHAccessory";
         private static readonly string SCIAPIThread = "api/VstrongAutoWHAccessory/SentDataByApiTag";
         private static readonly string suppAPIThread = "snpvsinterface/services/pmstowms";
-        private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
         private static readonly string URL = GetSupplierUrl(VstrongSuppID, moduleName);
+        private AutomationErrMsgPMS automationErrMsg = new AutomationErrMsgPMS();
 
         /// <inheritdoc/>
         public static bool IsVstrong_AutoWHAccessoryEnable => IsModuleAutomationEnable(VstrongSuppID, moduleName);
@@ -66,32 +66,21 @@ namespace Sci.Production.Automation
             {
                 case "P07":
                 case "P08":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from Receiving_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Receiving"))
+                    {
+                        return;
+                    }
+
                     break;
                 case "P18":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from TransferIn_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "TransferIn"))
+                    {
+                        return;
+                    }
+
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-            {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
-                return;
-            }
             #endregion
 
             this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "New");
@@ -165,31 +154,19 @@ where exists(
                 {
                     case "P07":
                     case "P08":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from Receiving_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Receiving"))
+                        {
+                            return false;
+                        }
+
                         break;
                     case "P18":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from TransferIn_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                        break;
-                }
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferIn"))
+                        {
+                            return false;
+                        }
 
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-                {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
-                    return false;
+                        break;
                 }
             }
 
@@ -226,41 +203,26 @@ where exists(
                 case "P12":
                 case "P13":
                 case "P33":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from Issue_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Issue"))
+                    {
+                        return;
+                    }
+
                     break;
                 case "P15":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from IssueLack_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "IssueLack"))
+                    {
+                        return;
+                    }
+
                     break;
                 case "P19":
-                    sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from TransferOut_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                    break;
-            }
+                    if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "TransferOut"))
+                    {
+                        return;
+                    }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-            {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
-                return;
+                    break;
             }
 
             #endregion
@@ -339,41 +301,26 @@ where exists(
                     case "P12":
                     case "P13":
                     case "P33":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from Issue_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Issue"))
+                        {
+                            return false;
+                        }
+
                         break;
                     case "P15":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from IssueLack_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "IssueLack"))
+                        {
+                            return false;
+                        }
+
                         break;
                     case "P19":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from TransferOut_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                        break;
-                }
+                        if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "TransferOut"))
+                        {
+                            return false;
+                        }
 
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-                {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
-                    return false;
+                        break;
                 }
             }
 
@@ -397,26 +344,15 @@ where exists(
 
             DualResult result;
             string sqlcmd = string.Empty;
-            DataTable dtMaster = this.GetRemoveC_Detail(dtDetail, formName, status);
+            DataTable dtMaster = this.GetRemoveC_Detail(dtDetail, status);
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
                 return;
             }
 
             #region Confirmed 後記錄那些資料有傳給WMS
-            sqlcmd = string.Empty;
-
-            sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from Adjust_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Adjust"))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -440,7 +376,7 @@ where exists(
         /// <param name="status">status</param>
         /// <param name = "isP99" > is P99 </ param >
         /// <returns>bool</returns>
-        public static bool SentRemoveC_Detail_delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
+        public static bool SentRemoveC_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -454,7 +390,7 @@ where exists(
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
 
             // 取得資料
-            DataTable dtMaster = callMethod.GetRemoveC_Detail(dtDetail, formName, status, isP99);
+            DataTable dtMaster = callMethod.GetRemoveC_Detail(dtDetail, status, isP99);
 
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -490,24 +426,8 @@ where exists(
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                switch (formName)
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Adjust"))
                 {
-                    case "P45":
-                    case "P48":
-                        sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from Adjust_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                        break;
-                }
-
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
-                {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
                     return false;
                 }
             }
@@ -538,19 +458,8 @@ where exists(
             }
 
             #region Confirmed 後記錄那些資料有傳給WMS
-            sqlcmd = string.Empty;
-
-            sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from SubTransfer_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "SubTransfer"))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -623,17 +532,8 @@ where exists(
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from SubTransfer_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "SubTransfer"))
                 {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
                     return false;
                 }
             }
@@ -664,19 +564,8 @@ where exists(
             }
 
             #region Confirmed 後記錄那些資料有傳給WMS
-            sqlcmd = string.Empty;
-
-            sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from ReturnReceipt_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "ReturnReceipt"))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -749,17 +638,8 @@ where exists(
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from ReturnReceipt_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "ReturnReceipt"))
                 {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
                     return false;
                 }
             }
@@ -817,22 +697,10 @@ where exists(
             }
 
             #region Confirmed 後記錄那些資料有傳給WMS
-            sqlcmd = string.Empty;
-
-            sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from BorrowBack_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "BorrowBack"))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
-
             #endregion
 
             string apiThread = "SentBorrowBackToVstrong";
@@ -901,17 +769,8 @@ where exists(
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from BorrowBack_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "BorrowBack"))
                 {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
                     return false;
                 }
             }
@@ -942,19 +801,8 @@ where exists(
             }
 
             #region Confirmed 後記錄那些資料有傳給WMS
-            sqlcmd = string.Empty;
-
-            sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from Adjust_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Adjust"))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -1026,17 +874,8 @@ where exists(
             // 記錄UnConfirmed後有傳給WMS的資料
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
-                sqlcmd = @"
-update t
-set t.SentToWMS = 0
-from Adjust_Detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Adjust"))
                 {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
                     return false;
                 }
             }
@@ -1110,19 +949,8 @@ and exists(
             }
 
             #region Confirmed 後記錄那些資料有傳給WMS
-            sqlcmd = string.Empty;
-
-            sqlcmd = @"
-update t
-set t.SentToWMS = 1
-from LocationTrans_detail t
-where exists(
-	select 1 from #tmp s
-	where s.id = t.Id and s.ukey = t.Ukey
-)";
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            if (!PublicPrg.Prgs.SentToWMS(dt, true, "LocationTrans"))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
                 return;
             }
 
@@ -1646,7 +1474,7 @@ and exists(
             return dtMaster;
         }
 
-        private DataTable GetRemoveC_Detail(DataTable dtDetail, string formName, string status, bool isP99 = false)
+        private DataTable GetRemoveC_Detail(DataTable dtDetail, string status, bool isP99 = false)
         {
             DualResult result;
             string sqlcmd = string.Empty;
@@ -1656,11 +1484,7 @@ and exists(
 
             #region 取得資料
 
-            switch (formName)
-            {
-                case "P45":
-                case "P48":
-                    sqlcmd = $@"
+            sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
 ,[PoId] = i2.POID
@@ -1693,8 +1517,6 @@ and exists(
 	and ml.IsWMS = 1
 )
 ";
-                    break;
-            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1963,7 +1785,7 @@ and exists(
 
             return resultObj;
         }
-
+         
         private void SetAutoAutomationErrMsg(string apiThread, string type = "")
         {
             this.automationErrMsg.apiThread = apiThread;

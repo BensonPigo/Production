@@ -175,7 +175,6 @@ namespace Sci.Production.Automation
             return requestHeaders;
         }
 
-
         /// <summary>
         /// Send WebAPI To Auto W/H
         /// </summary>
@@ -188,7 +187,7 @@ namespace Sci.Production.Automation
         {
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 30);
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
             bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
             if (!webApiBaseResult.isSuccess)
@@ -204,10 +203,10 @@ namespace Sci.Production.Automation
                 SaveAutomationCheckMsg(automationErrMsg);
             }
 
-            return result;
+            //return result;
 
-            // MyUtility.Msg.InfoBox("Send Web API to VS");
-            // return new DualResult(true);
+             MyUtility.Msg.InfoBox("Send Web API to VS");
+             return new DualResult(true);
         }
 
         /// <summary>

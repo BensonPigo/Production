@@ -40,8 +40,8 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.Initl(false);
             this.SetFilter(transID, formNo);
+            this.Initl(false);
             this.Query();
         }
 
@@ -2238,9 +2238,14 @@ where t1.Status = 'Confirmed'
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
@@ -2420,9 +2425,14 @@ inner join #tmp s on t2.Ukey = s.Ukey
                         }
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
@@ -2585,9 +2595,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2664,6 +2679,46 @@ inner join #tmp s on t.id = s.id
                         }
                         #endregion
 
+                        #region update 先檢查WMS是否傳送成功
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        {
+                            switch (this.strFunction)
+                            {
+                                case "P43":
+                                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                case "P45":
+                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         transactionscope = new TransactionScope();
                         using (transactionscope)
                         {
@@ -2733,9 +2788,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentReturnReceipt_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2813,9 +2873,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentBorrowBack_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2895,9 +2960,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentSubTransfer_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -3004,9 +3074,14 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3231,9 +3306,14 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
                             {
                                 return;
                             }
@@ -3489,9 +3569,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3699,9 +3784,14 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ";
                         #endregion 檢查負數庫存
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3752,7 +3842,7 @@ inner join #tmp s on t.ID = s.ID
                         #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3842,9 +3932,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentReturnReceipt_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4010,9 +4105,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentBorrowBack_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4292,9 +4392,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentSubTransfer_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -5446,6 +5551,80 @@ WHERE FTI.StockType='O'
                 this.txtSPNoEnd.Text = string.Empty;
                 this.comboFunction.SelectedIndex = 0;
                 this.comboFunction.SelectedIndex = 0;
+                string strcomboType = string.Empty;
+                switch (this.strFunction)
+                {
+                    case "P07":
+                        strcomboType = "P07. Material Receiving";
+                        break;
+                    case "P08":
+                        strcomboType = "P08. Receiving from factory Supply";
+                        break;
+                    case "P18":
+                        strcomboType = "P18. Transfer In";
+                        break;
+                    case "P11":
+                        strcomboType = "P11. Issue Sewing Material";
+                        break;
+                    case "P12":
+                        strcomboType = "P12. Issue Packing Material";
+                        break;
+                    case "P13":
+                        strcomboType = "P13. Issue R/Mtl By Item";
+                        break;
+                    case "P15":
+                        strcomboType = "P15. Issue Accessory Lacking  && Replacement";
+                        break;
+                    case "P16":
+                        strcomboType = "P16. Issue Fabric Lacking  && Replacement";
+                        break;
+                    case "P19":
+                        strcomboType = "P19. Transfer Out";
+                        break;
+                    case "P33":
+                        strcomboType = "P33. Issue Thread";
+                        break;
+                    case "P45":
+                        strcomboType = "P45. Remove from Scrap Whse";
+                        break;
+                    case "P22":
+                        strcomboType = "P22. Transfer Bulk to Inventory (A2B)";
+                        break;
+                    case "P23":
+                        strcomboType = "P23. Transfer Inventory to Bulk (B2A)";
+                        break;
+                    case "P24":
+                        strcomboType = "P24. Transfer Inventory To Scrap (B2C)";
+                        break;
+                    case "P36":
+                        strcomboType = "P36. Transfer Scrap to Inventory (C2B)";
+                        break;
+                    case "P37":
+                        strcomboType = "P37. Return Receiving Material";
+                        break;
+                    case "P31":
+                        strcomboType = "P31. Material Borrow";
+                        break;
+                    case "P32":
+                        strcomboType = "P32. Return Borrowing";
+                        break;
+                    case "P34":
+                        strcomboType = "P34. Adjust Inventory Qty";
+                        break;
+                    case "P35":
+                        strcomboType = "P35. Adjust Bulk Qty";
+                        break;
+                    case "P43":
+                        strcomboType = "P43. Adjust Scrap Qty";
+                        break;
+                    case "P62":
+                        strcomboType = "P62. Issue Fabric for Cutting Tape";
+                        break;
+                    default:
+                        break;
+                }
+
+                MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, $"{this.strFunction},{strcomboType}");
             }
             else
             {
@@ -5461,7 +5640,7 @@ WHERE FTI.StockType='O'
             this.txtSPNoStart.Enabled = canEdit;
             this.txtSPNoEnd.Enabled = canEdit;
             this.btnQuery.Visible = canEdit;
-            this.EditMode = canEdit;
+            this.EditMode = true;
         }
 
         /// <summary>
