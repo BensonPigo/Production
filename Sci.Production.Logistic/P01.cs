@@ -40,7 +40,6 @@ namespace Sci.Production.Logistic
         {
             base.OnDetailEntered();
             DataRow brandData;
-            this.displayDescription.Value = MyUtility.GetValue.Lookup(string.Format("select Description from style WITH (NOLOCK) where Ukey = {0}", this.CurrentMaintain["StyleUkey"].ToString()));
             this.displayPOCombo.Value = MyUtility.GetValue.Lookup(string.Format("select [dbo].getPOComboList('{0}','{1}') as PoList from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString()));
             if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3 from Brand WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["BrandID"].ToString()), out brandData))
             {
@@ -105,6 +104,37 @@ group by case when CFAFinalInspectResult in('Pass','Fail but release') then 'Pas
                 }
             }
 
+            sqlcmd = string.Format(
+                @"
+SELECT s.Description
+    , o.CDCodeNew
+    , ProductType = r2.Name
+	, FabricType = r1.Name
+	, s.Lining
+	, s.Gender
+	, Construction = d1.Name
+FROM Orders o WITH(NOLOCK)
+left join Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey
+left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+where o.ID = '{0}'
+",
+                this.CurrentMaintain["ID"].ToString());
+
+            DualResult res = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!res)
+            {
+                this.ShowErr(res);
+            }
+
+            this.displayDescription.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Description"].ToString() : string.Empty;
+            this.displayCDCodeNew.Value = dt.Rows.Count > 0 ? dt.Rows[0]["CDCodeNew"].ToString() : string.Empty;
+            this.displayProductType.Value = dt.Rows.Count > 0 ? dt.Rows[0]["ProductType"].ToString() : string.Empty;
+            this.displayFabricType.Value = dt.Rows.Count > 0 ? dt.Rows[0]["FabricType"].ToString() : string.Empty;
+            this.displayLining.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Lining"].ToString() : string.Empty;
+            this.displayGender.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Gender"].ToString() : string.Empty;
+            this.displayConstruction.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Construction"].ToString() : string.Empty;
             this.txtCFAFinalInspDate.Text = finalResult;
             this.txtCFAFinalInspDate.BackColor = (ttlcnt > 1) ? Color.Yellow : Color.FromArgb(183, 227, 255);
 

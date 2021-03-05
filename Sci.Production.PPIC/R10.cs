@@ -138,6 +138,12 @@ select	O.ID
 		, O.StyleID
 		, O.SeasonID
 		, O.CdCodeID
+	    , O.CDCodeNew
+	    , sty.ProductType
+	    , sty.FabricType
+	    , sty.Lining
+	    , sty.Gender
+	    , sty.Construction
 		, O.CPU
 		, CPU_EType = IIF (O.StyleUnit = 'sets', Convert(varchar, (O.CPU * isnull (SL.Rate, 0) / 100)), '0')
 		, O.Qty
@@ -279,7 +285,19 @@ outer apply (
 	inner join SewingOutput_Detail _SOD on _SO.ID = _SOD.ID
 	where	_SOD.OrderId = O.ID
 			and _SOD.ComboType = EType.value
-) nTtlOutPut 
+) nTtlOutPut
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.Ukey = o.StyleUkey
+)sty
 where	O.Category in ('B','S')
 		--Buyer Delivery Date
 		{2}--and O.BuyerDelivery between @BDDateStart and @BDDateEnd  

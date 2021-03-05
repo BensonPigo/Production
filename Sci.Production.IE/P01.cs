@@ -1819,7 +1819,21 @@ and s.BrandID = @brandid ", Env.User.Factory);
 
             this.displayCD.Value = string.Empty;
             DataTable dt;
-            string sqlCmd = "select CdCodeID from Style WITH (NOLOCK) where ID = @styleid and SeasonID = @seasonid and BrandID = @brandid";
+            string sqlCmd = @"
+select s.CdCodeID 
+    , s.CDCodeNew
+    , ProductType = r2.Name
+	, FabricType = r1.Name
+	, s.Lining
+	, s.Gender
+	, Construction = d1.Name
+from Style s WITH (NOLOCK)
+left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+where s.ID = @styleid 
+and s.SeasonID = @seasonid 
+and s.BrandID = @brandid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out dt);
             if (!result)
             {
@@ -1828,6 +1842,12 @@ and s.BrandID = @brandid ", Env.User.Factory);
             }
 
             this.displayCD.Value = dt.Rows.Count > 0 ? dt.Rows[0]["CdCodeID"].ToString() : string.Empty;
+            this.displayCDCodeNew.Value = dt.Rows.Count > 0 ? dt.Rows[0]["CDCodeNew"].ToString() : string.Empty;
+            this.displayProductType.Value = dt.Rows.Count > 0 ? dt.Rows[0]["ProductType"].ToString() : string.Empty;
+            this.displayFabricType.Value = dt.Rows.Count > 0 ? dt.Rows[0]["FabricType"].ToString() : string.Empty;
+            this.displayLining.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Lining"].ToString() : string.Empty;
+            this.displayGender.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Gender"].ToString() : string.Empty;
+            this.displayConstruction.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Construction"].ToString() : string.Empty;
         }
 
         private void BtnDel_Click(object sender, EventArgs e)

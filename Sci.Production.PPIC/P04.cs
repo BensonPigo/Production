@@ -32,6 +32,11 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
             this.destination_path = MyUtility.GetValue.Lookup("select StyleSketch from System WITH (NOLOCK) ", null);
+            this.comboProductType1.SetDataSource();
+            this.comboFabricType1.SetDataSource();
+            this.comboLining1.SetDataSource();
+            this.comboGender1.SetDataSource();
+            this.comboConstruction1.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -254,6 +259,12 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 this.checkJnuk.ReadOnly = true;
                 this.comboSizeUnit.ReadOnly = true;
                 this.comboGender.ReadOnly = true;
+                this.txtcdcodenew.ReadOnly = true;
+                this.comboProductType1.ReadOnly = true;
+                this.comboFabricType1.ReadOnly = true;
+                this.comboLining1.ReadOnly = true;
+                this.comboGender1.ReadOnly = true;
+                this.comboConstruction1.ReadOnly = true;
             }
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["NoNeedPPMeeting"]).ToUpper() == "TRUE")

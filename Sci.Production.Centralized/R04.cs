@@ -411,6 +411,12 @@ select * from(
 		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
 		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)
 		,CDNo = IIF(t.Category=''M'',MockupCDCodeID,OrderCdCodeID)+''-''+t.ComboType
+        ,sty.CDCodeNew
+	    ,sty.ProductType
+	    ,sty.FabricType
+	    ,sty.Lining
+	    ,sty.Gender
+	    ,sty.Construction
 		,ActManPower = ActManPower
 		,WorkHour
 		,ManHour = ROUND(ActManPower*WorkHour,2)
@@ -438,7 +444,23 @@ select * from(
         ,t.Remark
         ,t.SewingReasonDesc
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
-    from #tmp1stFilter t");
+    from #tmp1stFilter t
+    Outer apply (
+	    SELECT s.CDCodeNew
+            , ProductType = r2.Name
+		    , FabricType = r1.Name
+		    , s.Lining
+		    , s.Gender
+		    , Construction = d1.Name
+	    FROM Style s WITH(NOLOCK)
+	    left join DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
+	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
+	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
+	    where s.ID = IIF(t.Category=''M'', t.MockupStyle, t.OrderStyle)
+	    and s.SeasonID = IIF(t.Category=''M'', t.MockupSeason, t.OrderSeason)
+	    and s.BrandID = IIF(t.Category=''M'', t.MockupBrandID, t.OrderBrandID)
+    )sty
+    ");
             if (this.show_Accumulate_output == true)
             {
                 sqlCmd.Append(@"
@@ -541,12 +563,12 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 42;
+                start_column = 48;
             }
             else
             {
-                start_column = 40;
-                objSheets.get_Range("AM:AN").EntireColumn.Delete();
+                start_column = 46;
+                objSheets.get_Range("AS:AT").EntireColumn.Delete();
             }
 
             for (int i = start_column; i < this.dtAllData.Columns.Count; i++)

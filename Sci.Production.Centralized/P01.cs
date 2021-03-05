@@ -74,8 +74,25 @@ namespace Sci.Production.Centralized
 with temporder AS (
 	select	StdOutput = isnull ((select top 1 stdq from getstdq(o.ID)), 0)
 			, o.* 
-	from Orders o
-	inner join Factory f on o.FactoryID = f.ID 
+	        , sty.ProductType
+	        , sty.FabricType
+	        , sty.Lining
+	        , sty.Gender
+	        , sty.Construction
+	from Orders o WITH(NOLOCK)
+	inner join Factory f WITH(NOLOCK) on o.FactoryID = f.ID 
+    Outer apply (
+	    SELECT ProductType = r2.Name
+		    , FabricType = r1.Name
+		    , Lining
+		    , Gender
+		    , Construction = d1.Name
+	    FROM Style s WITH(NOLOCK)
+	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	    where s.Ukey = o.StyleUkey
+    )sty
 	--排除ADIDAS 中 mi-adidas、SLC、PPC  order，及Sample、Local order
 	where	((o.ProjectID != 'ZMII' and o.ProjectID != 'CR' and o.OrderTypeID != 'PPC') or o.BrandID != 'ADIDAS') 
 			and o.Category='B' 
@@ -99,6 +116,12 @@ select	O.ID
 		, O.StyleID
 		, O.SeasonID
 		, O.CdCodeID
+        , O.CDCodeNew
+	    , O.ProductType
+	    , O.FabricType
+	    , O.Lining
+	    , O.Gender
+	    , O.Construction
 		, O.CPU
 		, CPU_EType = IIF (O.StyleUnit = 'sets', Convert(varchar, (O.CPU * isnull (SL.Rate, 0) / 100)), '0')
 		, O.Qty
