@@ -469,7 +469,7 @@ from #tmp Group BY A,B,C order by A,B,C";
                     @"
 {0} 
 Select StyleID, BrandID, CDCodeID, CDDesc, StyleDesc, SeasonID
-, QARate, TotalCPUOut,TotalManHour, ModularParent, CPUAdjusted, Category, OutputDate, SewingLineID, FactoryID
+, QARate, TotalCPUOut,TotalManHour, ModularParent, CPUAdjusted, Category, OutputDate, SewingLineID, FtyZone, FactoryID
 , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ",
                     strSQL);
@@ -494,10 +494,10 @@ alter table #tmp alter column StyleID  varchar(15)
 alter table #tmp alter column BrandID  varchar(8)
 alter table #tmp alter column StyleDesc  varchar(100)
 
-select StyleID,BrandID,StyleDesc,SeasonID,FactoryID,OutputDate = max(OutputDate)
+select StyleID,BrandID,StyleDesc,SeasonID,FtyZone,FactoryID,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by StyleID,BrandID,StyleDesc,SeasonID,FactoryID
+group by StyleID,BrandID,StyleDesc,SeasonID,FtyZone,FactoryID
 
 select StyleID,BrandID,CDCodeID
 , CDCodeNew
@@ -515,8 +515,7 @@ select StyleID,BrandID,CDCodeID
 , K=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
 , ModularParent
 , CPUAdjusted
-, N= Stuff((select   concat('/', a.FactoryID + ' ' + (case     when Max(a.OutputDate) is null then 'New Style'
-                                                               when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
+, N= Stuff((select   concat('/', a.FtyZone + ' ' + (case     when Max(a.OutputDate) is null then 'New Style'
                                                                else concat((Stuff((
 																	select distinct concat(' ', t.SewingLineID)
 																	from #tmp t
@@ -524,21 +523,21 @@ select StyleID,BrandID,CDCodeID
                                                                     and t.BrandID = #tmp.BrandID
                                                                     and t.StyleDesc = #tmp.StyleDesc
                                                                     and t.SeasonID = #tmp.SeasonID
-                                                                    and t.FactoryID = a.FactoryID
+                                                                    and t.FtyZone = a.FtyZone
 																	and exists (select 1 from #tmp_MaxOutputDate t2
 																				where t2.StyleID = t.StyleID 
 																				and t2.BrandID = t.BrandID 
 																				and t2.StyleDesc = t.StyleDesc
 																				and t2.SeasonID = t.SeasonID
 																				and t2.OutputDate = t.OutputDate
-                                                                                and t2.FactoryID = t.FactoryID)
+                                                                                and t2.FtyZone = t.FtyZone)
 																	FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
                                                                end))
                 from #tmp a where   a.StyleID = #tmp.StyleID and 
                                     a.BrandID = #tmp.BrandID and
                                     a.StyleDesc = #tmp.StyleDesc and
                                     a.SeasonID = #tmp.SeasonID
-                group by a.FactoryID FOR XML PATH(''))
+                group by a.FtyZone FOR XML PATH(''))
         ,1,1,'') 
 from #tmp 
 Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,CDDesc,StyleDesc,SeasonID,ModularParent,CPUAdjusted
@@ -711,7 +710,6 @@ select FtyZone
     ,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
     ,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
     ,P= case when Max(OutputDate) is null then 'New Style'
-            when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
             else concat((Stuff((
 							select distinct concat(' ', t.SewingLineID)
 							from #tmp t
@@ -790,7 +788,6 @@ select ProgramID
     , N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
     , O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
     , P= case    when Max(OutputDate) is null then 'New Style'
-            when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
             else concat((Stuff((
 							select distinct concat(' ', t.SewingLineID)
 							from #tmp t
