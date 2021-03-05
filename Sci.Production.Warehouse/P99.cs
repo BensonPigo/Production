@@ -1142,14 +1142,21 @@ and t1.Status = 'Confirmed'
 select  [Selected] = 0 --0
 		, [SentToWMS] = iif(t2.SentToWMS=1,'V','')
 		, [CompleteTime] = t2.CompleteTime
-	,po3.FabricType
-	,t2.POID,t2.Seq1,t2.Seq2,t2.Roll,t2.Dyelot
-    , t2.StockType
+	,[FabricType] = isnull(po3.FabricType,'')
+	,[GridPoID] = s.Poid
+	,[GridSeq1] = s.seq1
+	,[GridSeq2] = s.seq2
+	,POID = isnull(t2.POID,'')
+	,[Seq1] = isnull(t2.Seq1,'')
+	,[Seq2] = isnull(t2.Seq2,'')
+	,[Roll] = isnull(t2.Roll,'')
+	,[Dyelot] = isnull(t2.Dyelot,'')
+    ,[StockType] = isnull(t2.StockType,'')
 	,s.Ukey
 	,s.Id
 	,[Ttl_Qty] = s.Qty
-	,[Qty] = t2.Qty
-	,[Old_Qty] = t2.Qty
+	,[Qty] = isnull(t2.Qty,0.00)
+	,[Old_Qty] = isnull(t2.Qty,0.00)
     ,[diffQty] = 0.00
     , f.Refno
 	, [description] = f.DescDetail
@@ -1169,7 +1176,7 @@ select  [Selected] = 0 --0
 	, aiqqty = AccuIssue.aiqqty
 	, avqty = (ec.RequestQty + AccuReq.ReqQty) - AccuIssue.aiqqty	
 from dbo.Issue_Summary s WITH (NOLOCK) 
-inner join Issue_Detail t2 WITH (NOLOCK) on t2.Id = s.Id and t2.Issue_SummaryUkey = s.Ukey
+left join Issue_Detail t2 WITH (NOLOCK) on t2.Id = s.Id and t2.Issue_SummaryUkey = s.Ukey
 inner join issue t1 WITH (NOLOCK) on t1.Id = s.Id
 left join Fabric f on s.SciRefno = f.SciRefno
 outer apply(
@@ -1226,6 +1233,7 @@ outer apply(
 			and i.Type = 'I'
 )AccuIssue
 where t1.Status = 'Confirmed'
+and t1.Type='I'
 ";
                     break;
                 default:
@@ -2093,9 +2101,9 @@ where t1.Status = 'Confirmed'
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                     .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                    .CellPOIDWithSeqRollDyelot("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                    .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                    .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                    .CellPOIDWithSeqRollDyelot("GridPoID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                    .Text("GridSeq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                    .Text("GridSeq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
                     .Text("Roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true)
@@ -3269,6 +3277,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P16":
                     case "P19":
                     case "P33":
+                    case "P62":
                         #region Issue_Detail
                         strTable = string.Empty;
                         strMainTable = string.Empty;

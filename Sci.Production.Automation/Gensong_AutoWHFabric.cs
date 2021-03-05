@@ -113,6 +113,19 @@ namespace Sci.Production.Automation
                 return true;
             }
 
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                var dtTable = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"]));
+                if (dtTable.Any())
+                {
+                    dtMaster = dtTable.CopyToDataTable();
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
             callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", string.Empty);
@@ -259,15 +272,23 @@ namespace Sci.Production.Automation
             // 取得資料
             DataTable dtMaster = callMethod.GetIssueData(dtDetail, formName, status, isP99);
 
-            if (string.Compare(status, "UnConfirmed", true) == 0)
-            {
-                dtMaster = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"])).CopyToDataTable();
-            }
-
             // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
                 return true;
+            }
+
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                var dtTable = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"]));
+                if (dtTable.Any())
+                {
+                    dtMaster = dtTable.CopyToDataTable();
+                }
+                else
+                {
+                    return true;
+                }
             }
 
             // DataTable轉化為JSON
@@ -426,6 +447,19 @@ namespace Sci.Production.Automation
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
                 return true;
+            }
+
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                var dtTable = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"]));
+                if (dtTable.Any())
+                {
+                    dtMaster = dtTable.CopyToDataTable();
+                }
+                else
+                {
+                    return true;
+                }
             }
 
             // DataTable轉化為JSON
@@ -699,6 +733,19 @@ select distinct
                 return true;
             }
 
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                var dtTable = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"]));
+                if (dtTable.Any())
+                {
+                    dtMaster = dtTable.CopyToDataTable();
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "BorrowBack_Detail");
             callMethod.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong", string.Empty);
@@ -802,6 +849,19 @@ select distinct
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
                 return true;
+            }
+
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                var dtTable = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"]));
+                if (dtTable.Any())
+                {
+                    dtMaster = dtTable.CopyToDataTable();
+                }
+                else
+                {
+                    return true;
+                }
             }
 
             // DataTable轉化為JSON
@@ -993,6 +1053,19 @@ and exists(
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
                 return true;
+            }
+
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                var dtTable = dtMaster.AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"]) && MyUtility.Check.Empty(x["CompleteTime"]));
+                if (dtTable.Any())
+                {
+                    dtMaster = dtTable.CopyToDataTable();
+                }
+                else
+                {
+                    return true;
+                }
             }
 
             // DataTable轉化為JSON
@@ -1245,6 +1318,7 @@ SELECT [ID] = rd.id
 ,[WhseArrival] = r.WhseArrival
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,[Barcode] = Barcode.value
+,rd.SentToWMS,rd.CompleteTime
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 {Environment.NewLine + strBody}
@@ -1277,45 +1351,46 @@ and exists(
                 case "P18":
                     strQty = isP99 ? "s.Qty" : "rd.Qty";
                     sqlcmd = $@"
-SELECT [ID] = td.id
-,[InvNo] = isnull(t.InvNo,'')
-,[PoId] = td.Poid
-,[Seq1] = td.Seq1
-,[Seq2] = td.Seq2
+SELECT [ID] = rd.id
+,[InvNo] = isnull(r.InvNo,'')
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
 ,[ColorID] = po3.ColorID
-,[Roll] = td.Roll
-,[Dyelot] = td.Dyelot
-,[StockUnit] = dbo.GetStockUnitBySPSeq(td.POID,td.Seq1,td.Seq2)
-,[StockQty] = {strQty}
+,[Roll] = rd.Roll
+,[Dyelot] = rd.Dyelot
+,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
+,[StockQty] = rd.Qty
 ,[PoUnit] = po3.PoUnit
-,[ShipQty] = td.Qty
-,[Weight] = td.Weight
-,[StockType] = td.StockType
-,[Ukey] = td.Ukey
+,[ShipQty] = rd.Qty
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[Ukey] = rd.Ukey
 ,[IsInspection] = convert(bit, 0)
 ,[ETA] = null
 ,[WhseArrival] = r.IssueDate
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,[Barcode] = Barcode.value
-FROM Production.dbo.TransferIn_Detail td
-inner join Production.dbo.TransferIn t on td.id = t.id
+,rd.SentToWMS,rd.CompleteTime
+FROM Production.dbo.TransferIn_Detail rd
+inner join Production.dbo.TransferIn r on rd.id = r.id
 {Environment.NewLine + strBody}
-inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= td.PoId 
-	and po3.SEQ1=td.Seq1 and po3.SEQ2=td.Seq2
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
 outer apply(
 	select value = min(fb.Barcode)
 	from FtyInventory_Barcode fb 
 	inner join FtyInventory f on f.Ukey = fb.Ukey
-	where f.POID = td.POID
-	and f.Seq1 = td.Seq1 and f.Seq2= td.Seq2
-	and f.Roll = td.Roll and f.Dyelot = td.Dyelot
-	and f.StockType = td.StockType
+	where f.POID = rd.POID
+	and f.Seq1 = rd.Seq1 and f.Seq2= rd.Seq2
+	and f.Roll = rd.Roll and f.Dyelot = rd.Dyelot
+	and f.StockType = rd.StockType
 )Barcode
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
 	and FabricType='F'
 )
 ";
@@ -1365,6 +1440,7 @@ select distinct
 ,CmdTime = GetDate()
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,rd.SentToWMS,rd.CompleteTime
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
 {strBody}
@@ -1382,7 +1458,7 @@ outer apply(
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
 )NewBarcode
-where i.Type = 'A'
+where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
@@ -1416,6 +1492,7 @@ select distinct
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
+,rd.SentToWMS,rd.CompleteTime
 from Production.dbo.IssueLack_Detail i2
 inner join Production.dbo.IssueLack i on i2.id = i.id
 {strBody}
@@ -1466,6 +1543,7 @@ select distinct
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
+,rd.SentToWMS,rd.CompleteTime
 from Production.dbo.TransferOut_Detail i2
 inner join Production.dbo.TransferOut i on i2.id = i.id
 {strBody}
@@ -1531,6 +1609,7 @@ select distinct
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
+,sd.SentToWMS,sd.CompleteTime
 from Production.dbo.SubTransfer_Detail sd
 inner join Production.dbo.SubTransfer s on s.id = sd.id
 {strBody}
@@ -1617,6 +1696,7 @@ select rrd.Id
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,[CmdTime] = GETDATE()
+,rrd.SentToWMS,rrd.CompleteTime
 from ReturnReceipt_Detail rrd
 inner join Production.dbo.ReturnReceipt rr on rr.id = rrd.id
 {strBody}
@@ -1674,6 +1754,7 @@ select distinct
 ,bb2.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
+,bb2.SentToWMS,bb2.CompleteTime
 from Production.dbo.BorrowBack_Detail bb2
 inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
 {strBody}
@@ -1754,6 +1835,7 @@ select distinct
 ,[QtyAfter] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
+,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.Adjust_Detail i2
 inner join Production.dbo.Adjust i on i.id = i2.id
 {strBody}
