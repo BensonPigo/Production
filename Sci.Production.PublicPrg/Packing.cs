@@ -3415,6 +3415,8 @@ where ID = '{currentMaintain["INVNo"]}'";
         }
         #endregion
 
+        #region Running Change相關
+
         /// <summary>
         /// Basic B11 Running change 查詢
         /// </summary>
@@ -3424,7 +3426,7 @@ where ID = '{currentMaintain["INVNo"]}'";
         /// <param name="stickerCombinationUkey_MixPack">stickerCombinationUkey_MixPack</param>
         /// <param name="stampCombinationUkey">stampCombinationUkey</param>
         /// <returns>List<DataTable></returns>
-        public static List<DataTable> CustCD_RunningChange(string custCDID, string brandID, long stickerCombinationUkey, long stickerCombinationUkey_MixPack, long stampCombinationUkey)
+        public static void CustCD_RunningChange(string custCDID, string brandID, long stickerCombinationUkey, long stickerCombinationUkey_MixPack, long stampCombinationUkey)
         {
             DataTable custpono;
             DataTable custCD_Detail;
@@ -3507,19 +3509,25 @@ where id='{custCDID}'
             DBProxy.Current.Select(null, cmd, out custCD_Detail);
             result.Add(custCD_Detail);
 
-            SendRunningChange(result, "Basic B11", chageTypes);
+            if (result[0].Rows.Count == 0)
+            {
+                return;
+            }
 
-            return result;
+            RunningChange_Excel(result, "Basic B11", chageTypes);
         }
 
         /// <summary>
         /// Subcon B01 Running change 查詢
         /// </summary>
-        /// <param name="cTNRefno">cTNRefno</param>
-        /// <param name="ctnHeight">ctnHeight</param>
-        /// <param name="ctnWidth">ctnWidth</param>
-        public static void LocalItem_RunningChange(string cTNRefno, decimal ctnHeight, decimal ctnWidth)
+        /// <param name="currentMaintain">currentMaintain</param>
+        public static void LocalItem_RunningChange(DataRow currentMaintain)
         {
+            string cTNRefno = currentMaintain["Refno"].ToString();
+            string cTNUnit = currentMaintain["cTNUnit"].ToString();
+            decimal ctnHeight = MyUtility.Convert.GetDecimal(currentMaintain["ctnHeight"]);
+            decimal ctnWidth = MyUtility.Convert.GetDecimal(currentMaintain["ctnWidth"]);
+
             DataTable custpono;
             DataTable b01_Detail;
             List<DataTable> result = new List<DataTable>();
@@ -3583,42 +3591,54 @@ DECLARE @UnitChange as numeric(5,2) = (select IIF(CtnUnit='Inch',25.4,1) from Lo
 
 select 
 a.CTNRefno
-,(select Ctnheight from LocalItem where RefNo='{ctnHeight}' )
-,(select Ctnwidth from LocalItem where RefNo='{ctnHeight}' )
+,(select Ctnheight from LocalItem where RefNo='{cTNRefno}' )
+,(select CTNUnit from LocalItem where RefNo='{cTNRefno}' )
 ,[AfterChangeHeight]=@AfterHeight
-,[AfterChangeWidth]=@AfterWidth
+,[AfterChangeUnit]='{cTNUnit}'
 ,a.BrandID
-,a.Category
+,IIF(a.Category = 'PIC', 'Sticker' , a.Category)
 ,[ShippingMarkCombination]=(select ID from ShippingMarkCombination where Ukey = a.ShippingMarkCombinationUkey)
+,a.CTNRefno
 ,[IsMixPack]=(select IIF(IsMixPack=1,'Y','') from ShippingMarkCombination where Ukey = a.ShippingMarkCombinationUkey)
 ,[ShippingMarkType]=st.ID
 ,b.FromRight
-,b.FromBottom   ,ss.Width ,ss.Length
-,b.IsHorizontal
-,b.IsOverCtnHt
-,b.NotAutomate
+,b.FromBottom  
+,IIF( b.IsHorizontal = 1,'Y','')
+,IIF( b.IsOverCtnHt = 1,'Y','')
+,IIF( b.NotAutomate = 1,'Y','')
 ,[AfterIsOverCtnHt]=
- CASE WHEN b.IsHorizontal = 1 THEN IIF( ( b.FromBottom + ss.Width ) > (@AfterHeight * @UnitChange) , 1 , 0)
+ IIF(
+(
+CASE WHEN b.IsHorizontal = 1 THEN IIF( ( b.FromBottom + ss.Width ) > (@AfterHeight * @UnitChange) , 1 , 0)
 	  WHEN b.IsHorizontal = 0 THEN IIF( ( b.FromBottom + ss.Length ) > (@AfterHeight * @UnitChange), 1 , 0)
 	  ELSE 0
  END
+) = 1,'Y','')
 ,[AfterNotAutomate]=
+ IIF(
+(
  CASE WHEN b.IsHorizontal = 1 THEN IIF( ( b.FromBottom + ss.Width ) >  (@AfterHeight * @UnitChange) , 1 , 0)
 	  WHEN b.IsHorizontal = 0 THEN IIF( ( b.FromBottom + ss.Length ) >  (@AfterHeight * @UnitChange) , 1 , 0)
 	  ELSE 0
  END
+) = 1,'Y','')
 from ShippingMarkPicture a
 inner join ShippingMarkPicture_Detail b on a.Ukey = b.ShippingMarkPictureUkey
 inner join ShippingMarkType st on st.Ukey = b.ShippingMarkTypeUkey
 inner join StickerSize ss on ss.ID = b.StickerSizeID
 where CTNRefno='{cTNRefno}' 
+AND a.Category = 'PIC'
 
 ";
             DBProxy.Current.Select(null, cmd, out b01_Detail);
             result.Add(b01_Detail);
 
-            SendRunningChange(result, "Subcon B01", new List<string>() { "Sticker" });
+            if (result[0].Rows.Count == 0)
+            {
+                return;
+            }
 
+            RunningChange_Excel(result, "Subcon B01", new List<string>() { "Sticker" });
         }
 
         /// <summary>
@@ -3628,7 +3648,7 @@ where CTNRefno='{cTNRefno}'
         /// <param name="detailDataRows">detailDataRows</param>
         /// <param name="isDetailChange">isDetailChange</param>
         /// <param name="defaultData">defaultData</param>
-        public static void ShippingMarkCombination_RunningChange(DataRow currentMaintain, List<DataRow> detailDataRows, bool isDetailChange, DataTable defaultData)
+        public static void ShippingMarkCombination_RunningChange(DataRow currentMaintain, List<DataRow> detailDataRows, bool isDetailChange, DataTable defaultData, bool IsDetailInserting)
         {
 
             DataTable[] tables;
@@ -3897,6 +3917,12 @@ DROP TABLE #OriDetail
                     brindID = b06_Details[1].Rows[0]["BrandID"].ToString();
                     categorys = b06_Details[1].Rows[0]["category"].ToString();
                     shippingMarkCombination = b06_Details[1].Rows[0]["shippingMarkCombination"].ToString();
+
+                    if (IsDetailInserting)
+                    {
+                        shippingMarkCombination = currentMaintain["ID"].ToString();
+                    }
+
                     isMixPacks = b06_Details[1].Rows[0]["isMixPack"].ToString();
                 }
 
@@ -3980,7 +4006,12 @@ DROP TABLE #OriDetail
                     break;
             }
 
-            SendRunningChange_B06(result, deleteColumn, new List<string>() { category });
+            if (result[0].Rows.Count == 0)
+            {
+                return;
+            }
+
+            RunningChange_Excel_B06(result, deleteColumn, new List<string>() { category });
         }
 
         /// <summary>
@@ -3990,7 +4021,7 @@ DROP TABLE #OriDetail
         /// <param name="newDetailDataRows">newDetailDataRows</param>
         /// <param name="oriDetailDataRows">oriDetailDataRows</param>
         /// <param name="category">category</param>
-        public static void ShippingMarkPicture_RunningChange(DataRow currentMaintain, List<DataRow> newDetailDataRows, List<DataRow> oriDetailDataRows,string category)
+        public static void ShippingMarkPicture_RunningChange(DataRow currentMaintain, List<DataRow> newDetailDataRows, List<ShippingMarkPicture_Detail> oriDetailDataRows, string category)
         {
             DataTable custpono;
             List<DataTable> result = new List<DataTable>();
@@ -4000,12 +4031,14 @@ DROP TABLE #OriDetail
             string cmd = string.Empty;
 
             // 判斷需要列出哪些CustPONo
-            cmd = $@"
+            if (category == "PIC")
+            {
+                cmd = $@"
 
 SELECT  BrandID,Category,ShippingMarkCombinationUkey,CTNRefno
 INTO #ShippingMarkPicture
 FROM ShippingMarkPicture a
-WHERE Ukey =  {shippingMarkPictureUkey}
+WHERE Ukey =  {shippingMarkPictureUkey} AND a.category = 'PIC'
 
 select distinct o.CustPONo
 from ShippingMarkPic_Detail a
@@ -4019,6 +4052,32 @@ WHERE  (pu.Status = 'New'  or pu.Status IS NULL)
 DROP TABLE #ShippingMarkPicture
 
 ";
+            }
+
+            if (category == "HTML")
+            {
+                cmd = $@"
+
+SELECT  BrandID,Category,ShippingMarkCombinationUkey,CTNRefno
+INTO #ShippingMarkPicture
+FROM ShippingMarkPicture a
+WHERE Ukey =  {shippingMarkPictureUkey}  AND a.category = 'HTML'
+
+select distinct o.CustPONo
+from ShippingMarkStamp_Detail a
+inner join PackingList_Detail pd on a.SCICtnNo = pd.SCICtnNo
+inner join PackingList p on p.ID = pd.ID
+inner join #ShippingMarkPicture c ON c.BrandID = p.BrandID and c.ShippingMarkCombinationUkey = a.ShippingMarkCombinationUkey and c.CTNRefno = pd.RefNo
+LEFT JOIN Pullout pu On pu.ID = p.PulloutID
+inner join orders o ON o.ID = pd.OrderID
+WHERE  (pu.Status = 'New'  or pu.Status IS NULL)
+
+DROP TABLE #ShippingMarkPicture
+
+";
+
+            }
+
             DBProxy.Current.Select(null, cmd, out custpono);
             result.Add(custpono);
 
@@ -4053,19 +4112,22 @@ select BrandID=''
 ";
             DBProxy.Current.Select(null, cmd, out structure);
             DataTable final = structure.Clone();
-            //if (newDetailDataRows.Count > 0)
-            //{
-            //    final = newDetailDataRows[0].Table.Clone();
-            //}
-            //else
-            //{
-            //    final = oriDetailDataRows[0].Table.Clone();
-            //}
+
+            switch (category)
+            {
+                case "PIC":
+                    category = "Sticker";
+                    break;
+                case "HTML":
+                    category = "Stamp";
+                    break;
+                default:
+                    break;
+            }
 
             for (int i = 0; i <= rowCount - 1; i++)
             {
                 string brindID = string.Empty;
-                string categorys = string.Empty;
                 string shippingMarkCombination = string.Empty;
                 string cTNRefno = string.Empty;
 
@@ -4093,9 +4155,9 @@ select BrandID=''
 
                 // 通用欄位
                 brindID = currentMaintain["BrandID"].ToString();
-                categorys = currentMaintain["Category"].ToString();
-                shippingMarkCombination = MyUtility.GetValue.Lookup($"select ID from ShippingMarkCombination WHERE Ukey={currentMaintain["ShippingMarkCombinationUkey"].ToString()}");
 
+                cTNRefno = currentMaintain["CTNRefno"].ToString();
+                shippingMarkCombination = MyUtility.GetValue.Lookup($"select ID from ShippingMarkCombination WHERE Ukey={currentMaintain["ShippingMarkCombinationUkey"].ToString()}");
 
                 bool ismix = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"
 SELECT IsMixPack
@@ -4109,15 +4171,15 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
                 // ori
                 if (i <= oriDetailDataRows.Count - 1)
                 {
-                    oriMarkType = MyUtility.GetValue.Lookup($"select ID from ShippingMarkType WHERE Ukey={oriDetailDataRows[i]["ShippingMarkTypeUkey"]}");
-                    oriSide = MyUtility.Convert.GetString(oriDetailDataRows[i]["Side"]);
-                    oriFromRight = MyUtility.Convert.GetString(oriDetailDataRows[i]["FromRight"]);
-                    oriFromBottom = MyUtility.Convert.GetString(oriDetailDataRows[i]["FromBottom"]);
-                    oriMarkSize = MyUtility.GetValue.Lookup($@"select Size from StickerSize WHERE ID ='{oriDetailDataRows[i]["StickerSizeID"]}' ");
-                    oriIs2Side = MyUtility.Convert.GetBool(oriDetailDataRows[i]["Is2Side"]) ? "Y" : string.Empty;
-                    oriIsHorizontal = MyUtility.Convert.GetBool(oriDetailDataRows[i]["IsHorizontal"]) ? "Y" : string.Empty;
-                    oriIsOverCartonHeight = MyUtility.Convert.GetBool(oriDetailDataRows[i]["IsOverCtnHt"]) ? "Y" : string.Empty;
-                    oriNottoAutomate = MyUtility.Convert.GetBool(oriDetailDataRows[i]["NotAutomate"]) ? "Y" : string.Empty;
+                    oriMarkType = MyUtility.GetValue.Lookup($"select ID from ShippingMarkType WHERE Ukey={oriDetailDataRows[i].ShippingMarkTypeUkey}");
+                    oriSide = oriDetailDataRows[i].Side;
+                    oriFromRight = oriDetailDataRows[i].FromRight.ToString();
+                    oriFromBottom = oriDetailDataRows[i].FromBottom.ToString();
+                    oriMarkSize = MyUtility.GetValue.Lookup($@"select Size from StickerSize WHERE ID ='{oriDetailDataRows[i].StickerSizeID}' ");
+                    oriIs2Side = oriDetailDataRows[i].Is2Side ? "Y" : string.Empty;
+                    oriIsHorizontal = oriDetailDataRows[i].IsHorizontal ? "Y" : string.Empty;
+                    oriIsOverCartonHeight = oriDetailDataRows[i].IsOverCtnHt ? "Y" : string.Empty;
+                    oriNottoAutomate = oriDetailDataRows[i].NotAutomate ? "Y" : string.Empty;
                 }
 
                 if (i <= newDetailDataRows.Count - 1)
@@ -4136,7 +4198,7 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
                 DataRow dr = final.NewRow();
 
                 dr["BrandID"] = brindID;
-                dr["Category"] = categorys;
+                dr["Category"] = category;
                 dr["ShippingMarkCombination"] = shippingMarkCombination;
                 dr["CTNRefno"] = cTNRefno;
                 dr["IsMixPack"] = isMixPacks;
@@ -4166,20 +4228,115 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
 
             result.Add(final);
 
-            switch (category)
+            if (result[0].Rows.Count == 0)
             {
-                case "PIC":
-                    category = "Sticker";
-                    break;
-                case "HTML":
-                    category = "Stamp";
-                    break;
-                default:
-                    break;
+                return;
             }
 
-            SendRunningChange(result, "Packing B03", new List<string>() { category });
+            RunningChange_Excel(result, "Packing B03", new List<string>() { category });
+        }
 
+        /// <summary>
+        /// Packing B04  Running change 查詢
+        /// </summary>
+        /// <param name="currentMaintain">currentMaintain</param>
+        /// <param name="oriCurrentMaintain">oriCurrentMaintain</param>
+        public static void StickerSize_RunningChange(DataRow currentMaintain, StickerSize oriCurrentMaintain)
+        {
+            DataTable[] tables;
+            List<DataTable> result = new List<DataTable>();
+
+            string stickerSizeID = currentMaintain["ID"].ToString();
+
+            string cmd = string.Empty;
+
+            #region SQL
+
+            // 判斷需要列出哪些CustPONo
+            cmd = $@"
+
+select distinct a.Ukey
+INTO #Ukeys
+from ShippingMarkPicture a
+inner join ShippingMarkPicture_Detail b on a.Ukey = b.ShippingMarkPictureUkey
+inner join ShippingMarkType c on c.Ukey = b.ShippingMarkTypeUkey
+inner join StickerSize s on s.ID = b.StickerSizeID
+where s.ID = {stickerSizeID}
+
+SELECT  BrandID,Category,ShippingMarkCombinationUkey,CTNRefno
+INTO #ShippingMarkPicture_PIC
+FROM ShippingMarkPicture a
+WHERE Ukey IN (select ukey from #Ukeys) AND a.Category='PIC'
+
+SELECT  BrandID,Category,ShippingMarkCombinationUkey,CTNRefno
+INTO #ShippingMarkPicture_HTML
+FROM ShippingMarkPicture a
+WHERE Ukey  IN (select ukey from #Ukeys) AND a.Category='HTML'
+
+select distinct o.CustPONo,Category='Sticker'
+INTO #CustPONo_PIC
+from ShippingMarkPic_Detail a
+inner join PackingList_Detail pd on a.SCICtnNo = pd.SCICtnNo
+inner join PackingList p on p.ID = pd.ID
+inner join #ShippingMarkPicture_PIC c ON c.BrandID = p.BrandID and c.ShippingMarkCombinationUkey = a.ShippingMarkCombinationUkey and c.CTNRefno = pd.RefNo
+LEFT JOIN Pullout pu On pu.ID = p.PulloutID
+inner join orders o ON o.ID = pd.OrderID
+WHERE  (pu.Status = 'New'  or pu.Status IS NULL)
+
+select distinct o.CustPONo,Category='Stamp'
+INTO #CustPONo_HTML
+from ShippingMarkStamp_Detail a
+inner join PackingList_Detail pd on a.SCICtnNo = pd.SCICtnNo
+inner join PackingList p on p.ID = pd.ID
+inner join #ShippingMarkPicture_HTML c ON c.BrandID = p.BrandID and c.ShippingMarkCombinationUkey = a.ShippingMarkCombinationUkey and c.CTNRefno = pd.RefNo
+LEFT JOIN Pullout pu On pu.ID = p.PulloutID
+inner join orders o ON o.ID = pd.OrderID
+WHERE  (pu.Status = 'New'  or pu.Status IS NULL)
+
+SELECT CustPONo
+FROM #CustPONo_PIC
+UNION
+SELECT CustPONo
+FROM #CustPONo_HTML
+
+SELECT Category
+FROM #CustPONo_PIC
+UNION
+SELECT Category
+FROM #CustPONo_HTML
+
+DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_HTML,#CustPONo_PIC
+
+";
+            #endregion
+
+            DBProxy.Current.Select(null, cmd, out tables);
+            result.Add(tables[0]);
+
+            List<string> chageTypes = tables[1].AsEnumerable().Select(o => MyUtility.Convert.GetString(o["Category"])).ToList();
+
+            DataTable final = new DataTable();
+            final.ColumnsStringAdd("Size");
+            final.ColumnsIntAdd("OriWidth");
+            final.ColumnsIntAdd("OriLength");
+            final.ColumnsIntAdd("NewWidth");
+            final.ColumnsIntAdd("NewLength");
+
+            DataRow dr = final.NewRow();
+            dr["Size"] = currentMaintain["Size"].ToString();
+            dr["OriWidth"] = oriCurrentMaintain.Width;
+            dr["OriLength"] = oriCurrentMaintain.Length;
+            dr["NewWidth"] = MyUtility.Convert.GetInt(currentMaintain["Width"]);
+            dr["NewLength"] = MyUtility.Convert.GetInt(currentMaintain["Length"]);
+            final.Rows.Add(dr);
+            result.Add(final);
+
+            if (result[0].Rows.Count == 0)
+            {
+                return;
+            }
+
+            RunningChange_Excel(result, "Packing B04", chageTypes);
         }
 
         /// <summary>
@@ -4188,7 +4345,7 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
         /// <param name="datas">datas</param>
         /// <param name="callFrom">callFrom</param>
         /// <param name="changeType">changeType</param>
-        public static void SendRunningChange(List<DataTable> datas, string callFrom, List<string> changeType)
+        public static void RunningChange_Excel(List<DataTable> datas, string callFrom, List<string> changeType)
         {
             string sqlcmd = $@"SELECT * FROM MailTo WHERE ID='102' AND ToAddress != '' ";
             if (!MyUtility.Check.Seek(sqlcmd))
@@ -4205,7 +4362,7 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\RunningChange.xltx"); // 預先開啟excel app
 
-            objApp.Visible = true;
+            objApp.Visible = false;
             objApp.DisplayAlerts = false;
 
             Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[3];
@@ -4270,7 +4427,11 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
             Worksheet custPoSheet = (Worksheet)objApp.ActiveWorkbook.Worksheets[1];
             Worksheet dataSheet = (Worksheet)objApp.ActiveWorkbook.Worksheets[2];
 
-            MyUtility.Excel.CopyToXls(poDatatable, null, "RunningChange.xltx", headerRow: 1, excelApp: objApp, wSheet: custPoSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+            if (poDatatable.Rows.Count > 0)
+            {
+                MyUtility.Excel.CopyToXls(poDatatable, null, "RunningChange.xltx", headerRow: 1, excelApp: objApp, wSheet: custPoSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
+            }
+
             MyUtility.Excel.CopyToXls(sheetData, null, "RunningChange.xltx", headerRow: 2, excelApp: objApp, wSheet: dataSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
 
             custPoSheet.Activate();
@@ -4286,84 +4447,7 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
 
             #endregion
 
-            DataTable mailToInfo;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out mailToInfo);
-
-            string toAddress = mailToInfo.Rows[0]["ToAddress"].ToString();
-            string cCAddress = mailToInfo.Rows[0]["CcAddress"].ToString();
-            string subject = mailToInfo.Rows[0]["Subject"].ToString();
-            string content = mailToInfo.Rows[0]["Content"].ToString().Replace("{0}", changeType.JoinToString(" & "));
-
-            totalFileList = excelFiles;
-
-            string mailServer = ConfigurationManager.AppSettings["mailserver_ip"];
-            string eMailID = ConfigurationManager.AppSettings["mailserver_account"];
-            string eMailPwd = ConfigurationManager.AppSettings["mailserver_password"];
-            ushort? smtpPort = MyUtility.Check.Empty(ConfigurationManager.AppSettings["mailserver_port"]) ? null : (ushort?)Convert.ToInt32(ConfigurationManager.AppSettings["mailserver_port"]); //25;
-            string sendFrom = "foxpro@sportscity.com.tw";
-
-            Sci.DB.TransferPms transferPMS = new Sci.DB.TransferPms();
-            transferPMS.SetSMTP(mailServer, smtpPort, eMailID, eMailPwd);
-
-            if (!MyUtility.Check.Empty(toAddress))
-            {
-                var mail = new MailMessage();
-
-                mail.IsBodyHtml = true;
-                mail.Subject = subject;
-
-                var altView = AlternateView.CreateAlternateViewFromString(
-                    content, null, System.Net.Mime.MediaTypeNames.Text.Html);
-
-                mail.AlternateViews.Add(altView);
-
-                foreach (var it in totalFileList)
-                {
-                    using (FileStream fileStream = new FileStream(
-                        it,
-                        FileMode.Open,
-                        FileAccess.Read,
-                        FileShare.ReadWrite))
-                    {
-                        try
-                        {
-                            var ms = new MemoryStream();
-                            fileStream.CopyTo(ms);
-                            fileStream.Flush();
-                            ms.Flush();
-                            ms.Position = 0;
-                            mail.Attachments.Add(new Attachment(ms, System.IO.Path.GetFileName(it)));
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-                }
-
-                foreach (var item in toAddress.Split(';'))
-                {
-                    if (!string.IsNullOrWhiteSpace(item))
-                    {
-                        mail.To.Add(item);
-                    }
-                }
-
-                foreach (var item in cCAddress.Split(';'))
-                {
-                    if (!string.IsNullOrWhiteSpace(item))
-                    {
-                        mail.CC.Add(item);
-                    }
-                }
-
-                mail.From = new MailAddress(sendFrom);
-
-                SmtpClient smtp = new SmtpClient(mailServer);
-                smtp.Credentials = new NetworkCredential(eMailID, eMailPwd);// 寄信帳密
-
-                smtp.Send(mail);
-            }
+            Send_RunningChange_Mail(changeType, excelFiles);
         }
 
         /// <summary>
@@ -4372,7 +4456,7 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
         /// <param name="datas">datas</param>
         /// <param name="deleteColumn">keepColumn</param>
         /// <param name="changeType">changeType</param>
-        public static void SendRunningChange_B06(List<DataTable> datas, string deleteColumn, List<string> changeType)
+        public static void RunningChange_Excel_B06(List<DataTable> datas, string deleteColumn, List<string> changeType)
         {
             string sqlcmd = $@"SELECT * FROM MailTo WHERE ID='102' AND ToAddress != '' ";
             if (!MyUtility.Check.Seek(sqlcmd))
@@ -4389,7 +4473,7 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
             DataTable sheetData = datas[2];
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("RunningChange.xltx");
-
+            
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(sheetData)
             {
                 ShowHeader = false,   // 表頭範本有了所以False
@@ -4473,20 +4557,30 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
             #region Save Excel
             string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
             excelFiles.Add(excelFile);
+            xl.BoOpenFile = false;
             xl.Save(excelFile);
             xl.FinishSave();
             #endregion
 
+            Send_RunningChange_Mail(changeType, excelFiles);
+        }
+
+        /// <summary>
+        /// 寄送Running Change信件
+        /// </summary>
+        /// <param name="changeType">Sticker 或 Stamp</param>
+        /// <param name="totalFileList">附件路徑檔</param>
+        public static void Send_RunningChange_Mail(List<string> changeType, List<string> totalFileList)
+        {
             DataTable mailToInfo;
+            string sqlcmd = $@"SELECT * FROM MailTo WHERE ID='102' AND ToAddress != '' ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out mailToInfo);
 
+            string userEmail = MyUtility.GetValue.Lookup($"select EMail from Pass1 where id='{Sci.Env.User.UserID}'");
             string toAddress = mailToInfo.Rows[0]["ToAddress"].ToString();
-            string cCAddress = mailToInfo.Rows[0]["CcAddress"].ToString();
+            string cCAddress = mailToInfo.Rows[0]["CcAddress"].ToString() + ";" + userEmail;
             string subject = mailToInfo.Rows[0]["Subject"].ToString();
             string content = mailToInfo.Rows[0]["Content"].ToString().Replace("{0}", changeType.JoinToString(" & "));
-
-            totalFileList = excelFiles;
-
             string mailServer = ConfigurationManager.AppSettings["mailserver_ip"];
             string eMailID = ConfigurationManager.AppSettings["mailserver_account"];
             string eMailPwd = ConfigurationManager.AppSettings["mailserver_password"];
@@ -4551,10 +4645,72 @@ WHERE Ukey = '{currentMaintain["ShippingMarkCombinationUkey"]}'
                 mail.From = new MailAddress(sendFrom);
 
                 SmtpClient smtp = new SmtpClient(mailServer);
-                smtp.Credentials = new NetworkCredential(eMailID, eMailPwd);// 寄信帳密
+                smtp.Credentials = new NetworkCredential(eMailID, eMailPwd); // 寄信帳密
 
                 smtp.Send(mail);
             }
         }
+
+        /// <summary>
+        /// Packing B03表身
+        /// </summary>
+        public class ShippingMarkPicture_Detail
+        {
+            /// <inheritdoc/>
+            public int ShippingMarkPictureUkey { get; set; }
+
+            /// <inheritdoc/>
+            public int ShippingMarkTypeUkey { get; set; }
+
+            /// <inheritdoc/>
+            public int Seq { get; set; }
+
+            /// <inheritdoc/>
+            public bool IsSSCC { get; set; }
+
+            /// <inheritdoc/>
+            public string Side { get; set; }
+
+            /// <inheritdoc/>
+            public int FromRight { get; set; }
+
+            /// <inheritdoc/>
+            public int FromBottom { get; set; }
+
+            /// <inheritdoc/>
+            public int StickerSizeID { get; set; }
+
+            /// <inheritdoc/>
+            public bool Is2Side { get; set; }
+
+            /// <inheritdoc/>
+            public bool IsHorizontal { get; set; }
+
+            /// <inheritdoc/>
+            public bool IsOverCtnHt { get; set; }
+
+            /// <inheritdoc/>
+            public bool NotAutomate { get; set; }
+        }
+
+        /// <summary>
+        /// Packing B04表身
+        /// </summary>
+        public class StickerSize
+        {
+            /// <inheritdoc/>
+            public int ID { get; set; }
+
+            /// <inheritdoc/>
+            public string Size { get; set; }
+
+            /// <inheritdoc/>
+            public int Width { get; set; }
+
+            /// <inheritdoc/>
+            public int Length { get; set; }
+        }
+
+        #endregion
     }
 }

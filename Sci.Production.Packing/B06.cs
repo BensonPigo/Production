@@ -376,6 +376,11 @@ AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? 
 	AND IsDefault =1 
 	AND IsMixPack = 0
 ";
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) && MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC" && !MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+            {
+                newPIC = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+            }
+
             string newPIC_Mix = $@"
 	select ID 
 	from ShippingMarkCombination
@@ -384,6 +389,12 @@ AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? 
 	AND IsDefault =1 
 	AND IsMixPack = 1
 ";
+
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) && MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC" && MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+            {
+                newPIC_Mix = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+            }
+
             string newHtml = $@"
 	select ID 
 	from ShippingMarkCombination
@@ -393,6 +404,11 @@ AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? 
 	AND IsMixPack = 0
 ";
 
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) && MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML" && MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+            {
+                newHtml = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+            }
+
             // 找不到代表改變了
             if (!MyUtility.Check.Seek(c))
             {
@@ -401,18 +417,18 @@ AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? 
                 {
                     if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
                     {
-                        newPIC = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                        newPIC = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
                     }
                     else
                     {
-                        newPIC_Mix = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                        newPIC_Mix = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
                     }
 
                     ischange = true;
                 }
                 else
                 {
-                    newHtml = $@"SELECT ID FROM ShippingMarkCombination WHERE Ukey = {this.CurrentMaintain["Ukey"]}";
+                    newHtml = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
                 }
 
                 ischange = true;
@@ -502,6 +518,11 @@ SELECT 1
 
 ";
                 if (MyUtility.Check.Seek(c))
+                {
+                    isDetailChange = true;
+                }
+
+                if (this.IsDetailInserting)
                 {
                     isDetailChange = true;
                 }
@@ -642,7 +663,12 @@ Please check to continue process.");
 
             if (ischange || isDetailChange)
             {
-                Prgs.ShippingMarkCombination_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), isDetailChange, defaultData);
+                cmd = "select * from MailTo where ID='102' AND ToAddress != '' AND ToAddress IS NOT NULL";
+
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    Prgs.ShippingMarkCombination_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), isDetailChange, defaultData, this.IsDetailInserting);
+                }
             }
 
             return true;

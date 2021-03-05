@@ -201,10 +201,12 @@ WHERE Type='Pms_LocalItem_UnPack'
 
             if (!MyUtility.Check.Seek(chk))
             {
-                Prgs.LocalItem_RunningChange(
-                     this.CurrentMaintain["Refno"].ToString(),
-                     MyUtility.Convert.GetDecimal(this.CurrentMaintain["CtnHeight"]),
-                     MyUtility.Convert.GetDecimal(this.CurrentMaintain["CtnWidth"]));
+                string cmd = "select * from MailTo where ID='102' AND ToAddress != '' AND ToAddress IS NOT NULL";
+
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    Prgs.LocalItem_RunningChange(this.CurrentMaintain);
+                }
             }
 
             return base.ClickSaveBefore();

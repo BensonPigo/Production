@@ -3,12 +3,16 @@ using Sci.Data;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using static Sci.Production.PublicPrg.Prgs;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Packing
 {
     /// <inheritdoc/>
     public partial class B04 : Win.Tems.Input1
     {
+        private StickerSize OriCurrentMaintain;
+
         /// <inheritdoc/>
         public B04(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -34,6 +38,21 @@ namespace Sci.Production.Packing
         }
 
         /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            this.OriCurrentMaintain = new StickerSize();
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                this.OriCurrentMaintain.ID = MyUtility.Convert.GetInt(this.CurrentMaintain["ID"]);
+                this.OriCurrentMaintain.Size = MyUtility.Convert.GetString(this.CurrentMaintain["Size"]);
+                this.OriCurrentMaintain.Width = MyUtility.Convert.GetInt(this.CurrentMaintain["Width"]);
+                this.OriCurrentMaintain.Length = MyUtility.Convert.GetInt(this.CurrentMaintain["Length"]);
+            }
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             List<SqlParameter> paras = new List<SqlParameter>();
@@ -45,6 +64,25 @@ namespace Sci.Production.Packing
             {
                 MyUtility.Msg.InfoBox("The Sticker Size exists already. Please check again.");
                 return false;
+            }
+
+            bool isChange = false;
+            if (MyUtility.Convert.GetInt(this.CurrentMaintain["ID"]) != this.OriCurrentMaintain.ID ||
+                MyUtility.Convert.GetString(this.CurrentMaintain["Size"]) != this.OriCurrentMaintain.Size ||
+                MyUtility.Convert.GetInt(this.CurrentMaintain["Width"]) != this.OriCurrentMaintain.Width ||
+                MyUtility.Convert.GetInt(this.CurrentMaintain["Length"]) != this.OriCurrentMaintain.Length)
+            {
+                isChange = true;
+            }
+
+            if (isChange)
+            {
+                string cmd = "select * from MailTo where ID='102' AND ToAddress != '' AND ToAddress IS NOT NULL";
+
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    Prgs.StickerSize_RunningChange(this.CurrentMaintain, this.OriCurrentMaintain);
+                }
             }
 
             return base.ClickSaveBefore();
