@@ -261,7 +261,7 @@ select	FactoryID
 into #TPEIn
 from (
 	-- Type 1, 4 --
-	select FactoryID = f.FTYGroup
+	select FactoryID = f.ID
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
@@ -278,7 +278,7 @@ from (
 	union all
 
 	-- Type 3 --
-	select FactoryID = f.FTYGroup
+	select FactoryID = f.ID
 			, POID = inv.InventoryPOID
 			, Seq1 = inv.InventorySeq1
 			, Seq2 = inv.InventorySeq2
@@ -367,7 +367,7 @@ group by o.FactoryID, fi.POID, fi.Seq1, fi.Seq2
 
 ------------------------------------------------------------------
 /*
-	Comparise
+	Comparison
 */
 
 select  FactoryID = iif (tcs.FactoryID is not null, tcs.FactoryID, fcs.FactoryID)
@@ -417,7 +417,6 @@ select	FactoryID = sl.FactoryID
 		, AdjustQty = sl.FtyAdjustQty
 		, ReturnQty = sl.FtyReturnQty
 		, BalanceQty = sl.FtyBalance
-		, v.RateValue
 from #StockList sl
 left join PO_Supp_Detail psd on sl.POID = psd.ID
 								and sl.Seq1 = psd.SEQ1
@@ -431,6 +430,7 @@ outer apply (
 ) v
 where   (sl.TPEBalance <> 0 or sl.TPEInQty <> 0 or sl.FtyBalance <> 0) 
         {whereFinal}
+order by sl.POID, sl.Seq1, sl.Seq2
 ------------------------------------------------------------------
 drop table #TPEIn, #TPEAllocated, #TPECurrentStock, #FtyCurrentStock, #StockList
 
