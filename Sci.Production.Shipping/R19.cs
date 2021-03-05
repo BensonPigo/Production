@@ -136,7 +136,7 @@ SELECT e.ID
 ,e.FactoryID
 ,e.Consignee
 ,e.ShipModeID
-,MainCYCFS.CYCFS
+,e.CYCFS
 ,e.InvNo
 ,[Payer] = (case when  e.Payer= 'S' then 'By Sci Taipei Office(Sender)'
 			when Payer= 'M' then 'By Mill(Sender)'
@@ -166,9 +166,6 @@ SELECT e.ID
 
 FROM Export e WITH(NOLOCK)
 LEFT JOIN VNImportDeclaration vd WITH(NOLOCK) ON e.Blno = vd.Blno AND vd.IsFtyExport = 0
-OUTER APPLY(
-	SELECT  CYCFS from Export a WITH (NOLOCK) where a.ID =  e.MainExportID
-)MainCYCFS
 OUTER APPLY(
 	SELECT 1 as [DoorToDoorDelivery]
 	FROM Door2DoorDelivery 
