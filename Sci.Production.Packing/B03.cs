@@ -9,6 +9,7 @@ using Sci.Win.Tools;
 using System.Linq;
 using System.Collections;
 using System;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Packing
 {
@@ -20,6 +21,8 @@ namespace Sci.Production.Packing
         private DataTable sizesAll;
         private string oldStickerComb = string.Empty;
         private string oldBrandID = string.Empty;
+        private List<DataRow> OriDetailDatas;
+        private DataRow OriCurrentMaintain;
 
         /// <inheritdoc/>
         public B03(ToolStripMenuItem menuitem)
@@ -78,6 +81,8 @@ WHERE Type ='PMS_ShipMarkCategory'
             this.comboCategory.ValueMember = "Value";
             this.comboCategory.DisplayMember = "Text";
             #endregion
+
+            this.OriDetailDatas = new List<DataRow>();
         }
 
         /// <inheritdoc/>
@@ -135,6 +140,16 @@ WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
             {
                 this.ChangeVisible("PIC");
             }
+
+            this.OriDetailDatas.Clear();
+            foreach (DataRow item in this.DetailDatas)
+            {
+                DataTable t = item.Table.Clone();
+                t.Rows.Add(item);
+                this.OriDetailDatas.Add(t.Rows[0]);
+            }
+
+            this.OriCurrentMaintain = this.CurrentMaintain;
         }
 
         /// <inheritdoc/>
@@ -363,6 +378,93 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
             }
 
             this.CurrentMaintain["CTNHeight"] = this.disCtnHeight.Value;
+
+            bool isDetailChange = false;
+            foreach (DataRow current in this.DetailDatas)
+            {
+                int shippingMarkPictureUkey = MyUtility.Convert.GetInt(current["ShippingMarkPictureUkey"]);
+                int shippingMarkTypeUkey = MyUtility.Convert.GetInt(current["shippingMarkTypeUkey"]);
+                var tmp = this.OriDetailDatas.Where(o => MyUtility.Convert.GetInt(o["ShippingMarkPictureUkey"]) == shippingMarkPictureUkey && MyUtility.Convert.GetInt(o["shippingMarkTypeUkey"]) == shippingMarkTypeUkey);
+
+                if (!tmp.Any())
+                {
+                    isDetailChange = true;
+                    break;
+                }
+
+                DataRow ori = tmp.FirstOrDefault();
+                int oriShippingMarkTypeUkey = MyUtility.Convert.GetInt(ori["ShippingMarkTypeUkey"]);
+                string oriSide = MyUtility.Convert.GetString(ori["Side"]);
+                int oriFromRight = MyUtility.Convert.GetInt(ori["FromRight"]);
+                int oriFromBottom = MyUtility.Convert.GetInt(ori["FromBottom"]);
+                int oriStickerSizeID = MyUtility.Convert.GetInt(ori["StickerSizeID"]);
+                bool oriIs2Side = MyUtility.Convert.GetBool(ori["Is2Side"]);
+                bool oriIsHorizontal = MyUtility.Convert.GetBool(ori["IsHorizontal"]);
+                bool oriIsOverCtnHt = MyUtility.Convert.GetBool(ori["IsOverCtnHt"]);
+                bool oriNotAutomate = MyUtility.Convert.GetBool(ori["NotAutomate"]);
+
+                int newShippingMarkTypeUkey = MyUtility.Convert.GetInt(current["ShippingMarkTypeUkey"]);
+                string newSide = MyUtility.Convert.GetString(current["Side"]);
+                int newFromRight = MyUtility.Convert.GetInt(current["FromRight"]);
+                int newFromBottom = MyUtility.Convert.GetInt(current["FromBottom"]);
+                int newStickerSizeID = MyUtility.Convert.GetInt(current["StickerSizeID"]);
+                bool newIs2Side = MyUtility.Convert.GetBool(current["Is2Side"]);
+                bool newIsHorizontal = MyUtility.Convert.GetBool(current["IsHorizontal"]);
+                bool newIsOverCtnHt = MyUtility.Convert.GetBool(current["IsOverCtnHt"]);
+                bool newNotAutomate = MyUtility.Convert.GetBool(current["NotAutomate"]);
+
+                if (oriShippingMarkTypeUkey != newShippingMarkTypeUkey ||
+                    oriSide != newSide ||
+                    oriFromRight != newFromRight ||
+                    oriFromBottom != newFromBottom ||
+                    oriStickerSizeID != newStickerSizeID ||
+                    oriIs2Side != newIs2Side ||
+                    oriIsHorizontal != newIsHorizontal ||
+                    oriIsOverCtnHt != newIsOverCtnHt ||
+                    oriNotAutomate != newNotAutomate)
+                {
+                    isDetailChange = true;
+                }
+
+            }
+
+            foreach (DataRow ori in this.OriDetailDatas)
+            {
+                int shippingMarkPictureUkey = MyUtility.Convert.GetInt(ori["ShippingMarkPictureUkey"]);
+                int shippingMarkTypeUkey = MyUtility.Convert.GetInt(ori["shippingMarkTypeUkey"]);
+                var tmp = this.DetailDatas.Where(o => MyUtility.Convert.GetInt(o["ShippingMarkPictureUkey"]) == shippingMarkPictureUkey && MyUtility.Convert.GetInt(o["shippingMarkTypeUkey"]) == shippingMarkTypeUkey);
+
+                if (!tmp.Any())
+                {
+                    isDetailChange = true;
+                    break;
+                }
+            }
+
+            bool oriIsMix = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"
+SELECT IsMixPack
+FROM ShippingMarkCombination WITH(NOLOCK)
+WHERE Ukey = '{this.OriCurrentMaintain["ShippingMarkCombinationUkey"]}'
+
+"));
+
+            bool newIsMix = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($@"
+SELECT IsMixPack
+FROM ShippingMarkCombination WITH(NOLOCK)
+WHERE Ukey = '{this.CurrentMaintain["ShippingMarkCombinationUkey"]}'
+
+"));
+
+            bool isHeadChange = MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]) == MyUtility.Convert.GetString(this.OriCurrentMaintain["BrandID"]) &&
+                MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == MyUtility.Convert.GetString(this.OriCurrentMaintain["Category"]) &&
+                MyUtility.Convert.GetInt(this.CurrentMaintain["ShippingMarkCombinationUkey"]) == MyUtility.Convert.GetInt(this.OriCurrentMaintain["ShippingMarkCombinationUkey"]) &&
+                MyUtility.Convert.GetString(this.CurrentMaintain["CTNRefno"]) == MyUtility.Convert.GetString(this.OriCurrentMaintain["CTNRefno"]) &&
+                newIsMix == oriIsMix;
+
+            if (isHeadChange && isDetailChange)
+            {
+                Prgs.ShippingMarkPicture_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), this.OriDetailDatas, MyUtility.Convert.GetString(this.CurrentMaintain["Category"]));
+            }
 
             return base.ClickSaveBefore();
         }

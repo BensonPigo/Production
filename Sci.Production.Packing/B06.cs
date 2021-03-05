@@ -9,7 +9,6 @@ using Sci.Win.Tools;
 using System.Linq;
 using Sci.Production.PublicPrg;
 
-
 namespace Sci.Production.Packing
 {
     /// <inheritdoc/>
@@ -361,124 +360,6 @@ ORDER BY b.Seq
                 }
             }
 
-            // Category為PIC
-            if (this.CurrentMaintain["Category"].ToString() == "PIC")
-            {
-                // 找出Category = PIC，同品牌 + IsMixPack 的IsDefault
-                cmd = $@"SELECT * FROM ShippingMarkCombination 
-WHERE BrandID='{this.CurrentMaintain["BrandID"]}' 
-AND IsMixPack='{(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "1" : "0")}' 
-AND IsDefault=1 
-AND Category ='PIC'
-AND Ukey <> {this.CurrentMaintain["UKey"]}
-";
-                DataTable repeat_Data;
-                DualResult r = DBProxy.Current.Select(null, cmd, out repeat_Data);
-
-                if (!r)
-                {
-                    this.ShowErr(r);
-                    return false;
-                }
-
-                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]))
-                {
-                    // 若有已勾選資料，詢問是否覆蓋
-                    if (repeat_Data.Rows.Count > 0)
-                    {
-                        string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
-                        string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
-
-                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Sticker : Brand {otherBrand} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
-Please check to continue process.");
-
-                        if (diaR == DialogResult.OK)
-                        {
-                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND Category='{this.CurrentMaintain["Category"]}'  AND IsMixPack='{(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "1" : "0")}' AND IsDefault = 1 ";
-                            r = DBProxy.Current.Execute(null, cmd);
-                            if (!r)
-                            {
-                                this.ShowErr(r);
-                                return false;
-                            }
-
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    // 若該Category + 品牌 + IsMixPack 沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
-                    // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
-                    if (repeat_Data.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.InfoBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
-                        this.CurrentMaintain["IsDefault"] = true;
-                    }
-                }
-            }
-
-            // Category為HTML
-            if (this.CurrentMaintain["Category"].ToString() == "HTML")
-            {
-                // 找出Category = HTML，同品牌 的IsDefault
-                cmd = $@"SELECT * FROM ShippingMarkCombination 
-WHERE BrandID='{this.CurrentMaintain["BrandID"]}' 
-AND IsDefault=1 
-AND Category ='HTML'
-AND Ukey <> {this.CurrentMaintain["UKey"]}
-";
-                DataTable repeat_Data;
-                DualResult r = DBProxy.Current.Select(null, cmd, out repeat_Data);
-
-                if (!r)
-                {
-                    this.ShowErr(r);
-                    return false;
-                }
-
-                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]))
-                {
-                    // 若有已勾選資料，詢問是否覆蓋
-                    if (repeat_Data.Rows.Count > 0)
-                    {
-                        string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
-                        string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
-
-                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Stamp : Brand {otherBrand} Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
-Please check to continue process.");
-
-                        if (diaR == DialogResult.OK)
-                        {
-                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND Category='{this.CurrentMaintain["Category"]}' AND IsDefault = 1 ";
-                            r = DBProxy.Current.Execute(null, cmd);
-                            if (!r)
-                            {
-                                this.ShowErr(r);
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    // 若該Category + 品牌 + IsMixPack 沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
-                    // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
-                    if (repeat_Data.Rows.Count == 0)
-                    {
-                        MyUtility.Msg.InfoBox($"Stamp  : Brand {this.CurrentMaintain["BrandID"]} not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
-                        this.CurrentMaintain["IsDefault"] = true;
-                    }
-                }
-            }
-
             #region Running Change資料準備
             bool ischange = false;
             string c = $@"select 1 
@@ -596,7 +477,7 @@ IF EXISTS(
     WHERE ShippingMarkCombinationUkey = {ukey}
     AND Seq = {seq}
     AND ShippingMarkTypeUkey = {shippingMarkTypeUkey}
-) OR
+) AND
 NOT EXISTS(
 	select 1
 	from ShippingMarkCombination_Detail 
@@ -611,7 +492,7 @@ IF NOT EXISTS(
     WHERE ShippingMarkCombinationUkey = {ukey}
     AND Seq = {seq}
     AND ShippingMarkTypeUkey = {shippingMarkTypeUkey}
-) OR
+) AND
 EXISTS(
 	select 1
 	from ShippingMarkCombination_Detail 
@@ -625,7 +506,139 @@ SELECT 1
                     isDetailChange = true;
                 }
             }
+
+            // 清空表身
+            if (this.DetailDatas.Count == 0)
+            {
+                c = $@"
+select 1
+from ShippingMarkCombination_Detail 
+WHERE ShippingMarkCombinationUkey = {this.CurrentMaintain["Ukey"]}
+";
+                if (MyUtility.Check.Seek(c))
+                {
+                    isDetailChange = true;
+                }
+            }
             #endregion
+
+            // Category為PIC
+            if (this.CurrentMaintain["Category"].ToString() == "PIC")
+            {
+                // 找出Category = PIC，同品牌 + IsMixPack 的IsDefault
+                cmd = $@"SELECT * FROM ShippingMarkCombination 
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}' 
+AND IsMixPack='{(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "1" : "0")}' 
+AND IsDefault=1 
+AND Category ='PIC'
+AND Ukey <> {this.CurrentMaintain["UKey"]}
+";
+                DataTable repeat_Data;
+                DualResult r = DBProxy.Current.Select(null, cmd, out repeat_Data);
+
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]))
+                {
+                    // 若有已勾選資料，詢問是否覆蓋
+                    if (repeat_Data.Rows.Count > 0)
+                    {
+                        string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
+                        string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
+
+                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Sticker : Brand {otherBrand} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
+Please check to continue process.");
+
+                        if (diaR == DialogResult.OK)
+                        {
+                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND Category='{this.CurrentMaintain["Category"]}'  AND IsMixPack='{(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "1" : "0")}' AND IsDefault = 1 ";
+                            r = DBProxy.Current.Execute(null, cmd);
+                            if (!r)
+                            {
+                                this.ShowErr(r);
+                                return false;
+                            }
+
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    // 若該Category + 品牌 + IsMixPack 沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
+                    // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
+                    if (repeat_Data.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.InfoBox($"Sticker : Brand {this.CurrentMaintain["BrandID"]} IsMixPack ({(MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]) ? "True" : "False")}) not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
+                        this.CurrentMaintain["IsDefault"] = true;
+                    }
+                }
+            }
+
+            // Category為HTML
+            if (this.CurrentMaintain["Category"].ToString() == "HTML")
+            {
+                // 找出Category = HTML，同品牌 的IsDefault
+                cmd = $@"SELECT * FROM ShippingMarkCombination 
+WHERE BrandID='{this.CurrentMaintain["BrandID"]}' 
+AND IsDefault=1 
+AND Category ='HTML'
+AND Ukey <> {this.CurrentMaintain["UKey"]}
+";
+                DataTable repeat_Data;
+                DualResult r = DBProxy.Current.Select(null, cmd, out repeat_Data);
+
+                if (!r)
+                {
+                    this.ShowErr(r);
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]))
+                {
+                    // 若有已勾選資料，詢問是否覆蓋
+                    if (repeat_Data.Rows.Count > 0)
+                    {
+                        string otherBrand = repeat_Data.Rows[0]["BrandID"].ToString();
+                        string otherIDd = repeat_Data.Rows[0]["ID"].ToString();
+
+                        DialogResult diaR = MyUtility.Msg.WarningBox($@"Stamp : Brand {otherBrand} Shipping Mark Combination {otherIDd}, already ticked ‘Is Default’, system will auto untick ‘Is Default’ for Shipping Mark Combination {this.CurrentMaintain["ID"]}.
+Please check to continue process.");
+
+                        if (diaR == DialogResult.OK)
+                        {
+                            cmd = $@"UPDATE ShippingMarkCombination SET IsDefault = 0 WHERE BrandID='{otherBrand}' AND Category='{this.CurrentMaintain["Category"]}' AND IsDefault = 1 ";
+                            r = DBProxy.Current.Execute(null, cmd);
+                            if (!r)
+                            {
+                                this.ShowErr(r);
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    // 若該Category + 品牌 + IsMixPack 沒有 IsDefault=1的資料，則將該筆資料設定為 IsDefault
+                    // 同一品牌中，『混尺碼 / 單尺碼』各至少要有一組貼標 Shipping Mark Combination 為預設
+                    if (repeat_Data.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.InfoBox($"Stamp  : Brand {this.CurrentMaintain["BrandID"]} not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
+                        this.CurrentMaintain["IsDefault"] = true;
+                    }
+                }
+            }
 
             if (ischange || isDetailChange)
             {
