@@ -389,7 +389,7 @@
             // displayContainerType
             // 
             this.displayContainerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MainCYCFS", true));
+            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CYCFS", true));
             this.displayContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayContainerType.Location = new System.Drawing.Point(98, 141);
             this.displayContainerType.Name = "displayContainerType";
