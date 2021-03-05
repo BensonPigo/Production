@@ -100,50 +100,50 @@ outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveD
             {
                 sqlwhere1.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
                 sqlwhere2.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
-                this.Parameters.Add(new SqlParameter("@InspectionDate1", this.dateInspectionDate.Value1));
-                this.Parameters.Add(new SqlParameter("@InspectionDate2", this.dateInspectionDate.Value2));
+                this.Parameters.Add(new SqlParameter("@InspectionDate1", SqlDbType.Date) { Value = this.dateInspectionDate.Value1 });
+                this.Parameters.Add(new SqlParameter("@InspectionDate2", SqlDbType.Date) { Value = this.dateInspectionDate.Value2 });
             }
 
             if (!this.txtSP.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand B.OrderID = @SP");
                 sqlwhere2.Append("\r\nand BR.OrderID = @SP");
-                this.Parameters.Add(new SqlParameter("@SP", this.txtSP.Text));
+                this.Parameters.Add(new SqlParameter("@SP", SqlDbType.VarChar, 13) { Value = this.txtSP.Text });
             }
 
             if (!this.txtstyle1.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand O.StyleID= @Style");
                 sqlwhere2.Append("\r\nand O.StyleID= @Style");
-                this.Parameters.Add(new SqlParameter("@Style", this.txtstyle1.Text));
+                this.Parameters.Add(new SqlParameter("@Style", SqlDbType.VarChar, 15) { Value = this.txtstyle1.Text });
             }
 
             if (!this.comboSubprocess.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand SR.SubProcessID= @SubProcessID");
                 sqlwhere2.Append("\r\nand SR.SubProcessID= @SubProcessID");
-                this.Parameters.Add(new SqlParameter("@SubProcessID", this.comboSubprocess.Text));
+                this.Parameters.Add(new SqlParameter("@SubProcessID", SqlDbType.VarChar, 10) { Value = this.comboSubprocess.Text });
             }
 
             if (!this.comboMDivision1.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand B.MDivisionID= @M");
                 sqlwhere2.Append("\r\nand BR.MDivisionID= @M");
-                this.Parameters.Add(new SqlParameter("@M", this.comboMDivision1.Text));
+                this.Parameters.Add(new SqlParameter("@M", SqlDbType.VarChar, 8) { Value = this.comboMDivision1.Text });
             }
 
             if (!this.comboFactory1.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand SR.FactoryID = @F");
                 sqlwhere2.Append("\r\nand SR.FactoryID = @F");
-                this.Parameters.Add(new SqlParameter("@F", this.comboFactory1.Text));
+                this.Parameters.Add(new SqlParameter("@F", SqlDbType.VarChar, 8) { Value = this.comboFactory1.Text });
             }
 
             if (!this.comboShift.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand SR.Shift = @Shift");
                 sqlwhere2.Append("\r\nand SR.Shift = @Shift");
-                this.Parameters.Add(new SqlParameter("@Shift", this.comboShift.Text));
+                this.Parameters.Add(new SqlParameter("@Shift", SqlDbType.VarChar, 5) { Value = this.comboShift.Text });
             }
             #endregion
 
