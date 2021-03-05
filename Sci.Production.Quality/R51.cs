@@ -96,57 +96,65 @@ outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveD
             #region where
             StringBuilder sqlwhere1 = new StringBuilder();
             StringBuilder sqlwhere2 = new StringBuilder();
+            StringBuilder declare = new StringBuilder();
             if (!this.dateInspectionDate.Value1.Empty())
             {
                 sqlwhere1.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
                 sqlwhere2.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
-                this.Parameters.Add(new SqlParameter("@InspectionDate1", this.dateInspectionDate.Value1));
-                this.Parameters.Add(new SqlParameter("@InspectionDate2", this.dateInspectionDate.Value2));
+                this.Parameters.Add(new SqlParameter("@InspectionDate1p", SqlDbType.Date) { Value = this.dateInspectionDate.Value1 });
+                this.Parameters.Add(new SqlParameter("@InspectionDate2p", SqlDbType.Date) { Value = this.dateInspectionDate.Value2 });
+                declare.Append("\r\ndeclare @InspectionDate1 Date = @InspectionDate1p\r\ndeclare @InspectionDate2 Date = @InspectionDate2p");
             }
 
             if (!this.txtSP.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand B.OrderID = @SP");
                 sqlwhere2.Append("\r\nand BR.OrderID = @SP");
-                this.Parameters.Add(new SqlParameter("@SP", this.txtSP.Text));
+                this.Parameters.Add(new SqlParameter("@SPp", SqlDbType.VarChar, 13) { Value = this.txtSP.Text });
+                declare.Append("\r\ndeclare @SP varchar(13) = @SPp");
             }
 
             if (!this.txtstyle1.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand O.StyleID= @Style");
                 sqlwhere2.Append("\r\nand O.StyleID= @Style");
-                this.Parameters.Add(new SqlParameter("@Style", this.txtstyle1.Text));
+                this.Parameters.Add(new SqlParameter("@Stylep", SqlDbType.VarChar, 15) { Value = this.txtstyle1.Text });
+                declare.Append("\r\ndeclare @Style varchar(15) = @Stylep");
             }
 
             if (!this.comboSubprocess.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand SR.SubProcessID= @SubProcessID");
                 sqlwhere2.Append("\r\nand SR.SubProcessID= @SubProcessID");
-                this.Parameters.Add(new SqlParameter("@SubProcessID", this.comboSubprocess.Text));
+                this.Parameters.Add(new SqlParameter("@SubProcessIDp", SqlDbType.VarChar, 10) { Value = this.comboSubprocess.Text });
+                declare.Append("\r\ndeclare @SubProcessID varchar(10) = @SubProcessIDp");
             }
 
             if (!this.comboMDivision1.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand B.MDivisionID= @M");
                 sqlwhere2.Append("\r\nand BR.MDivisionID= @M");
-                this.Parameters.Add(new SqlParameter("@M", this.comboMDivision1.Text));
+                this.Parameters.Add(new SqlParameter("@Mp", SqlDbType.VarChar, 8) { Value = this.comboMDivision1.Text });
+                declare.Append("\r\ndeclare @M varchar(8) = @Mp");
             }
 
             if (!this.comboFactory1.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand SR.FactoryID = @F");
                 sqlwhere2.Append("\r\nand SR.FactoryID = @F");
-                this.Parameters.Add(new SqlParameter("@F", this.comboFactory1.Text));
+                this.Parameters.Add(new SqlParameter("@Fp", SqlDbType.VarChar, 8) { Value = this.comboFactory1.Text });
+                declare.Append("\r\ndeclare @F varchar(8) = @Fp");
             }
 
             if (!this.comboShift.Text.Empty())
             {
                 sqlwhere1.Append("\r\nand SR.Shift = @Shift");
                 sqlwhere2.Append("\r\nand SR.Shift = @Shift");
-                this.Parameters.Add(new SqlParameter("@Shift", this.comboShift.Text));
+                this.Parameters.Add(new SqlParameter("@Shiftp", SqlDbType.VarChar, 5) { Value = this.comboShift.Text });
+                declare.Append("\r\ndeclare @Shift varchar(5) = @Shiftp");
             }
             #endregion
-
+            this.Sqlcmd.Append(declare);
             this.Sqlcmd.Append($@"
 select
     SR.FactoryID,
