@@ -142,11 +142,6 @@ order by rd.Seq1,rd.Seq2", masterID);
             this.displayTPELastEditDate.Value = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["TPEEditDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             this.label8.Visible = !MyUtility.Check.Empty(this.CurrentMaintain["RespDeptConfirmDate"]);
             this.numTtlEstAmt.Value = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(EstReplacementAMT)", string.Empty));
-            this.numTotalUS.Value =
-                MyUtility.Convert.GetDecimal(this.CurrentMaintain["RMtlAmt"]) +
-                MyUtility.Convert.GetDecimal(this.CurrentMaintain["ActFreight"]) +
-                MyUtility.Convert.GetDecimal(this.CurrentMaintain["EstFreight"]) +
-                MyUtility.Convert.GetDecimal(this.CurrentMaintain["SurchargeAmt"]);
             this.lbCompletedShow.Visible = MyUtility.Convert.GetBool(this.CurrentMaintain["isComplete"]);
             DataRow poData;
             if (MyUtility.Check.Seek(string.Format("select POSMR,POHandle,PCSMR,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"])), out poData))
