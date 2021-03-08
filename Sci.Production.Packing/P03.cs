@@ -392,7 +392,8 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
 
             this.Color_Change();
 
-            if (!MyUtility.Check.Seek($@"select * from Brand where ID='{this.CurrentMaintain["BrandID"]}' and Customize1 !=''"))
+            #region 表身欄位[Customize1] 動態顯示和調整名稱
+            if (!MyUtility.Check.Seek($@"select Customize1 from Brand where ID='{this.CurrentMaintain["BrandID"]}' and Customize1 !=''", out DataRow drCust))
             {
                 if (this.detailgrid.Columns["colCustom1"] != null)
                 {
@@ -403,9 +404,12 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             {
                 if (this.detailgrid.Columns["colCustom1"] != null)
                 {
+                    this.detailgrid.Columns["colCustom1"].HeaderText = $"{drCust["Customize1"]}";
                     this.detailgrid.Columns["colCustom1"].Visible = true;
                 }
             }
+            #endregion
+
         }
 
         /// <summary>
