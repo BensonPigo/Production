@@ -138,6 +138,23 @@
             this.btnIntendedDeliveryDate = new Sci.Win.UI.Button();
             this.btnBatchUpdateIDD = new Sci.Win.UI.Button();
             this.txtCFAFinalInspDate = new Sci.Win.UI.TextBox();
+            this.lbCDCodeNew = new Sci.Win.UI.Label();
+            this.displayCDCodeNew = new Sci.Win.UI.DisplayBox();
+            this.displayProductType = new Sci.Win.UI.DisplayBox();
+            this.lbProductType = new Sci.Win.UI.Label();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.displayFabricType = new Sci.Win.UI.DisplayBox();
+            this.lbFabricType = new Sci.Win.UI.Label();
+            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.displayLining = new Sci.Win.UI.DisplayBox();
+            this.lbLining = new Sci.Win.UI.Label();
+            this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.displayGender = new Sci.Win.UI.DisplayBox();
+            this.lbGender = new Sci.Win.UI.Label();
+            this.shapeContainer5 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.displayConstruction = new Sci.Win.UI.DisplayBox();
+            this.lbConstruction = new Sci.Win.UI.Label();
+            this.shapeContainer6 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -154,6 +171,18 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayConstruction);
+            this.detailcont.Controls.Add(this.lbConstruction);
+            this.detailcont.Controls.Add(this.displayGender);
+            this.detailcont.Controls.Add(this.lbGender);
+            this.detailcont.Controls.Add(this.displayLining);
+            this.detailcont.Controls.Add(this.lbLining);
+            this.detailcont.Controls.Add(this.displayFabricType);
+            this.detailcont.Controls.Add(this.lbFabricType);
+            this.detailcont.Controls.Add(this.displayProductType);
+            this.detailcont.Controls.Add(this.lbProductType);
+            this.detailcont.Controls.Add(this.displayCDCodeNew);
+            this.detailcont.Controls.Add(this.lbCDCodeNew);
             this.detailcont.Controls.Add(this.txtCFAFinalInspDate);
             this.detailcont.Controls.Add(this.btnIntendedDeliveryDate);
             this.detailcont.Controls.Add(this.panel7);
@@ -1189,11 +1218,6 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4,
-            this.lineShape3,
-            this.lineShape2,
-            this.lineShape1});
             this.shapeContainer1.Size = new System.Drawing.Size(976, 562);
             this.shapeContainer1.TabIndex = 85;
             this.shapeContainer1.TabStop = false;
@@ -1497,6 +1521,164 @@
             this.txtCFAFinalInspDate.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCFAFinalInspDate_PopUp);
             this.txtCFAFinalInspDate.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TxtCFAFinalInspDate_MouseDoubleClick);
             // 
+            // lbCDCodeNew
+            // 
+            this.lbCDCodeNew.Location = new System.Drawing.Point(165, 169);
+            this.lbCDCodeNew.Name = "lbCDCodeNew";
+            this.lbCDCodeNew.Size = new System.Drawing.Size(99, 23);
+            this.lbCDCodeNew.TabIndex = 102;
+            this.lbCDCodeNew.Text = "CD Code(new)";
+            // 
+            // displayCDCodeNew
+            // 
+            this.displayCDCodeNew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCDCodeNew.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
+            this.displayCDCodeNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCDCodeNew.Location = new System.Drawing.Point(267, 169);
+            this.displayCDCodeNew.Name = "displayCDCodeNew";
+            this.displayCDCodeNew.Size = new System.Drawing.Size(90, 23);
+            this.displayCDCodeNew.TabIndex = 103;
+            // 
+            // displayProductType
+            // 
+            this.displayProductType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayProductType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
+            this.displayProductType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayProductType.Location = new System.Drawing.Point(348, 275);
+            this.displayProductType.Name = "displayProductType";
+            this.displayProductType.Size = new System.Drawing.Size(90, 23);
+            this.displayProductType.TabIndex = 105;
+            // 
+            // lbProductType
+            // 
+            this.lbProductType.Location = new System.Drawing.Point(246, 275);
+            this.lbProductType.Name = "lbProductType";
+            this.lbProductType.Size = new System.Drawing.Size(99, 23);
+            this.lbProductType.TabIndex = 104;
+            this.lbProductType.Text = "Product Type";
+            // 
+            // shapeContainer2
+            // 
+            this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Size = new System.Drawing.Size(976, 562);
+            this.shapeContainer2.TabIndex = 85;
+            this.shapeContainer2.TabStop = false;
+            // 
+            // displayFabricType
+            // 
+            this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
+            this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricType.Location = new System.Drawing.Point(348, 304);
+            this.displayFabricType.Name = "displayFabricType";
+            this.displayFabricType.Size = new System.Drawing.Size(90, 23);
+            this.displayFabricType.TabIndex = 107;
+            // 
+            // lbFabricType
+            // 
+            this.lbFabricType.Location = new System.Drawing.Point(246, 304);
+            this.lbFabricType.Name = "lbFabricType";
+            this.lbFabricType.Size = new System.Drawing.Size(99, 23);
+            this.lbFabricType.TabIndex = 106;
+            this.lbFabricType.Text = "Fabric Type";
+            // 
+            // shapeContainer3
+            // 
+            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Size = new System.Drawing.Size(976, 562);
+            this.shapeContainer3.TabIndex = 85;
+            this.shapeContainer3.TabStop = false;
+            // 
+            // displayLining
+            // 
+            this.displayLining.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayLining.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
+            this.displayLining.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayLining.Location = new System.Drawing.Point(543, 277);
+            this.displayLining.Name = "displayLining";
+            this.displayLining.Size = new System.Drawing.Size(90, 23);
+            this.displayLining.TabIndex = 109;
+            // 
+            // lbLining
+            // 
+            this.lbLining.Location = new System.Drawing.Point(441, 277);
+            this.lbLining.Name = "lbLining";
+            this.lbLining.Size = new System.Drawing.Size(99, 23);
+            this.lbLining.TabIndex = 108;
+            this.lbLining.Text = "Lining";
+            // 
+            // shapeContainer4
+            // 
+            this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer4.Name = "shapeContainer1";
+            this.shapeContainer4.Size = new System.Drawing.Size(976, 562);
+            this.shapeContainer4.TabIndex = 85;
+            this.shapeContainer4.TabStop = false;
+            // 
+            // displayGender
+            // 
+            this.displayGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayGender.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
+            this.displayGender.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayGender.Location = new System.Drawing.Point(543, 305);
+            this.displayGender.Name = "displayGender";
+            this.displayGender.Size = new System.Drawing.Size(90, 23);
+            this.displayGender.TabIndex = 111;
+            // 
+            // lbGender
+            // 
+            this.lbGender.Location = new System.Drawing.Point(441, 305);
+            this.lbGender.Name = "lbGender";
+            this.lbGender.Size = new System.Drawing.Size(99, 23);
+            this.lbGender.TabIndex = 110;
+            this.lbGender.Text = "Gender";
+            // 
+            // shapeContainer5
+            // 
+            this.shapeContainer5.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer5.Name = "shapeContainer1";
+            this.shapeContainer5.Size = new System.Drawing.Size(976, 562);
+            this.shapeContainer5.TabIndex = 85;
+            this.shapeContainer5.TabStop = false;
+            // 
+            // displayConstruction
+            // 
+            this.displayConstruction.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayConstruction.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CdCodeID", true));
+            this.displayConstruction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayConstruction.Location = new System.Drawing.Point(738, 277);
+            this.displayConstruction.Name = "displayConstruction";
+            this.displayConstruction.Size = new System.Drawing.Size(90, 23);
+            this.displayConstruction.TabIndex = 113;
+            // 
+            // lbConstruction
+            // 
+            this.lbConstruction.Location = new System.Drawing.Point(636, 277);
+            this.lbConstruction.Name = "lbConstruction";
+            this.lbConstruction.Size = new System.Drawing.Size(99, 23);
+            this.lbConstruction.TabIndex = 112;
+            this.lbConstruction.Text = "Construction";
+            // 
+            // shapeContainer6
+            // 
+            this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer6.Name = "shapeContainer1";
+            this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape4,
+            this.lineShape3,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer6.Size = new System.Drawing.Size(976, 562);
+            this.shapeContainer6.TabIndex = 85;
+            this.shapeContainer6.TabStop = false;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(984, 662);
@@ -1639,5 +1821,22 @@
         private Win.UI.Button btnIntendedDeliveryDate;
         private Win.UI.Button btnBatchUpdateIDD;
         private Win.UI.TextBox txtCFAFinalInspDate;
+        private Win.UI.DisplayBox displayConstruction;
+        private Win.UI.Label lbConstruction;
+        private Win.UI.DisplayBox displayGender;
+        private Win.UI.Label lbGender;
+        private Win.UI.DisplayBox displayLining;
+        private Win.UI.Label lbLining;
+        private Win.UI.DisplayBox displayFabricType;
+        private Win.UI.Label lbFabricType;
+        private Win.UI.DisplayBox displayProductType;
+        private Win.UI.Label lbProductType;
+        private Win.UI.DisplayBox displayCDCodeNew;
+        private Win.UI.Label lbCDCodeNew;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer4;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer5;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer6;
     }
 }

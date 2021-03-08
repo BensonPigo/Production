@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.pictureBox2 = new Sci.Win.UI.PictureBox();
             this.displayPicture2 = new Sci.Win.UI.DisplayBox();
@@ -104,11 +105,6 @@
             this.displayUnit = new Sci.Win.UI.DisplayBox();
             this.btnComboType = new Sci.Win.UI.Button();
             this.displayStyleApprove2 = new Sci.Win.UI.DisplayBox();
-            this.comboGender = new Sci.Production.Class.Txtdropdownlist();
-            this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
-            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
-            this.txtcdcode = new Sci.Production.Class.Txtcdcode();
             this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtTPEEditBy = new Sci.Win.UI.TextBox();
@@ -119,7 +115,24 @@
             this.comboPressing1 = new Sci.Win.UI.ComboBox();
             this.labelFabricType = new Sci.Win.UI.Label();
             this.displayFabricType = new Sci.Win.UI.DisplayBox();
+            this.lbCDCodeNew = new Sci.Win.UI.Label();
+            this.lbProductType = new Sci.Win.UI.Label();
+            this.lbFabricType = new Sci.Win.UI.Label();
+            this.lbLining = new Sci.Win.UI.Label();
+            this.lbGender = new Sci.Win.UI.Label();
+            this.lbConstruction = new Sci.Win.UI.Label();
+            this.comboGender1 = new Sci.Production.Class.ComboGender(this.components);
+            this.comboFabricType1 = new Sci.Production.Class.ComboFabricType(this.components);
+            this.comboLining1 = new Sci.Production.Class.ComboLining(this.components);
+            this.comboProductType1 = new Sci.Production.Class.ComboProductType(this.components);
+            this.comboConstruction1 = new Sci.Production.Class.ComboConstruction(this.components);
+            this.txtcdcodenew = new Sci.Production.Class.Txtcdcode();
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
+            this.comboGender = new Sci.Production.Class.Txtdropdownlist();
+            this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
+            this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
+            this.txtcdcode = new Sci.Production.Class.Txtcdcode();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -137,6 +150,18 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboGender1);
+            this.detailcont.Controls.Add(this.comboFabricType1);
+            this.detailcont.Controls.Add(this.comboLining1);
+            this.detailcont.Controls.Add(this.comboProductType1);
+            this.detailcont.Controls.Add(this.comboConstruction1);
+            this.detailcont.Controls.Add(this.lbConstruction);
+            this.detailcont.Controls.Add(this.lbGender);
+            this.detailcont.Controls.Add(this.lbLining);
+            this.detailcont.Controls.Add(this.lbFabricType);
+            this.detailcont.Controls.Add(this.lbProductType);
+            this.detailcont.Controls.Add(this.txtcdcodenew);
+            this.detailcont.Controls.Add(this.lbCDCodeNew);
             this.detailcont.Controls.Add(this.txtbrand1);
             this.detailcont.Controls.Add(this.comboPressing1);
             this.detailcont.Controls.Add(this.comboFolding2);
@@ -276,7 +301,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 570);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Sketch";
             // 
@@ -701,7 +726,7 @@
             this.checkLocalstyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LocalStyle", true));
             this.checkLocalstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkLocalstyle.IsSupportEditMode = false;
-            this.checkLocalstyle.Location = new System.Drawing.Point(492, 7);
+            this.checkLocalstyle.Location = new System.Drawing.Point(474, 7);
             this.checkLocalstyle.Name = "checkLocalstyle";
             this.checkLocalstyle.ReadOnly = true;
             this.checkLocalstyle.Size = new System.Drawing.Size(94, 21);
@@ -729,7 +754,7 @@
             // 
             // labelSizePage
             // 
-            this.labelSizePage.Location = new System.Drawing.Point(318, 141);
+            this.labelSizePage.Location = new System.Drawing.Point(361, 142);
             this.labelSizePage.Name = "labelSizePage";
             this.labelSizePage.Size = new System.Drawing.Size(68, 23);
             this.labelSizePage.TabIndex = 38;
@@ -737,7 +762,7 @@
             // 
             // labelCareCode
             // 
-            this.labelCareCode.Location = new System.Drawing.Point(318, 169);
+            this.labelCareCode.Location = new System.Drawing.Point(361, 170);
             this.labelCareCode.Name = "labelCareCode";
             this.labelCareCode.Size = new System.Drawing.Size(68, 23);
             this.labelCareCode.TabIndex = 39;
@@ -745,7 +770,7 @@
             // 
             // labelCPUAdjusted
             // 
-            this.labelCPUAdjusted.Location = new System.Drawing.Point(318, 196);
+            this.labelCPUAdjusted.Location = new System.Drawing.Point(361, 197);
             this.labelCPUAdjusted.Name = "labelCPUAdjusted";
             this.labelCPUAdjusted.Size = new System.Drawing.Size(105, 23);
             this.labelCPUAdjusted.TabIndex = 40;
@@ -753,7 +778,7 @@
             // 
             // labelPhase
             // 
-            this.labelPhase.Location = new System.Drawing.Point(318, 223);
+            this.labelPhase.Location = new System.Drawing.Point(361, 224);
             this.labelPhase.Name = "labelPhase";
             this.labelPhase.Size = new System.Drawing.Size(68, 23);
             this.labelPhase.TabIndex = 41;
@@ -761,7 +786,7 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Location = new System.Drawing.Point(318, 250);
+            this.labelSMR.Location = new System.Drawing.Point(361, 251);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(68, 23);
             this.labelSMR.TabIndex = 42;
@@ -769,7 +794,7 @@
             // 
             // labelHandle
             // 
-            this.labelHandle.Location = new System.Drawing.Point(318, 277);
+            this.labelHandle.Location = new System.Drawing.Point(361, 278);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(68, 23);
             this.labelHandle.TabIndex = 43;
@@ -777,7 +802,7 @@
             // 
             // labelLocalMR
             // 
-            this.labelLocalMR.Location = new System.Drawing.Point(318, 304);
+            this.labelLocalMR.Location = new System.Drawing.Point(361, 305);
             this.labelLocalMR.Name = "labelLocalMR";
             this.labelLocalMR.Size = new System.Drawing.Size(68, 23);
             this.labelLocalMR.TabIndex = 44;
@@ -788,7 +813,7 @@
             this.txtSizePage.BackColor = System.Drawing.Color.White;
             this.txtSizePage.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SizePage", true));
             this.txtSizePage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSizePage.Location = new System.Drawing.Point(390, 142);
+            this.txtSizePage.Location = new System.Drawing.Point(433, 143);
             this.txtSizePage.Name = "txtSizePage";
             this.txtSizePage.Size = new System.Drawing.Size(30, 23);
             this.txtSizePage.TabIndex = 11;
@@ -798,7 +823,7 @@
             this.txtCareCode.BackColor = System.Drawing.Color.White;
             this.txtCareCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CareCode", true));
             this.txtCareCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCareCode.Location = new System.Drawing.Point(390, 169);
+            this.txtCareCode.Location = new System.Drawing.Point(433, 170);
             this.txtCareCode.Name = "txtCareCode";
             this.txtCareCode.Size = new System.Drawing.Size(74, 23);
             this.txtCareCode.TabIndex = 15;
@@ -809,7 +834,7 @@
             this.numCPUAdjusted.DecimalPlaces = 2;
             this.numCPUAdjusted.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCPUAdjusted.IsSupportEditMode = false;
-            this.numCPUAdjusted.Location = new System.Drawing.Point(427, 196);
+            this.numCPUAdjusted.Location = new System.Drawing.Point(470, 197);
             this.numCPUAdjusted.Name = "numCPUAdjusted";
             this.numCPUAdjusted.NullValue = new decimal(new int[] {
             0,
@@ -843,7 +868,7 @@
             this.checkRainwearTestRequest.AutoSize = true;
             this.checkRainwearTestRequest.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RainwearTestPassed", true));
             this.checkRainwearTestRequest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkRainwearTestRequest.Location = new System.Drawing.Point(492, 142);
+            this.checkRainwearTestRequest.Location = new System.Drawing.Point(535, 143);
             this.checkRainwearTestRequest.Name = "checkRainwearTestRequest";
             this.checkRainwearTestRequest.Size = new System.Drawing.Size(165, 21);
             this.checkRainwearTestRequest.TabIndex = 12;
@@ -852,7 +877,7 @@
             // 
             // labelSpecialMark
             // 
-            this.labelSpecialMark.Location = new System.Drawing.Point(492, 169);
+            this.labelSpecialMark.Location = new System.Drawing.Point(535, 170);
             this.labelSpecialMark.Name = "labelSpecialMark";
             this.labelSpecialMark.Size = new System.Drawing.Size(85, 23);
             this.labelSpecialMark.TabIndex = 54;
@@ -972,7 +997,7 @@
             // 
             this.displaySpecialMark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySpecialMark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySpecialMark.Location = new System.Drawing.Point(581, 169);
+            this.displaySpecialMark.Location = new System.Drawing.Point(624, 170);
             this.displaySpecialMark.Name = "displaySpecialMark";
             this.displaySpecialMark.Size = new System.Drawing.Size(111, 23);
             this.displaySpecialMark.TabIndex = 16;
@@ -982,7 +1007,7 @@
             this.checkJnuk.AutoSize = true;
             this.checkJnuk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJnuk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJnuk.Location = new System.Drawing.Point(492, 34);
+            this.checkJnuk.Location = new System.Drawing.Point(474, 34);
             this.checkJnuk.Name = "checkJnuk";
             this.checkJnuk.Size = new System.Drawing.Size(57, 21);
             this.checkJnuk.TabIndex = 4;
@@ -994,7 +1019,7 @@
             this.displayPhase.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPhase.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Phase", true));
             this.displayPhase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPhase.Location = new System.Drawing.Point(390, 224);
+            this.displayPhase.Location = new System.Drawing.Point(433, 225);
             this.displayPhase.Name = "displayPhase";
             this.displayPhase.Size = new System.Drawing.Size(92, 23);
             this.displayPhase.TabIndex = 20;
@@ -1013,7 +1038,7 @@
             // 
             // labelUnit
             // 
-            this.labelUnit.Location = new System.Drawing.Point(173, 142);
+            this.labelUnit.Location = new System.Drawing.Point(226, 169);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(30, 23);
             this.labelUnit.TabIndex = 71;
@@ -1024,7 +1049,7 @@
             this.displayUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StyleUnit", true));
             this.displayUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayUnit.Location = new System.Drawing.Point(207, 142);
+            this.displayUnit.Location = new System.Drawing.Point(260, 169);
             this.displayUnit.Name = "displayUnit";
             this.displayUnit.Size = new System.Drawing.Size(56, 23);
             this.displayUnit.TabIndex = 10;
@@ -1048,59 +1073,6 @@
             this.displayStyleApprove2.Name = "displayStyleApprove2";
             this.displayStyleApprove2.Size = new System.Drawing.Size(152, 23);
             this.displayStyleApprove2.TabIndex = 30;
-            // 
-            // comboGender
-            // 
-            this.comboGender.BackColor = System.Drawing.Color.White;
-            this.comboGender.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Gender", true));
-            this.comboGender.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboGender.FormattingEnabled = true;
-            this.comboGender.IsSupportUnselect = true;
-            this.comboGender.Location = new System.Drawing.Point(108, 277);
-            this.comboGender.Name = "comboGender";
-            this.comboGender.OldText = "";
-            this.comboGender.Size = new System.Drawing.Size(121, 24);
-            this.comboGender.TabIndex = 23;
-            this.comboGender.Type = "Gender";
-            // 
-            // txtuserLocalMR
-            // 
-            this.txtuserLocalMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
-            this.txtuserLocalMR.DisplayBox1Binding = "";
-            this.txtuserLocalMR.Location = new System.Drawing.Point(390, 304);
-            this.txtuserLocalMR.Name = "txtuserLocalMR";
-            this.txtuserLocalMR.Size = new System.Drawing.Size(302, 23);
-            this.txtuserLocalMR.TabIndex = 26;
-            this.txtuserLocalMR.TextBox1Binding = "";
-            // 
-            // txttpeuserHandle
-            // 
-            this.txttpeuserHandle.DisplayBox1Binding = "";
-            this.txttpeuserHandle.DisplayBox2Binding = "";
-            this.txttpeuserHandle.Location = new System.Drawing.Point(390, 277);
-            this.txttpeuserHandle.Name = "txttpeuserHandle";
-            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserHandle.TabIndex = 24;
-            // 
-            // txttpeuserSMR
-            // 
-            this.txttpeuserSMR.DisplayBox1Binding = "";
-            this.txttpeuserSMR.DisplayBox2Binding = "";
-            this.txttpeuserSMR.Location = new System.Drawing.Point(390, 250);
-            this.txttpeuserSMR.Name = "txttpeuserSMR";
-            this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuserSMR.TabIndex = 22;
-            // 
-            // txtcdcode
-            // 
-            this.txtcdcode.BackColor = System.Drawing.Color.White;
-            this.txtcdcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CdCodeID", true));
-            this.txtcdcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcdcode.Location = new System.Drawing.Point(108, 142);
-            this.txtcdcode.Name = "txtcdcode";
-            this.txtcdcode.Size = new System.Drawing.Size(54, 23);
-            this.txtcdcode.TabIndex = 9;
-            this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
             // label3
             // 
@@ -1193,7 +1165,7 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Location = new System.Drawing.Point(492, 196);
+            this.labelFabricType.Location = new System.Drawing.Point(535, 197);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(85, 23);
             this.labelFabricType.TabIndex = 72;
@@ -1204,10 +1176,140 @@
             this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricType", true));
             this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFabricType.Location = new System.Drawing.Point(580, 196);
+            this.displayFabricType.Location = new System.Drawing.Point(623, 197);
             this.displayFabricType.Name = "displayFabricType";
             this.displayFabricType.Size = new System.Drawing.Size(111, 23);
             this.displayFabricType.TabIndex = 73;
+            // 
+            // lbCDCodeNew
+            // 
+            this.lbCDCodeNew.Location = new System.Drawing.Point(168, 142);
+            this.lbCDCodeNew.Name = "lbCDCodeNew";
+            this.lbCDCodeNew.Size = new System.Drawing.Size(98, 23);
+            this.lbCDCodeNew.TabIndex = 82;
+            this.lbCDCodeNew.Text = "New CD Code";
+            // 
+            // lbProductType
+            // 
+            this.lbProductType.Location = new System.Drawing.Point(571, 5);
+            this.lbProductType.Name = "lbProductType";
+            this.lbProductType.Size = new System.Drawing.Size(98, 23);
+            this.lbProductType.TabIndex = 84;
+            this.lbProductType.Text = "Product Type";
+            // 
+            // lbFabricType
+            // 
+            this.lbFabricType.Location = new System.Drawing.Point(571, 34);
+            this.lbFabricType.Name = "lbFabricType";
+            this.lbFabricType.Size = new System.Drawing.Size(98, 23);
+            this.lbFabricType.TabIndex = 85;
+            this.lbFabricType.Text = "Fabric Type";
+            // 
+            // lbLining
+            // 
+            this.lbLining.Location = new System.Drawing.Point(571, 61);
+            this.lbLining.Name = "lbLining";
+            this.lbLining.Size = new System.Drawing.Size(98, 23);
+            this.lbLining.TabIndex = 86;
+            this.lbLining.Text = "Lining";
+            // 
+            // lbGender
+            // 
+            this.lbGender.Location = new System.Drawing.Point(571, 88);
+            this.lbGender.Name = "lbGender";
+            this.lbGender.Size = new System.Drawing.Size(98, 23);
+            this.lbGender.TabIndex = 87;
+            this.lbGender.Text = "Gender";
+            // 
+            // lbConstruction
+            // 
+            this.lbConstruction.Location = new System.Drawing.Point(571, 115);
+            this.lbConstruction.Name = "lbConstruction";
+            this.lbConstruction.Size = new System.Drawing.Size(98, 23);
+            this.lbConstruction.TabIndex = 88;
+            this.lbConstruction.Text = "Construction";
+            // 
+            // comboGender1
+            // 
+            this.comboGender1.BackColor = System.Drawing.Color.White;
+            this.comboGender1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Gender", true));
+            this.comboGender1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboGender1.FormattingEnabled = true;
+            this.comboGender1.IsSupportUnselect = true;
+            this.comboGender1.Location = new System.Drawing.Point(672, 87);
+            this.comboGender1.Name = "comboGender1";
+            this.comboGender1.OldText = "";
+            this.comboGender1.Size = new System.Drawing.Size(80, 24);
+            this.comboGender1.StyleGender = "";
+            this.comboGender1.TabIndex = 93;
+            // 
+            // comboFabricType1
+            // 
+            this.comboFabricType1.BackColor = System.Drawing.Color.White;
+            this.comboFabricType1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "FabricType", true));
+            this.comboFabricType1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFabricType1.FormattingEnabled = true;
+            this.comboFabricType1.IsJunk = false;
+            this.comboFabricType1.IsSupportUnselect = true;
+            this.comboFabricType1.Location = new System.Drawing.Point(672, 32);
+            this.comboFabricType1.Name = "comboFabricType1";
+            this.comboFabricType1.OldText = "";
+            this.comboFabricType1.Size = new System.Drawing.Size(80, 24);
+            this.comboFabricType1.StyleFabricType = "";
+            this.comboFabricType1.TabIndex = 92;
+            // 
+            // comboLining1
+            // 
+            this.comboLining1.BackColor = System.Drawing.Color.White;
+            this.comboLining1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Lining", true));
+            this.comboLining1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLining1.FormattingEnabled = true;
+            this.comboLining1.IsSupportUnselect = true;
+            this.comboLining1.Location = new System.Drawing.Point(672, 60);
+            this.comboLining1.Name = "comboLining1";
+            this.comboLining1.OldText = "";
+            this.comboLining1.Size = new System.Drawing.Size(80, 24);
+            this.comboLining1.StyleLining = "";
+            this.comboLining1.TabIndex = 91;
+            // 
+            // comboProductType1
+            // 
+            this.comboProductType1.BackColor = System.Drawing.Color.White;
+            this.comboProductType1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ApparelType", true));
+            this.comboProductType1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboProductType1.FormattingEnabled = true;
+            this.comboProductType1.IsJunk = false;
+            this.comboProductType1.IsSupportUnselect = true;
+            this.comboProductType1.Location = new System.Drawing.Point(672, 5);
+            this.comboProductType1.Name = "comboProductType1";
+            this.comboProductType1.OldText = "";
+            this.comboProductType1.Size = new System.Drawing.Size(80, 24);
+            this.comboProductType1.StyleApparelType = "";
+            this.comboProductType1.TabIndex = 90;
+            // 
+            // comboConstruction1
+            // 
+            this.comboConstruction1.BackColor = System.Drawing.Color.White;
+            this.comboConstruction1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Construction", true));
+            this.comboConstruction1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboConstruction1.FormattingEnabled = true;
+            this.comboConstruction1.IsSupportUnselect = true;
+            this.comboConstruction1.Location = new System.Drawing.Point(672, 114);
+            this.comboConstruction1.Name = "comboConstruction1";
+            this.comboConstruction1.OldText = "";
+            this.comboConstruction1.Size = new System.Drawing.Size(80, 24);
+            this.comboConstruction1.StyleGender = "";
+            this.comboConstruction1.TabIndex = 89;
+            // 
+            // txtcdcodenew
+            // 
+            this.txtcdcodenew.BackColor = System.Drawing.Color.White;
+            this.txtcdcodenew.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CDCodeNew", true));
+            this.txtcdcodenew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcdcodenew.Location = new System.Drawing.Point(269, 142);
+            this.txtcdcodenew.Name = "txtcdcodenew";
+            this.txtcdcodenew.Size = new System.Drawing.Size(81, 23);
+            this.txtcdcodenew.TabIndex = 83;
             // 
             // txtbrand1
             // 
@@ -1219,6 +1321,59 @@
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 81;
             this.txtbrand1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBrand_Validating);
+            // 
+            // comboGender
+            // 
+            this.comboGender.BackColor = System.Drawing.Color.White;
+            this.comboGender.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Gender", true));
+            this.comboGender.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboGender.FormattingEnabled = true;
+            this.comboGender.IsSupportUnselect = true;
+            this.comboGender.Location = new System.Drawing.Point(108, 277);
+            this.comboGender.Name = "comboGender";
+            this.comboGender.OldText = "";
+            this.comboGender.Size = new System.Drawing.Size(121, 24);
+            this.comboGender.TabIndex = 23;
+            this.comboGender.Type = "Gender";
+            // 
+            // txtuserLocalMR
+            // 
+            this.txtuserLocalMR.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalMR", true));
+            this.txtuserLocalMR.DisplayBox1Binding = "";
+            this.txtuserLocalMR.Location = new System.Drawing.Point(433, 305);
+            this.txtuserLocalMR.Name = "txtuserLocalMR";
+            this.txtuserLocalMR.Size = new System.Drawing.Size(302, 23);
+            this.txtuserLocalMR.TabIndex = 26;
+            this.txtuserLocalMR.TextBox1Binding = "";
+            // 
+            // txttpeuserHandle
+            // 
+            this.txttpeuserHandle.DisplayBox1Binding = "";
+            this.txttpeuserHandle.DisplayBox2Binding = "";
+            this.txttpeuserHandle.Location = new System.Drawing.Point(433, 278);
+            this.txttpeuserHandle.Name = "txttpeuserHandle";
+            this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserHandle.TabIndex = 24;
+            // 
+            // txttpeuserSMR
+            // 
+            this.txttpeuserSMR.DisplayBox1Binding = "";
+            this.txttpeuserSMR.DisplayBox2Binding = "";
+            this.txttpeuserSMR.Location = new System.Drawing.Point(433, 251);
+            this.txttpeuserSMR.Name = "txttpeuserSMR";
+            this.txttpeuserSMR.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuserSMR.TabIndex = 22;
+            // 
+            // txtcdcode
+            // 
+            this.txtcdcode.BackColor = System.Drawing.Color.White;
+            this.txtcdcode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CdCodeID", true));
+            this.txtcdcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcdcode.Location = new System.Drawing.Point(108, 142);
+            this.txtcdcode.Name = "txtcdcode";
+            this.txtcdcode.Size = new System.Drawing.Size(54, 23);
+            this.txtcdcode.TabIndex = 9;
+            this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
             // 
             // P04
             // 
@@ -1344,5 +1499,17 @@
         private Win.UI.DisplayBox displayFabricType;
         private Win.UI.Label labelFabricType;
         private Class.Txtbrand txtbrand1;
+        private Class.Txtcdcode txtcdcodenew;
+        private Win.UI.Label lbCDCodeNew;
+        private Class.ComboGender comboGender1;
+        private Class.ComboFabricType comboFabricType1;
+        private Class.ComboLining comboLining1;
+        private Class.ComboProductType comboProductType1;
+        private Class.ComboConstruction comboConstruction1;
+        private Win.UI.Label lbConstruction;
+        private Win.UI.Label lbGender;
+        private Win.UI.Label lbLining;
+        private Win.UI.Label lbFabricType;
+        private Win.UI.Label lbProductType;
     }
 }

@@ -29,6 +29,8 @@ namespace Sci.Production.Shipping
         private int summaryBy;
         private bool includeLO;
         private DataTable printData;
+        private string whereExcludePullout = string.Empty;
+        private string whereExcludePulloutOuterApply = string.Empty;
 
         /// <inheritdoc/>
         public R04(ToolStripMenuItem menuitem)
@@ -64,6 +66,38 @@ namespace Sci.Production.Shipping
             this.orderNo = this.txtOrderNo.Text;
             this.includeLO = this.checkIncludeLocalOrder.Checked;
             this.summaryBy = this.comboSummaryBy.SelectedIndex;
+
+            if (this.chkExcludePullout.Checked)
+            {
+                this.whereExcludePullout = $@"
+and (
+        exists(
+            select 1 from packinglist p with (nolock)
+	        		 where exists(select 1 from packinglist_detail pd with (nolock) 
+                                    where   p.id = pd.id and 
+                                            pd.orderid = o.id and 
+                                            pd.OrderShipmodeSeq = oq.seq)  and
+                            (p.PulloutDate is null or p.PulloutID is null)
+                
+        )
+        or
+        not exists (
+            select 1 from packinglist p with (nolock)
+	        		 where exists(select 1 from packinglist_detail pd with (nolock) 
+                                    where   p.id = pd.id and 
+                                            pd.orderid = o.id and 
+                                            pd.OrderShipmodeSeq = oq.seq)
+        )
+    )
+";
+                this.whereExcludePulloutOuterApply = " and (p.PulloutDate is null or p.PulloutID is null)";
+            }
+            else
+            {
+                this.whereExcludePullout = string.Empty;
+                this.whereExcludePulloutOuterApply = string.Empty;
+            }
+
             return base.ValidateInput();
         }
 
@@ -156,8 +190,8 @@ namespace Sci.Production.Shipping
 
         private StringBuilder SummaryBySP(StringBuilder sqlCmd)
         {
-            sqlCmd.Append(string.Format(
-@"select 	oq.BuyerDelivery
+            sqlCmd.Append(
+$@"select 	oq.BuyerDelivery
 		,oq.IDD
 		,o.BrandID
 		,b.BuyerID
@@ -240,7 +274,8 @@ outer apply(
 		from(
 			select distinct pd.id
 			from packinglist_detail pd
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+            inner join packinglist p on p.id = pd.id
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 		)a
 		order by a.id
 		for xml path('')
@@ -253,7 +288,7 @@ outer apply(
 			select distinct pd.id,p.Status
 			from packinglist_detail pd
             inner join packinglist p on p.id = pd.id
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 		)a
 		order by a.id
 		for xml path('')
@@ -266,7 +301,7 @@ outer apply(
 			select distinct p.INVNo,p.id
 			from packinglist_detail pd
 			inner join PackingList p on p.id = pd.id
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 		)a
 		order by a.id
 		for xml path('')
@@ -280,7 +315,7 @@ outer apply(
 			from packinglist_detail pd
 			inner join PackingList p on p.id = pd.id
 			inner join GMTBooking gb on gb.id = p.INVNo
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
             
 		)a
 		order by a.id
@@ -295,7 +330,7 @@ outer apply(
 			from packinglist_detail pd
 			inner join PackingList p on p.id = pd.id
 			inner join GMTBooking gb on gb.id = p.INVNo
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
             
 		)a
 		order by a.id
@@ -306,19 +341,20 @@ outer apply(
 	select top 1 p.CustCDID
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
-	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 )CustCDID
 outer apply(
 	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
-	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 )plds
 outer apply(
 	select CTNQty=round(sum(l.CBM),4)
 	from packinglist_detail pd
+    inner join PackingList p on p.id = pd.id
 	inner join LocalItem l on l.refno = pd.refno
-	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
     and pd.CTNQty > 0
 )cbm
 
@@ -328,7 +364,7 @@ outer apply(
 		from(
 			select distinct p.PulloutDate,p.id
 			from packinglist_detail pd
-			inner join PackingList p on p.id = pd.id
+			inner join PackingList p on p.id = pd.id {this.whereExcludePulloutOuterApply}
 			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
 		)a
 		order by a.id
@@ -342,7 +378,7 @@ outer apply(
 			select distinct p.PulloutID
 			from packinglist_detail pd
 			inner join PackingList p on p.id = pd.id
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 		)a
 		order by a.PulloutID
 		for xml path('')
@@ -352,7 +388,7 @@ left join
 (
 	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq,p.ShipPlanID,gb.SONo,gb.SOCFMDate,gb.CutOffDate
 	from packinglist_detail pd
-	inner join PackingList p on p.id = pd.id
+	inner join PackingList p on p.id = pd.id {this.whereExcludePulloutOuterApply}
 	inner join GMTBooking gb on gb.id = p.INVNo 
 )gb2 on  gb2.orderid = o.id and gb2.OrderShipmodeSeq = oq.seq
 outer apply(
@@ -362,7 +398,7 @@ outer apply(
 			select distinct p.ExpressID,p.id
 			from packinglist_detail pd
 			inner join PackingList p on p.id = pd.id
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 		)a
 		order by a.id
 		for xml path('')
@@ -376,7 +412,7 @@ outer apply(
 			from packinglist_detail pd
 			inner join PackingList p on p.id = pd.id
 			inner join Express e on p.ExpressID = e.ID
-			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 		)a
 		order by a.id
 		for xml path('')
@@ -388,7 +424,9 @@ where ((isnull(ot.IsGMTMaster,0) != 1
 or ( 
 	exists (select 1 from Order_Finish Where ID = o.ID)
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
-))"));
+))
+{this.whereExcludePullout}
+");
 
             return sqlCmd;
         }
@@ -487,8 +525,8 @@ and isnull(oq.Qty,0) - isnull(ShipQty.ShipQty,0) > 0
 
         private StringBuilder SummaryByPL(StringBuilder sqlCmd)
         {
-            sqlCmd.Append(string.Format(
-@"select oq.BuyerDelivery
+            sqlCmd.Append(
+$@"select oq.BuyerDelivery
 		,oq.IDD
 		,o.BrandID
 		,b.BuyerID
@@ -570,19 +608,20 @@ outer apply(
 	from PackingList_Detail pd WITH (NOLOCK)
 	inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 	left join Express e on p.ExpressID = e.ID
-	where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq
+	where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq {this.whereExcludePulloutOuterApply}
 )p
 outer apply(
 	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
-	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 )plds
 outer apply(
 	select CTNQty=round(sum(l.CBM),4)
 	from packinglist_detail pd
+    inner join PackingList p on p.id = pd.id
 	inner join LocalItem l on l.refno = pd.refno
-	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
     and pd.CTNQty > 0
 )cbm
 outer apply
@@ -597,14 +636,16 @@ where ((isnull(ot.IsGMTMaster,0) != 1
 or ( 
 	exists (select 1 from Order_Finish Where ID = o.ID)
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
-))"));
+))
+{this.whereExcludePullout}
+");
 
             return sqlCmd;
         }
 
         private StringBuilder SummaryByPL2(StringBuilder sqlCmd)
         {
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 union
 
 select oq.BuyerDelivery
@@ -689,14 +730,14 @@ outer apply(
 	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
 	from packinglist_detail pd
 	inner join PackingList p on p.id = pd.id
-	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq {this.whereExcludePulloutOuterApply}
 )plds
 outer apply(
 	select distinct p.ID, p.Status, p.PulloutDate, p.INVNo ,p.ExpressID, [ExpressStatus] = e.Status, p.ShipPlanID
 	from PackingList_Detail pd WITH (NOLOCK)
 	inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 	left join Express e on p.ExpressID = e.ID
-	where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq
+	where pd.OrderID = o.ID and pd.OrderShipmodeSeq = oq.Seq {this.whereExcludePulloutOuterApply}
 )p
 
 
@@ -709,6 +750,7 @@ or (
 	and (select FOCQty from Order_Finish Where ID = o.ID) < (select dbo.GetFocStockByOrder(o.ID))
 ))
 AND p.PulloutDate IS NOT NULL
+{this.whereExcludePullout}
  ");
 
             return sqlCmd;
@@ -789,6 +831,31 @@ AND p.PulloutDate IS NOT NULL
             }
 
             return sqlCmd;
+        }
+
+        private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.ChkExcludePulloutStatusChange();
+        }
+
+        private void ComboSummaryBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.ChkExcludePulloutStatusChange();
+        }
+
+        private void ChkExcludePulloutStatusChange()
+        {
+            if (
+                ((this.comboCategory.Text == "Bulk" || this.comboCategory.Text == "Garment" || this.comboCategory.Text == "Bulk+Garment") && this.comboSummaryBy.Text == "SP# and Seq") ||
+                (this.comboCategory.Text == "Sample" && this.comboSummaryBy.Text == "PL#"))
+            {
+                this.chkExcludePullout.ReadOnly = false;
+            }
+            else
+            {
+                this.chkExcludePullout.ReadOnly = true;
+                this.chkExcludePullout.Checked = false;
+            }
         }
     }
 }

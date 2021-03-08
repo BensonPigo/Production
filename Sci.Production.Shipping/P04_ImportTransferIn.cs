@@ -48,69 +48,51 @@ namespace Sci.Production.Shipping
         // Qurey
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSPNo.Text))
+            if (MyUtility.Check.Empty(this.txtTransferInNo.Text))
             {
-                this.txtSPNo.Focus();
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!");
+                this.txtTransferInNo.Focus();
+                MyUtility.Msg.WarningBox("< Transfer In No. > can't be empty!");
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.txtScifactoryFromFactory.Text))
-            {
-                this.txtScifactoryFromFactory.Focus();
-                MyUtility.Msg.WarningBox("< From Factory > can't be empty!");
-                return;
-            }
-
-            if (MyUtility.Check.Empty(this.txtScifactoryToFactory.Text))
-            {
-                this.txtScifactoryToFactory.Focus();
-                MyUtility.Msg.WarningBox("< To Factory > can't be empty!");
-                return;
-            }
-
-            string sqlCmd;
-            if (MyUtility.Check.Seek(this.txtSPNo.Text.Trim(), "PO_Supp", "ID"))
-            {
-                sqlCmd = string.Format(
-                    @"select 1 as Selected,ps.ID as POID,ps.SEQ1,psd.SEQ2,(left(ps.SEQ1+' ',3)+'-'+isnull(psd.SEQ2,'')) as Seq,ps.SuppID,
-(ps.SuppID+'-'+ isnull(s.AbbEN,'')) as Supp,psd.Refno,psd.SCIRefno,f.DescDetail as Description,
-psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
-isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitID
-,(isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) as Qty,0.0 as NetKg,0.0 as WeightKg,
-o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery
-from PO_Supp ps WITH (NOLOCK) 
-left join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+            string sqlCmd = $@"
+select Selected = cast(1 as bit)
+    , td.Poid
+    , td.Seq1
+    , td.Seq2
+    , Seq = (left(td.Seq1 + ' ', 3) + '-' + td.Seq2)
+    , SuppID = isnull(ps.SuppID, '')
+    , Supp = (isnull(ps.SuppID, '') + '-' + isnull(s.AbbEN, ''))
+    , RefNo = isnull(psd.Refno, '')
+    , SCIRefNo = isnull(psd.SCIRefno, '')
+    , Description = isnull(f.DescDetail, '') 
+    , FabricType = isnull(psd.FabricType, '')
+    , Type = case 
+        when psd.FabricType = 'F' then 'Fabric' 
+        when psd.FabricType = 'A' then 'Accessory' 
+        else '' 
+        end
+    , MtlTypeID = isnull(f.MtlTypeID, '') 
+    , UnitId = isnull(psd.StockUnit, '') 
+    , td.Qty
+    , NetKg = 0.0
+    , WeightKg = 0.0
+    , o.BuyerDelivery
+    , BrandID = isnull(o.BrandID, '')
+    , FactoryID = isnull(o.FactoryID, '')
+    , o.SciDelivery
+from TransferIn_Detail td WITH (NOLOCK) 
+left join PO_Supp ps WITH (NOLOCK) on ps.ID = td.Poid and ps.SEQ1 = td.Seq1
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.SEQ2 = td.Seq2
 left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-left join Orders o WITH (NOLOCK) on o.ID = ps.ID
-where ps.ID = '{0}' and (isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) <> 0", this.txtSPNo.Text.Trim());
-            }
-            else
-            {
-                sqlCmd = string.Format(
-                    @"select 1 as Selected,i.InventoryPOID as POID,i.InventorySeq1 as Seq1,i.InventorySeq2 as Seq2,
-(SUBSTRING(i.InventorySeq1,1,3)+'-'+InventorySeq2) as Seq,'' as SuppID,'' as Supp,
-i.Refno,'' as SCIRefNo,'' as Description,(select top 1 type from Fabric WITH (NOLOCK) where Refno = i.Refno) as FabricType,
-(select top 1 MtlTypeID from Fabric WITH (NOLOCK) where Refno = i.Refno) as MtlTypeID,i.UnitID
-,i.Qty,0.0 as NetKg,0.0 as WeightKg,
-null as BuyerDelivery,'' as BrandID,i.FactoryID,null as SciDelivery
-from Invtrans i WITH (NOLOCK) 
-where i.InventoryPOID = '{0}'
-and i.Qty <> 0
-and (i.Type = '2' or i.Type = '3')
-and i.FactoryID = '{1}'
-and i.TransferFactory = '{2}'",
-                    this.txtSPNo.Text.Trim(),
-                    this.txtScifactoryFromFactory.Text.Trim(),
-                    this.txtScifactoryToFactory.Text.Trim());
-            }
-
-            DataTable selectData;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
+left join Orders o WITH (NOLOCK) on o.ID = td.Poid
+where td.ID = '{this.txtTransferInNo.Text}'
+";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Query error." + result.ToString());
+                this.ShowErr(result);
                 return;
             }
 

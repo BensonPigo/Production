@@ -262,7 +262,7 @@ SET		--a.ID					= b.ID
 		, a.Qty					= b.Qty
 		, a.Type				= isnull(b.Type,'')
 		, a.TransferMDivisionID	= isnull(c.MDivisionID ,'') 
-		, a.TransferFactory		= b.OrderFactory
+		, a.TransferFactory		= iif(b.Type = '3', b.TransferFactory, b.OrderFactory)
 		, a.InventoryUkey		= b.InventoryUkey
 		, a.InventoryRefnoId	= b.InventoryRefnoId
 		, a.PoID				= b.PoID
@@ -378,7 +378,7 @@ select	b.ID
 		, ISNULL(Confirmed,0)
 		, ISNULL(Qty,0)
 		, ISNULL(b.Type,'')
-		, b.OrderFactory      
+		, iif(b.Type = '3', b.TransferFactory, b.OrderFactory)      
 		, isnull(c.MDivisionID,'')
 		, InventoryUkey
 		, InventoryRefnoId

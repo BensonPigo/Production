@@ -658,7 +658,8 @@ where   pl.INVNo = '{0}'
             {
                 List<string> shipmodeIDs = new List<string> { "SEA", "S-A/C", "S-A/P" };
                 if (shipmodeIDs.Where(x => x.EqualString(this.CurrentMaintain["ShipModeID"])).ToList().Count > 0 &&
-                    MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"]))
+                    MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"]) &&
+                    !MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
                 {
                     this.txtPulloutPort1.Focus();
                     MyUtility.Msg.WarningBox("Port of Discharge can't empty!!");
@@ -1532,6 +1533,15 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
                 return;
             }
 
+            List<string> shipmodeIDs = new List<string> { "SEA", "S-A/C", "S-A/P" };
+            if (shipmodeIDs.Where(x => x.EqualString(this.CurrentMaintain["ShipModeID"])).ToList().Count > 0 &&
+                MyUtility.Check.Empty(this.CurrentMaintain["DischargePortID"]))
+            {
+                this.txtPulloutPort1.Focus();
+                MyUtility.Msg.WarningBox("Port of Discharge can't empty!!");
+                return;
+            }
+
             this.CheckIDD();
 
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]) == "A/P" ||
@@ -2178,8 +2188,7 @@ Offline Order: S/O#
                 foreach (var order in orders)
                 {
                     string cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
-                    DataTable dt;
-                    DBProxy.Current.Select(null, cmd, out dt);
+                    DBProxy.Current.Select(null, cmd, out DataTable dt);
                     bool find = dt.Rows.Count > 0;
                     if (find)
                     {
@@ -2225,44 +2234,6 @@ and BrandID =  '{this.CurrentMaintain["BrandID"]}'";
                 MyUtility.Msg.WarningBox("Brand not match to Port Discharge .");
                 return false;
             }
-
-            // 2. 檢查 GMTBooking.Dest = PulloutPort.CountryID
-//            sqlcmd = $@"
-//SELECT SeaPort,AirPort
-//FROM PulloutPort p 
-//WHERE p.Junk = 0 
-//and  p.id = '{this.CurrentMaintain["DischargePortID"]}'
-//and p.CountryID = '{this.CurrentMaintain["Dest"]}'
-//and Junk = 0
-//";
-
-            //if (!MyUtility.Check.Seek(sqlcmd, out DataRow dr))
-            //{
-            //    MyUtility.Msg.WarningBox("Destination not match to country of Port Discharge .");
-            //    return false;
-            //}
-
-            //if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
-            //{
-            //    // 3.shipmode 是 Sea PulloutPort 必須設定 SeaPort = 1. S-A/C, S-A/P PulloutPort 必須設定 SeaPort = 1 or AirPort = 1
-            //    string shipModeID = MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]);
-            //    if (shipModeID == "SEA")
-            //    {
-            //        if (!MyUtility.Convert.GetBool(dr["SeaPort"]))
-            //        {
-            //            MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
-            //            return false;
-            //        }
-            //    }
-            //    else if (shipModeID == "S-A/C" || shipModeID == "S-A/P")
-            //    {
-            //        if (!MyUtility.Convert.GetBool(dr["SeaPort"]) && !MyUtility.Convert.GetBool(dr["AirPort"]))
-            //        {
-            //            MyUtility.Msg.WarningBox("Shipmode not match to Port Discharge .");
-            //            return false;
-            //        }
-            //    }
-            //}
 
             return true;
         }

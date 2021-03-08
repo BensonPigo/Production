@@ -274,7 +274,9 @@ select
 	o.StyleID,
 	o.Category,
 	VasShas=iif(o.VasShas = 0,'N','Y'),
-	o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.CustCDID,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
+	o.SeasonID,o.ProgramID,o.CdCodeID,
+    o.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction,
+    o.Qty,o.CustCDID,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
 	o.BuyerDelivery,
 	ScanQty=sum(pld.ScanQty),
 	BalanceQty=o.Qty-sum(pld.ScanQty),
@@ -282,16 +284,29 @@ select
 into #tmp
 from Orders o
 inner join PackingList_Detail pld on o.id = pld.OrderID
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.Ukey = o.StyleUkey
+)sty
 where 1=1
 {where}
 group by o.MDivisionID,o.FactoryID,o.SewLine,o.CustPONo,o.ID,o.Junk,o.StyleID,o.Category,o.VasShas,
 o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
-o.BuyerDelivery,o.CustCDID
+o.BuyerDelivery,o.CustCDID,o.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
 {having}
 order by o.CustPONo
 
 select	MDivisionID,FactoryID,SewLine,CustPONo,ID,Junk,StyleID,Category,VasShas,
-		SeasonID,ProgramID,CdCodeID,Qty,CustCDID,Dest,SewInLine,SewOffLine,ShipModeList,SciDelivery,
+		SeasonID,ProgramID,CdCodeID,CDCodeNew,ProductType,FabricType,Lining,Gender,Construction,
+        Qty,CustCDID,Dest,SewInLine,SewOffLine,ShipModeList,SciDelivery,
 		BuyerDelivery,carton.TtlCtnQty,carton.TtlRemainCtnQty,ScanQty,BalanceQty,POCompletion
 from #tmp t
 outer apply( select [TtlCtnQty] = sum(p.CTNQty),[TtlRemainCtnQty] = sum(iif(p.ScanEditDate is null or p.Lacking = 1,p.CTNQty,0))

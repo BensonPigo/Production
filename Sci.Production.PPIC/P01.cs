@@ -217,7 +217,24 @@ namespace Sci.Production.PPIC
             this.displayOutstandingReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OutstandingReason"])));
             this.displayFinalUpdateOutstandingReasondate.Value = MyUtility.Check.Empty(this.CurrentMaintain["OutstandingDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["OutstandingDate"]).ToString(string.Format("{0}", Env.Cfg.DateTimeStringFormat));
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            string sqlCmd = string.Format(
+                @"
+select s.Description
+    , s.ExpectionForm
+    , s.FTYRemark
+    , s.ApvDate
+    , s.ExpectionFormRemark 
+    , [ProductType] = r2.Name
+	, [FabricType] = r1.Name
+	, s.Lining
+	, s.Gender
+	, [Construction] = d1.Name
+from Style s WITH (NOLOCK) 
+left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+where s.Ukey = '{0}'",
+                MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out DataRow styleData))
             {
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
@@ -240,6 +257,12 @@ namespace Sci.Production.PPIC
                 {
                     this.btnExpectionFormRemark.Enabled = true;
                 }
+
+                this.displayProductType.Value = styleData["ProductType"].ToString();
+                this.displayFabricType.Value = styleData["FabricType"].ToString();
+                this.displayLining.Value = styleData["Lining"].ToString();
+                this.displayGender.Value = styleData["Gender"].ToString();
+                this.displayConstruction.Value = styleData["Construction"].ToString();
             }
             else
             {
@@ -250,8 +273,6 @@ namespace Sci.Production.PPIC
                 this.dateStyleApv.Value = null;
             }
 
-            #endregion
-            #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
             #endregion
             #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
             if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), out DataRow brandData))
@@ -271,8 +292,6 @@ namespace Sci.Production.PPIC
 
             #endregion
             #region 填PO SMR, PO Handle欄位值
-            #endregion
-            #region 填PO SMR, PO Handle欄位值
             sqlCmd = string.Format("select POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out DataRow pOData))
             {
@@ -287,8 +306,6 @@ namespace Sci.Production.PPIC
                 this.PcHandleText.DisplayBox1Binding = string.Empty;
             }
 
-            #endregion
-            #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T, OrderCombo 欄位值
             #endregion
             #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T, OrderCombo 欄位值
             sqlCmd = string.Format(

@@ -384,11 +384,17 @@ namespace Sci.Production.Planning
 	                       , O.FtyCTN          , O.ClogCTN    , O.VasShas         , O.TissuePaper       , O.MTLExport     , O.SewLine
 	                       , O.ShipModeList    , O.PlanDate   , O.FirstProduction , O.Finished          , O.FtyGroup      , O.OrderTypeID
 	                       , O.SpecialMark     , O.GFR        , O.SampleReason    , InspDate = QtyShip_InspectDate.Val     
-		                   , O.MnorderApv      , O.FtyKPI	   , O.KPIChangeReason , O.StyleUkey		 , O.POID          , OrdersBuyerDelivery = o.BuyerDelivery
+		                   , O.MnorderApv      , O.FtyKPI	  , O.KPIChangeReason , O.StyleUkey		    , O.POID          , OrdersBuyerDelivery = o.BuyerDelivery
                            , InspResult = QtyShip_Result.Val
                            , InspHandle = QtyShip_Handle.Val
                            , O.Junk,CFACTN=isnull(o.CFACTN,0)
-                           , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
+                           , InStartDate = Null, InEndDate = Null, OutStartDate = Null, OutEndDate = Null
+                           , O.CDCodeNew
+                           , sty.ProductType
+                           , sty.FabricType
+                           , sty.Lining
+                           , sty.Gender
+                           , sty.Construction
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -418,6 +424,18 @@ namespace Sci.Production.Planning
 		                    FOR XML PATH('')
 	                    ),1,1,'')
                     )QtyShip_Handle
+                    Outer apply (
+	                    SELECT ProductType = r2.Name
+		                    , FabricType = r1.Name
+		                    , Lining
+		                    , Gender
+		                    , Construction = d1.Name
+	                    FROM Style s WITH(NOLOCK)
+	                    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	                    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	                    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	                    where s.Ukey = o.StyleUkey
+                    )sty
                     WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
 
@@ -750,6 +768,12 @@ select t.MDivisionID
        , t.CustCDID
        , t.ProgramID
        , t.CdCodeID
+	   , t.CDCodeNew
+	   , t.ProductType
+	   , t.FabricType
+	   , t.Lining
+	   , t.Gender
+	   , t.Construction
        , t.KPILETA
        , t.LETA
        , t.MTLETA
@@ -1064,7 +1088,13 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , InspHandle = QtyShip_Handle.Val
        , O.Junk,CFACTN=isnull(o.CFACTN,0)
 	   , oq.Article,oq.SizeCode
-       , InStartDate = Null,InEndDate = Null,OutStartDate = Null,OutEndDate = Null
+       , InStartDate = Null, InEndDate = Null, OutStartDate = Null, OutEndDate = Null
+       , O.CDCodeNew
+       , sty.ProductType
+       , sty.FabricType
+       , sty.Lining
+       , sty.Gender
+       , sty.Construction
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
@@ -1094,6 +1124,18 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )QtyShip_Handle
+OUTER APPLY(
+    SELECT ProductType = r2.Name
+        , FabricType = r1.Name
+        , Lining
+        , Gender
+        , Construction = d1.Name
+    FROM Style s WITH(NOLOCK)
+    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+    where s.Ukey = o.StyleUkey
+)sty
 WHERE 1=1 {whereIncludeCancelOrder} "));
             #endregion
 
@@ -1417,6 +1459,12 @@ select t.MDivisionID
        , t.CustCDID
        , t.ProgramID
        , t.CdCodeID
+	   , t.CDCodeNew
+	   , t.ProductType
+	   , t.FabricType
+	   , t.Lining
+	   , t.Gender
+	   , t.Construction
        , t.KPILETA
        , t.LETA
        , t.MTLETA
@@ -1767,6 +1815,12 @@ select
     , t.CustCDID
     , t.ProgramID
     , t.CdCodeID
+	, t.CDCodeNew
+	, t.ProductType
+	, t.FabricType
+	, t.Lining
+	, t.Gender
+	, t.Construction
     , t.KPILETA
     , t.LETA
     , t.MTLETA
@@ -1939,6 +1993,12 @@ t.MDivisionID
 , t.CustCDID
 , t.ProgramID
 , t.CdCodeID
+, t.CDCodeNew
+, t.ProductType
+, t.FabricType
+, t.Lining
+, t.Gender
+, t.Construction
 , t.KPILETA
 , t.LETA
 , t.MTLETA

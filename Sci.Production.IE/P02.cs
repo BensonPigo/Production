@@ -80,25 +80,46 @@ namespace Sci.Production.IE
             this.btnCheckList.ForeColor = existsChgOver_Check ? Color.Blue : Color.Black;
 
             string brand = string.Format(
-                @"SELECT BrandID FROM Orders WITH (NOLOCK) 
-                             left join ChgOver WITH (NOLOCK) on  Orders.id= ChgOver.OrderID
-                             where ChgOver.OrderID ='{0}'",
+                @"
+SELECT o.BrandID 
+    , o.CDCodeNew
+	, sty.ProductType
+	, sty.FabricType
+	, sty.Lining
+	, sty.Gender
+	, sty.Construction
+FROM Orders o WITH (NOLOCK) 
+left join ChgOver c WITH (NOLOCK) on o.id= c.OrderID
+Outer apply (
+	SELECT ProductType = r2.Name
+		, FabricType = r1.Name
+		, Lining
+		, Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.ID = c.StyleID
+    and s.SeasonID = c.SeasonID
+    and s.BrandID = o.BrandID
+)sty
+where c.OrderID ='{0}'",
                 this.CurrentMaintain["OrderID"].ToString());
-            DataTable brandOutput;
-            DualResult res = DBProxy.Current.Select(null, brand, out brandOutput);
+            DataTable dt;
+            DualResult res = DBProxy.Current.Select(null, brand, out dt);
             if (!res)
             {
                 this.ShowErr(res);
             }
 
-            if (brandOutput.Rows.Count < 1)
-            {
-                this.txtBrand.Text = string.Empty;
-            }
-            else
-            {
-                this.txtBrand.Text = brandOutput.Rows[0]["BrandID"].ToString();
-            }
+            this.txtBrand.Text = dt.Rows.Count > 0 ? dt.Rows[0]["BrandID"].ToString() : string.Empty;
+            this.displayCDCodeNew.Value = dt.Rows.Count > 0 ? dt.Rows[0]["CDCodeNew"].ToString() : string.Empty;
+            this.displayProductType.Value = dt.Rows.Count > 0 ? dt.Rows[0]["ProductType"].ToString() : string.Empty;
+            this.displayFabricType.Value = dt.Rows.Count > 0 ? dt.Rows[0]["FabricType"].ToString() : string.Empty;
+            this.displayLining.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Lining"].ToString() : string.Empty;
+            this.displayGender.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Gender"].ToString() : string.Empty;
+            this.displayConstruction.Value = dt.Rows.Count > 0 ? dt.Rows[0]["Construction"].ToString() : string.Empty;
 
             // textBox_brand.Visible = false;
             this.txtBrand.ReadOnly = true;

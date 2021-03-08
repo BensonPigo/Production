@@ -111,9 +111,15 @@ namespace Sci.Production.Centralized
         protected override bool OnToExcel(ReportDefinition report)
         {
             DualResult result = Ict.Result.True;
-            if (this.excel == null)
+
+            if (((this.gdtData1 != null) && (this.gdtData1.Rows.Count > 0)) || ((this.gdtData2 != null) && (this.gdtData2.Rows.Count > 0)) || ((this.gdtData3 != null) && (this.gdtData3.Rows.Count > 0))
+                     || ((this.gdtData4 != null) && (this.gdtData4.Rows.Count > 0)) || ((this.gdtData5 != null) && (this.gdtData5.Rows.Count > 0)) || ((this.gdtData6 != null) && (this.gdtData6.Rows.Count > 0))
+                     || ((this.gdtData7 != null) && (this.gdtData7.Rows.Count > 0)) || ((this.gdtData8 != null) && (this.gdtData8.Rows.Count > 0)) || ((this.gdtData9 != null) && (this.gdtData9.Rows.Count > 0)))
             {
-                return true;
+                if (!(result = this.TransferToExcel()))
+                {
+                    return result;
+                }
             }
 
             this.gdtData1 = null;
@@ -311,40 +317,70 @@ from #stmp
 group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
 , ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone, ProductionFamilyID, ActManPower
 
-select 
-a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FtyZone,a.FactoryID, a.POID , a.Category, a.CdCodeID 
-, CPU = sum(a.CPU)
-, CPURate = sum(a.CPURate)
-, a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
-, ManPower = sum(a.ManPower)
-, WorkHour = sum(Round(a.WorkHour,2)) 
-, QARate = convert(numeric(12,2)
-, sum(a.QARate))
-, TotalManHour =
-    (select sum(ROUND( ActManPower * WorkHour, 2)) 
-	from #stmp2 f 
-	where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
-	and f.orderid = a.orderid
-	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
-	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
-, a.CDDesc
-, a.StyleDesc
-, a.ModularParent
-, a.ProductionFamilyID
-, CPUAdjusted = sum(a.CPUAdjusted)
-,QAQty = sum(a.QAQty) 
-,TotalCPUOut =
-	(select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
-	from #stmp2 f 
-	where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
-	and f.orderid = a.orderid
-	and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
-	and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
-,a.OutputDate
+select a.ID
+    , a.ProgramID
+    , a.StyleID
+    , a.SeasonID
+    , a.BrandID
+    , a.FtyZone
+    , a.FactoryID
+    , a.POID
+    , a.Category
+    , a.CdCodeID 
+    , sty.CDCodeNew
+    , sty.ProductType
+    , sty.FabricType
+    , sty.Lining
+    , sty.Gender
+    , sty.Construction
+    , CPU = sum(a.CPU)
+    , CPURate = sum(a.CPURate)
+    , a.BuyerDelivery, a.SCIDelivery, a.SewingLineID , a.ComboType
+    , ManPower = sum(a.ManPower)
+    , WorkHour = sum(Round(a.WorkHour,2)) 
+    , QARate = convert(numeric(12,2)
+    , sum(a.QARate))
+    , TotalManHour =
+        (select sum(ROUND( ActManPower * WorkHour, 2)) 
+	    from #stmp2 f 
+	    where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	    and f.orderid = a.orderid
+	    and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
+	    and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+    , a.CDDesc
+    , a.StyleDesc
+    , a.ModularParent
+    , a.ProductionFamilyID
+    , CPUAdjusted = sum(a.CPUAdjusted)
+    ,QAQty = sum(a.QAQty) 
+    ,TotalCPUOut =
+	    (select sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
+	    from #stmp2 f 
+	    where f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID 
+	    and f.orderid = a.orderid
+	    and f.CPU = a.CPU and f.CPUFactor = a.CPUFactor and f.Rate = a.Rate
+	    and f.OutputDate=a.OutputDate and f.Category = a.Category and f.Shift = a.Shift and f.Team = a.Team and f.ComboType = a.ComboType and f.SCategory = a.SCategory)
+    ,a.OutputDate
 into #tmpz
 from #stmp a
+Outer apply (
+	SELECT s.CDCodeNew
+        , ProductType = r2.Name
+		, FabricType = r1.Name
+		, s.Lining
+		, s.Gender
+		, Construction = d1.Name
+	FROM Style s WITH(NOLOCK)
+	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+	left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+	where s.ID = a.StyleID 
+	and s.SeasonID = a.SeasonID 
+	and s.BrandID = a.BrandID
+)sty
 group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
 , a.CDDesc, a.StyleDesc,a.ComboType,a.ModularParent, a.ProductionFamilyID,a.OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone
+, sty.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
 ";
                 #region 1.  By Factory
                 string strFactory = string.Format(@"{0} Select A=FtyZone,B=FactoryID, QARate, TotalCPUOut, TotalManHour FROM #tmpz ", strSQL);
@@ -432,8 +468,9 @@ from #tmp Group BY A,B,C order by A,B,C";
                 string strStyle = string.Format(
                     @"
 {0} 
-Select StyleID AS A, BrandID AS B, CDCodeID AS C, CDDesc AS D, StyleDesc AS E, SeasonID AS F
-, QARate, TotalCPUOut,TotalManHour, ModularParent AS L, CPUAdjusted AS M, Category, OutputDate, SewingLineID, FactoryID
+Select StyleID, BrandID, CDCodeID, CDDesc, StyleDesc, SeasonID
+, QARate, TotalCPUOut,TotalManHour, ModularParent, CPUAdjusted, Category, OutputDate, SewingLineID, FtyZone, FactoryID
+, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ",
                     strSQL);
                 foreach (string conString in connectionString)
@@ -453,53 +490,64 @@ FROM #tmpz ",
                 }
 
                 sqlcmd = @"
-alter table #tmp alter column A  varchar(15)
-alter table #tmp alter column B  varchar(8)
-alter table #tmp alter column E  varchar(100)
+alter table #tmp alter column StyleID  varchar(15)
+alter table #tmp alter column BrandID  varchar(8)
+alter table #tmp alter column StyleDesc  varchar(100)
 
-select A,B,E,F,OutputDate = max(OutputDate)
+select StyleID,BrandID,StyleDesc,SeasonID,FtyZone,FactoryID,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by A,B,E,F
+group by StyleID,BrandID,StyleDesc,SeasonID,FtyZone,FactoryID
 
-select A,B,C,D,E,F
-,G=sum(QARate)
-,H=sum(TotalCPUOut),I=sum(TotalManHour)
-,J=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
-,K=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
-,L,M
-,N= Stuff((select   concat('/', a.FactoryID + ' ' + (case     when Max(a.OutputDate) is null then 'New Style'
-                                                               when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
+select StyleID,BrandID,CDCodeID
+, CDCodeNew
+, ProductType
+, FabricType
+, Lining
+, Gender
+, Construction 
+, CDDesc
+, StyleDesc
+, SeasonID
+, G=sum(QARate)
+, H=sum(TotalCPUOut),I=sum(TotalManHour)
+, J=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
+, K=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
+, ModularParent
+, CPUAdjusted
+, N= Stuff((select   concat('/', a.FtyZone + ' ' + (case     when Max(a.OutputDate) is null then 'New Style'
                                                                else concat((Stuff((
 																	select distinct concat(' ', t.SewingLineID)
 																	from #tmp t
-																	where t.A = #tmp.A
-                                                                    and t.B = #tmp.B
-                                                                    and t.E = #tmp.E
-                                                                    and t.F = #tmp.F
+																	where t.StyleID = #tmp.StyleID
+                                                                    and t.BrandID = #tmp.BrandID
+                                                                    and t.StyleDesc = #tmp.StyleDesc
+                                                                    and t.SeasonID = #tmp.SeasonID
+                                                                    and t.FtyZone = a.FtyZone
 																	and exists (select 1 from #tmp_MaxOutputDate t2
-																				where t2.A = t.A 
-																				and t2.B = t.B 
-																				and t2.E = t.E
-																				and t2.F = t.F
-																				and t2.OutputDate = t.OutputDate)
+																				where t2.StyleID = t.StyleID 
+																				and t2.BrandID = t.BrandID 
+																				and t2.StyleDesc = t.StyleDesc
+																				and t2.SeasonID = t.SeasonID
+																				and t2.OutputDate = t.OutputDate
+                                                                                and t2.FtyZone = t.FtyZone)
 																	FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
                                                                end))
-                from #tmp a where   a.A = #tmp.A and 
-                                    a.B = #tmp.B and
-                                    a.E = #tmp.E and
-                                    a.F = #tmp.F
-                group by a.FactoryID FOR XML PATH(''))
+                from #tmp a where   a.StyleID = #tmp.StyleID and 
+                                    a.BrandID = #tmp.BrandID and
+                                    a.StyleDesc = #tmp.StyleDesc and
+                                    a.SeasonID = #tmp.SeasonID
+                group by a.FtyZone FOR XML PATH(''))
         ,1,1,'') 
 from #tmp 
-Group BY A,B,C,D,E,F,L,M 
-order by A,B,C,E";
+Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,CDDesc,StyleDesc,SeasonID,ModularParent,CPUAdjusted
+order by StyleID, BrandID, CDCodeID, StyleDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData4o, string.Empty, sqlcmd, out this.gdtData4);
                 #endregion 4.   By Style
 
                 #region 5.  By CD
-                string strCdCodeID = string.Format(@"{0}  Select CdCodeID AS A, CDDesc AS B, QARate, TotalCPUOut,TotalManHour FROM #tmpz ", strSQL);
+                string strCdCodeID = string.Format(@"{0}  Select CdCodeID, CDDesc, QARate, TotalCPUOut,TotalManHour, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -516,10 +564,21 @@ order by A,B,C,E";
                     }
                 }
 
-                sqlcmd = @"select A,B,C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
-,F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
-from #tmp Group BY A,B order by A";
+                sqlcmd = @"
+select CdCodeID
+    , CDCodeNew
+    , ProductType
+    , FabricType
+    , Lining
+    , Gender
+    , Construction
+    , CDDesc
+    , C=sum(QARate),D=sum(TotalCPUOut),E=sum(TotalManHour)
+    , F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+    , G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
+from #tmp 
+Group BY CdCodeID, CDDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+order by CdCodeID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData5o, string.Empty, sqlcmd, out this.gdtData5);
                 #endregion 5.   By CD
@@ -552,7 +611,9 @@ from #tmp Group BY A,B,C order by A,B,C";
 
                 #region 7.  By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
-                    @"{0}  Select A=BrandID, B=FtyZone,C=FactoryID, D=CdCodeID,E=CDDesc, QARate, TotalCPUOut,TotalManHour
+                    @"{0}
+Select BrandID, FtyZone, FactoryID, CdCodeID, CDDesc, QARate, TotalCPUOut,TotalManHour
+    , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
                     strSQL);
                 foreach (string conString in connectionString)
@@ -571,10 +632,26 @@ FROM #tmpz  ",
                     }
                 }
 
-                sqlcmd = @"select A,B,C,D,E,F=sum(QARate),G=sum(TotalCPUOut),H=sum(TotalManHour)
-,I=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,J=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-from #tmp Group BY A,B,C,D,E order by A,B,C,D,E";
+                sqlcmd = @"
+select BrandID
+    , FtyZone
+    , FactoryID
+    , CdCodeID
+    , CDCodeNew
+    , ProductType
+    , FabricType
+    , Lining
+    , Gender
+    , Construction
+    , CDDesc
+    , F=sum(QARate)
+    , G=sum(TotalCPUOut)
+    , H=sum(TotalManHour)
+    , I=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+    , J=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+from #tmp 
+Group BY BrandID, FtyZone, FactoryID, CdCodeID, CDDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+order by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData7o, string.Empty, sqlcmd, out this.gdtData7);
                 #endregion 7.   By Factory, Brand , CDCode
@@ -583,7 +660,9 @@ from #tmp Group BY A,B,C,D,E order by A,B,C,D,E";
                 string strPOCombo = string.Format(
                     @"
 {0} 
-Select A=FtyZone,POID AS B, StyleID AS C, BrandID AS D, CdCodeID AS E, CDDesc AS F,G=ProductionFamilyID, StyleDesc AS H, SeasonID AS I, ProgramID AS J, QARate, TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID
+Select FtyZone, POID, StyleID, BrandID, CdCodeID, CDDesc, ProductionFamilyID, StyleDesc, SeasonID, ProgramID
+    , QARate, TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID
+    , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
                     strSQL);
                 foreach (string conString in connectionString)
@@ -603,45 +682,69 @@ FROM #tmpz  ",
                 }
 
                 sqlcmd = @"
-alter table #tmp alter column B  varchar(13)
+alter table #tmp alter column POID  varchar(13)
 
-select B,C,D,H,I,OutputDate = max(OutputDate)
+select POID,StyleID,BrandID,StyleDesc,SeasonID,FtyZone,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by B,C,D,H,I
+group by POID,StyleID,BrandID,StyleDesc,SeasonID,FtyZone
 
-select A,B,C,D,E,F,G,H,I,J
-,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
-,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
-,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-,P= case    when Max(OutputDate) is null then 'New Style'
-            when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
+select FtyZone
+    , POID
+    , StyleID
+    , BrandID
+    , CdCodeID
+    , CDCodeNew
+    , ProductType
+    , FabricType
+    , Lining
+    , Gender
+    , Construction
+    , CDDesc
+    , ProductionFamilyID
+    , StyleDesc
+    , SeasonID
+    , ProgramID
+    ,K=sum(QARate),L=sum(TotalCPUOut)
+    ,M=sum(TotalManHour)
+    ,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
+    ,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+    ,P= case when Max(OutputDate) is null then 'New Style'
             else concat((Stuff((
 							select distinct concat(' ', t.SewingLineID)
 							from #tmp t
-							where t.C = #tmp.C
-							and t.D = #tmp.D
-							and t.H = #tmp.H
-                            and t.I = #tmp.I
-                            and t.B = #tmp.B
+							where t.StyleID = #tmp.StyleID
+							and t.BrandID = #tmp.BrandID
+							and t.StyleDesc = #tmp.StyleDesc
+                            and t.SeasonID = #tmp.SeasonID
+                            and t.POID = #tmp.POID
+                            and t.FtyZone = #tmp.FtyZone
 							and exists (select 1 from #tmp_MaxOutputDate t2
-										where t2.C = t.C
-										and t2.D = t.D 
-										and t2.H = t.H
-										and t2.I = t.I
-										and t2.B = t.B
-										and t2.OutputDate = t.OutputDate)
+										where t2.StyleID = t.StyleID
+										and t2.BrandID = t.BrandID 
+										and t2.StyleDesc = t.StyleDesc
+										and t2.SeasonID = t.SeasonID
+										and t2.POID = t.POID
+										and t2.OutputDate = t.OutputDate
+                                        and t2.FtyZone = t.FtyZone)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY A,B,C,D,E,F,G,H,I,J 
-order by A,B,C,D,G";
+Group BY FtyZone,POID,StyleID,BrandID,CdCodeID,CDDesc,ProductionFamilyID,StyleDesc,SeasonID,ProgramID
+	, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+order by FtyZone,POID,StyleID,BrandID,ProductionFamilyID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData8o, string.Empty, sqlcmd, out this.gdtData8);
                 #endregion 8.   By PO Combo
 
                 #region 9.  By Program
-                string strProgram = string.Format(@"{0}  Select ProgramID AS A, StyleID AS B, C=FtyZone,D=FactoryID, BrandID AS E, CdCodeID AS F, CDDesc AS G,H=ProductionFamilyID, StyleDesc AS I, SeasonID AS J, QARate,TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID FROM #tmpz ", strSQL);
+                string strProgram = string.Format(
+                    @"
+{0}  
+Select ProgramID, StyleID, FtyZone, FactoryID, BrandID, CdCodeID, CDDesc, ProductionFamilyID
+    , StyleDesc, SeasonID, QARate,TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID 
+    , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+FROM #tmpz ", strSQL);
                 foreach (string conString in connectionString)
                 {
                     SqlConnection conn = new SqlConnection(conString);
@@ -659,35 +762,52 @@ order by A,B,C,D,G";
                 }
 
                 sqlcmd = @"
-select B,E,I,J,OutputDate = max(OutputDate)
+select StyleID,BrandID,StyleDesc,SeasonID,FactoryID,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by B,E,I,J
+group by StyleID,BrandID,StyleDesc,SeasonID,FactoryID
 
-select A,B,C,D,E,F,G,H,I,J
-,K=sum(QARate),L=sum(TotalCPUOut),M=sum(TotalManHour)
-,N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
-,O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
-,P= case    when Max(OutputDate) is null then 'New Style'
-            when sum(iif(Category = 'S',1,0)) > 0 AND sum(iif(Category = 'B',1,0)) = 0 then 'New Style'
+select ProgramID
+    , StyleID
+    , FtyZone
+    , FactoryID
+    , BrandID
+    , CdCodeID
+    , CDCodeNew
+    , ProductType
+    , FabricType
+    , Lining
+    , Gender
+    , Construction
+    , CDDesc
+    , ProductionFamilyID
+    , StyleDesc
+    , SeasonID
+    , K=sum(QARate),L=sum(TotalCPUOut)
+    , M=sum(TotalManHour)
+    , N=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end) ,2)
+    , O=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
+    , P= case    when Max(OutputDate) is null then 'New Style'
             else concat((Stuff((
 							select distinct concat(' ', t.SewingLineID)
 							from #tmp t
-							where t.B = #tmp.B
-							and t.E = #tmp.E
-							and t.I = #tmp.I
-							and t.J = #tmp.J
+							where t.StyleID = #tmp.StyleID
+							and t.BrandID = #tmp.BrandID
+							and t.StyleDesc = #tmp.StyleDesc
+							and t.SeasonID = #tmp.SeasonID
+							and t.FactoryID = #tmp.FactoryID
 							and exists (select 1 from #tmp_MaxOutputDate t2
-										where t2.B = t.B
-										and t2.E = t.E 
-										and t2.I = t.I
-										and t2.J = t.J
-										and t2.OutputDate = t.OutputDate)
+										where t2.StyleID = t.StyleID
+										and t2.BrandID = t.BrandID 
+										and t2.StyleDesc = t.StyleDesc
+										and t2.SeasonID = t.SeasonID
+										and t2.OutputDate = t.OutputDate
+										and t2.FactoryID = t.FactoryID)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY A,B,C,D,E,F,G,H,I,J 
-order by A,B,C,D,E,F,H";
+Group BY ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,CDDesc,ProductionFamilyID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,ProductionFamilyID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData9o, string.Empty, sqlcmd, out this.gdtData9);
                 #endregion 9.   By Program
@@ -696,10 +816,7 @@ order by A,B,C,D,E,F,H";
                      || ((this.gdtData4 != null) && (this.gdtData4.Rows.Count > 0)) || ((this.gdtData5 != null) && (this.gdtData5.Rows.Count > 0)) || ((this.gdtData6 != null) && (this.gdtData6.Rows.Count > 0))
                      || ((this.gdtData7 != null) && (this.gdtData7.Rows.Count > 0)) || ((this.gdtData8 != null) && (this.gdtData8.Rows.Count > 0)) || ((this.gdtData9 != null) && (this.gdtData9.Rows.Count > 0)))
                 {
-                    if (!(result = this.TransferToExcel()))
-                    {
-                        return result;
-                    }
+                    return new DualResult(true);
                 }
                 else
                 {
@@ -710,223 +827,106 @@ order by A,B,C,D,E,F,H";
             {
                 return new DualResult(false, "data loading error.", ex);
             }
-
-            return result;
         }
 
         private DualResult TransferToExcel()
         {
-            string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
             DualResult result = Ict.Result.True;
             string strPath = PrivUtilsPMS.GetPath_XLT(AppDomain.CurrentDomain.BaseDirectory);
-            this.temfile = strPath + @"\Centralized-R03.Prod. Efficiency Analysis Report.xltx";
-
+            string excelFileName = "Centralized-R03.Prod. Efficiency Analysis Report.xltx";
+            this.temfile = strPath + @"\" + excelFileName;
             try
             {
-                if (!(result = PrivUtilsPMS.Excels.CreateExcel(this.temfile, out this.excel)))
-                {
-                    return result;
-                }
+                this.excel = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + excelFileName);
 
                 Worksheet wsSheet;
                 #region 1.  By Factory
-                int intRowsCount = this.gdtData1.Rows.Count;
-                int intRowsStart = 2; // 匯入起始位置
-                int rownum = intRowsStart; // 每筆資料匯入之位置
-                int intColumns = 7; // 匯入欄位數
                 if ((this.gdtData1 != null) && (this.gdtData1.Rows.Count > 0))
                 {
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[1];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData1.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData1.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData1, string.Empty,  excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 1.   By Factory
 
                 #region 2.  By Brand
                 if ((this.gdtData2 != null) && (this.gdtData2.Rows.Count > 0))
                 {
-                    intColumns = 6; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[2];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData2.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData2.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:F{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData2, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 2.   By Brand
 
                 #region 3.  By Brand-Factory
                 if ((this.gdtData3 != null) && (this.gdtData3.Rows.Count > 0))
                 {
-                    intColumns = 8; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[3];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData3.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData3.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:H{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData3, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 3.   By Brand-Factory
 
                 #region 4.  By Style
                 if ((this.gdtData4 != null) && (this.gdtData4.Rows.Count > 0))
                 {
-                    intColumns = 14; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[4];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData4.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData4.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:N{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData4, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 4.   By Style
 
                 #region 5.  By CD
                 if ((this.gdtData5 != null) && (this.gdtData5.Rows.Count > 0))
                 {
-                    intColumns = 7; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[5];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData5.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData5.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:G{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData5, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 5.   By CD
 
                 #region 6.  By Factory Line
                 if ((this.gdtData6 != null) && (this.gdtData6.Rows.Count > 0))
                 {
-                    intColumns = 8; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[6];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData6.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData6.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:H{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData6, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 6.   By Factory Line
 
                 #region 7.  By Brand-Factory-CD
                 if ((this.gdtData7 != null) && (this.gdtData7.Rows.Count > 0))
                 {
-                    intColumns = 10; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[7];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData7.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData7.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:J{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData7, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 7.   By Brand-Factory-CD
 
                 #region 8.  By PO Combo
                 if ((this.gdtData8 != null) && (this.gdtData8.Rows.Count > 0))
                 {
-                    intColumns = 16; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[8];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData8.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData8.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:P{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData8, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 8.   By PO Combo
 
                 #region 9.  By Program
                 if ((this.gdtData9 != null) && (this.gdtData9.Rows.Count > 0))
                 {
-                    intColumns = 16; // 匯入欄位數
                     wsSheet = this.excel.ActiveWorkbook.Worksheets[9];
-                    object[,] objArray = new object[intRowsCount, intColumns]; // 每列匯入欄位區間
-                    for (int intIndex = 0; intIndex < this.gdtData9.Rows.Count; intIndex++)
-                    {
-                        for (int intIndex_C = 0; intIndex_C < intColumns; intIndex_C++)
-                        {
-                            objArray[0, intIndex_C] = this.gdtData9.Rows[intIndex][aryAlpha[intIndex_C]];
-                        }
-
-                        wsSheet.Range[string.Format("A{0}:P{0}", intIndex + rownum)].Value2 = objArray;
-                    }
-
-                    // 欄寬調整
-                    wsSheet.Range[string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))].WrapText = false;
-                    wsSheet.get_Range(string.Format("A:{0}", PrivUtilsPMS.GetPosition(intColumns))).EntireColumn.AutoFit();
+                    MyUtility.Excel.CopyToXls(this.gdtData9, string.Empty, excelFileName, headerRow: 1, showExcel: false, fieldList: null, excelApp: this.excel, showSaveMsg: false, wSheet: wsSheet);
+                    wsSheet.Columns.WrapText = false;
+                    wsSheet.Columns.AutoFit();
                 }
                 #endregion 9.   By Program
 

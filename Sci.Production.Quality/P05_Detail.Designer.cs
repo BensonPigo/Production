@@ -44,10 +44,6 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.dateTestDate = new Sci.Win.UI.DateBox();
             this.btnToPDF = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.numTemperature = new Sci.Win.UI.NumericBox();
-            this.numTime = new Sci.Win.UI.NumericBox();
             this.txtuserInspector = new Sci.Production.Class.Txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -69,8 +65,8 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 113);
-            this.gridcont.Size = new System.Drawing.Size(984, 334);
+            this.gridcont.Location = new System.Drawing.Point(12, 88);
+            this.gridcont.Size = new System.Drawing.Size(984, 359);
             // 
             // undo
             // 
@@ -181,6 +177,7 @@
             this.comboResult.IsSupportUnselect = true;
             this.comboResult.Location = new System.Drawing.Point(901, 12);
             this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
             this.comboResult.ReadOnly = true;
             this.comboResult.Size = new System.Drawing.Size(98, 24);
             this.comboResult.TabIndex = 4;
@@ -235,60 +232,6 @@
             this.btnToPDF.UseVisualStyleBackColor = true;
             this.btnToPDF.Click += new System.EventHandler(this.BtnToPDF_Click);
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(15, 81);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 23);
-            this.label1.TabIndex = 99;
-            this.label1.Text = "Temperature(˚C)";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(436, 81);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 100;
-            this.label2.Text = "Time(hrs)";
-            // 
-            // numTemperature
-            // 
-            this.numTemperature.BackColor = System.Drawing.Color.White;
-            this.numTemperature.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTemperature.Location = new System.Drawing.Point(126, 81);
-            this.numTemperature.Name = "numTemperature";
-            this.numTemperature.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTemperature.Size = new System.Drawing.Size(100, 23);
-            this.numTemperature.TabIndex = 103;
-            this.numTemperature.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTime
-            // 
-            this.numTime.BackColor = System.Drawing.Color.White;
-            this.numTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTime.Location = new System.Drawing.Point(515, 81);
-            this.numTime.Name = "numTime";
-            this.numTime.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTime.Size = new System.Drawing.Size(100, 23);
-            this.numTime.TabIndex = 104;
-            this.numTime.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // txtuserInspector
             // 
             this.txtuserInspector.DisplayBox1Binding = "";
@@ -302,10 +245,6 @@
             // P05_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 497);
-            this.Controls.Add(this.numTime);
-            this.Controls.Add(this.numTemperature);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.dateTestDate);
             this.Controls.Add(this.btnEncode);
             this.Controls.Add(this.txtRemark);
@@ -326,6 +265,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P05_Detail";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Oven Test";
             this.WorkAlias = "Oven_Detail";
             this.Controls.SetChildIndex(this.labelNoofTest, 0);
@@ -345,10 +285,6 @@
             this.Controls.SetChildIndex(this.txtRemark, 0);
             this.Controls.SetChildIndex(this.btnEncode, 0);
             this.Controls.SetChildIndex(this.dateTestDate, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.numTemperature, 0);
-            this.Controls.SetChildIndex(this.numTime, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -376,9 +312,5 @@
         private Win.UI.Button btnEncode;
         private Win.UI.DateBox dateTestDate;
         private Win.UI.Button btnToPDF;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.NumericBox numTemperature;
-        private Win.UI.NumericBox numTime;
     }
 }

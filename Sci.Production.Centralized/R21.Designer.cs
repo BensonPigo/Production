@@ -55,6 +55,7 @@
             this.labelM = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Production.Class.ComboCentralizedFactory(this.components);
             this.comboM = new Sci.Production.Class.ComboCentralizedM(this.components);
+            this.chkExcludePullout = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -87,7 +88,7 @@
             this.txtbuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbuyer.Location = new System.Drawing.Point(128, 117);
             this.txtbuyer.Name = "txtbuyer";
-            this.txtbuyer.Size = new System.Drawing.Size(84, 23);
+            this.txtbuyer.Size = new System.Drawing.Size(84, 24);
             this.txtbuyer.TabIndex = 165;
             // 
             // txtcountryDestination
@@ -106,7 +107,7 @@
             this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtcustcd.Location = new System.Drawing.Point(128, 183);
             this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
+            this.txtcustcd.Size = new System.Drawing.Size(125, 24);
             this.txtcustcd.TabIndex = 163;
             this.txtcustcd.Validating += new System.ComponentModel.CancelEventHandler(this.Txtcustcd_Validating);
             // 
@@ -116,7 +117,7 @@
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(128, 149);
             this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.Size = new System.Drawing.Size(84, 24);
             this.txtbrand.TabIndex = 157;
             // 
             // dateFCRDate
@@ -126,19 +127,19 @@
             // 
             this.dateFCRDate.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dateFCRDate.DateBox1.Name = "";
-            this.dateFCRDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox1.Size = new System.Drawing.Size(128, 24);
             this.dateFCRDate.DateBox1.TabIndex = 0;
             // 
             // 
             // 
             this.dateFCRDate.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dateFCRDate.DateBox2.Name = "";
-            this.dateFCRDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox2.Size = new System.Drawing.Size(128, 24);
             this.dateFCRDate.DateBox2.TabIndex = 1;
             this.dateFCRDate.IsRequired = false;
             this.dateFCRDate.Location = new System.Drawing.Point(128, 84);
             this.dateFCRDate.Name = "dateFCRDate";
-            this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
+            this.dateFCRDate.Size = new System.Drawing.Size(280, 24);
             this.dateFCRDate.TabIndex = 162;
             // 
             // lbDestinction
@@ -180,19 +181,19 @@
             // 
             this.dateEstimatePullout.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dateEstimatePullout.DateBox1.Name = "";
-            this.dateEstimatePullout.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateEstimatePullout.DateBox1.Size = new System.Drawing.Size(128, 24);
             this.dateEstimatePullout.DateBox1.TabIndex = 0;
             // 
             // 
             // 
             this.dateEstimatePullout.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dateEstimatePullout.DateBox2.Name = "";
-            this.dateEstimatePullout.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateEstimatePullout.DateBox2.Size = new System.Drawing.Size(128, 24);
             this.dateEstimatePullout.DateBox2.TabIndex = 1;
             this.dateEstimatePullout.IsRequired = false;
             this.dateEstimatePullout.Location = new System.Drawing.Point(128, 48);
             this.dateEstimatePullout.Name = "dateEstimatePullout";
-            this.dateEstimatePullout.Size = new System.Drawing.Size(280, 23);
+            this.dateEstimatePullout.Size = new System.Drawing.Size(280, 24);
             this.dateEstimatePullout.TabIndex = 156;
             // 
             // dateBuyerDelivery
@@ -202,19 +203,19 @@
             // 
             this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dateBuyerDelivery.DateBox1.Name = "";
-            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(128, 24);
             this.dateBuyerDelivery.DateBox1.TabIndex = 0;
             // 
             // 
             // 
             this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dateBuyerDelivery.DateBox2.Name = "";
-            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(128, 24);
             this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(128, 12);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
-            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 24);
             this.dateBuyerDelivery.TabIndex = 155;
             // 
             // labelBrand
@@ -250,8 +251,9 @@
             this.comboSummaryBy.Location = new System.Drawing.Point(128, 385);
             this.comboSummaryBy.Name = "comboSummaryBy";
             this.comboSummaryBy.OldText = "";
-            this.comboSummaryBy.Size = new System.Drawing.Size(112, 24);
+            this.comboSummaryBy.Size = new System.Drawing.Size(112, 26);
             this.comboSummaryBy.TabIndex = 185;
+            this.comboSummaryBy.SelectedIndexChanged += new System.EventHandler(this.ComboSummaryBy_SelectedIndexChanged);
             // 
             // lbSummaryBy
             // 
@@ -265,15 +267,16 @@
             // 
             this.chkIncludeCancelOrder.AutoSize = true;
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 442);
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 444);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
-            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(162, 22);
             this.chkIncludeCancelOrder.TabIndex = 183;
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
@@ -281,9 +284,10 @@
             this.comboCategory.Location = new System.Drawing.Point(128, 355);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(238, 24);
+            this.comboCategory.Size = new System.Drawing.Size(238, 26);
             this.comboCategory.TabIndex = 182;
             this.comboCategory.Type = "Pms_GMT_Simple";
+            this.comboCategory.SelectedIndexChanged += new System.EventHandler(this.ComboCategory_SelectedIndexChanged);
             // 
             // txtOrderNo
             // 
@@ -291,7 +295,7 @@
             this.txtOrderNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtOrderNo.Location = new System.Drawing.Point(128, 322);
             this.txtOrderNo.Name = "txtOrderNo";
-            this.txtOrderNo.Size = new System.Drawing.Size(238, 23);
+            this.txtOrderNo.Size = new System.Drawing.Size(238, 24);
             this.txtOrderNo.TabIndex = 181;
             // 
             // checkIncludeLocalOrder
@@ -300,7 +304,7 @@
             this.checkIncludeLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkIncludeLocalOrder.Location = new System.Drawing.Point(13, 419);
             this.checkIncludeLocalOrder.Name = "checkIncludeLocalOrder";
-            this.checkIncludeLocalOrder.Size = new System.Drawing.Size(151, 21);
+            this.checkIncludeLocalOrder.Size = new System.Drawing.Size(155, 22);
             this.checkIncludeLocalOrder.TabIndex = 178;
             this.checkIncludeLocalOrder.Text = "Include Local Order";
             this.checkIncludeLocalOrder.UseVisualStyleBackColor = true;
@@ -346,7 +350,7 @@
             this.comboFactory.Location = new System.Drawing.Point(128, 286);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.Size = new System.Drawing.Size(80, 26);
             this.comboFactory.TabIndex = 186;
             // 
             // comboM
@@ -358,14 +362,27 @@
             this.comboM.Location = new System.Drawing.Point(128, 250);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(80, 24);
+            this.comboM.Size = new System.Drawing.Size(80, 26);
             this.comboM.TabIndex = 187;
+            // 
+            // chkExcludePullout
+            // 
+            this.chkExcludePullout.AutoSize = true;
+            this.chkExcludePullout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkExcludePullout.Location = new System.Drawing.Point(13, 469);
+            this.chkExcludePullout.Name = "chkExcludePullout";
+            this.chkExcludePullout.ReadOnly = true;
+            this.chkExcludePullout.Size = new System.Drawing.Size(187, 22);
+            this.chkExcludePullout.TabIndex = 188;
+            this.chkExcludePullout.Text = "Exclude Pullout SP+Seq";
+            this.chkExcludePullout.UseVisualStyleBackColor = true;
             // 
             // R21
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 505);
+            this.ClientSize = new System.Drawing.Size(540, 524);
+            this.Controls.Add(this.chkExcludePullout);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboSummaryBy);
@@ -427,6 +444,7 @@
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.chkExcludePullout, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -460,5 +478,6 @@
         private Win.UI.Label labelM;
         private Class.ComboCentralizedFactory comboFactory;
         private Class.ComboCentralizedM comboM;
+        private Win.UI.CheckBox chkExcludePullout;
     }
 }
