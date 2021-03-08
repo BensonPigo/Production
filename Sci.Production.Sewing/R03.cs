@@ -82,10 +82,11 @@ namespace Sci.Production.Sewing
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            DualResult result;
+            DataTable dt = new DataTable();
             #region 組撈基礎資料的SQL
             sqlCmd.Append(string.Format(
                 @"
-with tmp1stData as (
     select  o.ID
             , o.ProgramID
             , o.StyleID
@@ -109,7 +110,8 @@ with tmp1stData as (
             , o.Category,OutputDate,Shift,Team,OrderId,sod.ComboType,LocalOrder
 			--,ManPower1= IIF(sod.QAQty = 0, so.Manpower, so.Manpower * sod.QAQty)
             , ActManPower= so.Manpower 
-		, SCategory = so.Category
+		    , SCategory = so.Category
+    into #tmp_1stData
     from Orders o WITH (NOLOCK) 
     inner join SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
     inner join SewingOutput so WITH (NOLOCK) on so.ID = sod.ID
@@ -193,7 +195,6 @@ with tmp1stData as (
             }
 
             sqlCmd.Append(@"
-), forttlcpu as(
 	select OutputDate,Category
 		   , Shift
 		   , SewingLineID
@@ -213,17 +214,10 @@ with tmp1stData as (
 		   , Rate
 		   , IIF(Shift <> 'O' and Category NOT IN ('M','A') and LocalOrder = 1, 'I',Shift) as LastShift
 		   , FtyZone
-	from tmp1stData
+    into #tmp_forttlcpu
+	from #tmp_1stData
 	group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType, SCategory, LocalOrder, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone,ActManPower
-),tmp1LineMaxOutputDate as (
-	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone, t.FactoryID, OutputDate = Max(t.OutputDate)
-	from tmp1stData t
-	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone, t.FactoryID
-),tmp1LineMaxOutputDatePOID as (
-	select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FtyZone, t.FactoryID, OutputDate = Max(t.OutputDate)
-	from tmp1stData t
-	group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FtyZone, t.FactoryID
-),tmp2ndData as (
+
     Select  ProgramID
             , StyleID
             , SeasonID
@@ -244,8 +238,12 @@ with tmp1stData as (
             , SewingLineID
             , ManHour = Round(Manpower * WorkHour ,2)
             , RateOutput = QAQty  * Rate
-            , ModularParent,CPUAdjusted 
-    from tmp1stData t
+            , ModularParent
+            , CPUAdjusted 
+            , Category
+            , OutputDate
+    into #tmp_2ndData
+    from #tmp_1stData t
     Outer apply (
 	    SELECT s.CDCodeNew
             , ProductType = r2.Name
@@ -261,7 +259,7 @@ with tmp1stData as (
 	    and s.SeasonID = t.SeasonID 
 	    and s.BrandID = t.BrandID
     )sty
-),tmp3rdData as (
+
     Select  ProgramID
             , StyleID
             , SeasonID
@@ -281,47 +279,63 @@ with tmp1stData as (
             , SewingLineID
             , ModularParent
             , CPUAdjusted
-            , TotalCPU = (select Sum(Round(CPU * CPUFactor * Rate * QAQty,2))  from forttlcpu f 
-			where  f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
-            --, TtlManhour = Sum(ManHour)
-            , TtlManhour = (select sum(ROUND( ActManPower * WorkHour, 2))  from forttlcpu f 
-			where  f.FtyZone = a.FtyZone and f.FactoryID = a.FactoryID and f.ProgramID = a.ProgramID and f.StyleID = a.StyleID and f.SewingLineID = a.SewingLineID and (select POID from orders where id = f.OrderId) = a.POID)
+            , TotalCPU = (select Sum(Round(CPU * CPUFactor * Rate * QAQty,2))  
+                          from #tmp_forttlcpu f 
+                          where f.FtyZone = a.FtyZone 
+                          and f.FactoryID = a.FactoryID 
+                          and f.ProgramID = a.ProgramID 
+                          and f.StyleID = a.StyleID 
+                          and f.SewingLineID = a.SewingLineID 
+                          and (select POID from orders where id = f.OrderId) = a.POID)
+            , TtlManhour = (select sum(ROUND( ActManPower * WorkHour, 2)) 
+                            from #tmp_forttlcpu f 
+                            where  f.FtyZone = a.FtyZone 
+                            and f.FactoryID = a.FactoryID 
+                            and f.ProgramID = a.ProgramID 
+                            and f.StyleID = a.StyleID 
+                            and f.SewingLineID = a.SewingLineID 
+                            and (select POID from orders where id = f.OrderId) = a.POID)
             , Output = Sum(RateOutput)  
-    from tmp2ndData a
+            , Category
+            , OutputDate = Max(OutputDate)
+    from #tmp_2ndData a
     group by ProgramID, StyleID, SeasonID, BrandID, FtyZone, FactoryID
              , CdCodeID, StyleDesc, CDDesc, POID, SewingLineID, ModularParent
              , CPUAdjusted, CDCodeNew, ProductType, FabricType, Lining
-	         , Gender, Construction 
-),");
+	         , Gender, Construction, Category
+");
+
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), null, out dt);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query By data fail\r\n" + result.ToString());
+                return failResult;
+            }
             #endregion
 
             string querySql;
-            DualResult result;
 
             #region By Factory
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
-    select  FtyZone
-            , FactoryID 
-            , TtlQty = sum(Output)
-            , TtlCPU = SUM(TotalCPU)
-            , TtlManhour = SUM(TtlManhour)
-    from tmp3rdData
-    group by FtyZone, FactoryID
-)
+            querySql = @"
 select  FtyZone
         , FactoryID
         , TtlQty
         , TtlCPU
         , TtlManhour
         , PPH = IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2))
-        ,EFF = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2))
-from tmp4thData
-Order by FtyZone,FactoryID",
-                sqlCmd.ToString());
+        , EFF = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK)))*100, 2))
+from (
+     select  FtyZone
+            , FactoryID 
+            , TtlQty = sum(Output)
+            , TtlCPU = SUM(TotalCPU)
+            , TtlManhour = SUM(TtlManhour)
+    from #tmp
+    group by FtyZone, FactoryID
+)t
+Order by FtyZone,FactoryID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.Factory);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Factory);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Factory data fail\r\n" + result.ToString());
@@ -330,27 +344,24 @@ Order by FtyZone,FactoryID",
             #endregion
 
             #region By Brand
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
-    select  BrandID
-            , sum(Output) AS TtlQty
-            , SUM(TotalCPU) AS TtlCPU
-            , SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by BrandID
-)
+            querySql = @"
 select  BrandID
         , TtlQty
         , TtlCPU
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
-from tmp4thData
-Order by BrandID",
-                sqlCmd.ToString());
+from (
+    select BrandID
+            , sum(Output) AS TtlQty
+            , SUM(TotalCPU) AS TtlCPU
+            , SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by BrandID
+)t
+Order by BrandID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.Brand);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Brand);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Brand data fail\r\n" + result.ToString());
@@ -359,18 +370,7 @@ Order by BrandID",
             #endregion
 
             #region By Brand-Factory
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
-    select  BrandID
-            , FtyZone
-            , FactoryID
-            , sum(Output) AS TtlQty
-            , SUM(TotalCPU) AS TtlCPU
-            , SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by BrandID, FtyZone, FactoryID
-)
+            querySql = @"
 select  BrandID
         , FtyZone
         , FactoryID
@@ -378,12 +378,20 @@ select  BrandID
         , TtlCPU
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
-        , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
-from tmp4thData
-Order by BrandID, FtyZone, FactoryID",
-                sqlCmd.ToString());
+        , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour * 3600/(select StdTMS from System WITH (NOLOCK)))*100, 2)) as EFF 
+from (
+    select  BrandID
+            , FtyZone
+            , FactoryID
+            , sum(Output) AS TtlQty
+            , SUM(TotalCPU) AS TtlCPU
+            , SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by BrandID, FtyZone, FactoryID
+)t
+Order by BrandID, FtyZone, FactoryID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.BrandFactory);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.BrandFactory);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Brand-Factory data fail\r\n" + result.ToString());
@@ -392,31 +400,12 @@ Order by BrandID, FtyZone, FactoryID",
             #endregion
 
             #region By Style
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
-    select  StyleID
-            , ModularParent
-            , CPUAdjusted
-            , BrandID
-            , CdCodeID
-            , CDCodeNew
-	        , ProductType
-	        , FabricType
-	        , Lining
-	        , Gender
-	        , Construction 
-            , CDDesc
-            , StyleDesc
-            , SeasonID
-            , FtyZone
-            , FactoryID
-            , sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by StyleID, ModularParent, CPUAdjusted, BrandID, CdCodeID
-             , CDDesc, StyleDesc, SeasonID, CDCodeNew, ProductType, FabricType
-	         , Lining, Gender, Construction, FtyZone, FactoryID
-)
+            querySql = @"
+select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone, OutputDate = Max(t.OutputDate)
+into #tmp_LineMaxOutputDate
+from #tmp t
+group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone
+
 select  StyleID
         , ModularParent
         , [CPUAdjusted] = CPUAdjusted*100
@@ -438,35 +427,56 @@ select  StyleID
         , EFF = SUM(IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour * 3600/ 1400)*100, 2)))
 		, [Remark] = Stuff((select concat('/', a.FtyZone + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
 																	   else concat((Stuff((
-																						select distinct concat(' ', t.SewingLineID)
-																						from tmp1stData t
-																						where t.StyleID = tmp4thData.StyleID
-																						and t.BrandID = tmp4thData.BrandID
-																						and t.StyleDesc = tmp4thData.StyleDesc
-                                                                                        and t.SeasonID = tmp4thData.SeasonID
-                                                                                        and t.FtyZone = a.FtyZone
-                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
-                                                                                                     where t2.OutputDate = t.OutputDate 
-                                                                                                     and t2.StyleID = t.StyleID
-                                                                                                     and t2.BrandID = t.BrandID 
-                                                                                                     and t2.StyleDesc = t.StyleDesc
-																									 and t2.SeasonID = t.SeasonID
-																									 and t2.FtyZone = t.FtyZone)
+																						select distinct concat(' ', a2.SewingLineID)
+																						from #tmp a2
+																						where a2.StyleID = t.StyleID
+																						and a2.BrandID = t.BrandID
+																						and a2.StyleDesc = t.StyleDesc
+                                                                                        and a2.SeasonID = t.SeasonID
+                                                                                        and a2.FtyZone = a.FtyZone
+                                                                                        and exists( select 1 
+                                                                                                     from #tmp_LineMaxOutputDate t2 
+                                                                                                     where t2.OutputDate = a2.OutputDate 
+                                                                                                     and t2.StyleID = a2.StyleID
+                                                                                                     and t2.BrandID = a2.BrandID 
+                                                                                                     and t2.StyleDesc = a2.StyleDesc
+																									 and t2.SeasonID = a2.SeasonID
+																									 and t2.FtyZone = a2.FtyZone)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
-						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
-											a.BrandID = tmp4thData.BrandID and
-											a.StyleDesc = tmp4thData.StyleDesc and
-                                            a.SeasonID = tmp4thData.SeasonID 
+						from #tmp a where a.StyleID = t.StyleID and 
+											a.BrandID = t.BrandID and
+											a.StyleDesc = t.StyleDesc and
+                                            a.SeasonID = t.SeasonID 
 						group by a.FtyZone FOR XML PATH(''))
 				,1,1,'') 
-from tmp4thData
+from (
+    select  StyleID
+            , ModularParent
+            , CPUAdjusted
+            , BrandID
+            , CdCodeID
+            , CDCodeNew
+	        , ProductType
+	        , FabricType
+	        , Lining
+	        , Gender
+	        , Construction 
+            , CDDesc
+            , StyleDesc
+            , SeasonID
+            , FtyZone
+            , sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by StyleID, ModularParent, CPUAdjusted, BrandID, CdCodeID
+             , CDDesc, StyleDesc, SeasonID, CDCodeNew, ProductType, FabricType
+	         , Lining, Gender, Construction, FtyZone
+) t
 GROUP by StyleID, ModularParent, CPUAdjusted, BrandID, CdCodeID, CDCodeNew
 	    , ProductType, FabricType, Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID
-Order by StyleID, SeasonID",
-                sqlCmd.ToString());
+Order by StyleID, SeasonID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.Style);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Style);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Style data fail\r\n" + result.ToString());
@@ -475,23 +485,7 @@ Order by StyleID, SeasonID",
             #endregion
 
             #region By CD
-            querySql = string.Format(
-                @"
-{0} tmp4thData as (
-    select  CdCodeID
-            , CDCodeNew
-	        , ProductType
-	        , FabricType
-	        , Lining
-	        , Gender
-	        , Construction 
-            , CDDesc
-            , sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by CdCodeID, CDDesc, CDCodeNew
-	        , ProductType, FabricType, Lining
-            , Gender, Construction 
-)
+            querySql = @"
 select  CdCodeID
         , CDCodeNew
 	    , ProductType
@@ -505,11 +499,24 @@ select  CdCodeID
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
-from tmp4thData
-Order by CdCodeID",
-                sqlCmd.ToString());
+from (
+    select  CdCodeID
+            , CDCodeNew
+	        , ProductType
+	        , FabricType
+	        , Lining
+	        , Gender
+	        , Construction 
+            , CDDesc
+            , sum(Output) AS TtlQty, SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by CdCodeID, CDDesc, CDCodeNew
+	        , ProductType, FabricType, Lining
+            , Gender, Construction 
+)t
+Order by CdCodeID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.CD);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.CD);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By CD data fail\r\n" + result.ToString());
@@ -518,17 +525,7 @@ Order by CdCodeID",
             #endregion
 
             #region By Factory-Line
-            querySql = string.Format(
-                @"
-{0} tmp4thData as (
-    select  FtyZone
-            , FactoryID
-            , SewingLineID
-            , sum(Output) AS TtlQty
-            , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by FtyZone, FactoryID, SewingLineID
-)
+            querySql = @"
 select  FtyZone
         , FactoryID
         , SewingLineID
@@ -537,11 +534,18 @@ select  FtyZone
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
-from tmp4thData
-Order by FtyZone, FactoryID, SewingLineID",
-                sqlCmd.ToString());
+from (
+    select  FtyZone
+            , FactoryID
+            , SewingLineID
+            , sum(Output) AS TtlQty
+            , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by FtyZone, FactoryID, SewingLineID
+)t
+Order by FtyZone, FactoryID, SewingLineID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.FactoryLine);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.FactoryLine);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Factory-Line data fail\r\n" + result.ToString());
@@ -552,24 +556,6 @@ Order by FtyZone, FactoryID, SewingLineID",
             #region By Brand-Factory-CD
             querySql = string.Format(
                 @"
-{0}tmp4thData as (
-    select  BrandID
-            , FtyZone
-            , FactoryID
-            , CdCodeID
-            , CDCodeNew
-	        , ProductType
-	        , FabricType
-	        , Lining
-	        , Gender
-	        , Construction 
-            , CDDesc
-            , sum(Output) AS TtlQty
-            , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc
-           , CDCodeNew, ProductType , FabricType, Lining, Gender, Construction 
-)
 select  BrandID
         , FtyZone
         , FactoryID
@@ -586,27 +572,10 @@ select  BrandID
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
-from tmp4thData
-Order by BrandID, FtyZone, FactoryID, CdCodeID",
-                sqlCmd.ToString());
-
-            result = DBProxy.Current.Select(null, querySql, out this.BrandFactoryCD);
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query By Brand-Factory-CD data fail\r\n" + result.ToString());
-                return failResult;
-            }
-            #endregion
-
-            #region By PO Combo
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
-    select  POID
+from (
+    select  BrandID
             , FtyZone
             , FactoryID
-            , StyleID
-            , BrandID
             , CdCodeID
             , CDCodeNew
 	        , ProductType
@@ -615,16 +584,30 @@ Order by BrandID, FtyZone, FactoryID, CdCodeID",
 	        , Gender
 	        , Construction 
             , CDDesc
-            , StyleDesc
-            , SeasonID
-            , ProgramID
             , sum(Output) AS TtlQty
-            , SUM(TotalCPU) AS TtlCPU
-            , SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by POID, FtyZone, FactoryID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID
-             , ProgramID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
-)
+            , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by BrandID, FtyZone, FactoryID, CdCodeID, CDDesc
+           , CDCodeNew, ProductType , FabricType, Lining, Gender, Construction 
+)t
+Order by BrandID, FtyZone, FactoryID, CdCodeID",
+                sqlCmd.ToString());
+
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.BrandFactoryCD);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query By Brand-Factory-CD data fail\r\n" + result.ToString());
+                return failResult;
+            }
+            #endregion
+
+            #region By PO Combo
+            querySql = @"
+select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FtyZone, OutputDate = Max(t.OutputDate)
+into #tmp_LineMaxOutputDatePOID
+from #tmp t
+group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.POID, t.FtyZone
+
 select  POID
         , StyleID
         , BrandID
@@ -645,38 +628,61 @@ select  POID
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
 		, [Remark] = Stuff((select concat('/', a.FtyZone + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
+																	   when sum(iif(a.Category = 'S',1,0)) > 0 AND sum(iif(a.Category = 'B',1,0)) = 0 then 'New Style'
 																	   else concat((Stuff((
-																						select distinct concat(' ', t.SewingLineID)
-																						from tmp1stData t
-																						where t.StyleID = tmp4thData.StyleID
-																						and t.BrandID = tmp4thData.BrandID
-																						and t.StyleDesc = tmp4thData.StyleDesc
-                                                                                        and t.SeasonID = tmp4thData.SeasonID
-                                                                                        and t.POID = tmp4thData.POID
-                                                                                        and t.FtyZone = tmp4thData.FtyZone
-                                                                                        and exists( select 1 from tmp1LineMaxOutputDatePOID t2 
-                                                                                                     where t2.OutputDate = t.OutputDate 
-                                                                                                     and t2.StyleID = t.StyleID
-                                                                                                     and t2.BrandID = t.BrandID 
-                                                                                                     and t2.StyleDesc = t.StyleDesc
-																									 and t2.SeasonID = t.SeasonID
-																									 and t2.POID = t.POID
-																									 and t2.FtyZone = t.FtyZone)
+																						select distinct concat(' ', a2.SewingLineID)
+																						from #tmp a2
+																						where a2.StyleID = t.StyleID
+																						and a2.BrandID = t.BrandID
+																						and a2.StyleDesc = t.StyleDesc
+                                                                                        and a2.SeasonID = t.SeasonID
+                                                                                        and a2.POID = t.POID
+                                                                                        and a2.FtyZone = t.FtyZone
+                                                                                        and exists( select 1 
+                                                                                                     from #tmp_LineMaxOutputDatePOID t2 
+                                                                                                     where t2.OutputDate = a2.OutputDate 
+                                                                                                     and t2.StyleID = a2.StyleID
+                                                                                                     and t2.BrandID = a2.BrandID 
+                                                                                                     and t2.StyleDesc = a2.StyleDesc
+																									 and t2.SeasonID = a2.SeasonID
+																									 and t2.POID = a2.POID
+																									 and t2.FtyZone = a2.FtyZone)
 																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
 																	   end))
-						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
-											a.BrandID = tmp4thData.BrandID and
-											a.StyleDesc = tmp4thData.StyleDesc and 
-											a.SeasonID = tmp4thData.SeasonID and
-											a.POID = tmp4thData.POID and
-                                            a.FtyZone = tmp4thData.FtyZone
+						from #tmp a where a.StyleID = t.StyleID and 
+											a.BrandID = t.BrandID and
+											a.StyleDesc = t.StyleDesc and 
+											a.SeasonID = t.SeasonID and
+											a.POID = t.POID and
+                                            a.FtyZone = t.FtyZone
 						group by a.FtyZone FOR XML PATH(''))
 				,1,1,'') 
-from tmp4thData
-Order by POID, StyleID, BrandID, CdCodeID, SeasonID",
-                sqlCmd.ToString());
+from (
+    select  POID
+            , FtyZone
+            , StyleID
+            , BrandID
+            , CdCodeID
+            , CDCodeNew
+	        , ProductType
+	        , FabricType
+	        , Lining
+	        , Gender
+	        , Construction 
+            , CDDesc
+            , StyleDesc
+            , SeasonID
+            , ProgramID
+            , sum(Output) AS TtlQty
+            , SUM(TotalCPU) AS TtlCPU
+            , SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by POID, FtyZone, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID
+             , ProgramID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+)t
+Order by POID, StyleID, BrandID, CdCodeID, SeasonID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.POCombo);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.POCombo);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By PO Combo data fail\r\n" + result.ToString());
@@ -685,9 +691,57 @@ Order by POID, StyleID, BrandID, CdCodeID, SeasonID",
             #endregion
 
             #region By Program
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
+            querySql = @"
+select t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone, OutputDate = Max(t.OutputDate)
+into #tmp_LineMaxOutputDate
+from #tmp t
+group by t.StyleID, t.BrandID, t.StyleDesc, t.SeasonID, t.FtyZone
+
+select  ProgramID
+        , StyleID
+        , BrandID
+        , CdCodeID
+        , CDCodeNew
+	    , ProductType
+	    , FabricType
+	    , Lining
+	    , Gender
+	    , Construction 
+        , CDDesc
+        , StyleDesc
+        , SeasonID
+        , [TtlQty] = SUM(TtlQty)
+        , [TtlCPU] = SUM(TtlCPU)
+        , [TtlManhour] = SUM(TtlManhour)
+        , [PPH] = SUM(IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)))
+        , [EFF] = SUM(IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/StdTMS)*100, 2)))
+		, [Remark] = Stuff((select concat('/', a.FtyZone + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
+																	   else concat((Stuff((
+																						select distinct concat(' ', a2.SewingLineID)
+																						from #tmp a2
+																						where a2.StyleID = t.StyleID
+																						and a2.BrandID = t.BrandID
+																						and a2.StyleDesc = t.StyleDesc
+                                                                                        and a2.SeasonID = t.SeasonID
+                                                                                        and a2.FtyZone = a.FtyZone
+                                                                                        and exists( select 1 
+                                                                                                     from #tmp_LineMaxOutputDate t2 
+                                                                                                     where t2.OutputDate = a2.OutputDate 
+                                                                                                     and t2.StyleID = a2.StyleID
+                                                                                                     and t2.BrandID = a2.BrandID 
+                                                                                                     and t2.StyleDesc = a2.StyleDesc
+																									 and t2.SeasonID = a2.SeasonID
+																									 and t2.FtyZone = a2.FtyZone)
+																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
+																	   end))
+						from #tmp a where a.StyleID = t.StyleID and 
+											a.BrandID = t.BrandID and
+											a.StyleDesc = t.StyleDesc and 
+											a.SeasonID = t.SeasonID and
+                                            a.FtyZone = t.FtyZone
+						group by a.FtyZone FOR XML PATH(''))
+				,1,1,'') 
+from (
     select  ProgramID
             , StyleID
             , BrandID
@@ -702,61 +756,18 @@ Order by POID, StyleID, BrandID, CdCodeID, SeasonID",
             , StyleDesc
             , SeasonID
             , FtyZone
-            , FactoryID
+            , StdTMS
             , sum(Output) AS TtlQty
             , SUM(TotalCPU) AS TtlCPU, SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by ProgramID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID, FtyZone, FactoryID
-           , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
-)
-select  ProgramID
-        , StyleID
-        , BrandID
-        , CdCodeID
-        , CDCodeNew
-	    , ProductType
-	    , FabricType
-	    , Lining
-	    , Gender
-	    , Construction 
-        , CDDesc
-        , StyleDesc
-        , SeasonID
-        , TtlQty
-        , TtlCPU
-        , TtlManhour
-        , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
-        , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF 
-		, [Remark] = Stuff((select concat('/', a.FtyZone + ' ' + (case when Max(a.OutputDate) is null then 'New Style'
-																	   else concat((Stuff((
-																						select distinct concat(' ', t.SewingLineID)
-																						from tmp1stData t
-																						where t.StyleID = tmp4thData.StyleID
-																						and t.BrandID = tmp4thData.BrandID
-																						and t.StyleDesc = tmp4thData.StyleDesc
-                                                                                        and t.SeasonID = tmp4thData.SeasonID
-                                                                                        and t.FtyZone = tmp4thData.FtyZone
-                                                                                        and exists( select 1 from tmp1LineMaxOutputDate t2 
-                                                                                                     where t2.OutputDate = t.OutputDate 
-                                                                                                     and t2.StyleID = t.StyleID
-                                                                                                     and t2.BrandID = t.BrandID 
-                                                                                                     and t2.StyleDesc = t.StyleDesc
-																									 and t2.SeasonID = t.SeasonID
-																									 and t2.FtyZone = t.FtyZone)
-																						FOR XML PATH('')) ,1,1,'')),'(',format(Max(a.OutputDate), 'yyyy/MM/dd'),')')
-																	   end))
-						from tmp1stData a where a.StyleID = tmp4thData.StyleID and 
-											a.BrandID = tmp4thData.BrandID and
-											a.StyleDesc = tmp4thData.StyleDesc and 
-											a.SeasonID = tmp4thData.SeasonID and 
-                                            a.FtyZone = tmp4thData.FtyZone
-						group by a.FtyZone FOR XML PATH(''))
-				,1,1,'') 
-from tmp4thData
-Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID",
-                sqlCmd.ToString());
+    from #tmp, System
+    group by ProgramID, StyleID, BrandID, CdCodeID, CDDesc, StyleDesc, SeasonID, FtyZone
+           , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction, StdTMS 
+)t
+group by  ProgramID, StyleID, BrandID, CdCodeID, CDCodeNew, ProductType, FabricType
+	    , Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID
+Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID";
 
-            result = DBProxy.Current.Select(null, querySql, out this.Program);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Program);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Program data fail\r\n" + result.ToString());
@@ -765,27 +776,7 @@ Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID",
             #endregion
 
             #region By Factory-Line-CD
-            querySql = string.Format(
-                @"
-{0}tmp4thData as (
-    select  FtyZone
-            , FactoryID
-            , SewingLineID
-            , CdCodeID
-            , CDCodeNew
-	        , ProductType
-	        , FabricType
-	        , Lining
-	        , Gender
-	        , Construction 
-            , CDDesc
-            , sum(Output) AS TtlQty
-            , SUM(TotalCPU) AS TtlCPU
-            , SUM(TtlManhour) AS TtlManhour
-    from tmp3rdData
-    group by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc
-         , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
-)
+            querySql = @"
 select  FtyZone
         , FactoryID
         , SewingLineID
@@ -802,11 +793,28 @@ select  FtyZone
         , TtlManhour
         , IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2)) as PPH
         , IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from System WITH (NOLOCK) ))*100, 2)) as EFF
-from tmp4thData
-Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc",
-                sqlCmd.ToString());
+from (
+    select  FtyZone
+            , FactoryID
+            , SewingLineID
+            , CdCodeID
+            , CDCodeNew
+	        , ProductType
+	        , FabricType
+	        , Lining
+	        , Gender
+	        , Construction 
+            , CDDesc
+            , sum(Output) AS TtlQty
+            , SUM(TotalCPU) AS TtlCPU
+            , SUM(TtlManhour) AS TtlManhour
+    from #tmp
+    group by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc
+         , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+)t
+Order by FtyZone, FactoryID, SewingLineID, CdCodeID, CDDesc";
 
-            result = DBProxy.Current.Select(null, querySql, out this.FactoryLineCD);
+            result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.FactoryLineCD);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query By Factory-Line-CD data fail\r\n" + result.ToString());
