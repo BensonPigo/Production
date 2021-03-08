@@ -1436,6 +1436,7 @@ SET IDENTITY_INSERT oven off";
             int signatureRow = 4; // 簽名有4列
             int frameRow = 34; // 框 33列 + 1 列空白
             int alladdSheet = 0;
+            string signature = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
             Excel.Worksheet worksheetDetail = excel.ActiveWorkbook.Worksheets[1];
             Excel.Worksheet worksheetSignature = excel.ActiveWorkbook.Worksheets[2];
             Excel.Worksheet worksheetFrame = excel.ActiveWorkbook.Worksheets[3];
@@ -1504,6 +1505,7 @@ SET IDENTITY_INSERT oven off";
                                 Excel.Range paste2 = worksheetn.get_Range($"A{addrow + 1}", Type.Missing);
                                 Excel.Range r2 = worksheetSignature.get_Range("A1:A4").EntireRow;
                                 paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                                worksheetn.Cells[addrow + 3, 13] = signature;
                                 afterSignatureRow = addrow + 1 + signatureRow;
                             }
                             else
@@ -1512,6 +1514,7 @@ SET IDENTITY_INSERT oven off";
                                 alladdSheet++;
                                 worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
                                 worksheetSignature.Copy(worksheetn);
+                                worksheetn.Cells[3, 13] = signature;
                                 afterSignatureRow = signatureRow;
                             }
                         }
@@ -1588,6 +1591,7 @@ SET IDENTITY_INSERT oven off";
                         Excel.Range paste2 = worksheet.get_Range($"A{dr.Length + headerRow + 1}", Type.Missing);
                         Excel.Range r2 = worksheetSignature.get_Range("A1:A4").EntireRow;
                         paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                        worksheet.Cells[dr.Length + headerRow + 3, 13] = signature;
                         afterSignatureRow = dr.Length + headerRow + signatureRow;
                     }
                     else
@@ -1596,6 +1600,7 @@ SET IDENTITY_INSERT oven off";
                         alladdSheet++;
                         Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
                         worksheetSignature.Copy(worksheetn);
+                        worksheetn.Cells[3, 13] = signature;
                         afterSignatureRow = signatureRow;
                     }
 
