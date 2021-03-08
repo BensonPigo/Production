@@ -558,12 +558,13 @@ where ad.Id='{0}'
                     if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
                     {
                         dr["QtyAfter"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["AdjustQty"]);
-                        e.Cancel = true;
+                        return;
                     }
                     else
                     {
                         dr["QtyAfter"] = e.FormattedValue;
                         dr["AdjustQty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
+                        dr.EndEdit();
                     }
                 }
             };
@@ -571,17 +572,19 @@ where ad.Id='{0}'
             adjustqty.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                if (this.EditMode)
                 {
-                    if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) < 0)
+                    if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) < 0 ||
+                        MyUtility.Check.Empty(e.FormattedValue))
                     {
                         dr["AdjustQty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
-                        e.Cancel = true;
+                        return;
                     }
                     else
                     {
                         dr["AdjustQty"] = e.FormattedValue;
                         dr["QtyAfter"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["AdjustQty"]);
+                        dr.EndEdit();
                     }
                 }
             };
