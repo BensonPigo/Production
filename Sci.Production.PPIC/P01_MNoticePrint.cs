@@ -523,6 +523,7 @@ order by ID";
             sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
             sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
             sxr.DicDatas.Add(sxr.VPrefix + "POID", poid);
+            sxr.DicDatas.Add(sxr.VPrefix + "POIDALL", poid + "-All");
             sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
             sxr.DicDatas.Add(sxr.VPrefix + "PO_Status", drvar["Status"].ToString().Trim());
             sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
