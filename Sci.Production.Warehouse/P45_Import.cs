@@ -57,6 +57,7 @@ select  0 as selected
         , c.Dyelot
         , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as QtyBefore
         , 0.00 as QtyAfter
+        , c.inqty - c.outqty + c.adjustqty - c.ReturnQty as adjustqty
         , dbo.Getlocation(c.ukey) as location
         , '' reasonid
         , '' reason_nm
@@ -133,8 +134,6 @@ Where   c.lock = 0
                     }
                     else
                     {
-                        this.dtInventory.Columns.Add("adjustqty", typeof(decimal));
-                        this.dtInventory.Columns["adjustqty"].Expression = "qtybefore-qtyafter";
                         this.dtInventory.DefaultView.Sort = "seq1,seq2,location,dyelot";
                     }
 
@@ -170,23 +169,48 @@ Where   c.lock = 0
             #region -- Current Qty Valid --
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-                    {
-                        DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
 
-                        if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
-                        {
-                            dr["qtyafter"] = 0;
-                            return;
-                        }
-                        else
-                        {
-                            dr["qtyafter"] = e.FormattedValue;
-                            dr["selected"] = true;
-                        }
+                    if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) <= 0)
+                    {
+                        dr["QtyAfter"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["AdjustQty"]);
+                        return;
                     }
-                };
+                    else
+                    {
+                        dr["QtyAfter"] = e.FormattedValue;
+                        dr["AdjustQty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
+                        dr["selected"] = true;
+                        dr.EndEdit();
+                    }
+                }
+            };
+            #endregion
+            #region -- Remove Qty Valid --
+            DataGridViewGeneratorNumericColumnSettings adjustqty = new DataGridViewGeneratorNumericColumnSettings();
+            adjustqty.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
+                    if (MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(e.FormattedValue) < 0 ||
+                        MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["AdjustQty"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["QtyAfter"]);
+                        return;
+                    }
+                    else
+                    {
+                        dr["AdjustQty"] = e.FormattedValue;
+                        dr["QtyAfter"] = MyUtility.Convert.GetDecimal(dr["QtyBefore"]) - MyUtility.Convert.GetDecimal(dr["AdjustQty"]);
+                        dr["selected"] = true;
+                        dr.EndEdit();
+                    }
+                }
+            };
             #endregion
             #region -- Reason ID 右鍵開窗 --
             DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
@@ -273,7 +297,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
             .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 3
             .Numeric("QtyBefore", header: "Original Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 6
             .Numeric("QtyAfter", header: "Current Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6)) // 7
-            .Numeric("adjustqty", header: "Remove Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) // 8
+            .Numeric("AdjustQty", header: "Remove Qty", decimal_places: 2, integer_places: 10, settings: adjustqty, width: Widths.AnsiChars(6)) // 8
             .Text("location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
             .Text("reasonid", header: "Reason ID", settings: ts, width: Widths.AnsiChars(6)) // 10
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20)) // 11
@@ -281,6 +305,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
 
             this.gridImport.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridImport.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridImport.Columns["AdjustQty"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Close
