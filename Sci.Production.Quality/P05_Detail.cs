@@ -862,26 +862,44 @@ and a.seq1=@seq1";
             #endregion
 
             DataGridViewGeneratorComboBoxColumnSettings temperature = new DataGridViewGeneratorComboBoxColumnSettings();
-            Dictionary<string, string> temperatureItem = new Dictionary<string, string>
-            {
-                { "0", string.Empty },
-                { "70", "70" },
-                { "90", "90" },
-            };
-            temperature.DataSource = new BindingSource(temperatureItem, null);
-            temperature.ValueMember = "Key";
-            temperature.DisplayMember = "Value";
+            DataTable temperatureDT = new DataTable();
+            temperatureDT.Columns.Add("Temperature", typeof(int));
+            temperatureDT.Columns.Add("TemperatureDisplay", typeof(string));
+            DataRow newRow = temperatureDT.NewRow();
+            newRow["Temperature"] = 0;
+            newRow["TemperatureDisplay"] = string.Empty;
+            temperatureDT.Rows.Add(newRow);
+            newRow = temperatureDT.NewRow();
+            newRow["Temperature"] = 70;
+            newRow["TemperatureDisplay"] = "70";
+            temperatureDT.Rows.Add(newRow);
+            newRow = temperatureDT.NewRow();
+            newRow["Temperature"] = 90;
+            newRow["TemperatureDisplay"] = "90";
+            temperatureDT.Rows.Add(newRow);
+            temperature.DataSource = temperatureDT; // new BindingSource(temperatureItem, null);
+            temperature.ValueMember = "Temperature";
+            temperature.DisplayMember = "TemperatureDisplay";
 
             DataGridViewGeneratorComboBoxColumnSettings time = new DataGridViewGeneratorComboBoxColumnSettings();
-            Dictionary<string, string> timeItem = new Dictionary<string, string>
-            {
-                { "0", string.Empty },
-                { "24", "24" },
-                { "48", "48" },
-            };
-            time.DataSource = new BindingSource(timeItem, null);
-            time.ValueMember = "Key";
-            time.DisplayMember = "Value";
+            DataTable timeDT = new DataTable();
+            timeDT.Columns.Add("Time", typeof(int));
+            timeDT.Columns.Add("TimeDisplay", typeof(string));
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 0;
+            newRow["TimeDisplay"] = string.Empty;
+            timeDT.Rows.Add(newRow);
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 24;
+            newRow["TimeDisplay"] = "24";
+            timeDT.Rows.Add(newRow);
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 48;
+            newRow["TimeDisplay"] = "48";
+            timeDT.Rows.Add(newRow);
+            time.DataSource = timeDT;
+            time.ValueMember = "Time";
+            time.DisplayMember = "TimeDisplay";
 
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Date("SubmitDate", "Submit Date", width: Widths.AnsiChars(8))
@@ -1663,8 +1681,8 @@ SET IDENTITY_INSERT oven off";
             worksheet.Cells[setRow, 9] = dr["ResultChange"];
             worksheet.Cells[setRow, 10] = dr["StainingScale"];
             worksheet.Cells[setRow, 11] = dr["ResultStain"];
-            worksheet.Cells[setRow, 12] = dr["Temperature"];
-            worksheet.Cells[setRow, 14] = dr["Time"];
+            worksheet.Cells[setRow, 12] = MyUtility.Convert.GetString(dr["Temperature"]) + "˚C";
+            worksheet.Cells[setRow, 14] = MyUtility.Convert.GetString(dr["Time"]) + " hrs";
             worksheet.Cells[setRow, 15] = dr["Remark"];
         }
 
