@@ -1505,13 +1505,6 @@ where   f.lock=1
             }
             #endregion
 
-            #region 檢查庫存項WMSLock
-            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "TransferIn_Detail"))
-            {
-                return;
-            }
-            #endregion 檢查庫存項WMSLock
-
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
             if (!Prgs.ChkWMSCompleteTime(dt, "TransferIn_Detail"))
             {

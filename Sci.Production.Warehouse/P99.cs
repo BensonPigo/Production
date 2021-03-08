@@ -3169,8 +3169,8 @@ inner join #tmp s on t.Ukey = s.Ukey
                                                     Barcode = m.Field<string>("Barcode"),
                                                 }).ToList();
 
-                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO_P99(70);
-                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO_P99(71);
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
 
                         #endregion
 

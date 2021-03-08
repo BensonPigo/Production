@@ -404,7 +404,7 @@ namespace Sci.Production.Automation
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            if (!PublicPrg.Prgs.SentToWMS(dtDetail, true, "SubTransfer"))
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "SubTransfer"))
             {
                 return;
             }
@@ -926,6 +926,8 @@ select lt2.Id
 ,lt2.Dyelot
 ,lt2.FromLocation
 ,lt2.ToLocation
+,po3.Refno
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
@@ -935,6 +937,10 @@ select lt2.Id
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
 left join FtyInventory f on lt2.FtyInventoryUkey = f.ukey
+left join PO_Supp_Detail po3 on po3.ID = lt2.POID and po3.SEQ1 = lt2.Seq1
+    and po3.SEQ2 = lt2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo = Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select value = min(fb.Barcode)
 	from Production.dbo.FtyInventory_Barcode fb
@@ -973,7 +979,7 @@ and exists(
             }
 
             #region 記錄Confirmed後有傳給WMS的資料
-            if (!PublicPrg.Prgs.SentToWMS(dtDetail, true, "LocationTrans"))
+            if (!PublicPrg.Prgs.SentToWMS(dt, true, "LocationTrans"))
             {
                 return;
             }
@@ -1208,6 +1214,8 @@ and exists(
                         ToStockType = dr["ToStockType"].ToString(),
                         ToBarcode = dr["ToBarcode"].ToString(),
                         ToLocation = dr["ToLocation"].ToString(),
+                        Refno = dr["Refno"].ToString(),
+                        Color = dr["Color"].ToString(),
                         Qty = (decimal)dr["Qty"],
                         Ukey = (long)dr["Ukey"],
                         Status = dr["Status"].ToString(),
@@ -1253,6 +1261,8 @@ and exists(
                        ToStockType = dr["ToStockType"].ToString(),
                        ToBarcode = dr["ToBarcode"].ToString(),
                        ToLocation = dr["ToLocation"].ToString(),
+                       Refno = dr["Refno"].ToString(),
+                       Color = dr["Color"].ToString(),
                        Qty = (decimal)dr["Qty"],
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
@@ -1271,6 +1281,8 @@ and exists(
                        Dyelot = s["Dyelot"].ToString(),
                        FromLocation = s["FromLocation"].ToString(),
                        ToLocation = s["ToLocation"].ToString(),
+                       Refno = s["Refno"].ToString(),
+                       Color = s["Color"].ToString(),
                        Qty = (decimal)s["Qty"],
                        Barcode = s["Barcode"].ToString(),
                        Ukey = (long)s["Ukey"],
@@ -1440,7 +1452,7 @@ select distinct
 ,CmdTime = GetDate()
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
-,rd.SentToWMS,rd.CompleteTime
+,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
 {strBody}
@@ -1492,7 +1504,7 @@ select distinct
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
-,rd.SentToWMS,rd.CompleteTime
+,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.IssueLack_Detail i2
 inner join Production.dbo.IssueLack i on i2.id = i.id
 {strBody}
@@ -1543,7 +1555,7 @@ select distinct
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
-,rd.SentToWMS,rd.CompleteTime
+,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.TransferOut_Detail i2
 inner join Production.dbo.TransferOut i on i2.id = i.id
 {strBody}
@@ -1606,10 +1618,13 @@ select distinct
 ,sd.ToPOID,sd.ToSeq1,sd.ToSeq2,sd.ToRoll,sd.ToDyelot,sd.ToStockType
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = sd.ToLocation
+,po3.Refno
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
 ,sd.SentToWMS,sd.CompleteTime
+,sd.ukey
 from Production.dbo.SubTransfer_Detail sd
 inner join Production.dbo.SubTransfer s on s.id = sd.id
 {strBody}
@@ -1617,6 +1632,10 @@ left join FtyInventory FI on sd.fromPoid = fi.poid
     and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
     and sd.fromDyelot = fi.Dyelot and sd.fromRoll = fi.roll 
     and sd.fromStocktype = fi.stocktype
+left join PO_Supp_Detail po3 on po3.ID = sd.FromPOID and po3.SEQ1 = sd.FromSeq1
+and po3.SEQ2 = sd.FromSeq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select listValue = Stuff((
 			select concat(',',MtlLocationID)
@@ -1693,6 +1712,7 @@ select rrd.Id
 ,rrd.Dyelot
 ,rrd.StockType
 ,rrd.Ukey
+,[Barcode] = Barcode.value
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,[CmdTime] = GETDATE()
@@ -1751,6 +1771,8 @@ select distinct
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = bb2.ToLocation
 ,[Qty] = {strQty}
+,po3.Refno
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,bb2.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
@@ -1760,6 +1782,10 @@ inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
 {strBody}
 left join FtyInventory FI on bb2.FromPoid = Fi.Poid and bb2.FromSeq1 = Fi.Seq1 and bb2.FromSeq2 = Fi.Seq2 
     and bb2.FromRoll = Fi.Roll and bb2.FromDyelot = Fi.Dyelot and bb2.FromStockType = FI.StockType
+left join PO_Supp_Detail po3 on po3.ID = bb2.FromPOID and po3.SEQ1 = bb2.FromSeq1
+    and po3.SEQ2 = bb2.FromSeq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
 	select listValue = Stuff((
 			select concat(',',FromLocation)

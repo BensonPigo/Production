@@ -743,7 +743,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #endregion
 
             #region 檢查庫存項WMSLock
-            if (Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
+            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "Issue_Detail"))
             {
                 return;
             }
@@ -977,7 +977,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
                 DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P11", "UnConfirmed"))
+                if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P10", "UnConfirmed"))
                 {
                     return;
                 }

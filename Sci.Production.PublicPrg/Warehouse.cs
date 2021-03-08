@@ -772,6 +772,8 @@ alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
 
 update t
 set WMSLock = {lockStatus}
@@ -780,6 +782,7 @@ where exists(
     select * from #TmpSource s
     where t.POID = s.POID
     and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+    and t.Roll = s.Roll and t.Dyelot = s.Dyelot
     and t.StockType = s.StockType
 )
 ";
@@ -4368,6 +4371,16 @@ where exists(
 update t
 set t.SentToWMS = {toWMS}
 from BorrowBack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "LocationTrans":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from LocationTrans_Detail t
 where exists(
 	select 1 from #tmp s
 	where s.id = t.Id and s.ukey = t.Ukey
