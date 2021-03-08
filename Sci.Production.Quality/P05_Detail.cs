@@ -1,16 +1,17 @@
-﻿using Ict.Win;
-using System.Data;
+﻿using Ict;
+using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Ict;
-using Sci.Production.PublicPrg;
-using System.Diagnostics;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Quality
 {
@@ -50,8 +51,7 @@ namespace Sci.Production.Quality
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DataTable dt;
-            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out dt);
+            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out DataTable dt);
 
             if (!result)
             {
@@ -81,8 +81,7 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override void OnEditModeChanged()
         {
-            DataTable dt;
-            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out dt);
+            var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out DataTable dt);
             if (dt.Rows.Count >= 1)
             {
                 this.newOven = false;
@@ -100,9 +99,11 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
-            Dictionary<string, string> result_RowSource = new Dictionary<string, string>();
-            result_RowSource.Add("Pass", "Pass");
-            result_RowSource.Add("Fail", "Fail");
+            Dictionary<string, string> result_RowSource = new Dictionary<string, string>
+            {
+                { "Pass", "Pass" },
+                { "Fail", "Fail" },
+            };
             this.comboResult.DataSource = new BindingSource(result_RowSource, null);
             this.comboResult.ValueMember = "Key";
             this.comboResult.DisplayMember = "Value";
@@ -111,8 +112,7 @@ namespace Sci.Production.Quality
             DualResult dResult;
             string cmd = "select * from oven WITH (NOLOCK) where id=@id";
 
-            List<SqlParameter> sqm = new List<SqlParameter>();
-            sqm.Add(new SqlParameter("@id", this.ID));
+            List<SqlParameter> sqm = new List<SqlParameter> { new SqlParameter("@id", this.ID) };
             if (dResult = DBProxy.Current.Select(null, cmd, sqm, out this.dtOven))
             {
                 if (this.dtOven.Rows.Count > 0)
@@ -123,8 +123,6 @@ namespace Sci.Production.Quality
                     this.txtArticle.Text = this.dtOven.Rows[0]["article"].ToString();
                     this.txtuserInspector.TextBox1Binding = this.dtOven.Rows[0]["inspector"].ToString();
                     this.txtRemark.Text = this.dtOven.Rows[0]["Remark"].ToString();
-                    this.numTemperature.Value = MyUtility.Convert.GetInt(this.dtOven.Rows[0]["Temperature"]);
-                    this.numTime.Value = MyUtility.Convert.GetInt(this.dtOven.Rows[0]["Time"]);
                     this.comboResult.SelectedValue = this.dtOven.Rows[0]["Result"].ToString();
                     if (this.dtOven.Rows[0]["Status"].ToString() == "New" || this.dtOven.Rows[0]["Status"].ToString() == string.Empty)
                     {
@@ -146,8 +144,6 @@ namespace Sci.Production.Quality
                     this.txtuserInspector.TextBox1Binding = this.loginID;
                     this.txtRemark.Text = string.Empty;
                     this.comboResult.SelectedValue = string.Empty;
-                    this.numTemperature.Value = 0;
-                    this.numTime.Value = 0;
                 }
             }
 
@@ -162,8 +158,6 @@ namespace Sci.Production.Quality
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
-            DataTable dtpo, dtsupp;
-            DataRow dr1;
 
             // Gridview新增欄位
             datas.Columns.Add("SCIRefno", typeof(string));
@@ -187,7 +181,7 @@ namespace Sci.Production.Quality
                 spm.Add(new SqlParameter("@id", this.PoID));
                 spm.Add(new SqlParameter("@seq1", datas.Rows[i]["seq1"]));
                 spm.Add(new SqlParameter("@seq2", datas.Rows[i]["seq2"]));
-                DBProxy.Current.Select(null, cmdd, spm, out dtpo);
+                DBProxy.Current.Select(null, cmdd, spm, out DataTable dtpo);
 
                 // Suppliers
                 List<SqlParameter> spmSupp = new List<SqlParameter>();
@@ -199,11 +193,11 @@ where a.ID=@id
 and a.seq1=@seq1";
                 spmSupp.Add(new SqlParameter("@id", this.PoID));
                 spmSupp.Add(new SqlParameter("@seq1", datas.Rows[i]["seq1"]));
-                DBProxy.Current.Select(null, cmddSupp, spmSupp, out dtsupp);
+                DBProxy.Current.Select(null, cmddSupp, spmSupp, out DataTable dtsupp);
                 if (dtpo.Rows.Count <= 0)
                 {
-                     dr["SCIRefno"] = string.Empty;
-                     dr["Colorid"] = string.Empty;
+                    dr["SCIRefno"] = string.Empty;
+                    dr["Colorid"] = string.Empty;
                 }
                 else
                 {
@@ -212,7 +206,7 @@ and a.seq1=@seq1";
                     dr["refno"] = dtpo.Rows[0]["refno"].ToString();
                     dr["Colorid"] = dtpo.Rows[0]["Colorid"].ToString();
                     dr["Supplier"] = dtsupp.Rows[0]["supplier"].ToString();
-                    if (MyUtility.Check.Seek(string.Format(@"select * from DBO.View_ShowName where id='{0}'", datas.Rows[0]["EditNAme"].ToString()), out dr1))
+                    if (MyUtility.Check.Seek(string.Format(@"select * from DBO.View_ShowName where id='{0}'", datas.Rows[0]["EditNAme"].ToString()), out DataRow dr1))
                     {
                         dr["LastUpdate"] = dr1["ID"].ToString() + " - " + dr1["Name_Extno"].ToString();
                     }
@@ -261,8 +255,7 @@ and a.seq1=@seq1";
                 var ctl = (Ict.Win.UI.DataGridViewTextBoxEditingControl)this.grid.EditingControl;
                 var groupValue = ctl.EditingControlFormattedValue.ToString();
 
-                int n;
-                if (int.TryParse(groupValue, out n))
+                if (int.TryParse(groupValue, out int n))
                 {
                     if (groupValue.ToString().Length > 2)
                     {
@@ -375,8 +368,6 @@ and a.seq1=@seq1";
             seqMskCell.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                DataTable dt;
-                DataTable dt1;
                 if (!this.EditMode)
                 {
                     return; // 非編輯模式
@@ -412,7 +403,7 @@ and a.seq1=@seq1";
                 }
 
                 string sql_cmd = string.Format("select seq1,seq2 from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and FabricType='F' and seq1='{1}' and seq2='{2}'", this.PoID, dr["seq1"].ToString().Trim(), dr["seq2"].ToString().Trim());
-                DBProxy.Current.Select(null, sql_cmd, out dt1);
+                DBProxy.Current.Select(null, sql_cmd, out DataTable dt1);
                 if (dt1.Rows.Count <= 0)
                 {
                     dr["SEQ"] = string.Empty;
@@ -444,12 +435,14 @@ and a.seq1=@seq1";
                 }
 
                 string cmd = "SELECT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
-                List<SqlParameter> spam = new List<SqlParameter>();
-                spam.Add(new SqlParameter("@poid", this.PoID));
-                spam.Add(new SqlParameter("@seq1", dr["seq1"]));
-                spam.Add(new SqlParameter("@seq2", dr["seq2"]));
-                spam.Add(new SqlParameter("@Roll", dr["roll"]));
-                DBProxy.Current.Select(null, cmd, spam, out dt);
+                List<SqlParameter> spam = new List<SqlParameter>
+                {
+                    new SqlParameter("@poid", this.PoID),
+                    new SqlParameter("@seq1", dr["seq1"]),
+                    new SqlParameter("@seq2", dr["seq2"]),
+                    new SqlParameter("@Roll", dr["roll"]),
+                };
+                DBProxy.Current.Select(null, cmd, spam, out DataTable dt);
                 if (dt.Rows.Count <= 0)
                 {
                     dr["Roll"] = string.Empty;
@@ -499,10 +492,12 @@ and a.seq1=@seq1";
                     #endregion
 
                     string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@poid", this.PoID));
-                    spam.Add(new SqlParameter("@seq1", dr["seq1"]));
-                    spam.Add(new SqlParameter("@seq2", dr["seq2"]));
+                    List<SqlParameter> spam = new List<SqlParameter>
+                    {
+                        new SqlParameter("@poid", this.PoID),
+                        new SqlParameter("@seq1", dr["seq1"]),
+                        new SqlParameter("@seq2", dr["seq2"]),
+                    };
                     SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -532,7 +527,7 @@ and a.seq1=@seq1";
                     DataRow dr = this.grid.GetDataRow(e.RowIndex);
                     #region 新資料 不判斷SEQ
 
-                     // if (newOven) //
+                    // if (newOven) //
                     // {
                     //    string item_cmd = "SELECT Roll,Dyelot from FtyInventory where poid=@poid and roll <>'' ";
                     //    List<SqlParameter> spam = new List<SqlParameter>();
@@ -552,10 +547,12 @@ and a.seq1=@seq1";
                     #endregion
 
                     string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
-                    List<SqlParameter> spam = new List<SqlParameter>();
-                    spam.Add(new SqlParameter("@poid", this.PoID));
-                    spam.Add(new SqlParameter("@seq1", dr["seq1"]));
-                    spam.Add(new SqlParameter("@seq2", dr["seq2"]));
+                    List<SqlParameter> spam = new List<SqlParameter>
+                    {
+                        new SqlParameter("@poid", this.PoID),
+                        new SqlParameter("@seq1", dr["seq1"]),
+                        new SqlParameter("@seq2", dr["seq2"]),
+                    };
                     SelectItem item = new SelectItem(item_cmd, spam, "10,10", dr["Roll"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -570,7 +567,6 @@ and a.seq1=@seq1";
             };
             rollCell.CellValidating += (s, e) =>
             {
-                DataTable dt;
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
@@ -599,12 +595,14 @@ and a.seq1=@seq1";
                 }
 
                 string cmd = "SELECT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 and Roll=@Roll ";
-                List<SqlParameter> spam = new List<SqlParameter>();
-                spam.Add(new SqlParameter("@poid", this.PoID));
-                spam.Add(new SqlParameter("@seq1", dr["seq1"]));
-                spam.Add(new SqlParameter("@seq2", dr["seq2"]));
-                spam.Add(new SqlParameter("@Roll", e.FormattedValue));
-                DBProxy.Current.Select(null, cmd, spam, out dt);
+                List<SqlParameter> spam = new List<SqlParameter>
+                {
+                    new SqlParameter("@poid", this.PoID),
+                    new SqlParameter("@seq1", dr["seq1"]),
+                    new SqlParameter("@seq2", dr["seq2"]),
+                    new SqlParameter("@Roll", e.FormattedValue),
+                };
+                DBProxy.Current.Select(null, cmd, spam, out DataTable dt);
                 if (dt.Rows.Count <= 0)
                 {
                     dr["Roll"] = string.Empty;
@@ -697,13 +695,11 @@ and a.seq1=@seq1";
                     return; // 沒資料 return
                 }
 
-                DataTable dt;
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string cmd = "select id from Scale WITH (NOLOCK) where Junk=0  and id=@ChangeScale";
-                List<SqlParameter> spam = new List<SqlParameter>();
-                spam.Add(new SqlParameter("@ChangeScale", e.FormattedValue));
+                List<SqlParameter> spam = new List<SqlParameter> { new SqlParameter("@ChangeScale", e.FormattedValue) };
 
-                DBProxy.Current.Select(null, cmd, spam, out dt);
+                DBProxy.Current.Select(null, cmd, spam, out DataTable dt);
                 if (dt.Rows.Count <= 0)
                 {
                     dr["Changescale"] = string.Empty;
@@ -789,13 +785,11 @@ and a.seq1=@seq1";
                     return; // 沒資料 return
                 }
 
-                DataTable dt;
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 string cmd = "select id from Scale WITH (NOLOCK) where Junk=0  and id=@StainingScale";
-                List<SqlParameter> spam = new List<SqlParameter>();
-                spam.Add(new SqlParameter("@StainingScale", e.FormattedValue));
+                List<SqlParameter> spam = new List<SqlParameter> { new SqlParameter("@StainingScale", e.FormattedValue) };
 
-                DBProxy.Current.Select(null, cmd, spam, out dt);
+                DBProxy.Current.Select(null, cmd, spam, out DataTable dt);
                 if (dt.Rows.Count <= 0)
                 {
                     dr["StainingScale"] = string.Empty;
@@ -867,6 +861,46 @@ and a.seq1=@seq1";
             };
             #endregion
 
+            DataGridViewGeneratorComboBoxColumnSettings temperature = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataTable temperatureDT = new DataTable();
+            temperatureDT.Columns.Add("Temperature", typeof(int));
+            temperatureDT.Columns.Add("TemperatureDisplay", typeof(string));
+            DataRow newRow = temperatureDT.NewRow();
+            newRow["Temperature"] = 0;
+            newRow["TemperatureDisplay"] = string.Empty;
+            temperatureDT.Rows.Add(newRow);
+            newRow = temperatureDT.NewRow();
+            newRow["Temperature"] = 70;
+            newRow["TemperatureDisplay"] = "70";
+            temperatureDT.Rows.Add(newRow);
+            newRow = temperatureDT.NewRow();
+            newRow["Temperature"] = 90;
+            newRow["TemperatureDisplay"] = "90";
+            temperatureDT.Rows.Add(newRow);
+            temperature.DataSource = temperatureDT; // new BindingSource(temperatureItem, null);
+            temperature.ValueMember = "Temperature";
+            temperature.DisplayMember = "TemperatureDisplay";
+
+            DataGridViewGeneratorComboBoxColumnSettings time = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataTable timeDT = new DataTable();
+            timeDT.Columns.Add("Time", typeof(int));
+            timeDT.Columns.Add("TimeDisplay", typeof(string));
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 0;
+            newRow["TimeDisplay"] = string.Empty;
+            timeDT.Rows.Add(newRow);
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 24;
+            newRow["TimeDisplay"] = "24";
+            timeDT.Rows.Add(newRow);
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 48;
+            newRow["TimeDisplay"] = "48";
+            timeDT.Rows.Add(newRow);
+            time.DataSource = timeDT;
+            time.ValueMember = "Time";
+            time.DisplayMember = "TimeDisplay";
+
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Date("SubmitDate", "Submit Date", width: Widths.AnsiChars(8))
                 .Text("OvenGroup", "Group", width: Widths.AnsiChars(5), settings: groupCell)
@@ -882,7 +916,10 @@ and a.seq1=@seq1";
                 .Text("StainingScale", header: "Color Staining Scale", width: Widths.AnsiChars(10), settings: staCell)
                 .Text("ResultStain", header: "Result(Staining)", width: Widths.AnsiChars(8), settings: resultStainCell, iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
-                .Text("LastUpdate", header: "LastUpdate", width: Widths.AnsiChars(30), iseditingreadonly: true);
+                .Text("LastUpdate", header: "LastUpdate", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .ComboBox("Temperature", "Temperature(˚C)", width: Widths.AnsiChars(10), settings: temperature)
+                .ComboBox("Time", "Time(hrs)", width: Widths.AnsiChars(10), settings: time)
+                ;
             return true;
         }
 
@@ -916,10 +953,9 @@ and a.seq1=@seq1";
         {
             DualResult upResult = new DualResult(true);
             string update_cmd = string.Empty;
-            DataTable dt;
 
             string sqlcmd = string.Format(@"select Max(TestNO) as MaxNO from oven WITH (NOLOCK) where poid='{0}'", this.PoID);
-            DBProxy.Current.Select(null, sqlcmd, out dt);
+            DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             int testno = MyUtility.Convert.GetInt(dt.Rows[0]["MaxNO"]);
 
             DataRow dr = ((DataTable)this.gridbs.DataSource).NewRow();
@@ -959,8 +995,7 @@ and a.seq1=@seq1";
                     if (this.newOven)
                     {
                         // insert 新資料進oven
-                        DataTable dtID;
-                        DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out dtID);
+                        DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out DataTable dtID);
 
                         int newID = MyUtility.Convert.GetInt(dtID.Rows[0]["id"]);
                         this.ID = (newID + 1).ToString();
@@ -971,15 +1006,15 @@ SET IDENTITY_INSERT oven ON
 insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate,Temperature,Time)
 values(@id ,@poid,@testNO,GETDATE(),@Article,'','New',@logid,@remark,@logid,GETDATE(),@Temperature,@Time)
 SET IDENTITY_INSERT oven off";
-                        List<SqlParameter> spamAddNew = new List<SqlParameter>();
-                        spamAddNew.Add(new SqlParameter("@id", this.ID)); // New ID
-                        spamAddNew.Add(new SqlParameter("@poid", this.PoID));
-                        spamAddNew.Add(new SqlParameter("@article", this.txtArticle.Text));
-                        spamAddNew.Add(new SqlParameter("@logid", this.loginID));
-                        spamAddNew.Add(new SqlParameter("@remark", this.txtRemark.Text));
-                        spamAddNew.Add(new SqlParameter("@testNO", testno + 1));
-                        spamAddNew.Add(new SqlParameter("@Temperature", this.numTemperature.Value));
-                        spamAddNew.Add(new SqlParameter("@Time", this.numTime.Value));
+                        List<SqlParameter> spamAddNew = new List<SqlParameter>
+                        {
+                            new SqlParameter("@id", this.ID), // New ID
+                            new SqlParameter("@poid", this.PoID),
+                            new SqlParameter("@article", this.txtArticle.Text),
+                            new SqlParameter("@logid", this.loginID),
+                            new SqlParameter("@remark", this.txtRemark.Text),
+                            new SqlParameter("@testNO", testno + 1),
+                        };
                         upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
 
                         if (upResult)
@@ -999,16 +1034,16 @@ SET IDENTITY_INSERT oven off";
                     string editCmd = @"update oven set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName,EditDate=@EditDate,Temperature=@Temperature,
                       Time=@Time
                                        where id=@id";
-                    List<SqlParameter> spamEdit = new List<SqlParameter>();
-                    spamEdit.Add(new SqlParameter("@id", this.ID)); // New ID
-                    spamEdit.Add(new SqlParameter("@insDate", this.dateTestDate.Value));
-                    spamEdit.Add(new SqlParameter("@article", this.txtArticle.Text));
-                    spamEdit.Add(new SqlParameter("@insor", this.loginID));
-                    spamEdit.Add(new SqlParameter("@remark", this.txtRemark.Text));
-                    spamEdit.Add(new SqlParameter("@EditName", this.loginID));
-                    spamEdit.Add(new SqlParameter("@EditDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
-                    spamEdit.Add(new SqlParameter("@Temperature", this.numTemperature.Value));
-                    spamEdit.Add(new SqlParameter("@Time", this.numTime.Value));
+                    List<SqlParameter> spamEdit = new List<SqlParameter>
+                    {
+                        new SqlParameter("@id", this.ID), // New ID
+                        new SqlParameter("@insDate", this.dateTestDate.Value),
+                        new SqlParameter("@article", this.txtArticle.Text),
+                        new SqlParameter("@insor", this.loginID),
+                        new SqlParameter("@remark", this.txtRemark.Text),
+                        new SqlParameter("@EditName", this.loginID),
+                        new SqlParameter("@EditDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
+                    };
                     upResult = DBProxy.Current.Execute(null, editCmd, spamEdit);
                 }
             }
@@ -1026,10 +1061,8 @@ SET IDENTITY_INSERT oven off";
         /// <inheritdoc/>
         protected override void OnInsert()
         {
-            DataTable dt;
-
             DataTable dtGrid = (DataTable)this.gridbs.DataSource;
-            DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out dt);
+            DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out DataTable dt);
 
             DataTable dtGrid_Max = (DataTable)this.gridbs.DataSource;
             DBProxy.Current.Select(null, string.Format("select  max(OvenGroup) as max from oven_detail WITH (NOLOCK) where id='{0}'", this.ID), out dtGrid_Max);
@@ -1044,47 +1077,47 @@ SET IDENTITY_INSERT oven off";
             // {
             // 第一筆0
             if (grid_rows == 0)
-                {
-                    dtGrid.Rows[grid_rows]["OvenGroup"] = "01";
-                    intTen = 0;
-                    return;
-                }
+            {
+                dtGrid.Rows[grid_rows]["OvenGroup"] = "01";
+                intTen = 0;
+                return;
+            }
 
             int group = MyUtility.Convert.GetInt(dtGrid.Rows[grid_rows - 1]["ovengroup"].ToString().Substring(1, 1));
             int groupAll = MyUtility.Convert.GetInt(dtGrid.Rows[grid_rows - 1]["ovengroup"]);
 
             if (group == 9 && groupAll < 10)
-                {
-                    intTen = 1;
-                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
-                    return;
-                }
-                else if (group == 9 && groupAll > 10)
-                {
-                    if (groupAll == 99)
-                    {
-                        intTen = 0;
-                        dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "1";
-                        return;
-                    }
-
-                    intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1)) + 1;
-                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
-                    return;
-                }
-
-            if (groupAll < 9)
+            {
+                intTen = 1;
+                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
+                return;
+            }
+            else if (group == 9 && groupAll > 10)
+            {
+                if (groupAll == 99)
                 {
                     intTen = 0;
-                    group++;
-                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "1";
+                    return;
                 }
-                else
-                {
-                    intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1));
-                    group++;
-                    dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
-                }
+
+                intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1)) + 1;
+                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + "0";
+                return;
+            }
+
+            if (groupAll < 9)
+            {
+                intTen = 0;
+                group++;
+                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+            }
+            else
+            {
+                intTen = MyUtility.Convert.GetInt(groupAll.ToString().Substring(0, 1));
+                group++;
+                dtGrid.Rows[grid_rows]["ovengroup"] = intTen.ToString() + group.ToString();
+            }
         }
 
         #region 表頭Article 右鍵事件: 1.右鍵selectItem 2.判斷validated
@@ -1102,8 +1135,7 @@ SET IDENTITY_INSERT oven off";
                     from orders o, order_qty oq 
                     where o.id = oq.id and oq.qty > 0 
                     and o.poid =@poid ";
-                List<SqlParameter> spm = new List<SqlParameter>();
-                spm.Add(new SqlParameter("@poid", this.PoID));
+                List<SqlParameter> spm = new List<SqlParameter> { new SqlParameter("@poid", this.PoID) };
                 SelectItem item = new SelectItem(cmd, spm, "12", null, null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
@@ -1123,16 +1155,17 @@ SET IDENTITY_INSERT oven off";
             }
 
             DualResult dresult;
-            DataTable dt;
             string cmd = @"select distinct oq.article 
                     from orders o, order_qty oq 
                     where o.id = oq.id and oq.qty > 0 
                     and o.poid =@poid
                     and oq.article=@art";
-            List<SqlParameter> spm = new List<SqlParameter>();
-            spm.Add(new SqlParameter("@poid", this.PoID));
-            spm.Add(new SqlParameter("@art", this.txtArticle.Text));
-            if (dresult = DBProxy.Current.Select(null, cmd, spm, out dt))
+            List<SqlParameter> spm = new List<SqlParameter>
+            {
+                new SqlParameter("@poid", this.PoID),
+                new SqlParameter("@art", this.txtArticle.Text),
+            };
+            if (dresult = DBProxy.Current.Select(null, cmd, spm, out DataTable dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -1148,7 +1181,7 @@ SET IDENTITY_INSERT oven off";
                 return;
             }
         }
-#endregion
+        #endregion
 
         private void BtnEncode_Click(object sender, EventArgs e)
         {
@@ -1243,22 +1276,21 @@ SET IDENTITY_INSERT oven off";
 
             if (dt.Rows.Count == 0)
             {
-                 MyUtility.Msg.WarningBox("Data not found!");
-                 return;
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
             }
 
-            DataTable dtPo;
             string styleID;
             string seasonID;
             string status;
             string brandID;
-            DBProxy.Current.Select(null, string.Format("select * from PO WITH (NOLOCK) where id='{0}'", this.PoID), out dtPo);
+            DBProxy.Current.Select(null, string.Format("select * from PO WITH (NOLOCK) where id='{0}'", this.PoID), out DataTable dtPo);
             if (dtPo.Rows.Count == 0)
             {
-                 styleID = string.Empty;
-                 seasonID = string.Empty;
-                 status = string.Empty;
-                 brandID = string.Empty;
+                styleID = string.Empty;
+                seasonID = string.Empty;
+                status = string.Empty;
+                brandID = string.Empty;
             }
             else
             {
@@ -1269,13 +1301,13 @@ SET IDENTITY_INSERT oven off";
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 2] = this.txtSP.Text.ToString();
             worksheet.Cells[1, 4] = styleID;
@@ -1330,8 +1362,7 @@ SET IDENTITY_INSERT oven off";
         {
             DualResult result;
             DataTable dt = (DataTable)this.gridbs.DataSource;
-            DataTable dtdist;
-            if (!(result = DBProxy.Current.Select(null, $@"select distinct convert(varchar(100),submitDate,111) as submitDate  from Oven_Detail  where id={this.ID}", out dtdist)))
+            if (!(result = DBProxy.Current.Select(null, $@"select distinct convert(varchar(100),submitDate,111) as submitDate  from Oven_Detail  where id={this.ID}", out DataTable dtdist)))
             {
                 this.ShowErr(result);
                 return;
@@ -1343,27 +1374,18 @@ SET IDENTITY_INSERT oven off";
                 return;
             }
 
-            DataTable dtOrders;
-            string styleUkey;
-            string styleID;
-            string seasonID;
-            string custPONo;
-            string brandID;
-            if (!(result = DBProxy.Current.Select(null, string.Format("select * from Orders WITH (NOLOCK) where poid='{0}'", this.PoID), out dtOrders)))
+            if (!(result = DBProxy.Current.Select(null, string.Format("select * from Orders WITH (NOLOCK) where poid='{0}'", this.PoID), out DataTable dtOrders)))
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (dtOrders.Rows.Count == 0)
-            {
-                styleUkey = string.Empty;
-                seasonID = string.Empty;
-                custPONo = string.Empty;
-                brandID = string.Empty;
-                styleID = string.Empty;
-            }
-            else
+            string styleUkey = string.Empty;
+            string styleID = string.Empty;
+            string seasonID = string.Empty;
+            string custPONo = string.Empty;
+            string brandID = string.Empty;
+            if (dtOrders.Rows.Count > 0)
             {
                 styleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
                 styleID = dtOrders.Rows[0]["StyleID"].ToString();
@@ -1373,165 +1395,268 @@ SET IDENTITY_INSERT oven off";
             }
 
             string strXltName = Env.Cfg.XltPathDir + "\\Quality_P05_Detail_Report_ToPDF.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
                 return;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            excel.DisplayAlerts = false;
 
+            // 預設頁在第4頁，前3頁是用來複製的格式，最後在刪除
+            // 依據 submitDate 複製分頁
+            int defaultSheet = 4;
             for (int c = 1; c < dtdist.Rows.Count; c++)
             {
-                Microsoft.Office.Interop.Excel.Worksheet worksheetFirst = excel.ActiveWorkbook.Worksheets[1];
-                Microsoft.Office.Interop.Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[1 + c];
+                Excel.Worksheet worksheetFirst = excel.ActiveWorkbook.Worksheets[defaultSheet];
+                Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + c];
                 worksheetFirst.Copy(worksheetn);
             }
 
-            int nSheet = 1;
+            Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            // 依據 submitDate 填入表頭資訊
             for (int i = 0; i < dtdist.Rows.Count; i++)
             {
-                worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
+                worksheet = excel.ActiveWorkbook.Worksheets[i + defaultSheet];
                 worksheet.Cells[4, 3] = dtdist.Rows[i]["submitDate"].ToString();
-                worksheet.Cells[4, 5] = this.dateTestDate.Text;
-                worksheet.Cells[4, 7] = this.txtSP.Text;
-                worksheet.Cells[4, 10] = brandID;
+                worksheet.Cells[4, 6] = this.dateTestDate.Text;
+                worksheet.Cells[4, 9] = this.txtSP.Text;
+                worksheet.Cells[4, 14] = brandID;
                 worksheet.Cells[6, 3] = styleID;
-                worksheet.Cells[6, 6] = custPONo;
-                worksheet.Cells[6, 9] = this.txtArticle.Text;
+                worksheet.Cells[6, 9] = custPONo;
+                worksheet.Cells[6, 14] = this.txtArticle.Text;
                 worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where Ukey ='{styleUkey}'", null));
-                worksheet.Cells[7, 6] = seasonID;
-                worksheet.Cells[10, 3] = this.numTemperature.Value + "˚C";
-                worksheet.Cells[10, 7] = this.numTime.Value + "hrs";
+                worksheet.Cells[7, 9] = seasonID;
+            }
+
+            // 細項
+            int setRow = 78; // 78 列為一頁
+            int headerRow = 9; // 表頭那頁前9列為固定
+            int signatureRow = 4; // 簽名有4列
+            int frameRow = 34; // 框 33列 + 1 列空白
+            int alladdSheet = 0;
+            string signature = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
+            Excel.Worksheet worksheetDetail = excel.ActiveWorkbook.Worksheets[1];
+            Excel.Worksheet worksheetSignature = excel.ActiveWorkbook.Worksheets[2];
+            Excel.Worksheet worksheetFrame = excel.ActiveWorkbook.Worksheets[3];
+            for (int i = 0; i < dtdist.Rows.Count; i++)
+            {
                 DataRow[] dr = dt.Select(MyUtility.Check.Empty(dtdist.Rows[i]["submitDate"]) ? $@"submitDate is null" : $"submitDate = '{dtdist.Rows[i]["submitDate"].ToString()}'");
 
-                for (int ii = 0; ii < dr.Length; ii++)
+                int underHeaderRow = setRow - headerRow;
+                if (dr.Length > underHeaderRow)
                 {
-                    worksheet.Cells[14 + ii, 2] = dr[ii]["Refno"];
-                    worksheet.Cells[14 + ii, 3] = dr[ii]["Colorid"];
-                    worksheet.Cells[14 + ii, 4] = dr[ii]["Dyelot"];
-                    worksheet.Cells[14 + ii, 5] = dr[ii]["Roll"];
-                    worksheet.Cells[14 + ii, 6] = dr[ii]["Changescale"];
-                    worksheet.Cells[14 + ii, 7] = dr[ii]["ResultChange"];
-                    worksheet.Cells[14 + ii, 8] = dr[ii]["StainingScale"];
-                    worksheet.Cells[14 + ii, 9] = dr[ii]["ResultStain"];
-                    worksheet.Cells[14 + ii, 10] = dr[ii]["Remark"];
+                    int overRow = dr.Length - underHeaderRow;
+                    int addSheets = (int)Math.Ceiling(overRow * 1.0 / setRow);
 
-                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[2][14 + ii], worksheet.Cells[10][14 + ii]];
-
-                    // 加框線
-                    rg1.Borders.LineStyle = 1;
-                    rg1.Borders.Weight = 3;
-                    rg1.WrapText = true; // 自動換列
-
-                    // 水平,垂直置中
-                    rg1.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                    rg1.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                }
-
-                #region singnature
-                for (int m = 0; m < 3; m++)
-                {
-                    // 設定range 變數
-                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[8][12 + dr.Length + 3 + m], worksheet.Cells[10][12 + dr.Length + 3 + m]]; // 14
-
-                    // 設定邊框
-                    rgSign.Borders.LineStyle = 1;
-                    rgSign.Borders.Weight = 3;
-
-                    // 置中
-                    rgSign.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                    rgSign.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                    switch (m)
+                    // 有表頭那頁下方的細項格線
+                    worksheet = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
+                    for (int j = 0; j < underHeaderRow; j++)
                     {
-                        case 0:
-                            rgSign.Font.Bold = true;
-                            rgSign.Cells[1, 1] = "Signature";
-                            break;
-                        case 1:
-                            rgSign.Cells[1, 1] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
-                            break;
-                        case 2:
-                            rgSign.Font.Bold = true;
-                            rgSign.Cells[1, 1] = "Checked by:";
-                            break;
+                        Excel.Range paste1 = worksheet.get_Range($"A{headerRow + 1 + j}", Type.Missing);
+                        Excel.Range r = worksheetDetail.get_Range("A1").EntireRow;
+                        paste1.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r.Copy(Type.Missing));
+
+                        // 細項資料
+                        this.SetDetailData(worksheet, j + headerRow + 1, dr[j]);
                     }
 
-                    rgSign.Merge();
-                }
-                #endregion
-
-                #region 畫Original After Test 固定框線格式
-
-                #region 判斷超過一頁則減少畫框數量
-                int cntFrame = 5;
-                if (dr.Length > 18 && dr.Length < 55)
-                {
-                    // 將會增長的dataRow -18 基礎數, 再除上固定畫框的7格 +1
-                    cntFrame = 5 - (((dr.Length - 18) / 7) + 1);
-                }
-                #endregion
-
-                int rowcnt = 19 + dr.Length;
-                #region 畫Original After Test
-                if (cntFrame > 0)
-                {
-                    for (int t = 0; t < 2; t++)
+                    // 額外細項分頁
+                    for (int k = 0; k < addSheets; k++)
                     {
-                        Microsoft.Office.Interop.Excel.Range rgText = worksheet.Range[worksheet.Cells[2 + (t * 5)][rowcnt], worksheet.Cells[5 + (t * 5)][rowcnt]];
+                        // 新增細項分頁
+                        Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
+                        worksheetDetail.Copy(worksheetn);
 
-                        // 置中
-                        rgText.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                        rgText.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                        rgText.Font.Bold = true;
+                        #region worksheetn 的細項格線
+                        worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
+                        worksheetn.get_Range("A1").EntireRow.Delete();
 
-                        switch (t)
+                        int addrow = overRow;
+                        if (overRow > setRow)
                         {
-                            case 0:
-                                rgText.Cells[1, 1] = "Original";
-                                break;
-                            case 1:
-                                rgText.Cells[1, 1] = "After Test";
-                                break;
+                            addrow = setRow;
+                            overRow -= setRow;
+                        }
+                        else
+                        {
+                            overRow = 0;
                         }
 
-                        rgText.Merge();
+                        for (int j = 0; j < addrow; j++)
+                        {
+                            Excel.Range paste1 = worksheetn.get_Range($"A{j + 1}", Type.Missing);
+                            Excel.Range r = worksheetDetail.get_Range("A1").EntireRow;
+                            paste1.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r.Copy(Type.Missing));
+
+                            // 細項資料
+                            this.SetDetailData(worksheetn, j + 1, dr[j + underHeaderRow + (k * setRow)]);
+                        }
+                        #endregion
+
+                        int afterSignatureRow = 0;
+
+                        // 簽名列
+                        if (overRow <= 0)
+                        {
+                            if (addrow < setRow - signatureRow)
+                            {
+                                Excel.Range paste2 = worksheetn.get_Range($"A{addrow + 1}", Type.Missing);
+                                Excel.Range r2 = worksheetSignature.get_Range("A1:A4").EntireRow;
+                                paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                                worksheetn.Cells[addrow + 3, 13] = signature;
+                                afterSignatureRow = addrow + 1 + signatureRow;
+                            }
+                            else
+                            {
+                                // 因簽名列塞不小，增加分頁
+                                alladdSheet++;
+                                worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
+                                worksheetSignature.Copy(worksheetn);
+                                worksheetn.Cells[3, 13] = signature;
+                                afterSignatureRow = signatureRow;
+                            }
+                        }
+
+                        #region 加入 4*10 的框
+                        worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
+
+                        // 共要加入幾組 frameNum
+                        int frameNum = (int)Math.Ceiling(dr.Length * 1.0 / 2);
+
+                        // 有簽名列那頁下方還有空間放下
+                        if (afterSignatureRow <= setRow - frameRow)
+                        {
+                            Excel.Range paste2 = worksheetn.get_Range($"A{afterSignatureRow + 1}", Type.Missing);
+                            Excel.Range r2 = worksheetFrame.get_Range("A9:A42").EntireRow;
+                            paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                            frameNum--;
+                            afterSignatureRow += frameRow;
+
+                            if (afterSignatureRow <= setRow - frameRow)
+                            {
+                                paste2 = worksheetn.get_Range($"A{afterSignatureRow + 1}", Type.Missing);
+                                paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                                frameNum--;
+                            }
+                        }
+
+                        bool g1 = true;
+                        for (int f = 0; f < frameNum; f++)
+                        {
+                            // 此頁第一組
+                            if (g1)
+                            {
+                                alladdSheet++;
+                                worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
+                                worksheetFrame.Copy(worksheetn);
+                            }
+
+                            // 此頁第2組
+                            else
+                            {
+                                worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i + k + 1];
+                                Excel.Range paste2 = worksheetn.get_Range($"A43", Type.Missing);
+                                Excel.Range r2 = worksheetFrame.get_Range("A9:A42").EntireRow;
+                                paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                            }
+
+                            g1 = !g1;
+                        }
+                        #endregion
                     }
 
-                    rowcnt++;
+                    alladdSheet += addSheets;
                 }
-                #endregion
-
-                #region 畫固定外框
-                for (int o = 0; o < cntFrame; o++)
+                else
                 {
-                    // 畫一對框線
-                    for (int oo = 0; oo < 2; oo++)
+                    // 有表頭那頁下方的細項格線
+                    worksheet = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
+                    for (int j = 0; j < dr.Length; j++)
                     {
-                        // 設定range 變數
-                        Microsoft.Office.Interop.Excel.Range rf = worksheet.Range[worksheet.Cells[2 + (oo * 5)][rowcnt], worksheet.Cells[5 + (oo * 5)][rowcnt + 5]];
+                        Excel.Range paste1 = worksheet.get_Range($"A{headerRow + 1 + j}", Type.Missing);
+                        Excel.Range r = worksheetDetail.get_Range("A1").EntireRow;
+                        paste1.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r.Copy(Type.Missing));
 
-                        // 設定邊框
-                        rf.BorderAround2(LineStyle: 1);
+                        // 細項資料
+                        this.SetDetailData(worksheet, j + headerRow + 1, dr[j]);
+                    }
 
-                        // 畫固定格式小框
-                        if (oo == 0)
+                    int afterSignatureRow;
+
+                    // 簽名列
+                    if (dr.Length < underHeaderRow - signatureRow)
+                    {
+                        Excel.Range paste2 = worksheet.get_Range($"A{dr.Length + headerRow + 1}", Type.Missing);
+                        Excel.Range r2 = worksheetSignature.get_Range("A1:A4").EntireRow;
+                        paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                        worksheet.Cells[dr.Length + headerRow + 3, 13] = signature;
+                        afterSignatureRow = dr.Length + headerRow + signatureRow;
+                    }
+                    else
+                    {
+                        // 因簽名列塞不小，增加分頁
+                        alladdSheet++;
+                        Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
+                        worksheetSignature.Copy(worksheetn);
+                        worksheetn.Cells[3, 13] = signature;
+                        afterSignatureRow = signatureRow;
+                    }
+
+                    #region 加入 4*10 的框
+                    worksheet = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
+
+                    // 共要加入幾組 frameNum
+                    int frameNum = (int)Math.Ceiling(dr.Length * 1.0 / 2);
+
+                    // 有簽名列那頁下方還有空間放下
+                    if (afterSignatureRow <= setRow - frameRow)
+                    {
+                        Excel.Range paste2 = worksheet.get_Range($"A{afterSignatureRow + 1}", Type.Missing);
+                        Excel.Range r2 = worksheetFrame.get_Range("A9:A42").EntireRow;
+                        paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                        frameNum--;
+                        afterSignatureRow += frameRow;
+
+                        if (afterSignatureRow <= setRow - frameRow)
                         {
-                            // 設定range 變數
-                            Microsoft.Office.Interop.Excel.Range rff = worksheet.Range[worksheet.Cells[2][rowcnt + 4], worksheet.Cells[2][rowcnt + 5]];
-
-                            // 設定邊框
-                            rff.BorderAround2(LineStyle: 1);
-                            rff.Cells[1, 1] = "Article#";
+                            paste2 = worksheet.get_Range($"A{afterSignatureRow + 1}", Type.Missing);
+                            paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                            frameNum--;
                         }
                     }
 
-                    rowcnt += 7;
-                }
-                #endregion
+                    bool g1 = true;
+                    for (int f = 0; f < frameNum; f++)
+                    {
+                        // 此頁第一組
+                        if (g1)
+                        {
+                            alladdSheet++;
+                            Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
+                            worksheetFrame.Copy(worksheetn);
+                        }
 
-                #endregion
-                nSheet++;
+                        // 此頁第2組
+                        else
+                        {
+                            Excel.Worksheet worksheetn = excel.ActiveWorkbook.Worksheets[defaultSheet + alladdSheet + i];
+                            Excel.Range paste2 = worksheetn.get_Range($"A43", Type.Missing);
+                            Excel.Range r2 = worksheetFrame.get_Range("A9:A42").EntireRow;
+                            paste2.Insert(Excel.XlInsertShiftDirection.xlShiftDown, r2.Copy(Type.Missing));
+                        }
+
+                        g1 = !g1;
+                    }
+                    #endregion
+                }
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                worksheet = excel.ActiveWorkbook.Worksheets[1];
+                worksheet.Delete();
             }
 
             #region Save & Show Excel
@@ -1549,6 +1674,21 @@ SET IDENTITY_INSERT oven off";
             #endregion
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(excel);
+        }
+
+        private void SetDetailData(Excel.Worksheet worksheet, int setRow, DataRow dr)
+        {
+            worksheet.Cells[setRow, 2] = dr["Refno"];
+            worksheet.Cells[setRow, 3] = dr["Colorid"];
+            worksheet.Cells[setRow, 4] = dr["Dyelot"];
+            worksheet.Cells[setRow, 6] = dr["Roll"];
+            worksheet.Cells[setRow, 7] = dr["Changescale"];
+            worksheet.Cells[setRow, 9] = dr["ResultChange"];
+            worksheet.Cells[setRow, 10] = dr["StainingScale"];
+            worksheet.Cells[setRow, 11] = dr["ResultStain"];
+            worksheet.Cells[setRow, 12] = MyUtility.Convert.GetString(dr["Temperature"]) + "˚C";
+            worksheet.Cells[setRow, 14] = MyUtility.Convert.GetString(dr["Time"]) + " hrs";
+            worksheet.Cells[setRow, 15] = dr["Remark"];
         }
 
         private void TxtuserInspector_Validating(object sender, CancelEventArgs e)
