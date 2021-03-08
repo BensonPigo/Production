@@ -309,7 +309,7 @@ namespace Sci.Production.Packing
                     #endregion
 
                     Bitmap oriBitmap = this.NewBarcode(barcode);
-                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 230));
+                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 200));
 
                     Clipboard.SetImage(resized);
                     tables.Cell(1, 1).Range.Paste();
