@@ -391,6 +391,25 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             this.btnClrearCustCtn.Enabled = this.EditMode;
 
             this.Color_Change();
+
+            #region 表身欄位[Customize1] 動態顯示和調整名稱
+            if (!MyUtility.Check.Seek($@"select Customize1 from Brand where ID='{this.CurrentMaintain["BrandID"]}' and Customize1 !=''", out DataRow drCust))
+            {
+                if (this.detailgrid.Columns["colCustom1"] != null)
+                {
+                    this.detailgrid.Columns["colCustom1"].Visible = false;
+                }
+            }
+            else
+            {
+                if (this.detailgrid.Columns["colCustom1"] != null)
+                {
+                    this.detailgrid.Columns["colCustom1"].HeaderText = $"{drCust["Customize1"]}";
+                    this.detailgrid.Columns["colCustom1"].Visible = true;
+                }
+            }
+            #endregion
+
         }
 
         /// <summary>
@@ -813,7 +832,7 @@ order by os.Seq",
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: this.seq).Get(out this.col_seq)
                 .Date("IDD", header: "Intended Delivery", iseditingreadonly: true)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("CustPONo", header: "P.O. No.", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6)).Get(out this.col_ctnno)
                 .Numeric("CTNQty", header: "# of CTN").Get(out this.col_ctnqty)
                 .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out this.col_refno)
@@ -960,6 +979,25 @@ order by os.Seq",
                 #endregion
             };
 
+            #region Add Column [Customize1] 在P.O.No.後面
+
+            DataGridViewTextBoxColumn col_Custom1 = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxCell cell = new DataGridViewTextBoxCell();
+            col_Custom1.CellTemplate = cell;
+            col_Custom1.Name = "colCustom1";
+            col_Custom1.HeaderText = "Customize1";
+
+            col_Custom1.DataPropertyName = "Customize1";
+            col_Custom1.Width = 110;
+            this.detailgrid.Columns.Add(col_Custom1);
+            if (this.detailgrid != null)
+            {
+                if (this.detailgrid.Columns["colCustom1"] != null)
+                {
+                    this.detailgrid.Columns["colCustom1"].DisplayIndex = 8;
+                }
+            }
+            #endregion
             this.Color_Change();
         }
 

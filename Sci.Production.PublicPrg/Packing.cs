@@ -607,6 +607,7 @@ select  a.*
         ,o.OrderTypeID
         ,oqs.IDD
         ,[PrepackQtyShow] = IIF(a.PrepackQty = 0 , NULL , a.PrepackQty)
+        ,[Customize1] = o.Customize1
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 
