@@ -131,15 +131,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(904, 519);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(898, 473);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(898, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -177,7 +177,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(29, 16);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(60, 23);
@@ -186,7 +185,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(29, 105);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(60, 23);
@@ -195,7 +193,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(29, 76);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(60, 23);
@@ -204,7 +201,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(29, 46);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(60, 23);
@@ -213,7 +209,6 @@
             // 
             // labelCompletionDate
             // 
-            this.labelCompletionDate.Lines = 0;
             this.labelCompletionDate.Location = new System.Drawing.Point(246, 107);
             this.labelCompletionDate.Name = "labelCompletionDate";
             this.labelCompletionDate.Size = new System.Drawing.Size(163, 23);
@@ -222,7 +217,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(550, 45);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(150, 23);
@@ -231,7 +225,6 @@
             // 
             // labelTargetLeadtime
             // 
-            this.labelTargetLeadtime.Lines = 0;
             this.labelTargetLeadtime.Location = new System.Drawing.Point(246, 78);
             this.labelTargetLeadtime.Name = "labelTargetLeadtime";
             this.labelTargetLeadtime.Size = new System.Drawing.Size(163, 23);
@@ -240,7 +233,6 @@
             // 
             // labelEarliestSCIDel
             // 
-            this.labelEarliestSCIDel.Lines = 0;
             this.labelEarliestSCIDel.Location = new System.Drawing.Point(246, 46);
             this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
             this.labelEarliestSCIDel.Size = new System.Drawing.Size(163, 23);
@@ -249,7 +241,6 @@
             // 
             // labelEarliestEstCuttingDate
             // 
-            this.labelEarliestEstCuttingDate.Lines = 0;
             this.labelEarliestEstCuttingDate.Location = new System.Drawing.Point(246, 16);
             this.labelEarliestEstCuttingDate.Name = "labelEarliestEstCuttingDate";
             this.labelEarliestEstCuttingDate.Size = new System.Drawing.Size(165, 23);
@@ -258,7 +249,6 @@
             // 
             // labelArticleofInspection
             // 
-            this.labelArticleofInspection.Lines = 0;
             this.labelArticleofInspection.Location = new System.Drawing.Point(550, 18);
             this.labelArticleofInspection.Name = "labelArticleofInspection";
             this.labelArticleofInspection.Size = new System.Drawing.Size(150, 23);
@@ -407,6 +397,7 @@
             this.KeyField1 = "id";
             this.KeyField2 = "POID";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05 .Laboratory – Fabric Oven Test";
             this.UniqueExpress = "id";
             this.WorkAlias = "PO";
