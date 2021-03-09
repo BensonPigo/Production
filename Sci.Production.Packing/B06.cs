@@ -541,6 +541,12 @@ WHERE ShippingMarkCombinationUkey = {this.CurrentMaintain["Ukey"]}
                     isDetailChange = true;
                 }
             }
+
+            DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
+            if (currentDt.AsEnumerable().Where(o => o.RowState == DataRowState.Deleted).Any())
+            {
+                isDetailChange = true;
+            }
             #endregion
 
             // Category為PIC

@@ -3947,6 +3947,19 @@ DROP TABLE #OriDetail
                 }
 
                 DataRow dr = final.NewRow();
+
+                switch (categorys)
+                {
+                    case "PIC":
+                        categorys = "Sticker";
+                        break;
+                    case "HTML":
+                        categorys = "Stamp";
+                        break;
+                    default:
+                        break;
+                }
+
                 dr["BrandID"] = brindID;
                 dr["Category"] = categorys;
                 dr["ShippingMarkCombination"] = shippingMarkCombination;
@@ -4446,6 +4459,14 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             int dataRowIndex = 0;
             switch (callFrom)
             {
+                case "Packing B03":
+                    dataRowIndex = sheetData.Rows.Count + 2;
+                    dataSheet.GetRanges($"A3:A{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"B3:B{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"C3:C{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"D3:D{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"E3:E{dataRowIndex}").Merge();
+                    break;
                 case "Subcon B01":
                     dataRowIndex = sheetData.Rows.Count + 2;
                     dataSheet.GetRanges($"A3:A{dataRowIndex}").Merge();
@@ -4505,19 +4526,19 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
 
             int idx = sheetData.Rows.Count + 2;
 
-            Dictionary<string, string> merge1 = new Dictionary<string, string>();
-            Dictionary<string, string> merge2 = new Dictionary<string, string>();
-            Dictionary<string, string> merge3 = new Dictionary<string, string>();
-            Dictionary<string, string> merge4 = new Dictionary<string, string>();
-            merge1.Add("BrandID", $"4,{idx}");
-            merge2.Add("Category", $"5,{idx}");
-            merge3.Add("ShippingMarkCombination", $"6,{idx}");
-            merge4.Add("IsMixPack", $"7,{idx}");
+            //Dictionary<string, string> merge1 = new Dictionary<string, string>();
+            //Dictionary<string, string> merge2 = new Dictionary<string, string>();
+            //Dictionary<string, string> merge3 = new Dictionary<string, string>();
+            //Dictionary<string, string> merge4 = new Dictionary<string, string>();
+            //merge1.Add("BrandID", $"4,{idx}");
+            //merge2.Add("Category", $"5,{idx}");
+            //merge3.Add("ShippingMarkCombination", $"6,{idx}");
+            //merge4.Add("IsMixPack", $"7,{idx}");
 
-            xdt_All.LisTitleMerge.Add(merge1);
-            xdt_All.LisTitleMerge.Add(merge2);
-            xdt_All.LisTitleMerge.Add(merge3);
-            xdt_All.LisTitleMerge.Add(merge4);
+            //xdt_All.LisTitleMerge.Add(merge1);
+            //xdt_All.LisTitleMerge.Add(merge2);
+            //xdt_All.LisTitleMerge.Add(merge3);
+            //xdt_All.LisTitleMerge.Add(merge4);
 
             Microsoft.Office.Interop.Excel.Application excel = xl.ExcelApp;
 
@@ -4542,10 +4563,17 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             MyUtility.Excel.CopyToXls(poDatatable, null, "RunningChange.xltx", headerRow: 1, excelApp: excel, wSheet: custPoSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
             xl.DicDatas.Add("##SheetData", xdt_All);
 
+            int dataRowIndex = sheetData.Rows.Count + 2;
+
             // 刪除不用的欄位
             if (deleteColumn == "Left")
             {
                 dataSheet.GetRanges("A:C").EntireColumn.Delete();
+
+                dataSheet.GetRanges($"A3:A{dataRowIndex}").Merge();
+                dataSheet.GetRanges($"B3:B{dataRowIndex}").Merge();
+                dataSheet.GetRanges($"C3:C{dataRowIndex}").Merge();
+                dataSheet.GetRanges($"D3:D{dataRowIndex}").Merge();
             }
             else if (deleteColumn == "Right")
             {
@@ -4572,6 +4600,11 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
                 dataSheet.Cells[7, 1] = sheetData_Left.Rows[0]["NewPIC"].ToString();
                 dataSheet.Cells[7, 2] = sheetData_Left.Rows[0]["NewPIC_Mix"].ToString();
                 dataSheet.Cells[7, 3] = sheetData_Left.Rows[0]["NewHTML"].ToString();
+
+                dataSheet.GetRanges($"D3:D{dataRowIndex}").Merge();
+                dataSheet.GetRanges($"E3:E{dataRowIndex}").Merge();
+                dataSheet.GetRanges($"F3:F{dataRowIndex}").Merge();
+                dataSheet.GetRanges($"G3:G{dataRowIndex}").Merge();
             }
 
             custPoSheet.Activate();
