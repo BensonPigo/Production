@@ -1097,6 +1097,9 @@
     <None Include="XLT\Shipping_R10_AirPrepaidExpense.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Shipping_R11_NonSharedListGarment_Main.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
