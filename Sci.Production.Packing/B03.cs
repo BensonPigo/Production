@@ -392,6 +392,7 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
             this.CurrentMaintain["CTNHeight"] = this.disCtnHeight.Value;
 
             bool isDetailChange = false;
+
             foreach (DataRow current in this.DetailDatas)
             {
                 int shippingMarkPictureUkey = MyUtility.Convert.GetInt(current["ShippingMarkPictureUkey"]);
@@ -400,12 +401,12 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
 
                 if (!tmp.Any())
                 {
+                    // 有新增表身的情況
                     isDetailChange = true;
                     break;
                 }
 
-                DataRow ori = this.DetailDatas.FirstOrDefault();
-                ShippingMarkPicture_Detail s = this.OriDetailDatas.FirstOrDefault();
+                ShippingMarkPicture_Detail s = this.OriDetailDatas.Where(o => o.ShippingMarkPictureUkey == shippingMarkPictureUkey && o.ShippingMarkTypeUkey == shippingMarkTypeUkey).FirstOrDefault();
                 int oriShippingMarkTypeUkey = s.ShippingMarkTypeUkey;
                 string oriSide = s.Side;
                 int oriFromRight = s.FromRight;
@@ -440,6 +441,7 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
                 }
             }
 
+            // 表身資料被刪除的情況
             foreach (ShippingMarkPicture_Detail ori in this.OriDetailDatas)
             {
                 int shippingMarkPictureUkey = ori.ShippingMarkPictureUkey;
