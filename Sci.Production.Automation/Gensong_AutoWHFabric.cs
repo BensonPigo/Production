@@ -46,15 +46,15 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            // Confirm後要上鎖物料
-            if (formName == "P07" || formName == "P18")
-            {
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
-                {
-                    MyUtility.Msg.WarningBox(result.Messages.ToString());
-                    return;
-                }
-            }
+            //// Confirm後要上鎖物料
+            //if (formName == "P07" || formName == "P18")
+            //{
+            //    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
+            //    {
+            //        MyUtility.Msg.WarningBox(result.Messages.ToString());
+            //        return;
+            //    }
+            //}
 
             #region 記錄Confirmed後有傳給WMS的資料
             switch (formName)
