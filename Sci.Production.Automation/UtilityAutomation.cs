@@ -203,10 +203,10 @@ namespace Sci.Production.Automation
                 SaveAutomationCheckMsg(automationErrMsg);
             }
 
-            //return result;
+            return result;
 
-             MyUtility.Msg.InfoBox("Send Web API to VS");
-             return new DualResult(true);
+            // MyUtility.Msg.InfoBox("Send Web API to VS");
+            // return new DualResult(true);
         }
 
         /// <summary>

@@ -5556,8 +5556,8 @@ WHERE FTI.StockType='O'
         {
             MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape");
 
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @",ALL,F,Fabric,A,Accessory");
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @",ALL,F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"F,Fabric,A,Accessory");
             if (!canEdit)
             {
                 this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab

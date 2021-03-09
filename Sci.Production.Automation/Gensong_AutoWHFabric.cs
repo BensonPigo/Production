@@ -598,7 +598,7 @@ select distinct
     ,[Seq2] = wo.SEQ2
     ,[Refno] = wo.Refno
     ,[Article] = Article.value
-    ,[Colorid] = cp2.Colorid
+    ,[Color] = cp2.Colorid
     ,[SizeCode] = SizeCode.value
     ,cp2.WorkorderUkey
     ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
@@ -656,7 +656,7 @@ select distinct
                     Seq2 = s["Seq2"].ToString(),
                     Refno = s["Refno"].ToString(),
                     Article = s["Article"].ToString(),
-                    ColorID = s["ColorID"].ToString(),
+                    Color = s["Color"].ToString(),
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
                     Status = s["Status"].ToString(),
@@ -931,7 +931,7 @@ select lt2.Id
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
-,[Qty] = f.InQty - f.OutQty + f.AdjustQty
+,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
@@ -1135,7 +1135,7 @@ and exists(
                         Seq1 = dr["Seq1"].ToString(),
                         Seq2 = dr["Seq2"].ToString(),
                         Refno = dr["Refno"].ToString(),
-                        ColorID = dr["ColorID"].ToString(),
+                        Color = dr["Color"].ToString(),
                         Roll = dr["Roll"].ToString(),
                         Dyelot = dr["Dyelot"].ToString(),
                         StockUnit = dr["StockUnit"].ToString(),
@@ -1315,7 +1315,7 @@ SELECT [ID] = rd.id
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[ColorID] = Color.Value
+,[Color] = Color.Value
 ,[Roll] = rd.Roll
 ,[Dyelot] = rd.Dyelot
 ,[StockUnit] = rd.StockUnit
@@ -1369,7 +1369,7 @@ SELECT [ID] = rd.id
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[ColorID] = po3.ColorID
+,[Color] = po3.ColorID
 ,[Roll] = rd.Roll
 ,[Dyelot] = rd.Dyelot
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
