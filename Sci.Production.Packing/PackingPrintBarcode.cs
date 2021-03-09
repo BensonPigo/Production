@@ -279,7 +279,8 @@ namespace Sci.Production.Packing
             try
             {
                 document.Activate();
-                winword.Visible = true;
+
+                //winword.Visible = true;
 
                 Word.Tables table = document.Tables;
 
@@ -293,10 +294,6 @@ namespace Sci.Production.Packing
                         winword.Selection.MoveDown();
                         winword.Selection.InsertNewPage();
                         winword.Selection.Paste();
-
-                        //winword.Selection.MoveDown();
-
-                        //winword.Selection.TypeBackspace();
                     }
                 }
 
