@@ -388,7 +388,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bio.BundleNo
 		and bio.SubProcessid =  bio.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -397,7 +397,7 @@ left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOS.BundleNo
 		and bunIOS.SubProcessid =  bunIOS.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -406,7 +406,7 @@ left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOL.BundleNo
 		and bunIOL.SubProcessid =  bunIOL.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 
@@ -635,7 +635,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bio.BundleNo
 		and bio.SubProcessid =  bio.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -644,7 +644,7 @@ left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOS.BundleNo
 		and bunIOS.SubProcessid =  bunIOS.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -653,7 +653,7 @@ left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOL.BundleNo
 		and bunIOL.SubProcessid =  bunIOL.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 
@@ -956,7 +956,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bio.BundleNo
 		and bio.SubProcessid =  bio.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -965,7 +965,7 @@ left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOS.BundleNo
 		and bunIOS.SubProcessid =  bunIOS.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -974,7 +974,7 @@ left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOL.BundleNo
 		and bunIOL.SubProcessid =  bunIOL.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}' and((IsSelection = 0) or (b.subProcessid= '{subProcess}' and IsSelection = 1))
@@ -1188,7 +1188,7 @@ left join BundleInOut bio with (nolock) on bio.BundleNo = b.BundleNo and bio.Sub
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bio.BundleNo
 		and bio.SubProcessid =  bio.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and bunIOS.SubProcessId = 'SORTING' and isnull(bunIOS.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -1197,7 +1197,7 @@ left join BundleInOut bunIOS with (nolock) on bunIOS.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOS.BundleNo
 		and bunIOS.SubProcessid =  bunIOS.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and bunIOL.SubProcessId = 'LOADING' and isnull(bunIOL.RFIDProcessLocationID,'') = ''
 	and exists(
@@ -1206,7 +1206,7 @@ left join BundleInOut bunIOL with (nolock) on bunIOL.BundleNo = b.BundleNo and b
 		inner join Bundle b on b.id = bd.Id
 		where bd.BundleNo = bunIOL.BundleNo
 		and bunIOL.SubProcessid =  bunIOL.SubProcessId 
-		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel)
+		and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.PatternPanel = b.PatternPanel and cw.ID = b.POID)
 	)
 outer apply(select PostSewingSubProcess_SL =iif(isnull(PostSewingSubProcess,0) = 1 and bunIOS.OutGoing is not null and bunIOL.InComing is not null, 1, 0))p
 where b.subProcessid='{subProcess}'  and((IsSelection = 0) or (b.subProcessid= '{subProcess}' and IsSelection = 1))
