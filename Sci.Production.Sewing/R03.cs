@@ -764,7 +764,7 @@ from (
            , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction, StdTMS 
 )t
 group by  ProgramID, StyleID, BrandID, CdCodeID, CDCodeNew, ProductType, FabricType
-	    , Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID
+	    , Lining, Gender, Construction, CDDesc, StyleDesc, SeasonID, FtyZone
 Order by ProgramID, StyleID, BrandID, CdCodeID, SeasonID";
 
             result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, querySql, out this.Program);
