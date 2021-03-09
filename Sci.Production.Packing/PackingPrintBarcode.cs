@@ -279,6 +279,8 @@ namespace Sci.Production.Packing
             try
             {
                 document.Activate();
+                winword.Visible = true;
+
                 Word.Tables table = document.Tables;
 
                 #region 計算頁數
@@ -291,6 +293,10 @@ namespace Sci.Production.Packing
                         winword.Selection.MoveDown();
                         winword.Selection.InsertNewPage();
                         winword.Selection.Paste();
+
+                        //winword.Selection.MoveDown();
+
+                        //winword.Selection.TypeBackspace();
                     }
                 }
 
@@ -308,16 +314,16 @@ namespace Sci.Production.Packing
                     string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                     #endregion
 
-                    Bitmap oriBitmap = this.NewBarcode(barcode);
-                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 200));
+                    Bitmap oriBitmap = this.NewBarcode_NoText(barcode);
+                    Bitmap resized = new Bitmap(oriBitmap, new Size(900, 145));
 
                     Clipboard.SetImage(resized);
                     tables.Cell(1, 1).Range.Paste();
                     tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 20f;
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
-                    tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapBehind;
+                    tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapSquare;
 
-                    tables.Cell(2, 1).Range.Text = packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
+                    tables.Cell(2, 1).Range.Text = "        " + barcode + Environment.NewLine + packingNo + Environment.NewLine + spNo + Environment.NewLine + poNo + Environment.NewLine + sizeQty + " " + cartonNo;
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
@@ -597,11 +603,27 @@ namespace Sci.Production.Packing
                 Type = BarcodeType.CODE128,
                 Data = strBarcode,
                 Format = ImageFormat.Bmp,
-                X = 3,
+                X = 4,
                 Y = 160,
-                TextFont = new Font("Arial", 20f, FontStyle.Regular),
-                Resolution = 900,
-                LeftMargin = -30,
+                TextFont = new Font("Arial", 18f, FontStyle.Regular),
+                Resolution = 600,
+            };
+            code.drawBarcode("c#-barcode.Bmp");
+            return code.drawBarcode();
+        }
+
+        private Bitmap NewBarcode_NoText(string strBarcode)
+        {
+            Linear code = new Linear
+            {
+                Type = BarcodeType.CODE128,
+                ShowText = false,
+                Data = strBarcode,
+                Format = ImageFormat.Bmp,
+                X = 4,
+                Y = 160,
+                TextFont = new Font("Arial", 18f, FontStyle.Regular),
+                Resolution = 600,
             };
             code.drawBarcode("c#-barcode.Bmp");
             return code.drawBarcode();
