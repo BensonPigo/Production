@@ -363,7 +363,7 @@ AND Ukey <> {this.CurrentMaintain["Ukey"]}
 
             DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
 
-            foreach (DataRow current in currentDt.Rows)
+            foreach (DataRow current in currentDt.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
             {
                 bool isHorizontal = MyUtility.Convert.GetBool(current["IsHorizontal"]);
                 string stickerSizeID = MyUtility.Convert.GetString(current["StickerSizeID"]);

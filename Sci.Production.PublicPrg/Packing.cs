@@ -3603,9 +3603,9 @@ a.CTNRefno
 ,[ShippingMarkType]=st.ID
 ,b.FromRight
 ,b.FromBottom  
-,IIF( b.IsHorizontal = 1,'Y','')
-,IIF( b.IsOverCtnHt = 1,'Y','')
-,IIF( b.NotAutomate = 1,'Y','')
+,[IsHorizontal]=IIF( b.IsHorizontal = 1,'Y','')
+,[OriIsOverCtnHt]=IIF( b.IsOverCtnHt = 1,'Y','')
+,[OriNotAutomate]=IIF( b.NotAutomate = 1,'Y','')
 ,[AfterIsOverCtnHt]=
  IIF(
 (
@@ -3634,6 +3634,12 @@ AND a.Category = 'PIC'
             result.Add(b01_Detail);
 
             if (result[0].Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (!b01_Detail.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriIsOverCtnHt"]) != MyUtility.Convert.GetString(o["AfterIsOverCtnHt"]) ||
+            MyUtility.Convert.GetString(o["OriNotAutomate"]) != MyUtility.Convert.GetString(o["AfterNotAutomate"])).Any())
             {
                 return;
             }
@@ -4424,6 +4430,7 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
                 default:
                     break;
             }
+
             Worksheet custPoSheet = (Worksheet)objApp.ActiveWorkbook.Worksheets[1];
             Worksheet dataSheet = (Worksheet)objApp.ActiveWorkbook.Worksheets[2];
 
@@ -4435,6 +4442,21 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             MyUtility.Excel.CopyToXls(sheetData, null, "RunningChange.xltx", headerRow: 2, excelApp: objApp, wSheet: dataSheet, showExcel: false, showSaveMsg: false);//將datatable copy to excel
 
             custPoSheet.Activate();
+
+            int dataRowIndex = 0;
+            switch (callFrom)
+            {
+                case "Subcon B01":
+                    dataRowIndex = sheetData.Rows.Count + 2;
+                    dataSheet.GetRanges($"A3:A{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"B3:B{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"C3:C{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"D3:D{dataRowIndex}").Merge();
+                    dataSheet.GetRanges($"E3:E{dataRowIndex}").Merge();
+                    break;
+                default:
+                    break;
+            }
 
             #region Save Excel
             string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
@@ -4473,7 +4495,7 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             DataTable sheetData = datas[2];
 
             Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("RunningChange.xltx");
-            
+
             SaveXltReportCls.XltRptTable xdt_All = new SaveXltReportCls.XltRptTable(sheetData)
             {
                 ShowHeader = false,   // 表頭範本有了所以False
