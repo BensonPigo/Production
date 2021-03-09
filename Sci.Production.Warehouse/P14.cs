@@ -13,6 +13,7 @@ using Sci.Production.PublicPrg;
 using Sci.Win;
 using System.Reflection;
 using System.Data.SqlClient;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {

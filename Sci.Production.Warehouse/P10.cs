@@ -853,8 +853,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                     // confirmed後取得當前Balance,才能設定Barcode
                     this.FtyBarcodeData(true);
 
-                    // AutoWHFabric WebAPI for Gensong
-                    this.SentToGensong_AutoWHFabric(true);
+                    // AutoWH Fabric WebAPI for Gensong
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                        Task.Run(() => new Gensong_AutoWHFabric().SentIssue_Detail_New(dtDetail, "P10"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -967,6 +973,17 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             #endregion 檢查負數庫存
 
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P10", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
+
             #region 更新表頭狀態資料
 
             sqlupd3 = string.Format(
@@ -1049,9 +1066,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
                     // unconfirmed後取得當前Balance,才能設定Barcode
                     this.FtyBarcodeData(false);
-
-                    // AutoWHFabric WebAPI for Gensong
-                    this.SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1064,79 +1078,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             transactionscope.Dispose();
             transactionscope = null;
-        }
-
-        /// <summary>
-        ///  AutoWHFabric WebAPI for Gensong
-        /// </summary>
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                DataTable dtDetail = new DataTable();
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-select distinct 
- [Id] = i2.Id 
-,[Type] = 'A'
-,[CutPlanID] = isnull(i.CutplanID,'')
-,[EstCutdate] = c.EstCutdate
-,[SpreadingNoID] = isnull(c.SpreadingNoID,'')
-,[PoId] = i2.POID
-,[Seq1] = i2.Seq1
-,[Seq2] = i2.Seq2
-,[Roll] = i2.Roll
-,[Dyelot] = i2.Dyelot
-,[Barcode] = Barcode.value
-,[NewBarcode] = NewBarcode.value
-,[Qty] = i2.Qty
-,[Ukey] = i2.ukey
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-,CmdTime = GetDate()
-from Production.dbo.Issue_Detail i2
-inner join Production.dbo.Issue i on i2.Id=i.Id
-left join Production.dbo.Cutplan c on c.ID = i.CutplanID
-left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
-	and f.Seq2=i2.Seq2 and f.Roll=i2.Roll and f.Dyelot=i2.Dyelot
-    and f.StockType = i2.StockType
-outer apply(
-	select value = min(fb.Barcode)
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey
-)Barcode
-outer apply(
-	select value = fb.Barcode
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
-)NewBarcode
-where i.Type = 'A'
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
-	and FabricType='F'
-)
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)
-and i.id = '{this.CurrentMaintain["ID"]}'
-
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
         }
 
         private void FtyBarcodeData(bool isConfirmed)

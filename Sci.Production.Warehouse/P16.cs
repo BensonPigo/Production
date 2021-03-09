@@ -301,6 +301,15 @@ namespace Sci.Production.Warehouse
                 this.displayBoxShift.Text = string.Empty;
                 this.txtLocalSupp1.TextBox1.Text = string.Empty;
             }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -506,7 +515,15 @@ where dbo.Lack_Detail.id = '{this.CurrentMaintain["requestid"]}'
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(true);
-                    this.SentToGensong_AutoWHFabric(true);
+
+                    // AutoWH Fabric WebAPI for Gensong
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                        Task.Run(() => new Gensong_AutoWHFabric().SentIssue_Detail_New(dtDetail, "P16"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
                     MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
@@ -580,6 +597,13 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     return;
                 }
                 #endregion
+
+                #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
+                if (!Prgs.ChkWMSCompleteTime(dt, "IssueLack_Detail"))
+                {
+                    return;
+                }
+                #endregion
                 #region -- 檢查負數庫存 --
 
                 sqlcmd = string.Format(
@@ -610,6 +634,17 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                 }
 
                 #endregion 檢查負數庫存
+                #region UnConfirmed 先檢查WMS是否傳送成功
+
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P16", "UnConfirmed"))
+                    {
+                        return;
+                    }
+                }
+                #endregion
                 #region -- 更新庫存數量  ftyinventory --
                 sqlupd2_FIO = Prgs.UpdateFtyInventory_IO(4, null, false);
                 sqlupd2_B = Prgs.UpdateMPoDetail(4, null, false);
@@ -697,7 +732,6 @@ where id = '{this.CurrentMaintain["id"]}'";
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
-                    this.SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -710,73 +744,6 @@ where id = '{this.CurrentMaintain["id"]}'";
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && this.CurrentMaintain["Type"].ToString() != "L")
-            {
-                DataTable dtDetail = new DataTable();
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-select distinct 
-[Id] = ik2.Id
-,[Type] = 'R' 
-,[CutPlanID] = ''
-,[EstCutdate] = null
-,[SpreadingNoID] = ''
-,[PoId] = ik2.POID
-,[Seq1] = ik2.Seq1
-,[Seq2] = ik2.Seq2
-,[Roll] = ik2.Roll
-,[Dyelot] = ik2.Dyelot
-,[Barcode] = Barcode.value
-,[NewBarcode] = NewBarcode.value
-,[Qty] = ik2.Qty
-,[Ukey] = ik2.Ukey
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-,CmdTime = GetDate()
-from Production.dbo.IssueLack_Detail ik2
-inner join Production.dbo.IssueLack ik on ik2.Id=ik.Id
-left join Production.dbo.FtyInventory f on f.POID = ik2.POID and f.Seq1 = ik2.Seq1
-	and f.Seq2 = ik2.Seq2 and f.Roll = ik2.Roll and f.Dyelot = ik2.Dyelot
-    and f.StockType = ik2.StockType
-outer apply(
-	select value = min(fb.Barcode)
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey
-)Barcode
-outer apply(
-	select value = fb.Barcode
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey and fb.TransactionID = ik2.Id
-)NewBarcode
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = ik2.Poid and seq1=ik2.seq1 and seq2=ik2.seq2 
-	and FabricType='F'
-)
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)
-and ik.id = '{this.CurrentMaintain["ID"]}'
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Gensong_AutoWHFabric().SentIssue_DetailToGensongAutoWHFabric(dtDetail))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-        }
 
         private void FtyBarcodeData(bool isConfirmed)
         {
@@ -1198,6 +1165,11 @@ where a.id= @ID";
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"], "Issuelack_Detail").ShowDialog();
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P16", this);
         }
     }
 }

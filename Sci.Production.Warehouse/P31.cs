@@ -779,13 +779,19 @@ where d.Id = '{this.CurrentMaintain["id"]}'";
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(true);
-                    this.SentToGensong_AutoWHFabric(true);
+                    DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
 
                     // AutoWHACC WebAPI for Vstrong
                     if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                     {
-                        DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                         Task.Run(() => new Vstrong_AutoWHAccessory().SentBorrowBack_Detail_New(dt, "New"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
+                    // AutoWH Fabric WebAPI for Gensong
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBack_Detail_New(dt, "New"))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                     }
 
@@ -937,10 +943,20 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             #endregion 檢查負數庫存
 
             #region UnConfirmed 先檢查WMS是否傳送成功
+
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (!Gensong_AutoWHFabric.SentBorrowBack_Detail_Delete(dtDetail, "UnConfirmed"))
                 {
                     return;
                 }
@@ -1120,7 +1136,6 @@ where id = '{this.CurrentMaintain["id"]}'";
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
-                    this.SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1133,17 +1148,6 @@ where id = '{this.CurrentMaintain["id"]}'";
 
             transactionscope.Dispose();
             transactionscope = null;
-        }
-
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHFabric().SentBorrowBackToGensongAutoWHFabric(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
         }
 
         private void FtyBarcodeData(bool isConfirmed)

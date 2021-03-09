@@ -316,7 +316,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     dtMain.Rows.Add(row);
                 }
 
-                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, true))
+                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMain))
            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 

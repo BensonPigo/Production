@@ -40,8 +40,8 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.Initl(false);
             this.SetFilter(transID, formNo);
+            this.Initl(false);
             this.Query();
         }
 
@@ -625,6 +625,45 @@ inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
 where 1=1
+and po3.FabricType='A'
+and t1.Status = 'Confirmed'
+";
+                    break;
+                case "P16":
+                    sqlcmd = @"
+select [Selected] = 0 --0
+, [SentToWMS] = iif(t2.SentToWMS=1,'V','')
+, [CompleteTime] = t2.CompleteTime
+,t2.id
+, t2.PoId
+, t2.Seq1
+, t2.Seq2
+, t2.StockType
+, seq = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)
+, t2.Roll
+, t2.Dyelot
+, po3.stockunit
+, [Description] = dbo.getMtlDesc(t2.poid,t2.seq1,t2.seq2,2,0) 
+, t2.Qty
+, [Old_Qty] = t2.Qty
+, [diffQty] = 0.00
+, t2.StockType
+, location = dbo.Getlocation(f.Ukey) 
+, t2.ukey
+, t2.FtyInventoryUkey
+, t2.Remark
+from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
+inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
+left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
+										and po3.SEQ2 = t2.seq2
+left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID 
+									and t2.Seq1 = f.Seq1 
+									and t2.Seq2 = f.Seq2 
+									and t2.Roll = f.Roll 
+									and t2.Dyelot = f.Dyelot 
+									and t2.StockType = f.StockType
+where 1=1
+and po3.FabricType='F'
 and t1.Status = 'Confirmed'
 ";
                     break;
@@ -1098,6 +1137,105 @@ and t1.Type='B'
 and t1.Status = 'Confirmed'
 ";
                     break;
+                case "P62":
+                    sqlcmd = @"
+select  [Selected] = 0 --0
+		, [SentToWMS] = iif(t2.SentToWMS=1,'V','')
+		, [CompleteTime] = t2.CompleteTime
+	,[FabricType] = isnull(po3.FabricType,'')
+	,[GridPoID] = s.Poid
+	,[GridSeq1] = s.seq1
+	,[GridSeq2] = s.seq2
+	,POID = isnull(t2.POID,'')
+	,[Seq1] = isnull(t2.Seq1,'')
+	,[Seq2] = isnull(t2.Seq2,'')
+	,[Roll] = isnull(t2.Roll,'')
+	,[Dyelot] = isnull(t2.Dyelot,'')
+    ,[StockType] = isnull(t2.StockType,'')
+	,s.Ukey
+	,s.Id
+	,[Ttl_Qty] = s.Qty
+	,[Qty] = isnull(t2.Qty,0.00)
+	,[Old_Qty] = isnull(t2.Qty,0.00)
+    ,[diffQty] = 0.00
+    , f.Refno
+	, [description] = f.DescDetail
+	, [requestqty] = isnull(ec.RequestQty, 0.00)
+	, [accu_issue] =isnull (accu.accu_issue, 0.00)
+    , unit = (select top 1 StockUnit from Po_Supp_Detail psd where psd.Id = s.Poid and psd.SciRefno = s.SciRefno)
+	, NetQty = isnull( Net.NETQty, 0)
+    , [FinalFIR] = (
+		SELECT Stuff((
+			select concat( '/',isnull(Result,' '))   
+			from dbo.FIR f with (nolock) 
+			where f.poid = s.poid and f.SCIRefno = s.SCIRefno
+			and exists(select 1 from Issue_Detail with (nolock) where Issue_SummaryUkey = s.Ukey and f.seq1 = seq1 and f.seq2 = seq2)
+			FOR XML PATH('')
+		),1,1,'') )
+	, arqty = ec.RequestQty + AccuReq.ReqQty
+	, aiqqty = AccuIssue.aiqqty
+	, avqty = (ec.RequestQty + AccuReq.ReqQty) - AccuIssue.aiqqty	
+from dbo.Issue_Summary s WITH (NOLOCK) 
+left join Issue_Detail t2 WITH (NOLOCK) on t2.Id = s.Id and t2.Issue_SummaryUkey = s.Ukey
+inner join issue t1 WITH (NOLOCK) on t1.Id = s.Id
+left join Fabric f on s.SciRefno = f.SciRefno
+outer apply(
+	select top 1 po.FabricType
+	from PO_Supp_Detail po
+	inner join Issue_Detail is2 on po.ID = is2.POID and po.SEQ1 = is2.Seq1
+	and po.SEQ2 = is2.Seq2 
+	where is2.Issue_SummaryUkey = s.Ukey and is2.Id = s.Id
+)po3
+outer apply(
+	select RequestQty = sum(c.ReleaseQty) 
+	from dbo.CutTapePlan_Detail c WITH (NOLOCK) 
+	where c.id = t1.CutplanID
+	and c.Seq1 = s.Seq1
+	and c.Seq2 = s.Seq2
+) ec
+outer apply(
+	select accu_issue = isNull(sum(qty) , 0.00)
+	from Issue a WITH (NOLOCK) 
+	inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
+	where b.poid = s.poid 
+			and a.CutplanID = t1.CutplanID
+			and b.SCIRefno = s.SCIRefno 
+			and b.Colorid = s.Colorid 
+			and a.status = 'Confirmed'
+			and a.id != s.id
+			and a.Type = 'I'
+) accu
+outer apply(
+	select top 1 p.NETQty
+	from PO_Supp_Detail p
+	where p.ID = s.POID and p.SCIRefno = s.SCIRefno and p.ColorID = s.ColorID
+			and p.SEQ1 like 'A%' and p.NETQty <> 0
+) Net
+outer apply(select CuttingID from CutTapePlan where Id = t1.CutplanID )c
+outer apply(
+	select ReqQty = isNull(sum(cd.ReleaseQty), 0)
+	from CutTapePlan c
+	inner join CutTapePlan_Detail cd on c.id = cd.id
+	inner join Issue i on i.CutplanID = c.ID
+	where c.CuttingID = c.CuttingID
+	and c.id <> t1.CutplanID
+	and i.Status = 'Confirmed'
+	and i.Type = 'I'
+)AccuReq
+outer apply(
+	select aiqqty = isnull(sum(sm.Qty), 0)
+    from Issue_Summary sm WITH (NOLOCK) 
+    inner join Issue i WITH (NOLOCK) on sm.Id = i.Id 
+    where sm.Poid = s.poid 
+            and sm.SCIRefno = s.SCIRefno 
+            and sm.Colorid = s.ColorID 
+            and i.status = 'Confirmed'
+			and i.Type = 'I'
+)AccuIssue
+where t1.Status = 'Confirmed'
+and t1.Type='I'
+";
+                    break;
                 default:
                     break;
             }
@@ -1287,6 +1425,7 @@ and t1.Status = 'Confirmed'
                     break;
                 case "P11":
                 case "P33":
+                case "P62":
                     chk_qty.CellValidating += (s, e) =>
                     {
                         if (this.EditMode && this.gridUpdate != null && this.gridUpdate.Rows.Count > 0 && this.listControlBindingSource1.DataSource != null)
@@ -1338,6 +1477,7 @@ and t1.Status = 'Confirmed'
                 case "P12":
                 case "P13":
                 case "P15":
+                case "P16":
                 case "P19":
                 case "P37":
                 case "P31":
@@ -1677,6 +1817,24 @@ and t1.Status = 'Confirmed'
                     ;
                     #endregion
                     break;
+                case "P16":
+                    #region P16 Grid
+                    this.gridUpdate.IsEditingReadOnly = false;
+                    this.Helper.Controls.Grid.Generator(this.gridUpdate)
+                    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                    .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+                    .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
+                    .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                    .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                    .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
+                    .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
+                    .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+                    .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
+                    #endregion
+                    break;
                 case "P19":
                     #region P19 Grid
                     this.gridUpdate.IsEditingReadOnly = false;
@@ -1918,7 +2076,7 @@ and t1.Status = 'Confirmed'
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                     .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                    .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+                    .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0    
                     .Text("fromseq", header: "From" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
                     .Text("fromroll", header: "From" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                     .Text("fromdyelot", header: "From" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true) // 3
@@ -1933,6 +2091,34 @@ and t1.Status = 'Confirmed'
                     .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 12
                     .ComboBox("tostocktype", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false)
+                    ;
+                    #endregion
+                    break;
+                case "P62":
+                    #region P62 Grid
+                    this.gridUpdate.IsEditingReadOnly = false;
+                    this.Helper.Controls.Grid.Generator(this.gridUpdate)
+                    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                    .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    .CellPOIDWithSeqRollDyelot("GridPoID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                    .Text("GridSeq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                    .Text("GridSeq2", header: "Seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                    .Text("Roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .EditText("Description", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                    .Numeric("requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Numeric(string.Empty, name: "bal_qty", header: "Bal. Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty)
+                    .Numeric("Ttl_Qty", header: "Ttl Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Text("FinalFIR", header: "Final FIR", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Numeric(string.Empty, name: "var_qty", header: "Var Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Numeric("arqty", header: "Accu Req. Qty by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Numeric("aiqqty", header: "Accu Issue Qty by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Numeric("avqty", header: "Accu Var by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Text("unit", header: "unit", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                    .Numeric("netqty", header: "Net Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     ;
                     #endregion
                     break;
@@ -2064,9 +2250,14 @@ and t1.Status = 'Confirmed'
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
@@ -2204,8 +2395,10 @@ inner join #tmp s on t2.Ukey = s.Ukey
                     case "P12":
                     case "P13":
                     case "P15":
+                    case "P16":
                     case "P19":
                     case "P33":
+                    case "P62":
                         #region Issue_Detail & IssueLack_Detail & TransferOut_Detail & ReturnReceipt_Detail
 
                         strTable = string.Empty;
@@ -2215,9 +2408,11 @@ inner join #tmp s on t2.Ukey = s.Ukey
                             case "P12":
                             case "P13":
                             case "P33":
+                            case "P62":
                                 strTable = "Issue_Detail";
                                 break;
                             case "P15":
+                            case "P16":
                                 strTable = "IssueLack_Detail";
                                 break;
                             case "P19":
@@ -2242,9 +2437,14 @@ inner join #tmp s on t2.Ukey = s.Ukey
                         }
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                             {
                                 return;
                             }
@@ -2284,6 +2484,7 @@ and t.SizeCode = s.SizeCode
 ";
                                         break;
                                     case "P33":
+                                    case "P62":
                                         sqlcmd = $@" 
 -- 第一層
 update t
@@ -2310,6 +2511,7 @@ and t.dyelot = s.dyelot and t.stocktype = s.stocktype
 ";
                                         break;
                                     case "P15":
+                                    case "P16":
                                         sqlcmd = $@" 
 update t
 set t.Qty = s.Qty
@@ -2405,9 +2607,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2484,6 +2691,46 @@ inner join #tmp s on t.id = s.id
                         }
                         #endregion
 
+                        #region update 先檢查WMS是否傳送成功
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        {
+                            switch (this.strFunction)
+                            {
+                                case "P43":
+                                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                case "P45":
+                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+                        }
+                        #endregion
+
                         transactionscope = new TransactionScope();
                         using (transactionscope)
                         {
@@ -2553,9 +2800,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentReturnReceipt_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2633,9 +2885,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentBorrowBack_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2715,9 +2972,14 @@ inner join #tmp s on t.id = s.id
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentSubTransfer_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -2824,9 +3086,14 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -2902,8 +3169,8 @@ inner join #tmp s on t.Ukey = s.Ukey
                                                     Barcode = m.Field<string>("Barcode"),
                                                 }).ToList();
 
-                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO_P99(70);
-                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO_P99(71);
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
 
                         #endregion
 
@@ -3007,8 +3274,10 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P12":
                     case "P13":
                     case "P15":
+                    case "P16":
                     case "P19":
                     case "P33":
+                    case "P62":
                         #region Issue_Detail
                         strTable = string.Empty;
                         strMainTable = string.Empty;
@@ -3018,10 +3287,12 @@ inner join #tmp s on t.Ukey = s.Ukey
                             case "P12":
                             case "P13":
                             case "P33":
+                            case "P62":
                                 strTable = "Issue_Detail";
                                 strMainTable = "Issue";
                                 break;
                             case "P15":
+                            case "P16":
                                 strTable = "IssueLack_Detail";
                                 strMainTable = "IssueLack";
                                 break;
@@ -3048,9 +3319,14 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
                             {
                                 return;
                             }
@@ -3150,6 +3426,7 @@ and (sizeQty.qty != 0 or sizeQty.qty is not null)
 ";
                                 break;
                             case "P33":
+                            case "P62":
                                 sqlcmd = $@"
 -- 第三層
 delete t
@@ -3200,6 +3477,7 @@ inner join #tmp s on t.ID = s.ID
 ";
                                 break;
                             case "P15":
+                            case "P16":
                                 sqlcmd = $@" 
 delete t
 from IssueLack_Detail t
@@ -3304,9 +3582,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3514,9 +3797,14 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ";
                         #endregion 檢查負數庫存
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3567,7 +3855,7 @@ inner join #tmp s on t.ID = s.ID
                         #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3657,9 +3945,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region update 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentReturnReceipt_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -3825,9 +4118,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentBorrowBack_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4107,9 +4405,14 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region 先檢查WMS是否傳送成功
-                        if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
+                        if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
                             if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
+                            {
+                                return;
+                            }
+
+                            if (!Gensong_AutoWHFabric.SentSubTransfer_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "delete", true))
                             {
                                 return;
                             }
@@ -4532,7 +4835,10 @@ and fi.WMSLock = 1
                 sqlcmd += $@" and (r.ID = '{this.txtReceivingID.Text}' or TD.ID = '{this.txtReceivingID.Text}')";
             }
 
-            sqlcmd += $@" and pd.FabricType = '{this.comboMaterialType_Sheet2.SelectedValue.ToString()}'";
+            if (!MyUtility.Check.Empty(this.comboMaterialType_Sheet2.SelectedValue))
+            {
+                sqlcmd += $@" and pd.FabricType = '{this.comboMaterialType_Sheet2.SelectedValue.ToString()}'";
+            }
 
             this.ShowWaitMessage("Data Loading....");
             DualResult result;
@@ -4843,6 +5149,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
                 case "P11":
                 case "P33":
+                case "P62":
                     symbol = isConfirmed ? "- (t.diffQty)" : isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
                     chk_sql = $@"
 
@@ -4894,6 +5201,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                 case "P12":
                 case "P13":
                 case "P15":
+                case "P16":
                 case "P19":
                 case "P37":
                     symbol = isConfirmed ? "- (t.diffQty)" : isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
@@ -5246,11 +5554,10 @@ WHERE FTI.StockType='O'
         /// <param name="canEdit">是否能編輯</param>
         public void Initl(bool canEdit)
         {
-            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty");
+            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape");
 
-            // MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"ALL,,F,Fabric,A,Accessory");
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"A,Accessory");
-            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"F,Fabric,A,Accessory");
             if (!canEdit)
             {
                 this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab
@@ -5260,6 +5567,80 @@ WHERE FTI.StockType='O'
                 this.txtSPNoEnd.Text = string.Empty;
                 this.comboFunction.SelectedIndex = 0;
                 this.comboFunction.SelectedIndex = 0;
+                string strcomboType = string.Empty;
+                switch (this.strFunction)
+                {
+                    case "P07":
+                        strcomboType = "P07. Material Receiving";
+                        break;
+                    case "P08":
+                        strcomboType = "P08. Receiving from factory Supply";
+                        break;
+                    case "P18":
+                        strcomboType = "P18. Transfer In";
+                        break;
+                    case "P11":
+                        strcomboType = "P11. Issue Sewing Material";
+                        break;
+                    case "P12":
+                        strcomboType = "P12. Issue Packing Material";
+                        break;
+                    case "P13":
+                        strcomboType = "P13. Issue R/Mtl By Item";
+                        break;
+                    case "P15":
+                        strcomboType = "P15. Issue Accessory Lacking  && Replacement";
+                        break;
+                    case "P16":
+                        strcomboType = "P16. Issue Fabric Lacking  && Replacement";
+                        break;
+                    case "P19":
+                        strcomboType = "P19. Transfer Out";
+                        break;
+                    case "P33":
+                        strcomboType = "P33. Issue Thread";
+                        break;
+                    case "P45":
+                        strcomboType = "P45. Remove from Scrap Whse";
+                        break;
+                    case "P22":
+                        strcomboType = "P22. Transfer Bulk to Inventory (A2B)";
+                        break;
+                    case "P23":
+                        strcomboType = "P23. Transfer Inventory to Bulk (B2A)";
+                        break;
+                    case "P24":
+                        strcomboType = "P24. Transfer Inventory To Scrap (B2C)";
+                        break;
+                    case "P36":
+                        strcomboType = "P36. Transfer Scrap to Inventory (C2B)";
+                        break;
+                    case "P37":
+                        strcomboType = "P37. Return Receiving Material";
+                        break;
+                    case "P31":
+                        strcomboType = "P31. Material Borrow";
+                        break;
+                    case "P32":
+                        strcomboType = "P32. Return Borrowing";
+                        break;
+                    case "P34":
+                        strcomboType = "P34. Adjust Inventory Qty";
+                        break;
+                    case "P35":
+                        strcomboType = "P35. Adjust Bulk Qty";
+                        break;
+                    case "P43":
+                        strcomboType = "P43. Adjust Scrap Qty";
+                        break;
+                    case "P62":
+                        strcomboType = "P62. Issue Fabric for Cutting Tape";
+                        break;
+                    default:
+                        break;
+                }
+
+                MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, $"{this.strFunction},{strcomboType}");
             }
             else
             {
@@ -5275,7 +5656,7 @@ WHERE FTI.StockType='O'
             this.txtSPNoStart.Enabled = canEdit;
             this.txtSPNoEnd.Enabled = canEdit;
             this.btnQuery.Visible = canEdit;
-            this.EditMode = canEdit;
+            this.EditMode = true;
         }
 
         /// <summary>
