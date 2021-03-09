@@ -2580,7 +2580,24 @@
     <Build Include="dbo\Stored Procedures\Cutting_Report_AccColorCombination.sql" />
     <Build Include="dbo\Stored Procedures\exp_BundleInfo.sql" />
     <Build Include="dbo\Tables\AutomationCheckMsg.sql" />
-    <Build Include="dbo\Tables\SubProLocation.sql">
+    <Build Include="dbo\Tables\SubProLocation.sql"/>
+    <Build Include="dbo\Stored Procedures\PPIC_Report04_New.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\Order_Report_SizeSpec_OrderCombo.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\Order_Report_Color_MaterialCode.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Functions\GetOrderStatus.sql" />
+    <Build Include="dbo\Functions\GetView_OrderSizeItem.sql" />
+    <Build Include="dbo\Functions\GetOrderStatusByOrderCombo.sql" />
+    <Build Include="dbo\Functions\GetOrderStatusByPOCombo.sql" />
+    <Build Include="dbo\Tables\Order_SizeTol.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>

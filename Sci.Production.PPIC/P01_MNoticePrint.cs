@@ -12,6 +12,7 @@ using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Diagnostics;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Sci.Production.Class.Commons;
 
 namespace Sci.Production.PPIC
 {
@@ -262,6 +263,14 @@ order by ID";
                 sxr.Save(this.strFileName);
                 sxr.FinishSave();
             }
+            else if (this.radioByOrderComboNew.Checked)
+            {
+                DualResult result = this.MNoticeByOrderComboNew();
+                if (!result)
+                {
+                    return result;
+                }
+            }
 
             // M/Notict (Combo by ComboID)
             else
@@ -462,6 +471,286 @@ order by ID";
             return new DualResult(true);
         }
 
+        private string GetOrderStatus(string id)
+        {
+            var result = string.Empty;
+            result = MyUtility.GetValue.Lookup($"Select dbo.GetOrderStatus('{id}')");
+            return result;
+        }
+
+        private DualResult MNoticeByOrderComboNew()
+        {
+            string poid = MyUtility.GetValue.Lookup("select POID FROM dbo.Orders where ID = @ID", new List<SqlParameter> { new SqlParameter("@ID", this._id) });
+
+            System.Data.DataTable dtOrderCombo = this.GetDtByComboID(poid);
+
+            if (dtOrderCombo == null)
+            {
+                return new DualResult(false, "[M/Notice (by OrderCombo)] Order Combo is empty!");
+            }
+
+            string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "PPIC_P01_M_Notice_Combo_New_Format.xltx");
+            sxrc sxr = new sxrc(xltPath, false, true);
+
+#if DEBUG
+            sxr.ExcelApp.Visible = true;
+#endif
+
+            sxr.AddPrintRange = true;
+            sxr.SetPrinterAtLocal = true;
+            sxr.FontName = "Times New Roman";
+            sxr.FontSize = 14;
+            sxr.VarToSheetName = sxr.VPrefix + "sname";
+
+            DataRow drvar = this.GetTitleDataByCustCD(poid, this._id, false);
+            System.Data.DataTable[] dts;
+
+            List<SqlParameter> para = new List<SqlParameter>();
+            para.Add(new SqlParameter("@ID", this._id));
+            para.Add(new SqlParameter("@WithZ", this.checkAdditionally.Checked));
+            para.Add(new SqlParameter("@ByType", 0));
+            para.Add(new SqlParameter("@PrintType", 1));
+
+            DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report04_New", para, out dts);
+
+            if (drvar == null | !res)
+            {
+                return new DualResult(false, "[M/Notice (by OrderCombo)] Transfer report error!");
+            }
+
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW", DateTime.Now.ToString());
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_QTY", drvar["QTY"].ToString());
+            sxr.DicDatas.Add(sxr.VPrefix + "POID", poid);
+            sxr.DicDatas.Add(sxr.VPrefix + "POIDALL", poid + "-All");
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_Status", drvar["Status"].ToString().Trim());
+            sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
+            sxr.DicDatas.Add(sxr.VPrefix + "sname1", this._id + "-Size Spec");
+            sxr.DicDatas.Add(sxr.VPrefix + "sname2", this._id + "-Order Combo Size");
+            sxr.DicDatas.Add(sxr.VPrefix + "sname3", this._id + "-All");
+
+            // For SizeSpec
+            sxrc.XltRptTable xltTbl = new sxrc.XltRptTable(dts[0], 1, 0, false, 18, 2);
+            xltTbl.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { IsAutoFitRows = true, VerticalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignTop });
+            for (int i = 3; i <= 18; i++)
+            {
+                sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                xcinfo.NumberFormate = "@";
+                xltTbl.LisColumnInfo.Add(xcinfo);
+            }
+
+            xltTbl.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
+            xltTbl.Separator2 = "'= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =";
+            sxr.DicDatas.Add(sxr.VPrefix + "SSizeSpec_Tbl1", xltTbl);
+            this.intSizeSpecRowCnt = dts[0].Rows.Count + 1 + 2; // 起始位置加一、格線加二
+
+            // For SizeSpec_OrderCombo
+            sxrc.XltRptTable xltTbl_OC = new sxrc.XltRptTable(dts[1], 1, 0, false, 18, 2);
+            xltTbl_OC.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { IsAutoFitRows = true, VerticalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignTop });
+            for (int i = 3; i <= 18; i++)
+            {
+                sxrc.XlsColumnInfo xcinfo = new sxrc.XlsColumnInfo(i, false, 0, Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft);
+                xcinfo.NumberFormate = "@";
+                xltTbl_OC.LisColumnInfo.Add(xcinfo);
+            }
+
+            xltTbl_OC.Separator1 = "'- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
+            xltTbl_OC.Separator2 = "'= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =";
+            sxr.DicDatas.Add(sxr.VPrefix + "SSizeSpec_OrderCombo_Tbl1", xltTbl_OC);
+            this.intSizeSpecRowCnt = dts[1].Rows.Count + 1 + 2; // 起始位置加一、格線加二
+
+            sxrc.ReplaceAction ra = this.ForSizeSpec;
+            sxr.DicDatas.Add(sxr.VPrefix + "ExtraAction", ra);
+
+            // For All
+            sxrc.XltRptTable tblAll1 = new sxrc.XltRptTable(dts[2], 1, 2, true);
+            sxrc.XltRptTable tblAll2 = new sxrc.XltRptTable(dts[3], 1, 3);
+            sxrc.XltRptTable tblAll3 = new sxrc.XltRptTable(dts[4], 1, 0);
+            this.SetColumn1toText(tblAll1);
+            this.SetColumn1toText(tblAll2);
+            this.SetColumn1toText(tblAll3);
+
+            sxr.DicDatas.Add(sxr.VPrefix + "SAll_Tbl1", tblAll1);
+            sxr.DicDatas.Add(sxr.VPrefix + "SAll_Tbl2", tblAll2);
+            sxr.DicDatas.Add(sxr.VPrefix + "SAll_Tbl3", tblAll3);
+            sxr.DicDatas.Add(sxr.VPrefix + "SAll_Tbl4", dts[5]); // COLOR list
+            sxr.DicDatas.Add(sxr.VPrefix + "SAll_Tbl5", dts[6]); // Fabric list
+            sxr.DicDatas.Add(sxr.VPrefix + "SAll_Tbl6", dts[7]); // Accessories list
+
+            sxr.CopySheets.Add("4,5", dtOrderCombo.Rows.Count - 1);
+
+            int ii = 0;
+            foreach (DataRow row in dtOrderCombo.Rows)
+            {
+                string idxStr = ii.ToString();
+                ii += 1;
+
+                string orderComboID = row["OrderComboID"].ToString();
+
+                drvar = this.GetTitleDataByCustCD(poid, orderComboID);
+
+                para = new List<SqlParameter>();
+                para.Add(new SqlParameter("@ID", orderComboID));
+                para.Add(new SqlParameter("@WithZ", this.checkAdditionally.Checked));
+                para.Add(new SqlParameter("@ByType", 0));
+                para.Add(new SqlParameter("@PrintType", 2));
+
+                System.Data.DataTable[] dts_Detail;
+                res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report04_New", para, out dts_Detail);
+
+                if (!res)
+                {
+                    return res;
+                }
+
+                if (!(drvar == null | !res))
+                {
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname4" + idxStr, orderComboID + "-1");
+                    sxr.DicDatas.Add(sxr.VPrefix + "sname5" + idxStr, orderComboID + "-2");
+
+                    sxr.DicDatas.Add(sxr.VPrefix + "NOW" + idxStr, DateTime.Now.ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "SP" + idxStr, drvar["SPNO"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "MAKER" + idxStr, drvar["MAKER"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "STYLENO" + idxStr, drvar["sty"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "QTY" + idxStr, drvar["QTY"].ToString());
+
+                    sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "SIno" + idxStr, drvar["SI"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, drvar["delDate"]);
+                    sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "Siname" + idxStr, string.IsNullOrEmpty(drvar["Customize2"].ToString()) ? string.Empty : drvar["Customize2"].ToString() + ":");
+
+                    // For Report 1
+                    sxrc.XltRptTable tbl1 = new sxrc.XltRptTable(dts_Detail[0], 1, 2, true);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S1_Tbl1" + idxStr, tbl1);
+                    sxr.DicDatas.Add(sxr.VPrefix + "S1PACKING" + idxStr, new sxrc.XltLongString(dts_Detail[1].Rows[0]["Packing"].ToString()));
+                    sxr.DicDatas.Add(sxr.VPrefix + "S1LH" + idxStr, new sxrc.XltLongString(dts_Detail[2].Rows[0]["Label"].ToString()));
+                    if (dts_Detail[3].Rows[0].Field<bool?>("VasShas").GetValueOrDefault(false) == true)
+                    {
+                        sxr.DicDatas.Add(sxr.VPrefix + "S1VS" + idxStr, new sxrc.XltLongString(dts_Detail[3].Rows[0]["Packing2"].ToString()));
+                    }
+                    else
+                    {
+                        sxr.DicDatas.Add(sxr.VPrefix + "S1VS" + idxStr, new sxrc.XlsPrivateCommand() { UpDelete = 2 });
+                    }
+
+                    // 新增Range Repeat數
+                    sxr.DicDatas.Add(sxr.VPrefix + "CR" + idxStr, dts_Detail[4].Rows.Count);
+                    sxr.DicDatas.Add(sxr.VPrefix + "Status" + idxStr, drvar["Status"].ToString().Trim());
+                    int idx = 0;
+                    foreach (DataRow dr in dts_Detail[4].Rows)
+                    {
+                        string sIdx = idx.ToString();
+                        idx += 1;
+
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_SP" + idxStr + sxr.CRPrefix + sIdx, dr["ID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_Style" + idxStr + sxr.CRPrefix + sIdx, dr["sty"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_QTY" + idxStr + sxr.CRPrefix + sIdx, dr["QTY"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_CUSTCD" + idxStr + sxr.CRPrefix + sIdx, dr["CustCDID"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_SI" + idxStr + sxr.CRPrefix + sIdx, dr["SI"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "Siname" + idxStr + sxr.CRPrefix + sIdx, string.IsNullOrEmpty(dr["Customize2"].ToString()) ? string.Empty : dr["Customize2"].ToString() + ":");
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_PoNo" + idxStr + sxr.CRPrefix + sIdx, dr["CustPONO"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_Order" + idxStr + sxr.CRPrefix + sIdx, dr["Customize1"].ToString());
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_DELIVERY" + idxStr + sxr.CRPrefix + sIdx, dr["BuyerDelivery"]);
+                        sxr.DicDatas.Add(sxr.VPrefix + "S2_Mark" + idxStr + sxr.CRPrefix + sIdx, new sxrc.XltLongString(dr["Mark"].ToString()));
+
+                        if (idx == 1)
+                        {
+                            sxr.DicDatas.Add(sxr.VPrefix + "S2_Status" + idxStr + sxr.CRPrefix + sIdx, dr["Status"].ToString().Trim());
+                        }
+                        else
+                        {
+                            sxr.DicDatas.Add(sxr.VPrefix + "S2_Status" + idxStr + sxr.CRPrefix + sIdx, this.GetOrderStatus(dr["ID"].ToString()));
+                        }
+
+                        System.Data.DataTable[] dts2;
+                        List<SqlParameter> lis2 = new List<SqlParameter>();
+                        lis2.Add(new SqlParameter("@OrderID", dr["ID"]));
+                        lis2.Add(new SqlParameter("@ByType", "0"));
+
+                        res = DBProxy.Current.SelectSP(string.Empty, "Order_Report_QtyBreakdown", lis2, out dts2);
+
+                        if (res)
+                        {
+                            sxrc.XltRptTable stbl = new sxrc.XltRptTable(dts2[0], 1, 2, true);
+                            this.SetColumn1toText(stbl);
+                            sxr.DicDatas.Add(sxr.VPrefix + "S2_Tbl" + idxStr + sxr.CRPrefix + sIdx, stbl);
+                        }
+                    }
+                }
+            }
+
+            sxr.BoOpenFile = true;
+
+            sxr.Save();
+
+            var sheetCount = sxr.ExcelApp.Worksheets.Count;
+            for (int i = 1; i <= sheetCount; i++)
+            {
+                Worksheet wkSheet = sxr.ExcelApp.Worksheets[i];
+                Range range = null;
+                string status = string.Empty;
+
+                if (i % 2 == 0 || i.IsOneOfThe(1, 2, 3))
+                {
+                    range = wkSheet.GetRange("B4");
+                    status = range.Value2;
+                    if (status.IsNullOrWhiteSpace())
+                    {
+                        wkSheet.Rows[4].Delete(XlDeleteShiftDirection.xlShiftUp);
+                    }
+                    else
+                    {
+                        range = wkSheet.Rows[4];
+                        var lineCount = status.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Length;
+                        range.EntireRow.RowHeight = lineCount * range.EntireRow.RowHeight;
+                    }
+                }
+                else
+                {
+                    Range rows = wkSheet.UsedRange.Rows;
+                    for (int j = 1; j <= rows.Count; j++)
+                    {
+                        Range cell = wkSheet.GetRange($"A{j}");
+                        string value = cell.Value2;
+                        if (value.EqualString("SP#:"))
+                        {
+                            #region 處理邊線
+                            cell.Borders[XlBordersIndex.xlEdgeTop].LineStyle = XlLineStyle.xlContinuous;
+                            cell = wkSheet.GetRange($"G{j}");
+                            cell.Borders[XlBordersIndex.xlEdgeTop].LineStyle = XlLineStyle.xlContinuous;
+                            cell = wkSheet.GetRange($"J{j}:R{j}");
+                            cell.Borders[XlBordersIndex.xlEdgeTop].LineStyle = XlLineStyle.xlContinuous;
+                            #endregion
+
+                            #region 處理Status
+                            cell = wkSheet.GetRange($"B{j + 1}");
+                            status = cell.Value2;
+                            var lineCount = status.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Length;
+                            cell.EntireRow.RowHeight = lineCount * cell.EntireRow.RowHeight;
+
+                            if (status.IsNullOrWhiteSpace())
+                            {
+                                cell.EntireRow.Delete(XlDeleteShiftDirection.xlShiftUp);
+                            }
+                            #endregion
+                        }
+                    }
+                }
+            }
+
+            if (dts[1] == null || MyUtility.Check.Empty(dts[1].Rows[0][0]))
+            {
+                sxr.ExcelApp.Sheets[2].Delete();
+            }
+
+            sxr.FinishSave();
+            return new DualResult(true);
+        }
+
         private System.Data.DataTable GetDtByComboID(string poid)
         {
             string strSqlSelect = @"
@@ -525,6 +814,7 @@ SELECT MAKER=max(FactoryID)
 ,(select BuyerDelivery from orders o where o.ID = @ID) as delDate
 ,(select Customize1 from orders o where o.ID = @ID) as Customize1
 ,(select Customize2 from Orders o where o.ID = @ID) AS SI
+, Status = (Select dbo.GetOrderStatusByOrderCombo(@POID, @ID))
 ,br.Customize2 
 ,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
 FROM orders a WITH (NOLOCK) 
@@ -558,6 +848,7 @@ SELECT
 ,(select Customize1 from Orders o where o.ID = @ID) as Customize1 
 ,(select Customize2 from Orders o where o.ID = @ID) AS SI
 ,br.Customize2 
+, Status = (Select dbo.GetOrderStatusByPOCombo(@POID))
 ,(select ChangeMemoDate from orders o where o.ID = @ID) as ChangeMemoDate
 FROM Orders a WITH (NOLOCK) 
 LEFT JOIN Brand Br ON a.BrandID = Br.ID
@@ -586,7 +877,7 @@ group by POID,b.spno,br.Customize2";
         private void Rd_CheckedChanged(object sender, EventArgs e)
         {
             this.checkAdditionally.Visible = false;
-            this.checkAdditionally.Visible = this.radioMNotice.Checked || this.radioByOrderCombo.Checked;
+            this.checkAdditionally.Visible = this.radioMNotice.Checked || this.radioByOrderCombo.Checked || this.radioByOrderComboNew.Checked;
         }
 
         private string GetSPNote(string orderID)
