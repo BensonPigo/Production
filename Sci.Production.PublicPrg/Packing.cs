@@ -3590,13 +3590,13 @@ DECLARE @AfterWidth as numeric(8,4) = {ctnWidth}
 DECLARE @UnitChange as numeric(5,2) = (select IIF(CtnUnit='Inch',25.4,1) from LocalItem where RefNo='{cTNRefno}' )
 
 select 
-a.CTNRefno
-,(select Ctnheight from LocalItem where RefNo='{cTNRefno}' )
-,(select CTNUnit from LocalItem where RefNo='{cTNRefno}' )
+[CTNRefno1] = a.CTNRefno
+,Ctnheight=(select Ctnheight from LocalItem where RefNo='{cTNRefno}' )
+,CTNUnit=(select CTNUnit from LocalItem where RefNo='{cTNRefno}' )
 ,[AfterChangeHeight]=@AfterHeight
 ,[AfterChangeUnit]='{cTNUnit}'
 ,a.BrandID
-,IIF(a.Category = 'PIC', 'Sticker' , a.Category)
+,Category = IIF(a.Category = 'PIC', 'Sticker' , a.Category)
 ,[ShippingMarkCombination]=(select ID from ShippingMarkCombination where Ukey = a.ShippingMarkCombinationUkey)
 ,a.CTNRefno
 ,[IsMixPack]=(select IIF(IsMixPack=1,'Y','') from ShippingMarkCombination where Ukey = a.ShippingMarkCombinationUkey)
@@ -3622,6 +3622,7 @@ CASE WHEN b.IsHorizontal = 1 THEN IIF( ( b.FromBottom + ss.Width ) > (@AfterHeig
 	  ELSE 0
  END
 ) = 1,'Y','')
+INTO #Final
 from ShippingMarkPicture a
 inner join ShippingMarkPicture_Detail b on a.Ukey = b.ShippingMarkPictureUkey
 inner join ShippingMarkType st on st.Ukey = b.ShippingMarkTypeUkey
@@ -3629,17 +3630,19 @@ inner join StickerSize ss on ss.ID = b.StickerSizeID
 where CTNRefno='{cTNRefno}' 
 AND a.Category = 'PIC'
 
+
+select * 
+from #Final
+where OriIsOverCtnHt != AfterIsOverCtnHt OR OriNotAutomate != AfterNotAutomate
+
+drop table #Final
+
 ";
             DBProxy.Current.Select(null, cmd, out b01_Detail);
+
             result.Add(b01_Detail);
 
-            if (result[0].Rows.Count == 0)
-            {
-                return;
-            }
-
-            if (!b01_Detail.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["OriIsOverCtnHt"]) != MyUtility.Convert.GetString(o["AfterIsOverCtnHt"]) ||
-            MyUtility.Convert.GetString(o["OriNotAutomate"]) != MyUtility.Convert.GetString(o["AfterNotAutomate"])).Any())
+            if (result[0].Rows.Count == 0 || b01_Detail.Rows.Count == 0)
             {
                 return;
             }
