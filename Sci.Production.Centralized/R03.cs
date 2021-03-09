@@ -494,10 +494,10 @@ alter table #tmp alter column StyleID  varchar(15)
 alter table #tmp alter column BrandID  varchar(8)
 alter table #tmp alter column StyleDesc  varchar(100)
 
-select StyleID,BrandID,StyleDesc,SeasonID,FtyZone,FactoryID,OutputDate = max(OutputDate)
+select StyleID,BrandID,StyleDesc,SeasonID,FtyZone,OutputDate = max(OutputDate)
 into #tmp_MaxOutputDate
 from #tmp 
-group by StyleID,BrandID,StyleDesc,SeasonID,FtyZone,FactoryID
+group by StyleID,BrandID,StyleDesc,SeasonID,FtyZone
 
 select StyleID,BrandID,CDCodeID
 , CDCodeNew
