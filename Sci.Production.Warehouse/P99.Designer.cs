@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.TabPage_UpdateCommand = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridUpdate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
-            this.comboMaterialType_Sheet1 = new System.Windows.Forms.ComboBox();
             this.labMaterialType2 = new Sci.Win.UI.Label();
+            this.comboMaterialType_Sheet1 = new System.Windows.Forms.ComboBox();
             this.labSPNo = new Sci.Win.UI.Label();
             this.labFunction = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -131,14 +131,14 @@
             this.gridUpdate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridUpdate.Location = new System.Drawing.Point(0, 0);
             this.gridUpdate.Name = "gridUpdate";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridUpdate.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridUpdate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridUpdate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridUpdate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridUpdate.RowTemplate.Height = 24;
@@ -150,8 +150,8 @@
             // 
             // panel6
             // 
-            this.panel6.Controls.Add(this.comboMaterialType_Sheet1);
             this.panel6.Controls.Add(this.labMaterialType2);
+            this.panel6.Controls.Add(this.comboMaterialType_Sheet1);
             this.panel6.Controls.Add(this.labSPNo);
             this.panel6.Controls.Add(this.labFunction);
             this.panel6.Controls.Add(this.btnQuery);
@@ -171,6 +171,20 @@
             this.panel6.Size = new System.Drawing.Size(1046, 114);
             this.panel6.TabIndex = 0;
             // 
+            // labMaterialType2
+            // 
+            this.labMaterialType2.Location = new System.Drawing.Point(426, 38);
+            this.labMaterialType2.Name = "labMaterialType2";
+            this.labMaterialType2.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labMaterialType2.RectStyle.BorderWidth = 1F;
+            this.labMaterialType2.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labMaterialType2.RectStyle.ExtBorderWidth = 1F;
+            this.labMaterialType2.Size = new System.Drawing.Size(111, 23);
+            this.labMaterialType2.TabIndex = 15;
+            this.labMaterialType2.Text = "Material Type";
+            this.labMaterialType2.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labMaterialType2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // comboMaterialType_Sheet1
             // 
             this.comboMaterialType_Sheet1.FormattingEnabled = true;
@@ -179,14 +193,6 @@
             this.comboMaterialType_Sheet1.Size = new System.Drawing.Size(121, 24);
             this.comboMaterialType_Sheet1.TabIndex = 5;
             this.comboMaterialType_Sheet1.SelectedValueChanged += new System.EventHandler(this.ComboMaterialType_Sheet1_SelectedValueChanged);
-            // 
-            // labMaterialType2
-            // 
-            this.labMaterialType2.Location = new System.Drawing.Point(439, 38);
-            this.labMaterialType2.Name = "labMaterialType2";
-            this.labMaterialType2.Size = new System.Drawing.Size(98, 23);
-            this.labMaterialType2.TabIndex = 10;
-            this.labMaterialType2.Text = "Material Type";
             // 
             // labSPNo
             // 
@@ -621,10 +627,10 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label labSPNo;
         private System.Windows.Forms.ComboBox comboMaterialType_Sheet1;
-        private Win.UI.Label labMaterialType2;
         private Win.UI.Label labReceivingID;
         private Win.UI.Label labWkNo;
         private Win.UI.Label labelSPNo;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.Label labMaterialType2;
     }
 }

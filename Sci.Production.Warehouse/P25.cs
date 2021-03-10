@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win;
+using Sci.Production.Automation;
 
 namespace Sci.Production.Warehouse
 {

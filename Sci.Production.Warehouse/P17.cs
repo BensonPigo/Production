@@ -719,7 +719,7 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (dt != null)
             {
-                if (!Prgs.ChkWMSCompleteTime(dt, "IssueReturn_Detail"))
+                if (UtilityAutomation.IsAutomationEnable && !Prgs.ChkWMSCompleteTime(dt, "IssueReturn_Detail"))
                 {
                     return;
                 }

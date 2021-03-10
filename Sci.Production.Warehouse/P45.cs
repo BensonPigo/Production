@@ -329,7 +329,7 @@ Balacne Qty is not enough!!
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(dtDetail, "P45", "UnConfirmed"))
+                if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(dtDetail, "UnConfirmed"))
                 {
                     return;
                 }
