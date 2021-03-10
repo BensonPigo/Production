@@ -1003,8 +1003,8 @@ and a.seq1=@seq1";
 
                         string insCmd = @"
 SET IDENTITY_INSERT oven ON
-insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate,Temperature,Time)
-values(@id ,@poid,@testNO,GETDATE(),@Article,'','New',@logid,@remark,@logid,GETDATE(),@Temperature,@Time)
+insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate)
+values(@id ,@poid,@testNO,GETDATE(),@Article,'','New',@logid,@remark,@logid,GETDATE())
 SET IDENTITY_INSERT oven off";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>
                         {
@@ -1031,8 +1031,7 @@ SET IDENTITY_INSERT oven off";
 
                 if (dr.RowState == DataRowState.Modified || this.isModify)
                 {
-                    string editCmd = @"update oven set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName,EditDate=@EditDate,Temperature=@Temperature,
-                      Time=@Time
+                    string editCmd = @"update oven set inspdate=@insDate,Article=@Article,Inspector=@insor,remark=@remark , EditName=@EditName,EditDate=@EditDate
                                        where id=@id";
                     List<SqlParameter> spamEdit = new List<SqlParameter>
                     {
@@ -1045,6 +1044,11 @@ SET IDENTITY_INSERT oven off";
                         new SqlParameter("@EditDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
                     };
                     upResult = DBProxy.Current.Execute(null, editCmd, spamEdit);
+                    if (!upResult)
+                    {
+                        this.ShowErr(upResult);
+                        return upResult;
+                    }
                 }
             }
 
