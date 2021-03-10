@@ -52,15 +52,14 @@ namespace Sci.Production.Automation
             }
 
             // Confirm後要上鎖物料
-            //if (formName == "P07" || formName == "P18")
-            //{
+            // if (formName == "P07" || formName == "P18")
+            // {
             //    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
             //    {
             //        MyUtility.Msg.WarningBox(result.Messages.ToString());
             //        return;
             //    }
-            //}
-
+            // }
             #region 記錄Confirmed後有傳給WMS的資料
             switch (formName)
             {
@@ -124,7 +123,7 @@ namespace Sci.Production.Automation
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "");
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", string.Empty);
 
             // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
             if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
@@ -175,6 +174,7 @@ namespace Sci.Production.Automation
         #endregion
 
         #region Issue
+
         /// <summary>
         /// Issue_Detail To Vstrong
         /// </summary>
@@ -329,6 +329,7 @@ namespace Sci.Production.Automation
         #endregion
 
         #region RemoveC
+
         /// <summary>
         /// Issue_Detail To Vstrong
         /// </summary>
@@ -437,6 +438,7 @@ namespace Sci.Production.Automation
         #endregion
 
         #region SubTransfer
+
         /// <summary>
         /// SubTransfer_Detail New
         /// </summary>
@@ -543,6 +545,7 @@ namespace Sci.Production.Automation
         #endregion
 
         #region ReturnReceipt
+
         /// <summary>
         /// ReturnReceipt_Detail New
         /// </summary>
@@ -676,6 +679,7 @@ namespace Sci.Production.Automation
         }
 
         #region BorrowBack
+
         /// <summary>
         /// BorrowBack_Detail New
         /// </summary>
@@ -718,6 +722,7 @@ namespace Sci.Production.Automation
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
+        /// <param name="isP99">isP99</param>
         /// <returns>bool</returns>
         public static bool SentBorrowBack_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
@@ -780,6 +785,7 @@ namespace Sci.Production.Automation
         #endregion
 
         #region Adjust
+
         /// <summary>
         /// Adjust_Detail New
         /// </summary>
@@ -823,6 +829,7 @@ namespace Sci.Production.Automation
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
+        /// <param name="isP99">isP99</param>
         /// <returns>bool</returns>
         public static bool SentAdjust_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
         {
@@ -1239,7 +1246,7 @@ and exists(
         {
             DualResult result;
             string sqlcmd = string.Empty;
-            DataTable dtMaster;
+            DataTable dtMaster = new DataTable();
             string strBody = isP99 ? "inner join #tmp s on rd.ukey = s.ukey " : "inner join #tmp s on rd.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "rd.StockQty";
             #region 取得資料
@@ -1329,9 +1336,12 @@ and exists(
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            if (!MyUtility.Check.Empty(sqlcmd))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
             }
 
             #endregion
@@ -1343,7 +1353,7 @@ and exists(
         {
             DualResult result;
             string sqlcmd = string.Empty;
-            DataTable dtMaster;
+            DataTable dtMaster = new DataTable();
             string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "i2.Qty";
 
@@ -1358,7 +1368,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = i.Type
+,[Type] = '{formName}'
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
@@ -1399,7 +1409,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = i.Type
+,[Type] = '{formName}'
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
@@ -1440,7 +1450,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = ''
+,[Type] = '{formName}'
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
@@ -1479,9 +1489,12 @@ and exists(
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            if (!MyUtility.Check.Empty(sqlcmd))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
             }
 
             #endregion
