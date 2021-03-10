@@ -16,6 +16,7 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.comboCentralizedM1.SetDefalutIndex();
         }
 
         /// <summary>

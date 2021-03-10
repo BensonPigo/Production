@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
@@ -36,7 +37,7 @@
             this.comboType = new Sci.Win.UI.ComboBox();
             this.numTarget = new Sci.Win.UI.NumericBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM();
+            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
