@@ -24,6 +24,7 @@ namespace Sci.Production.Automation
         public static bool IsGensong_AutoWHFabricEnable => IsModuleAutomationEnable(GensongSuppID, moduleName);
 
         #region Reveive
+
         /// <summary>
         /// Sent Receive Detail New
         /// </summary>
@@ -38,7 +39,6 @@ namespace Sci.Production.Automation
 
             // 取得資料
             DataTable dtMaster = this.GetReceiveData(dtDetail, formName, "New");
-            DualResult result;
 
             // 沒資料就return
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
@@ -47,15 +47,15 @@ namespace Sci.Production.Automation
             }
 
             //// Confirm後要上鎖物料
-            //if (formName == "P07" || formName == "P18")
-            //{
+            // DualResult result;
+            // if (formName == "P07" || formName == "P18")
+            // {
             //    if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, true), out DataTable dt, "#TmpSource")))
             //    {
             //        MyUtility.Msg.WarningBox(result.Messages.ToString());
             //        return;
             //    }
-            //}
-
+            // }
             #region 記錄Confirmed後有傳給WMS的資料
             switch (formName)
             {
@@ -188,6 +188,7 @@ namespace Sci.Production.Automation
         #endregion
 
         #region Issue
+
         /// <summary>
         /// Sent Receive Detail New
         /// </summary>
@@ -386,7 +387,6 @@ namespace Sci.Production.Automation
         /// Sent SubTransfer Detail New
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
-        /// <param name="formName">formName</param>
         public void SentSubTransfer_Detail_New(DataTable dtDetail)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
@@ -908,7 +908,7 @@ select distinct
         /// Sent LocationTrans Detail New
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
-        /// <param name="formName">formName</param>
+        /// <param name="status">status</param>
         public void SentLocationTrans_Detail_New(DataTable dtDetail, string status = "")
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
@@ -1001,7 +1001,6 @@ and exists(
         /// Sent Adjust Detail New
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
-        /// <param name="formName">formName</param>
         public void SentAdjust_Detail_New(DataTable dtDetail)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
@@ -1300,7 +1299,7 @@ and exists(
         {
             DualResult result;
             string sqlcmd = string.Empty;
-            DataTable dtMaster;
+            DataTable dtMaster = new DataTable();
             string strBody = isP99 ? "inner join #tmp s on rd.ukey = s.ukey " : "inner join #tmp s on rd.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "rd.StockQty";
             #region 取得資料
@@ -1409,9 +1408,12 @@ and exists(
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            if (!MyUtility.Check.Empty(sqlcmd))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
             }
 
             #endregion
@@ -1423,7 +1425,7 @@ and exists(
         {
             DualResult result;
             string sqlcmd = string.Empty;
-            DataTable dtMaster;
+            DataTable dtMaster = new DataTable();
             string strBody = isP99 ? "inner join #tmp s on i2.ukey = s.ukey " : "inner join #tmp s on i2.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "i2.Qty";
 
@@ -1437,7 +1439,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = 'A'
+,[Type] = '{formName}'
 ,[CutPlanID] = isnull(i.CutplanID,'')
 ,[EstCutdate] = c.EstCutdate
 ,[SpreadingNoID] = isnull(c.SpreadingNoID,'')
@@ -1489,7 +1491,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
 [Id] = i2.Id
-,[Type] = 'R' 
+,[Type] = '{formName}'
 ,[CutPlanID] = ''
 ,[EstCutdate] = null
 ,[SpreadingNoID] = ''
@@ -1540,7 +1542,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = ''
+,[Type] = '{formName}'
 ,[CutPlanID] = ''
 ,[EstCutdate] = null
 ,[SpreadingNoID] = ''
@@ -1589,9 +1591,12 @@ and exists(
                     break;
             }
 
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+            if (!MyUtility.Check.Empty(sqlcmd))
             {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
             }
 
             #endregion
