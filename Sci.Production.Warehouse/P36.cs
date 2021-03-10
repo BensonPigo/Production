@@ -279,8 +279,8 @@ WHERE   StockType='{0}'
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
                 .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
+                .Text("location", header: "From Scrap\r\nLocation", iseditingreadonly: true, width: Widths.AnsiChars(20))
                 .Text("ToLocation", header: "To Inventory\r\nLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30))
-                .Text("location", header: "From Scrap\r\nLocation", iseditingreadonly: true, settings: ts2, width: Widths.AnsiChars(20))
             ;
             #endregion 欄位設定
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
