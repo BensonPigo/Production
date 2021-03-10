@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
@@ -37,7 +36,7 @@
             this.comboType = new Sci.Win.UI.ComboBox();
             this.numTarget = new Sci.Win.UI.NumericBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
+            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -185,6 +184,7 @@
             // comboCentralizedM1
             // 
             this.comboCentralizedM1.BackColor = System.Drawing.Color.White;
+            this.comboCentralizedM1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "MDivisionID", true));
             this.comboCentralizedM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCentralizedM1.FormattingEnabled = true;
             this.comboCentralizedM1.IsSupportUnselect = true;
