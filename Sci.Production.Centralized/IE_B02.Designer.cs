@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
@@ -35,8 +36,8 @@
             this.dateDate = new Sci.Win.UI.DateBox();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.numTarget = new Sci.Win.UI.NumericBox();
-            this.displayM = new Sci.Win.UI.DisplayBox();
             this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.comboCentralizedM1 = new Sci.Production.Class.ComboCentralizedM(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,8 +52,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboCentralizedM1);
             this.detailcont.Controls.Add(this.chkJunk);
-            this.detailcont.Controls.Add(this.displayM);
             this.detailcont.Controls.Add(this.numTarget);
             this.detailcont.Controls.Add(this.comboType);
             this.detailcont.Controls.Add(this.dateDate);
@@ -169,29 +170,31 @@
             0,
             0});
             // 
-            // displayM
-            // 
-            this.displayM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayM.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionID", true));
-            this.displayM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayM.Location = new System.Drawing.Point(374, 37);
-            this.displayM.Name = "displayM";
-            this.displayM.Size = new System.Drawing.Size(40, 23);
-            this.displayM.TabIndex = 3;
-            // 
             // chkJunk
             // 
             this.chkJunk.AutoSize = true;
             this.chkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkJunk.Location = new System.Drawing.Point(450, 37);
+            this.chkJunk.Location = new System.Drawing.Point(471, 37);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.Size = new System.Drawing.Size(56, 21);
             this.chkJunk.TabIndex = 4;
             this.chkJunk.Text = "Juck";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
-            // B02
+            // comboCentralizedM1
+            // 
+            this.comboCentralizedM1.BackColor = System.Drawing.Color.White;
+            this.comboCentralizedM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCentralizedM1.FormattingEnabled = true;
+            this.comboCentralizedM1.IsSupportUnselect = true;
+            this.comboCentralizedM1.Location = new System.Drawing.Point(373, 37);
+            this.comboCentralizedM1.Name = "comboCentralizedM1";
+            this.comboCentralizedM1.OldText = "";
+            this.comboCentralizedM1.Size = new System.Drawing.Size(80, 24);
+            this.comboCentralizedM1.TabIndex = 5;
+            // 
+            // IE_B02
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
             this.ConnectionName = "ProductionTPE";
@@ -199,7 +202,7 @@
             this.DefaultControlForEdit = "numTarget";
             this.DefaultOrder = "EffectiveDate";
             this.IsSupportPrint = false;
-            this.Name = "B02";
+            this.Name = "IE_B02";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02. Lean Measurement Target Setting";
             this.UniqueExpress = "EffectiveDate,MDivisionID,Type";
@@ -226,7 +229,7 @@
         private Win.UI.DateBox dateDate;
         private Win.UI.ComboBox comboType;
         private Win.UI.NumericBox numTarget;
-        private Win.UI.DisplayBox displayM;
         private Win.UI.CheckBox chkJunk;
+        private Class.ComboCentralizedM comboCentralizedM1;
     }
 }

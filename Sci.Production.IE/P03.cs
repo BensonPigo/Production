@@ -1389,11 +1389,13 @@ WHERE Ukey={item["Ukey"]}
         // 撈出ChgOverTarget資料
         private string FindTarget(string type)
         {
-            return MyUtility.GetValue.Lookup(string.Format(
-                @"select Target from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
-select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())",
-                type,
-                Env.User.Keyword));
+            return MyUtility.GetValue.Lookup($@"
+select top 1 c.Target
+from factory f
+left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < GETDATE() and c. Type ='{type}.'
+where f.id = '{Sci.Env.User.Factory}'
+order by EffectiveDate desc
+");
         }
 
         /// <inheritdoc/>

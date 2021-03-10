@@ -135,14 +135,14 @@ from LineMapping lm WITH (NOLOCK)
 outer apply(
 	select top 1 c.Target
 	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate > lm.Editdate and c. Type ='EFF.'
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate < lm.Editdate and c. Type ='EFF.'
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )EffTarget
 outer apply(
 	select top 1 c.Target
 	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate > lm.Editdate and c. Type ='LBR'
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and lm.status = 'Confirmed' and c.EffectiveDate < lm.Editdate and c. Type ='LBR'
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )LinebalancingTarget 

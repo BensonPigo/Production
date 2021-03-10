@@ -16,7 +16,6 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = string.Format("MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         /// <summary>
