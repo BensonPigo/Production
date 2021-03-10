@@ -1530,7 +1530,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = i.Type
+,[Type] = '{formName}'
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
@@ -1571,7 +1571,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = i.Type
+,[Type] = '{formName}'
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
@@ -1612,7 +1612,7 @@ and exists(
                     sqlcmd = $@"
 select distinct 
  [Id] = i2.Id 
-,[Type] = ''
+,[Type] = '{formName}'
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
