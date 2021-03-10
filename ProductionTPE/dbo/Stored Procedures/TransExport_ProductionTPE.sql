@@ -120,7 +120,7 @@ BEGIN
 
 	-------------ChgOverTarget-------------------
 	RAISERROR('ChgOverTarget  - Starts',0,0)
-	select * into dbo.ChgOverTarget from (select * from ProductionTPE.dbo.ChgOverTarget ) as tmp
+	select * into dbo.ChgOverTarget from (select * from ProductionTPE.dbo.ChgOverTarget where junk <> 1 ) as tmp
 
 	set transaction isolation level read committed
 END
