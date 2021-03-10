@@ -278,7 +278,7 @@
             this.txtartworktype_fty1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtartworktype_fty1.Location = new System.Drawing.Point(349, 200);
             this.txtartworktype_fty1.Name = "txtartworktype_fty1";
-            this.txtartworktype_fty1.Size = new System.Drawing.Size(105, 23);
+            this.txtartworktype_fty1.Size = new System.Drawing.Size(175, 23);
             this.txtartworktype_fty1.TabIndex = 234;
             // 
             // R06

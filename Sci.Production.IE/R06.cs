@@ -248,7 +248,6 @@ Outer apply (
 	Left join Operation o on o.id = td.OperationID
 	Left join MachineType m on m.id = o. MachineTypeID
 	where td.ID = t.ID
-	{whereArtworkType.Replace("@ArtworkTypeID", "'''+@ArtworkTypeID+'''")}
 )FtyTotal
 Outer apply (
 	select SMV = Sum(round(id.SMV * (isnull(id.MtlFactorRate, 0) / 100 + 1) * id.Frequency * 60, 3))
@@ -256,8 +255,7 @@ Outer apply (
 	inner join IETMS_Detail id on id.IETMSUkey = i.ukey 
 	Left join Operation o on o.id = id.OperationID
 	Left join machineType m on m.id = o. MachineTypeID
-	where exists (select 1 from #tmp_TimeStudy t2 where t.ID = t2.ID and t2.IETMSID = i.ID and t2.IETMSVersion = i.Version) 
-	{whereArtworkType.Replace("@ArtworkTypeID", "'''+@ArtworkTypeID+'''")}
+	where exists (select 1 from #tmp_TimeStudy t2 where t.ID = t2.ID and t2.IETMSID = i.ID and t2.IETMSVersion = i.Version)
 )STDTotal
 '
 --print @lastSql
@@ -435,13 +433,17 @@ Deallocate _cursor
 
             workSheets.Name = this.bolDetail ? "Detail" : "Summary";
             MyUtility.Excel.CopyToXls(this.printData[0], string.Empty, "IE_R06.xltx", 1, false, null, objApp, wSheet: workSheets);
-            string r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData[0].Columns.Count);
+            string r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData[0].Columns.Count); // EditDate
             workSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
             workSheets.get_Range("A1", r + "1").AutoFilter(1);
             workSheets.get_Range("A1", r + "1").Font.Bold = true;
             workSheets.UsedRange.Columns[r].NumberFormat = "yyyy/MM/dd HH:mm:ss";
-            r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData[0].Columns.Count - 2);
+            r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData[0].Columns.Count - 2); // AddDate
             workSheets.UsedRange.Columns[r].NumberFormat = "yyyy/MM/dd HH:mm:ss";
+            r = MyUtility.Excel.ConvertNumericToExcelColumn(3); // Style
+            workSheets.UsedRange.Columns[r].NumberFormat = "@";
+            r = MyUtility.Excel.ConvertNumericToExcelColumn(7); // Version
+            workSheets.UsedRange.Columns[r].NumberFormat = "@";
 
             if (this.bolShowSheet && this.printData.Count() > 1)
             {
