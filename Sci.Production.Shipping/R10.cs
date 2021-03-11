@@ -2213,8 +2213,6 @@ where s.Type = 'EXPORT'");
             // Garment
             if (this.reportContent == 1)
             {
-                // Export Fee Report or Detail List by SP#
-                // Export Fee Report
                 #region 組SQL
                 sqlCmd.Append($@"
 with tmpGB 
@@ -2553,22 +2551,7 @@ from #temp3 a
 ");
 
                 #endregion
-                /*result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.accnoData);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                    return;
-                }
 
-                StringBuilder allAccno = new StringBuilder();
-                allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
-
-                foreach (DataRow dr in this.accnoData.Rows)
-                {
-                    allAccno.Append($@",[{MyUtility.Convert.GetString(dr["Accno"])}]");
-                }
-
-                string account = allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString();*/
                 string account = this.GetAccount();
                 sqlCmd.Append($@"
 
@@ -2585,10 +2568,6 @@ drop table #temp1,#temp2,#temp3,#temp4
             }
             else
             {
-                // Row Material
-                // Export Fee Report or Detail List by SP#
-
-                // Export Fee Report
                 #region 組SQL
                 sqlCmd.Append($@"
 with tmpMaterialData
@@ -2679,20 +2658,6 @@ as (
                 sqlCmd.Append($@"
 ) 
 ");
-                /*
-                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.accnoData);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                    return;
-                }
-
-                StringBuilder allAccno = new StringBuilder();
-                allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
-                foreach (DataRow dr in this.accnoData.Rows)
-                {
-                    allAccno.Append($@",[{MyUtility.Convert.GetString(dr["Accno"])}]");
-                }*/
 
                 string account = this.GetAccount();
                 sqlCmd.Append($@"
@@ -2705,19 +2670,19 @@ FOR AccountID IN ({account})) a
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
 
-            List<AccountNo> tmpDatas = new List<AccountNo>();
-            List<AccountNo> finalDatas = new List<AccountNo>();
+            List<ReportData> tmpDatas = new List<ReportData>();
+            List<ReportData> finalDatas = new List<ReportData>();
 
-            tmpDatas = PublicPrg.DataTableToList.ConvertToClassList<AccountNo>(this.printData).ToList();
+            tmpDatas = PublicPrg.DataTableToList.ConvertToClassList<ReportData>(this.printData).ToList();
 
             foreach (var d in tmpDatas)
             {
-                AccountNo a = this.GetValueByAccountNo(d.RgCode, d);
+                ReportData a = this.GetValueByAccountNo(d.RgCode, d);
                 finalDatas.Add(a);
             }
 
             this.printData.Clear();
-            this.printData = PublicPrg.ListToDataTable.ToDataTable<AccountNo>(finalDatas);
+            this.printData = PublicPrg.ListToDataTable.ToDataTable<ReportData>(finalDatas);
 
             if (!result)
             {
@@ -2755,48 +2720,7 @@ FOR AccountID IN ({account})) a
 
             if (this.reportContent == 2)
             {
-                worksheet.Cells[1, 2] = "FTY WK#";
-                worksheet.Cells[1, 3] = "M";
-                worksheet.Cells[1, 10] = "Ship Date";
-            }
-            else
-            {/*
-                tb_onBoardDate = this.printData.Copy();
-                for (int f = 0; f < tb_onBoardDate.Columns.Count; f++)
-                {
-                    if (!tb_onBoardDate.Columns[f].ColumnName.Equals("OnBoardDate"))
-                    {
-                        tb_onBoardDate.Columns.RemoveAt(f);
-                        f--;
-                    }
-                }
-
-                this.printData.Columns.Remove("OnBoardDate");
-
-                tb_IncludeFoundry = this.printData.Copy();
-                for (int f = 0; f < tb_IncludeFoundry.Columns.Count; f++)
-                {
-                    if (!tb_IncludeFoundry.Columns[f].ColumnName.Equals("Foundry"))
-                    {
-                        tb_IncludeFoundry.Columns.RemoveAt(f);
-                        f--;
-                    }
-                }
-
-                this.printData.Columns.Remove("Foundry");
-
-                tb_SisFtyAP = this.printData.Copy();
-                for (int f = 0; f < tb_SisFtyAP.Columns.Count; f++)
-                {
-                    if (!tb_SisFtyAP.Columns[f].ColumnName.Equals("SisFtyAPID"))
-                    {
-                        tb_SisFtyAP.Columns.RemoveAt(f);
-                        f--;
-                    }
-                }
-
-                this.printData.Columns.Remove("SisFtyAPID");
-                */
+                worksheet.Cells[1, 4] = "FTY WK#";
             }
 
             // 複製儲存格
@@ -2813,7 +2737,9 @@ FOR AccountID IN ({account})) a
             worksheet.get_Range("BA:BQ").EntireColumn.Delete();
 
             int x = this.printData.Rows.Count + 2;
-            worksheet.get_Range($"A{x}:AZ{x+200}").Interior.Color = Color.White;
+
+            // 剩下的底色弄成白色，抓個兩百行不要被User看到就好
+            worksheet.get_Range($"A{x}:AZ{x + 200}").Interior.Color = Color.White;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Shipping_R10_ExportFeeReport(MergerdAcctCode)");
@@ -2825,6 +2751,10 @@ FOR AccountID IN ({account})) a
             #endregion
         }
 
+        /// <summary>
+        /// 取得會計科目 for Report type為Export Fee Report(Mergerd Acct Code)的報表
+        /// </summary>
+        /// <returns>字串</returns>
         private string GetAccount()
         {
             // 所有欄位會用到的會計科目
@@ -2847,27 +2777,45 @@ FOR AccountID IN ({account})) a
             return accountList;
         }
 
-        private AccountNo GetValueByAccountNo(string factoryID, AccountNo accountNo)
+        /// <summary>
+        /// 傳入Report type為Export Fee Report(Mergerd Acct Code)的報表資料，處理運算每個會計科目的值
+        /// </summary>
+        /// <param name="factoryID">factoryID</param>
+        /// <param name="reportData">reportData</param>
+        /// <returns>ReportData</returns>
+        private ReportData GetValueByAccountNo(string factoryID, ReportData reportData)
         {
+            /*
+            規則依據：ISP20210275。
+            說明：DB會撈出所有會計科目的資料，根據不同工廠，按照以下步驟，請搭配報表範本看
+            1. 以Total Export Fee欄位為分界，這之前的欄位，逐一重新運算/替換
+            2. 前面欄位全部重新算完之後，才加總Total Export Fee欄位
+            3. 後面繼續運算/替換，所有欄位不需要運算/替換的值，不用管他
+            4. 最後將不需要顯示的值改成NULL
+            5. 注意NULL的運算，NULL + 1 會等於NULL，因此凡是遭遇運算都必須轉型別
+             */
+
             if (factoryID == "PHI")
             {
-                accountNo.A_61022001 = accountNo.A_61022001 + accountNo.A_61012001;
-                accountNo.A_61022006 = accountNo.A_61022006 + accountNo.A_61092006;
+                reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
+                reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006);
             }
 
             if (factoryID == "PH2")
             {
-                accountNo.A_61022003 = accountNo.A_61022003 + accountNo.A_61012003;
-                accountNo.A_61092101 = accountNo.A_61092101 + accountNo.A_61092001;
-                accountNo.A_61092106 = accountNo.A_61092106 + accountNo.A_61092006;
+                reportData.A_61022003 = MyUtility.Convert.GetDecimal(reportData.A_61022003) + MyUtility.Convert.GetDecimal(reportData.A_61012003);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006);
             }
 
             if (factoryID == "ESP")
             {
-                accountNo.A_61022001 = accountNo.A_61022001 + accountNo.A_61012001;
-                accountNo.A_61022006 = accountNo.A_61022006 + accountNo.A_61012006;
-                accountNo.A_61092101 = accountNo.A_61092101 + accountNo.A_61092001;
-                accountNo.A_61092106 = accountNo.A_61092106 + accountNo.A_61092006;
+                reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
+                reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006);
             }
 
             if (factoryID == "SNP")
@@ -2877,8 +2825,8 @@ FOR AccountID IN ({account})) a
 
             if (factoryID == "SPT")
             {
-                accountNo.A_61022001 = accountNo.A_61022001 + accountNo.A_61012001;
-                accountNo.A_61092106 = accountNo.A_61092106 + accountNo.A_61092006;
+                reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
+                reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
             }
 
             if (factoryID == "SPR")
@@ -2888,12 +2836,12 @@ FOR AccountID IN ({account})) a
 
             if (factoryID == "SPS")
             {
-                accountNo.A_61092105 = accountNo.A_61092105 + accountNo.A_61092005;
+                reportData.A_61092105 = MyUtility.Convert.GetDecimal(reportData.A_61092105) + MyUtility.Convert.GetDecimal(reportData.A_61092005);
             }
 
             if (factoryID == "HXG")
             {
-                accountNo.A_6102 = accountNo.A_6102 + accountNo.A_61041001;
+                reportData.A_6102 = MyUtility.Convert.GetDecimal(reportData.A_6102) + MyUtility.Convert.GetDecimal(reportData.A_61041001);
             }
 
             if (factoryID == "HZG")
@@ -2902,269 +2850,338 @@ FOR AccountID IN ({account})) a
             }
 
             // 共通
-            accountNo.TotalExportFee = MyUtility.Convert.GetDecimal(accountNo.A_61022001)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61022002)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61022003)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61022004)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61022005)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61022006)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61092101)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61092102)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61092103)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61092104)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61092105)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61092106)
-                + MyUtility.Convert.GetDecimal(accountNo.A_6102)
-                + MyUtility.Convert.GetDecimal(accountNo.A_61021005);
+            reportData.TotalExportFee = MyUtility.Convert.GetDecimal(reportData.A_61022001)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022002)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022003)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022004)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022005)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022006)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092101)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092102)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092103)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092104)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092105)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092106)
+                + MyUtility.Convert.GetDecimal(reportData.A_6102)
+                + MyUtility.Convert.GetDecimal(reportData.A_61021005);
 
             // 最後要把不需要顯示得改成NULL
             if (factoryID == "PHI")
             {
-                accountNo.A_59122102 = accountNo.A_59122102 + accountNo.A_59122222;
-                accountNo.A_59122104 = accountNo.A_59129999;
-                accountNo.A_59122106 = accountNo.A_59122106 + accountNo.A_5912 + accountNo.A_59122001;
-                accountNo.A_61052101 = accountNo.A_61052101 + accountNo.A_61052001;
-                accountNo.A_61052106 = accountNo.A_61052106 + accountNo.A_6105 + accountNo.A_61052006;
+                reportData.A_59122102 = MyUtility.Convert.GetDecimal(reportData.A_59122102) + MyUtility.Convert.GetDecimal(reportData.A_59122222);
+                reportData.A_59122104 = MyUtility.Convert.GetDecimal(reportData.A_59129999);
+                reportData.A_59122106 = MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_5912) + MyUtility.Convert.GetDecimal(reportData.A_59122001);
+                reportData.A_61052101 = MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61052001);
+                reportData.A_61052106 = MyUtility.Convert.GetDecimal(reportData.A_61052106) + MyUtility.Convert.GetDecimal(reportData.A_6105) + MyUtility.Convert.GetDecimal(reportData.A_61052006);
 
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_61052104 = null;
-                accountNo.A_61052105 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
             }
 
             if (factoryID == "PH2")
             {
-                accountNo.A_59122106 = accountNo.A_59122106 + accountNo.A_59122001;
-                accountNo.A_61052101 = accountNo.A_61052101 + accountNo.A_61052001;
+                reportData.A_59122106 = MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59122001);
+                reportData.A_61052101 = MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61052001);
 
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
-                accountNo.A_61052105 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
             }
 
             if (factoryID == "ESP")
             {
-                accountNo.A_59122102 = accountNo.A_59122222;
-                accountNo.A_59122104 = accountNo.A_59122104 + accountNo.A_59129999;
-                accountNo.A_61052106 = accountNo.A_61052106 + accountNo.A_61050001;
+                reportData.A_59122102 = MyUtility.Convert.GetDecimal(reportData.A_59122222);
+                reportData.A_59122104 = MyUtility.Convert.GetDecimal(reportData.A_59122104) + MyUtility.Convert.GetDecimal(reportData.A_59129999);
+                reportData.A_61052106 = MyUtility.Convert.GetDecimal(reportData.A_61052106) + MyUtility.Convert.GetDecimal(reportData.A_61050001);
 
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052105 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052105 = null;
             }
 
             if (factoryID == "SNP")
             {
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
-                accountNo.A_61052105 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
             }
 
             if (factoryID == "SPT")
             {
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
-                accountNo.A_61052105 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
             }
 
             if (factoryID == "SPR")
             {
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
             }
 
             if (factoryID == "SPS")
             {
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_6102 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
             }
 
             if (factoryID == "HXG")
             {
-                accountNo.A_61022006 = null;
-                accountNo.A_61092101 = null;
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_61092106 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_61021005 = null;
-                accountNo.A_59122101 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_59122106 = null;
-                accountNo.A_61052101 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
-                accountNo.A_61052105 = null;
-                accountNo.A_61052106 = null;
+                reportData.A_61022006 = null;
+                reportData.A_61092101 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_61092106 = null;
+                reportData.A_6109 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122101 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_59122106 = null;
+                reportData.A_61052101 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+                reportData.A_61052106 = null;
             }
 
             if (factoryID == "HZG")
             {
-                accountNo.A_59122106 = accountNo.A_59122106 + accountNo.A_82131001;
-                accountNo.A_61052101 = accountNo.A_61052101 + accountNo.A_61051001;
+                reportData.A_59122106 = MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_82131001);
+                reportData.A_61052101 = MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61051001);
 
-                accountNo.A_61022006 = null;
-                accountNo.A_61092101 = null;
-                accountNo.A_61092102 = null;
-                accountNo.A_61092103 = null;
-                accountNo.A_61092104 = null;
-                accountNo.A_61092105 = null;
-                accountNo.A_61092106 = null;
-                accountNo.A_6109 = null;
-                accountNo.A_59122101 = null;
-                accountNo.A_59122102 = null;
-                accountNo.A_59122103 = null;
-                accountNo.A_59122104 = null;
-                accountNo.A_61052102 = null;
-                accountNo.A_61052103 = null;
-                accountNo.A_61052104 = null;
-                accountNo.A_61052105 = null;
-                accountNo.A_61052106 = null;
+                reportData.A_61022006 = null;
+                reportData.A_61092101 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_61092106 = null;
+                reportData.A_6109 = null;
+                reportData.A_59122101 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+                reportData.A_61052106 = null;
             }
 
-            return accountNo;
+            return reportData;
         }
 
-        private class AccountNo
+        /// <summary>
+        /// Report Type = 5 的報表資料
+        /// </summary>
+        private class ReportData
         {
             public string Origin { get; set; }
+
             public string RgCode { get; set; }
+
             public string Type { get; set; }
+
             public string ID { get; set; }
-            public DateTime OnBoardDate { get; set; }
+
+            public DateTime? OnBoardDate { get; set; }
+
             public string Shipper { get; set; }
+
             public string Foundry { get; set; }
+
             public string SisFtyAPID { get; set; }
+
             public string BrandID { get; set; }
+
             public string Category { get; set; }
+
             public int OQty { get; set; }
+
             public string CustCDID { get; set; }
+
             public string Dest { get; set; }
+
             public string ShipModeID { get; set; }
-            public DateTime PullOutDate { get; set; }
+
+            public DateTime? PullOutDate { get; set; }
+
             public int ShipQty { get; set; }
+
             public int CtnQty { get; set; }
+
             public decimal GW { get; set; }
+
             public decimal CBM { get; set; }
+
             public string Forwarder { get; set; }
+
             public string BLNo { get; set; }
+
             public string AccountID { get; set; }
 
             public decimal? A_61022001 { get; set; }
+
             public decimal? A_61022002 { get; set; }
+
             public decimal? A_61022003 { get; set; }
+
             public decimal? A_61022004 { get; set; }
+
             public decimal? A_61022005 { get; set; }
+
             public decimal? A_61022006 { get; set; }
+
             public decimal? A_61092101 { get; set; }
+
             public decimal? A_61092102 { get; set; }
+
             public decimal? A_61092103 { get; set; }
+
             public decimal? A_61092104 { get; set; }
+
             public decimal? A_61092105 { get; set; }
+
             public decimal? A_61092106 { get; set; }
+
             public decimal? A_6109 { get; set; }
+
             public decimal? A_6102 { get; set; }
+
             public decimal? A_61021005 { get; set; }
+
             public decimal? TotalExportFee { get; set; }
+
             public string Blank1 { get; set; }
 
             public decimal? A_59122101 { get; set; }
+
             public decimal? A_59122102 { get; set; }
+
             public decimal? A_59122103 { get; set; }
+
             public decimal? A_59122104 { get; set; }
+
             public decimal? A_59122106 { get; set; }
+
             public decimal? A_59121111 { get; set; }
+
             public string Blank2 { get; set; }
+
             public decimal? A_61052101 { get; set; }
+
             public decimal? A_61052102 { get; set; }
+
             public decimal? A_61052103 { get; set; }
+
             public decimal? A_61052104 { get; set; }
+
             public decimal? A_61052105 { get; set; }
+
             public decimal? A_61052106 { get; set; }
+
             public decimal? A_61041001 { get; set; }
+
             public decimal? A_82131001 { get; set; }
+
             public decimal? A_61051001 { get; set; }
+
             public decimal? A_61092005 { get; set; }
+
             public decimal? A_61012001 { get; set; }
+
             public decimal? A_61012006 { get; set; }
+
             public decimal? A_59122222 { get; set; }
+
             public decimal? A_5912 { get; set; }
+
             public decimal? A_59122001 { get; set; }
+
             public decimal? A_61052001 { get; set; }
+
             public decimal? A_6105 { get; set; }
+
             public decimal? A_61052006 { get; set; }
+
             public decimal? A_61012003 { get; set; }
+
             public decimal? A_61092001 { get; set; }
+
             public decimal? A_61092006 { get; set; }
+
             public decimal? A_59129999 { get; set; }
+
             public decimal? A_61050001 { get; set; }
         }
     }

@@ -63,6 +63,7 @@ CREATE TABLE [dbo].[System] (
     [WIP_ByShell]                BIT            CONSTRAINT [DF_System_WIP_FollowCutOutput] DEFAULT ((0)) NOT NULL,
     [NoRestrictOrdersDelivery]   BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
     [RFCardEraseBeforePrinting]  BIT            DEFAULT ((0)) NOT NULL,
+    [Region] Varchar (2) NOT NULL CONSTRAINT [DF_System_Region]  DEFAULT(''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
