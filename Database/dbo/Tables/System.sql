@@ -1,70 +1,78 @@
-CREATE TABLE [dbo].[System] (
-    [Mailserver]                 VARCHAR (60)   CONSTRAINT [DF_System_Mailserver] DEFAULT ('') NULL,
-    [Sendfrom]                   VARCHAR (40)   CONSTRAINT [DF_System_Sendfrom] DEFAULT ('') NULL,
-    [EmailID]                    VARCHAR (40)   CONSTRAINT [DF_System_Emailid] DEFAULT ('') NULL,
-    [EmailPwd]                   VARCHAR (20)   CONSTRAINT [DF_System_EmailPwd] DEFAULT ('') NULL,
-    [PicPath]                    VARCHAR (80)   CONSTRAINT [DF_System_PicPath] DEFAULT ('') NULL,
-    [StdTMS]                     INT            CONSTRAINT [DF_System_StdTMS] DEFAULT ((0)) NOT NULL,
-    [ClipPath]                   VARCHAR (80)   CONSTRAINT [DF_System_ClipPath] DEFAULT ('') NULL,
-    [FtpIP]                      VARCHAR (36)   CONSTRAINT [DF_System_FtpIP] DEFAULT ('') NULL,
-    [FtpID]                      VARCHAR (10)   CONSTRAINT [DF_System_FtpID] DEFAULT ('') NULL,
-    [FtpPwd]                     VARCHAR (36)   CONSTRAINT [DF_System_FtpPwd] DEFAULT ('') NULL,
-    [SewLock]                    DATE           NULL,
-    [SampleRate]                 TINYINT        CONSTRAINT [DF_System_SPLRate] DEFAULT ((0)) NULL,
-    [PullLock]                   DATE           NULL,
-    [RgCode]                     VARCHAR (3)    CONSTRAINT [DF_System_RgCode] DEFAULT ('') NOT NULL,
-    [ImportDataPath]             VARCHAR (60)   CONSTRAINT [DF_System_UdsPath] DEFAULT ('') NULL,
-    [ImportDataFileName]         VARCHAR (60)   CONSTRAINT [DF_System_UdFileName] DEFAULT ('') NULL,
-    [ExportDataPath]             VARCHAR (60)   CONSTRAINT [DF_System_DnsPath] DEFAULT ('') NULL,
-    [CurrencyID]                 VARCHAR (4)    CONSTRAINT [DF_System_CurrencyID] DEFAULT ('') NULL,
-    [USDRate]                    NUMERIC (9, 4) CONSTRAINT [DF_System_USDRate] DEFAULT ((0)) NULL,
-    [POApproveName]              VARCHAR (10)   CONSTRAINT [DF_System_POApproveName] DEFAULT ('') NULL,
-    [POApproveDay]               TINYINT        CONSTRAINT [DF_System_POApproveDay] DEFAULT ((0)) NULL,
-    [CutDay]                     TINYINT        CONSTRAINT [DF_System_CutDay] DEFAULT ((0)) NULL,
-    [AccountKeyword]             VARCHAR (1)    CONSTRAINT [DF_System_AccountKeyword] DEFAULT ('') NULL,
-    [ReadyDay]                   TINYINT        CONSTRAINT [DF_System_ReadyDay] DEFAULT ((0)) NULL,
-    [VNMultiple]                 NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
-    [MtlLeadTime]                TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL,
-    [ExchangeID]                 VARCHAR (2)    DEFAULT ('') NULL,
-    [RFIDServerName]             VARCHAR (20)   NULL,
-    [RFIDDatabaseName]           VARCHAR (20)   NULL,
-    [RFIDLoginId]                VARCHAR (20)   NULL,
-    [RFIDLoginPwd]               VARCHAR (20)   NULL,
-    [RFIDTable]                  VARCHAR (20)   NULL,
-    [ProphetSingleSizeDeduct]    NUMERIC (3)    NULL,
-    [PrintingSuppID]             VARCHAR (8)    NULL,
-    [QCMachineDelayTime]         NUMERIC (2, 1) NULL,
-    [APSLoginId]                 VARCHAR (15)   CONSTRAINT [DF_System_APSLoginId] DEFAULT ('') NULL,
-    [APSLoginPwd]                VARCHAR (15)   CONSTRAINT [DF_System_APSLoginPwd] DEFAULT ('') NULL,
-    [SQLServerName]              VARCHAR (130)  CONSTRAINT [DF_System_SQLServerName] DEFAULT ('') NULL,
-    [APSDatabaseName]            VARCHAR (15)   CONSTRAINT [DF_System_APSDatabaseName] DEFAULT ('') NULL,
-    [RFIDMiddlewareInRFIDServer] BIT            DEFAULT ((0)) NOT NULL,
-    [UseAutoScanPack]            BIT            CONSTRAINT [DF_System_UseAutoScanPack] DEFAULT ((0)) NOT NULL,
-    [MtlAutoLock]                BIT            CONSTRAINT [DF_System_MtlAutoLock] DEFAULT ((0)) NOT NULL,
-    [InspAutoLockAcc]            BIT            DEFAULT ((0)) NOT NULL,
-    [ShippingMarkPath]           VARCHAR (80)   NULL,
-    [StyleSketch]                VARCHAR (80)   NULL,
-    [ARKServerName]              VARCHAR (20)   NULL,
-    [ARKDatabaseName]            VARCHAR (20)   NULL,
-    [ARKLoginId]                 VARCHAR (20)   NULL,
-    [ARKLoginPwd]                VARCHAR (20)   NULL,
-    [MarkerInputPath]            NVARCHAR (80)  NULL,
-    [MarkerOutputPath]           NVARCHAR (80)  NULL,
-    [ReplacementReport]          VARCHAR (80)   NULL,
-    [CuttingP10mustCutRef]       BIT            DEFAULT ((0)) NOT NULL,
-    [Automation]                 BIT            DEFAULT ((0)) NOT NULL,
-    [AutomationAutoRunTime]      TINYINT        CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)) NOT NULL,
-    [CanReviseDailyLockData]     BIT            DEFAULT ((0)) NOT NULL,
-    [AutoGenerateByTone]         BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
-    [MiscPOApproveName]          VARCHAR (10)   CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL,
-    [MiscPOApproveDay]           TINYINT        CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL,
-    [QMSAutoAdjustMtl]           BIT            DEFAULT ((0)) NOT NULL,
-    [ShippingMarkTemplatePath]   VARCHAR (80)   CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT ('') NOT NULL,
-    [WIP_ByShell]                BIT            CONSTRAINT [DF_System_WIP_FollowCutOutput] DEFAULT ((0)) NOT NULL,
-    [NoRestrictOrdersDelivery]   BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
-    [RFCardEraseBeforePrinting]  BIT            DEFAULT ((0)) NOT NULL,
+﻿CREATE TABLE [dbo].[System] (
+    [Mailserver]                  VARCHAR (60)   CONSTRAINT [DF_System_Mailserver] DEFAULT ('') NULL,
+    [Sendfrom]                    VARCHAR (40)   CONSTRAINT [DF_System_Sendfrom] DEFAULT ('') NULL,
+    [EmailID]                     VARCHAR (40)   CONSTRAINT [DF_System_Emailid] DEFAULT ('') NULL,
+    [EmailPwd]                    VARCHAR (20)   CONSTRAINT [DF_System_EmailPwd] DEFAULT ('') NULL,
+    [PicPath]                     VARCHAR (80)   CONSTRAINT [DF_System_PicPath] DEFAULT ('') NULL,
+    [StdTMS]                      INT            CONSTRAINT [DF_System_StdTMS] DEFAULT ((0)) NOT NULL,
+    [ClipPath]                    VARCHAR (80)   CONSTRAINT [DF_System_ClipPath] DEFAULT ('') NULL,
+    [FtpIP]                       VARCHAR (36)   CONSTRAINT [DF_System_FtpIP] DEFAULT ('') NULL,
+    [FtpID]                       VARCHAR (10)   CONSTRAINT [DF_System_FtpID] DEFAULT ('') NULL,
+    [FtpPwd]                      VARCHAR (36)   CONSTRAINT [DF_System_FtpPwd] DEFAULT ('') NULL,
+    [SewLock]                     DATE           NULL,
+    [SampleRate]                  TINYINT        CONSTRAINT [DF_System_SPLRate] DEFAULT ((0)) NULL,
+    [PullLock]                    DATE           NULL,
+    [RgCode]                      VARCHAR (3)    CONSTRAINT [DF_System_RgCode] DEFAULT ('') NOT NULL,
+    [ImportDataPath]              VARCHAR (60)   CONSTRAINT [DF_System_UdsPath] DEFAULT ('') NULL,
+    [ImportDataFileName]          VARCHAR (60)   CONSTRAINT [DF_System_UdFileName] DEFAULT ('') NULL,
+    [ExportDataPath]              VARCHAR (60)   CONSTRAINT [DF_System_DnsPath] DEFAULT ('') NULL,
+    [CurrencyID]                  VARCHAR (4)    CONSTRAINT [DF_System_CurrencyID] DEFAULT ('') NULL,
+    [USDRate]                     NUMERIC (9, 4) CONSTRAINT [DF_System_USDRate] DEFAULT ((0)) NULL,
+    [POApproveName]               VARCHAR (10)   CONSTRAINT [DF_System_POApproveName] DEFAULT ('') NULL,
+    [POApproveDay]                TINYINT        CONSTRAINT [DF_System_POApproveDay] DEFAULT ((0)) NULL,
+    [CutDay]                      TINYINT        CONSTRAINT [DF_System_CutDay] DEFAULT ((0)) NULL,
+    [AccountKeyword]              VARCHAR (1)    CONSTRAINT [DF_System_AccountKeyword] DEFAULT ('') NULL,
+    [ReadyDay]                    TINYINT        CONSTRAINT [DF_System_ReadyDay] DEFAULT ((0)) NULL,
+    [VNMultiple]                  NUMERIC (4, 2) CONSTRAINT [DF_System_VNMultiple] DEFAULT ((0)) NULL,
+    [MtlLeadTime]                 TINYINT        CONSTRAINT [DF_System_MtlLeadTime] DEFAULT ((0)) NULL,
+    [ExchangeID]                  VARCHAR (2)    DEFAULT ('') NULL,
+    [RFIDServerName]              VARCHAR (20)   NULL,
+    [RFIDDatabaseName]            VARCHAR (20)   NULL,
+    [RFIDLoginId]                 VARCHAR (20)   NULL,
+    [RFIDLoginPwd]                VARCHAR (20)   NULL,
+    [RFIDTable]                   VARCHAR (20)   NULL,
+    [ProphetSingleSizeDeduct]     NUMERIC (3)    NULL,
+    [PrintingSuppID]              VARCHAR (8)    NULL,
+    [QCMachineDelayTime]          NUMERIC (2, 1) NULL,
+    [APSLoginId]                  VARCHAR (15)   CONSTRAINT [DF_System_APSLoginId] DEFAULT ('') NULL,
+    [APSLoginPwd]                 VARCHAR (15)   CONSTRAINT [DF_System_APSLoginPwd] DEFAULT ('') NULL,
+    [SQLServerName]               VARCHAR (130)  CONSTRAINT [DF_System_SQLServerName] DEFAULT ('') NULL,
+    [APSDatabaseName]             VARCHAR (15)   CONSTRAINT [DF_System_APSDatabaseName] DEFAULT ('') NULL,
+    [RFIDMiddlewareInRFIDServer]  BIT            DEFAULT ((0)) NOT NULL,
+    [UseAutoScanPack]             BIT            CONSTRAINT [DF_System_UseAutoScanPack] DEFAULT ((0)) NOT NULL,
+    [MtlAutoLock]                 BIT            CONSTRAINT [DF_System_MtlAutoLock] DEFAULT ((0)) NOT NULL,
+    [InspAutoLockAcc]             BIT            DEFAULT ((0)) NOT NULL,
+    [ShippingMarkPath]            VARCHAR (80)   NULL,
+    [StyleSketch]                 VARCHAR (80)   NULL,
+    [ARKServerName]               VARCHAR (20)   NULL,
+    [ARKDatabaseName]             VARCHAR (20)   NULL,
+    [ARKLoginId]                  VARCHAR (20)   NULL,
+    [ARKLoginPwd]                 VARCHAR (20)   NULL,
+    [MarkerInputPath]             NVARCHAR (80)  NULL,
+    [MarkerOutputPath]            NVARCHAR (80)  NULL,
+    [ReplacementReport]           VARCHAR (80)   NULL,
+    [CuttingP10mustCutRef]        BIT            DEFAULT ((0)) NOT NULL,
+    [Automation]                  BIT            DEFAULT ((0)) NOT NULL,
+    [AutomationAutoRunTime]       TINYINT        CONSTRAINT [DF_System_AutomationAutoRunTime] DEFAULT ((0)) NOT NULL,
+    [CanReviseDailyLockData]      BIT            DEFAULT ((0)) NOT NULL,
+    [AutoGenerateByTone]          BIT            CONSTRAINT [DF_System_AutoGenerateByTone] DEFAULT ((0)) NOT NULL,
+    [MiscPOApproveName]           VARCHAR (10)   CONSTRAINT [DF_System_MiscPOApproveName] DEFAULT ('') NULL,
+    [MiscPOApproveDay]            TINYINT        CONSTRAINT [DF_System_MiscPOApproveDay] DEFAULT ((0)) NULL,
+    [QMSAutoAdjustMtl]            BIT            DEFAULT ((0)) NOT NULL,
+    [ShippingMarkTemplatePath]    VARCHAR (80)   CONSTRAINT [DF_System_ShippingMarkPath] DEFAULT ('') NOT NULL,
+    [WIP_FollowCutOutput]         BIT            CONSTRAINT [DF_System_WIP_FollowCutOutput] DEFAULT ((0)) NOT NULL,
+    [NoRestrictOrdersDelivery]    BIT            CONSTRAINT [DF_System_NoRestrictOrdersDelivery] DEFAULT ((0)) NOT NULL,
+    [WIP_ByShell]                 BIT            DEFAULT ((1)) NULL,
+    [RFCardEraseBeforePrinting]   BIT            DEFAULT ((0)) NOT NULL,
+    [IsCombineSubProcess]         BIT            CONSTRAINT [DF_System_IsCombineSubProcess] DEFAULT ((0)) NOT NULL,
+    [IsNoneShellNoCreateAllParts] BIT            CONSTRAINT [DF_System_IsNoneShellNoCreateAllParts] DEFAULT ((0)) NOT NULL,
+    [Region]                      VARCHAR (2)    CONSTRAINT [DF_System_Region] DEFAULT ('') NOT NULL,
+    [SewlineAvgCPU]               INT            CONSTRAINT [DF_System_SewlineAvgCPU] DEFAULT ((1100)) NULL,
+    [SmallLogoCM]                 DECIMAL (5, 2) CONSTRAINT [DF_System_SmallLogoCM] DEFAULT ((15)) NULL,
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
+
+
 
 
 
@@ -296,3 +304,26 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'RFCardEraseBeforePrinting'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Card Erase Before Printing', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'RFCardEraseBeforePrinting';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'以下判斷 smalll logo 的長度標準 (CM)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SmallLogoCM';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PH 產線平均一天的 CPU', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'SewlineAvgCPU';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠區', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'Region';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否不產生AllParts', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'IsNoneShellNoCreateAllParts';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否combine subprocess產生bundle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'IsCombineSubProcess';
+

@@ -1446,18 +1446,24 @@ else
 				t.AddName		= s.AddName,
 				t.AddDate		= s.AddDate,
 				t.EditName		= s.EditName,
-				t.EditDate		= s.EditDate
+				t.EditDate		= s.EditDate,
+				t.InkType		= s.InkType,
+				t.Length 		= s.Length,
+				t.Width 		= s.Width,
+				t.Colors		= s.Colors
 		when not matched by target then 
 			insert (
 				ID				, ArtworkTypeID		, Article	, PatternCode	, PatternDesc
 				, ArtworkID		, ArtworkName		, Qty		, TMS			, Price
 				, Cost			, Remark			, Ukey		, AddName		, AddDate
-				, PPU			, EditName		, EditDate
+				, PPU			, EditName			, EditDate	, InkType		, Length
+				, Width			, Colors
 			) values (
 				s.ID			, s.ArtworkTypeID	, s.Article	, s.PatternCode	, s.PatternDesc
 				, s.ArtworkID	, s.ArtworkName		, s.Qty		, s.TMS			, s.Price
 				, s.Cost		, s.Remark			, s.Ukey	, s.AddName		, s.AddDate
-				, s.PPU	, s.EditName	, s.EditDate
+				, s.PPU			, s.EditName		, s.EditDate, s.InkType		, s.Length
+				, s.Width		, s.Colors
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
