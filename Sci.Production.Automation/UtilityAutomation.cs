@@ -157,5 +157,16 @@ namespace Sci.Production.Automation
         {
             return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{Sci}' and ModuleName = '{Sci}' and ModuleType = '{ModuleType}' ", "Production");
         }
+
+        /// <summary>
+        /// GetSuppApiUrl
+        /// </summary>
+        /// <param name="suppID">suppID</param>
+        /// <param name="moduleName">moduleName</param>
+        /// <returns>string</returns>
+        public static string GetSuppApiUrl(string suppID, string moduleName)
+        {
+            return MyUtility.GetValue.Lookup($"select URL from WebApiURL with (nolock) where SuppID = '{suppID}' and ModuleName = '{moduleName}' and ModuleType = '{ModuleType}'", "Production");
+        }
     }
 }

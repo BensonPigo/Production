@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tems;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Sci.Production.Automation.Gensong_SpreadingSchedule;
 
 namespace Sci.Production.Cutting
 {
@@ -75,6 +77,16 @@ namespace Sci.Production.Cutting
                     this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
                 }
             }
+
+            if (dr["MtlStatusValue"].ToString() == "Y")
+            {
+                this.detailgrid.Rows[e.RowIndex].Cells["MaterialStatus"].Style.BackColor = Color.LightPink;
+            }
+            else if (dr["MtlStatusValue"].ToString() == "N")
+            {
+                this.detailgrid.Rows[e.RowIndex].Cells["MaterialStatus"].Style.BackColor = Color.LightGreen;
+            }
+
         }
 
         /// <inheritdoc/>
@@ -101,7 +113,7 @@ namespace Sci.Production.Cutting
             string estCutDate = (e.Master == null) ? string.Empty : ((DateTime)e.Master["EstCutDate"]).ToString("yyyy/MM/dd");
             string cutCellID = (e.Master == null) ? string.Empty : e.Master["CutCellID"].ToString();
             this.DetailSelectCommand = $@"
-select * from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')";
+select *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -249,6 +261,7 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.RefreshMaterialStatus();
         }
 
         /// <inheritdoc/>
@@ -281,8 +294,14 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                 return false;
             }
 
+            if (!this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["SpreadingSchdlSeq"])))
+            {
+                MyUtility.Msg.WarningBox("Please enter at least one SCHDL Seq");
+                return false;
+            }
+
             this.SeqtoNull();
-            var x = this.DetailDatas.AsEnumerable().Where(w => !MyUtility.Check.Empty(w["SpreadingSchdlSeq"]))
+            var x = this.DetailDatas.Where(w => !MyUtility.Check.Empty(w["SpreadingSchdlSeq"]))
                 .Select(s => new
                 {
                     CutRef = MyUtility.Convert.GetString(s["CutRef"]),
@@ -347,6 +366,15 @@ where   ss.EstCutDate <> @EstCutDate and
             }
             #endregion
             return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            Task.Run(() => new Gensong_SpreadingSchedule().SendSpreadingSchedule(this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString()))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            this.RefreshMaterialStatus();
         }
 
         /// <inheritdoc/>
@@ -442,6 +470,8 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
             {
                 ((DataTable)this.detailgridbs.DataSource).ImportRowAdded(dr);
             }
+
+            this.RefreshMaterialStatus();
         }
 
         private void BtnDefault_Click(object sender, EventArgs e)
@@ -484,6 +514,48 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
                 }
 
                 i++;
+            }
+        }
+
+        private void RefreshMaterialStatus()
+        {
+            string factoryID = this.CurrentMaintain["FactoryID"].ToString();
+            DateTime estCutDate = (DateTime)this.CurrentMaintain["EstCutDate"];
+            string cutCellID = this.CurrentMaintain["CutCellID"].ToString();
+            InventorySpreadingSchedule inventorySpreadingSchedule;
+            DualResult result = new Gensong_SpreadingSchedule().GetInventory(factoryID, estCutDate, cutCellID, out inventorySpreadingSchedule);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (inventorySpreadingSchedule.Inventory.Count == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                var matchRow = inventorySpreadingSchedule.Inventory
+                        .Where(s => s.Cutref == dr["CutRef"].ToString() &&
+                                    s.SCIRefNo == dr["SCIRefNo"].ToString() &&
+                                    s.ColorID == dr["Colorid"].ToString());
+
+                if (!matchRow.Any())
+                {
+                    continue;
+                }
+
+                if (matchRow.First().Ttl_Qty < (decimal)dr["ReqQty"])
+                {
+                    dr["MtlStatusValue"] = "Y";
+                }
+                else
+                {
+                    dr["MtlStatusValue"] = "N";
+                }
             }
         }
     }

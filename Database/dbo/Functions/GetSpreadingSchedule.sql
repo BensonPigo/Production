@@ -36,13 +36,16 @@ RETURN
 		act.actcutdate,
 		w.CutplanID,
 		IsOutStanding = IIF(o.Finished = 0 and w.EstCutDate < CAST(getdate() as date), 'Y', 'N'),
-		o.BuyerDelivery
+		o.BuyerDelivery,
+		w.SCIRefno,
+		[ReqQty] = isnull(cp.Cons, 0)  
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	left join SpreadingSchedule s with(nolock) on	s.FactoryID = @FactoryID
 													and s.EstCutDate = @EstCutDate
 													and s.CutCellid = @CutCellid
 	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
+	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkorderUkey = w.Ukey
 	outer apply
 	(
 		select article = stuff(
