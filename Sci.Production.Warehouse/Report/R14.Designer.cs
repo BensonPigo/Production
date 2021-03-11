@@ -77,7 +77,7 @@
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(98, 23);
             this.labelFabricType.TabIndex = 118;
-            this.labelFabricType.Text = "Fabric Type";
+            this.labelFabricType.Text = "Material Type";
             // 
             // labelWKNoETA
             // 

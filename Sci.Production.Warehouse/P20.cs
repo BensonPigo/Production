@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("OutputQty_unit", header: "Output Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Qty_unit", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(10))
-                 .Text("FabricType", header: "Fabric Type", width: Widths.AnsiChars(10))
+                 .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(10))
                  .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10))
                  .Date("eta", header: "ETA")
                  .Date("Deadline", header: "Deadline")

@@ -20,7 +20,7 @@ namespace Sci.Production.Warehouse
         {
             this.InitializeComponent();
             this.dr = data;
-            this.Text += string.Format(" [Fabric Type : {0} SP# : {3} Seq : {1}-{2}]", this.dr["fabrictype2"], this.dr["seq1"], this.dr["seq2"], this.dr["id"]);
+            this.Text += string.Format(" [Material Type : {0} SP# : {3} Seq : {1}-{2}]", this.dr["fabrictype2"], this.dr["seq1"], this.dr["seq2"], this.dr["id"]);
         }
 
         private void Open_QA_program(string this_inv, string inp_type, string receivingid)

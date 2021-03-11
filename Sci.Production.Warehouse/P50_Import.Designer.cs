@@ -187,7 +187,7 @@
             this.labelFabricType.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelFabricType.Size = new System.Drawing.Size(112, 23);
             this.labelFabricType.TabIndex = 99;
-            this.labelFabricType.Text = "Fabric Type";
+            this.labelFabricType.Text = "Material Type";
             this.labelFabricType.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // labelCategory
