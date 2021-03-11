@@ -55,7 +55,6 @@ namespace Sci.Production.Warehouse
                  .Numeric("Qty_unit", header: "Balance", width: Widths.AnsiChars(10), integer_places: 6, decimal_places: 2)
                  .Text("stockunit", header: "Stock Unit", width: Widths.AnsiChars(10))
                  .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(10))
-                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10))
                  .Date("eta", header: "ETA")
                  .Date("Deadline", header: "Deadline")
                  .Text("scirefno", header: "SCI Refno#", width: Widths.AnsiChars(20));
@@ -157,7 +156,7 @@ from
 			, i.InputQty
 			, i.OutputQty
 			, i.Qty
-			, case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end as fabrictype
+			, fabrictype = concat( case b.FabricType when 'F' then 'Fabric' when 'A' then 'Accessory' else 'Other' end , '-', i.MtlTypeID)
 			, i.FactoryID
 			, i.ETA
 			, i.MtlTypeID
