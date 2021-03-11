@@ -44,6 +44,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(619, 312);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtEndTime);
@@ -54,6 +58,16 @@
             this.detailcont.Controls.Add(this.labStartDate);
             this.detailcont.Controls.Add(this.labM);
             this.detailcont.Controls.Add(this.txtMdivision);
+            this.detailcont.Size = new System.Drawing.Size(619, 274);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 274);
+            this.detailbtm.Size = new System.Drawing.Size(619, 38);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(627, 341);
             // 
             // txtMdivision
             // 
@@ -65,14 +79,14 @@
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.ReadOnly = true;
             this.txtMdivision.Size = new System.Drawing.Size(90, 23);
-            this.txtMdivision.TabIndex = 7;
+            this.txtMdivision.TabIndex = 3;
             // 
             // labM
             // 
             this.labM.Location = new System.Drawing.Point(26, 34);
             this.labM.Name = "labM";
             this.labM.Size = new System.Drawing.Size(79, 23);
-            this.labM.TabIndex = 3;
+            this.labM.TabIndex = 4;
             this.labM.Text = "M";
             // 
             // labStartDate
@@ -80,7 +94,7 @@
             this.labStartDate.Location = new System.Drawing.Point(26, 73);
             this.labStartDate.Name = "labStartDate";
             this.labStartDate.Size = new System.Drawing.Size(79, 23);
-            this.labStartDate.TabIndex = 4;
+            this.labStartDate.TabIndex = 5;
             this.labStartDate.Text = "Start Date";
             // 
             // labBeginTime
@@ -88,7 +102,7 @@
             this.labBeginTime.Location = new System.Drawing.Point(26, 115);
             this.labBeginTime.Name = "labBeginTime";
             this.labBeginTime.Size = new System.Drawing.Size(79, 23);
-            this.labBeginTime.TabIndex = 5;
+            this.labBeginTime.TabIndex = 6;
             this.labBeginTime.Text = "Begin Time";
             // 
             // labEndTime
@@ -96,7 +110,7 @@
             this.labEndTime.Location = new System.Drawing.Point(26, 156);
             this.labEndTime.Name = "labEndTime";
             this.labEndTime.Size = new System.Drawing.Size(79, 23);
-            this.labEndTime.TabIndex = 6;
+            this.labEndTime.TabIndex = 7;
             this.labEndTime.Text = "End Time";
             // 
             // dateStartDate
@@ -116,7 +130,7 @@
             this.txtBeginTime.Mask = "90:00";
             this.txtBeginTime.Name = "txtBeginTime";
             this.txtBeginTime.Size = new System.Drawing.Size(90, 23);
-            this.txtBeginTime.TabIndex = 8;
+            this.txtBeginTime.TabIndex = 1;
             this.txtBeginTime.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             this.txtBeginTime.ValidatingType = typeof(System.DateTime);
             this.txtBeginTime.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBeginTime_Validating);
@@ -128,19 +142,18 @@
             this.txtEndTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtEndTime.IsAutoTrim = false;
             this.txtEndTime.Location = new System.Drawing.Point(108, 156);
-            this.txtEndTime.Mask = "00:00";
+            this.txtEndTime.Mask = "90:00";
             this.txtEndTime.MaxLength = 4;
             this.txtEndTime.Name = "txtEndTime";
             this.txtEndTime.Size = new System.Drawing.Size(90, 23);
-            this.txtEndTime.TabIndex = 9;
+            this.txtEndTime.TabIndex = 2;
             this.txtEndTime.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
             this.txtEndTime.ValidatingType = typeof(System.DateTime);
-            this.txtEndTime.TextChanged += new System.EventHandler(this.TxtEndTime_TextChanged);
             this.txtEndTime.Validating += new System.ComponentModel.CancelEventHandler(this.TxtEndTime_Validating);
             // 
             // B07
             // 
-            this.ClientSize = new System.Drawing.Size(905, 457);
+            this.ClientSize = new System.Drawing.Size(627, 374);
             this.DefaultControl = "dateStartDate";
             this.DefaultControlForEdit = "dateStartDate";
             this.IsSupportClip = false;

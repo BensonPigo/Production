@@ -9,24 +9,29 @@ using Ict;
 
 namespace Sci.Production.Warehouse
 {
+    /// <inheritdoc/>
     public partial class B07 : Sci.Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public B07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             return base.ClickSavePre();
         }
 
+        /// <inheritdoc/>
         protected override DualResult ClickSave()
         {
             return base.ClickSave();
         }
 
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain["StartDate"]) ||
@@ -40,6 +45,7 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             this.CurrentMaintain["Mdivision"] = Sci.Env.User.Keyword;
@@ -96,25 +102,6 @@ namespace Sci.Production.Warehouse
                         MyUtility.Msg.WarningBox(@"The Begin and End Time is not correct," + Environment.NewLine + "Begin Time cannot later than End Time.");
                     }
                 }
-            }
-
-            // format Time Value
-            if (!MyUtility.Check.Empty(strBeginTime))
-            {
-                this.CurrentMaintain["BeginTime"] = MyUtility.Convert.GetInt(strBeginTime.Substring(0, 2)) + ":" + MyUtility.Convert.GetInt(strBeginTime.Substring(2, 2));
-            }
-
-            if (!MyUtility.Check.Empty(strEndTime))
-            {
-                this.CurrentMaintain["EndTime"] = MyUtility.Convert.GetInt(strEndTime.Substring(0, 2)) + ":" + MyUtility.Convert.GetInt(strEndTime.Substring(2, 2));
-            }
-        }
-
-        private void TxtEndTime_TextChanged(object sender, EventArgs e)
-        {
-            if (!MyUtility.Check.Empty(this.txtEndTime.Text) && this.txtEndTime.Text.Length == 4)
-            {
-                this.CurrentMaintain["EndTime"] = MyUtility.Convert.GetInt(this.txtEndTime.Text.Substring(0, 2)) + ":" + MyUtility.Convert.GetInt(this.txtEndTime.Text.Substring(2, 2));
             }
         }
     }
