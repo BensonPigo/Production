@@ -344,7 +344,8 @@ BEGIN
 			AND LBIO.InComing IS NOT NULL
 			AND LBIO.RFIDProcessLocationID=''''
 			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
-			 
+			OPTION (RECOMPILE)
+
 			--更新ArtworkPO_Detail FarmOut準備資料
 			SELECT FarmOut = SUM(LBD.Qty),LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
 			into #FarmOut_tmp
@@ -361,6 +362,7 @@ BEGIN
 			AND LBIO.OutGoing IS NOT NULL
 			AND LBIO.RFIDProcessLocationID=''''
 			group by LB.Orderid,LS.ArtworkTypeId,LBD.Patterncode,LBD.PatternDesc,LBD.SizeCode,LB.Article
+			OPTION (RECOMPILE)
 
 			select apd.Ukey,FarmIn = sum(t.FarmIn) 
 			into #ArtworkPO_DetailFarmIn
