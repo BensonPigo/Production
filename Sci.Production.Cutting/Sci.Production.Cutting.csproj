@@ -408,6 +408,12 @@
     <Compile Include="P15_SelectDistribute.Designer.cs">
       <DependentUpon>P15_SelectDistribute.cs</DependentUpon>
     </Compile>
+    <Compile Include="P15_SpreadingStauts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P15_SpreadingStauts.Designer.cs">
+      <DependentUpon>P15_SpreadingStauts.cs</DependentUpon>
+    </Compile>
     <Compile Include="P20_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -726,6 +732,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P15_SelectDistribute.resx">
       <DependentUpon>P15_SelectDistribute.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P15_SpreadingStauts.resx">
+      <DependentUpon>P15_SpreadingStauts.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P20_Detail.resx">
       <DependentUpon>P20_Detail.cs</DependentUpon>

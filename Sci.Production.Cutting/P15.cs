@@ -25,9 +25,16 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P15 : Win.Tems.QueryForm
     {
+        /// <inheritdoc/>
+        public static DataTable SpreadingDT { get; set; }
+
+        /// <inheritdoc/>
+        public static string SpreadingType { get; set; }
+
         private readonly string loginID = Env.User.UserID;
         private readonly string keyWord = Env.User.Keyword;
         private string tone;
+        private bool numNoOfBundle_Validating = true;
         private bool isCombineSubProcess;
         private bool isNoneShellNoCreateAllParts;
         private DataTable CutRefTb;
@@ -888,6 +895,7 @@ Select
 	 sel = cast(0 as bit)
 	, w.cutref
 	, o.poid
+	, w.OrderID
 	, w.estcutdate
 	, w.Fabriccombo
 	, w.FabricPanelCode
@@ -1725,6 +1733,11 @@ order by ArticleGroup";
 
         private void NumNoOfBundle_Validating(object sender, CancelEventArgs e)
         {
+            if (this.gridCutRef.CurrentDataRow == null)
+            {
+                return;
+            }
+
             if (this.numNoOfBundle.Value == 0)
             {
                 e.Cancel = true;
@@ -1732,10 +1745,12 @@ order by ArticleGroup";
                 return;
             }
 
-            if (this.numNoOfBundle.Value == this.numNoOfBundle.OldValue || this.gridCutRef.CurrentDataRow == null)
+            if (this.numNoOfBundle.Value == this.numNoOfBundle.OldValue && this.numNoOfBundle_Validating)
             {
                 return;
             }
+
+            this.numNoOfBundle_Validating = true;
 
             // 記錄使用者輸入的 Tone
             DataTable tmpqtyTb = this.qtyTb.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}").CopyToDataTable();
@@ -2879,6 +2894,211 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             }
 
             return sum;
+        }
+
+        private void BtnSpreadingStauts_Click(object sender, EventArgs e)
+        {
+            if (this.gridCutRef.CurrentDataRow == null)
+            {
+                return;
+            }
+
+            P15.SpreadingDT = null;
+            P15.SpreadingType = null;
+            string filter = $"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}";
+            string sizeRatio = this.SizeRatioTb.Select(filter)
+                .Select(s => MyUtility.Convert.GetString(s["SizeCode"]) + "/" + MyUtility.Convert.GetString(s["Qty"]))
+                .ToList().JoinToString(",");
+            var spList = this.ArticleSizeTb.Select(filter).AsEnumerable().Select(s => new { OrderID = MyUtility.Convert.GetString(s["OrderID"]) }).Distinct().ToList();
+            DataTable spDt = PublicPrg.ListToDataTable.ToDataTable(spList);
+            var frm = new P15_SpreadingStauts(this.gridCutRef.CurrentDataRow, sizeRatio, spDt);
+            DialogResult result = frm.ShowDialog();
+            if (P15.SpreadingDT != null)
+            {
+                this.Spreading();
+            }
+        }
+
+        private void Spreading()
+        {
+            var list = SpreadingDT.AsEnumerable().Select(s => new { NoofLayer = (int)s["NoofLayer"], ToneChar = s["ToneChar"].ToString() })
+                .GroupBy(g => g.ToneChar).Select(s => new { ToneChar = s.Key, NoofLayer = s.Sum(su => su.NoofLayer) }).ToList();
+            int ttlLayer = list.Sum(s => s.NoofLayer);
+            int ttlRatio = this.SizeRatioTb.Select($"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}").Sum(s => MyUtility.Convert.GetInt(s["Qty"]));
+            int ttlQty = ttlLayer * ttlRatio;
+
+            string filter = $"Ukey = {this.gridCutRef.CurrentDataRow["Ukey"]}";
+            int ttlbal = this.ArticleSizeTbOri.Select(filter).Sum(s => MyUtility.Convert.GetInt(s["cutoutput"]));
+            if (ttlbal == 0)
+            {
+                return;
+            }
+
+            DataTable processArticleSizeTb = this.ArticleSizeTbOri.Select(filter).TryCopyToDataTable(this.ArticleSizeTbOri);
+
+            // 若 By Buyer Delivery 且要裁的數量小於剩餘數，先從最晚日期的數量扣到一樣，之後分配與by Article相同
+            int noCutQty = ttlbal - ttlQty;
+            if (SpreadingType == "B" && noCutQty > 0)
+            {
+                foreach (DataRow item in processArticleSizeTb.AsEnumerable()
+                            .OrderByDescending(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]))
+                            .ThenByDescending(o => MyUtility.Convert.GetString(o["orderid"])))
+                {
+                    int cutoutput = MyUtility.Convert.GetInt(item["cutoutput"]);
+                    if (cutoutput >= noCutQty)
+                    {
+                        item["cutoutput"] = cutoutput - noCutQty;
+                        noCutQty = 0;
+                    }
+                    else
+                    {
+                        item["cutoutput"] = 0;
+                        noCutQty -= cutoutput;
+                    }
+
+                    if (noCutQty == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            processArticleSizeTb.Columns.Add("ToneChar", typeof(string));
+            processArticleSizeTb.Columns.Add("running", typeof(bool));
+            DataTable tmpArticleSizeTb = processArticleSizeTb.Clone();
+
+            // by tone 分配
+            string beforeArticle = string.Empty;
+            string beforeSizeCode = string.Empty;
+            int overNoofLayer = 0;
+            int no = 0;
+            foreach (var item in list)
+            {
+                overNoofLayer = item.NoofLayer;
+                int toneQty = item.NoofLayer * ttlRatio;
+                while (toneQty > 0)
+                {
+                    // 找到最早BuyerDelivery
+                    // 前一輪數量還沒分配完的繼續
+                    DataRow process1stBuyerDelivery = processArticleSizeTb.Select("running = 1 and cutoutput > 0").FirstOrDefault();
+                    if (process1stBuyerDelivery == null)
+                    {
+                        // 前一輪 article 還沒分完的繼續
+                        process1stBuyerDelivery = processArticleSizeTb.Select($"article = '{beforeArticle}' and cutoutput > 0").FirstOrDefault();
+                        if (process1stBuyerDelivery == null)
+                        {
+                            process1stBuyerDelivery = processArticleSizeTb.Select("cutoutput > 0").AsEnumerable()
+                            .OrderBy(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]))
+                            .ThenBy(o => MyUtility.Convert.GetString(o["orderid"])).FirstOrDefault();
+                            if (process1stBuyerDelivery == null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    string article = MyUtility.Convert.GetString(process1stBuyerDelivery["Article"]);
+
+                    // 取數量最大那筆
+                    // 先找上一輪沒分完(只會有1筆或0筆)
+                    DataRow[] sameArticle = processArticleSizeTb.Select("running = 1 and cutoutput > 0");
+                    if (sameArticle.Length == 0)
+                    {
+                        sameArticle = processArticleSizeTb.Select($"Article = '{article}'").AsEnumerable()
+                            .OrderByDescending(o => MyUtility.Convert.GetInt(o["cutoutput"])).ToArray();
+                    }
+
+                    foreach (DataRow articleRow in sameArticle)
+                    {
+                        if (toneQty == 0)
+                        {
+                            break;
+                        }
+
+                        string sizeCode = MyUtility.Convert.GetString(articleRow["SizeCode"]);
+                        articleRow["running"] = 1;
+                        int cutoutput = MyUtility.Convert.GetInt(articleRow["cutoutput"]);
+                        if (overNoofLayer > 0 && overNoofLayer < item.NoofLayer)
+                        {
+                            DataRow newrow = tmpArticleSizeTb.NewRow();
+                            articleRow.CopyTo(newrow);
+                            if (article != beforeArticle || beforeSizeCode != sizeCode)
+                            {
+                                no++;
+                            }
+
+                            newrow["No"] = no;
+                            int mincutoutput = Math.Min(cutoutput, overNoofLayer);
+                            newrow["cutoutput"] = mincutoutput;
+                            newrow["ToneChar"] = item.ToneChar;
+                            tmpArticleSizeTb.Rows.Add(newrow);
+                            cutoutput -= mincutoutput;
+                            toneQty -= mincutoutput;
+                            overNoofLayer -= mincutoutput;
+                        }
+
+                        beforeArticle = article;
+                        beforeSizeCode = sizeCode;
+                        while (cutoutput >= item.NoofLayer && toneQty > 0)
+                        {
+                            DataRow newrow = tmpArticleSizeTb.NewRow();
+                            articleRow.CopyTo(newrow);
+                            newrow["No"] = ++no;
+                            newrow["cutoutput"] = item.NoofLayer;
+                            newrow["ToneChar"] = item.ToneChar;
+                            tmpArticleSizeTb.Rows.Add(newrow);
+                            cutoutput -= item.NoofLayer;
+                            toneQty -= item.NoofLayer;
+                        }
+
+                        if (cutoutput > 0 && toneQty > 0)
+                        {
+                            DataRow newrow = tmpArticleSizeTb.NewRow();
+                            articleRow.CopyTo(newrow);
+                            if (overNoofLayer == 0 || overNoofLayer == item.NoofLayer)
+                            {
+                                no++;
+                                overNoofLayer = item.NoofLayer;
+                            }
+
+                            newrow["No"] = no;
+                            newrow["cutoutput"] = cutoutput;
+                            newrow["ToneChar"] = item.ToneChar;
+                            tmpArticleSizeTb.Rows.Add(newrow);
+                            toneQty -= cutoutput;
+                            overNoofLayer -= cutoutput;
+                            cutoutput = 0;
+                        }
+
+                        articleRow["cutoutput"] = cutoutput;
+                    }
+                }
+            }
+
+            // 透過 NumNoOfBundle_Validating 產生 中上的資料，包含iden
+            this.numNoOfBundle.Value = tmpArticleSizeTb.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["No"]));
+            this.numNoOfBundle_Validating = false;
+            this.NumNoOfBundle_Validating(null, null);
+            int i = 0;
+
+            foreach (DataRow dr in this.qtyTb.Select(filter))
+            {
+                tmpArticleSizeTb.Select($"No = {dr["No"]}").ToList().ForEach(f => f["iden"] = dr["iden"]);
+
+                dr["POID"] = tmpArticleSizeTb.Rows[i]["POID"];
+                dr["Article"] = tmpArticleSizeTb.Rows[i]["Article"];
+                dr["SizeCode"] = tmpArticleSizeTb.Rows[i]["SizeCode"];
+                dr["Qty"] = tmpArticleSizeTb.Select($"No = {dr["No"]}").AsEnumerable().Sum(sum => MyUtility.Convert.GetInt(sum["cutoutput"]));
+                dr["ToneChar"] = tmpArticleSizeTb.Select($"No = {dr["No"]}").Select(s => MyUtility.Convert.GetString(s["ToneChar"])).FirstOrDefault();
+                dr["Tone"] = this.LetterToNumber(MyUtility.Convert.GetString(dr["ToneChar"]));
+                i++;
+            }
+
+            tmpArticleSizeTb.Columns.Remove("ToneChar");
+            this.ArticleSizeTb.Merge(tmpArticleSizeTb);
+            this.GetBalancebyWorkOrder();
+            this.GridAutoResizeColumns();
+            this.Calpart();
         }
     }
 }
