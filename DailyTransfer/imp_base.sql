@@ -4135,6 +4135,53 @@ FROM Trade_To_Pms.dbo.HealthLabelSupp_FtyExpiration a
 LEFT JOIN Production.dbo.HealthLabelSupp_FtyExpiration b ON a.id = b.id and a.FactoryID = b.FactoryID
 WHERE b.id is null
 
+
+---------ChgOverTarget 
+
+DELETE Production.dbo.ChgOverTarget
+FROM Production.dbo.ChgOverTarget a
+LEFT JOIN Trade_To_Pms.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
+WHERE b.EffectiveDate is null
+and exists(select 1 from Production.dbo.MDivision where ID = b.MDivisionID)
+
+
+UPDATE a
+SET
+	 a.[EffectiveDate] = b.[EffectiveDate]
+	,a.[MDivisionID]   = b.[MDivisionID]
+	,a.[Type]		   = b.[Type]
+	,a.[Target]		   = b.[Target]
+	,a.[AddName]	   = b.[AddName]
+	,a.[AddDate]	   = b.[AddDate]
+	,a.[EditName]	   = b.[EditName]
+	,a.[EditDate]	   = b.[EditDate]
+FROM Production.dbo.ChgOverTarget a
+INNER JOIN Trade_To_Pms.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
+
+
+
+INSERT INTO [dbo].[ChgOverTarget]
+           ([EffectiveDate]
+           ,[MDivisionID]
+           ,[Type]
+           ,[Target]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+select 
+	 a.[EffectiveDate]
+    ,a.[MDivisionID]
+    ,a.[Type]
+    ,a.[Target]
+    ,a.[AddName]
+    ,a.[AddDate]
+    ,a.[EditName]
+    ,a.[EditDate]
+FROM Trade_To_Pms.dbo.ChgOverTarget a
+LEFT JOIN Production.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
+WHERE b.EffectiveDate is null
+and exists(select 1 from Production.dbo.MDivision where ID = a.MDivisionID)
+
+
 END
-
-
