@@ -77,7 +77,7 @@ SELECT pd.OrderID
     , b.SCICtnNo
     , b.FileName
     , [HTMLFile] = IIF(b.FileName = '' ,0 , 1)
-    , [ShippingMark]=IIF(b.Image IS NULL , 0 , 1 )
+    , [ShippingMark]=Cast( IIF(b.Image IS NULL , 0 , 1 ) as bit)
     , b.ShippingMarkCombinationUkey
     , b.ShippingMarkTypeUkey
     , b.Side
@@ -340,11 +340,6 @@ ORDER BY pd.SortCTNStartNo
 
             if (!MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"]) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
             {
-                if (this.readToSave != null)
-                {
-                    return;
-                }
-
                 // MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) = 0，表示為新增
                 if (this.readToSave.Any(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
