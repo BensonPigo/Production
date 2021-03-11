@@ -137,8 +137,15 @@ namespace Sci.Production.Shipping
 
             if (this.reportType == 5)
             {
-                this.ReportType5();
-                return Ict.Result.True;
+                bool b = this.ReportType5();
+                if (!b)
+                {
+                    return new DualResult(false);
+                }
+                else
+                {
+                    return Ict.Result.True;
+                }
             }
 
             // Garment
@@ -2205,16 +2212,21 @@ where s.Type = 'EXPORT'");
             return true;
         }
 
-        private void ReportType5()
+        /// <summary>
+        /// Report Type = 5 的報表資料
+        /// </summary>
+        private bool ReportType5()
         {
             StringBuilder sqlCmd = new StringBuilder();
             DualResult result;
 
-            // Garment
-            if (this.reportContent == 1)
+            try
             {
-                #region 組SQL
-                sqlCmd.Append($@"
+                // Garment
+                if (this.reportContent == 1)
+                {
+                    #region 組SQL
+                    sqlCmd.Append($@"
 with tmpGB 
 as (
 	select distinct [Origin] = (SELECT Region FROM System)
@@ -2260,72 +2272,72 @@ as (
 	)gm
     where s.Type = 'EXPORT'
 ");
-                if (!MyUtility.Check.Empty(this.date1))
-                {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.date2))
-                {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.apApvDate1))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.apApvDate2))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.onBoardDate1))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.onBoardDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.onBoardDate2))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.onBoardDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.voucherDate1))
-                {
-                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.voucherDate2))
-                {
-                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.brand))
-                {
-                    sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
-                }
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                    }
 
-                if (!MyUtility.Check.Empty(this.custcd))
-                {
-                    sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", this.custcd));
-                }
+                    if (!MyUtility.Check.Empty(this.custcd))
+                    {
+                        sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", this.custcd));
+                    }
 
-                if (!MyUtility.Check.Empty(this.dest))
-                {
-                    sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
-                }
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                    }
 
-                if (!MyUtility.Check.Empty(this.shipmode))
-                {
-                    sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
-                }
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
+                    }
 
-                if (!MyUtility.Check.Empty(this.forwarder))
-                {
-                    sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
-                }
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
+                    }
 
-                sqlCmd.Append($@"
+                    sqlCmd.Append($@"
 ),
 tmpPL as 
 (
@@ -2371,60 +2383,60 @@ tmpPL as
 	)gm
     where s.Type = 'EXPORT'
 ");
-                if (!MyUtility.Check.Empty(this.date1))
-                {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.date2))
-                {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.apApvDate1))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.apApvDate2))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.voucherDate1))
-                {
-                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.voucherDate2))
-                {
-                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.brand))
-                {
-                    sqlCmd.Append(string.Format(" and p.BrandID = '{0}'", this.brand));
-                }
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and p.BrandID = '{0}'", this.brand));
+                    }
 
-                if (!MyUtility.Check.Empty(this.custcd))
-                {
-                    sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", this.custcd));
-                }
+                    if (!MyUtility.Check.Empty(this.custcd))
+                    {
+                        sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", this.custcd));
+                    }
 
-                if (!MyUtility.Check.Empty(this.dest))
-                {
-                    sqlCmd.Append(string.Format(" and o.Dest = '{0}'", this.dest));
-                }
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and o.Dest = '{0}'", this.dest));
+                    }
 
-                if (!MyUtility.Check.Empty(this.shipmode))
-                {
-                    sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipmode));
-                }
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipmode));
+                    }
 
-                #endregion
+                    #endregion
 
-                #region SQL
-                sqlCmd.Append(@"
+                    #region SQL
+                    sqlCmd.Append(@"
 ),
 tmpAllData
 as (
@@ -2550,10 +2562,10 @@ from #temp3 a
 
 ");
 
-                #endregion
+                    #endregion
 
-                string account = this.GetAccount();
-                sqlCmd.Append($@"
+                    string account = this.GetAccount();
+                    sqlCmd.Append($@"
 
 select *
 from #temp4
@@ -2565,11 +2577,11 @@ order by id
 
 drop table #temp1,#temp2,#temp3,#temp4
 ");
-            }
-            else
-            {
-                #region 組SQL
-                sqlCmd.Append($@"
+                }
+                else
+                {
+                    #region 組SQL
+                    sqlCmd.Append($@"
 with tmpMaterialData
 as (
 	select distinct [Origin] = (SELECT Region FROM System)
@@ -2606,89 +2618,101 @@ as (
 	)gm
     where s.Type = 'EXPORT'
 ");
-                #endregion
+                    #endregion
 
-                #region 組條件
-                if (!MyUtility.Check.Empty(this.date1))
-                {
-                    sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
-                }
+                    #region 組條件
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.date2))
-                {
-                    sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.apApvDate1))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.apApvDate2))
-                {
-                    sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.voucherDate1))
-                {
-                    sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.voucherDate2))
-                {
-                    sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
-                }
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
 
-                if (!MyUtility.Check.Empty(this.dest))
-                {
-                    sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
-                }
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
+                    }
 
-                if (!MyUtility.Check.Empty(this.shipmode))
-                {
-                    sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
-                }
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
+                    }
 
-                if (!MyUtility.Check.Empty(this.forwarder))
-                {
-                    sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
-                }
-                #endregion
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
+                    }
+                    #endregion
 
-                sqlCmd.Append($@"
+                    sqlCmd.Append($@"
 ) 
 ");
 
-                string account = this.GetAccount();
-                sqlCmd.Append($@"
+                    string account = this.GetAccount();
+                    sqlCmd.Append($@"
 select * from tmpMaterialData
 PIVOT (SUM(Amount)
 FOR AccountID IN ({account})) a
 
 ");
+                }
+
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+
+                List<ReportData> tmpDatas = new List<ReportData>();
+                List<ReportData> finalDatas = new List<ReportData>();
+
+                tmpDatas = PublicPrg.DataTableToList.ConvertToClassList<ReportData>(this.printData).ToList();
+
+                foreach (var d in tmpDatas)
+                {
+                    ReportData a = this.GetValueByAccountNo(d.RgCode, d);
+                    finalDatas.Add(a);
+                }
+
+                this.printData.Clear();
+                this.printData = PublicPrg.ListToDataTable.ToDataTable<ReportData>(finalDatas);
+
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    this.ShowErr(failResult);
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
-
-            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-
-            List<ReportData> tmpDatas = new List<ReportData>();
-            List<ReportData> finalDatas = new List<ReportData>();
-
-            tmpDatas = PublicPrg.DataTableToList.ConvertToClassList<ReportData>(this.printData).ToList();
-
-            foreach (var d in tmpDatas)
+            catch (Exception ex)
             {
-                ReportData a = this.GetValueByAccountNo(d.RgCode, d);
-                finalDatas.Add(a);
+                this.ShowErr(ex);
+                return false;
             }
 
-            this.printData.Clear();
-            this.printData = PublicPrg.ListToDataTable.ToDataTable<ReportData>(finalDatas);
-
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return;
-            }
         }
 
         private void ReportType5ToExcel()
