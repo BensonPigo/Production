@@ -3,6 +3,7 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -2543,7 +2544,7 @@ select Origin
 	, a.Forwarder
 	, a.BLNo
 	, a.CurrencyID 
-	, a.AccountID
+	, [AccountID]='A_'+a.AccountID
 	, a.Amount
 into #temp4
 from #temp3 a
@@ -2570,6 +2571,7 @@ from #temp3 a
                 string account = allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString();*/
                 string account = this.GetAccount();
                 sqlCmd.Append($@"
+
 select *
 from #temp4
 PIVOT (SUM(Amount)
@@ -2591,29 +2593,38 @@ drop table #temp1,#temp2,#temp3,#temp4
                 sqlCmd.Append($@"
 with tmpMaterialData
 as (
-	select [Type] = 'MATERIAL'
+	select distinct [Origin] = (SELECT Region FROM System)
+		, [RgCode] = (SELECT RgCode FROM System)
+		, [Type] = 'MATERIAL'
 		, f.ID
-		, [Shipper] = s.MDivisionID
-		, [BrandID] = '' 
-		, [Category] = '' 
-		, [OQty] = 0
-		, [CustCDID] = ''
-		, [Dest] = f.ImportCountry
+		, [OnBoardDate] = f.OnBoard
+		, f.Shipper
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y') 
+		, s.SisFtyAPID
+		, BrandID=''
+		, [Category] = ''
+		, CustCDID=''
+		, Dest = ''
 		, f.ShipModeID
-		, [PulloutDate] = f.PortArrival
-		, [ShipQty] = 0
-		, [CTNQty] = 0 
-		, [GW] = f.WeightKg 
-		, [CBM] = f.Cbm
+		, PulloutDate =  f.PortArrival
 		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
-		, [BLNo] = f.Blno
+		, s.BLNo
 		, se.CurrencyID
-		, [AccountID]= iif(se.AccountID='','Empty',se.AccountID)
-		, [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+		, OrderID=''
+		, [packingID] = ''
+        , se.AccountID
+        , [Amount] = se.Amount * iif('FX' = '', 1, dbo.getRate('FX', s.CurrencyID,'USD', s.CDate))
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
     left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
     where s.Type = 'EXPORT'
 ");
                 #endregion
@@ -2694,6 +2705,20 @@ FOR AccountID IN ({account})) a
 
             result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
 
+            List<AccountNo> tmpDatas = new List<AccountNo>();
+            List<AccountNo> finalDatas = new List<AccountNo>();
+
+            tmpDatas = PublicPrg.DataTableToList.ConvertToClassList<AccountNo>(this.printData).ToList();
+
+            foreach (var d in tmpDatas)
+            {
+                AccountNo a = this.GetValueByAccountNo(d.RgCode, d);
+                finalDatas.Add(a);
+            }
+
+            this.printData.Clear();
+            this.printData = PublicPrg.ListToDataTable.ToDataTable<AccountNo>(finalDatas);
+
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -2706,7 +2731,7 @@ FOR AccountID IN ({account})) a
             string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R10_ExportFeeReport(MergerdAcctCode).xltx";
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            excel.Visible = true;
+            //excel.Visible = true;
             if (excel == null)
             {
                 return;
@@ -2716,6 +2741,17 @@ FOR AccountID IN ({account})) a
             DataTable tb_IncludeFoundry = new DataTable();
             DataTable tb_SisFtyAP = new DataTable();
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            if (this.rateType == string.Empty)
+            {
+                for (int i = 23; i <= 52; i++)
+                {
+                    if (i != 39 && i != 46)
+                    {
+                        worksheet.Cells[1, i] = worksheet.Cells[1, i].Value + "\r\n(USD)";
+                    }
+                }
+            }
 
             if (this.reportContent == 2)
             {
@@ -2763,7 +2799,21 @@ FOR AccountID IN ({account})) a
                 */
             }
 
+            // 複製儲存格
+            //Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A2:AZ2").EntireRow;
+            //for (int i = 1; i <= this.printData.Rows.Count - 1; i++)
+            //{
+            //    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A2", Type.Missing).EntireRow; // 選擇要被貼上的位置
+            //    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
+            //}
+
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R10_ExportFeeReport(MergerdAcctCode).xltx", 1, showExcel: false, excelApp: excel);
+
+            // 刪除不必要的欄位
+            worksheet.get_Range("BA:BQ").EntireColumn.Delete();
+
+            int x = this.printData.Rows.Count + 2;
+            worksheet.get_Range($"A{x}:AZ{x+200}").Interior.Color = Color.White;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Shipping_R10_ExportFeeReport(MergerdAcctCode)");
@@ -2777,17 +2827,345 @@ FOR AccountID IN ({account})) a
 
         private string GetAccount()
         {
+            // 所有欄位會用到的會計科目
             List<string> basic = new List<string>()
             {
-                "61022001", "61022002", "61022003", "61022004", "61022005", "61022006",
-                "61092101", "61092102", "61092103", "61092104", "61092105", "61092106",
-                "6109", "6102", "61021005",
-                "59122101", "59122102", "59122103", "59122104", "59122106", "59121111",
-                "61052101", "61052102", "61052103", "61052104", "61052105", "61052106",
+                "A_61022001", "A_61022002", "A_61022003", "A_61022004", "A_61022005", "A_61022006",
+                "A_61092101", "A_61092102", "A_61092103", "A_61092104", "A_61092105", "A_61092106",
+                "A_6109", "A_6102", "A_61021005",
+                "TotalExportFee", "Blank1",
+                "A_59122101", "A_59122102", "A_59122103", "A_59122104", "A_59122106", "A_59121111",
+                "Blank2",
+                "A_61052101", "A_61052102", "A_61052103", "A_61052104", "A_61052105", "A_61052106",
+
+                "A_61041001", "A_82131001", "A_61051001", "A_61092005", "A_61012001", "A_61012006",
+                "A_59122222", "A_5912", "A_59122001", "A_61052001", "A_6105",
+                "A_61052006", "A_61012003", "A_61092001", "A_61092006", "A_59129999", "A_61050001",
             };
 
             string accountList = "[" + basic.JoinToString("],[") + "]";
             return accountList;
+        }
+
+        private AccountNo GetValueByAccountNo(string factoryID, AccountNo accountNo)
+        {
+            if (factoryID == "PHI")
+            {
+                accountNo.A_61022001 = accountNo.A_61022001 + accountNo.A_61012001;
+                accountNo.A_61022006 = accountNo.A_61022006 + accountNo.A_61092006;
+            }
+
+            if (factoryID == "PH2")
+            {
+                accountNo.A_61022003 = accountNo.A_61022003 + accountNo.A_61012003;
+                accountNo.A_61092101 = accountNo.A_61092101 + accountNo.A_61092001;
+                accountNo.A_61092106 = accountNo.A_61092106 + accountNo.A_61092006;
+            }
+
+            if (factoryID == "ESP")
+            {
+                accountNo.A_61022001 = accountNo.A_61022001 + accountNo.A_61012001;
+                accountNo.A_61022006 = accountNo.A_61022006 + accountNo.A_61012006;
+                accountNo.A_61092101 = accountNo.A_61092101 + accountNo.A_61092001;
+                accountNo.A_61092106 = accountNo.A_61092106 + accountNo.A_61092006;
+            }
+
+            if (factoryID == "SNP")
+            {
+                // 無異動
+            }
+
+            if (factoryID == "SPT")
+            {
+                accountNo.A_61022001 = accountNo.A_61022001 + accountNo.A_61012001;
+                accountNo.A_61092106 = accountNo.A_61092106 + accountNo.A_61092006;
+            }
+
+            if (factoryID == "SPR")
+            {
+                // 無異動
+            }
+
+            if (factoryID == "SPS")
+            {
+                accountNo.A_61092105 = accountNo.A_61092105 + accountNo.A_61092005;
+            }
+
+            if (factoryID == "HXG")
+            {
+                accountNo.A_6102 = accountNo.A_6102 + accountNo.A_61041001;
+            }
+
+            if (factoryID == "HZG")
+            {
+                // 無異動
+            }
+
+            // 共通
+            accountNo.TotalExportFee = MyUtility.Convert.GetDecimal(accountNo.A_61022001)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61022002)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61022003)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61022004)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61022005)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61022006)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61092101)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61092102)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61092103)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61092104)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61092105)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61092106)
+                + MyUtility.Convert.GetDecimal(accountNo.A_6102)
+                + MyUtility.Convert.GetDecimal(accountNo.A_61021005);
+
+            // 最後要把不需要顯示得改成NULL
+            if (factoryID == "PHI")
+            {
+                accountNo.A_59122102 = accountNo.A_59122102 + accountNo.A_59122222;
+                accountNo.A_59122104 = accountNo.A_59129999;
+                accountNo.A_59122106 = accountNo.A_59122106 + accountNo.A_5912 + accountNo.A_59122001;
+                accountNo.A_61052101 = accountNo.A_61052101 + accountNo.A_61052001;
+                accountNo.A_61052106 = accountNo.A_61052106 + accountNo.A_6105 + accountNo.A_61052006;
+
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_61052104 = null;
+                accountNo.A_61052105 = null;
+            }
+
+            if (factoryID == "PH2")
+            {
+                accountNo.A_59122106 = accountNo.A_59122106 + accountNo.A_59122001;
+                accountNo.A_61052101 = accountNo.A_61052101 + accountNo.A_61052001;
+
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+                accountNo.A_61052105 = null;
+            }
+
+            if (factoryID == "ESP")
+            {
+                accountNo.A_59122102 = accountNo.A_59122222;
+                accountNo.A_59122104 = accountNo.A_59122104 + accountNo.A_59129999;
+                accountNo.A_61052106 = accountNo.A_61052106 + accountNo.A_61050001;
+
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052105 = null;
+            }
+
+            if (factoryID == "SNP")
+            {
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+                accountNo.A_61052105 = null;
+            }
+
+            if (factoryID == "SPT")
+            {
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+                accountNo.A_61052105 = null;
+            }
+
+            if (factoryID == "SPR")
+            {
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+            }
+
+            if (factoryID == "SPS")
+            {
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_6102 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+            }
+
+            if (factoryID == "HXG")
+            {
+                accountNo.A_61022006 = null;
+                accountNo.A_61092101 = null;
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_61092106 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_61021005 = null;
+                accountNo.A_59122101 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_59122106 = null;
+                accountNo.A_61052101 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+                accountNo.A_61052105 = null;
+                accountNo.A_61052106 = null;
+            }
+
+            if (factoryID == "HZG")
+            {
+                accountNo.A_59122106 = accountNo.A_59122106 + accountNo.A_82131001;
+                accountNo.A_61052101 = accountNo.A_61052101 + accountNo.A_61051001;
+
+                accountNo.A_61022006 = null;
+                accountNo.A_61092101 = null;
+                accountNo.A_61092102 = null;
+                accountNo.A_61092103 = null;
+                accountNo.A_61092104 = null;
+                accountNo.A_61092105 = null;
+                accountNo.A_61092106 = null;
+                accountNo.A_6109 = null;
+                accountNo.A_59122101 = null;
+                accountNo.A_59122102 = null;
+                accountNo.A_59122103 = null;
+                accountNo.A_59122104 = null;
+                accountNo.A_61052102 = null;
+                accountNo.A_61052103 = null;
+                accountNo.A_61052104 = null;
+                accountNo.A_61052105 = null;
+                accountNo.A_61052106 = null;
+            }
+
+            return accountNo;
+        }
+
+        private class AccountNo
+        {
+            public string Origin { get; set; }
+            public string RgCode { get; set; }
+            public string Type { get; set; }
+            public string ID { get; set; }
+            public DateTime OnBoardDate { get; set; }
+            public string Shipper { get; set; }
+            public string Foundry { get; set; }
+            public string SisFtyAPID { get; set; }
+            public string BrandID { get; set; }
+            public string Category { get; set; }
+            public int OQty { get; set; }
+            public string CustCDID { get; set; }
+            public string Dest { get; set; }
+            public string ShipModeID { get; set; }
+            public DateTime PullOutDate { get; set; }
+            public int ShipQty { get; set; }
+            public int CtnQty { get; set; }
+            public decimal GW { get; set; }
+            public decimal CBM { get; set; }
+            public string Forwarder { get; set; }
+            public string BLNo { get; set; }
+            public string AccountID { get; set; }
+
+            public decimal? A_61022001 { get; set; }
+            public decimal? A_61022002 { get; set; }
+            public decimal? A_61022003 { get; set; }
+            public decimal? A_61022004 { get; set; }
+            public decimal? A_61022005 { get; set; }
+            public decimal? A_61022006 { get; set; }
+            public decimal? A_61092101 { get; set; }
+            public decimal? A_61092102 { get; set; }
+            public decimal? A_61092103 { get; set; }
+            public decimal? A_61092104 { get; set; }
+            public decimal? A_61092105 { get; set; }
+            public decimal? A_61092106 { get; set; }
+            public decimal? A_6109 { get; set; }
+            public decimal? A_6102 { get; set; }
+            public decimal? A_61021005 { get; set; }
+            public decimal? TotalExportFee { get; set; }
+            public string Blank1 { get; set; }
+
+            public decimal? A_59122101 { get; set; }
+            public decimal? A_59122102 { get; set; }
+            public decimal? A_59122103 { get; set; }
+            public decimal? A_59122104 { get; set; }
+            public decimal? A_59122106 { get; set; }
+            public decimal? A_59121111 { get; set; }
+            public string Blank2 { get; set; }
+            public decimal? A_61052101 { get; set; }
+            public decimal? A_61052102 { get; set; }
+            public decimal? A_61052103 { get; set; }
+            public decimal? A_61052104 { get; set; }
+            public decimal? A_61052105 { get; set; }
+            public decimal? A_61052106 { get; set; }
+            public decimal? A_61041001 { get; set; }
+            public decimal? A_82131001 { get; set; }
+            public decimal? A_61051001 { get; set; }
+            public decimal? A_61092005 { get; set; }
+            public decimal? A_61012001 { get; set; }
+            public decimal? A_61012006 { get; set; }
+            public decimal? A_59122222 { get; set; }
+            public decimal? A_5912 { get; set; }
+            public decimal? A_59122001 { get; set; }
+            public decimal? A_61052001 { get; set; }
+            public decimal? A_6105 { get; set; }
+            public decimal? A_61052006 { get; set; }
+            public decimal? A_61012003 { get; set; }
+            public decimal? A_61092001 { get; set; }
+            public decimal? A_61092006 { get; set; }
+            public decimal? A_59129999 { get; set; }
+            public decimal? A_61050001 { get; set; }
         }
     }
 }
