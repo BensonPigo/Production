@@ -333,13 +333,24 @@ ORDER BY pd.SortCTNStartNo
 
         private void BtnDelete(object sender, EventArgs e)
         {
-            if ((!this.EditMode && !MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"])) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
+            if (!this.EditMode)
             {
+                return;
+            }
+
+            if (!MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"]) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
+            {
+                if (this.readToSave != null)
+                {
+                    return;
+                }
+
                 // MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) = 0，表示為新增
                 if (this.readToSave.Any(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
                                             && x.ShippingMarkPicUkey == 0))
                 {
+
                     this.readToSave.RemoveAll(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
                                             && x.ShippingMarkPicUkey == 0);

@@ -3587,7 +3587,7 @@ DROP TABLE #Sticker_PackingID --,#StampPackingID
 
 DECLARE @AfterHeight as numeric(8,4) = {ctnHeight}
 DECLARE @AfterWidth as numeric(8,4) = {ctnWidth}
-DECLARE @UnitChange as numeric(5,2) = (select IIF(CtnUnit='Inch',25.4,1) from LocalItem where RefNo='{cTNRefno}' )
+DECLARE @UnitChange as numeric(5,2) = (select IIF('{cTNUnit}'='Inch',25.4,1) /*from LocalItem where RefNo='{cTNRefno}' */)
 
 select 
 [CTNRefno1] = a.CTNRefno
