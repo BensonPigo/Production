@@ -106,7 +106,8 @@ from dbo.TransferOut_Detail a WITH (NOLOCK)
 LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
-where a.id= @ID";
+where a.id= @ID
+order by a.Dyelot, Len(a.Roll), a.Roll";
 
                 result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
@@ -140,7 +141,7 @@ select
 	Seq2
 from TransferOut_Detail with (nolock)
 where ID = '{this.mainCurrentMaintain["ID"]}'
-
+order by Dyelot, Len(Roll), Roll
 ";
                 DualResult result = DBProxy.Current.Select(null, sql, out this.dtResult);
                 if (!result)
