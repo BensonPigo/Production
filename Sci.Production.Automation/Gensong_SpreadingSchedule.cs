@@ -25,11 +25,11 @@ namespace Sci.Production.Automation
         /// <param name="factoryID">factoryID</param>
         /// <param name="estCutDate">estCutDate</param>
         /// <param name="cutCellID">cutCellID</param>
-        public void SendSpreadingSchedule(string factoryID, DateTime estCutDate, string cutCellID)
+        public DualResult SendSpreadingSchedule(string factoryID, DateTime estCutDate, string cutCellID)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
-                return;
+                return new DualResult(true);
             }
 
             string apiThread = "SendSpreadingSchedule";
@@ -46,7 +46,17 @@ namespace Sci.Production.Automation
 
             string jsonBody = JsonConvert.SerializeObject(postBody);
 
-            SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+            DualResult result = new DualResult(true);
+            WebApiBaseResult webApiBaseResult;
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, 600);
+
+            if (!webApiBaseResult.isSuccess)
+            {
+                string errMsg = MyUtility.Check.Empty(webApiBaseResult.responseContent) ? webApiBaseResult.exception.ToString() : webApiBaseResult.responseContent;
+                return new DualResult(false, new Ict.BaseResult.MessageInfo(errMsg));
+            }
+
+            return new DualResult(true);
         }
 
         /// <summary>

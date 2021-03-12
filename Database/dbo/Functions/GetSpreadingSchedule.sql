@@ -87,14 +87,14 @@ RETURN
 		(
 			@Ukey = 0 and 
 			@Cutref = '' and 
-			w.EstCutDate <= @EstCutDate and
+			w.EstCutDate = @EstCutDate and
 			w.CutCellid = @CutCellid and
 			--排除未來已排SpreadingSchedule的資料
 			not exists (select 1 from	SpreadingSchedule ss with(nolock)
-											inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
-									where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd')  and
-											ss.EstCutDate <> @EstCutDate and
-											ssd.CutRef = w.CutRef)
+								 inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
+								 where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd')  and
+								 		ss.EstCutDate <> @EstCutDate and
+								 		ssd.CutRef = w.CutRef)
 		)
 		or
 		(
@@ -105,10 +105,10 @@ RETURN
 			s.Ukey = @Ukey and
 			--排除未來已排SpreadingSchedule的資料
 			not exists (select 1 from	SpreadingSchedule ss with(nolock)
-											inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
-									where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd') and
-											ss.EstCutDate <> @EstCutDate and
-											ssd.CutRef = w.CutRef)
+								 inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
+								 where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd') and
+										ss.EstCutDate <> @EstCutDate and
+										ssd.CutRef = w.CutRef)
 		)
 	)
 )

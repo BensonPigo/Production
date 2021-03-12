@@ -364,17 +364,14 @@ where   ss.EstCutDate <> @EstCutDate and
             {
                 return result;
             }
+
+            result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString());
+            if (!result)
+            {
+                return result;
+            }
             #endregion
             return base.ClickSavePost();
-        }
-
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
-            Task.Run(() => new Gensong_SpreadingSchedule().SendSpreadingSchedule(this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString()))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            this.RefreshMaterialStatus();
         }
 
         /// <inheritdoc/>
