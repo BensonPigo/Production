@@ -4141,8 +4141,8 @@ WHERE b.id is null
 DELETE Production.dbo.ChgOverTarget
 FROM Production.dbo.ChgOverTarget a
 LEFT JOIN Trade_To_Pms.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate and a.MDivisionID = b.MDivisionID and a.Type = b.Type
+	and exists(select 1 from Production.dbo.MDivision where ID = b.MDivisionID)
 WHERE b.EffectiveDate is null
-and exists(select 1 from Production.dbo.MDivision where ID = b.MDivisionID)
 
 
 UPDATE a
