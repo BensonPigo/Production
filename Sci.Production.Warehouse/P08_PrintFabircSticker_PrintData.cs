@@ -62,5 +62,10 @@
         /// ActSlice
         /// </summary>
         public string ActSlice { get; set; }
+
+        /// <summary>
+        /// Remark
+        /// </summary>
+        public string Remark { get; set; }
     }
 }

@@ -204,7 +204,7 @@
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(89, 23);
             this.labelFabricType.TabIndex = 14;
-            this.labelFabricType.Text = "Fabric Type";
+            this.labelFabricType.Text = "Material Type";
             // 
             // labelCategory
             // 

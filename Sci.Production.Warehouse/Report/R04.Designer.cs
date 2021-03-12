@@ -214,7 +214,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(98, 23);
             this.label3.TabIndex = 137;
-            this.label3.Text = "Fabric Type";
+            this.label3.Text = "Material Type";
             // 
             // comboFabricType
             // 

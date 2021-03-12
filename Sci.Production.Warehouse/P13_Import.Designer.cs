@@ -199,7 +199,7 @@
             this.labFabricType.Name = "labFabricType";
             this.labFabricType.Size = new System.Drawing.Size(95, 23);
             this.labFabricType.TabIndex = 5;
-            this.labFabricType.Text = "Fabric Type";
+            this.labFabricType.Text = "Material Type";
             // 
             // comboFabricType
             // 
