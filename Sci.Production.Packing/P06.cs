@@ -619,7 +619,9 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup(string.Format("select (select KeyWord from Factory WITH (NOLOCK) where ID = Orders.FtyGroup) as KeyWord from Orders WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["OrderID"].ToString())) + "LS", "PackingList", DateTime.Today, 2, "Id", null);
+                string cmd = $@"select TOP 1 f.MDivisionID from Orders a  LEFT join Factory f on a.FactoryID = f.ID  where a.id='{this.CurrentMaintain["OrderID"]}'";
+                string mDivisionID = MyUtility.GetValue.Lookup(cmd);
+                string id = MyUtility.GetValue.GetID(mDivisionID + "LS", "PackingList", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
