@@ -114,7 +114,7 @@ left join FtyInventory ft on ft.POID = t2.PoId
                             and ft.Dyelot = t2.Dyelot
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN po3.SuppColor
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
 		 ELSE dbo.GetColorMultipleID(o.BrandID,po3.ColorID)
 	 END
 )Color
@@ -224,7 +224,7 @@ outer apply(
 )ttlQty
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN po3.SuppColor
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID),po3.SuppColor)
 		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
 	 END
 )Color

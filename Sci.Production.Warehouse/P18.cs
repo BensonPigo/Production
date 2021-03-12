@@ -1818,7 +1818,7 @@ outer apply(
 )ttlQty
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(p.BrandID,p.ColorID),p.SuppColor)
 		 ELSE dbo.GetColorMultipleID(p.BrandID,p.ColorID)
 	 END
 )Color

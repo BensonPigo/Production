@@ -912,7 +912,9 @@ select lt2.Id
 ,lt2.ToLocation
 ,po3.Refno
 ,[StockUnit] = dbo.GetStockUnitBySpSeq (f.POID, f.seq1, f.seq2)
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+    ,IIF(Isnull(po3.SuppColor,'')='',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+    ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[SizeCode] = po3.SizeSpec
 ,[MtlType] = Fabric.MtlTypeID
 ,lt2.Ukey
@@ -1003,7 +1005,9 @@ select ir2.Id
 ,ir2.Seq2
 ,po3.Refno
 ,[StockUnit] = dbo.GetStockUnitBySpSeq (f.POID, f.seq1, f.seq2)
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+    ,IIF(Isnull(po3.SuppColor,'')='',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+    ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[SizeCode] = po3.SizeSpec
 ,[MtlType] = Fabric.MtlTypeID
 ,ir2.Ukey
@@ -1692,7 +1696,9 @@ select distinct
 ,[ToLocation] = bb2.ToLocation
 ,po3.Refno
 ,[StockUnit] = dbo.GetStockUnitBySpSeq (fi.POID, fi.seq1, fi.seq2)
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+    ,IIF(Isnull(po3.SuppColor,'')='',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+    ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[SizeCode] = po3.SizeSpec
 ,[MtlType] = Fabric.MtlTypeID
 ,[Qty] = {strQty}

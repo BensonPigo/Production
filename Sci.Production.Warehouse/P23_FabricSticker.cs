@@ -65,7 +65,9 @@ select
     , Dyelot = std.FromDyelot
     , ToFactory = std.ToFactoryID
     , Refno = isnull (psd.Refno, '')
-    , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,SuppColor, isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
+    , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+	            , IIF(isnull(SuppColor,'')='',isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''),SuppColor)
+	            , isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
     , StockUnit = isnull (dbo.GetStockUnitBySPSeq (std.FromPOID, std.FromSeq1, std.FromSeq2), '')
     , Qty = std.Qty
     , [FromLocation]= dbo.Getlocation (fi.ukey)
