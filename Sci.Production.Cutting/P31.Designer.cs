@@ -36,6 +36,12 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnDefault = new Sci.Win.UI.Button();
             this.txtCell1 = new Sci.Production.Class.TxtCell();
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.btnFind = new Sci.Win.UI.Button();
+            this.txtCutRef = new Sci.Win.UI.TextBox();
+            this.labelCutRef = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -48,17 +54,19 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.panel1);
             this.masterpanel.Controls.Add(this.txtCell1);
             this.masterpanel.Controls.Add(this.displayFactory);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateEstCut);
-            this.masterpanel.Size = new System.Drawing.Size(792, 75);
+            this.masterpanel.Size = new System.Drawing.Size(955, 75);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEstCut, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -66,16 +74,17 @@
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCell1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.panel1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 75);
-            this.detailpanel.Size = new System.Drawing.Size(792, 231);
+            this.detailpanel.Size = new System.Drawing.Size(955, 256);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(684, 37);
+            this.gridicon.Location = new System.Drawing.Point(910, 34);
             // 
             // refresh
             // 
@@ -84,7 +93,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(792, 231);
+            this.detailgridcont.Size = new System.Drawing.Size(955, 256);
             // 
             // detail2
             // 
@@ -102,18 +111,18 @@
             // detail
             // 
             this.detail.Location = new System.Drawing.Point(4, 27);
-            this.detail.Size = new System.Drawing.Size(792, 386);
+            this.detail.Size = new System.Drawing.Size(955, 411);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(792, 306);
+            this.detailcont.Size = new System.Drawing.Size(955, 331);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnDefault);
             this.detailbtm.Controls.Add(this.label4);
-            this.detailbtm.Location = new System.Drawing.Point(0, 306);
-            this.detailbtm.Size = new System.Drawing.Size(792, 80);
+            this.detailbtm.Location = new System.Drawing.Point(0, 331);
+            this.detailbtm.Size = new System.Drawing.Size(955, 80);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -125,11 +134,11 @@
             // browse
             // 
             this.browse.Location = new System.Drawing.Point(4, 27);
-            this.browse.Size = new System.Drawing.Size(792, 386);
+            this.browse.Size = new System.Drawing.Size(955, 411);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(800, 417);
+            this.tabs.Size = new System.Drawing.Size(963, 442);
             // 
             // createby
             // 
@@ -228,11 +237,71 @@
             this.txtCell1.TabIndex = 6;
             this.txtCell1.Validated += new System.EventHandler(this.TxtCell1_Validated);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnFind);
+            this.panel1.Controls.Add(this.txtCutRef);
+            this.panel1.Controls.Add(this.labelCutRef);
+            this.panel1.Controls.Add(this.txtSP);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.DrawBorder = true;
+            this.panel1.Location = new System.Drawing.Point(389, 6);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(452, 63);
+            this.panel1.TabIndex = 7;
+            this.panel1.Title = "Locate For";
+            // 
+            // btnFind
+            // 
+            this.btnFind.Location = new System.Drawing.Point(363, 23);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(80, 30);
+            this.btnFind.TabIndex = 8;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
+            // 
+            // txtCutRef
+            // 
+            this.txtCutRef.BackColor = System.Drawing.Color.White;
+            this.txtCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutRef.IsSupportEditMode = false;
+            this.txtCutRef.Location = new System.Drawing.Point(244, 26);
+            this.txtCutRef.Name = "txtCutRef";
+            this.txtCutRef.Size = new System.Drawing.Size(113, 24);
+            this.txtCutRef.TabIndex = 7;
+            // 
+            // labelCutRef
+            // 
+            this.labelCutRef.Location = new System.Drawing.Point(177, 27);
+            this.labelCutRef.Name = "labelCutRef";
+            this.labelCutRef.Size = new System.Drawing.Size(64, 23);
+            this.labelCutRef.TabIndex = 6;
+            this.labelCutRef.Text = "CutRef#";
+            // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.IsSupportEditMode = false;
+            this.txtSP.Location = new System.Drawing.Point(61, 27);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(113, 24);
+            this.txtSP.TabIndex = 5;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(11, 28);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(47, 23);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "SP#";
+            // 
             // P31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(963, 475);
             this.GridAlias = "SpreadingSchedule_Detail";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -258,6 +327,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -272,5 +343,11 @@
         private Win.UI.Button btnDefault;
         private System.Windows.Forms.Label label4;
         private Class.TxtCell txtCell1;
+        private Win.UI.Panel panel1;
+        private Win.UI.Button btnFind;
+        private Win.UI.TextBox txtCutRef;
+        private Win.UI.Label labelCutRef;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label label5;
     }
 }

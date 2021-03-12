@@ -558,5 +558,26 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
                 }
             }
         }
+
+        private void BtnFind_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtSP.Text) &&
+                MyUtility.Check.Empty(this.txtCutRef.Text))
+            {
+                return;
+            }
+
+            foreach (DataGridViewRow item in this.detailgrid.Rows)
+            {
+                string sp = MyUtility.Check.Empty(this.txtSP.Text) ? item.Cells["orderid"].Value.ToString() : this.txtSP.Text;
+                string cutRef = MyUtility.Check.Empty(this.txtCutRef.Text) ? item.Cells["CutRef"].Value.ToString() : this.txtCutRef.Text;
+
+                if (item.Cells["orderid"].Value.ToString() == sp && item.Cells["CutRef"].Value.ToString() == cutRef)
+                {
+                    this.detailgrid.SelectRowTo(item.Index);
+                    return;
+                }
+            }
+        }
     }
 }
