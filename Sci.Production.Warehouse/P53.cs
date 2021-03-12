@@ -399,8 +399,10 @@ select
 ,[Location] = iL.PrepardLocation
 ,[StartDate] = FORMAT(iL.PrepareStartDate,'yyyyMMddHHmm')
 ,[FinishDate] = FORMAT(iL.PrepardFinishDate,'yyyyMMddHHmm')
-,[PreparingTime] = ''
-,[LeadTime]= ''
+,[PreparingTime] = PreparingTime.value
+,[LeadTime]= case when (iL.PrepareStartDate is null or iL.PrepardFinishDate is null) then ''
+				  when  PreparingTime.ttlMinute <= 420 then 'OK'
+				  else 'Not OK' end
 ,[Scan] = iL.ScanTransferSlip
 ,iL.Id
 from IssueLack iL
@@ -413,6 +415,12 @@ outer apply(
 		where iL2.Id = il.Id
 	) a
 )ttlRoll
+outer apply(
+	select value = CONVERT(varchar,sum(minute)/1440) + ' '  -- day
+	            + SUBSTRING(CONVERT(VARCHAR, DATEADD(MINUTE, sum(minute), 0), 108),1,5)  -- minute: second
+	, ttlMinute = sum(minute)
+	from dbo.GetPreparingTime(iL.PrepareStartDate,iL.PrepardFinishDate,iL.MDivisionID)
+)PreparingTime
 where 1=1
 ";
             #endregion

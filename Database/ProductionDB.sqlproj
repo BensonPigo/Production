@@ -2584,6 +2584,8 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\WHWorkingCalendar.sql" />
+    <Build Include="dbo\Functions\GetPreparingTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
