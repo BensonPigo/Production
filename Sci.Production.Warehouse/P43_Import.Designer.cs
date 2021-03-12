@@ -274,7 +274,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 23);
             this.label1.TabIndex = 13;
-            this.label1.Text = "Fabric Type";
+            this.label1.Text = "Material Type";
             // 
             // cmbFabric
             // 

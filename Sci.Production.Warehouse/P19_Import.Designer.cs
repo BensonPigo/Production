@@ -179,7 +179,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(81, 23);
             this.label2.TabIndex = 126;
-            this.label2.Text = "Fabric Type";
+            this.label2.Text = "Material Type";
             // 
             // label1
             // 

@@ -86,7 +86,7 @@ namespace Sci.Production.Warehouse
                 @"Shift : {0}" + "   ",
                 this.txtdropdownlistShift.Text));
             this.condition.Append(string.Format(
-                @"Fabric Type : {0}",
+                @"Material Type : {0}",
                 this.comboFabricType.Text));
 
             return base.ValidateInput();

@@ -69,7 +69,7 @@
             this.lblFabricType.Name = "lblFabricType";
             this.lblFabricType.Size = new System.Drawing.Size(97, 23);
             this.lblFabricType.TabIndex = 98;
-            this.lblFabricType.Text = "Fabric Type";
+            this.lblFabricType.Text = "Material Type";
             // 
             // lblRequestType
             // 
