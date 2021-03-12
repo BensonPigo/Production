@@ -87,9 +87,9 @@ namespace Sci.Production.Warehouse
 select a.POID
     ,a.Seq1+'-'+a.seq2 as SEQ
 	,a.Roll,a.Dyelot
-	,IIF((b.ID =   lag(b.ID,1,'') over (order by a.Dyelot, Len(a.Roll), a.Roll) 
-		AND(b.seq1 = lag(b.seq1,1,'')over (order by a.Dyelot, Len(a.Roll), a.Roll))
-		AND(b.seq2 = lag(b.seq2,1,'')over (order by a.Dyelot, Len(a.Roll), a.Roll))) 
+	,IIF((b.ID =   lag(b.ID,1,'') over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll) 
+		AND(b.seq1 = lag(b.seq1,1,'')over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll))
+		AND(b.seq2 = lag(b.seq2,1,'')over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll))) 
 		,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))[DESC]
 	,CASE a.stocktype
 			WHEN 'B' THEN 'Bulk'
@@ -107,7 +107,7 @@ LEFT join dbo.PO_Supp_Detail b WITH (NOLOCK) on  b.id=a.POID and b.SEQ1=a.Seq1 a
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
 where a.id= @ID
-order by a.Dyelot, Len(a.Roll), a.Roll";
+order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll";
 
                 result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
