@@ -1020,27 +1020,6 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
-            {
-                MyUtility.Msg.WarningBox("Invoive# cannot be empty!!");
-                return;
-            }
-
-            // InvNo 需要存在 Shipping_P04
-            string sqlcmd = $@"select top 1 * from FtyExport where InvNo = '{this.CurrentMaintain["InvNo"]}' order by adddate desc";
-            if (!MyUtility.Check.Seek(sqlcmd, out DataRow ftyExportdr))
-            {
-                MyUtility.Msg.WarningBox("Please notify the Shipping team to create Shipping_P04 before click confirm.");
-                return;
-            }
-
-            // [表頭].[Arrive W/H Date]需要>=[FtyExport].[PortArrival]
-            if (MyUtility.Convert.GetDate(this.CurrentMaintain["IssueDate"]) < MyUtility.Convert.GetDate(ftyExportdr["PortArrival"]))
-            {
-                MyUtility.Msg.WarningBox("[Wharehouse_P18].[Arrive W/H Date] cannot be earlier than [Shipping_P04].[Arrive Port Date]");
-                return;
-            }
-
             base.ClickConfirm();
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -1048,6 +1027,7 @@ where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", this.Curre
                 return;
             }
 
+            string sqlcmd = string.Empty;
             string upd_MD_2T = string.Empty;
             string upd_MD_8T = string.Empty;
             string upd_Fty_2T = string.Empty;
