@@ -13,6 +13,7 @@
 	Width		int	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_Width] DEFAULT(0),
 	Length		int	NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_Length] DEFAULT(0),
 	[DPI] INT NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_DPI] DEFAULT 0, 
+	NotAutomate bit NOT NULL CONSTRAINT [DF_ShippingMarkStamp_Detail_NotAutomate]  DEFAULT (0),
 	CONSTRAINT [PK_ShippingMarkStamp_Detail] PRIMARY KEY CLUSTERED 
 (
 	PackingListID ASC ,SCICtnNo ASC ,ShippingMarkTypeUkey ASC

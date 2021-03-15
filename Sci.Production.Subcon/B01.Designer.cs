@@ -60,6 +60,8 @@
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtCartonType = new Sci.Win.UI.TextBox();
             this.dropDownUnpack = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label3 = new Sci.Win.UI.Label();
             this.btnSetCardboardPads = new Sci.Win.UI.Button();
@@ -88,8 +90,6 @@
             this.btnBatchApprove = new Sci.Win.UI.Button();
             this.txtAccountNo = new Sci.Production.Class.TxtAccountNo();
             this.chkIsCarton = new Sci.Win.UI.CheckBox();
-            this.txtCartonType = new Sci.Win.UI.TextBox();
-            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -140,7 +140,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(900, 536);
+            this.browse.Size = new System.Drawing.Size(900, 481);
             // 
             // tabs
             // 
@@ -461,8 +461,27 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Carton Only";
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(219, 80);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(85, 23);
+            this.label4.TabIndex = 26;
+            this.label4.Text = "Carton Type";
+            // 
+            // txtCartonType
+            // 
+            this.txtCartonType.BackColor = System.Drawing.Color.White;
+            this.txtCartonType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CartonType", true));
+            this.txtCartonType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCartonType.Location = new System.Drawing.Point(307, 79);
+            this.txtCartonType.Name = "txtCartonType";
+            this.txtCartonType.Size = new System.Drawing.Size(100, 23);
+            this.txtCartonType.TabIndex = 7;
+            // 
             // dropDownUnpack
             // 
+            this.dropDownUnpack.AddAllItem = false;
             this.dropDownUnpack.BackColor = System.Drawing.Color.White;
             this.dropDownUnpack.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "UnPack", true));
             this.dropDownUnpack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
@@ -968,24 +987,6 @@
             this.chkIsCarton.TabIndex = 3;
             this.chkIsCarton.Text = "Is Carton";
             this.chkIsCarton.UseVisualStyleBackColor = true;
-            // 
-            // txtCartonType
-            // 
-            this.txtCartonType.BackColor = System.Drawing.Color.White;
-            this.txtCartonType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CartonType", true));
-            this.txtCartonType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCartonType.Location = new System.Drawing.Point(307, 79);
-            this.txtCartonType.Name = "txtCartonType";
-            this.txtCartonType.Size = new System.Drawing.Size(100, 23);
-            this.txtCartonType.TabIndex = 7;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(219, 80);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(85, 23);
-            this.label4.TabIndex = 26;
-            this.label4.Text = "Carton Type";
             // 
             // B01
             // 

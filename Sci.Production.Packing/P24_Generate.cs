@@ -554,6 +554,9 @@ SELECT DISTINCT [PackingListID]=b.ID   ----對應ShippingMarkPic和的 [PackingL
 	,pictD.Seq
 	,pictD.FromBottom
 	,pictD.FromRight
+	,pict.CtnHeight
+	,pictD.IsOverCtnHt
+	,pictD.NotAutomate
 	,st.Width
 	,st.Length
 FROM  #base b
@@ -604,6 +607,9 @@ DROP TABLE #base, #Mix
                     Seq = MyUtility.Convert.GetInt(dr["Seq"]),
                     FromBottom = MyUtility.Convert.GetDouble(dr["FromBottom"]),
                     FromRight = MyUtility.Convert.GetDouble(dr["FromRight"]),
+                    CtnHeight = MyUtility.Convert.GetDecimal(dr["CtnHeight"]),
+                    IsOverCtnHt = MyUtility.Convert.GetBool(dr["IsOverCtnHt"]),
+                    NotAutomate = MyUtility.Convert.GetBool(dr["NotAutomate"]),
                     Width = MyUtility.Convert.GetInt(dr["Width"]),
                     Length = MyUtility.Convert.GetInt(dr["Length"]),
                     FromTemplate = MyUtility.Convert.GetBool(dr["FromTemplate"]),
@@ -939,7 +945,7 @@ END
 ELSE
 BEGIN
     INSERT INTO ShippingMarkPic_Detail
-               (ShippingMarkPicUkey, IsSSCC, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI)
+               (ShippingMarkPicUkey, IsSSCC, SCICtnNo ,ShippingMarkCombinationUkey ,ShippingMarkTypeUkey ,FilePath ,FileName ,Side ,Seq ,FromRight ,FromBottom ,Width ,Length ,DPI, CtnHeight, IsOverCtnHt, NotAutomate)
          VALUES
                ( (SELECT  Ukey FROM ShippingMarkPic WHERE PackingListID = '{p24_Template.PackingListID}') 
                ,(SELECT IsSSCC FROM ShippingMarkType WHERE Ukey = {p24_Template.ShippingMarkTypeUkey})
@@ -954,7 +960,11 @@ BEGIN
                ,{p24_Template.FromBottom}
                ,{p24_Template.Width}
                ,{p24_Template.Length}
-               ,{dPI} )
+               ,{dPI}
+               ,{p24_Template.CtnHeight}
+               ,{p24_Template.IsOverCtnHt}
+               ,{p24_Template.NotAutomate}
+                )
 END
 ;
 ";
@@ -1122,6 +1132,15 @@ END
 
         /// <inheritdoc/>
         public bool FromTemplate { get; set; }
+
+        /// <inheritdoc/>
+        public decimal CtnHeight { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsOverCtnHt { get; set; }
+
+        /// <inheritdoc/>
+        public bool NotAutomate { get; set; }
 
         /// <inheritdoc/>
         public List<DefineColumn> DefineColumns { get; set; }

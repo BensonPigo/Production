@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Subcon
 {
@@ -196,6 +197,18 @@ WHERE Type='Pms_LocalItem_UnPack'
                 }
             }
 
+            string chk = $@"select 1 from LocalItem where RefNo='{this.CurrentMaintain["Refno"]}' AND CtnHeight = {this.CurrentMaintain["CtnHeight"]} AND CtnUnit = '{this.CurrentMaintain["CtnUnit"]}' ";
+
+            if (!MyUtility.Check.Seek(chk))
+            {
+                string cmd = "select * from MailTo where ID='102' AND ToAddress != '' AND ToAddress IS NOT NULL";
+
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    Prgs.LocalItem_RunningChange(this.CurrentMaintain);
+                }
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -203,6 +216,61 @@ WHERE Type='Pms_LocalItem_UnPack'
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
+            if (this.CurrentMaintain["Category"].ToString().ToUpper() == "CARTON")
+            {
+                string ctnUnit = this.CurrentMaintain["CtnUnit"].ToString().ToUpper();
+
+                decimal ctnheight = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CtnHeight"]);
+                if (ctnUnit == "INCH")
+                {
+                    ctnheight = ctnheight * MyUtility.Convert.GetDecimal(25.4);
+                }
+
+                string cmd = $@"
+SELECT  DISTINCT  a.UKey
+	  ,b.ShippingMarkTypeUkey
+	  ,b.IsHorizontal
+	  ,b.FromBottom
+	  ,b.FromRight
+	  ,sticker.Width
+	  ,sticker.Length
+	  ,[RealCtnHeight] = {ctnheight}
+INTO #tmp
+FROM ShippingMarkPicture a
+INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey
+INNER JOIN StickerSize sticker ON b.StickerSizeID = sticker.ID
+WHERE a.CTNRefno = '{this.CurrentMaintain["Refno"]}'
+
+UPDATE t
+SET t.CtnHeight = s.RealCtnHeight
+FROM ShippingMarkPicture t
+INNER JOIN #tmp s ON  t.Ukey = s.Ukey
+
+UPDATE t
+SET t.IsOverCtnHt = 
+				(		
+					CASE WHEN s.IsHorizontal = 1 THEN IIF( s.FromBottom + s.Width > s.RealCtnHeight , 1, 0)
+						 WHEN s.IsHorizontal = 0 THEN IIF( s.FromBottom + s.Length > s.RealCtnHeight , 1, 0)
+						 ELSE 0
+					END
+				)
+	,t.NotAutomate = 
+				(		
+					CASE WHEN s.IsHorizontal = 1 THEN IIF( s.FromBottom + s.Width > s.RealCtnHeight , 1, 0)
+						 WHEN s.IsHorizontal = 0 THEN IIF( s.FromBottom + s.Length > s.RealCtnHeight , 1, 0)
+						 ELSE 0
+					END
+				)
+FROM ShippingMarkPicture_Detail t 
+INNER JOIN #tmp s ON t.ShippingMarkPictureUkey = s.Ukey AND t.ShippingMarkTypeUkey = s.ShippingMarkTypeUkey
+
+DROP TABLE #tmp
+";
+
+                DBProxy.Current.Execute(null, cmd);
+            }
+
             #region ISP20200757 資料交換 - Sunrise
             if (this.CurrentMaintain["Category"].ToString().ToUpper() == "CARTON")
             {
