@@ -35,7 +35,6 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             this.displayFinished.BackColor = this.finishedColor;
             this.displayPreparing.BackColor = this.preparingColor;
-            this.gridDetail.DataSource = this.detailbs;
             this.gridDetail.IsEditable = true;
             this.gridDetail.IsEditingReadOnly = false;
 
@@ -109,7 +108,7 @@ namespace Sci.Production.Warehouse
                 {
                     DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
                     string sqlcmd = $@"select ID,StockType,Description from dbo.MtlLocation where Junk = 0 and StockType='B'";
-                    SelectItem2 item = new SelectItem2(sqlcmd, string.Empty, "14,7,15", string.Empty, null, null, null);
+                    SelectItem2 item = new SelectItem2(sqlcmd, string.Empty, "14,7,15", dr["Location"].ToString(), null, null, null);
                     item.Size = new System.Drawing.Size(550, 666);
                     DialogResult drResult = item.ShowDialog();
                     if (drResult == DialogResult.Cancel)
@@ -122,61 +121,8 @@ namespace Sci.Production.Warehouse
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorDateColumnSettings col_StartDate = new DataGridViewGeneratorDateColumnSettings();
-            col_StartDate.CellValidating += (s, e) =>
-            {
-                if (this.detailbs == null || e.RowIndex == -1 || MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return;
-                }
-
-                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty((DateTime)e.FormattedValue) && !MyUtility.Check.Empty(dr["FinishDate"]))
-                {
-                    if (DateTime.Compare((DateTime)e.FormattedValue, (DateTime)dr["FinishDate"]) == 1)
-                    {
-                        MyUtility.Msg.WarningBox("Start Date cannot later than Finish Date.");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-
-                dr["StartDate"] = e.FormattedValue;
-                dr.EndEdit();
-            };
-
-            Ict.Win.DataGridViewGeneratorDateColumnSettings col_FinishDate = new DataGridViewGeneratorDateColumnSettings();
-            col_FinishDate.CellValidating += (s, e) =>
-            {
-                if (this.detailbs == null || e.RowIndex == -1 || MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return;
-                }
-
-                DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["StartDate"]) && !MyUtility.Check.Empty((DateTime)e.FormattedValue))
-                {
-                    MyUtility.Msg.WarningBox("Start Date cannot be empty.");
-                    e.Cancel = true;
-                    return;
-                }
-
-                if (!MyUtility.Check.Empty(dr["StartDate"]) && !MyUtility.Check.Empty((DateTime)e.FormattedValue))
-                {
-                    if (DateTime.Compare((DateTime)dr["StartDate"], (DateTime)e.FormattedValue) == 1)
-                    {
-                        MyUtility.Msg.WarningBox("Start Date cannot later than Finish Date.");
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-
-                dr["FinishDate"] = e.FormattedValue;
-                dr.EndEdit();
-            };
-
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings mask_StartDate = new DataGridViewGeneratorMaskedTextColumnSettings();
-            mask_StartDate.CellValidating += (s, e) => 
+            mask_StartDate.CellValidating += (s, e) =>
             {
                 if (e.RowIndex == -1 || MyUtility.Check.Empty(e.FormattedValue))
                 {
@@ -198,6 +144,11 @@ namespace Sci.Production.Warehouse
                     }
 
                     dr["StartDate"] = e.FormattedValue.ToString().PadRight(12, '0');
+
+                    // 直接計算PreparingTime
+                    DataRow drPre = this.GetPreparTime(dr);
+                    dr["PreparingTime"] = drPre["PreparingTime"];
+                    dr["LeadTime"] = drPre["LeadTime"];
                     dr.EndEdit();
                 }
                 else
@@ -227,7 +178,6 @@ namespace Sci.Production.Warehouse
                     if (!MyUtility.Check.Empty(dr["StartDate"]))
                     {
                         string strStartDate = this.DateTimeMaskFull(dr["StartDate"].ToString());
-                        //if (DateTime.Compare((DateTime)e.FormattedValue, (DateTime)dr["FinishDate"]) == 1)
                         if (DateTime.Compare(Convert.ToDateTime(strStartDate), Convert.ToDateTime(strEndDate)) == 1)
                         {
                             MyUtility.Msg.WarningBox("Start Date cannot later than Finish Date.");
@@ -236,6 +186,11 @@ namespace Sci.Production.Warehouse
                     }
 
                     dr["FinishDate"] = e.FormattedValue.ToString().PadRight(12, '0');
+
+                    // 直接計算PreparingTime
+                    DataRow drPre = this.GetPreparTime(dr);
+                    dr["PreparingTime"] = drPre["PreparingTime"];
+                    dr["LeadTime"] = drPre["LeadTime"];
                     dr.EndEdit();
                 }
                 else
@@ -244,10 +199,10 @@ namespace Sci.Production.Warehouse
                 }
             };
             #endregion
-
+            this.gridDetail.DataSource = this.detailbs;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Select", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("Factory", header: "Factory", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("RQNo", header: "RQ NO", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("SP", header: "SP", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("Department", header: "Department", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -257,8 +212,6 @@ namespace Sci.Production.Warehouse
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("Worker", header: "Worker", width: Widths.AnsiChars(11), iseditingreadonly: false, settings: col_Worker)
                 .Text("Location", header: "Location", width: Widths.AnsiChars(11), iseditingreadonly: true, settings: col_Location)
-                //.DateTime("StartDate", header: "Start Date", width: Widths.AnsiChars(20), iseditingreadonly: false, format: DataGridViewDateTimeFormat.yyyyMMddHHmm)
-                //.DateTime("FinishDate", header: "Finish Date", width: Widths.AnsiChars(20), iseditingreadonly: false, format: DataGridViewDateTimeFormat.yyyyMMddHHmm)
                 .MaskedText("StartDate", "0000/00/00 00:00", header: "Start Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_StartDate)
                 .MaskedText("FinishDate", "0000/00/00 00:00", header: "Finish Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_EndDate)
                 .Text("PreparingTime", header: "PreparingTime", width: Widths.AnsiChars(11), iseditingreadonly: true)
@@ -272,6 +225,7 @@ namespace Sci.Production.Warehouse
             this.gridDetail.Columns["StartDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["FinishDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["Scan"].DefaultCellStyle.BackColor = Color.Pink;
+            this.ChangeRowColor();
         }
 
         private string DateTimeMaskFull(string value)
@@ -302,39 +256,6 @@ namespace Sci.Production.Warehouse
             }
         }
 
-        private void GridDetail_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
-        {
-            //if (e.RowIndex < 0 || this.EditMode == false)
-            //{
-            //    return;
-            //}
-
-            //DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
-            //if (dr == null)
-            //{
-            //    return;
-            //}
-
-            //if (MyUtility.Check.Empty(dr["StartDate"]) && !MyUtility.Check.Empty(dr["FinishDate"]))
-            //{
-            //    MyUtility.Msg.WarningBox("Start Date cannot be empty.");
-            //    e.Cancel = true;
-            //    return;
-            //}
-
-            //if (!MyUtility.Check.Empty(dr["StartDate"]) && !MyUtility.Check.Empty(dr["FinishDate"]))
-            //{
-            //    if (DateTime.Compare((DateTime)dr["StartDate"], (DateTime)dr["FinishDate"]) == 1)
-            //    {
-            //        MyUtility.Msg.WarningBox("Start Date cannot later than Finish Date.");
-            //        e.Cancel = true;
-            //        return;
-            //    }
-            //}
-
-            //dr.EndEdit();
-        }
-
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.Query();
@@ -352,8 +273,6 @@ namespace Sci.Production.Warehouse
 
             foreach (DataRow dr in upd_list)
             {
-                //string startDate = MyUtility.Check.Empty(dr["StartDate"]) ? "null" : "'" + ((DateTime)dr["StartDate"]).ToString("yyyy/MM/dd HH:mm") + "'";
-                //string endDate = MyUtility.Check.Empty(dr["FinishDate"]) ? "null" : "'" + ((DateTime)dr["FinishDate"]).ToString("yyyy/MM/dd HH:mm") + "'";
                 string startDate = MyUtility.Check.Empty(dr["StartDate"]) ? "null" : "'" + this.DateTimeMaskFull(dr["StartDate"].ToString()) + "'";
                 string endDate = MyUtility.Check.Empty(dr["FinishDate"]) ? "null" : "'" + this.DateTimeMaskFull(dr["FinishDate"].ToString()) + "'";
                 int scan = MyUtility.Check.Empty(dr["Scan"]) ? 0 : 1;
@@ -405,6 +324,7 @@ select
 				  else 'Not OK' end
 ,[Scan] = iL.ScanTransferSlip
 ,iL.Id
+,iL.MDivisionID
 from IssueLack iL
 left join Lack on Lack.ID = iL.RequestID
 outer apply(
@@ -463,6 +383,8 @@ where 1=1
             {
                 sqlcmd += $" and Lack.OrderID = '{this.txtSPNo.Text}'";
             }
+
+            sqlcmd += " order by il.Id,iL.FactoryID,iL.RequestID";
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dtData);
@@ -486,27 +408,64 @@ where 1=1
         private void ChangeRowColor()
         {
             DataTable tmp_dt = (DataTable)this.detailbs.DataSource;
-            if (tmp_dt == null)
-            {
-                return;
-            }
 
-            for (int i = 0; i < tmp_dt.Rows.Count; i++)
+            if (this.gridDetail.Rows.Count > 0 || tmp_dt != null)
             {
-                if (!MyUtility.Check.Empty(tmp_dt.Rows[i]["StartDate"]))
+                for (int i = 0; i < this.gridDetail.Rows.Count; i++)
                 {
-                    // Preparing
-                    if (MyUtility.Check.Empty(tmp_dt.Rows[i]["FinishDate"]))
+                    DataRow dr = this.gridDetail.GetDataRow(i);
+                    if (this.gridDetail.Rows.Count <= i || i < 0)
                     {
-                        this.gridDetail.Rows[i].DefaultCellStyle.BackColor = this.preparingColor;
+                        return;
                     }
-                    else
+
+                    if (!MyUtility.Check.Empty(dr["StartDate"]))
                     {
-                        // Finished
-                        this.gridDetail.Rows[i].DefaultCellStyle.BackColor = this.finishedColor;
+                        // Preparing
+                        if (MyUtility.Check.Empty(dr["FinishDate"]))
+                        {
+                            this.gridDetail.Rows[i].DefaultCellStyle.BackColor = this.preparingColor;
+                            this.gridDetail.Rows[i].DefaultCellStyle.SelectionBackColor = this.preparingColor;
+                        }
+                        else
+                        {
+                            // Finished
+                            this.gridDetail.Rows[i].DefaultCellStyle.BackColor = this.finishedColor;
+                            this.gridDetail.Rows[i].DefaultCellStyle.SelectionBackColor = this.finishedColor;
+                        }
                     }
                 }
             }
+        }
+
+        private DataRow GetPreparTime(DataRow dr)
+        {
+            DataRow drReturn;
+            string startTime = MyUtility.Check.Empty(dr["StartDate"]) ? "null" : "'" + this.DateTimeMaskFull(dr["StartDate"].ToString()) + "'";
+            string endTime = MyUtility.Check.Empty(dr["FinishDate"]) ? "null" : "'" + this.DateTimeMaskFull(dr["FinishDate"].ToString()) + "'"; 
+
+            string sqlcmd = $@"
+select PreparingTime = isnull(CONVERT(varchar,sum(minute)/1440) + ' '  -- day
+	            + SUBSTRING(CONVERT(VARCHAR, DATEADD(MINUTE, sum(minute), 0), 108),1,5),0)  -- minute: second
+	, ttlMinute = isnull(sum(minute),0)
+    , [LeadTime]= case when ({startTime} is null or {endTime} is null) then ''
+				  when isnull(isnull(sum(minute),0),0) <= 420 then 'OK'
+				  else 'Not OK' end
+	from dbo.GetPreparingTime({startTime},{endTime},'{dr["MDivisionID"]}');
+";
+            if (MyUtility.Check.Seek(sqlcmd, out drReturn))
+            {
+                return drReturn;
+            }
+            else
+            {
+                return dr;
+            }
+        }
+
+        private void GridDetail_Sorted(object sender, EventArgs e)
+        {
+            this.ChangeRowColor();
         }
     }
 }
