@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
-using System.Linq;
 
 namespace Sci.Production.PPIC
 {
@@ -37,6 +37,7 @@ namespace Sci.Production.PPIC
         private bool poCombo;
         private bool garment;
         private bool smtl;
+        private bool printingDetail;
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
         private DateTime? sciDlv1;
@@ -52,6 +53,7 @@ namespace Sci.Production.PPIC
         private DataTable printData;
         private DataTable subprocessColumnName;
         private DataTable orderArtworkData;
+        private DataTable printingDetailDatas;
         private decimal stdTMS;
         private int subtrue = 0;
 
@@ -167,6 +169,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             string seperCmd = string.Empty, seperCmdkpi = string.Empty, seperCmdkpi2 = string.Empty;
             string order_QtyShip_Source_InspDate = string.Empty, order_QtyShip_Source_InspResult = string.Empty, order_QtyShip_Source_InspHandle = string.Empty, order_QtyShip_OuterApply = string.Empty;
 
+            this.printingDetail = this.chkPrintingDetail.Checked;
             #region 組SQL
             if (this.seperate && p_type.Equals("ALL"))
             {
@@ -1634,6 +1637,80 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                     }
                     #endregion
                 }
+
+                if (this.printingDetail)
+                {
+                    string sqlprintingDetail = $@"
+SELECT distinct
+	oa.[ID]
+	,[InkTypecolorsize] = concat(oa.InkType,'/',oa.Colors,' ','/',IIF(s.SmallLogo = 1,'Small logo','Big logo'))
+	,PrintingLT = cast(plt.LeadTime + plt.AddLeadTime as float)
+into #tmp2
+FROM Order_Artwork oa
+outer apply(select SmallLogo = iif(oa.Width >= (select SmallLogoCM from system) or oa.Length >= (select SmallLogoCM from system), 0, 1) )s
+inner join orders o on o.id = oa.id
+outer apply(select tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU  / o.Cpu)  from System s)tr
+outer apply(select RTLQty = iif(o.Qty < tmpRTL, o.Qty, tmpRTL))r
+outer apply(select Colors = iif(isnull(oa.Colors,'')='', 0, oa.Colors))c
+outer apply(select ex = iif(exists(select 1 from PrintLeadTime plt where plt.InkType = oa.InkType), 1, 0))e
+outer apply(select * from PrintLeadTime plt where plt.InkType = oa.InkType and plt.SmallLogo = s.SmallLogo 
+	and r.RTLQty between plt.RTLQtyLowerBound and plt.RTLQtyUpperBound
+	and c.Colors between plt.ColorsLowerBound and plt.ColorsUpperBound
+)pEx
+outer apply(select * from PrintLeadTime plt where plt.SmallLogo = s.SmallLogo and plt.IsDefault = 1
+	and r.RTLQty between plt.RTLQtyLowerBound and plt.RTLQtyUpperBound
+	and c.Colors between plt.ColorsLowerBound and plt.ColorsUpperBound
+)pNEx
+outer apply(
+	select
+		InkType = IIF(e.ex = 1, pEx.InkType, pnEx.InkType),
+		LeadTime = IIF(e.ex = 1, pEx.LeadTime, pnEx.LeadTime),
+		AddLeadTime = IIF(e.ex = 1, pEx.AddLeadTime, pnEx.AddLeadTime)
+)plt
+where oa.id in (select t.id from #tmp t)
+and oa.ArtworkTypeID = 'Printing'
+
+select *,rn = ROW_NUMBER() over(order by PrintingLT desc) into #tmp3 from #tmp2
+
+select t.id,a.PrintingLT,b.InkTypecolorsize
+from #tmp t
+outer apply(
+	select PrintingLT =   STUFF((
+		select concat(',', t2.PrintingLT)
+		from #tmp3 t2
+		where t2.ID = t.id
+		order by rn
+		for xml path('')
+	),1,1,'')
+)a
+outer apply(
+	select [InkTypecolorsize] = STUFF((
+		select concat(',', t2.[InkTypecolorsize])
+		from #tmp3 t2
+		where t2.ID = t.id
+		order by rn
+		for xml path('')
+	),1,1,'')
+)b
+
+drop table #tmp,#tmp2,#tmp3
+";
+                    result = MyUtility.Tool.ProcessWithDatatable(this.printData, "id", sqlprintingDetail, out this.printingDetailDatas);
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    // 在PRINTING (PCS)前面插入兩個欄位
+                    int rno = this.subprocessColumnName.Select("ColumnN = 'PRINTING (PCS)'").Select(s => MyUtility.Convert.GetInt(s["rno"])).FirstOrDefault();
+                    if (this.printingDetailDatas.Rows.Count > 0 && rno > 0)
+                    {
+                        foreach (DataRow item in this.subprocessColumnName.Select($"rno >= {rno}"))
+                        {
+                            item["rno"] = MyUtility.Convert.GetInt(item["rno"]) + 2; // 插入 [Printing LT], [InkType/color/size] 兩個欄位
+                        }
+                    }
+                }
             }
 
             DBProxy.Current.DefaultTimeout = 0;
@@ -1643,7 +1720,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
         // 最後一欄 , 有新增欄位要改這
         // 注意!新增欄位也要新增到StandardReport_Detail(Customized)。
-        private int lastColA = 142;
+        private int lastColA = 143;
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -1670,6 +1747,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
             // 填Subprocess欄位名稱
             int poSubConCol = 9999, subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
+            int printingDetailCol = 9999;
             string excelColEng = string.Empty;
             if (this.artwork || this.pap)
             {
@@ -1677,6 +1755,13 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                 {
                     worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"])] = MyUtility.Convert.GetString(dr["ColumnN"]);
                     lastCol = MyUtility.Convert.GetInt(dr["rno"]);
+
+                    if (this.printingDetail && MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "PRINTING (PCS)")
+                    {
+                        worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"]) - 2] = "Printing LT";
+                        worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"]) - 1] = "InkType/color/size";
+                        printingDetailCol = MyUtility.Convert.GetInt(dr["rno"]);
+                    }
 
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "POSUBCON")
                     {
@@ -1714,7 +1799,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
 
-                                         // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
+            // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
             if (this.orderArtworkData == null)
             {
                 this.orderArtworkData = new DataTable();
@@ -1975,6 +2060,16 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                     }
 
                     objArray[intRowsStart, ttlTMS - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+
+                    if (this.printingDetail)
+                    {
+                        DataRow pdr = this.printingDetailDatas.Select($"ID = '{dr["ID"]}'").FirstOrDefault();
+                        if (pdr != null)
+                        {
+                            objArray[intRowsStart, printingDetailCol - 3] = pdr["PrintingLT"];
+                            objArray[intRowsStart, printingDetailCol - 2] = pdr["InkTypecolorsize"];
+                        }
+                    }
                 }
                 else
                 {
@@ -2077,6 +2172,15 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
             this.HideWaitMessage();
             #endregion
             return true;
+        }
+
+        private void CheckIncludeArtworkdata_CheckedChanged(object sender, EventArgs e)
+        {
+            this.chkPrintingDetail.Enabled = this.checkIncludeArtworkdata.Checked;
+            if (!this.checkIncludeArtworkdata.Checked)
+            {
+                this.chkPrintingDetail.Checked = false;
+            }
         }
     }
 }

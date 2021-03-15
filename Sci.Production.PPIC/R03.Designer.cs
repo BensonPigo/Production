@@ -70,12 +70,13 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtSp2 = new Sci.Win.UI.TextBox();
+            this.checkByCPU = new Sci.Win.UI.CheckBox();
+            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.chkPrintingDetail = new Sci.Win.UI.CheckBox();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtseason = new Sci.Production.Class.Txtseason();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
-            this.checkByCPU = new Sci.Win.UI.CheckBox();
-            this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -431,6 +432,7 @@
             this.checkIncludeArtworkdata.TabIndex = 25;
             this.checkIncludeArtworkdata.Text = "Include Artwork data";
             this.checkIncludeArtworkdata.UseVisualStyleBackColor = true;
+            this.checkIncludeArtworkdata.CheckedChanged += new System.EventHandler(this.CheckIncludeArtworkdata_CheckedChanged);
             // 
             // checkIncludeArtworkdataKindIsPAP
             // 
@@ -585,6 +587,40 @@
             this.txtSp2.Size = new System.Drawing.Size(122, 23);
             this.txtSp2.TabIndex = 8;
             // 
+            // checkByCPU
+            // 
+            this.checkByCPU.AutoSize = true;
+            this.checkByCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkByCPU.Location = new System.Drawing.Point(295, 516);
+            this.checkByCPU.Name = "checkByCPU";
+            this.checkByCPU.Size = new System.Drawing.Size(75, 21);
+            this.checkByCPU.TabIndex = 116;
+            this.checkByCPU.Text = "By CPU";
+            this.checkByCPU.UseVisualStyleBackColor = true;
+            // 
+            // chkIncludeCancelOrder
+            // 
+            this.chkIncludeCancelOrder.AutoSize = true;
+            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 626);
+            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
+            this.chkIncludeCancelOrder.TabIndex = 129;
+            this.chkIncludeCancelOrder.Text = "Include Cancel order";
+            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
+            // 
+            // chkPrintingDetail
+            // 
+            this.chkPrintingDetail.AutoSize = true;
+            this.chkPrintingDetail.Enabled = false;
+            this.chkPrintingDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkPrintingDetail.Location = new System.Drawing.Point(174, 517);
+            this.chkPrintingDetail.Name = "chkPrintingDetail";
+            this.chkPrintingDetail.Size = new System.Drawing.Size(115, 21);
+            this.chkPrintingDetail.TabIndex = 130;
+            this.chkPrintingDetail.Text = "Printing Detail";
+            this.chkPrintingDetail.UseVisualStyleBackColor = true;
+            // 
             // txtbrand
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
@@ -626,31 +662,10 @@
             this.txtstyle.TarBrand = null;
             this.txtstyle.TarSeason = null;
             // 
-            // checkByCPU
-            // 
-            this.checkByCPU.AutoSize = true;
-            this.checkByCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkByCPU.Location = new System.Drawing.Point(271, 516);
-            this.checkByCPU.Name = "checkByCPU";
-            this.checkByCPU.Size = new System.Drawing.Size(75, 21);
-            this.checkByCPU.TabIndex = 116;
-            this.checkByCPU.Text = "By CPU";
-            this.checkByCPU.UseVisualStyleBackColor = true;
-            // 
-            // chkIncludeCancelOrder
-            // 
-            this.chkIncludeCancelOrder.AutoSize = true;
-            this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIncludeCancelOrder.Location = new System.Drawing.Point(13, 626);
-            this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
-            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
-            this.chkIncludeCancelOrder.TabIndex = 129;
-            this.chkIncludeCancelOrder.Text = "Include Cancel order";
-            this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
-            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(587, 682);
+            this.Controls.Add(this.chkPrintingDetail);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.checkByCPU);
             this.Controls.Add(this.txtSp2);
@@ -760,6 +775,7 @@
             this.Controls.SetChildIndex(this.txtSp2, 0);
             this.Controls.SetChildIndex(this.checkByCPU, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.chkPrintingDetail, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -815,5 +831,6 @@
         private Win.UI.TextBox txtSp2;
         private Win.UI.CheckBox checkByCPU;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Win.UI.CheckBox chkPrintingDetail;
     }
 }
