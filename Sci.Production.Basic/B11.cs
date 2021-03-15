@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Basic
 {
@@ -20,6 +21,7 @@ namespace Sci.Production.Basic
         private string oldStampComb;
         private string oldStickerComb;
         private string oldStickerCombMix;
+        private DataRow OriCurrentMaintain;
 
         /// <summary>
         /// B11
@@ -97,7 +99,51 @@ AND Ukey = '{this.CurrentMaintain["StampCombinationUkey"]}'
 AND Category = 'HTML'
 AND Junk = 0
 ");
+
             this.oldStampComb = this.txtStampComb.Text;
+
+            DataTable dataTable = new DataTable();
+
+            dataTable.ColumnsStringAdd("BrandID");
+            dataTable.ColumnsStringAdd("ID");
+            dataTable.ColumnsIntAdd("StickerCombinationUkey");
+            dataTable.ColumnsIntAdd("StickerCombinationUkey_MixPack");
+            dataTable.ColumnsIntAdd("StampCombinationUkey");
+            this.OriCurrentMaintain = dataTable.NewRow();
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                this.OriCurrentMaintain["ID"] = this.CurrentMaintain["ID"];
+                this.OriCurrentMaintain["BrandID"] = this.CurrentMaintain["BrandID"];
+                this.OriCurrentMaintain["StickerCombinationUkey"] = this.CurrentMaintain["StickerCombinationUkey"];
+                this.OriCurrentMaintain["StickerCombinationUkey_MixPack"] = this.CurrentMaintain["StickerCombinationUkey_MixPack"];
+                this.OriCurrentMaintain["StampCombinationUkey"] = this.CurrentMaintain["StampCombinationUkey"];
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            string cmd = "select * from MailTo where ID='102' AND ToAddress != '' AND ToAddress IS NOT NULL";
+
+            if (MyUtility.Check.Seek(cmd))
+            {
+                if (this.CurrentMaintain["ID"].ToString() != this.OriCurrentMaintain["ID"].ToString() ||
+                        this.CurrentMaintain["BrandID"].ToString() != this.OriCurrentMaintain["BrandID"].ToString() ||
+                   MyUtility.Convert.GetInt(this.CurrentMaintain["StickerCombinationUkey"]) != MyUtility.Convert.GetInt(this.OriCurrentMaintain["StickerCombinationUkey"]) ||
+                   MyUtility.Convert.GetInt(this.CurrentMaintain["StickerCombinationUkey_MixPack"]) != MyUtility.Convert.GetInt(this.OriCurrentMaintain["StickerCombinationUkey_MixPack"]) ||
+                   MyUtility.Convert.GetInt(this.CurrentMaintain["StampCombinationUkey"]) != MyUtility.Convert.GetInt(this.OriCurrentMaintain["StampCombinationUkey"]))
+                {
+                    Prgs.CustCD_RunningChange(
+                         this.CurrentMaintain["ID"].ToString(),
+                         this.CurrentMaintain["BrandID"].ToString(),
+                         MyUtility.Convert.GetLong(this.CurrentMaintain["stickerCombinationUkey"]),
+                         MyUtility.Convert.GetLong(this.CurrentMaintain["stickerCombinationUkey_MixPack"]),
+                         MyUtility.Convert.GetLong(this.CurrentMaintain["stampCombinationUkey"]));
+                }
+            }
+
+            return base.ClickSaveBefore();
         }
 
         private void BtnShippingMark_Click(object sender, EventArgs e)

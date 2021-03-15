@@ -77,7 +77,7 @@ SELECT pd.OrderID
     , b.SCICtnNo
     , b.FileName
     , [HTMLFile] = IIF(b.FileName = '' ,0 , 1)
-    , [ShippingMark]=IIF(b.Image IS NULL , 0 , 1 )
+    , [ShippingMark]=Cast( IIF(b.Image IS NULL , 0 , 1 ) as bit)
     , b.ShippingMarkCombinationUkey
     , b.ShippingMarkTypeUkey
     , b.Side
@@ -89,6 +89,9 @@ SELECT pd.OrderID
     , b.FromBottom
     , b.Width
     , b.Length
+    , b.CtnHeight
+    , b.IsOverCtnHt
+    , b.NotAutomate
     ,local_file_type=''
     ,FileSourcePath=''
     ,FileAction=''
@@ -154,6 +157,9 @@ ORDER BY pd.SortCTNStartNo
             .Numeric("FromBottom", header: "From Bottom (mm)", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Width", header: "Width", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Length", header: "Length", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("CtnHeight", header: "Carton Height", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .CheckBox("IsOverCtnHt", header: "Is Over Carton Height", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
+            .CheckBox("NotAutomate", header: "Not to Automate", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("ShippingMark", header: "Shipping Mark", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .CheckBox("HTMLFile", header: "HTML File", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             .Button("Upload", null, header: string.Empty, width: Widths.AnsiChars(5), onclick: this.BtnUpload)
@@ -327,13 +333,19 @@ ORDER BY pd.SortCTNStartNo
 
         private void BtnDelete(object sender, EventArgs e)
         {
-            if ((!this.EditMode && !MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"])) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            if (!MyUtility.Convert.GetBool(this.CurrentDetailData["ShippingMark"]) || MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) == 0)
             {
                 // MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkPicUkey"]) = 0，表示為新增
                 if (this.readToSave.Any(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
                                             && x.ShippingMarkPicUkey == 0))
                 {
+
                     this.readToSave.RemoveAll(x => x.SCICtnNo == MyUtility.Convert.GetString(this.CurrentDetailData["SCICtnNo"])
                                             && x.ShippingMarkTypeUkey == MyUtility.Convert.GetLong(this.CurrentDetailData["ShippingMarkTypeUkey"])
                                             && x.ShippingMarkPicUkey == 0);
@@ -1256,6 +1268,9 @@ SELECT DISTINCT
 	,b.IsHorizontal
 	,b.FromRight
 	,b.FromBottom
+	,a.CtnHeight
+	,b.IsOverCtnHt
+	,b.NotAutomate
 	,c.Width
 	,c.Length
 	,[Image]=NULL
@@ -1339,6 +1354,9 @@ SELECT DISTINCT
 	,b.IsHorizontal
 	,b.FromRight
 	,b.FromBottom
+	,a.CtnHeight
+	,b.IsOverCtnHt
+	,b.NotAutomate
 	,c.Width
 	,c.Length
 	,[Image]=NULL
