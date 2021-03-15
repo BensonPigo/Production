@@ -4375,9 +4375,6 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
                 return;
             }
 
-            List<string> totalFileList = new List<string>();
-            List<string> excelFiles = new List<string>();
-
             // 附件報表處理
             DataTable poDatatable = datas[0];
             DataTable sheetData = datas[1];
@@ -4484,7 +4481,6 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
 
             #region Save Excel
             string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
-            excelFiles.Add(excelFile);
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(excelFile);
             workbook.Close();
@@ -4493,7 +4489,7 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
 
             #endregion
 
-            Send_RunningChange_Mail(changeType, excelFiles);
+            Send_RunningChange_Mail(changeType, excelFile);
         }
 
         /// <summary>
@@ -4509,9 +4505,6 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             {
                 return;
             }
-
-            List<string> totalFileList = new List<string>();
-            List<string> excelFiles = new List<string>();
 
             // 附件報表處理
             DataTable poDatatable = datas[0];
@@ -4614,21 +4607,20 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
 
             #region Save Excel
             string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
-            excelFiles.Add(excelFile);
             xl.BoOpenFile = false;
             xl.Save(excelFile);
             xl.FinishSave();
             #endregion
 
-            Send_RunningChange_Mail(changeType, excelFiles);
+            Send_RunningChange_Mail(changeType, excelFile);
         }
 
         /// <summary>
         /// 寄送Running Change信件
         /// </summary>
         /// <param name="changeType">Sticker 或 Stamp</param>
-        /// <param name="totalFileList">附件路徑檔</param>
-        public static void Send_RunningChange_Mail(List<string> changeType, List<string> totalFileList)
+        /// <param name="filePath">附件路徑檔</param>
+        public static void Send_RunningChange_Mail(List<string> changeType, string filePath)
         {
             DataTable mailToInfo;
             string sqlcmd = $@"SELECT * FROM MailTo WHERE ID='102' AND ToAddress != '' ";
@@ -4636,77 +4628,21 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
 
             string userEmail = MyUtility.GetValue.Lookup($"select EMail from Pass1 where id='{Sci.Env.User.UserID}'");
             string toAddress = mailToInfo.Rows[0]["ToAddress"].ToString();
-            string cCAddress = mailToInfo.Rows[0]["CcAddress"].ToString() + ";" + userEmail;
+            string cCAddress = userEmail + ";" + mailToInfo.Rows[0]["CcAddress"].ToString();
             string subject = mailToInfo.Rows[0]["Subject"].ToString();
             string content = mailToInfo.Rows[0]["Content"].ToString().Replace("{0}", changeType.JoinToString(" & "));
-            string mailServer = ConfigurationManager.AppSettings["mailserver_ip"];
-            string eMailID = ConfigurationManager.AppSettings["mailserver_account"];
-            string eMailPwd = ConfigurationManager.AppSettings["mailserver_password"];
-            ushort? smtpPort = MyUtility.Check.Empty(ConfigurationManager.AppSettings["mailserver_port"]) ? null : (ushort?)Convert.ToInt32(ConfigurationManager.AppSettings["mailserver_port"]); //25;
-            string sendFrom = "foxpro@sportscity.com.tw";
 
-            Sci.DB.TransferPms transferPMS = new Sci.DB.TransferPms();
-            transferPMS.SetSMTP(mailServer, smtpPort, eMailID, eMailPwd);
+            var email = new MailTo(
+                Env.Cfg.MailFrom,
+                toAddress,
+                cCAddress,
+                subject,
+                filePath,
+                content,
+                true,
+                true);
 
-            if (!MyUtility.Check.Empty(toAddress))
-            {
-                var mail = new MailMessage();
-
-                mail.IsBodyHtml = true;
-                mail.Subject = subject;
-
-                var altView = AlternateView.CreateAlternateViewFromString(
-                    content, null, System.Net.Mime.MediaTypeNames.Text.Html);
-
-                mail.AlternateViews.Add(altView);
-
-                foreach (var it in totalFileList)
-                {
-                    using (FileStream fileStream = new FileStream(
-                        it,
-                        FileMode.Open,
-                        FileAccess.Read,
-                        FileShare.ReadWrite))
-                    {
-                        try
-                        {
-                            var ms = new MemoryStream();
-                            fileStream.CopyTo(ms);
-                            fileStream.Flush();
-                            ms.Flush();
-                            ms.Position = 0;
-                            mail.Attachments.Add(new Attachment(ms, System.IO.Path.GetFileName(it)));
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-                }
-
-                foreach (var item in toAddress.Split(';'))
-                {
-                    if (!string.IsNullOrWhiteSpace(item))
-                    {
-                        mail.To.Add(item);
-                    }
-                }
-
-                foreach (var item in cCAddress.Split(';'))
-                {
-                    if (!string.IsNullOrWhiteSpace(item))
-                    {
-                        mail.CC.Add(item);
-                    }
-                }
-
-                mail.From = new MailAddress(sendFrom);
-
-                SmtpClient smtp = new SmtpClient(mailServer);
-                smtp.Credentials = new NetworkCredential(eMailID, eMailPwd); // 寄信帳密
-
-                smtp.Send(mail);
-            }
+            email.ShowDialog();
         }
 
         /// <summary>
