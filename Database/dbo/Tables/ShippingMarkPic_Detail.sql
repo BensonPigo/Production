@@ -16,6 +16,9 @@
 	[Length] [int] NOT NULL,
 	[DPI] INT NOT NULL DEFAULT 0, 
 	FilePath Varchar (150) NOT NULL CONSTRAINT [DF_ShippingMarkPic_Detail_FilePath]  DEFAULT(''),
+	CtnHeight numeric (8, 4) NOT NULL CONSTRAINT [DF_ShippingMarkPic_Detail_CtnHeight]  DEFAULT (0),
+	IsOverCtnHt bit NOT NULL CONSTRAINT [DF_ShippingMarkPic_Detail_IsOverCtnHt]  DEFAULT 0,
+	NotAutomate bit NOT NULL CONSTRAINT [DF_ShippingMarkPic_Detail_NotAutomate]  DEFAULT 0,
     CONSTRAINT [PK_ShippingMarkPic_Detail] PRIMARY KEY CLUSTERED 
 (
 	[ShippingMarkPicUkey] ASC,

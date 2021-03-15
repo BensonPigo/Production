@@ -7,6 +7,7 @@ using Sci.Data;
 using System.Data.SqlClient;
 using Sci.Win.Tools;
 using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Packing
 {
@@ -359,6 +360,195 @@ ORDER BY b.Seq
                 }
             }
 
+            #region Running Change資料準備
+            bool ischange = false;
+            string c = $@"select 1 
+from ShippingMarkCombination 
+where Ukey = {this.CurrentMaintain["Ukey"]} 
+AND IsDefault ={(MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) ? "1" : "0")} 
+";
+
+            string newPIC = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+";
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) && MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC" && !MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+            {
+                newPIC = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+            }
+
+            string newPIC_Mix = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 1
+";
+
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) && MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC" && MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+            {
+                newPIC_Mix = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+            }
+
+            string newHtml = $@"
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='HTML'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+";
+
+            if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsDefault"]) && MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "HTML" && MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+            {
+                newHtml = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+            }
+
+            // 找不到代表改變了
+            if (!MyUtility.Check.Seek(c))
+            {
+                // 因為沒有取消勾選IsDefault這件事，因此新資料直接取現在Ukey即可
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "PIC")
+                {
+                    if (!MyUtility.Convert.GetBool(this.CurrentMaintain["IsMixPack"]))
+                    {
+                        newPIC = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+                    }
+                    else
+                    {
+                        newPIC_Mix = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+                    }
+
+                    ischange = true;
+                }
+                else
+                {
+                    newHtml = "'" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]) + "'";
+                }
+
+                ischange = true;
+            }
+
+            c = $@"
+select [BrandID]='{this.CurrentMaintain["BrandID"]}'
+,[OriPIC] = (
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault = 1 
+	AND IsMixPack = 0
+)
+,[OriPIC_Mix] = (
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='PIC'
+	AND IsDefault =1 
+	AND IsMixPack = 1
+)
+,[OriHTML]=(
+	select ID 
+	from ShippingMarkCombination
+	WHERE BrandID= '{this.CurrentMaintain["BrandID"]}'
+	AND Category='HTML'
+	AND IsDefault =1 
+	AND IsMixPack = 0
+)
+,[NewPIC] = (
+    {newPIC}
+)
+,[NewPIC_Mix] = (
+    {newPIC_Mix}
+)
+,[NewHTML]=(
+    {newHtml}
+)
+
+";
+            DataTable defaultData;
+            DBProxy.Current.Select(null, c, out defaultData);
+
+            bool isDetailChange = false;
+
+            // 逐一判斷資料有無修改過
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                int ukey = MyUtility.Convert.GetInt(dr["ShippingMarkCombinationUkey"]);
+                int seq = MyUtility.Convert.GetInt(dr["Seq"]);
+                int shippingMarkTypeUkey = MyUtility.Convert.GetInt(dr["shippingMarkTypeUkey"]);
+                c = $@"
+
+----如果表身原本有資料，但現在的表身與之不同 > 表身有修改
+----如果表身原本沒資料，現在有資料 > 表身有修改
+
+IF EXISTS(  
+    select 1
+    from ShippingMarkCombination_Detail 
+    WHERE ShippingMarkCombinationUkey = {ukey}
+    AND Seq = {seq}
+    AND ShippingMarkTypeUkey = {shippingMarkTypeUkey}
+) AND
+NOT EXISTS(
+	select 1
+	from ShippingMarkCombination_Detail 
+	WHERE ShippingMarkCombinationUkey =  {ukey}
+)
+SELECT 1 
+
+
+IF NOT EXISTS(  
+    select 1
+    from ShippingMarkCombination_Detail 
+    WHERE ShippingMarkCombinationUkey = {ukey}
+    AND Seq = {seq}
+    AND ShippingMarkTypeUkey = {shippingMarkTypeUkey}
+) AND
+EXISTS(
+	select 1
+	from ShippingMarkCombination_Detail 
+	WHERE ShippingMarkCombinationUkey =  {ukey}
+)
+SELECT 1 
+
+";
+                if (MyUtility.Check.Seek(c))
+                {
+                    isDetailChange = true;
+                }
+
+                if (this.IsDetailInserting)
+                {
+                    isDetailChange = true;
+                }
+            }
+
+            // 清空表身
+            if (this.DetailDatas.Count == 0)
+            {
+                c = $@"
+select 1
+from ShippingMarkCombination_Detail 
+WHERE ShippingMarkCombinationUkey = {this.CurrentMaintain["Ukey"]}
+";
+                if (MyUtility.Check.Seek(c))
+                {
+                    isDetailChange = true;
+                }
+            }
+
+            DataTable currentDt = (DataTable)this.detailgridbs.DataSource;
+            if (currentDt.AsEnumerable().Where(o => o.RowState == DataRowState.Deleted).Any())
+            {
+                isDetailChange = true;
+            }
+            #endregion
+
             // Category為PIC
             if (this.CurrentMaintain["Category"].ToString() == "PIC")
             {
@@ -399,6 +589,7 @@ Please check to continue process.");
                                 this.ShowErr(r);
                                 return false;
                             }
+
                         }
                         else
                         {
@@ -473,6 +664,16 @@ Please check to continue process.");
                         MyUtility.Msg.InfoBox($"Stamp  : Brand {this.CurrentMaintain["BrandID"]} not yet set default, system will auto tick 'Is Default' for this Shipping Mark Combination.");
                         this.CurrentMaintain["IsDefault"] = true;
                     }
+                }
+            }
+
+            if (ischange || isDetailChange)
+            {
+                cmd = "select * from MailTo where ID='102' AND ToAddress != '' AND ToAddress IS NOT NULL";
+
+                if (MyUtility.Check.Seek(cmd))
+                {
+                    Prgs.ShippingMarkCombination_RunningChange(this.CurrentMaintain, this.DetailDatas.ToList(), isDetailChange, defaultData, this.IsDetailInserting);
                 }
             }
 
