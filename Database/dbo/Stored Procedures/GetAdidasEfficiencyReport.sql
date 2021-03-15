@@ -5,11 +5,22 @@
 	@FactoryID as varchar(8) = '',
 	@CDCode as varchar(6) = '',
 	@Shift as varchar(1) = '',
-	@BrandID as varchar(8) = '',
+	@BrandID as varchar(500) = '',
 	@IsSintexEffReportCompare as bit = 0
 AS
 BEGIN
 	declare @sql as varchar(max) = ''
+
+	----將BrandID拆解重新組合
+	declare @BrandIDs as varchar(550)  = (
+		SELECT STUFF((
+		SELECT  ',' + Data
+		FROM dbo.SplitString(@BrandID,',') 
+		FOR XML PATH(''))
+		,1,1,'')
+	)
+
+	SET @BrandIDs = '''' +  REPLACE( @BrandIDs,',',''',''') + ''''
 
 	if @OutPutDateS = null or @OutPutDateE = null
 	begin
@@ -95,7 +106,6 @@ Begin
 		and s.Team = i.Team 
 	)Inspection
 	Where  s.Outputdate between ''' + FORMAT(@OutPutDateS, 'yyyyMMdd') + ''' and  ''' + FORMAT(@OutPutDateE, 'yyyyMMdd') + '''
-	and o.BrandID in (''Adidas'', ''Reebok'') 
 	and o.category in (''B'', ''S'') 
 	and f.IsSampleRoom = 0
 	and not (sd.WorkHour = 0 and sd.QAQty = 0)
@@ -127,10 +137,10 @@ Begin
 	and s.SHIFT = ''' + @Shift + '''' 
 	End 
 
-	if @BrandID <> ''
+	if @BrandIDs <> ''
 	Begin
 		set @sql = @sql + '
-	and o.BrandID = ''' + @BrandID + '''' 
+	and o.BrandID IN ( '+ @BrandIDs + ' )' 
 	End 
 
 	set @sql = @sql + '
@@ -205,7 +215,6 @@ from
 	Inner join [Production].[dbo].Factory f with (nolock) on o.FactoryID=f.ID
 
 	Where  s.Outputdate between ''' + FORMAT(@OutPutDateS, 'yyyyMMdd') + ''' and  ''' + FORMAT(@OutPutDateE, 'yyyyMMdd') + '''
-	and o.BrandID in (''Adidas'', ''Reebok'') 
 	and o.category in (''B'', ''S'') 
 	and f.IsSampleRoom = 0
 	and not (sd.WorkHour = 0 and sd.QAQty = 0)
@@ -237,10 +246,10 @@ from
 	and s.SHIFT = ''' + @Shift + '''' 
 	End 
 
-	if @BrandID <> ''
+	if @BrandIDs <> ''
 	Begin
 		set @sql = @sql + '
-	and o.BrandID = ''' + @BrandID + '''' 
+	and o.BrandID IN ( '+ @BrandIDs + ' )' 
 	End 
 	
 	set @sql = @sql + '
