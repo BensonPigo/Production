@@ -1647,7 +1647,7 @@ SELECT distinct
 	,PrintingLT = cast(plt.LeadTime + plt.AddLeadTime as float)
 into #tmp2
 FROM Order_Artwork oa
-outer apply(select SmallLogo = iif(oa.Width >= (select SmallLogoCM from system), 0, 1) )s
+outer apply(select SmallLogo = iif(oa.Width >= (select SmallLogoCM from system) or oa.Length >= (select SmallLogoCM from system), 0, 1) )s
 inner join orders o on o.id = oa.id
 outer apply(select tmpRTL = IIF(o.Cpu = 0, 0, s.SewlineAvgCPU  / o.Cpu)  from System s)tr
 outer apply(select RTLQty = iif(o.Qty < tmpRTL, o.Qty, tmpRTL))r
