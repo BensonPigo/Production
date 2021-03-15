@@ -1,4 +1,5 @@
 ﻿using Ict;
+using PostJobLog;
 using Sci;
 using Sci.Data;
 using System;
@@ -24,7 +25,8 @@ namespace AdidasEfficiencyReport
         private string eMailPwd = "orpxof";
         private string[] mailTO = ConfigurationManager.AppSettings["MailList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string[] mailTOCC = ConfigurationManager.AppSettings["MailListCC"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-        private string[] settingFactoryList = ConfigurationManager.AppSettings["SettingFactoryList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries); 
+        private string[] settingFactoryList = ConfigurationManager.AppSettings["SettingFactoryList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+        private DateTime? StartTime, EndTime;
 
         bool isAuto = false;
         private List<string> factorys = new List<string>();
@@ -53,18 +55,19 @@ namespace AdidasEfficiencyReport
             this.EditMode = true;
             bool bolSintexEffReportCompare = false;
             Ict.Logs.APP.LogInfo("AdidasEfficiencyReport Start IsAuto : " + isAuto.ToString());
+            StartTime = DateTime.Now;
 
             /*
-             * 每週五：產生本週Output Date週一~Output Date周三的資料
-             * 每週二：產生上週Output Date週四~Output Date周六的資料  + 當年度報表
+             * 每週二 ~ 每周四：產生上週Output Date週四~Output Date周六的資料  + 當年度報表
+             * 其他：產生本週Output Date週一~Output Date周三的資料
              */
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Tuesday)
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Tuesday || DateTime.Now.DayOfWeek == DayOfWeek.Wednesday || DateTime.Now.DayOfWeek == DayOfWeek.Thursday)
             {
                 this.OutputDateS = DateTime.Now.AddDays(-5);
                 this.OutputDateE = DateTime.Now.AddDays(-3);
                 bolSintexEffReportCompare = true;
             }
-            else if(DateTime.Now.DayOfWeek == DayOfWeek.Friday)
+            else
             {
                 this.OutputDateS = DateTime.Now.AddDays(-4);
                 this.OutputDateE = DateTime.Now.AddDays(-2);
@@ -81,6 +84,7 @@ namespace AdidasEfficiencyReport
                 if (!result)
                 {
                     Ict.Logs.APP.LogInfo("Query PMSDB Error : " + result.ToString());
+                    this.writeJobLog(false, result.ToString());
                     return;
                 }
 
@@ -88,6 +92,7 @@ namespace AdidasEfficiencyReport
                 if (!result)
                 {
                     Ict.Logs.APP.LogInfo("Query Error : " + result.ToString());
+                    this.writeJobLog(false, result.ToString());
                     return;
                 }
 
@@ -97,6 +102,7 @@ namespace AdidasEfficiencyReport
                     if (!result)
                     {
                         Ict.Logs.APP.LogInfo("Query Error : " + result.ToString());
+                        this.writeJobLog(false, result.ToString());
                         return;
                     }
                 }
@@ -108,7 +114,7 @@ namespace AdidasEfficiencyReport
                 this.SendMail(files);
                 // SendMail & Create Excel
                 //this.CreateXLTandSend();
-
+                this.writeJobLog(true, "Adidas Efficiency Report is complete");
                 return;
             }
         }
@@ -136,6 +142,7 @@ namespace AdidasEfficiencyReport
             if (!result)
             {
                 Ict.Logs.APP.LogInfo("Query Error : " + result.ToString());
+                this.writeJobLog(false, result.ToString());
                 return;
             }
 
@@ -145,6 +152,7 @@ namespace AdidasEfficiencyReport
                 if (!result)
                 {
                     Ict.Logs.APP.LogInfo("Query Error : " + result.ToString());
+                    this.writeJobLog(false, result.ToString());
                     return;
                 }
             }
@@ -154,6 +162,7 @@ namespace AdidasEfficiencyReport
             List<string> files = this.CreateXML(dataTables);
 
             this.SendMail(files);
+            this.writeJobLog(true, "Adidas Efficiency Report is complete");
         }
 
         private DualResult QueryPMSDB()
@@ -206,10 +215,20 @@ having count(*) = 2", sqlwhere);
                 return result;
             }
 
-            result = new DualResult(false);
+            List<string> RestoreDB = dt.AsEnumerable().Select(x => x["Region"].ToString()).Distinct().ToList();
+            string strRestorDB = string.Empty;
+            if (RestoreDB.Any())
+            {
+                strRestorDB = string.Join(",", RestoreDB);
+            }
+
             if (dt.Rows.Count == newfactoryList.Count)
             {
                 result = new DualResult(true);
+            }
+            else
+            {
+                result = new DualResult(false, $@"PMS資料尚未還原到台北 , RestoreDB :{strRestorDB} , Checked Fty :{sqlwhere}");
             }
 
             return result;
@@ -851,6 +870,33 @@ outer apply (
             }
 
             return rtnVal;
+        }
+
+        private void writeJobLog(bool isSucceed, string desc)
+        {
+            EndTime = DateTime.Now;
+
+            this.CallJobLogApi("PMS Adidas Efficiency Report", desc, ((DateTime)StartTime).ToString("yyyyMMdd HH:mm:ss"), ((DateTime)EndTime).ToString("yyyyMMdd HH:mm:ss"), isTest: false, isSucceed);
+        }
+
+        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
+        {
+            JobLog jobLog = new JobLog()
+            {
+                GroupID = "P",
+                SystemID = "PMS",
+                Region = "TPE",
+                MDivisionID = "TPE",
+                OperationName = subject,
+                StartTime = startDate,
+                EndTime = endDate,
+                Description = desc,
+                FileName = new List<string>(),
+                FilePath = string.Empty,
+                Succeeded = succeeded
+            };
+            CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
+            callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
         }
     }
 }
