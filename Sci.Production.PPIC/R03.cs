@@ -1643,7 +1643,7 @@ where exists (select id from OrderID where ot.ID = OrderID.ID )");
                     string sqlprintingDetail = $@"
 SELECT distinct
 	oa.[ID]
-	,[InkTypecolorsize] = concat(plt.InkType,'/',oa.Colors,' ','/',IIF(s.SmallLogo = 1,'Small logo','Big logo'))
+	,[InkTypecolorsize] = concat(oa.InkType,'/',oa.Colors,' ','/',IIF(s.SmallLogo = 1,'Small logo','Big logo'))
 	,PrintingLT = cast(plt.LeadTime + plt.AddLeadTime as float)
 into #tmp2
 FROM Order_Artwork oa
