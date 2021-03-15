@@ -70,7 +70,7 @@ namespace Sci.Production.Automation
         {
             inventorySpreadingSchedule = new InventorySpreadingSchedule()
             {
-                Inventory = new List<InventoryItem>()
+                Inventory = new List<InventoryItem>(),
             };
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
