@@ -28,11 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.label_TotalQty = new Sci.Win.UI.Label();
@@ -403,14 +398,6 @@
             this.gridPattern.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridPattern.Location = new System.Drawing.Point(0, 0);
             this.gridPattern.Name = "gridPattern";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridPattern.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridPattern.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridPattern.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPattern.RowTemplate.Height = 24;
@@ -419,7 +406,7 @@
             this.gridPattern.Size = new System.Drawing.Size(514, 254);
             this.gridPattern.TabIndex = 79;
             this.gridPattern.TabStop = false;
-            this.gridPattern.SelectionChanged += new System.EventHandler(this.GridCutpart_SelectionChanged);
+            this.gridPattern.SelectionChanged += new System.EventHandler(this.GridPattern_SelectionChanged);
             // 
             // art_contextMenuStrip
             // 
@@ -427,19 +414,19 @@
             this.insertIntoRecordToolStripMenuItem,
             this.deleteRecordToolStripMenuItem});
             this.art_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.art_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
+            this.art_contextMenuStrip.Size = new System.Drawing.Size(174, 48);
             // 
             // insertIntoRecordToolStripMenuItem
             // 
             this.insertIntoRecordToolStripMenuItem.Name = "insertIntoRecordToolStripMenuItem";
-            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.insertIntoRecordToolStripMenuItem.Text = "Insert into Record";
             this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertIntoRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
-            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
             this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
@@ -458,14 +445,6 @@
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridArticleSize.Location = new System.Drawing.Point(0, 0);
             this.gridArticleSize.Name = "gridArticleSize";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
@@ -492,14 +471,6 @@
             this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridAllPart.Location = new System.Drawing.Point(0, 0);
             this.gridAllPart.Name = "gridAllPart";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAllPart.RowTemplate.Height = 24;
@@ -515,19 +486,19 @@
             this.allpart_insert,
             this.allpart_delete});
             this.allpart_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
+            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(174, 48);
             // 
             // allpart_insert
             // 
             this.allpart_insert.Name = "allpart_insert";
-            this.allpart_insert.Size = new System.Drawing.Size(175, 22);
+            this.allpart_insert.Size = new System.Drawing.Size(173, 22);
             this.allpart_insert.Text = "Insert into Record";
             this.allpart_insert.Click += new System.EventHandler(this.Allpart_insert_Click);
             // 
             // allpart_delete
             // 
             this.allpart_delete.Name = "allpart_delete";
-            this.allpart_delete.Size = new System.Drawing.Size(175, 22);
+            this.allpart_delete.Size = new System.Drawing.Size(173, 22);
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
@@ -546,14 +517,6 @@
             this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQty.Location = new System.Drawing.Point(0, 0);
             this.gridQty.Name = "gridQty";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQty.RowTemplate.Height = 24;
@@ -578,14 +541,6 @@
             this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutRef.Location = new System.Drawing.Point(0, 0);
             this.gridCutRef.Name = "gridCutRef";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;

@@ -220,7 +220,7 @@ order by ArticleGroup", patternukey);
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.chkNoneShellNoCreateAllParts.ReadOnly = !this.isShell;
+            this.chkNoneShellNoCreateAllParts.ReadOnly = this.isShell;
             if (MyUtility.Check.Seek("select AutoGenerateByTone,IsCombineSubProcess,IsNoneShellNoCreateAllParts from SYSTEM", out DataRow sysDr))
             {
                 this.chkCombineSubprocess.Checked = MyUtility.Convert.GetBool(sysDr["IsCombineSubProcess"]);
@@ -554,6 +554,7 @@ drop table #tmp,#tmp2";
                     dr["parts"] = 1;
                     dr.EndEdit();
                     this.SynchronizeMain(0, "PatternCode");
+                    this.CombineSubprocessIspair();
                     this.CalculateParts();
                     Prgs.CheckNotMain(dr, this.GarmentTb);
                 }
@@ -600,6 +601,7 @@ drop table #tmp,#tmp2";
 
                 dr.EndEdit();
                 this.SynchronizeMain(0, "PatternCode");
+                this.CombineSubprocessIspair();
                 Prgs.CheckNotMain(dr, this.GarmentTb);
             };
 
@@ -1109,6 +1111,8 @@ drop table #tmp,#tmp2";
                         chdr.Delete();
                     }
                 }
+
+                this.CombineSubprocessIspair();
             }
             #endregion
             this.CalculateParts();
@@ -2016,8 +2020,7 @@ drop table #tmp,#tmp2";
             this.button_LefttoRight.Enabled = !this.chkCombineSubprocess.Checked;
             this.grid_allpart.Columns["Annotation"].Visible = !this.chkCombineSubprocess.Checked;
             this.gridPattern.Columns["isPair"].Visible = !this.chkCombineSubprocess.Checked;
-            this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
-
+            this.ChangeRightLabel();
             this.ChangeDefault();
             this.DeleteAllpartsDatas();
         }
@@ -2026,6 +2029,19 @@ drop table #tmp,#tmp2";
         {
             this.ChangeDefault();
             this.DeleteAllpartsDatas();
+        }
+
+        private void ChangeRightLabel()
+        {
+            if (this.gridPattern.CurrentDataRow == null)
+            {
+                this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
+            }
+            else
+            {
+                this.label5.Text = this.chkCombineSubprocess.Checked && MyUtility.Convert.GetString(this.gridPattern.CurrentDataRow["PatternCode"]) != "ALLPARTS" ?
+                    "Combine Subprocess Detail" : "All Parts Detail";
+            }
         }
 
         private void DeleteAllpartsDatas()
@@ -2053,7 +2069,6 @@ drop table #tmp,#tmp2";
             else
             {
                 pdt = xdt.Select($"isMain = 1").TryCopyToDataTable(this.patternTb);
-                pdt.AsEnumerable().ToList().ForEach(f => f["isPair"] = false);
                 pdt.ImportRow(xdt.Select($"PatternCode = 'ALLPARTS'").FirstOrDefault());
 
                 DataTable psdt = xdt.Select($"PatternCode <> 'ALLPARTS'").TryCopyToDataTable(this.patternTb);
@@ -2062,11 +2077,13 @@ drop table #tmp,#tmp2";
 
             this.patternTb.Merge(pdt);
             this.allpartTb.Merge(adt);
+            this.CombineSubprocessIspair();
             this.CalculateParts();
         }
 
-        private void Grid_art_SelectionChanged(object sender, EventArgs e)
+        private void GridPattern_SelectionChanged(object sender, EventArgs e)
         {
+            this.ChangeRightLabel();
             this.allpartTb.DefaultView.RowFilter = string.Empty;
             if (this.gridPattern.CurrentDataRow == null || !this.chkCombineSubprocess.Checked)
             {
@@ -2077,6 +2094,14 @@ drop table #tmp,#tmp2";
             {
                 string filter = $"CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}";
                 this.allpartTb.DefaultView.RowFilter = filter;
+            }
+        }
+
+        private void CombineSubprocessIspair()
+        {
+            if (this.chkCombineSubprocess.Checked)
+            {
+                this.patternTb.AsEnumerable().ToList().ForEach(f => f["isPair"] = false);
             }
         }
     }

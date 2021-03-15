@@ -361,6 +361,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 dr["Parts"] = 1;
                 dr.EndEdit();
                 this.SynchronizeMain(0, "PatternCode");
+                this.CombineSubprocessIspair(MyUtility.Convert.GetLong(dr["ukey"]));
                 this.Calpart();
                 Prgs.CheckNotMain(dr, this.GarmentTb);
             };
@@ -397,6 +398,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
 
                 dr.EndEdit();
                 this.SynchronizeMain(0, "PatternCode");
+                this.CombineSubprocessIspair(MyUtility.Convert.GetLong(dr["ukey"]));
                 this.Calpart();
                 Prgs.CheckNotMain(dr, this.GarmentTb);
             };
@@ -1257,6 +1259,7 @@ and o.mDivisionid = '{this.keyWord}'
             }
 
             this.patternTb.Merge(dtp);
+            this.CombineSubprocessIspair(ukey);
         }
 
         private void RemoveFtyColumn(DataTable dt)
@@ -1561,7 +1564,7 @@ order by ArticleGroup";
             this.labelToalCutOutputValue.Text = this.gridCutRef.CurrentDataRow["TTLCutQty"].ToString();
             this.labelAccumulateQty.Text = this.gridCutRef.CurrentDataRow["CreatedBundleQty"].ToString();
             this.chkCombineSubprocess.Checked = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubProcess"]);
-            this.GridCutpart_SelectionChanged(null, null);
+            this.GridPattern_SelectionChanged(null, null);
             this.chkNoneShellNoCreateAllParts.Checked = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsNoneShellNoCreateAllParts"]);
             this.chkNoneShellNoCreateAllParts.ReadOnly = MyUtility.Convert.GetString(this.gridCutRef.CurrentDataRow["FabricKindID"]) == "1";
             this.ChkNoneShellNoCreateAllParts_CheckedChanged(null, null);
@@ -1576,8 +1579,9 @@ order by ArticleGroup";
             this.ChangeRowGridQty();
         }
 
-        private void GridCutpart_SelectionChanged(object sender, EventArgs e)
+        private void GridPattern_SelectionChanged(object sender, EventArgs e)
         {
+            this.ChangeRightLabel();
             if (this.gridPattern.CurrentDataRow == null)
             {
                 return;
@@ -1922,15 +1926,8 @@ order by ArticleGroup";
                     }
                 }
 
-                // 維持 ALLPARTS 在最後一列, 以便建立時順序
-                var drs = this.patternTb.AsEnumerable()
-                    .Where(w => w.RowState != DataRowState.Deleted
-                    && MyUtility.Convert.GetLong(w["ukey"]) == ukey
-                    && w["PatternCode"].ToString().Equals("ALLPARTS"));
-                DataTable cdt = drs.CopyToDataTable();
-                drs.Delete();
-                this.patternTb.Merge(cdt);
-                this.patternTb.AcceptChanges();
+                this.ReAddALLPARTS(ukey);
+                this.CombineSubprocessIspair(ukey);
             }
 
             this.Calpart();
@@ -1965,6 +1962,17 @@ order by ArticleGroup";
 
             int ttlallpart = MyUtility.Convert.GetInt(this.patternTb.Compute("Sum(Parts)", filterUkey));
             this.ArticleSizeTb.Select(filterUkey).ToList().ForEach(r => r["TotalParts"] = ttlallpart);
+        }
+
+        private void ReAddALLPARTS(long ukey)
+        {
+            // 維持 ALLPARTS 在最後一列, 以便建立時順序
+            this.patternTb.AcceptChanges();
+            var drs = this.patternTb.Select($"Ukey = {ukey} and PatternCode = 'ALLPARTS'");
+            DataTable cdt = drs.TryCopyToDataTable(this.patternTb);
+            drs.Delete();
+            this.patternTb.Merge(cdt);
+            this.patternTb.AcceptChanges();
         }
 
         #region 右鍵 Menu 新增/刪除
@@ -2097,7 +2105,7 @@ order by ArticleGroup";
             this.btn_LefttoRight.Enabled = !this.chkCombineSubprocess.Checked;
             this.gridAllPart.Columns["Annotation"].Visible = !this.chkCombineSubprocess.Checked;
             this.gridPattern.Columns["IsPair"].Visible = !this.chkCombineSubprocess.Checked;
-            this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
+            this.ChangeRightLabel();
             if (this.gridCutRef.CurrentDataRow == null)
             {
                 return;
@@ -2135,6 +2143,19 @@ order by ArticleGroup";
             this.GridAutoResizeColumns();
         }
 
+        private void ChangeRightLabel()
+        {
+            if (this.gridPattern.CurrentDataRow == null)
+            {
+                this.label5.Text = this.chkCombineSubprocess.Checked ? "Combine Subprocess Detail" : "All Parts Detail";
+            }
+            else
+            {
+                this.label5.Text = this.chkCombineSubprocess.Checked && MyUtility.Convert.GetString(this.gridPattern.CurrentDataRow["PatternCode"]) != "ALLPARTS" ?
+                    "Combine Subprocess Detail" : "All Parts Detail";
+            }
+        }
+
         private void DeleteAllpartsDatas()
         {
             if (MyUtility.Convert.GetString(this.gridCutRef.CurrentDataRow["FabricKind"]) != "1" && this.chkNoneShellNoCreateAllParts.Checked)
@@ -2168,14 +2189,13 @@ order by ArticleGroup";
             DataTable adt = this.allpartTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.allpartTb);
             DataTable xdt = this.patternTbOri.Select($"ukey = {ukey}").TryCopyToDataTable(this.patternTb);
 
-            if (!this.chkCombineSubprocess.Checked)
+            if (!MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubprocess"]))
             {
                 pdt = xdt;
             }
             else
             {
                 pdt = xdt.Select($"isMain = 1").TryCopyToDataTable(this.patternTb);
-                pdt.AsEnumerable().ToList().ForEach(f => f["isPair"] = false);
                 pdt.ImportRow(xdt.Select($"PatternCode = 'ALLPARTS'").FirstOrDefault());
 
                 DataTable psdt = xdt.Select($"PatternCode <> 'ALLPARTS'").TryCopyToDataTable(this.patternTb);
@@ -2184,8 +2204,18 @@ order by ArticleGroup";
 
             this.patternTb.Merge(pdt);
             this.allpartTb.Merge(adt);
+            this.CombineSubprocessIspair(ukey);
+            this.ReAddALLPARTS(ukey);
             this.CheckwithOri();
             this.Calpart();
+        }
+
+        private void CombineSubprocessIspair(long ukey)
+        {
+            if (MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubprocess"]))
+            {
+                this.patternTb.Select($@"Ukey = {ukey}").ToList().ForEach(f => f["isPair"] = false);
+            }
         }
 
         private void BtnGarmentList_Click(object sender, EventArgs e)

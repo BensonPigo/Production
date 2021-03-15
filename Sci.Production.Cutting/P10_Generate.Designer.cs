@@ -139,7 +139,7 @@
             this.gridPattern.Size = new System.Drawing.Size(496, 234);
             this.gridPattern.TabIndex = 1;
             this.gridPattern.TabStop = false;
-            this.gridPattern.SelectionChanged += new System.EventHandler(this.Grid_art_SelectionChanged);
+            this.gridPattern.SelectionChanged += new System.EventHandler(this.GridPattern_SelectionChanged);
             // 
             // art_contextMenuStrip
             // 
