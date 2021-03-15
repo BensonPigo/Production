@@ -623,7 +623,9 @@ where o.ID = @orderid";
             // GetID
             if (this.IsDetailInserting)
             {
-                string id = MyUtility.GetValue.GetID(MyUtility.GetValue.Lookup("FtyGroup", this.CurrentMaintain["OrderID"].ToString(), "Orders", "ID") + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
+                string cmd = $@"select TOP 1 f.MDivisionID from Orders a  LEFT join Factory f on a.FactoryID = f.ID  where a.id='{this.CurrentMaintain["OrderID"]}'";
+                string mDivisionID = MyUtility.GetValue.Lookup(cmd);
+                string id = MyUtility.GetValue.GetID(mDivisionID + "PG", "PackingGuide", DateTime.Today, 2, "Id", null);
                 if (MyUtility.Check.Empty(id))
                 {
                     MyUtility.Msg.WarningBox("GetID fail, please try again!");
