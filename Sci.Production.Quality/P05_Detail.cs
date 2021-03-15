@@ -889,10 +889,17 @@ and a.seq1=@seq1";
             newRow["Time"] = 0;
             newRow["TimeDisplay"] = string.Empty;
             timeDT.Rows.Add(newRow);
+
+            newRow = timeDT.NewRow();
+            newRow["Time"] = 4;
+            newRow["TimeDisplay"] = "4";
+            timeDT.Rows.Add(newRow);
+
             newRow = timeDT.NewRow();
             newRow["Time"] = 24;
             newRow["TimeDisplay"] = "24";
             timeDT.Rows.Add(newRow);
+
             newRow = timeDT.NewRow();
             newRow["Time"] = 48;
             newRow["TimeDisplay"] = "48";
