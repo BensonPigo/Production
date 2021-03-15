@@ -25,6 +25,7 @@ namespace PMS_ProductionKitsConfirm
         private string eMailPwd = "orpxof";
         private string[] mailTO = ConfigurationManager.AppSettings["MailList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string[] mailTOCC = ConfigurationManager.AppSettings["MailListCC"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+        private string[] MailList_ForTest = ConfigurationManager.AppSettings["MailList_ForTest"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string[] settingFactoryList = ConfigurationManager.AppSettings["SettingFactoryList"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
         private string isTest = ConfigurationManager.AppSettings["IsTest"].ToString();
 
@@ -63,25 +64,19 @@ namespace PMS_ProductionKitsConfirm
 
             this.GetMailSetting();
 
-            // PMSDB所有工廠當天還原都有成功再執行(PMS&MES都要檢查)，若沒有則不執行
-            if (isAuto)
+            Dictionary<string, DataTable> FtyDataTables = this.Query();
+
+            if (FtyDataTables == null)
             {
-                DualResult result = QueryPMSDB();
-                if (!result)
-                {
-                    Ict.Logs.APP.LogInfo("Query PMSDB Error : " + result.ToString());
-                    return;
-                }
-
-                Dictionary<string, DataTable> dataTables = this.Query();
-
-                List<string> files = this.CreateExcel(dataTables);
-
-                this.SendMail(files);
-
                 return;
             }
 
+            List<string> files = this.CreateExcel_OneSheet(FtyDataTables);
+
+            if (files.Count > 0)
+            {
+                this.SendMail(files);
+            }
         }
 
         private void BtnSubmit_Click(object sender, EventArgs e)
@@ -95,11 +90,19 @@ namespace PMS_ProductionKitsConfirm
 
             this.GetMailSetting();
 
-            Dictionary<string, DataTable> dataTables = this.Query();
+            Dictionary<string, DataTable> FtyDataTables = this.Query();
 
-            List<string> files = this.CreateExcel(dataTables);            
+            if (FtyDataTables == null)
+            {
+                return;
+            }
 
-            this.SendMail(files);
+            List<string> files = this.CreateExcel_OneSheet(FtyDataTables);
+
+            if (files.Count > 0)
+            {
+                this.SendMail(files);
+            }
 
         }
 
@@ -110,7 +113,14 @@ namespace PMS_ProductionKitsConfirm
 
             #region Sned Mail
             string subject = "Outstanding Production Kits Confirm " + this.SendDateS.ToString("yyyyMMdd") + " ~ " + this.SendDateE.ToString("yyyyMMdd");
-            string desc = "(**Please don't reply this mail. **)";
+            string desc = $@"
+Hi All FTY PPIC & Planning manager
+<br/><br/>
+Please help to check attached file if production kits receive or not and need FTY in charge use PMS PPIC=>P03 to confirm receive date within 2 days upon receiving.
+We would like to remind factory, confirm received date means confirm MR send document is correct and without lacking.
+<br/><br/>
+<hr/>
+";
             this.MailToHtml(subject, files, desc);
             #endregion
 
@@ -129,10 +139,15 @@ namespace PMS_ProductionKitsConfirm
                 message.To.Add(mail);
             }
 
+            // 若是測試信件，則寄給測試用收件人
             if (this.isTest == "true")
             {
                 message.To.Clear();
-                message.To.Add("benson.chung@sportscity.com.tw");
+
+                foreach (var mail in MailList_ForTest)
+                {
+                    message.To.Add(mail);
+                }
             }
 
             if (message.To.Count == 0)
@@ -241,6 +256,10 @@ having count(*) = 2";
             return result;
         }
 
+        /// <summary>
+        /// 取得資料： 廠區 → 對應的DataTable的Key Value pair型別
+        /// </summary>
+        /// <returns></returns>
         private Dictionary<string, DataTable> Query()
         {
             DualResult result = new DualResult(false);
@@ -294,6 +313,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                 result = DBProxy.Current.Select(conn, sqlCmd.ToString(), null, out DataTable dtTmp);
                 if (!result)
                 {
+                    this.CallJobLogApi("PMS_ProductionKitsConfirm - DB ereor", result.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
                     return null;
                 }
 
@@ -306,6 +326,11 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             return FtyData;
         }
 
+        /// <summary>
+        /// 產生Excel附件
+        /// </summary>
+        /// <param name="dataTables"></param>
+        /// <returns></returns>
         private List<string> CreateExcel(Dictionary<string, DataTable> dataTables)
         {
             List<string> files = new List<string>();
@@ -313,7 +338,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             {
                 Ict.Logs.APP.LogInfo("Create XLT Start - Detail");
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P03.xltx"); //預先開啟excel app
-                objApp.Visible = true;
+                objApp.Visible = false;
 
                 // 複製Sheet，由於本來就有一個Sheet，因此少複製一次
 
@@ -323,75 +348,26 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                     Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
                     Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[idx + 1];                    
 
-                    if (idx == dataTables.Count -1)
+                    if (idx < dataTables.Count -1)
                     {
+                        worksheet1.Copy(worksheet1);
                     }
 
-                    worksheet1.Copy(worksheetn);
                     string fty = FtyData.Key;
                     DataTable dt = FtyData.Value;
 
-                    worksheetn.Name = fty;
-
-                    Marshal.ReleaseComObject(worksheetn); // 釋放sheet
-                    idx++;
-                }
-
-                idx = 1;
-                foreach (var FtyData in dataTables)
-                {
-                    Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[idx];
-                    string fty = FtyData.Key;
-                    DataTable dt = FtyData.Value;
+                    worksheet1.Name = fty;
 
                     if (dt.Rows.Count > 0)
                     {
                         dt.Columns.Remove("Fty");
-                        MyUtility.Excel.CopyToXls(dt, null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, wSheet: worksheetn, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(dt, null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, wSheet: worksheet1, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
+                        worksheetn.Cells[1, 1] = $"(PMSDB_{fty}) P03. Production Kits confirm";
                     }
-
-                    worksheetn.Cells[1, 1] = $"(PMSDB_{fty}) P03. Production Kits confirm";
 
                     Marshal.ReleaseComObject(worksheetn); // 釋放sheet
                     idx++;
                 }
-
-                //for (int i = 0; i < this.factorys.Count - 1; i++)
-                //{
-                //    Microsoft.Office.Interop.Excel.Worksheet worksheet1 = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
-                //    Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1];
-                //    worksheet1.Copy(worksheetn);
-
-                //    string fty = this.factorys[i].Replace("PMSDB_", string.Empty);
-                //    var tmp = dataTables.Where(o => o.Rows.Count > 0).ToList();//.Where(dt => dt.AsEnumerable().Where(dr => MyUtility.Convert.GetString(dr["Fty"]) == fty).Any()).FirstOrDefault();
-                //    var ftyData = tmp.Where(dt => dt.AsEnumerable().Where(dr => MyUtility.Convert.GetString(dr["Fty"]) == fty).Any()).FirstOrDefault();
-
-                //    if (ftyData.Rows.Count > 0)
-                //    {
-                //        ftyData.Columns.Remove("Fty");
-                //    }
-
-                //    worksheetn.Name = fty;
-                //    MyUtility.Excel.CopyToXls(ftyData, null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, wSheet: worksheetn, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
-                //    worksheetn.Cells[1, 1] = $"(PMSDB_{fty}) P03. Production Kits confirm";
-
-                //    Marshal.ReleaseComObject(worksheetn); // 釋放sheet
-
-                //}
-
-
-                //for (int i = 0; i <= this.factorys.Count; i++)
-                //{
-                //    string fty = MyUtility.Convert.GetString(dataTables[i-1].Rows[0]["Fty"]);
-                //    dataTables[i - 1].Columns.Remove("Fty");
-
-                //    Microsoft.Office.Interop.Excel.Worksheet worksheetn = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i];
-                //    worksheetn.Name = fty;
-                //    MyUtility.Excel.CopyToXls(dataTables[i-1], null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, wSheet: worksheetn, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
-                //    worksheetn.Cells[1, 1] = $"(PMSDB_{fty}) P03. Production Kits confirm";
-
-                //    Marshal.ReleaseComObject(worksheetn); // 釋放sheet
-                //}
 
                 Microsoft.Office.Interop.Excel.Worksheet no1Sheet = (Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1];
                 no1Sheet.Activate();
@@ -417,11 +393,59 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             catch (Exception ex)
             {
                 Ict.Logs.APP.LogInfo("Create Excel Error : " + ex.ToString());
-                this.CallJobLogApi("PMS_ProductionKitsConfirm - Ereor", ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
-                return files;
+                this.CallJobLogApi("PMS_ProductionKitsConfirm -Create excel ereor", ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
+                return new List<string>();
             }
         }
 
+
+        /// <summary>
+        /// 產生Excel附件(所有工廠合併在一個Sheet)
+        /// </summary>
+        /// <param name="dataTables"></param>
+        /// <returns></returns>
+        private List<string> CreateExcel_OneSheet(Dictionary<string, DataTable> dataTables)
+        {
+            List<string> files = new List<string>();
+            try
+            {
+                Ict.Logs.APP.LogInfo("Create XLT Start - Detail");
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P03.xltx"); //預先開啟excel app
+                objApp.Visible = false;
+
+                DataTable final = dataTables.FirstOrDefault().Value.Clone();
+                final.Columns.Remove("Fty");
+                foreach (var keyValuePair in dataTables)
+                {
+                    keyValuePair.Value.Columns.Remove("Fty");
+                    final.Merge(keyValuePair.Value);
+                }
+                MyUtility.Excel.CopyToXls(final, null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
+
+                Ict.Logs.APP.LogInfo("Create XLT Start - Production Kits Confirm Report");
+
+                #region Save Excel
+                string excelFile = GetName("ProductionKitsConfirm");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(excelFile);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(workbook);
+                Marshal.ReleaseComObject(objApp);
+                #endregion
+
+                files.Add(excelFile);
+
+                return files;
+
+            }
+            catch (Exception ex)
+            {
+                Ict.Logs.APP.LogInfo("Create Excel Error : " + ex.ToString());
+                this.CallJobLogApi("PMS_ProductionKitsConfirm -Create excel ereor", ex.ToString(), DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), false, false);
+                return new List<string>();
+            }
+        }
 
         #region Call JobLog web api回傳執行結果
         private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
@@ -430,7 +454,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             {
                 GroupID = "P",
                 SystemID = "PMS",
-                Region = "",
+                Region = "TSR",
                 MDivisionID = string.Empty,
                 OperationName = subject,
                 StartTime = startDate,
@@ -487,15 +511,15 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
         private void GetFactoryList()
         {
             this.factorys.Clear();
-            if (this.chkPH1.Checked) factorys.Add("PMSDB_PH1");
-            if (this.chkPH2.Checked) factorys.Add("PMSDB_PH2");
-            if (this.chkESP.Checked) factorys.Add("PMSDB_ESP");
-            if (this.chkSNP.Checked) factorys.Add("PMSDB_SNP");
-            if (this.chkSPT.Checked) factorys.Add("PMSDB_SPT");
-            if (this.chkSPS.Checked) factorys.Add("PMSDB_SPS");
-            if (this.chkSPR.Checked) factorys.Add("PMSDB_SPR");
-            if (this.chkHXG.Checked) factorys.Add("PMSDB_HXG");
             if (this.chkHZG.Checked) factorys.Add("PMSDB_HZG");
+            if (this.chkHXG.Checked) factorys.Add("PMSDB_HXG");
+            if (this.chkSPR.Checked) factorys.Add("PMSDB_SPR");
+            if (this.chkSPS.Checked) factorys.Add("PMSDB_SPS");
+            if (this.chkSPT.Checked) factorys.Add("PMSDB_SPT");
+            if (this.chkSNP.Checked) factorys.Add("PMSDB_SNP");
+            if (this.chkESP.Checked) factorys.Add("PMSDB_ESP");
+            if (this.chkPH2.Checked) factorys.Add("PMSDB_PH2");
+            if (this.chkPH1.Checked) factorys.Add("PMSDB_PH1");
         }
     }
 }
