@@ -2212,7 +2212,7 @@ order by ArticleGroup";
 
         private void CombineSubprocessIspair(long ukey)
         {
-            if (MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsCombineSubprocess"]))
+            if (this.CutRefTb.Select($@"Ukey = {ukey}").Select(s => MyUtility.Convert.GetBool(s["IsCombineSubprocess"])).First())
             {
                 this.patternTb.Select($@"Ukey = {ukey}").ToList().ForEach(f => f["isPair"] = false);
             }
