@@ -280,9 +280,7 @@
     <Compile Include="P02_StandardQtyPlannedCuttingWIP.Designer.cs">
       <DependentUpon>P02_StandardQtyPlannedCuttingWIP.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_WKETA.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="P02_WKETA.cs" />
     <Compile Include="P02_WKETA.Designer.cs">
       <DependentUpon>P02_WKETA.cs</DependentUpon>
     </Compile>
@@ -467,6 +465,12 @@
     </Compile>
     <Compile Include="P21_QueryRevised.Designer.cs">
       <DependentUpon>P21_QueryRevised.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P31.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31.Designer.cs">
+      <DependentUpon>P31.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="B02.cs">
@@ -762,6 +766,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P21_QueryRevised.resx">
       <DependentUpon>P21_QueryRevised.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P31.resx">
+      <DependentUpon>P31.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

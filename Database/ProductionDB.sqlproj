@@ -2584,6 +2584,9 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\SpreadingSchedule_Detail.sql" />
+    <Build Include="dbo\Tables\SpreadingSchedule.sql" />
+    <Build Include="dbo\Functions\GetSpreadingSchedule.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
