@@ -1,24 +1,30 @@
 ﻿CREATE TABLE [dbo].[Order_Artwork] (
-    [ID]            VARCHAR (13)   CONSTRAINT [DF_Order_Artwork_ID] DEFAULT ('') NOT NULL,
-    [ArtworkTypeID] VARCHAR (20)   CONSTRAINT [DF_Order_Artwork_ArtworkTypeID] DEFAULT ('') NOT NULL,
-    [Article]       VARCHAR (8)    CONSTRAINT [DF_Order_Artwork_Article] DEFAULT ('') NOT NULL,
-    [PatternCode]   VARCHAR (20)   CONSTRAINT [DF_Order_Artwork_PatternCode] DEFAULT ('') NULL,
+    [ID]            VARCHAR (13)    CONSTRAINT [DF_Order_Artwork_ID] DEFAULT ('') NOT NULL,
+    [ArtworkTypeID] VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_ArtworkTypeID] DEFAULT ('') NOT NULL,
+    [Article]       VARCHAR (8)     CONSTRAINT [DF_Order_Artwork_Article] DEFAULT ('') NOT NULL,
+    [PatternCode]   VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_PatternCode] DEFAULT ('') NULL,
     [PatternDesc]   NVARCHAR (100)  CONSTRAINT [DF_Order_Artwork_PatternDesc] DEFAULT ('') NULL,
-    [ArtworkID]     VARCHAR (20)   CONSTRAINT [DF_Order_Artwork_ArtworkID] DEFAULT ('') NOT NULL,
-    [ArtworkName]   NVARCHAR (40)  CONSTRAINT [DF_Order_Artwork_ArtworkName] DEFAULT ('') NULL,
-    [Qty]           INT            CONSTRAINT [DF_Order_Artwork_Qty] DEFAULT ((0)) NULL,
-	[TMS]           INT            CONSTRAINT [DF_Order_Artwork_TMS] DEFAULT ((0)) NULL,
+    [ArtworkID]     VARCHAR (20)    CONSTRAINT [DF_Order_Artwork_ArtworkID] DEFAULT ('') NOT NULL,
+    [ArtworkName]   NVARCHAR (40)   CONSTRAINT [DF_Order_Artwork_ArtworkName] DEFAULT ('') NULL,
+    [Qty]           INT             CONSTRAINT [DF_Order_Artwork_Qty] DEFAULT ((0)) NULL,
+    [TMS]           INT             CONSTRAINT [DF_Order_Artwork_TMS] DEFAULT ((0)) NULL,
     [Price]         NUMERIC (16, 4) CONSTRAINT [DF_Order_Artwork_Price] DEFAULT ((0)) NULL,
-    [Cost]          NUMERIC (8, 4) CONSTRAINT [DF_Order_Artwork_Cost] DEFAULT ((0)) NULL,
-    [Remark]        NVARCHAR (100) CONSTRAINT [DF_Order_Artwork_Remark] DEFAULT ('') NULL,
-    [Ukey]          BIGINT         CONSTRAINT [DF_Order_Artwork_Ukey] DEFAULT ((0)) NOT NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Order_Artwork_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Order_Artwork_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME       NULL,
-    [PPU]           NUMERIC (8, 3)  NOT NULL DEFAULT (0) ,
+    [Cost]          NUMERIC (8, 4)  CONSTRAINT [DF_Order_Artwork_Cost] DEFAULT ((0)) NULL,
+    [Remark]        NVARCHAR (1000) CONSTRAINT [DF_Order_Artwork_Remark] DEFAULT ('') NULL,
+    [Ukey]          BIGINT          CONSTRAINT [DF_Order_Artwork_Ukey] DEFAULT ((0)) NOT NULL,
+    [AddName]       VARCHAR (10)    CONSTRAINT [DF_Order_Artwork_AddName] DEFAULT ('') NULL,
+    [AddDate]       DATETIME        NULL,
+    [EditName]      VARCHAR (10)    CONSTRAINT [DF_Order_Artwork_EditName] DEFAULT ('') NULL,
+    [EditDate]      DATETIME        NULL,
+    [PPU]           NUMERIC (8, 3)  DEFAULT ((0)) NULL,
+    [InkType]       VARCHAR (50)    NULL,
+    [Length]        NUMERIC (5, 1)  NULL,
+    [Width]         NUMERIC (5, 1)  NULL,
+    [Colors] VARCHAR(100) NULL, 
     CONSTRAINT [PK_Order_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

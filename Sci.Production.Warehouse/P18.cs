@@ -1425,15 +1425,20 @@ when matched then
             transactionscope.Dispose();
             transactionscope = null;
 
-            // AutoWHFabric WebAPI for Gensong
-            this.SentToGensong_AutoWHFabric(true);
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
 
             // AutoWH ACC WebAPI for Vstrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Detail_New(dtDetail, "P18"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
+            // AutoWH Fabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Detail_New(dtDetail, "P18"))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -1506,13 +1511,6 @@ where   f.lock=1
             }
             #endregion
 
-            #region 檢查庫存項WMSLock
-            if (!Prgs.ChkWMSLock(this.CurrentMaintain["id"].ToString(), "TransferIn_Detail"))
-            {
-                return;
-            }
-            #endregion 檢查庫存項WMSLock
-
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
             if (!Prgs.ChkWMSCompleteTime(dt, "TransferIn_Detail"))
             {
@@ -1564,10 +1562,19 @@ where   (isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0) - isn
             #endregion 檢查負數庫存
 
             #region UnConfirmed 先檢查WMS是否傳送成功
+
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(dtDetail, "P18", "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(dtDetail, "P18", "UnConfirmed"))
                 {
                     return;
                 }
@@ -1752,74 +1759,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             transactionscope = null;
         }
 
-        /// <summary>
-        ///  AutoWHFabric WebAPI for Gensong
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
-        {
-            DataTable dtDetail = new DataTable();
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                string sqlGetData = string.Empty;
-                sqlGetData = $@"
-SELECT [ID] = td.id
-,[InvNo] = isnull(t.InvNo,'')
-,[PoId] = td.Poid
-,[Seq1] = td.Seq1
-,[Seq2] = td.Seq2
-,[Refno] = po3.Refno
-,[ColorID] = po3.ColorID
-,[Roll] = td.Roll
-,[Dyelot] = td.Dyelot
-,[StockUnit] = dbo.GetStockUnitBySPSeq(td.POID,td.Seq1,td.Seq2)
-,[StockQty] = td.Qty
-,[PoUnit] = po3.PoUnit
-,[ShipQty] = td.Qty
-,[Weight] = td.Weight
-,[StockType] = td.StockType
-,[Ukey] = td.Ukey
-,[IsInspection] = convert(bit, 0)
-,[ETA] = null
-,[WhseArrival] = t.IssueDate
-,[Status] = case '{isConfirmed}' when 'True' then 'New' 
-    when 'False' then 'Delete' end
-,[Barcode] = Barcode.value
-FROM Production.dbo.TransferIn_Detail td
-inner join Production.dbo.TransferIn t on td.id = t.id
-inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= td.PoId 
-	and po3.SEQ1=td.Seq1 and po3.SEQ2=td.Seq2
-outer apply(
-	select value = min(fb.Barcode)
-	from FtyInventory_Barcode fb 
-	inner join FtyInventory f on f.Ukey = fb.Ukey
-	where f.POID = td.POID
-	and f.Seq1 = td.Seq1 and f.Seq2= td.Seq2
-	and f.Roll = td.Roll and f.Dyelot = td.Dyelot
-	and f.StockType = td.StockType
-)Barcode
-where 1=1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail 
-	where id = td.Poid and seq1=td.seq1 and seq2=td.seq2 
-	and FabricType='F'
-)
-and t.id = '{this.CurrentMaintain["id"]}'
-";
-
-                DualResult drResult = DBProxy.Current.Select(string.Empty, sqlGetData, out dtDetail);
-                if (!drResult)
-                {
-                    this.ShowErr(drResult);
-                }
-
-                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_DetailToGensongAutoWHFabric(dtDetail))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-        }
-
-        // 寫明細撈出的sql command
-
+        /// 寫明細撈出的sql command
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)

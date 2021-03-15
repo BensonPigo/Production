@@ -765,21 +765,24 @@ and t.Barcode = ''
                     #endregion
                     break;
                 case 99:
-                    #region 物料解鎖
-                    sqlcmd = @"
+                    #region 物料解鎖/上鎖
+                    int lockStatus = encoded ? 1 : 0;
+                    sqlcmd = $@"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
 alter table #TmpSource alter column stocktype varchar(1)
-
+alter table #TmpSource alter column roll varchar(15)
+alter table #TmpSource alter column Dyelot varchar(15)
 
 update t
-set WMSLock = 1
+set WMSLock = {lockStatus}
 from FtyInventory t
 where exists(
-    select *from #TmpSource s
+    select * from #TmpSource s
     where t.POID = s.POID
     and t.Seq1 = s.Seq1 and t.Seq2 = s.Seq2
+    and t.Roll = s.Roll and t.Dyelot = s.Dyelot
     and t.StockType = s.StockType
 )
 ";
@@ -4059,7 +4062,7 @@ and exists(
             return true;
         }
 
-            /// <inheritdoc/>
+        /// <inheritdoc/>
         public static bool ChkWMSLock(string id, string keyType)
         {
             bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
@@ -4079,15 +4082,10 @@ and exists(
 Select d.poid,d.seq1,d.seq2,d.Roll,d.StockQty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Receiving_Detail d  WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 
-and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot 
+inner join FtyInventory f WITH (NOLOCK) on d.PoId = f.POID 
+    and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 
+    and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot 
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'";
                     break;
                 case "Issue_Detail":
@@ -4095,15 +4093,10 @@ and d.Id = '{id}'";
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Issue_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on d.POID = f.POID  AND D.StockType = F.StockType
-and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot 
+inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID  
+    and D.StockType = F.StockType
+    and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot 
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4113,15 +4106,10 @@ and d.Id = '{id}'
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.IssueLack_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 
-and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+inner join FtyInventory f WITH (NOLOCK) on d.poid = f.POID 
+    and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 
+    and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4131,15 +4119,10 @@ and d.Id = '{id}'
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.IssueReturn_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 
-and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+inner join FtyInventory f WITH (NOLOCK) on d.poid = f.POID 
+    and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 
+    and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.WMSLock = 1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4150,14 +4133,9 @@ Select d.poid, d.seq1, d.seq2, d.Roll, d.Qty
 , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0),f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on  d.PoId = f.PoId
-and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType
-and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+    and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType
+    and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.WMSLock = 1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4168,14 +4146,9 @@ Select d.poid, d.seq1, d.seq2, d.Roll, d.Qty
 , balanceQty = isnull(f.InQty, 0) - isnull(f.OutQty, 0) + isnull(f.AdjustQty, 0),f.Dyelot
 from dbo.TransferOut_Detail d WITH(NOLOCK)
 inner join FtyInventory f WITH(NOLOCK) on d.PoId = f.PoId
-and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType
-and d.Roll = f.Roll and d.Dyelot = f.Dyelot
+    and d.Seq1 = f.Seq1 and d.Seq2 = f.seq2 and d.StockType = f.StockType
+    and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.WMSLock = 1
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4189,19 +4162,10 @@ Select
 ,[Roll] = d.toRoll
 ,[Dyelot] = d.toDyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on  d.toPoId = f.PoId
-and d.toSeq1 = f.Seq1
-and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType
-and d.toRoll = f.Roll
-and d.toDyelot = f.Dyelot
+inner join FtyInventory f WITH (NOLOCK) on  d.toPoId = f.PoId
+    and d.toSeq1 = f.Seq1 and d.toSeq2 = f.seq2 and d.toStocktype = f.StockType
+    and d.toRoll = f.Roll and d.toDyelot = f.Dyelot 
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4215,15 +4179,10 @@ Select
 ,[Roll] = d.fromRoll
 ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK, INDEX(MdID_POSeq))
-on d.FromPOID = f.POID and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 
-AND D.FromStockType = F.StockType and d.FromDyelot = f.Dyelot
+inner join FtyInventory f WITH (NOLOCK, INDEX(MdID_POSeq)) on d.FromPOID = f.POID 
+    and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 
+    and D.FromStockType = F.StockType and d.FromDyelot = f.Dyelot
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'
 ";
                     break;
@@ -4238,14 +4197,9 @@ Select
 ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID  
-  AND D.FromStockType = F.StockType and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 
-and d.FromSeq2 = f.Seq2 and d.fromDyelot = f.Dyelot
+    AND D.FromStockType = F.StockType and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 
+    and d.FromSeq2 = f.Seq2 and d.fromDyelot = f.Dyelot
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'";
                     break;
 
@@ -4257,15 +4211,11 @@ Select
 ,[seq2] = d.toseq2
 ,[Roll] = d.toRoll
 ,[Dyelot] = d.toDyelot
-from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
-on d.toPoId = f.PoId and d.toSeq1 = f.Seq1 and d.toSeq2 = f.seq2
-and d.toStocktype = f.StockType and d.toRoll = f.Roll and d.toDyelot = f.Dyelot
+from dbo.BorrowBack_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) on d.toPoId = f.PoId 
+    and d.toSeq1 = f.Seq1 and d.toSeq2 = f.seq2
+    and d.toStocktype = f.StockType and d.toRoll = f.Roll and d.toDyelot = f.Dyelot
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'";
                     break;
 
@@ -4276,13 +4226,9 @@ FROM Issue i
 INNER JOIN Issue_Summary s ON i.ID = s.ID 
 INNER JOIN Issue_Detail d ON s.id=d.id AND s.Ukey = d.Issue_SummaryUkey
 INNER JOIN FtyInventory f ON f.POID=s.Poid AND f.Seq1=d.Seq1 AND f.Seq2=d.Seq2
-INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
+INNER JOIN PO_Supp_Detail psd ON psd.ID = s.Poid 
+    AND psd.SCIRefno = s.SCIRefno AND psd.SCIRefno = s.SCIRefno AND psd.SEQ1=d.Seq1 AND psd.Seq2=d.Seq2
 WHERE i.Id = '{id}' 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 AND  f.WMSLock = 1 ";
                     break;
                 case "Adjust_Detail":
@@ -4290,15 +4236,10 @@ AND  f.WMSLock = 1 ";
 Select d.poid,d.seq1,d.seq2,d.Roll,isnull(d.QtyAfter,0.00) - isnull(d.QtyBefore,0.00) qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK)
-on d.POID = f.POID  AND D.StockType = F.StockType
-and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
+inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID  
+    AND D.StockType = F.StockType
+    and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'";
                     break;
 
@@ -4307,15 +4248,10 @@ and d.Id = '{id}'";
 Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
 from dbo.returnreceipt_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) 
-on d.PoId = f.POID and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 
-and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
+inner join FtyInventory f WITH (NOLOCK) on d.PoId = f.POID 
+    and d.Seq1 = f.Seq1 and d.Seq2 = f.Seq2 
+    and d.Roll = f.Roll and d.StockType = f.StockType and d.Dyelot = f.Dyelot
 where f.WMSLock = 1 
-and exists(
-	select 1 from Production.dbo.PO_Supp_Detail po3
-	where po3.id = f.Poid and po3.seq1 = f.seq1 and po3.seq2 = f.seq2 
-	and po3.FabricType='A'
-)
 and d.Id = '{id}'";
                     break;
             }
@@ -4337,6 +4273,125 @@ and d.Id = '{id}'";
                     MyUtility.Msg.WarningBox("Material Locked cause from WMS system not received below material yet." + Environment.NewLine + errmsg, "Warning");
                     return false;
                 }
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public static bool SentToWMS(DataTable dtMain, bool isConfirmed, string tableName)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            int toWMS = isConfirmed ? 1 : 0;
+            switch (tableName)
+            {
+                case "Receiving":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "TransferIn":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "Issue":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Issue_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "IssueLack":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from IssueLack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "TransferOut":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from TransferOut_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "Adjust":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Adjust_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "SubTransfer":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from SubTransfer_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "ReturnReceipt":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from ReturnReceipt_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "BorrowBack":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from BorrowBack_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+                case "LocationTrans":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from LocationTrans_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMain, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
             }
 
             return true;

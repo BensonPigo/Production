@@ -118,6 +118,10 @@ BEGIN
 	RAISERROR('Consignee_Detail  - Starts',0,0)
 	select * into dbo.Consignee_Detail from (select * from ProductionTPE.dbo.Consignee_Detail ) as tmp
 
+	-------------ChgOverTarget-------------------
+	RAISERROR('ChgOverTarget  - Starts',0,0)
+	select * into dbo.ChgOverTarget from (select * from ProductionTPE.dbo.ChgOverTarget where junk <> 1 ) as tmp
+
 	set transaction isolation level read committed
 END
 

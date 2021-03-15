@@ -36,6 +36,8 @@
             this.labelColorID = new Sci.Win.UI.Label();
             this.labelDesc = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.displayColorID = new Sci.Win.UI.DisplayBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.displaySCIRefno = new Sci.Win.UI.DisplayBox();
             this.editDesc = new Sci.Win.UI.EditBox();
@@ -47,8 +49,6 @@
             this.labelIssueQty = new Sci.Win.UI.Label();
             this.labelAccuIssue = new Sci.Win.UI.Label();
             this.btnAutoPick = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.displayColorID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -189,6 +189,23 @@
             this.groupBox1.Size = new System.Drawing.Size(984, 146);
             this.groupBox1.TabIndex = 110;
             this.groupBox1.TabStop = false;
+            // 
+            // displayColorID
+            // 
+            this.displayColorID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayColorID.Location = new System.Drawing.Point(695, 19);
+            this.displayColorID.Name = "displayColorID";
+            this.displayColorID.Size = new System.Drawing.Size(73, 23);
+            this.displayColorID.TabIndex = 113;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(648, 19);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(44, 23);
+            this.label2.TabIndex = 112;
+            this.label2.Text = "Color";
             // 
             // label1
             // 
@@ -334,23 +351,6 @@
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(648, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 23);
-            this.label2.TabIndex = 112;
-            this.label2.Text = "Color";
-            // 
-            // displayColorID
-            // 
-            this.displayColorID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayColorID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayColorID.Location = new System.Drawing.Point(695, 19);
-            this.displayColorID.Name = "displayColorID";
-            this.displayColorID.Size = new System.Drawing.Size(73, 23);
-            this.displayColorID.TabIndex = 113;
             // 
             // P33_Detail
             // 

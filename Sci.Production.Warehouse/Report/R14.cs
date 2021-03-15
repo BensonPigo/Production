@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
                 Convert.ToDateTime(this.eta1).ToString("d"),
                 Convert.ToDateTime(this.eta2).ToString("d")));
             this.condition.Append(string.Format(
-                @"Fabric Type : {0}" + Environment.NewLine,
+                @"Material Type : {0}" + Environment.NewLine,
                 this.comboFabricType.Text));
             this.condition.Append(string.Format(
                 @"Factory : {0}" + Environment.NewLine,

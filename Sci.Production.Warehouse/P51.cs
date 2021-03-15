@@ -441,7 +441,7 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
             .Text("refno", header: "Ref#", iseditingreadonly: true) // 8
             .Text("Colorid", header: "Color", iseditingreadonly: true) // 9
             .Text("stockunit", header: "Stock Unit", iseditingreadonly: true) // 10
-            .ComboBox("FabricType", header: "Fabric Type", iseditable: false).Get(out cbb_fabrictype) // 11
+            .ComboBox("FabricType", header: "Material Type", iseditable: false).Get(out cbb_fabrictype) // 11
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 12
             ;
             #endregion 欄位設定

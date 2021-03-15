@@ -272,14 +272,15 @@ WHERE   StockType='{0}'
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
-            .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
-            .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
-            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
-            .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
-            .Text("ToLocation", header: "Location", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30)) // 7
+                .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+                .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
+                .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
+                .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
+                .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
+                .Text("location", header: "From Scrap\r\nLocation", iseditingreadonly: true, width: Widths.AnsiChars(20))
+                .Text("ToLocation", header: "To Inventory\r\nLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(30))
             ;
             #endregion 欄位設定
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
@@ -532,13 +533,19 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(true);
-                    this.SentToGensong_AutoWHFabric(true);
+                    DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
 
                     // AutoWHACC WebAPI for Vstrong
                     if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                     {
-                        DataTable dt = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                         Task.Run(() => new Vstrong_AutoWHAccessory().SentSubTransfer_Detail_New(dt, "New"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
+
+                    // AutoWH Fabric WebAPI for Gensong
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dt))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
                     }
 
@@ -676,10 +683,19 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
             #endregion 檢查負數庫存
 
             #region UnConfirmed 先檢查WMS是否傳送成功
+
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
                 if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (!Gensong_AutoWHFabric.SentSubTransfer_Detail_Delete(dtDetail, "UnConfirmed"))
                 {
                     return;
                 }
@@ -830,7 +846,6 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
                     transactionscope.Complete();
                     transactionscope.Dispose();
                     this.FtyBarcodeData(false);
-                    this.SentToGensong_AutoWHFabric(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -874,9 +889,11 @@ a.id
 ,a.ToStockType
 ,a.ToLocation
 ,a.ukey
+,location = dbo.Getlocation(c.ukey)
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 
-and p1.SEQ2 = a.FromSeq2
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = p1.id and c.seq1 = p1.seq1 and c.seq2  = p1.seq2 and c.stocktype = 'O' 
+    and c.roll = a.FromRoll and c.Dyelot = FromDyelot
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1042,17 +1059,6 @@ Where a.id = '{0}'", masterID);
             frm.Show();
 
             return true;
-        }
-
-        private void SentToGensong_AutoWHFabric(bool isConfirmed)
-        {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMain, isConfirmed))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
         }
 
         private void FtyBarcodeData(bool isConfirmed)

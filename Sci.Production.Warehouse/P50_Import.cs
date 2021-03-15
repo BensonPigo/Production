@@ -71,7 +71,7 @@ namespace Sci.Production.Warehouse
 
             if (MyUtility.Check.Empty(sp1) && MyUtility.Check.Empty(sp2) && MyUtility.Check.Empty(category) && MyUtility.Check.Empty(fabrictype))
             {
-                MyUtility.Msg.WarningBox("< SP# > < Category > < Fabric Type > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SP# > < Category > < Material Type > can't be empty!!");
                 this.txtSPNoStart.Focus();
                 return;
             }

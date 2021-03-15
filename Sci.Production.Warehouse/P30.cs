@@ -752,8 +752,14 @@ from #tmp
                     }
 
                     transactionscope.Complete();
-                    transactionscope.Dispose();
-                    this.SentToGensong_AutoWHFabric(dtMaster);
+                    transactionscope.Dispose(); 
+
+                    // AutoWHFabric WebAPI for Gensong
+                    if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                    {
+                        Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_Detail_New(dtMaster))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1054,16 +1060,6 @@ and i2.id = '{dr["ID"]}'
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(exceldt, string.Empty, "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
             Marshal.ReleaseComObject(excelApp);
-        }
-
-        private void SentToGensong_AutoWHFabric(DataTable dtMaster)
-        {
-            // AutoWHFabric WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-            {
-                Task.Run(() => new Gensong_AutoWHFabric().SentSubTransfer_DetailToGensongAutoWHFabric(dtMaster, true))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
         }
     }
 }

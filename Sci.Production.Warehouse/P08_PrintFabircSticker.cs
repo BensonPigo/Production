@@ -55,7 +55,9 @@ select [Select] = cast(0 as bit)
 	, [CutType] = psd.Special
 	, [ExpSlice] = ''
 	, [ActSlice] = ''
-from Receiving_Detail rd
+    , r.Remark
+from  Receiving r with (nolock)
+inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 left join Orders o on o.ID=rd.POID
 left join Po_Supp_Detail psd on rd.POID = psd.ID
 								and rd.Seq1 = psd.SEQ1
@@ -68,7 +70,7 @@ outer apply(
 			WHERE pp.ID = psd.StockPOID AND pp.Seq1 = psd.StockSeq1 AND pp.Seq2 = psd.StockSeq2
 		)
 ThreadColor
-where rd.id = '{0}'", this.ID));
+where r.id = '{0}'", this.ID));
 
             DualResult result = DBProxy.Current.Select(null, selectCommand1.ToString(), out DataTable dt);
 
@@ -120,6 +122,7 @@ where rd.id = '{0}'", this.ID));
                 CutType = dr["CutType"].ToString(),
                 ExpSlice = dr["ExpSlice"].ToString(),
                 ActSlice = dr["ActSlice"].ToString(),
+                Remark = dr["Remark"].ToString(),
             }).ToList();
 
             ReportDefinition report = new ReportDefinition()

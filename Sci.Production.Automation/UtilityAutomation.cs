@@ -187,7 +187,7 @@ namespace Sci.Production.Automation
         {
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 30);
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
             bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
 
             if (!webApiBaseResult.isSuccess)

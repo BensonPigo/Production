@@ -126,6 +126,7 @@ namespace Sci.Production.Warehouse
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("WeaveTypeID", header: "Weave Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -344,6 +345,7 @@ from
         ,[OldCutShadebandTime]=cutTime.CutTime
         ,cutTime.CutBy
         ,o.BrandID
+        ,fb.WeaveTypeID
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -418,6 +420,7 @@ from
         ,[OldCutShadebandTime]=cutTime.CutTime
         ,cutTime.CutBy
         ,o.BrandID
+        ,fb.WeaveTypeID
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN Orders o with (nolock) ON o.ID = td.POID
