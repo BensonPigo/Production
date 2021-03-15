@@ -68,6 +68,15 @@ namespace Sci.Production.Automation
         /// <returns>InventorySendSpreadingSchedule</returns>
         public DualResult GetInventory(string factoryID, DateTime estCutDate, string cutCellID, out InventorySpreadingSchedule inventorySpreadingSchedule)
         {
+            inventorySpreadingSchedule = new InventorySpreadingSchedule()
+            {
+                Inventory = new List<InventoryItem>()
+            };
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            {
+                return new DualResult(true);
+            }
+
             string baseUrl = UtilityAutomation.GetSuppApiUrl(GensongSuppID, moduleName);
             string requestUri = "PMS/GS_WebServices/GetInventory";
 
@@ -78,7 +87,6 @@ namespace Sci.Production.Automation
 
             WebApiBaseResult webApiBaseResult;
             webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, string.Empty, 600, queryStrings: dicQueryString);
-            inventorySpreadingSchedule = new InventorySpreadingSchedule();
 
             switch (webApiBaseResult.webApiResponseStatus)
             {

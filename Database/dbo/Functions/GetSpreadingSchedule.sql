@@ -41,9 +41,9 @@ RETURN
 		[ReqQty] = isnull(cp.Cons, 0)  
 	from WorkOrder w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
-	left join SpreadingSchedule s with(nolock) on	s.FactoryID = @FactoryID
+	left join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
 													and s.EstCutDate = @EstCutDate
-													and s.CutCellid = @CutCellid
+													and s.CutCellid = w.CutCellid
 	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
 	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkorderUkey = w.Ukey
 	outer apply
@@ -82,7 +82,7 @@ RETURN
 	where 1=1
 	and o.Finished = 0
 	and w.FactoryID = @FactoryID
-	and (act.actcutdate is null or sd.CutRef is not null)
+	and ((act.actcutdate is null and w.CutRef is not null) or sd.CutRef is not null)
 	and (
 		(
 			@Ukey = 0 and 
@@ -98,17 +98,12 @@ RETURN
 		)
 		or
 		(
-			@Ukey = 0 and w.CutRef = @Cutref
+			@Ukey = 0 and w.CutRef = @Cutref and @Cutref <> ''
 		)
 		or
 		(
-			s.Ukey = @Ukey and
-			--排除未來已排SpreadingSchedule的資料
-			not exists (select 1 from	SpreadingSchedule ss with(nolock)
-								 inner join SpreadingSchedule_Detail ssd with(nolock) on ss.Ukey = ssd.SpreadingScheduleUkey
-								 where	ss.EstCutDate >= FORMAT(getdate(), 'yyyyMMdd') and
-										ss.EstCutDate <> @EstCutDate and
-										ssd.CutRef = w.CutRef)
+			sd.SpreadingScheduleUkey = @Ukey and
+			@Cutref = '' 
 		)
 	)
 )

@@ -516,6 +516,11 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
 
         private void RefreshMaterialStatus()
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["EstCutDate"]))
+            {
+                return;
+            }
+
             string factoryID = this.CurrentMaintain["FactoryID"].ToString();
             DateTime estCutDate = (DateTime)this.CurrentMaintain["EstCutDate"];
             string cutCellID = this.CurrentMaintain["CutCellID"].ToString();
