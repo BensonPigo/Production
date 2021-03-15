@@ -1244,11 +1244,19 @@ end
                     return;
                 }
 
-                if (resultBLNoCheck != null)
+                if (resultBLNoCheck.Rows.Count > 0)
                 {
                     string errMsg = @"The B/L# you entered cannot be found in the below data, please first check whether the B/L# is correct,
 You can complete Account Payment only after the corresponding Number is updated, Thank You.";
-                    MyUtility.Msg.ShowMsgGrid(resultBLNoCheck, errMsg);
+                    var m = MyUtility.Msg.ShowMsgGrid(resultBLNoCheck, errMsg);
+
+                    // m.TopMost = true; 這個不能加，不然電腦會爆炸
+                    m.grid1.Columns[0].Width = 100;
+                    m.grid1.Columns[1].Width = 200;
+                    m.grid1.Columns[2].Width = 100;
+                    m.grid1.Columns[3].Width = 200;
+                    m.grid1.Columns[4].Width = 500;
+                    this.CurrentMaintain["BLNo"] = string.Empty;
                     return;
                 }
             }
