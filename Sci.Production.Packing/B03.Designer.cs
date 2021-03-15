@@ -39,6 +39,9 @@
             this.pictureBox1 = new Sci.Win.UI.PictureBox();
             this.label10 = new Sci.Win.UI.Label();
             this.chkIsMixPack = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.disCtnHeight = new Sci.Win.UI.DisplayBox();
+            this.btnReloadSticker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -56,6 +59,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnReloadSticker);
+            this.masterpanel.Controls.Add(this.disCtnHeight);
+            this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.chkIsMixPack);
             this.masterpanel.Controls.Add(this.pictureBox1);
             this.masterpanel.Controls.Add(this.label10);
@@ -67,7 +73,7 @@
             this.masterpanel.Controls.Add(this.txtbrand1);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(947, 164);
+            this.masterpanel.Size = new System.Drawing.Size(947, 173);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -80,19 +86,22 @@
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.pictureBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkIsMixPack, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disCtnHeight, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnReloadSticker, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 164);
-            this.detailpanel.Size = new System.Drawing.Size(947, 302);
+            this.detailpanel.Location = new System.Drawing.Point(0, 173);
+            this.detailpanel.Size = new System.Drawing.Size(947, 293);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(830, 129);
+            this.gridicon.Location = new System.Drawing.Point(830, 138);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(947, 302);
+            this.detailgridcont.Size = new System.Drawing.Size(947, 293);
             // 
             // detail2
             // 
@@ -239,6 +248,33 @@
             this.chkIsMixPack.Text = "Is Mix Pack";
             this.chkIsMixPack.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(20, 140);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(181, 23);
+            this.label5.TabIndex = 42;
+            this.label5.Text = "CTN Height (mm)";
+            // 
+            // disCtnHeight
+            // 
+            this.disCtnHeight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disCtnHeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disCtnHeight.Location = new System.Drawing.Point(204, 140);
+            this.disCtnHeight.Name = "disCtnHeight";
+            this.disCtnHeight.Size = new System.Drawing.Size(125, 23);
+            this.disCtnHeight.TabIndex = 44;
+            // 
+            // btnReloadSticker
+            // 
+            this.btnReloadSticker.Location = new System.Drawing.Point(757, 133);
+            this.btnReloadSticker.Name = "btnReloadSticker";
+            this.btnReloadSticker.Size = new System.Drawing.Size(182, 30);
+            this.btnReloadSticker.TabIndex = 45;
+            this.btnReloadSticker.Text = "Reload Mark Type List";
+            this.btnReloadSticker.UseVisualStyleBackColor = true;
+            this.btnReloadSticker.Click += new System.EventHandler(this.BtnReloadSticker_Click);
+            // 
             // B03
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -295,5 +331,8 @@
         private Win.UI.PictureBox pictureBox1;
         private Win.UI.Label label10;
         private Win.UI.CheckBox chkIsMixPack;
+        private Win.UI.Label label5;
+        private Win.UI.DisplayBox disCtnHeight;
+        private Win.UI.Button btnReloadSticker;
     }
 }

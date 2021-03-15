@@ -9,6 +9,7 @@ CREATE TABLE [dbo].ShippingMarkPicture(
 	EditName [varchar](10) NOT NULL CONSTRAINT DF_ShippingMarkPicture_EditName DEFAULT ('') ,
 	Junk [Bit] NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Junk] DEFAULT (0),
 	Ukey [Bigint] IDENTITY(1,1) NOT NULL,
+	CtnHeight numeric (8, 4) NOT NULL CONSTRAINT [DF_ShippingMarkPicture_CtnHeight]  DEFAULT(0),
 	CONSTRAINT [PK_ShippingMarkPicture] PRIMARY KEY CLUSTERED 
 (		Ukey ASC	)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

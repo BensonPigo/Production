@@ -12,6 +12,8 @@ CREATE TABLE [dbo].ShippingMarkPicture_Detail(
 	StickerSizeID [bigInt] NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Detail_StickerSizeID] DEFAULT (0) ,
 	Is2Side [Bit] NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Detail_Is2Side]  DEFAULT (0),
 	IsHorizontal [Bit] NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Detail_IsHorizontal]  DEFAULT (0),
+	IsOverCtnHt bit NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Detail_IsOverCtnHt]  DEFAULT 0,
+	NotAutomate bit NOT NULL CONSTRAINT [DF_ShippingMarkPicture_Detail_NotAutomate]  DEFAULT(0),
 	CONSTRAINT [PK_ShippingMarkPicture_Detail] PRIMARY KEY CLUSTERED 
 	(		ShippingMarkPictureUkey ,ShippingMarkTypeUkey ASC	)
 	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
