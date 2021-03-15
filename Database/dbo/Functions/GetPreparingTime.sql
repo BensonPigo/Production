@@ -1,8 +1,9 @@
-﻿-- =============================================
+﻿
+-- =============================================
 -- Create date: <Create Date,,>
 -- Description:	Get Preparing Time
 -- =============================================
-CREATE FUNCTION GetPreparingTime
+CREATE FUNCTION [dbo].[GetPreparingTime]
 (	
 	@StartDate DateTime,
 	@EndDate DateTime,
@@ -65,8 +66,13 @@ RETURN
 		and wc.StartDate = WCalendar.StartDate
 	)wcWorking
 	 outer apply(
-		select [minute] = case when CONVERT(date,c.Dates) = CONVERT(date,@StartDate) then  DATEDIFF(MINUTE,CONVERT(time,@StartDate),SUBSTRING(s.EndTime,1,2)+':'+SUBSTRING(s.EndTime,3,2))
-							   when (convert(date,c.Dates) = CONVERT(date,@EndDate)) then DATEDIFF(MINUTE,SUBSTRING(s.BeginTime,1,2)+':'+SUBSTRING(s.BeginTime,3,2),CONVERT(time,@EndDate))
+		select [minute] = 
+			case when (CONVERT(date,c.Dates) = CONVERT(date,@StartDate) and convert(date,c.Dates) != CONVERT(date,@EndDate)) 
+					then  DATEDIFF(MINUTE,CONVERT(time,@StartDate),SUBSTRING(s.EndTime,1,2)+':'+SUBSTRING(s.EndTime,3,2))
+				 when (convert(date,c.Dates) = CONVERT(date,@EndDate) and CONVERT(date,c.Dates) != CONVERT(date,@StartDate)) 
+					then DATEDIFF(MINUTE,SUBSTRING(s.BeginTime,1,2)+':'+SUBSTRING(s.BeginTime,3,2),CONVERT(time,@EndDate))
+			     when (CONVERT(date,c.Dates) = CONVERT(date,@StartDate) and convert(date,@StartDate) = CONVERT(date,@EndDate)) 
+					then DATEDIFF(MINUTE,CONVERT(time,@StartDate),CONVERT(time,@EndDate))
 		else DATEDIFF(MINUTE,SUBSTRING(s.BeginTime,1,2)+':'+SUBSTRING(s.BeginTime,3,2),SUBSTRING(s.EndTime,1,2)+':'+SUBSTRING(s.EndTime,3,2)) end
 		from WHWorkingCalendar s
 		where s.MDivision = WCalendar.MDivision

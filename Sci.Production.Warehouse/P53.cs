@@ -108,9 +108,9 @@ namespace Sci.Production.Warehouse
                 if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
-                    string sqlcmd = $@"select ID,StockType,Description from dbo.MtlLocation where Junk = 0";
-                    SelectItem2 item = new SelectItem2(sqlcmd, string.Empty, "12,7,15", string.Empty, null, null, null);
-                    item.Size = new System.Drawing.Size(810, 666);
+                    string sqlcmd = $@"select ID,StockType,Description from dbo.MtlLocation where Junk = 0 and StockType='B'";
+                    SelectItem2 item = new SelectItem2(sqlcmd, string.Empty, "14,7,15", string.Empty, null, null, null);
+                    item.Size = new System.Drawing.Size(550, 666);
                     DialogResult drResult = item.ShowDialog();
                     if (drResult == DialogResult.Cancel)
                     {
@@ -399,9 +399,9 @@ select
 ,[Location] = iL.PrepardLocation
 ,[StartDate] = FORMAT(iL.PrepareStartDate,'yyyyMMddHHmm')
 ,[FinishDate] = FORMAT(iL.PrepardFinishDate,'yyyyMMddHHmm')
-,[PreparingTime] = PreparingTime.value
+,[PreparingTime] = isnull(PreparingTime.value,0)
 ,[LeadTime]= case when (iL.PrepareStartDate is null or iL.PrepardFinishDate is null) then ''
-				  when  PreparingTime.ttlMinute <= 420 then 'OK'
+				  when isnull(PreparingTime.ttlMinute,0) <= 420 then 'OK'
 				  else 'Not OK' end
 ,[Scan] = iL.ScanTransferSlip
 ,iL.Id
@@ -428,12 +428,12 @@ where 1=1
             #region Where 條件
             if (!MyUtility.Check.Empty(this.dateRequestDate.DateBox1.Value))
             {
-                sqlcmd += $" and Lack.ApvDate >= '{this.dateRequestDate.DateBox1.Text}'";
+                sqlcmd += $" and Convert(date, Lack.ApvDate) >= '{this.dateRequestDate.DateBox1.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.dateRequestDate.DateBox2.Value))
             {
-                sqlcmd += $" and Lack.ApvDate <= '{this.dateRequestDate.DateBox2.Text}'";
+                sqlcmd += $" and Convert(date, Lack.ApvDate) <= '{this.dateRequestDate.DateBox2.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtRequestNo.Text))

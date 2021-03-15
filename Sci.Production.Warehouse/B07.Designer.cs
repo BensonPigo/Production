@@ -46,7 +46,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(619, 312);
+            this.detail.Size = new System.Drawing.Size(619, 475);
             // 
             // detailcont
             // 
@@ -58,16 +58,20 @@
             this.detailcont.Controls.Add(this.labStartDate);
             this.detailcont.Controls.Add(this.labM);
             this.detailcont.Controls.Add(this.txtMdivision);
-            this.detailcont.Size = new System.Drawing.Size(619, 274);
+            this.detailcont.Size = new System.Drawing.Size(619, 437);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 274);
+            this.detailbtm.Location = new System.Drawing.Point(0, 437);
             this.detailbtm.Size = new System.Drawing.Size(619, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(619, 475);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(627, 341);
+            this.tabs.Size = new System.Drawing.Size(627, 504);
             // 
             // txtMdivision
             // 
@@ -153,7 +157,7 @@
             // 
             // B07
             // 
-            this.ClientSize = new System.Drawing.Size(627, 374);
+            this.ClientSize = new System.Drawing.Size(627, 537);
             this.DefaultControl = "dateStartDate";
             this.DefaultControlForEdit = "dateStartDate";
             this.IsSupportClip = false;

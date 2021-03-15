@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnSave = new Sci.Win.UI.Button();
             this.labFinished = new Sci.Win.UI.Label();
@@ -87,7 +87,7 @@
             this.btnSave.Location = new System.Drawing.Point(891, 43);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 174;
+            this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
@@ -98,7 +98,7 @@
             this.labFinished.Location = new System.Drawing.Point(123, 65);
             this.labFinished.Name = "labFinished";
             this.labFinished.Size = new System.Drawing.Size(71, 23);
-            this.labFinished.TabIndex = 173;
+            this.labFinished.TabIndex = 15;
             this.labFinished.Text = "Finished";
             this.labFinished.TextStyle.Color = System.Drawing.Color.Black;
             // 
@@ -111,7 +111,7 @@
             this.displayFinished.Location = new System.Drawing.Point(106, 69);
             this.displayFinished.Name = "displayFinished";
             this.displayFinished.Size = new System.Drawing.Size(14, 14);
-            this.displayFinished.TabIndex = 172;
+            this.displayFinished.TabIndex = 14;
             // 
             // labPreparing
             // 
@@ -119,7 +119,7 @@
             this.labPreparing.Location = new System.Drawing.Point(24, 65);
             this.labPreparing.Name = "labPreparing";
             this.labPreparing.Size = new System.Drawing.Size(83, 23);
-            this.labPreparing.TabIndex = 171;
+            this.labPreparing.TabIndex = 12;
             this.labPreparing.Text = "Preparing";
             this.labPreparing.TextStyle.Color = System.Drawing.Color.Black;
             // 
@@ -132,7 +132,7 @@
             this.displayPreparing.Location = new System.Drawing.Point(7, 69);
             this.displayPreparing.Name = "displayPreparing";
             this.displayPreparing.Size = new System.Drawing.Size(14, 14);
-            this.displayPreparing.TabIndex = 170;
+            this.displayPreparing.TabIndex = 13;
             // 
             // comboStatus
             // 
@@ -147,14 +147,14 @@
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(121, 24);
-            this.comboStatus.TabIndex = 142;
+            this.comboStatus.TabIndex = 2;
             // 
             // labStatus
             // 
             this.labStatus.Location = new System.Drawing.Point(608, 10);
             this.labStatus.Name = "labStatus";
             this.labStatus.Size = new System.Drawing.Size(63, 23);
-            this.labStatus.TabIndex = 143;
+            this.labStatus.TabIndex = 9;
             this.labStatus.Text = "Status";
             // 
             // labFactory
@@ -162,7 +162,7 @@
             this.labFactory.Location = new System.Drawing.Point(392, 39);
             this.labFactory.Name = "labFactory";
             this.labFactory.Size = new System.Drawing.Size(80, 23);
-            this.labFactory.TabIndex = 141;
+            this.labFactory.TabIndex = 11;
             this.labFactory.Text = "Factory";
             // 
             // txtfactory
@@ -177,7 +177,7 @@
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(74, 23);
-            this.txtfactory.TabIndex = 140;
+            this.txtfactory.TabIndex = 4;
             // 
             // labRequestNo
             // 
@@ -188,7 +188,7 @@
             this.labRequestNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labRequestNo.RectStyle.ExtBorderWidth = 1F;
             this.labRequestNo.Size = new System.Drawing.Size(80, 23);
-            this.labRequestNo.TabIndex = 130;
+            this.labRequestNo.TabIndex = 8;
             this.labRequestNo.Text = "Request#";
             this.labRequestNo.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labRequestNo.TextStyle.Color = System.Drawing.Color.Black;
@@ -202,7 +202,7 @@
             this.labSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labSPNo.RectStyle.ExtBorderWidth = 1F;
             this.labSPNo.Size = new System.Drawing.Size(98, 23);
-            this.labSPNo.TabIndex = 129;
+            this.labSPNo.TabIndex = 10;
             this.labSPNo.Text = "SP#";
             this.labSPNo.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labSPNo.TextStyle.Color = System.Drawing.Color.Black;
@@ -216,7 +216,7 @@
             this.labRequestDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labRequestDate.RectStyle.ExtBorderWidth = 1F;
             this.labRequestDate.Size = new System.Drawing.Size(98, 23);
-            this.labRequestDate.TabIndex = 128;
+            this.labRequestDate.TabIndex = 7;
             this.labRequestDate.Text = "Request Date";
             this.labRequestDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labRequestDate.TextStyle.Color = System.Drawing.Color.Black;
@@ -227,7 +227,7 @@
             this.btnQuery.Location = new System.Drawing.Point(891, 7);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 6;
+            this.btnQuery.TabIndex = 5;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -239,7 +239,7 @@
             this.txtSPNo.Location = new System.Drawing.Point(110, 39);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(130, 23);
-            this.txtSPNo.TabIndex = 5;
+            this.txtSPNo.TabIndex = 3;
             // 
             // txtRequestNo
             // 
@@ -248,7 +248,7 @@
             this.txtRequestNo.Location = new System.Drawing.Point(475, 10);
             this.txtRequestNo.Name = "txtRequestNo";
             this.txtRequestNo.Size = new System.Drawing.Size(130, 23);
-            this.txtRequestNo.TabIndex = 3;
+            this.txtRequestNo.TabIndex = 1;
             // 
             // dateRequestDate
             // 
@@ -266,11 +266,10 @@
             this.dateRequestDate.DateBox2.Name = "";
             this.dateRequestDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateRequestDate.DateBox2.TabIndex = 1;
-            this.dateRequestDate.IsRequired = false;
             this.dateRequestDate.Location = new System.Drawing.Point(109, 10);
             this.dateRequestDate.Name = "dateRequestDate";
             this.dateRequestDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRequestDate.TabIndex = 1;
+            this.dateRequestDate.TabIndex = 0;
             // 
             // panel4
             // 
@@ -307,14 +306,14 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 93);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -330,6 +329,8 @@
             this.Controls.Add(this.gridDetail);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
+            this.DefaultControl = "dateRequestDate";
+            this.DefaultControlForEdit = "dateRequestDate";
             this.Name = "P53";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P53. Issue Fabric Lacking & Replacement Tracking";
