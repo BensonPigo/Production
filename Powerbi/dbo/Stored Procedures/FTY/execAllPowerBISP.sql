@@ -7,7 +7,7 @@ Create PROCEDURE [dbo].[execAllPowerBISP]
 AS
 BEGIN
 
-	SET NOCOUNT ON;
+SET NOCOUNT ON;
 
 /*判斷當前Server後, 指定帶入正式機Server名稱*/
 DECLARE @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)
@@ -42,25 +42,31 @@ DECLARE @M nvarchar(10)
 		ELSE '' END
 )
 
+select M= @M, Region =@Region
 
-DECLARE @desc nvarchar(1000)  = '';
-DECLARE @ErrorMessage NVARCHAR(1000) = '';
+DECLARE @desc nvarchar(4000)  = '';
+DECLARE @ErrorMessage NVARCHAR(4000) = '';
 DECLARE @ErrorStatus bit = 1;
 DECLARE @StartTime datetime = getdate();
 DECLARE @StartDate date
 DECLARE @EndDate date
--- ImportForecastLoadingBI
+
+DECLARE @Stime datetime, @Etime datetime
+
+--01) ImportForecastLoadingBI
 BEGIN TRY
+	set @Stime = getdate()
 	set @StartDate = '2019-01-08'
 	set @EndDate = DATEADD(m, DATEDIFF(m,0,DATEADD(MM,5,GETDATE())),6)
 	EXEC ImportForecastLoadingBI @StartDate,@EndDate
+	set @Etime = getdate()
 END TRY
 
 BEGIN CATCH
 
 SET @ErrorMessage = 
 '
-錯誤程序名稱: [1-Forecast Loading]' + CHAR(13) +
+[1-Forecast Loading]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -68,11 +74,10 @@ SET @ErrorMessage =
 SET @ErrorStatus = 0
 
 END CATCH;
-
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[1-Forecast Loading] is completed'
+[1-Forecast Loading] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 ELSE
 BEGIN
@@ -80,43 +85,47 @@ BEGIN
 END
 SET @ErrorMessage = ''
 
--- ImportEfficiencyBI 
+--02) ImportEfficiencyBI 
 BEGIN TRY
+	set @Stime = getdate()
 	set @StartDate = CAST(DATEADD(day,-60, GETDATE()) AS date)
 	set @EndDate   = CAST(GETDATE() AS date)
-	EXEC  ImportEfficiencyBI @StartDate	,@EndDate
+	EXEC ImportEfficiencyBI @StartDate	,@EndDate
+	set @Etime = getdate()
 END TRY
 BEGIN CATCH
-	SET @ErrorMessage = 
-'錯誤程序名稱: [2-Production Efficiency]' + CHAR(13) +
+SET @ErrorMessage = 
+'
+[2-Production Efficiency]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
 
 	SET @ErrorStatus = 0
 END CATCH;
-
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) +'
-[2-Production Efficiency] is completed'
+[2-Production Efficiency] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 BEGIN
 	set @desc += CHAR(13) + @ErrorMessage
 END
-
 SET @ErrorMessage = ''
 
---ImportSewingLineScheduleBIData
+--03) ImportSewingLineScheduleBIData
 BEGIN TRY
+	set @Stime = getdate()
 	set @StartDate = CAST(DATEADD(day,-60, GETDATE()) AS date)
 	set @EndDate   = CAST(DATEADD(day,120, GETDATE()) AS date)
 	execute [dbo].[ImportSewingLineScheduleBIData] @StartDate,@EndDate
+	set @Etime = getdate()
 END TRY
 
 BEGIN CATCH
 SET @ErrorMessage = 
-'錯誤程序名稱: [3-Production Sewing Line Schedule]' + CHAR(13) +
+'
+[3-Production Sewing Line Schedule]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -124,30 +133,32 @@ SET @ErrorMessage =
 SET @ErrorStatus = 0
 
 END CATCH;
-
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) + '
-[3-Production Sewing Line Schedule] is completed'
+[3-Production Sewing Line Schedule] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 BEGIN
 	set @desc +=  CHAR(13) +@ErrorMessage
 END
 SET @ErrorMessage = ''
 
---P_ImportOustandingPO_Fty、P_ImportSDPOrderDetail
+--04) P_ImportOustandingPO_Fty、P_ImportSDPOrderDetail
 BEGIN TRY
+	set @Stime = getdate()
 	set @StartDate = CAST(DATEADD(day,-150, GETDATE()) AS date)
 	set @EndDate   = CAST(DATEADD(day,30, GETDATE()) AS date)
 	execute [dbo].[P_ImportOustandingPO_Fty] @StartDate,@EndDate
 	DECLARE @BuyerDelivery_s as Date = '2020/01/01'
 	--DECLARE @BuyerDelivery_e as Date = '2020/07/31'
 	execute [dbo].[P_ImportSDPOrderDetail] @BuyerDelivery_s--,@BuyerDelivery_e
+	set @Etime = getdate()
 END TRY
 
 BEGIN CATCH
 SET @ErrorMessage = 
-'錯誤程序名稱: [4-Outstanding PO]' + CHAR(13) +
+'
+[4-Outstanding PO]' + CHAR(13) +
 ',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
 ',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
 ',錯誤訊息: ' + ERROR_MESSAGE()
@@ -155,11 +166,37 @@ SET @ErrorMessage =
 SET @ErrorStatus = 0
 
 END CATCH;
-
 IF (@ErrorMessage IS NULL or @ErrorMessage='')
 BEGIN 
 	set @desc += CHAR(13) +'
-[4-Outstanding PO] is completed'
+[4-Outstanding PO] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
+END
+BEGIN
+	set @desc +=  CHAR(13) +@ErrorMessage
+END
+SET @ErrorMessage = ''
+
+--05) P_ImportLoadingProductionOutput_FTY
+BEGIN TRY
+	execute [dbo].[P_ImportLoadingProductionOutput_FTY]
+	set @Etime = getdate()
+END TRY
+
+BEGIN CATCH
+SET @ErrorMessage =
+'
+[5-LoadingProductionOutput]' + CHAR(13) +
+',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
+',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
+',錯誤訊息: ' + ERROR_MESSAGE()
+
+SET @ErrorStatus = 0
+
+END CATCH;
+IF (@ErrorMessage IS NULL or @ErrorMessage='')
+BEGIN 
+	set @desc += CHAR(13) +'
+[5-LoadingProductionOutput] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
 END
 BEGIN
 	set @desc +=  CHAR(13) +@ErrorMessage
@@ -186,7 +223,7 @@ SELECT @mailserver = Mailserver
 ,@eMailID = EmailID
 ,@eMailPwd = EmailPwd
 ,@sendFrom = Sendfrom
---,@toAddress = 'willy.wei@sportscity.com.tw'
+,@toAddress = 'willy.wei@sportscity.com.tw'
 FROM Production.dbo.System
 
 --select @toAddress = ToAddress from Production.dbo.MailTo where id = '101'
@@ -194,6 +231,5 @@ DECLARE @EndTime datetime = getdate()
 
 exec callJobLog_SP @mailserver,@eMailID,@eMailPwd,@sendFrom,@toAddress,'Import PowerBI Report Data',@comboDesc,0,@ErrorStatus,0,'Power BI',@Region,@M,@StartTime,@EndTime
 
+
 END
-
-

@@ -1,19 +1,36 @@
-Ôªø
 -- =============================================
--- Create date: 2020/07/07
+-- Create date: 2020/08/06
 -- Description:	Data Query Logic by PMS.Centralized R05 Report Sheet [Balance_Detail], Import Data to P_SDPOrderDetail
 -- =============================================
-CREATE PROCEDURE [dbo].[P_ImportLoadingProductionOutput]	
-	@LinkServerName varchar(50)
-AS
+CREATE PROCEDURE [dbo].[P_ImportLoadingProductionOutput_FTY]
 
+AS
 BEGIN
+	SET NOCOUNT ON
+
+	-- Get current server name
+	declare @current_ServerName varchar(50) = (SELECT [Server Name] = @@SERVERNAME)	
+	-- use current server name to take Production Server name
+	declare @current_PMS_ServerName nvarchar(50) 
+	= (
+		select [value] = 
+			CASE WHEN @current_ServerName= 'PHL-NEWPMS-02' THEN 'PHL-NEWPMS' -- PH1
+				 WHEN @current_ServerName= 'VT1-PH2-PMS2b' THEN 'VT1-PH2-PMS2' -- PH2
+				 WHEN @current_ServerName= 'system2017BK' THEN 'SYSTEM2017' -- SNP
+				 WHEN @current_ServerName= 'SPS-SQL2' THEN 'SPS-SQL.spscd.com' -- SPS
+				 WHEN @current_ServerName= 'SQLBK' THEN 'PMS-SXR' -- SPR
+				 WHEN @current_ServerName= 'newerp-bak' THEN 'newerp' -- HZG		
+				 WHEN @current_ServerName= 'SQL' THEN 'NDATA' -- HXG
+				 when (select top 1 MDivisionID from Production.dbo.Factory) in ('VM2','VM1') then 'SYSTEM2016' -- ESP & SPT
+			ELSE '' END
+	)
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
 declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 declare @strID nvarchar(15) = N'SubCON-Out_'
+
 
 declare @useYear varchar(4) = (select YEAR(GETDATE()))
 declare @curr_Month varchar(2) = (select MONTH(GETDATE()))
@@ -25,10 +42,9 @@ end
 
 declare @S_Year as varchar(10) = CAST(@useYear AS varchar) 
 
-
 SET @SqlCmd1 = '
 
-SELECT * into #tmp FROM OPENQUERY(['+@LinkServerName+'], 
+SELECT * into #tmp FROM OPENQUERY(['+@current_PMS_ServerName+'], 
 ''exec Production.dbo.GetProductionOutputSummary @Year = '''''+@useYear+'''''
 ,@DateType=1, @ChkOrder=1, @ChkForecast=1, @ChkFtylocalOrder=1, @ExcludeSampleFactory=1, @ChkMonthly=1, @IncludeCancelOrder=1, @IsFtySide=0, @IsPowerBI=1
 '')
@@ -36,34 +52,12 @@ SELECT * into #tmp FROM OPENQUERY(['+@LinkServerName+'],
 select * into #Final 
 from (
 
-	-- ÈùûÂ§ñ‰ª£Â∑•
-	select t.* 
-		,[CDCodeNew] = sty.CDCodeNew
-		,[ProductType] = sty.ProductType
-		,[FabricType] = sty.FabricType
-		,[Lining] = sty.Lining
-		,[Gender] = sty.Gender
-		,[Construction] = sty.Construction
-	from #tmp t
-	Outer apply (
-		SELECT o.CDCodeNew
-			, s.[ID]
-			, ProductType = r2.Name
-			, FabricType = r1.Name
-			, Lining
-			, Gender
-			, Construction = d1.Name
-		FROM ['+@LinkServerName+'].Production.dbo.Orders o WITH(NOLOCK)
-		left join ['+@LinkServerName+'].Production.dbo.Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey
-		left join ['+@LinkServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
-		left join ['+@LinkServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
-		left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
-		where o.ID = t.ID
-	)sty
+	-- ´D•~•N§u
+	select * from #tmp 
 
 	union all
 
-	-- Â§ñ‰ª£Â∑•
+	-- •~•N§u
 	select [MDivisionID] = F.MDivisionID,
 		[FtyZone] = F.FtyZone,
 		[FactoryID] = F.ID,
@@ -106,29 +100,8 @@ from (
 		T.SewInLine,
 		T.SewOffLine,
 		T.TransFtyZone 
-		,[CDCodeNew] = sty.CDCodeNew
-		,[ProductType] = sty.ProductType
-		,[FabricType] = sty.FabricType
-		,[Lining] = sty.Lining
-		,[Gender] = sty.Gender
-		,[Construction] = sty.Construction
 	from #tmp T
-	LEFT JOIN ['+@LinkServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
-	Outer apply (
-		SELECT o.CDCodeNew
-			, s.[ID]
-			, ProductType = r2.Name
-			, FabricType = r1.Name
-			, Lining
-			, Gender
-			, Construction = d1.Name
-		FROM ['+@LinkServerName+'].Production.dbo.Orders o WITH(NOLOCK)
-		left join ['+@LinkServerName+'].Production.dbo.Style s WITH(NOLOCK) on s.Ukey = o.StyleUkey
-		left join ['+@LinkServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
-		left join ['+@LinkServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType
-		left join ['+@LinkServerName+'].Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= ''Style_Apparel_Type'' and r2.ID = s.ApparelType
-		where o.ID = T.ID
-	)sty
+	LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
 	where TransFtyZone != ''''
 
 ) a
@@ -138,9 +111,6 @@ drop table #tmp
 '
 
 SET @SqlCmd2 = '
-
-BEGIN TRY
-Begin tran
 
 update t
 set	    t.MDivisionID =  s.MDivisionID,
@@ -183,13 +153,7 @@ set	    t.MDivisionID =  s.MDivisionID,
 		t.PulloutComplete =  s.PulloutComplete,
 		t.SewInLine =  s.SewInLine,
 		t.SewOffLine =  s.SewOffLine,
-		t.TransFtyZone =  s.TransFtyZone,
-		t.CDCodeNew =  s.CDCodeNew,
-		t.ProductType =  s.ProductType,
-		t.FabricType =  s.FabricType,
-		t.Lining =  s.Lining,
-		t.Gender =  s.Gender,
-		t.Construction =  s.Construction
+		t.TransFtyZone =  s.TransFtyZone
 from P_LoadingProductionOutput as t
 inner join #Final s 
 on t.FactoryID=s.FactoryID  
@@ -237,13 +201,7 @@ insert into P_LoadingProductionOutput
 	s.PulloutComplete,
 	s.SewInLine,
 	s.SewOffLine,
-	s.TransFtyZone,
-	s.CDCodeNew,
-	s.ProductType,
-	s.FabricType,
-	s.Lining,
-	s.Gender,
-	s.Construction
+	s.TransFtyZone
 from #Final s
 where not exists(
 	select 1 from P_LoadingProductionOutput t 
@@ -261,25 +219,13 @@ where
 )
 and exists	   (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
 and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
-
-	Commit tran
-
-END TRY
-BEGIN CATCH
-	RollBack Tran
-	declare @ErrMsg varchar(1000) = ''Err# : '' + ltrim(str(ERROR_NUMBER())) + 
-				CHAR(10)+''Error Severity:''+ltrim(str(ERROR_SEVERITY()  )) +
-				CHAR(10)+''Error State:'' + ltrim(str(ERROR_STATE() ))  +
-				CHAR(10)+''Error Proc:'' + isNull(ERROR_PROCEDURE(),'''')  +
-				CHAR(10)+''Error Line:''+ltrim(str(ERROR_LINE()  )) +
-				CHAR(10)+''Error Msg:''+ ERROR_MESSAGE() ;
-    
-    RaisError( @ErrMsg ,16,-1)
-
-END CATCH
 '
 
 SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 
 	EXEC sp_executesql @SqlCmd_Combin
 
 End
+
+GO
+
+
