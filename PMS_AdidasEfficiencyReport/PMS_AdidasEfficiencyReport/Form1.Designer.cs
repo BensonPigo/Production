@@ -77,8 +77,6 @@
             // chkTSR
             // 
             this.chkTSR.AutoSize = true;
-            this.chkTSR.Checked = true;
-            this.chkTSR.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTSR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkTSR.Location = new System.Drawing.Point(3, 111);
             this.chkTSR.Name = "chkTSR";
@@ -90,8 +88,6 @@
             // chkNAI
             // 
             this.chkNAI.AutoSize = true;
-            this.chkNAI.Checked = true;
-            this.chkNAI.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkNAI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNAI.Location = new System.Drawing.Point(123, 84);
             this.chkNAI.Name = "chkNAI";
@@ -168,8 +164,6 @@
             // chkSNP
             // 
             this.chkSNP.AutoSize = true;
-            this.chkSNP.Checked = true;
-            this.chkSNP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSNP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkSNP.Location = new System.Drawing.Point(63, 30);
             this.chkSNP.Name = "chkSNP";
