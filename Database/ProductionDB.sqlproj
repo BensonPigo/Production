@@ -2603,6 +2603,8 @@
     </Build>
     <Build Include="dbo\Functions\Getlocation_Intersection.sql" />
     <Build Include="dbo\Tables\PrintLeadTime.sql" />
+    <Build Include="dbo\Tables\WHWorkingCalendar.sql" />
+    <Build Include="dbo\Functions\GetPreparingTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
