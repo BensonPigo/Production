@@ -40,9 +40,9 @@ namespace Sci.Production.Automation
 
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
 
-            string[] structureID = listID.Split(',');
+            var structureID = listID.Split(',').Where( s => !MyUtility.Check.Empty(s));
 
-            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Length / 10.0));
+            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Count() / 10.0));
             List<AutomationCreateRecord> listSendData = new List<AutomationCreateRecord>();
             SqlConnection sqlConnection = new SqlConnection();
 
