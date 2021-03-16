@@ -1,4 +1,5 @@
 ﻿
+
 -- =============================================
 -- Create date: <Create Date,,>
 -- Description:	Get Preparing Time
@@ -77,5 +78,6 @@ RETURN
 		from WHWorkingCalendar s
 		where s.MDivision = WCalendar.MDivision
 		and s.StartDate = WCalendar.StartDate
+		and @StartDate is not null and @EndDate is not null 
 	 )ttlminute
 )
