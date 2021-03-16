@@ -16,7 +16,7 @@ CREATE PROCEDURE [dbo].[GetProductionOutputSummary]
 	@IsFtySide bit = 0,
 	@IsPowerBI bit =0,
 	@IsByCMPLockDate bit = 0,
-	@DailyLockDate varchar(10) = ''
+	@OutputDate varchar(10) = ''
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -237,22 +237,29 @@ Declare @tmpSewingOutput Table(
 	[QAQty] [NUMERIC](16,6)
 )
 
+Declare @OutputDateLimit date
 
+if(@OutputDate = '' and @IsByCMPLockDate = 1)
+begin
+	set @OutputDateLimit = @SewLock
+end
+
+if(@OutputDate <> '')
+begin
+	set @OutputDateLimit = @OutputDate
+end
 
 insert into @tmpSewingOutput(OrderId, OutputDate, QAQty)
 select	sdd.OrderId,
 		s.OutputDate,
-		isnull(
-				sum(
-					iif( (s.LockDate = @DailyLockDate or @DailyLockDate = ''), isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate), 0)
-				   )
-		,0) / 100
+		isnull(sum(isnull(sdd.QAQty,0) * isnull(ol.Rate, sl.Rate)),0) / 100
 from SewingOutput_Detail_Detail sdd with (nolock)
 inner join SewingOutput s with (nolock) on s.ID = sdd.ID
 inner join Orders o with(nolock) on o.ID = sdd.OrderId
 left join Order_Location ol with (nolock) on ol.OrderId = sdd.OrderId and ol.Location = sdd.ComboType
 left join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey and sl.Location = sdd.ComboType
-where exists(select 1 from @tmpBaseStep1 tbs where tbs.ID = sdd.OrderId) and (@IsByCMPLockDate = 0 or s.OutputDate <= @SewLock)
+where	exists(select 1 from @tmpBaseStep1 tbs where tbs.ID = sdd.OrderId) and 
+		(@OutputDateLimit is null or s.OutputDate <= @OutputDateLimit)
 group by	sdd.OrderId,
 			s.OutputDate
 

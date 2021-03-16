@@ -51,7 +51,7 @@
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
             this.chkCMPLockDate = new Sci.Win.UI.CheckBox();
             this.label8 = new Sci.Win.UI.Label();
-            this.dateDailyLock = new Sci.Win.UI.DateBox();
+            this.dateOutputDate = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -333,21 +333,21 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(111, 23);
             this.label8.TabIndex = 122;
-            this.label8.Text = "Daily Lock Date";
+            this.label8.Text = "Output Date";
             // 
-            // dateDailyLock
+            // dateOutputDate
             // 
-            this.dateDailyLock.Location = new System.Drawing.Point(123, 315);
-            this.dateDailyLock.Name = "dateDailyLock";
-            this.dateDailyLock.Size = new System.Drawing.Size(130, 24);
-            this.dateDailyLock.TabIndex = 123;
+            this.dateOutputDate.Location = new System.Drawing.Point(123, 315);
+            this.dateOutputDate.Name = "dateOutputDate";
+            this.dateOutputDate.Size = new System.Drawing.Size(130, 24);
+            this.dateOutputDate.TabIndex = 123;
             // 
             // R05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 473);
-            this.Controls.Add(this.dateDailyLock);
+            this.Controls.Add(this.dateOutputDate);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.chkCMPLockDate);
             this.Controls.Add(this.chkIncludeCancelOrder);
@@ -401,7 +401,7 @@
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkCMPLockDate, 0);
             this.Controls.SetChildIndex(this.label8, 0);
-            this.Controls.SetChildIndex(this.dateDailyLock, 0);
+            this.Controls.SetChildIndex(this.dateOutputDate, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -432,6 +432,6 @@
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkCMPLockDate;
         private Win.UI.Label label8;
-        private Win.UI.DateBox dateDailyLock;
+        private Win.UI.DateBox dateOutputDate;
     }
 }
