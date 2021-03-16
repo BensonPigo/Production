@@ -124,12 +124,27 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings mask_StartDate = new DataGridViewGeneratorMaskedTextColumnSettings();
             mask_StartDate.CellValidating += (s, e) =>
             {
-                if (e.RowIndex == -1 || MyUtility.Check.Empty(e.FormattedValue))
+                if (e.RowIndex == -1)
                 {
                     return;
                 }
 
                 DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    if (!MyUtility.Check.Empty(dr["FinishDate"]))
+                    {
+                        MyUtility.Msg.WarningBox("Start Date cannot be empty when Finish Date already exsis.");
+                        e.Cancel = true;
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
                 string strStartDate = this.DateTimeMaskFull(e.FormattedValue.ToString().Replace(" ", "0"));
                 if (this.IsDateTimeFormat(strStartDate))
                 {
