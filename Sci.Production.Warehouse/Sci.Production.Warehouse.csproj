@@ -157,6 +157,18 @@
     <Compile Include="B06.Designer.cs">
       <DependentUpon>B06.cs</DependentUpon>
     </Compile>
+    <Compile Include="B07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B07.Designer.cs">
+      <DependentUpon>B07.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P53.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P53.Designer.cs">
+      <DependentUpon>P53.cs</DependentUpon>
+    </Compile>
     <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
@@ -1314,6 +1326,9 @@
     <EmbeddedResource Include="B06.resx">
       <DependentUpon>B06.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B07.resx">
+      <DependentUpon>B07.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1552,6 +1567,9 @@
     <EmbeddedResource Include="P52_StocktakingListBack.rdlc" />
     <EmbeddedResource Include="P52_StocktakingWithoutBookQtyBack.rdlc" />
     <EmbeddedResource Include="P52_StocktakingWithoutBookQty.rdlc" />
+    <EmbeddedResource Include="P53.resx">
+      <DependentUpon>P53.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P60_Print.rdlc" />
     <EmbeddedResource Include="P61.resx">
       <DependentUpon>P61.cs</DependentUpon>
