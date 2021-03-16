@@ -244,7 +244,7 @@ having count(*) = 2", sqlwhere);
                         string.Empty,
                         string.Empty,
                         string.Empty,
-                        string.Empty,
+                        "ADIDAS,REEBOK",
                         sintexEffReportCompare);
                 result = DBProxy.Current.Select(conn, sqlCmd.ToString(), null, out DataTable dtTmp);
                 if (!result)
