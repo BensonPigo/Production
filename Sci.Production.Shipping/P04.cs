@@ -49,10 +49,32 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select ed.*,isnull(o.FactoryID,'') as FactoryID,isnull(o.BrandID,'') as BrandID,o.BuyerDelivery,o.SciDelivery,
-(left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp WITH (NOLOCK) where ID = ed.SuppID),(select AbbEN from Supp WITH (NOLOCK) where ID = ed.SuppID))) as Supp,
-ed.RefNo,isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as Description,
-(case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
+                @"
+select ed.*
+,isnull(o.FactoryID,'') as FactoryID
+,isnull(o.BrandID,'') as BrandID
+,o.BuyerDelivery
+,(left(ed.Seq1+' ',3)+'-'+ed.Seq2) as Seq
+,(ed.SuppID+'-'+iif(fe.Type = 4,(select Abb from LocalSupp WITH (NOLOCK) where ID = ed.SuppID),(select AbbEN from Supp WITH (NOLOCK) where ID = ed.SuppID))) as Supp
+,ed.RefNo
+,isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as Description
+,(case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
+,[ToSP]=IIF(ed.TransactionID = '',''
+		,(select td.ToPOID
+		from TransferOut_Detail td
+		where td.POID=ed.POID
+		AND td.Seq1 = ed.Seq1 
+		AND td.Seq2 = ed.Seq2
+		AND td.ID=ed.TransactionID)
+	)
+,[ToSEQ]=IIF(ed.TransactionID = '',''
+		,(select td.ToSeq1  + ' '+ td.ToSeq2
+		from TransferOut_Detail td
+		where td.POID=ed.POID
+		AND td.Seq1 = ed.Seq1 
+		AND td.Seq2 = ed.Seq2
+		AND td.ID=ed.TransactionID)
+	)
 from FtyExport_Detail ed WITH (NOLOCK) 
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
@@ -110,6 +132,18 @@ where ed.ID = '{0}'", masterID);
                 this.displayCustomsDeclareNo.Text = MyUtility.GetValue.Lookup(sqlcmd);
             }
 
+            // 表身[TO SP]及[TO SEQ]欄位只在表題Type = 'Transfer Out'時顯示
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3")
+            {
+                this.detailgrid.Columns["ToSP"].Visible = true;
+                this.detailgrid.Columns["ToSEQ"].Visible = true;
+            }
+            else
+            {
+                this.detailgrid.Columns["ToSP"].Visible = false;
+                this.detailgrid.Columns["ToSEQ"].Visible = false;
+            }
+
             this.ControlColor();
         }
 
@@ -118,19 +152,21 @@ where ed.ID = '{0}'", masterID);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("TransactionID", header: "ID#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("FactoryID", header: "Prod. Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("POID", header: "FM SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("Seq", header: "FM SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Del.", iseditingreadonly: true)
-                .Date("SCIDelivery", header: "SCI Del.", iseditingreadonly: true)
-                .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("ToSP", header: "To SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ToSEQ", header: "To SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("Qty", header: "Import Q'ty", decimal_places: 2)
+                .Numeric("Qty", header: "Q'ty", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2);
         }
@@ -372,6 +408,25 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
+            // 如果Type='Transfer In', 則將[表頭][Invoice No] 更新到TransferIn.InvNo
+            if (this.CurrentMaintain["Type"].ToString() == "2")
+            {
+                string cmd = string.Empty;
+                string iNVNo = MyUtility.Convert.GetString(this.CurrentMaintain["INVNo"]);
+
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    string transactionID = MyUtility.Convert.GetString(dr["TransactionID"]);
+                    cmd += $"UPDATE TransferIn SET InvNo = '{iNVNo}' WHERE ID = '{transactionID}' " + Environment.NewLine; ;
+                }
+
+                DualResult r = DBProxy.Current.Execute(null, cmd);
+                if (!r)
+                {
+                    this.ShowErr(r);
+                }
+            }
+
             if (this.radioTransferOut.Checked)
             {
                 this.SendMail();
@@ -472,6 +527,9 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 this.dateShipDate.ReadOnly = this.EditMode ? false : true;
                 this.dateArrivePortDate.DataBindings.Clear();
                 this.dateArrivePortDate.DataBindings.Add(new Binding("Value", this.mtbs, "ETA", true));
+
+                this.detailgrid.Columns["ToSP"].Visible = true;
+                this.detailgrid.Columns["ToSEQ"].Visible = true;
             }
             else
             {
@@ -480,6 +538,9 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 this.dateShipDate.ReadOnly = true;
                 this.dateArrivePortDate.DataBindings.Clear();
                 this.dateArrivePortDate.DataBindings.Add(new Binding("Value", this.mtbs, "PortArrival", true));
+
+                this.detailgrid.Columns["ToSP"].Visible = false;
+                this.detailgrid.Columns["ToSEQ"].Visible = false;
             }
 
             if (this.EditMode)

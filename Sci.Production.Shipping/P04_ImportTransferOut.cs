@@ -33,6 +33,7 @@ namespace Sci.Production.Shipping
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                .Text("TransactionID", header: "Transfer Out No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -64,6 +65,7 @@ namespace Sci.Production.Shipping
 
             string sqlCmd = @"
 select Selected = 1
+       , [TransactionID] = td.ID
 	   , td.Poid
 	   , td.Seq1
 	   , td.Seq2
@@ -128,7 +130,8 @@ where td.ID = @id";
             {
                 DataTable dtComputeQty;
                 string strComputeQtySQL = @"
-select Poid
+select TransactionID
+       , Poid
 	   , Seq1
 	   , Seq2
 	   , Seq
@@ -149,14 +152,20 @@ select Poid
 	   , FactoryID
 	   , SciDelivery
 from #tmp
-group by Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
+group by TransactionID,Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
 		 , SCIRefNo, Description, FabricType, Type 
 	   	 , MtlTypeID, UnitId, BuyerDelivery, BrandID
 	   	 , FactoryID, SciDelivery";
                 MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), string.Empty, strComputeQtySQL, out dtComputeQty);
                 foreach (DataRow currentRow in dtComputeQty.Rows)
                 {
-                    DataRow[] findrow = this.detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
+
+                    DataRow[] findrow = this.detailData.Select($@"
+TransactionID = '{MyUtility.Convert.GetString(currentRow["TransactionID"])}' 
+AND POID = '{MyUtility.Convert.GetString(currentRow["POID"])}' 
+AND Seq1 = '{MyUtility.Convert.GetString(currentRow["Seq1"])}'
+AND Seq2 = '{MyUtility.Convert.GetString(currentRow["Seq2"])}'");
+
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
