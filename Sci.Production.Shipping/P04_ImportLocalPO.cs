@@ -33,7 +33,7 @@ namespace Sci.Production.Shipping
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                .Text("LocalPOID", header: "Local Purchase#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("TransactionID", header: "Local Purchase#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -72,7 +72,7 @@ namespace Sci.Production.Shipping
             sqlCmd.Append(@"select lo.*, 1 as Selected, (lo.SuppID+' - '+ls.Abb) as Supp,isnull(li.Description,'') as Description,li.Category as MtlTypeID,
 o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery,0.0 as NetKg,0.0 as WeightKg,
 '' as Seq1,'' as Seq2,'' as Seq,'' as FabricType
-from (select l.Id as LocalPOID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
+from (select l.Id as TransactionID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
       from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) 
 	  where l.Id = ld.Id");
             if (!MyUtility.Check.Empty(this.txtLocalPurchase.Text))
@@ -127,7 +127,12 @@ left join LocalSupp ls on ls.ID = lo.SuppID");
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = this.detailData.Select(string.Format("POID = '{0}' and SCIRefNo = '{1}' and RefNo = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["SCIRefNo"]), MyUtility.Convert.GetString(currentRow["RefNo"])));
+                    DataRow[] findrow = this.detailData.Select($@"
+TransactionID = '{MyUtility.Convert.GetString(currentRow["TransactionID"])}' 
+AND POID = '{MyUtility.Convert.GetString(currentRow["POID"])}' 
+AND SCIRefNo = '{MyUtility.Convert.GetString(currentRow["SCIRefNo"])}'
+AND RefNo = '{MyUtility.Convert.GetString(currentRow["RefNo"])}'");
+
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();

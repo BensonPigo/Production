@@ -17,6 +17,7 @@
     [CurrencyId] VARCHAR (3)     CONSTRAINT [DF_FtyExport_Detail_CurrencyId] DEFAULT ('') NULL,
     [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
     [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
+	TransactionID varchar(13) NOT NULL CONSTRAINT [DF_FtyExport_Detail_TransactionID] DEFAULT(''),
     CONSTRAINT [PK_FtyExport_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC, [SCIRefno] ASC, [RefNo] ASC, [LocalPOID] ASC)
 );
 
