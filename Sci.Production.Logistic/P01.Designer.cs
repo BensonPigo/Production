@@ -1561,7 +1561,7 @@
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Size = new System.Drawing.Size(976, 562);
             this.shapeContainer2.TabIndex = 85;
             this.shapeContainer2.TabStop = false;
@@ -1588,7 +1588,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(976, 562);
             this.shapeContainer3.TabIndex = 85;
             this.shapeContainer3.TabStop = false;
@@ -1615,7 +1615,7 @@
             // 
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer4.Name = "shapeContainer1";
+            this.shapeContainer4.Name = "shapeContainer4";
             this.shapeContainer4.Size = new System.Drawing.Size(976, 562);
             this.shapeContainer4.TabIndex = 85;
             this.shapeContainer4.TabStop = false;
@@ -1642,7 +1642,7 @@
             // 
             this.shapeContainer5.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer5.Name = "shapeContainer1";
+            this.shapeContainer5.Name = "shapeContainer5";
             this.shapeContainer5.Size = new System.Drawing.Size(976, 562);
             this.shapeContainer5.TabIndex = 85;
             this.shapeContainer5.TabStop = false;
@@ -1669,7 +1669,7 @@
             // 
             this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer6.Name = "shapeContainer1";
+            this.shapeContainer6.Name = "shapeContainer6";
             this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4,
             this.lineShape3,
