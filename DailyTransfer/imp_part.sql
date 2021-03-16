@@ -334,6 +334,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	set 
 		Junk = b.Cancel 
 		,TPEPOID = b.MmsPoID
+		,FinalBrand = b.FinalBrand
 	from dbo.PartPO_Detail a
 	inner join SciTrade_To_Pms_MmsReq_Detail b on a.id=b.ID and a.SEQ2=b.Seq2
 

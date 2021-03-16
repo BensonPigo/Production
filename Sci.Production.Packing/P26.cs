@@ -903,7 +903,7 @@ INNER JOIN ShippingMarkPicture_Detail pictD ON pict.Ukey = pictD.ShippingMarkPic
 
 INSERT ShippingMarkPic_Detail 
 		(ShippingMarkPicUkey,SCICtnNo,ShippingMarkCombinationUkey,ShippingMarkTypeUkey,FileName
-		,Side,Seq,Is2Side,IsHorizontal,IsSSCC,FromRight,FromBottom,Width,Length)
+		,Side,Seq,Is2Side,IsHorizontal,IsSSCC,FromRight,FromBottom,Width,Length, CtnHeight, IsOverCtnHt, NotAutomate)
 SELECT 
 	 [ShippingMarkPicUkey]=pic.Ukey
 	,t.SCICtnNo
@@ -920,6 +920,9 @@ SELECT
 	,b.FromBottom
 	,s.Width
 	,s.Length
+    ,a.CtnHeight
+    ,b.IsOverCtnHt
+    ,b.NotAutomate
 FROM #tmp_Pic_Detail{i} t
 INNER JOIN ShippingMarkPicture a ON a.BrandID = t.BrandID AND a.CTNRefno = t.RefNo AND a.ShippingMarkCombinationUkey = t.ShippingMarkCombinationUkey AND a.Category ='PIC' 
 INNER JOIN ShippingMarkPicture_Detail b ON a.Ukey = b.ShippingMarkPictureUkey AND b.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey

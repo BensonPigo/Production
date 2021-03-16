@@ -358,6 +358,10 @@ where   o.Category <>''
 /*    
     撈各Style目前最後的CustomSP
 */
+select [ID] = Ltrim(ID), NLCode2, HSCode
+into #tmpMisc
+from SciMachine_Misc
+
 select 	 v.ID
 		,v.CustomSP
         , v.StyleID
@@ -366,8 +370,12 @@ select 	 v.ID
         , v.seasonid 
         , vc.Article
         , vc.SizeCode
-        , vdd.HSCode
-        , vdd.NLCode
+        , [HSCode] = case	when vdd.FabricType in ('F', 'A') then f.HSCode
+							when vdd.FabricType = 'L' then l.HSCode
+							else misc.HSCode end
+        , [NLCode] = case	when vdd.FabricType in ('F', 'A') then f.NLCode2
+							when vdd.FabricType = 'L' then l.NLCode2
+							else misc.NLCode2 end
         , vdd.RefNo
         , vdd.SCIRefno
         , vdd.FabricType
@@ -395,6 +403,9 @@ inner join (
 inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
 inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on vdd.ID = vd.ID 
                                                            and vdd.NLCode = vd.NLCode
+left join Fabric f with (nolock) on vdd.SCIRefno = f.SCIRefno and vdd.FabricType in ('A', 'F')
+left join LocalItem l with (nolock) on vdd.RefNo = l.RefNo and vdd.FabricType = 'L'
+left join #tmpMisc misc on vdd.RefNo = misc.ID and vdd.FabricType = 'Misc'
 where v.VNContractID = @contract
 
 
@@ -1834,8 +1845,12 @@ select [SP#] = vdd.OrderId
         , [CustomSP] = vdd.customsp
         , [Article] = vdd.Article
         , [SizeCode] = vdd.SizeCode
-        , [NLCode] = vcd.NlCode
-        , [HSCode] = vcd.HSCode
+        , [HSCode] = case	when vcdd.FabricType in ('F', 'A') then f.HSCode
+							when vcdd.FabricType = 'L' then li.HSCode
+							else misc.HSCode end
+        , [NLCode] = case	when vcdd.FabricType in ('F', 'A') then f.NLCode2
+							when vcdd.FabricType = 'L' then li.NLCode2
+							else misc.NLCode2 end
         , [Qty] = vdds.ExportQty * (vcdd.Qty * (1+vcd.Waste))
         , [Unit] = vcdd.UnitID
         , [StockQty] =  vdds.ExportQty * (vcdd.StockQty * (1+vcd.Waste))
@@ -1853,6 +1868,8 @@ inner join VNConsumption_Detail_Detail vcdd WITH (NOLOCK) on vcd.ID= vcdd.ID
                                                              and vcd.NLCode = vcdd.NLCode
 inner join orders o WITH (NOLOCK) on o.id=vdd.OrderId
 left join LocalItem li with (nolock) on li.RefNo = vcdd.RefNo
+left join Fabric f with (nolock) on vcdd.SCIRefno = f.SCIRefno and vcdd.FabricType in ('A', 'F')
+left join #tmpMisc misc on vcdd.RefNo = misc.ID and vcdd.FabricType = 'Misc'
 outer apply (
 	select sum(ExportQty) as ExportQty 
 	from VNExportDeclaration_Detail WITH (NOLOCK)

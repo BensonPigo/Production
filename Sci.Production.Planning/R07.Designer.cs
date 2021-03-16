@@ -49,17 +49,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(426, 12);
+            this.print.Location = new System.Drawing.Point(430, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(426, 48);
+            this.toexcel.Location = new System.Drawing.Point(430, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(426, 84);
+            this.close.Location = new System.Drawing.Point(430, 84);
             this.close.TabIndex = 6;
             // 
             // lbOutputDate
@@ -245,7 +245,7 @@
             this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand1.Location = new System.Drawing.Point(115, 120);
             this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.Size = new System.Drawing.Size(300, 23);
             this.txtbrand1.TabIndex = 145;
             // 
             // R07

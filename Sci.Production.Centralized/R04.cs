@@ -443,6 +443,7 @@ select * from(
 		,rate
         ,t.Remark
         ,t.SewingReasonDesc
+        ,t.NonRevenue
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t
     Outer apply (
@@ -563,11 +564,11 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 48;
+                start_column = 49;
             }
             else
             {
-                start_column = 46;
+                start_column = 47;
                 objSheets.get_Range("AS:AT").EntireColumn.Delete();
             }
 

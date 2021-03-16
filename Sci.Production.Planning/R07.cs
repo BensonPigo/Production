@@ -37,6 +37,7 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,D,Day,N,Night");
+            this.txtbrand1.MultiSelect = true;
         }
 
         /// <inheritdoc/>
