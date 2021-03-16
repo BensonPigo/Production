@@ -42,6 +42,7 @@ namespace Sci.Production.Centralized
             MyUtility.Tool.SetupCombox(this.comboShift, 2, 1, ",,D,Day,N,Night");
             this.comboM.SetDefalutIndex();
             this.comboFactory.SetDefalutIndex(string.Empty);
+            this.txtbrand1.MultiSelect = true;
         }
 
         /// <inheritdoc/>
