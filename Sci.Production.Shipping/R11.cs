@@ -144,6 +144,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
             {
                 this.rdbtnMainList.Enabled = true;
                 this.rdbtnDetailList.Enabled = true;
+                this.rdbtnMajorItem.Enabled = true;
                 this.rdbtnMainList.Checked = true;
                 this.chkExcludePackingFOC.Enabled = true;
                 this.chkExcludePackingLocalOrder.Enabled = true;
@@ -154,8 +155,10 @@ where a.ID = '{0}'", this.txtForwarder.Text);
             {
                 this.rdbtnMainList.Enabled = false;
                 this.rdbtnDetailList.Enabled = false;
+                this.rdbtnMajorItem.Enabled = false;
                 this.rdbtnMainList.Checked = false;
                 this.rdbtnDetailList.Checked = false;
+                this.rdbtnMajorItem.Checked = false;
                 this.chkExcludePackingFOC.Enabled = false;
                 this.chkExcludePackingLocalOrder.Enabled = false;
                 this.chkExcludePackingFOC.Checked = false;
@@ -176,7 +179,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
             this.shipMode = this.txtshipmode.Text;
             this.forwarder = this.txtForwarder.Text;
             this.reportType = this.radioGarment.Checked ? 1 : 2;
-            this.reportType2 = this.rdbtnMainList.Checked ? 1 : 2;
+            this.reportType2 = this.rdbtnMainList.Checked ? 1 : this.rdbtnDetailList.Checked ? 2 : 3;
             this.excludePackingFoc = this.chkExcludePackingFOC.Checked;
             this.excludePackingLocalOrder = this.chkExcludePackingLocalOrder.Checked;
 
@@ -356,7 +359,7 @@ select * from GBData
 union all
 select * from PLData");
                 }
-                else
+                else if (this.reportType2 == 2)
                 {
                     #region 組SQL Command
                     sqlCmd.Append(@"
@@ -590,6 +593,216 @@ union all
 select * from PLData");
                     #endregion
                 }
+                else
+                {
+                    sqlCmd.Append(@"
+with GBData
+as (
+    select 
+    	   IE = 'Export'
+           , Type = 'GARMENT'
+           , g.ID
+           , OnBoardDate = g.ETD
+           , g.Shipper 
+           , [Foundry] = iif(ISNULL(g.Foundry,'0') = '0', '' , 'Y')
+           , g.BrandID
+           , Category = Stuff((
+				select distinct CONCAT(',', d.Name) 
+				from PackingList p WITH (NOLOCK) 
+				, DropDownList d WITH (NOLOCK) 
+				where p.INVNo = g.ID
+				and p.Type = REPLACE(d.ID,'''','') 
+				and d.Type='Pms_ReportCategory'
+				for xml path('')
+		   ),1,1,'')
+		   , g.CustCDID
+		   , g.Dest
+		   , g.ShipModeID
+		   , PulloutDate = (select MAX(PulloutDate) from PackingList WITH (NOLOCK) where INVNo = g.ID)
+		   , g.TotalShipQty
+		   , g.TotalCTNQty
+		   , g.TotalGW
+		   , g.TotalCBM
+		   , Forwarder = g.Forwarder+'-'+isnull(l.Abb,'')
+		   , g.BLNo
+		   , g.BL2No
+		   , [NoExportCharges] = iif(isnull(g.NoExportCharges,0)=1,'V','')
+    from GMTBooking g WITH (NOLOCK) 
+    left join LocalSupp l WITH (NOLOCK) on l.ID = g.Forwarder
+   outer apply(
+	-- 只要cnt = 0, 沒資料 = 就存在
+		select cnt = count(1) from (
+			select distinct sap.AccountID from ShareExpense se
+			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
+			where 1=1
+			and se.InvNo = g.id
+			and sap.AccountID in ('61022001')
+		) a
+	)major1
+	outer apply(	
+	-- 只要cnt != 2, 代表任何一筆都沒有 = 就存在
+		select cnt = count(1) from (
+			select distinct sap.AccountID from ShareExpense se
+			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
+			where 1=1
+			and se.InvNo = g.id
+			and sap.AccountID in ('61092101','61092106')
+		) a
+	)major2
+	outer apply(	
+	-- 只要 cnt = 0,代表這三筆都沒有 = 就存在
+		select cnt = count(1) from (
+			select distinct sap.AccountID from ShareExpense se
+			inner join ShippingAP_Detail sap WITH (NOLOCK) on sap.ID = se.ShippingAPID
+			where 1=1
+			and se.InvNo = g.id
+			and sap.AccountID in ('61022003','6102','61021005')
+		) a
+	)major3
+    where 1=1
+	and (
+			(major1.cnt = 0 and g.ShipModeID in ('A/C','A/P-C','E/C','E/P-C','RAIL','RIVER','S-A/C','SEA','SEA-TRUCK'))
+			or 
+			(major2.cnt != 2 and g.ShipModeID in ('A/P','E/P','S-A/P'))
+			or 
+			(major3.cnt = 0) and g.ShipModeID in ('TRUCK')
+		)
+");
+
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(
+                            @"
+and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
+",
+                            Convert.ToDateTime(this.date1).ToString("d"),
+                            Convert.ToDateTime(this.date2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.custCD))
+                    {
+                        sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", this.custCD));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipMode))
+                    {
+                        sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipMode));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
+                    }
+
+                    if (this.excludePackingFoc)
+                    {
+                        sqlCmd.Append(string.Format(" and exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'F' ) "));
+                    }
+
+                    if (this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and exists(select 1 from PackingList p WITH (NOLOCK) where p.INVNo = g.ID and p.Type != 'L' ) "));
+                    }
+
+                    sqlCmd.Append(@"
+),PLData as (
+	select  IE = 'Export'
+			, Type = 'GARMENT'
+			, p.ID
+			, OnBoardDate = null 
+			, p.MDivisionID
+            , [Foundry] = ''
+			, p.BrandID
+			, Category = (
+				select top 1 d.name 
+				from Orders o WITH (NOLOCK) 
+					, PackingList_Detail pd WITH (NOLOCK) 
+					, DropDownList d WITH (NOLOCK) 
+				where pd.ID = p.ID 
+					and o.ID = pd.OrderID
+					and o.Category = REPLACE(d.ID,'''','') 
+					and d.Type='Pms_ReportCategory'
+				) 
+			, p.CustCDID
+			, Dest = ''  
+			, p.ShipModeID
+			, p.PulloutDate
+			, p.ShipQty
+			, p.CTNQty
+			, p.GW
+			, p.CBM
+			, Forwarder = ''
+			, BLNo = ''
+            , BL2No = ''
+			, [NoExportCharges] = ''
+	from PackingList p WITH (NOLOCK) 
+	where (p.Type = 'F' or p.Type = 'L')
+    and not exists (
+		  		select 1 
+		  		from ShareExpense WITH (NOLOCK) 
+		  		where InvNo = p.ID) 
+");
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and p.BrandID = '{0}'", this.brand));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.custCD))
+                    {
+                        sqlCmd.Append(string.Format(" and p.CustCDID = '{0}'", this.custCD));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipMode))
+                    {
+                        sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipMode));
+                    }
+
+                    if (this.excludePackingFoc)
+                    {
+                        sqlCmd.Append(string.Format(" and p.Type != 'F' "));
+                    }
+
+                    if (this.excludePackingLocalOrder)
+                    {
+                        sqlCmd.Append(string.Format(" and p.Type != 'L' "));
+                    }
+
+                    sqlCmd.Append(@")
+
+select * from GBData
+union all
+select * from PLData");
+                }
             }
             else
             {
@@ -795,9 +1008,13 @@ from FtyExportData");
                 {
                     excelFile = "Shipping_R11_NonSharedListGarment_Main.xltx";
                 }
-                else
+                else if (this.reportType2 == 2)
                 {
                     excelFile = "Shipping_R11_NonSharedListGarment.xltx";
+                }
+                else
+                {
+                    excelFile = "Shipping_R11_NonSharedListGarment_MajorItem.xltx";
                 }
             }
             else
