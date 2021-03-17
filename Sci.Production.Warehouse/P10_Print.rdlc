@@ -1529,10 +1529,10 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!ID.Value</Value>
+                  <Value>="*"+Parameters!ID.Value+"*"</Value>
                   <Style>
-                    <FontFamily>C39HrP48DhTt</FontFamily>
-                    <FontSize>30pt</FontSize>
+                    <FontFamily>C39HrP24DhTt</FontFamily>
+                    <FontSize>32pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -1542,14 +1542,12 @@
             </Paragraph>
           </Paragraphs>
           <Top>0.49953cm</Top>
-          <Left>14.9152cm</Left>
+          <Left>14.01566cm</Left>
           <Height>2.34697cm</Height>
-          <Width>4.95506cm</Width>
+          <Width>5.8546cm</Width>
           <ZIndex>22</ZIndex>
           <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
+            <Border />
             <VerticalAlign>Middle</VerticalAlign>
             <PaddingLeft>2pt</PaddingLeft>
             <PaddingRight>2pt</PaddingRight>
