@@ -14,7 +14,7 @@
     [AddDate]           DATETIME      NULL,
     [EditName]          VARCHAR (10)  CONSTRAINT [DF_IssueLack_EditName] DEFAULT ('') NULL,
     [EditDate]          DATETIME      NULL,
-    [PrepardWorker]     VARCHAR (10)  DEFAULT ('') NOT NULL,
+    [PrepardWorker]     NVARCHAR(30)  DEFAULT ('') NOT NULL,
     [PrepardLocation]   VARCHAR (100) DEFAULT ('') NOT NULL,
     [PrepareStartDate]  DATETIME      NULL,
     [PrepardFinishDate] DATETIME      NULL,

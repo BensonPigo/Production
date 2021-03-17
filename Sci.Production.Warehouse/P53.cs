@@ -39,7 +39,7 @@ namespace Sci.Production.Warehouse
             this.gridDetail.IsEditingReadOnly = false;
 
             #region Grid Settings
-
+            /* ISP20210372 移除Location,Worker的開窗跟檢驗事件
             Ict.Win.DataGridViewGeneratorTextColumnSettings col_Worker = new DataGridViewGeneratorTextColumnSettings();
             col_Worker.EditingMouseDown += (s, e) =>
             {
@@ -120,7 +120,7 @@ namespace Sci.Production.Warehouse
                     dr.EndEdit();
                 }
             };
-
+            */
             Ict.Win.DataGridViewGeneratorMaskedTextColumnSettings mask_StartDate = new DataGridViewGeneratorMaskedTextColumnSettings();
             mask_StartDate.CellValidating += (s, e) =>
             {
@@ -221,12 +221,12 @@ namespace Sci.Production.Warehouse
                 .Text("RQNo", header: "RQ NO", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("SP", header: "SP", width: Widths.AnsiChars(14), iseditingreadonly: true)
                 .Text("Department", header: "Department", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Date("RequestDate", header: "Request Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("RequestDate", header: "Request Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                .DateTime("IssueDate", header: "Issue Date", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Text("ttlRoll", header: "Total Roll", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .Text("Worker", header: "Worker", width: Widths.AnsiChars(11), iseditingreadonly: false, settings: col_Worker)
-                .Text("Location", header: "Location", width: Widths.AnsiChars(11), iseditingreadonly: true, settings: col_Location)
+                .Text("Worker", header: "Worker", width: Widths.AnsiChars(11), iseditingreadonly: false)
+                .Text("Location", header: "Location", width: Widths.AnsiChars(11), iseditingreadonly: false)
                 .MaskedText("StartDate", "0000/00/00 00:00", header: "Start Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_StartDate)
                 .MaskedText("FinishDate", "0000/00/00 00:00", header: "Finish Date", width: Widths.AnsiChars(18), iseditingreadonly: false, settings: mask_EndDate)
                 .Text("PreparingTime", header: "PreparingTime", width: Widths.AnsiChars(11), iseditingreadonly: true)
@@ -321,7 +321,7 @@ where id = '{dr["ID"]}'" + Environment.NewLine;
             string sqlcmd = $@"
 select 
 [Select] = 0
-,iL.FactoryID
+,Lack.FactoryID
 ,[RQNo] = iL.RequestID
 ,[SP] = Lack.OrderID
 ,[Department] = Lack.Dept
@@ -391,7 +391,7 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
-                sqlcmd += $" and iL.FactoryID = '{this.txtfactory.Text}'";
+                sqlcmd += $" and Lack.FactoryID = '{this.txtfactory.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
