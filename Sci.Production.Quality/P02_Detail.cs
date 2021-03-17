@@ -461,7 +461,7 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
 
             if (e.Button == MouseButtons.Right)
             {
-                string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) ";
+                string sqlcmd = "select id,description from AccessoryDefect WITH (NOLOCK) where Junk = 0 ";
                 SelectItem2 item = new SelectItem2(sqlcmd, "Code,Description", "10,30", null, null, null, null);
                 DialogResult result = item.ShowDialog();
                 if (result == DialogResult.Cancel)
