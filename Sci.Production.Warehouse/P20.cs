@@ -163,7 +163,7 @@ from
 			, i.ProjectID
 			, i.Deadline
 			, i.Refno
-			, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,b.SuppColor , b.ColorID)
+			, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,IIF(b.SuppColor = '', dbo.GetColorMultipleID (i.BrandID, b.ColorID), b.SuppColor) , b.ColorID)
 			, i.Ukey
 			, I.SCIRefno
 			, I.UnitID POUNIT

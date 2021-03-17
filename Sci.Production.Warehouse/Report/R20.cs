@@ -146,7 +146,9 @@ select	SPNo = inv.POID
 		, RefNo = inv.Refno
 		, SuppID = inv.SuppID
 		, Width = invRef.Width
-		, [ColorID]=IIF(Fabric.MtlTypeID LIKE '%Thread%' ,psd.SuppColor , psd.ColorID)
+		, [ColorID]= IIF(Fabric.MtlTypeID LIKE '%Thread%' 
+			            , IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID), psd.SuppColor)
+			            , psd.ColorID)
 		, Size = invRef.SizeSpec
 		, SizeUnit = invRef.SizeUnit
 		, Unit = psd.StockUnit
