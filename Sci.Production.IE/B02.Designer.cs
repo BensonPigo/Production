@@ -44,10 +44,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(828, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayM);
@@ -58,11 +54,6 @@
             this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Controls.Add(this.labelType);
             this.detailcont.Controls.Add(this.labelDate);
-            this.detailcont.Size = new System.Drawing.Size(828, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -88,7 +79,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(70, 37);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(85, 23);
@@ -97,7 +87,6 @@
             // 
             // labelType
             // 
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(70, 84);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(85, 23);
@@ -106,7 +95,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(352, 37);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(18, 23);
@@ -115,7 +103,6 @@
             // 
             // labelTarget
             // 
-            this.labelTarget.Lines = 0;
             this.labelTarget.Location = new System.Drawing.Point(70, 129);
             this.labelTarget.Name = "labelTarget";
             this.labelTarget.Size = new System.Drawing.Size(85, 23);
@@ -139,6 +126,7 @@
             this.comboType.IsSupportUnselect = true;
             this.comboType.Location = new System.Drawing.Point(161, 84);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(188, 24);
             this.comboType.TabIndex = 1;
             this.comboType.SelectedIndexChanged += new System.EventHandler(this.ComboType_SelectedIndexChanged);
@@ -186,8 +174,12 @@
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "numTarget";
             this.DefaultOrder = "EffectiveDate";
+            this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02. Lean Measurement Target Setting";
             this.UniqueExpress = "EffectiveDate,MDivisionID,Type";
             this.WorkAlias = "ChgOverTarget";
