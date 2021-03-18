@@ -123,6 +123,7 @@ select
 ,UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0)
 ,KpiRate = isnull(KpiRate,0)
 ,[SubConPrice/CPU] = ROUND(sd.UnitPrice,4,4)
+,[SubConPrice/CPUByComboType] = ROUND(sd.UnitPrice * r.rate, 4, 4)
 ,[Cut] = ROUND(tms.CuttingCPU * r.rate,4,4)
 ,[H.T] = ROUND(tms.HeatTransfer,4,4)
 ,[Inspection] = ROUND(tms.InspectionCPU * r.rate ,4,4)
@@ -200,9 +201,9 @@ where 1=1
             for (int c = 1; c <= this.printData.Rows.Count; c++)
             {
                 int tr = c + 3;
-                wks.Cells[c + 3, 21] = $"=(M{tr}-R{tr}-S{tr}-T{tr})/(G{tr}+N{tr}+O{tr}+P{tr}+Q{tr})";
-                wks.Cells[c + 3, 22] = $"=IF(P{tr}<R{tr},\"<\",\">\")";
-                wks.Cells[c + 3, 27] = $"=T{tr}/U{tr}";
+                wks.Cells[c + 3, 22] = $"=(M{tr}-S{tr}-T{tr}-U{tr})/(G{tr}+O{tr}+P{tr}+Q{tr}+R{tr})";
+                wks.Cells[c + 3, 23] = $"=IF(Q{tr}<S{tr},\"<\",\">\")";
+                wks.Cells[c + 3, 28] = $"=U{tr}/V{tr}";
             }
 
             objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
@@ -211,7 +212,7 @@ where 1=1
             // 畫框線
             int rowcnt = this.printData.Rows.Count + 3;
             Microsoft.Office.Interop.Excel.Range rg1;
-            rg1 = wks.get_Range("A4", $"AC{this.printData.Rows.Count + 3}");
+            rg1 = wks.get_Range("A4", $"AD{this.printData.Rows.Count + 3}");
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;

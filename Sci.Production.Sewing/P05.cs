@@ -27,40 +27,41 @@ namespace Sci.Production.Sewing
             string contractNumber = (e.Master == null) ? string.Empty : e.Master["ContractNumber"].ToString();
             string cmd = $@"
 select 
-sd.SubConOutFty,
-sd.ContractNumber,
-sd.OrderId,
-o.StyleID,
-sd.ComboType,
-sd.Article,
-[QrderQty] = (select isnull(sum(Qty),0) from Order_Qty with (nolock) where ID = sd.OrderID and Article = sd.Article),
-sd.OutputQty,
-[AccuOutputQty] = (
-    select isnull(sum(sod.QAQty),0) 
-    from SewingOutput s with (nolock)
-    inner join SewingOutput_Detail sod with (nolock) on s.ID = sod.ID
-    where   s.SubConOutContractNumber = sd.ContractNumber and
-            s.SubconOutFty = sd.SubConOutFty  and
-            sod.OrderID = sd.OrderID and
-            sod.Article = sd.Article and
-            sod.Combotype  = sd.Combotype
-    ),
-UnitPrice = sd.UnitPrice,
-SewingCPU = tms.SewingCPU*r.rate,
-CuttingCPU = tms.CuttingCPU*r.rate,
-InspectionCPU = tms.InspectionCPU*r.rate,
-OtherCPU = tms.OtherCPU*r.rate,
-OtherAmt = tms.OtherAmt*r.rate,
-EMBAmt = tms.EMBAmt*r.rate,
-PrintingAmt = tms.PrintingAmt*r.rate,
-OtherPrice = tms.OtherPrice*r.rate,
-EMBPrice = tms.EMBPrice*r.rate,
-PrintingPrice = tms.PrintingPrice*r.rate,
-LocalCurrencyID = LocalCurrencyID,
-LocalUnitPrice = isnull(LocalUnitPrice,0),
-Vat = isnull(Vat,0),
-UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0),
-KpiRate = isnull(KpiRate,0)
+    sd.SubConOutFty,
+    sd.ContractNumber,
+    sd.OrderId,
+    o.StyleID,
+    sd.ComboType,
+    sd.Article,
+    [QrderQty] = (select isnull(sum(Qty),0) from Order_Qty with (nolock) where ID = sd.OrderID and Article = sd.Article),
+    sd.OutputQty,
+    [AccuOutputQty] = (
+        select isnull(sum(sod.QAQty),0) 
+        from SewingOutput s with (nolock)
+        inner join SewingOutput_Detail sod with (nolock) on s.ID = sod.ID
+        where   s.SubConOutContractNumber = sd.ContractNumber and
+                s.SubconOutFty = sd.SubConOutFty  and
+                sod.OrderID = sd.OrderID and
+                sod.Article = sd.Article and
+                sod.Combotype  = sd.Combotype
+        ),
+    UnitPrice = sd.UnitPrice,
+    UnitPriceByComboType = sd.UnitPrice * r.rate,
+    SewingCPU = tms.SewingCPU*r.rate,
+    CuttingCPU = tms.CuttingCPU*r.rate,
+    InspectionCPU = tms.InspectionCPU*r.rate,
+    OtherCPU = tms.OtherCPU*r.rate,
+    OtherAmt = tms.OtherAmt*r.rate,
+    EMBAmt = tms.EMBAmt*r.rate,
+    PrintingAmt = tms.PrintingAmt*r.rate,
+    OtherPrice = tms.OtherPrice*r.rate,
+    EMBPrice = tms.EMBPrice*r.rate,
+    PrintingPrice = tms.PrintingPrice*r.rate,
+    LocalCurrencyID = LocalCurrencyID,
+    LocalUnitPrice = isnull(LocalUnitPrice,0),
+    Vat = isnull(Vat,0),
+    UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0),
+    KpiRate = isnull(KpiRate,0)
 
 from dbo.SubconOutContract_Detail sd with (nolock)
 left join Orders o with (nolock) on sd.Orderid = o.ID
@@ -482,6 +483,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("OutputQty", header: "Output Qty", width: Widths.AnsiChars(10), settings: outputQtySet)
                 .Numeric("AccuOutputQty", header: "Accu. Output Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4).Get(out this.col_UnitPrice)
+                .Numeric("UnitPriceByComboType", header: "Price(Unit) by ComboType", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
                 .Numeric("SewingCPU", header: "Sewing CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("CuttingCPU", header: "Cutting CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("InspectionCPU", header: "Inspection CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
