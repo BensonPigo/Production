@@ -35,6 +35,7 @@ namespace Sci.Production.Packing
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Type", header: "Packing Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("SciDelivery", header: "SCI Delivery", iseditingreadonly: true)
                 .Date("SewInLine", header: "Sewing Inline Date", iseditingreadonly: true)
@@ -69,7 +70,8 @@ select distinct
     pld.OrderID, -- 表身只取 OrderID
 	o.SciDelivery,
 	o.SewInLine,
-	d.Description
+	d.Description,
+    pl.FactoryID
 from PackingList pl WITH (NOLOCK)
 inner join PackingList_Detail pld WITH (NOLOCK) on pld.ID = pl.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pld.OrderID
