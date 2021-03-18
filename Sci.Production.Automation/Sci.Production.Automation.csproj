@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gensong_SpreadingSchedule.cs" />
     <Compile Include="Vstrong_AutoWHAccessory.cs" />
     <Compile Include="Gensong_AutoWHFabric.cs" />
     <Compile Include="Gensong_FinishingProcesses.cs" />
