@@ -44,6 +44,23 @@ from #tmp_order tmp with(nolock)
 inner join order_Qty oo with(nolock) on tmp.id=oo.ID
 where 1=1
 
+--Order_ColorCombo
+select	Id				 ,
+		Article			 ,
+		ColorID			 ,
+		FabricCode		 ,
+		FabricPanelCode	 ,
+		PatternPanel	 ,
+		AddName			 ,
+		AddDate			 ,
+		EditName		 ,
+		EditDate		 ,
+		FabricType
+		into #tmpOrder_ColorCombo
+from Order_ColorCombo with (nolock)
+where ID in (select ID from #tmp_order)
+
+
 ---------------------------------------------------------------------------------------------
 /*
  * 綁包類: bundle, bundle_detail, Bundle_Detail_Allpart, Bundle_Detail_Art, Bundle_Detail_Order
@@ -180,7 +197,7 @@ select	ob.Id		  ,
  where id in (select poid from #tmp_order)
 
  SET XACT_ABORT ON
- BEGIN TRANSACTION
+ --BEGIN TRANSACTION
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.Orders
 	
 	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Orders(ID	  ,
@@ -415,6 +432,34 @@ select	ob.Id		  ,
 						Qty		  ,
 						OriQty
 				from #tmp_order_Qty
+	
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.Order_ColorCombo
+
+	insert into [RFID_Middle].[PMS_TO_RFID].dbo.Order_ColorCombo(Id				   ,
+																 Article		   ,
+																 ColorID		   ,
+																 FabricCode		   ,
+																 FabricPanelCode   ,
+																 PatternPanel	   ,
+																 AddName		   ,
+																 AddDate		   ,
+																 EditName		   ,
+																 EditDate		   ,
+																 FabricType
+																 )
+				select	Id				   ,
+						Article		   ,
+						ColorID		   ,
+						FabricCode		   ,
+						FabricPanelCode   ,
+						PatternPanel	   ,
+						AddName		   ,
+						AddDate		   ,
+						EditName		   ,
+						EditDate		   ,
+						FabricType
+				from #tmpOrder_ColorCombo
+
 
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess
 	insert into [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess(Id			  ,
@@ -429,7 +474,7 @@ select	ob.Id		  ,
 						InOutRule
 				from #tmp_SubProcess
 
- commit
+ --commit
 
 
 --------------------------------------------------------------------------------------------- 
@@ -437,4 +482,5 @@ drop table #tmp_order, #tmp_order_Qty
  , #tmp_Bundle_Detail_Order, #tmp_bundle_detail, #tmp_bundle, #tmp_Bundle_Detail_Allpart, #tmp_Bundle_Detail_Art
  , #tmp_SubProcess, #tmp_Machine
  , #tmp_bof, #tmp_boa
+ , #tmpOrder_ColorCombo
 end
