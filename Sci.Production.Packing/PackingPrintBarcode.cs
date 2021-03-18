@@ -167,6 +167,7 @@ namespace Sci.Production.Packing
                                 string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = printData.Rows[i]["PONo"].ToString();
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode);
@@ -180,6 +181,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(1, 1).Range.Text = packingNo;
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(3, 1).Range.Text = style;
+                                tables.Cell(3, 2).Range.Text = brandFTYCode;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
