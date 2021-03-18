@@ -2605,6 +2605,9 @@
     <Build Include="dbo\Tables\PrintLeadTime.sql" />
     <Build Include="dbo\Tables\WHWorkingCalendar.sql" />
     <Build Include="dbo\Functions\GetPreparingTime.sql" />
+    <Build Include="dbo\Tables\SpreadingSchedule_Detail.sql" />
+    <Build Include="dbo\Tables\SpreadingSchedule.sql" />
+    <Build Include="dbo\Functions\GetSpreadingSchedule.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

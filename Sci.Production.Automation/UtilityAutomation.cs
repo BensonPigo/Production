@@ -138,8 +138,8 @@ namespace Sci.Production.Automation
             automationErrMsg.json = jsonBody;
             if (!webApiBaseResult.isSuccess)
             {
-                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
+                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
                 SaveAutomationErrMsg(automationErrMsg);
             }
 
