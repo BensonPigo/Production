@@ -66,8 +66,7 @@ namespace Sci.Production.Warehouse
         private void Time_Validating(object sender, CancelEventArgs e)
         {
             Win.UI.TextBox prodTextValue = (Win.UI.TextBox)sender;
-            string strBeginTime = this.txtBeginTime.Text;
-            string strEndTime = this.txtEndTime.Text;
+
             if (this.EditMode && !MyUtility.Check.Empty(prodTextValue.Text) && prodTextValue.Text != prodTextValue.OldValue)
             {
                 string textValue = prodTextValue.Text.ToString().PadRight(4);
@@ -83,6 +82,9 @@ namespace Sci.Production.Warehouse
                     string newValue = (MyUtility.Check.Empty(textValue.Substring(0, 2)) ? "00" : Convert.ToInt32(textValue.Substring(0, 2)) < 10 ? "0" + Convert.ToInt32(textValue.Substring(0, 2)).ToString() : textValue.Substring(0, 2)) + (MyUtility.Check.Empty(textValue.Substring(2, 2)) ? "00" : Convert.ToInt32(textValue.Substring(2, 2)) < 10 ? "0" + Convert.ToInt32(textValue.Substring(2, 2)).ToString() : textValue.Substring(2, 2));
                     prodTextValue.Text = newValue;
                 }
+
+                string strBeginTime = this.txtBeginTime.Text;
+                string strEndTime = this.txtEndTime.Text;
 
                 if (!MyUtility.Check.Empty(strBeginTime) &&
                     !MyUtility.Check.Empty(strEndTime))
