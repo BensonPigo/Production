@@ -459,8 +459,8 @@ Select distinct ReceivingID
 	,[HowManyDyelotArrived]=HowManyDyelotArrived.Val
 	,[AlreadyInspecetedDyelot]=AlreadyInspecetedDyelot.Val
 	,[InspectionPercentage]=InspectionPercentage.Val
-	,[DefectCode]=DefectCode.Val
-	,[TotalPoints]= ISNULL( TotalPoints.Val ,0)
+	,[DefectCode]=DefectCode.DefectRecord
+	,[TotalPoints]= DefectCode.point
 from #tmp3 t
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
@@ -491,22 +491,12 @@ OUTER APPLY(
 	AND fp.Result != '' AND fp.Result IS NOT NULL
 )InspectionPercentage
 OUTER APPLY(
-	select Val = Stuff((
-		select DISTINCT ','+DefectRecord
+		select DefectRecord , point
 		from #Sheet2 s
 		WHERE s.ReceivingID=t.ReceivingID
 		AND s.POID=t.POID
 		AND s.Seq=t.Seq1+'-'+t.Seq2
-		FOR XML PATH('')
-	),1,1,'')
 )DefectCode
-OUTER APPLY(
-	select Val = SUM(point)
-	from #Sheet2 s
-	WHERE s.ReceivingID=t.ReceivingID
-	AND s.POID=t.POID
-	AND s.Seq=t.Seq1+'-'+t.Seq2
-)TotalPoints
 
 UNION
 Select ReceivingID
@@ -527,8 +517,8 @@ Select ReceivingID
 	,[HowManyDyelotArrived]=HowManyDyelotArrived.Val
 	,[AlreadyInspecetedDyelot]=AlreadyInspecetedDyelot.Val
 	,[InspectionPercentage]=InspectionPercentage.Val
-	,[DefectCode]=DefectCode.Val
-	,[TotalPoints]= ISNULL( TotalPoints.Val ,0)
+	,[DefectCode]=DefectCode.DefectRecord
+	,[TotalPoints]= DefectCode.point
 from #tmp4 t
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
@@ -559,22 +549,12 @@ OUTER APPLY(
 	AND fp.Result != '' AND fp.Result IS NOT NULL
 )InspectionPercentage
 OUTER APPLY(
-	select Val = Stuff((
-		select DISTINCT ','+DefectRecord
+		select DefectRecord , point
 		from #Sheet2 s
 		WHERE s.ReceivingID=t.ReceivingID
 		AND s.POID=t.POID
 		AND s.Seq=t.Seq1+'-'+t.Seq2
-		FOR XML PATH('')
-	),1,1,'')
 )DefectCode
-OUTER APPLY(
-	select Val = SUM(point)
-	from #Sheet2 s
-	WHERE s.ReceivingID=t.ReceivingID
-	AND s.POID=t.POID
-	AND s.Seq=t.Seq1+'-'+t.Seq2
-)TotalPoints 
 
 )Q
 ORDER BY ReceivingID,WKno,POID,Seq1,Seq2,TotalPoints
