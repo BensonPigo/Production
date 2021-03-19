@@ -1661,6 +1661,7 @@ where b.id = a.CutplanID
                 xl.DicDatas.Add("##cLineNo", lineNo);
                 xl.DicDatas.Add("##OrderID", orderID);
                 xl.DicDatas.Add("##cCellNo", cellNo);
+                xl.DicDatas.Add("##Barcode", "*" + id + "*");
                 SaveXltReportCls.XltRptTable xlTable = new SaveXltReportCls.XltRptTable(dtseq);
                 int allColumns = dtseq.Columns.Count;
                 int sizeColumns = dtSizecode.Rows.Count;
