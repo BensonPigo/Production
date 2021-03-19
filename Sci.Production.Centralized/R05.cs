@@ -13,8 +13,15 @@ using System.Text;
 
 namespace Sci.Production.Centralized
 {
+    /// <summary>
+    /// R05
+    /// </summary>
     public partial class R05 : Win.Tems.PrintForm
     {
+        /// <summary>
+        /// R05
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -104,6 +111,7 @@ namespace Sci.Production.Centralized
             sqlcmdSP.Append($" 0,"); // IsFtySide 工廠端限制ForeCast單 僅顯示SCI delivery or buyer delivery 小於等於 當月份+4個月的月底+7天
             sqlcmdSP.Append($" 0,"); // @IsPowerBI
             sqlcmdSP.Append(this.chkCMPLockDate.Checked ? $" 1," : "0,"); // @IsByCMPLockDate
+            sqlcmdSP.Append(MyUtility.Check.Empty(this.dateOutputDate.Value) ? "''," : $"'{this.dateOutputDate.Text}',"); // @DailyLockDate
             #endregion
 
             #region --由 appconfig 抓各個連線路徑
@@ -135,6 +143,12 @@ namespace Sci.Production.Centralized
                 {
                     conn.Open();
                     result = DBProxy.Current.SelectByConn(conn, sqlcmdSP.ToString().Substring(0, sqlcmdSP.Length - 1), null, out this.printData);
+#if DEBUG
+                    if (!result && result.ToString().Contains("has too many arguments specified"))
+                    {
+                        continue;
+                    }
+#endif
                     if (!result)
                     {
                         DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -168,7 +182,7 @@ namespace Sci.Production.Centralized
 
             foreach (string ftyZone in this.listFtyZone)
             {
-                #region summary
+#region summary
                 string sqlsum = $@"
 select Date
     , ID
@@ -325,7 +339,7 @@ drop table #tmp
                     this.Summarydt.Add(ftySummarydt);
                 }
 
-                #endregion
+#endregion
             }
 
             DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
@@ -372,7 +386,7 @@ drop table #tmp
                 worksheet1.Copy(newSummarySheet);
             }
 
-            #region detail data
+#region detail data
             MyUtility.Excel.CopyToXls(this.dtAllDetail, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: excelApp, wSheet: excelApp.Sheets[this.listFtyZone.Count + 1], showExcel: false, DisplayAlerts_ForSaveFile: true);
             worksheet = excelApp.ActiveWorkbook.Worksheets[this.listFtyZone.Count + 1]; // 取得工作表
             worksheet.Columns.AutoFit();
@@ -416,7 +430,7 @@ drop table #tmp
             worksheet.Columns[37].ColumnWidth = 16.38;
             worksheet.Columns[38].ColumnWidth = 16.38;
             worksheet.Columns[39].ColumnWidth = 16.38;
-            #endregion
+#endregion
 
             for (int j = 1; j <= this.listFtyZone.Count; j++)
             {
@@ -437,6 +451,13 @@ drop table #tmp
                 }
 
                 i--;
+
+                if (!MyUtility.Check.Empty(this.dateOutputDate.Value))
+                {
+                    DateTime outputDate = this.dateOutputDate.Value.GetValueOrDefault();
+                    worksheet.Cells[2, i] = $"As of {outputDate.ToString("MM/dd")}";
+                }
+
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 8], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
                 worksheet.Columns.AutoFit();
