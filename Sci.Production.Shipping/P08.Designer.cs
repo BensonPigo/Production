@@ -90,6 +90,7 @@
             this.txtcurrency = new Sci.Production.Class.Txtcurrency();
             this.btnIncludeFoundryRatio = new Sci.Win.UI.Button();
             this.checkIsFreightForwarder = new Sci.Win.UI.CheckBox();
+            this.btnImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -106,6 +107,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.checkIsFreightForwarder);
             this.masterpanel.Controls.Add(this.btnIncludeFoundryRatio);
             this.masterpanel.Controls.Add(this.txtcurrency);
@@ -231,6 +233,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtcurrency, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnIncludeFoundryRatio, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkIsFreightForwarder, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             // 
             // detailpanel
             // 
@@ -986,6 +989,16 @@
             this.checkIsFreightForwarder.Text = "Is Freight Fwd";
             this.checkIsFreightForwarder.UseVisualStyleBackColor = true;
             // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(890, 167);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(80, 30);
+            this.btnImport.TabIndex = 108;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 628);
@@ -1086,5 +1099,6 @@
         private Class.Txtcurrency txtcurrency;
         private Win.UI.Button btnIncludeFoundryRatio;
         private Win.UI.CheckBox checkIsFreightForwarder;
+        private Win.UI.Button btnImport;
     }
 }
