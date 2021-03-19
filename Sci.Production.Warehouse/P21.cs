@@ -320,7 +320,9 @@ from
         ,rd.Roll
         ,rd.Dyelot
         ,[Description] = dbo.getmtldesc(rd.POID, rd.Seq1, rd.Seq2, 2, 0)
-        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
+        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
+					, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
+					, psd.ColorID)
         ,rd.StockQty
         ,[StockTypeDesc] = st.Name
         ,rd.StockType
@@ -397,7 +399,9 @@ from
         ,td.Roll
         ,td.Dyelot
         ,[Description] = dbo.getmtldesc(td.POID, td.Seq1, td.Seq2, 2, 0)
-        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' , psd.SuppColor, psd.ColorID)
+        ,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
+					, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
+					, psd.ColorID)
         ,[StockQty]=td.Qty
         ,[StockTypeDesc] = st.Name
         ,td.StockType

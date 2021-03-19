@@ -400,7 +400,7 @@ inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN ff.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN pd.SuppColor
+	 CASE WHEN ff.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(pd.SuppColor = '' or pd.SuppColor is null, dbo.GetColorMultipleID(pd.BrandID,pd.ColorID),pd.SuppColor)
 		 ELSE dbo.GetColorMultipleID(pd.BrandID,pd.ColorID)
 	 END
 )Color

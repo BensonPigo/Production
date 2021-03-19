@@ -129,7 +129,7 @@ LEFT JOIN Fabric f WITH (NOLOCK) ON p.SCIRefNo=f.SCIRefNo
 LEFT JOIN color c on c.id = p.colorid and c.BrandId = p.BrandId 
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(p.SuppColor = '' or p.SuppColor is null, dbo.GetColorMultipleID(o.BrandID,p.ColorID),p.SuppColor)
 		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
 	 END
 )Color

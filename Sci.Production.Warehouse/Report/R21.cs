@@ -106,8 +106,9 @@ namespace Sci.Production.Warehouse
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
 	,[Description] = d.Description
-	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' THEN psd.SuppColor 
-					ELSE psd.ColorID  
+	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, psd.ColorID) , psd.SuppColor)
+				    ELSE psd.ColorID  
 			   END
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
@@ -188,8 +189,9 @@ namespace Sci.Production.Warehouse
 	,[Refno] = psd.Refno
 	,[SCI Refno] = psd.SCIRefno
     ,[Description] = d.Description
-	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' THEN psd.SuppColor 
-					ELSE psd.ColorID  
+	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, psd.ColorID) , psd.SuppColor)
+				    ELSE psd.ColorID  
 			   END
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit

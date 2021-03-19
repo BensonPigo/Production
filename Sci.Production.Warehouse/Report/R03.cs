@@ -201,7 +201,9 @@ select  F.MDivisionID
 						end) + '-' + Fabric.MtlTypeID
         --,dbo.getMtlDesc(PSD.id,PSD.seq1,PSD.seq2,2,0)
 		,ds5.string
-        ,[Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread'), PSD.SuppColor, dbo.GetColorMultipleID(O.BrandID, PSD.ColorID))
+        ,[Color] = iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread') 
+                , IIF(isnull(PSD.SuppColor,'') = '',dbo.GetColorMultipleID(O.BrandID, PSD.ColorID),PSD.SuppColor)
+                , dbo.GetColorMultipleID(O.BrandID, PSD.ColorID))
         ,PSD.Qty
         ,PSD.NETQty
         ,PSD.NETQty+PSD.LossQty

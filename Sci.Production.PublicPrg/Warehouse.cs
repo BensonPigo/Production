@@ -1081,7 +1081,7 @@ inner join View_unitrate v on v.FROM_U = p.POUnit
 	                          and v.TO_U = dbo.GetStockUnitBySPSeq (p.id, p.seq1, p.seq2)
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN p.SuppColor
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(p.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID,p.ColorID), p.SuppColor)
 		 ELSE dbo.GetColorMultipleID(o.BrandID,p.ColorID)
 	 END
 )Color

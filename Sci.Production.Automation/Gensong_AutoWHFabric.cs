@@ -927,7 +927,9 @@ select lt2.Id
 ,lt2.FromLocation
 ,lt2.ToLocation
 ,po3.Refno
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+	            , IIF(isnull(po3.SuppColor,'') = '', dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+	            , dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
@@ -1342,8 +1344,9 @@ left join Production.dbo.FtyInventory f on f.POID = rd.PoId
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 OUTER APPLY(
  SELECT [Value]=
-	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN po3.SuppColor
-		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+            THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+            ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
 	 END
 )Color
 outer apply(
@@ -1624,7 +1627,9 @@ select distinct
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = sd.ToLocation
 ,po3.Refno
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+                 ,IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+                 ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
@@ -1777,7 +1782,9 @@ select distinct
 ,[ToLocation] = bb2.ToLocation
 ,[Qty] = {strQty}
 ,po3.Refno
-,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,po3.SuppColor,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+                 ,IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+                 ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,bb2.Ukey
 ,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
 ,CmdTime = GetDate()
