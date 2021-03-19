@@ -55,7 +55,7 @@ namespace Sci.Production.Quality
             string formatCol3 = string.Empty;
             string formatJoin;
             string s_d = $@"
-outer apply(select ttlMINUTE_RD = sum(DATEDIFF(MINUTE, StartResolveDate, EndResolveDate)) from SubProInsRecord_ResponseTeam where EndResolveDate is not null and SubProInsRecordUkey = SR.Ukey)ttlMINUTE_RD
+outer apply(select ttlSecond_RD = sum(DATEDIFF(Second, StartResolveDate, EndResolveDate)) from SubProInsRecord_ResponseTeam where EndResolveDate is not null and SubProInsRecordUkey = SR.Ukey)ttlSecond_RD
 outer apply(
 	select SubProResponseTeamID = STUFF((
 		select CONCAT(',', SubProResponseTeamID)
@@ -85,7 +85,7 @@ outer apply(
             {
                 formatJoin = @"left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
 left join SubProInsRecord_ResponseTeam SRR on SRR.SubProInsRecordUkey = SR.Ukey
-outer apply(select ttlMINUTE_RD = DATEDIFF(MINUTE, StartResolveDate, EndResolveDate))ttlMINUTE_RD";
+outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveDate))ttlSecond_RD";
                 formatCol = @"  SRD.DefectCode,
                                 SRD.DefectQty,";
                 formatCol2 = $@"SRR.StartResolveDate,
@@ -177,15 +177,9 @@ select
 	SR.Remark,
     AddDate2 = SR.AddDate,
     SR.RepairedDatetime,
-	RepairedTime = iif(RepairedDatetime is null,null,
-		concat(IIF(ttlMINUTE >= 1440, ttlMINUTE / 1440, 0), ' ',
-			IIF(ttlMINUTE_D >= 60, ttlMINUTE_D / 60, 0), ':',
-			isnull(ttlMINUTE_D_HR, 0))),
+	RepairedTime = iif(RepairedDatetime is null, null, ttlSecond),
     {formatCol2}
-	ResolveTime = iif(isnull(ttlMINUTE_RD, 0) = 0,null,
-		concat(IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD / 1440, 0), ' ',
-			IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D / 60, 0), ':',
-			isnull(ttlMINUTE_RD_D_HR, 0))),
+	ResolveTime = iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
     ,CustomColumn1
 into #tmp
@@ -194,12 +188,7 @@ Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
 {formatJoin}
-outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
-outer apply(select ttlMINUTE_D = IIF(ttlMINUTE >= 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
-outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D >= 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
-
-outer apply(select ttlMINUTE_RD_D = IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD - (ttlMINUTE_RD / 1440) * 1440, ttlMINUTE_RD))ttlMINUTE_RD_D
-outer apply(select ttlMINUTE_RD_D_HR = IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D - (ttlMINUTE_RD_D / 60) * 60, ttlMINUTE_RD_D))ttlMINUTE_RD_D_HR
+outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere1);
@@ -227,15 +216,9 @@ select
 	SR.Remark,
     AddDate2 = SR.AddDate,
     SR.RepairedDatetime,
-	RepairedTime = iif(RepairedDatetime is null,null,
-		concat(IIF(ttlMINUTE >= 1440, ttlMINUTE / 1440, 0), ' ',
-			IIF(ttlMINUTE_D >= 60, ttlMINUTE_D / 60, 0), ':',
-			isnull(ttlMINUTE_D_HR, 0))),
+	iif(RepairedDatetime is null, null, ttlSecond),
     {formatCol2}
-	ResolveTime = iif(isnull(ttlMINUTE_RD, 0) = 0,null,
-		concat(IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD / 1440, 0), ' ',
-			IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D / 60, 0), ':',
-			isnull(ttlMINUTE_RD_D_HR, 0))),
+	iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
     ,CustomColumn1
 from SubProInsRecord SR WITH (NOLOCK)
@@ -243,12 +226,7 @@ Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
 {formatJoin}
-outer apply(select ttlMINUTE = DATEDIFF(MINUTE, SR.AddDate, RepairedDatetime))ttlMINUTE
-outer apply(select ttlMINUTE_D = IIF(ttlMINUTE >= 1440, ttlMINUTE - (ttlMINUTE / 1440) * 1440, ttlMINUTE))ttlMINUTE_D
-outer apply(select ttlMINUTE_D_HR = IIF(ttlMINUTE_D >= 60, ttlMINUTE_D - (ttlMINUTE_D / 60) * 60, ttlMINUTE_D))ttlMINUTE_D_HR
-
-outer apply(select ttlMINUTE_RD_D = IIF(ttlMINUTE_RD >= 1440, ttlMINUTE_RD - (ttlMINUTE_RD / 1440) * 1440, ttlMINUTE_RD))ttlMINUTE_RD_D
-outer apply(select ttlMINUTE_RD_D_HR = IIF(ttlMINUTE_RD_D >= 60, ttlMINUTE_RD_D - (ttlMINUTE_RD_D / 60) * 60, ttlMINUTE_RD_D))ttlMINUTE_RD_D_HR
+outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
 ");
             this.Sqlcmd.Append(sqlwhere2);
@@ -303,7 +281,7 @@ drop table #tmp,#tmp2
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.CustomColumnDt != null)
             {
-                int col = this.radioSummary.Checked ? 22 : this.radioDetail_DefectType.Checked ? 23 : 25;
+                int col = this.radioSummary.Checked ? 24 : this.radioDetail_DefectType.Checked ? 25 : 27;
                 foreach (DataRow dr in this.CustomColumnDt.Rows)
                 {
                     worksheet.Cells[1, col] = dr["DisplayName"];
