@@ -57,7 +57,7 @@
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(833, 38);
-            //  
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(833, 395);
@@ -114,7 +114,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(70, 48);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(78, 23);
@@ -123,7 +122,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(70, 82);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(78, 23);
@@ -132,15 +130,19 @@
             // 
             // B02
             // 
-            this.ClientSize = new System.Drawing.Size(841, 457);
+            this.ClientSize = new System.Drawing.Size(900, 457);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "editDescription";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
+            this.IsSupportEdit = false;
             this.IsSupportLocate = false;
+            this.IsSupportNew = false;
             this.IsSupportPrint = false;
+            this.ExpressQuery = true;
             this.Name = "B02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B02. Defect Code For Accessory Inspection";
             this.WorkAlias = "AccessoryDefect";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();

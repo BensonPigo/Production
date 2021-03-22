@@ -1074,6 +1074,39 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
+        <Textbox Name="BarcodeID">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>="*"+Parameters!ID.Value+"*"</Value>
+                  <Style>
+                    <FontFamily>C39HrP24DhTt</FontFamily>
+                    <FontSize>32pt</FontSize>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <Top>0.53975cm</Top>
+          <Left>14.44743cm</Left>
+          <Height>1.45383cm</Height>
+          <Width>6.38057cm</Width>
+          <ZIndex>12</ZIndex>
+          <Style>
+            <Border />
+            <VerticalAlign>Middle</VerticalAlign>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
       </ReportItems>
       <Style>
         <Border>
@@ -1101,6 +1134,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>0.62015cm</Left>
           <Height>0.6cm</Height>
           <Width>5.20536cm</Width>
@@ -1129,6 +1163,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>5.82551cm</Left>
           <Height>0.6cm</Height>
           <Width>5.2279cm</Width>
@@ -1158,6 +1193,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>11.05341cm</Left>
           <Height>0.6cm</Height>
           <Width>5.00944cm</Width>
@@ -1187,6 +1223,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>16.06285cm</Left>
           <Height>0.6cm</Height>
           <Width>4.76515cm</Width>

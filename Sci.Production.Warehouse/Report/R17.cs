@@ -127,7 +127,9 @@ select distinct
         Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
-        color		= iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread'), p.SuppColor, dbo.GetColorMultipleID(Orders.BrandID, p.ColorID)),
+        color		= iif(Fabric.MtlTypeID in ('EMB Thread', 'SP Thread', 'Thread')
+	                , IIF( isnull(p.SuppColor,'')='',dbo.GetColorMultipleID(Orders.BrandID, p.ColorID),p.SuppColor)
+	                , dbo.GetColorMultipleID(Orders.BrandID, p.ColorID)),
         size		= p.SizeSpec,
         description	= dbo.getMtlDesc(A.Poid,A.SEQ1,A.SEQ2,2,0),
         roll		= a.Roll,

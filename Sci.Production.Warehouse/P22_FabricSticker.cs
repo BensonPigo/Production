@@ -59,7 +59,9 @@ select Sel = 0
 	, SPNo = std.FromPOID
 	, Seq = Concat (std.FromSeq1, '-', std.FromSeq2)
 	, Refno = isnull (psd.Refno, '')
-    , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' ,SuppColor, isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
+    , Color =  IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+	            ,IIF(isnull(SuppColor,'') = '',isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''),SuppColor)
+	            , isnull(dbo.GetColorMultipleID (o.BrandID, psd.ColorID), ''))
 	, ToRoll = std.ToRoll
 	, ToDyelot = std.ToDyelot
 	, Qty = std.Qty

@@ -7,6 +7,7 @@
     [AddName]      VARCHAR (10)   NULL,
     [EditDate]     DATETIME       NULL,
     [Editname]     VARCHAR (10)   NULL,
+    [LocalDesc] NVARCHAR(100) NULL, 
     CONSTRAINT [PK_SubProDefectCode] PRIMARY KEY CLUSTERED ([SubProcessID] ASC, [DefectCode] ASC)
 );
 

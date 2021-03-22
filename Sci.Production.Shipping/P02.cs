@@ -618,9 +618,9 @@ FROM(
 			,[CategoryNameFromDD]=dp.Description
             ,pl.PulloutID
             ,pl.Type
-            ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' ,
-							p.SuppColor,
-							dbo.GetColorMultipleID(o.BrandID,p.ColorID))
+            ,ColorID = IIF(f.MtlTypeID = 'EMB THREAD' OR f.MtlTypeID = 'SP THREAD' OR f.MtlTypeID = 'THREAD' 
+                        ,IIF(isnull(p.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,p.ColorID) , p.SuppColor)
+                        ,dbo.GetColorMultipleID(o.BrandID,p.ColorID))
 	    from Express_Detail ed WITH (NOLOCK) 
 	    left join PO_Supp_Detail p WITH (NOLOCK) on ed.OrderID = p.ID and ed.Seq1 = p.SEQ1 and ed.Seq2 = p.SEQ2
 	    left join Supp s WITH (NOLOCK) on ed.SuppID = s.ID

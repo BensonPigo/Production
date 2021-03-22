@@ -496,7 +496,7 @@ SELECT Article FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID]=PSD.SuppColor 
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN PO_Supp_Detail_OrderList pd ON PSD.ID = pd.ID AND PSD.SEQ1= pd.SEQ1 AND PSD.SEQ2= pd.SEQ2
@@ -553,7 +553,7 @@ SELECT * FROM
 					,BOA_Article.Article 
 					)				
 
-	,[ThreadColorID]=PSD.SuppColor 
+	,[ThreadColorID] = IIF(PSD.SuppColor = '',dbo.GetColorMultipleID('{this.BrandID}', PSD.ColorID),PSD.SuppColor)
 	FROM PO_Supp_Detail PSD
 	INNER join Fabric f on f.SCIRefno = PSD.SCIRefno
 	LEFT JOIN Order_BOA boa ON boa.id =psd.ID and boa.SCIRefno = psd.SCIRefno and boa.seq=psd.SEQ1

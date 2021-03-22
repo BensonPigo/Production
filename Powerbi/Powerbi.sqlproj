@@ -124,6 +124,7 @@
     <Build Include="dbo\Stored Procedures\P_ImportQAInspection.sql" />
     <Build Include="dbo\Stored Procedures\P_ImportLoadingProductionOutput.sql" />
     <Build Include="dbo\Functions\SplitString.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_ImportLoadingProductionOutput_FTY.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

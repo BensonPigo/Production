@@ -111,6 +111,7 @@ namespace Sci.Production.Planning
             sqlcmdSP.Append($" 1,"); // IsFtySide 工廠端限制ForeCast單 僅顯示SCI delivery or buyer delivery 小於等於 當月份+4個月的月底+7天
             sqlcmdSP.Append($" 0,"); // @IsPowerBI
             sqlcmdSP.Append(this.chkCMPLockDate.Checked ? $" 1," : "0,"); // @IsByCMPLockDate
+            sqlcmdSP.Append(MyUtility.Check.Empty(this.dateOutputDate.Value) ? "''," : $"'{this.dateOutputDate.Text}',"); // @DailyLockDate
             #endregion
 
             DualResult result = new DualResult(true);
@@ -417,6 +418,12 @@ drop table #tmp
                 }
 
                 i--;
+                if (!MyUtility.Check.Empty(this.dateOutputDate.Value))
+                {
+                    DateTime outputDate = this.dateOutputDate.Value.GetValueOrDefault();
+                    worksheet.Cells[2, i] = $"As of {outputDate.ToString("MM/dd")}";
+                }
+
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 8], (Excel.Range)worksheet.Cells[3, i]).Merge(false);
                 worksheet.get_Range((Excel.Range)worksheet.Cells[3, 1], (Excel.Range)worksheet.Cells[this.Summarydt[j - 1].Rows.Count + 4, i]).Borders.Weight = 3; // 設定全框線
                 worksheet.Columns.AutoFit();

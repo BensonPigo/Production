@@ -1406,16 +1406,16 @@ WHERE Ukey={item["Ukey"]}
         // 撈出ChgOverTarget資料
         private string FindTarget(string type)
         {
-            return MyUtility.GetValue.Lookup(string.Format(
-                @"select Target from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate = (
-select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' and MDivisionID = '{1}' and EffectiveDate <= GETDATE())",
-                type,
-                Env.User.Keyword));
+            return MyUtility.GetValue.Lookup($@"
+select top 1 c.Target
+from factory f
+left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < GETDATE() and c. Type ='{type}.'
+where f.id = '{Sci.Env.User.Factory}'
+order by EffectiveDate desc
+");
         }
 
-        /// <summary>
-        /// ClickConfirm
-        /// </summary>
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -1438,12 +1438,12 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
             this.ComputeTaktTime();
 
             string lBRTarget = this.FindTarget("LBR");
-            string lLERTarget = this.FindTarget("LLER");
+            string lLERTarget = this.FindTarget("EFF.");
             bool checkLBR = !MyUtility.Check.Empty(lBRTarget) && Convert.ToDecimal(this.numLBR.Value) < Convert.ToDecimal(lBRTarget);
-            bool checkLLER = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numLLER.Value) < Convert.ToDecimal(lLERTarget);
+            bool checkEFF = !MyUtility.Check.Empty(lLERTarget) && Convert.ToDecimal(this.numEffieiency.Value) < Convert.ToDecimal(lLERTarget);
             string notHitReasonID = string.Empty;
 
-            if (checkLBR || checkLLER)
+            if (checkLBR || checkEFF)
             {
                 StringBuilder msg = new StringBuilder();
                 if (checkLBR)
@@ -1451,9 +1451,9 @@ select MAX(EffectiveDate) from ChgOverTarget WITH (NOLOCK) where Type = '{0}' an
                     msg.Append("LBR is lower than target.\r\n");
                 }
 
-                if (checkLLER)
+                if (checkEFF)
                 {
-                    msg.Append("LLER is lower than target.\r\n");
+                    msg.Append("Efficiency is lower than target.\r\n");
                 }
 
                 MyUtility.Msg.WarningBox(msg.ToString() + "Please select not hit target reason.");

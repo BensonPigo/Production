@@ -263,28 +263,37 @@ AND g.Foundry = 1
             #region Code的按右鍵與Validating、Qty與Rate的Validating
             this.code.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode)
+                if (this.EditMode &&
+                    e.Button == MouseButtons.Right &&
+                    e.RowIndex != -1 &&
+                    MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]))
                 {
-                    if (e.Button == MouseButtons.Right)
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string localSuppID = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]);
+                    string expressTypeID = this.comboType.SelectedValue.ToString().ToLower().EqualString("export") ? "1" : "2";
+                    string sqlCmd = string.Format(
+                        @"
+select ID
+	, Description
+	, [Brand] = BrandID
+	, CurrencyID
+	, Price
+	, [Unit] = UnitID 
+from ShipExpense WITH (NOLOCK) 
+where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = {1})
+and Junk = 0 
+and LocalSuppID = '{0}' 
+and AccountID != ''",
+                        localSuppID,
+                        expressTypeID);
+                    Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
+                    DialogResult returnResult = item.ShowDialog();
+                    if (returnResult == DialogResult.Cancel)
                     {
-                        if (e.RowIndex != -1)
-                        {
-                            if (MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]))
-                            {
-                                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                                string localSuppID = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]);
-                                string sqlCmd = string.Format("select ID,Description,[Brand]=BrandID,CurrencyID, Price,[Unit]=UnitID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = '{0}' and AccountID != ''", localSuppID);
-                                Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "20,50,6,3,11,8", MyUtility.Convert.GetString(dr["ShipExpenseID"]), columndecimals: "0,0,0,0,4");
-                                DialogResult returnResult = item.ShowDialog();
-                                if (returnResult == DialogResult.Cancel)
-                                {
-                                    return;
-                                }
-
-                                e.EditingControl.Text = item.GetSelectedString();
-                            }
-                        }
+                        return;
                     }
+
+                    e.EditingControl.Text = item.GetSelectedString();
                 }
             };
             this.code.CellValidating += (s, e) =>
@@ -295,15 +304,30 @@ AND g.Foundry = 1
                     if (!MyUtility.Check.Empty(e.FormattedValue) && MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["ShipExpenseID"]))
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@localsuppid", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]));
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@shipexpenseid", MyUtility.Convert.GetString(MyUtility.Convert.GetString(e.FormattedValue)));
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-                        cmds.Add(sp2);
+                        string expressTypeID = this.comboType.SelectedValue.ToString().ToLower().EqualString("export") ? "1" : "2";
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        {
+                            new SqlParameter("@localsuppid", MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"])),
+                            new SqlParameter("@shipexpenseid", MyUtility.Convert.GetString(MyUtility.Convert.GetString(e.FormattedValue))),
+                            new SqlParameter("@expressTypeID", expressTypeID),
+                        };
 
                         DataTable expenseData;
-                        string sqlCmd = "select ID,Description,LocalSuppID,CurrencyID,Price,BrandID,UnitID,AccountID from ShipExpense WITH (NOLOCK) where Junk = 0 and LocalSuppID = @localsuppid and ID = @shipexpenseid  and AccountID != ''";
+                        string sqlCmd = @"
+select ID
+	, Description
+	, LocalSuppID
+	, CurrencyID
+	, Price
+	, BrandID
+	, UnitID
+	, AccountID 
+from ShipExpense WITH (NOLOCK
+where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = @expressTypeID)
+and Junk = 0 
+and LocalSuppID = @localsuppid 
+and ID = @shipexpenseid  
+and AccountID != ''";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out expenseData);
                         if (!result || expenseData.Rows.Count <= 0)
                         {
@@ -455,9 +479,9 @@ AND g.Foundry = 1
         {
             base.ClickCopyAfter();
             this.CurrentMaintain["Handle"] = Env.User.UserID;
-            this.CurrentMaintain["InvNo"] = string.Empty;
             this.CurrentMaintain["ID"] = string.Empty;
             this.CurrentMaintain["VoucherID"] = string.Empty;
+            this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
         }
 
         // protected override void ClickUndo()
@@ -1200,6 +1224,11 @@ Non SP# Sample/Mock-up
         {
             this.IncludeFoundryRefresh(this.txtBLNo.Text);
 
+            if (this.txtBLNo.Text.Empty())
+            {
+                return;
+            }
+
             #region ISP20210237 check [GB#]and[WK#]and[FTY WK#]
             if (this.checkIsFreightForwarder.Checked)
             {
@@ -1248,7 +1277,7 @@ end
                 {
                     string errMsg = @"The B/L# you entered cannot be found in the below data, please first check whether the B/L# is correct,
 You can complete Account Payment only after the corresponding Number is updated, Thank You.";
-                    var m = MyUtility.Msg.ShowMsgGrid(resultBLNoCheck, errMsg);
+                    Win.UI.MsgGridForm m = new Win.UI.MsgGridForm(resultBLNoCheck, errMsg);
 
                     // m.TopMost = true; 這個不能加，不然電腦會爆炸
                     m.grid1.Columns[0].Width = 100;
@@ -1256,6 +1285,7 @@ You can complete Account Payment only after the corresponding Number is updated,
                     m.grid1.Columns[2].Width = 100;
                     m.grid1.Columns[3].Width = 200;
                     m.grid1.Columns[4].Width = 500;
+                    m.ShowDialog();
                     this.CurrentMaintain["BLNo"] = string.Empty;
                     return;
                 }
@@ -1333,6 +1363,63 @@ You can complete Account Payment only after the corresponding Number is updated,
             else
             {
                 this.checkIsFreightForwarder.Checked = false;
+            }
+        }
+
+        private void BtnImport_Click(object sender, EventArgs e)
+        {
+            if (this.EditMode &&
+                MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]))
+            {
+                string localSuppID = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID"]);
+                string expressTypeID = this.comboType.SelectedValue.ToString().ToLower().EqualString("export") ? "1" : "2";
+                string sqlCmd = string.Format(
+                    @"
+select ID
+	, Description
+	, [Brand] = BrandID
+	, CurrencyID
+	, Price
+	, [Unit] = UnitID 
+    , AccountID 
+from ShipExpense WITH (NOLOCK) 
+where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = {1})
+and Junk = 0 
+and LocalSuppID = '{0}' 
+and AccountID != ''",
+                    localSuppID,
+                    expressTypeID);
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(dt, "ID,Description,Brand,CurrencyID,Price,Unit,AccountID", "ID,Description,Brand,CurrencyID,Price,Unit,AccountID", "20,50,6,3,11,8,10", string.Empty, columndecimals: "0,0,0,0,4,0");
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                DataTable detailDT = (DataTable)this.detailgridbs.DataSource;
+                foreach (DataRow dr in item.GetSelecteds())
+                {
+                    DataRow newRow = detailDT.NewRow();
+                    newRow["ShipExpenseID"] = dr["ID"];
+                    newRow["Description"] = dr["Description"];
+                    newRow["Price"] = MyUtility.Convert.GetDecimal(dr["Price"]);
+                    newRow["Qty"] = 1;
+                    newRow["CurrencyID"] = dr["CurrencyID"];
+                    newRow["Rate"] = 1;
+                    newRow["Amount"] = MyUtility.Convert.GetDecimal(dr["Price"]);
+                    newRow["UnitID"] = dr["Unit"];
+                    newRow["AccountID"] = dr["AccountID"];
+                    string sqlcmd = $@"select a.Name from SciFMS_AccountNO a  where a.ID = '{dr["AccountID"]}'";
+                    newRow["Account"] = MyUtility.Convert.GetString(dr["AccountID"]) + "-" + MyUtility.GetValue.Lookup(sqlcmd);
+                    detailDT.Rows.Add(newRow);
+                }
             }
         }
     }

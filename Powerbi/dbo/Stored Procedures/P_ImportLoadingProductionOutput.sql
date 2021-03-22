@@ -3,16 +3,11 @@
 -- Create date: 2020/07/07
 -- Description:	Data Query Logic by PMS.Centralized R05 Report Sheet [Balance_Detail], Import Data to P_SDPOrderDetail
 -- =============================================
-CREATE PROCEDURE [dbo].[P_ImportLoadingProductionOutput]
-
-@Year varchar(10),
-@LinkServerName varchar(50)
-
+CREATE PROCEDURE [dbo].[P_ImportLoadingProductionOutput]	
+	@LinkServerName varchar(50)
 AS
 
 BEGIN
-
-declare @S_Year as varchar(10) = CAST(@Year AS varchar) 
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
@@ -20,10 +15,21 @@ declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 declare @strID nvarchar(15) = N'SubCON-Out_'
 
+declare @useYear varchar(4) = (select YEAR(GETDATE()))
+declare @curr_Month varchar(2) = (select MONTH(GETDATE()))
+
+if( @curr_Month = '1' or @curr_Month = '01')
+begin
+	select @useYear = YEAR(DATEADD(YEAR,-1,GETDATE()))	
+end
+
+declare @S_Year as varchar(10) = CAST(@useYear AS varchar) 
+
+
 SET @SqlCmd1 = '
 
 SELECT * into #tmp FROM OPENQUERY(['+@LinkServerName+'], 
-''exec Production.dbo.GetProductionOutputSummary @Year = '''''+@Year+'''''
+''exec Production.dbo.GetProductionOutputSummary @Year = '''''+@useYear+'''''
 ,@DateType=1, @ChkOrder=1, @ChkForecast=1, @ChkFtylocalOrder=1, @ExcludeSampleFactory=1, @ChkMonthly=1, @IncludeCancelOrder=1, @IsFtySide=0, @IsPowerBI=1
 '')
 

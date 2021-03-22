@@ -589,6 +589,7 @@ select [PackingListID] =  p.ID
 ,pd.Seq
 ,pd.MDScanDate
 ,pd.MDFailQty
+,pd.DRYTransferDate
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 outer apply(
 	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
@@ -628,7 +629,8 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-                .Date("DryReceiveDate", header: "Dry Room Scan Date", width: Widths.AnsiChars(10))
+                .Date("DryReceiveDate", header: "Dry Room Receive Date", width: Widths.AnsiChars(10))
+                .Date("DRYTransferDate", header: "Dry Room Transfer Date", width: Widths.AnsiChars(10))
                 .Date("MDScanDate", header: "MD Room Scan Date", width: Widths.AnsiChars(10))
                 .Text("MDFailQty", header: "MD Discrepancy", width: Widths.AnsiChars(6))
                 .Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))

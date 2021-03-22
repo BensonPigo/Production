@@ -32,6 +32,7 @@ namespace Sci.Production.Shipping
             this.gridImport.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                .Text("TransactionID", header: "Transfer In No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Seq", header: "SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -57,6 +58,7 @@ namespace Sci.Production.Shipping
 
             string sqlCmd = $@"
 select Selected = cast(1 as bit)
+    , [TransactionID] = td.ID
     , td.Poid
     , td.Seq1
     , td.Seq2
@@ -121,7 +123,12 @@ where td.ID = '{this.txtTransferInNo.Text}'
             {
                 foreach (DataRow currentRow in dr)
                 {
-                    DataRow[] findrow = this.detailData.Select(string.Format("POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}'", MyUtility.Convert.GetString(currentRow["POID"]), MyUtility.Convert.GetString(currentRow["Seq1"]), MyUtility.Convert.GetString(currentRow["Seq2"])));
+                    DataRow[] findrow = this.detailData.Select($@"
+TransactionID = '{MyUtility.Convert.GetString(currentRow["TransactionID"])}' 
+AND POID = '{MyUtility.Convert.GetString(currentRow["POID"])}' 
+AND Seq1 = '{MyUtility.Convert.GetString(currentRow["Seq1"])}'
+AND Seq2 = '{MyUtility.Convert.GetString(currentRow["Seq2"])}'");
+
                     if (findrow.Length == 0)
                     {
                         currentRow.AcceptChanges();
