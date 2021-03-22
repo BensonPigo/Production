@@ -302,6 +302,7 @@ select sp.FactoryID
 	,isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle)),sp.PoHandle) as POHandleName
 	,isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR)),sp.POSMR) as POSMRName
     ,[Fty]='{fty}'
+    ,sp.MRLastDate
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''
@@ -411,7 +412,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             {
                 Ict.Logs.APP.LogInfo("Create XLT Start - Detail");
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P03.xltx"); //預先開啟excel app
-                objApp.Visible = false;
+                objApp.Visible = true;
 
                 DataTable final = dataTables.FirstOrDefault().Value.Clone();
                 final.Columns.Remove("Fty");
@@ -420,8 +421,49 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                     keyValuePair.Value.Columns.Remove("Fty");
                     final.Merge(keyValuePair.Value);
                 }
+
+                var sheet2 = objApp.Workbooks[1].Worksheets.Add("PivotSheet");
+                Excel.PivotCaches pCaches = objApp.Workbooks[1].PivotCaches();
+                string sourceRange = "A2:" + $"Q{final.Rows.Count + 2}";
+                Excel.PivotCache pCache = pCaches.Create(Excel.XlPivotTableSourceType.xlDatabase, sourceRange);
+                var table = sheet2.PivotTables.Add(pCache, "AAA", "A2");
+                var field = table.DataFields.Add("FactoryID");
+                field.Function = Excel.XlConsolidationFunction.xlCount;
+                field.Name = "aaa";
+                table.RowFields.Add("ReceiveDate");
+                table.ColumnHeaderCaption = "Factory";
+
                 MyUtility.Excel.CopyToXls(final, null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
 
+                #region 產生樞紐分析表
+               
+               
+                //Excel.Worksheet sheet2 = objApp.Sheets[2];
+                //sheet2.Activate();                
+
+                ////Excel.Range range = sheet2.Range["A2", $"Q{final.Rows.Count + 2}"];
+                //Excel.PivotCaches pCaches = objApp.ActiveWorkbook.PivotCaches();
+                //string sourceRange = "A2:"+ $"Q{final.Rows.Count + 2}";
+                //Excel.Range datarange = sheet2.get_Range("A2", $"Q{final.Rows.Count + 2}");
+
+
+                /*
+            Excel.PivotCache pCache = pCaches.Create(Excel.XlPivotTableSourceType.xlDatabase, sourceRange);
+            Excel.Range range = sheet2.get_Range("A2");
+            Excel.PivotTable pTable = pCache.CreatePivotTable(TableDestination: range, TableName: "PivoTable1");
+            int headerRow = datarange[1, 1].Row;
+
+            int fieldPosition = 1;
+            Excel.PivotField field = pTable.PivotFields("ReceiveDate");
+            field.Orientation = Excel.XlPivotFieldOrientation.xlRowField;
+            */
+                //Excel.PivotCache cache = (Excel.PivotCache)book.PivotCaches().Add(SourceType: Excel.XlPivotTableSourceType.xlDatabase, range);
+                //Excel.PivotTable pt = sheet2.PivotTables().Add("Pivot Table", range, cache);
+                //this.Pivot("A2", $"Q{final.Rows.Count + 2}", "ReceiveDate", "FactoryID", "FactoryID");
+
+
+
+                #endregion
                 Ict.Logs.APP.LogInfo("Create XLT Start - Production Kits Confirm Report");
 
                 #region Save Excel
@@ -446,6 +488,93 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                 return new List<string>();
             }
         }
+
+        public Microsoft.Office.Interop.Excel.Application ExcelApp { get; set; } = null;
+
+        /// <summary>
+        /// 指定Sheet資料作樞紐統計表
+        /// </summary>
+        /// <param name="sourceRange">樞紐資料來源的range, 針對active sheet, 給予 "A1:K50" (包含標題列) 或是給予 "sheet!A1:K50"</param>
+        /// <param name="rowHeaders">指定成為報表分析的縱向欄位Header內文, 例如 A1 內文是"ID",B1 內文"Name" , 則傳入"ID,Name" 即為指定A和B欄位樞紐的縱向欄</param>
+        /// <param name="columnHeaders">指定成為報表分析的橫向欄位Header內文, 例如 C1 內文是"Factory",D1 內文"Country" , 則傳入"Factory,Country" 即為指定C和D欄位樞紐的橫向欄</param>
+        /// <param name="valueField">指定成為報表分析的值欄位Header內文, 例如 E1 內文是"Qty" , 則傳入"Qty" 即為指定E欄位樞紐的計算值欄</param>
+        /// <param name="pageField">指定成為報表分析的分頁欄位Header內文, 例如 F1 內文是"SuppID" , 則傳入"SuppID" 即為指定F欄位作為分頁List</param>
+        /// <param name="function">預設為將ValueField 作加總分析</param>
+        public virtual void Pivot(string sourceRange, string rowHeaders = "", string columnHeaders = "", string valueField = "", string pageField = "", Excel.XlConsolidationFunction function = Excel.XlConsolidationFunction.xlSum)
+        {
+            Excel.Workbook book = this.ExcelApp.ActiveWorkbook;
+            Excel.Worksheet sheet1 = this.ExcelApp.ActiveSheet;
+            Excel.Range dataRange = this.ExcelApp.get_Range(sourceRange);
+            var pivotWorkSheet = (Excel.Worksheet)this.ExcelApp.Sheets.Add();
+
+            // 編pivot sheet name
+            int pivotNo = 1;
+            bool sheetNameOK = false;
+            string sheetName_Pivot = "Pivot";
+            var existedNames = book.Sheets.Cast<Excel.Worksheet>().Select(ws => ws.Name).ToArray();
+            while (!sheetNameOK && pivotNo < 999)
+            {
+                sheetName_Pivot = "Pivot" + pivotNo;
+                if (!existedNames.Contains(sheetName_Pivot, StringComparer.OrdinalIgnoreCase))
+                {
+                    sheetNameOK = true;
+                }
+                else
+                {
+                    pivotNo++;
+                }
+            }
+
+            pivotWorkSheet.Name = sheetName_Pivot;
+            Excel.PivotCaches pCaches = book.PivotCaches();
+            Excel.PivotCache pCache = pCaches.Create(Excel.XlPivotTableSourceType.xlDatabase, sourceRange);
+            Excel.Range rngDes = pivotWorkSheet.get_Range("A2");
+            Excel.PivotTable pTable = pCache.CreatePivotTable(TableDestination: rngDes, TableName: "PivotTable1");
+
+            int headerRow = dataRange[1, 1].Row;
+
+            int fieldPosition = 1;
+            foreach (string rowHead in rowHeaders.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string headerText = rowHead; //// sheet1.get_Range(rowHead.Trim() + headerRow).ToString();
+
+                Excel.PivotField field = pTable.PivotFields(headerText);
+                field.Orientation = Excel.XlPivotFieldOrientation.xlRowField;
+                field.Position = fieldPosition++;
+            }
+
+            fieldPosition = 1;
+            foreach (string columnHead in columnHeaders.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string headerText = columnHead; //// sheet1.get_Range(columnHead.Trim() + headerRow).ToString();
+
+                Excel.PivotField field = pTable.PivotFields(headerText);
+                field.Orientation = Excel.XlPivotFieldOrientation.xlColumnField;
+                field.Position = fieldPosition++;
+            }
+
+            fieldPosition = 1;
+            foreach (string pageHead in pageField.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string headerText = pageHead; //// sheet1.get_Range(pageHead.Trim() + headerRow).ToString();
+
+                Excel.PivotField field = pTable.PivotFields(headerText);
+                field.Orientation = Excel.XlPivotFieldOrientation.xlPageField;
+                field.Position = fieldPosition++;
+                field.Function = function;
+            }
+
+            fieldPosition = 1;
+            foreach (string valueHead in valueField.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string headerText = valueHead; //// sheet1.get_Range(valueHead.Trim() + headerRow).ToString();
+
+                Excel.PivotField field = pTable.PivotFields(headerText);
+                field.Orientation = Excel.XlPivotFieldOrientation.xlDataField;
+                field.Position = fieldPosition++;
+            }
+        }
+
 
         #region Call JobLog web api回傳執行結果
         private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
