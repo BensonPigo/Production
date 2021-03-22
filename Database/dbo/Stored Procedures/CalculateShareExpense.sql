@@ -1,7 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[CalculateShareExpense]
 (
     @APID as varchar(13) = '',
-    @login varchar(20) = ''
+    @login as varchar(20) = '',
+	@IsFreightFwd as bit = 0
 )
 as 
 BEGIN
@@ -72,13 +73,25 @@ BEGIN
 		IF @Type = 'IMPORT'
 		BEGIN
 			/*
-			 * 將已不存在系統中的 WK Junk
+			 * 將已不存在系統中的 BLNo Junk
 			 */
 			update s
 			set s.Junk = 1				
 				, s.EditName = @login
 				, s.EditDate = @adddate
 			from ShareExpense s
+			where s.ShippingAPID = @ShippingAPID
+			and s.WKNo != '' 
+			and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+
+			/*
+			 * 將已不存在系統中的 WK Junk
+			 */
+			update s
+			set s.Junk = 1				
+				, s.EditName = @login
+				, s.EditDate = @adddate
+			from ShareExpense s 
 			where s.ShippingAPID = @ShippingAPID and s.WKNo != '' 
 				  and s.WKNo not in (select ID from Export where ID = s.WKNo and ID is not null)
 				  and s.WKNo not in (select ID from FtyExport where ID = s.WKNo and ID is not null)
@@ -94,7 +107,7 @@ BEGIN
 						, e.Cbm
 						, s.CurrencyID
 						, s.SubType
-				from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
+ 				from Export e WITH (NOLOCK) , ShareExpense se WITH (NOLOCK) , ShippingAP s WITH (NOLOCK) 
 				where e.ID = se.WKNo
 				and s.ID = se.ShippingAPID
 				and s.ID = @ShippingAPID
@@ -118,6 +131,18 @@ BEGIN
 		END
 		ELSE
 		BEGIN
+			/*
+			 * 將已不存在系統中的 BLNo Junk
+			 */
+			update s
+			set s.Junk = 1				
+				, s.EditName = @login
+				, s.EditDate = @adddate
+			from ShareExpense s
+			where s.ShippingAPID = @ShippingAPID
+			and s.InvNo != '' 
+			and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+
 			/*
 			 * 將已不存在系統中的 Inv Junk
 			 */
@@ -404,10 +429,16 @@ BEGIN
 				select @recno = isnull(count(ShippingAPID),0) from ShareExpense WITH (NOLOCK) where ShippingAPID = @ShippingAPID and WKNo = @wkno and InvNo = @invno and AccountID = @accno
 				IF @recno = 0
 					BEGIN
-						INSERT INTO ShareExpense
-						(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
-						VALUES 
-						(@ShippingAPID, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @login, @adddate)
+						/*
+						 * 只有勾選[Is Freight Forwarder] 才需要將資料自動帶入
+						 */
+						if @IsFreightFwd = 1
+						BEGIN
+							INSERT INTO ShareExpense
+							(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
+							VALUES 
+							(@ShippingAPID, @blno, @wkno, @invno, @type, @gw, @cbm, @currency, @inputamount, @shipmodeid, @1stsharebase, @ftywk, @accno, @login, @adddate)
+						END
 					END
 				ELSE
 					BEGIN
