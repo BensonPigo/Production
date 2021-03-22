@@ -74,7 +74,7 @@ namespace Sci.Production.Automation
         /// </summary>
         /// <param name="listID">List ID</param>
         /// <param name="actionType">Action Type</param>
-        public void SentPackingListToFinishingProcesses(string listID, string actionType)
+        public async void SentPackingListToFinishingProcesses(string listID, string actionType)
         {
             if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
             {
@@ -99,7 +99,7 @@ namespace Sci.Production.Automation
                 DBProxy._OpenConnection("Production", out sqlConnection);
                 automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
 
-                SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+                await SendWebAPIAsync(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
 
                 DBProxy._OpenConnection("Production", out sqlConnection);
                 automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
