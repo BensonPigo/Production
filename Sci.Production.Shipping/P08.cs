@@ -1224,11 +1224,7 @@ Non SP# Sample/Mock-up
         {
             this.IncludeFoundryRefresh(this.txtBLNo.Text);
 
-            if (this.comboType.SelectedValue == null ||
-                !this.EditMode ||
-                !this.IsDetailInserting ||
-                this.txtBLNo.Text.Empty() ||
-                this.txtInvoice.Text.Empty())
+            if (this.txtBLNo.Text.Empty())
             {
                 return;
             }
@@ -1281,7 +1277,7 @@ end
                 {
                     string errMsg = @"The B/L# you entered cannot be found in the below data, please first check whether the B/L# is correct,
 You can complete Account Payment only after the corresponding Number is updated, Thank You.";
-                    var m = MyUtility.Msg.ShowMsgGrid(resultBLNoCheck, errMsg);
+                    Win.UI.MsgGridForm m = new Win.UI.MsgGridForm(resultBLNoCheck, errMsg);
 
                     // m.TopMost = true; 這個不能加，不然電腦會爆炸
                     m.grid1.Columns[0].Width = 100;
@@ -1289,11 +1285,17 @@ You can complete Account Payment only after the corresponding Number is updated,
                     m.grid1.Columns[2].Width = 100;
                     m.grid1.Columns[3].Width = 200;
                     m.grid1.Columns[4].Width = 500;
+                    m.ShowDialog();
                     this.CurrentMaintain["BLNo"] = string.Empty;
                     return;
                 }
             }
             #endregion
+
+            if (this.comboType.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
+            {
+                return;
+            }
 
             this.disVesselName.Text = string.Empty;
             string sBLNo = this.txtBLNo.Text;
