@@ -147,6 +147,31 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
+        /// SendWebAPI
+        /// </summary>
+        /// <param name="baseUrl">Base Url</param>
+        /// <param name="requestUri">Request Url</param>
+        /// <param name="jsonBody">Json Body</param>
+        /// <param name="automationErrMsg">Automation Err Msg</param>
+        /// <returns>DualResult</returns>
+        public static async Task<DualResult> SendWebAPIAsync(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
+        {
+            DualResult result = new DualResult(true);
+            WebApiBaseResult webApiBaseResult;
+            Dictionary<string, string> requestHeaders = GetCustomHeaders();
+            webApiBaseResult = await PmsWebApiUtility45.WebApiTool.WebApiPostAsync(baseUrl, requestUri, jsonBody, 600, requestHeaders);
+            automationErrMsg.json = jsonBody;
+            if (!webApiBaseResult.isSuccess)
+            {
+                automationErrMsg.SetErrInfo(webApiBaseResult, jsonBody);
+                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                SaveAutomationErrMsg(automationErrMsg);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// GetCustomHeaders
         /// </summary>
         /// <returns>Dictionary</returns>

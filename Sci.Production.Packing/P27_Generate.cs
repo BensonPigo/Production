@@ -383,11 +383,11 @@ DROP TABLE #base
                 success = this.UpdateDatabese(bList);
             }
 
-            var successPackingList = tList.Where(w => !w.Fail).Select(o => new { o.PackingListID, o.AlreadyGenerateStampFile }).Distinct().ToList();
             if (success)
             {
+                var transPackIDs = bList.Select(o => o.PackingListID).Distinct().ToList();
                 #region ISP20201690 資料交換 - Sunrise
-                foreach (var packingListID in successPackingList.Select(o => o.PackingListID).Distinct())
+                foreach (var packingListID in transPackIDs)
                 {
                     Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(packingListID, string.Empty))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
@@ -395,7 +395,7 @@ DROP TABLE #base
                 #endregion
 
                 #region ISP20201607 資料交換 - Gensong
-                foreach (var packingListID in successPackingList.Select(o => o.PackingListID).Distinct())
+                foreach (var packingListID in transPackIDs)
                 {
                     Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(packingListID, string.Empty))
                         .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
@@ -414,6 +414,7 @@ DROP TABLE #base
 
             // 1.Update sucess    [成功] : PL 在這一次匯入中成功上傳圖檔
             // 2.Overwrite success[成功] : PL 已上傳過圖檔，這一次匯入成功覆寫
+            var successPackingList = tList.Where(w => !w.Fail).Select(o => new { o.PackingListID, o.AlreadyGenerateStampFile }).Distinct().ToList();
             foreach (var item in successPackingList)
             {
                 DataRow nr = msgDt.NewRow();
