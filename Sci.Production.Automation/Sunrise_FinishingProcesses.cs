@@ -25,7 +25,7 @@ namespace Sci.Production.Automation
         /// </summary>
         /// <param name="listID">List ID</param>
         /// <param name="actionType">Action Type</param>
-        public void SentPackingToFinishingProcesses(string listID, string actionType)
+        public async void SentPackingToFinishingProcesses(string listID, string actionType)
         {
             if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
@@ -64,7 +64,7 @@ namespace Sci.Production.Automation
 
                 foreach (AutomationCreateRecord item in listSendData)
                 {
-                    SendWebAPI(UtilityAutomation.GetSciUrl(), suppAPIThread, item.json, this.automationErrMsg);
+                    await SendWebAPIAsync(UtilityAutomation.GetSciUrl(), suppAPIThread, item.json, this.automationErrMsg);
                     DBProxy._OpenConnection("Production", out sqlConnection);
                     item.DeleteAutomationCreateRecord(sqlConnection);
                 }
