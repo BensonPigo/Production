@@ -179,7 +179,7 @@ namespace Sci.Production.Automation
         {
             Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
             StackTrace stackTrace = new StackTrace();
-            MethodBase methodBase = stackTrace.GetFrame(3).GetMethod();
+            MethodBase methodBase = stackTrace.GetFrame(7).GetMethod();
 
             string callFrom = methodBase.DeclaringType.FullName;
             if (callFrom.Contains("+"))
