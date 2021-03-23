@@ -322,7 +322,7 @@ select ID
 	, BrandID
 	, UnitID
 	, AccountID 
-from ShipExpense WITH (NOLOCK
+from ShipExpense WITH (NOLOCK)
 where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = @expressTypeID)
 and Junk = 0 
 and LocalSuppID = @localsuppid 
