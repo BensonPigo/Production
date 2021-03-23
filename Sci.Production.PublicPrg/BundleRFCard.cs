@@ -451,6 +451,7 @@ from
             DualResult result = new DualResult(false);
             BundleRFCardUSB bundleRFCard = new BundleRFCardUSB();
             bool initEraseSet = true;
+            bool checkRFIDCardDuplicateByWebservice = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select CheckRFIDCardDuplicateByWebservice from [System]"));
             returnIndex = nowIndex;
             try
             {
@@ -493,6 +494,19 @@ from
                         if (result)
                         {
                             cardUID = result.Description;
+
+                            // Check WebService
+                            if (checkRFIDCardDuplicateByWebservice && !BundleNOWebServiceCheck(data[nowIndex].BundleNo.ToString(), cardUID, "2"))
+                            {
+                                result = BundleNOWebServiceOtherPrint(bundleRFCard, isEraser, cardUID);
+                                if (!result)
+                                {
+                                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "WebService Other Print Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                                    throw new Exception(result.Messages.ToString());
+                                }
+
+                                continue;
+                            }
                         }
                         else
                         {
@@ -628,6 +642,121 @@ from
             finally
             {
                 bundleRFCard.UsbPortClose();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 呼叫WebService 檢查 RFID是否已使用
+        /// </summary>
+        /// <param name="bundleNO">Bundle No</param>
+        /// <param name="cardUID">RFID 卡號</param>
+        /// <param name="cardType">2 Bundle</param>
+        /// <returns>DualResult</returns>
+        public static DualResult BundleNOWebServiceCheck(string bundleNO, string cardUID, string cardType)
+        {
+            DualResult result = new DualResult(false);
+            try
+            {
+                string url = "http://fty_website/SNPWebService/RFIDCombine.asmx";
+                string methodname = "CheckRFIDUsage";
+                string[] args = new string[3] { cardUID, bundleNO, cardType };
+                object wsResult = WebServiceHelper.InvokeWebService(url, methodname, args);
+
+                string[] wsResultarr = wsResult.ToString().Split(';');
+                if (wsResultarr.Length < 1)
+                {
+                    throw new Exception("Call WebService Error");
+                }
+
+                bool wsResultStatus = wsResultarr[0] == "True";
+                result = new DualResult(wsResultStatus, new BaseResult.MessageInfo(wsResultarr[1]));
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 已使用過RFID 印出新的卡
+        /// </summary>
+        /// <param name="bundleRFCard">BundleRFCardUSB</param>
+        /// <param name="isEraser">isEraser</param>
+        /// <param name="cardUID">RFID 卡號</param>
+        /// <returns>DualResult</returns>
+        public static DualResult BundleNOWebServiceOtherPrint(BundleRFCardUSB bundleRFCard, bool isEraser, string cardUID)
+        {
+            DualResult result = new DualResult(false);
+            try
+            {
+                if (isEraser)
+                {
+                    // P22 sets the partial Erase Area.
+                    result = CardEraseSettingArea(bundleRFCard);
+                    if (!result)
+                    {
+                        result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS Card set Erase Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                        throw new Exception(result.Messages.ToString());
+                    }
+
+                    // P24 Card Erase the partial Area.
+                    result = CardErasePartialArea(bundleRFCard);
+                    if (!result)
+                    {
+                        result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS Card Erase Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                        throw new Exception(result.Messages.ToString());
+                    }
+                }
+
+                // P42 Sram Reset
+                result = CardSramReset(bundleRFCard);
+                if (!result)
+                {
+                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS Card Sram Reset Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                    throw new Exception(result.Messages.ToString());
+                }
+
+                // P35
+                List<string> settings = new List<string>();
+                result = GetSettingWSCheckText(cardUID, out settings);
+                if (!result)
+                {
+                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS SettingText Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                    throw new Exception(result.Messages.ToString());
+                }
+
+                result = CardSettingTextTOSram(bundleRFCard, settings);
+                if (!result)
+                {
+                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS Card SettingText TO Sram Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                    throw new Exception(result.Messages.ToString());
+                }
+
+                // P41
+                result = CardPrint(bundleRFCard);
+                if (!result)
+                {
+                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS Card Print Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                    throw new Exception(result.Messages.ToString());
+                }
+
+                // C36
+                result = CardDrop(bundleRFCard);
+                if (!result)
+                {
+                    result = BundleRFCardPrintErrorMsg(bundleRFCard, "WS Card Capture Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                    throw new Exception(result.Messages.ToString());
+                }
+
+                result = new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, new BaseResult.MessageInfo(ex.Message.ToString()));
             }
 
             return result;
@@ -1776,6 +1905,28 @@ from
                 $"{subLast}",
                 $"Desc:{descFirst}",
                 $"{descLast}",
+            };
+
+            try
+            {
+                result = new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                result = new DualResult(false, ex.ToString());
+            }
+
+            return result;
+        }
+
+        private static DualResult GetSettingWSCheckText(string cardUID, out List<string> settings)
+        {
+            DualResult result = new DualResult(false);
+            settings = new List<string>()
+            {
+                $"Card No: {cardUID} ",
+                "has been used in Employee card",
+                "or Machine card.",
             };
 
             try

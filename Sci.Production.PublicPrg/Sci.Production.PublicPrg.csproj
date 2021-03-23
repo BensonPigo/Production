@@ -134,6 +134,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -167,6 +168,7 @@
     <Compile Include="Warehouse.cs" />
     <Compile Include="Cutting.cs" />
     <Compile Include="Quality.cs" />
+    <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
