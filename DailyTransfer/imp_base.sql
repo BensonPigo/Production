@@ -4184,4 +4184,66 @@ WHERE b.EffectiveDate is null
 and exists(select 1 from Production.dbo.MDivision where ID = a.MDivisionID)
 
 
+---------Rate
+Delete Production.dbo.Rate
+from Production.dbo.Rate as a 
+left join Trade_To_Pms.dbo.Rate as b on a.RateTypeID = b.RateTypeID
+                                     and a.BeginDate = b.BeginDate
+                                     and a.OriginalCurrency = b.OriginalCurrency
+                                     and a.ExchangeCurrency = b.ExchangeCurrency
+where b.RateTypeID is null
+
+UPDATE a
+SET   a.EndDate		      =b.EndDate
+      ,a.Rate		      =b.Rate
+      ,a.Remark		      =b.Remark
+      ,a.AddName		      =b.AddName
+      ,a.AddDate		      =b.AddDate
+      ,a.EditName		      =b.EditName
+      ,a.EditDate		      =b.EditDate
+
+from Production.dbo.Rate as a 
+left join Trade_To_Pms.dbo.Rate as b on a.RateTypeID = b.RateTypeID
+                                     and a.BeginDate = b.BeginDate
+                                     and a.OriginalCurrency = b.OriginalCurrency
+                                     and a.ExchangeCurrency = b.ExchangeCurrency
+where a.EndDate <> b.EndDate
+or a.Rate <> b.Rate
+or a.Remark <> b.Remark
+
+INSERT INTO Production.dbo.Rate(
+       RateTypeID
+      ,BeginDate
+      ,EndDate
+      ,OriginalCurrency
+      ,ExchangeCurrency
+      ,Rate
+      ,Remark
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+
+)
+select 
+       RateTypeID
+      ,BeginDate
+      ,EndDate
+      ,OriginalCurrency
+      ,ExchangeCurrency
+      ,Rate
+      ,Remark
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+from Trade_To_Pms.dbo.Rate as b WITH (NOLOCK)
+where not exists(
+    select 1 
+    from Production.dbo.Rate as a WITH (NOLOCK) 
+    where a.RateTypeID = b.RateTypeID
+    and a.BeginDate = b.BeginDate
+    and a.OriginalCurrency = b.OriginalCurrency
+    and a.ExchangeCurrency = b.ExchangeCurrency)
+
 END
