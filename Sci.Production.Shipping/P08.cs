@@ -809,9 +809,10 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
+            int isFreightForwarder = this.checkIsFreightForwarder.Checked ? 1 : 0;
             DualResult result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");

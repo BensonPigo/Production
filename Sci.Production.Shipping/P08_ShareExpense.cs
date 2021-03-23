@@ -25,6 +25,7 @@ namespace Sci.Production.Shipping
         private DataTable SAPP;
         private bool Apflag;
         private string LocalSuppID;
+        private int isFreightForwarder;
 
         /// <summary>
         /// P08_ShareExpense
@@ -36,6 +37,7 @@ namespace Sci.Production.Shipping
             this.InitializeComponent();
             this.apData = aPData;
             this.Apflag = apflag;
+            this.isFreightForwarder = apflag ? 1 : 0;
             this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
             this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
             this.numTtlAmt.Value = MyUtility.Convert.GetDecimal(this.apData["Amount"]);
@@ -617,7 +619,7 @@ when not matched by target then
             // 重新計算
             result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Calcute share expense failed.\r\n" + result.ToString());
@@ -1119,7 +1121,7 @@ where   ShippingAPID = '{3}'
 
                         result = DBProxy.Current.ExecuteByConn(
                             sqlConn,
-                            string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
+                            string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
                         if (!result)
                         {
                             errmsg = errmsg + "Calcute share expense failed." + "\r\n" + result.ToString();
@@ -1346,7 +1348,7 @@ select [resultType] = 'OK',
         {
             DualResult result = DBProxy.Current.Execute(
                 "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}'", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID));
+                string.Format("exec CalculateShareExpense '{0}','{1}', {2}", MyUtility.Convert.GetString(this.apData["ID"]), Env.User.UserID, this.isFreightForwarder));
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Re-Calculate Delete faile\r\n" + result.ToString());
