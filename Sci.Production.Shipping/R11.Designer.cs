@@ -48,6 +48,7 @@
             this.dateOnBoardDate = new Sci.Win.UI.DateRange();
             this.labelOnBoardDate = new Sci.Win.UI.Label();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.rdbtnMajorItem = new Sci.Win.UI.RadioButton();
             this.rdbtnDetailList = new Sci.Win.UI.RadioButton();
             this.rdbtnMainList = new Sci.Win.UI.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
@@ -96,7 +97,7 @@
             // 
             // labelPulloutDate
             // 
-            this.labelPulloutDate.Location = new System.Drawing.Point(13, 120);
+            this.labelPulloutDate.Location = new System.Drawing.Point(13, 143);
             this.labelPulloutDate.Name = "labelPulloutDate";
             this.labelPulloutDate.Size = new System.Drawing.Size(101, 23);
             this.labelPulloutDate.TabIndex = 95;
@@ -104,7 +105,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(13, 184);
+            this.labelBrand.Location = new System.Drawing.Point(13, 207);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(101, 23);
             this.labelBrand.TabIndex = 96;
@@ -112,7 +113,7 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Location = new System.Drawing.Point(13, 220);
+            this.labelCustCD.Location = new System.Drawing.Point(13, 243);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(101, 23);
             this.labelCustCD.TabIndex = 97;
@@ -120,7 +121,7 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Location = new System.Drawing.Point(13, 257);
+            this.labelDestination.Location = new System.Drawing.Point(13, 280);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(101, 23);
             this.labelDestination.TabIndex = 98;
@@ -128,7 +129,7 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Location = new System.Drawing.Point(13, 293);
+            this.labelShipMode.Location = new System.Drawing.Point(13, 316);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(101, 23);
             this.labelShipMode.TabIndex = 99;
@@ -136,7 +137,7 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Location = new System.Drawing.Point(13, 330);
+            this.labelForwarder.Location = new System.Drawing.Point(13, 353);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(101, 23);
             this.labelForwarder.TabIndex = 100;
@@ -146,7 +147,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioRawMaterial);
             this.radioPanel1.Controls.Add(this.radioGarment);
-            this.radioPanel1.Location = new System.Drawing.Point(117, 10);
+            this.radioPanel1.Location = new System.Drawing.Point(119, 10);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(112, 52);
             this.radioPanel1.TabIndex = 101;
@@ -194,7 +195,7 @@
             this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
-            this.datePulloutDate.Location = new System.Drawing.Point(120, 120);
+            this.datePulloutDate.Location = new System.Drawing.Point(120, 143);
             this.datePulloutDate.Name = "datePulloutDate";
             this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
             this.datePulloutDate.TabIndex = 4;
@@ -203,7 +204,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(120, 184);
+            this.txtbrand.Location = new System.Drawing.Point(120, 207);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 6;
@@ -213,7 +214,7 @@
             this.txtcustcd.BackColor = System.Drawing.Color.White;
             this.txtcustcd.BrandObjectName = null;
             this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(120, 220);
+            this.txtcustcd.Location = new System.Drawing.Point(120, 243);
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd.TabIndex = 7;
@@ -221,7 +222,7 @@
             // txtcountryDestination
             // 
             this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Location = new System.Drawing.Point(120, 257);
+            this.txtcountryDestination.Location = new System.Drawing.Point(120, 280);
             this.txtcountryDestination.Name = "txtcountryDestination";
             this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
             this.txtcountryDestination.TabIndex = 8;
@@ -233,7 +234,7 @@
             this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode.FormattingEnabled = true;
             this.txtshipmode.IsSupportUnselect = true;
-            this.txtshipmode.Location = new System.Drawing.Point(120, 293);
+            this.txtshipmode.Location = new System.Drawing.Point(120, 316);
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(80, 24);
@@ -244,7 +245,7 @@
             // 
             this.displayForwarder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayForwarder.Location = new System.Drawing.Point(183, 331);
+            this.displayForwarder.Location = new System.Drawing.Point(183, 354);
             this.displayForwarder.Name = "displayForwarder";
             this.displayForwarder.Size = new System.Drawing.Size(100, 23);
             this.displayForwarder.TabIndex = 11;
@@ -253,7 +254,7 @@
             // 
             this.txtForwarder.BackColor = System.Drawing.Color.White;
             this.txtForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtForwarder.Location = new System.Drawing.Point(120, 330);
+            this.txtForwarder.Location = new System.Drawing.Point(120, 353);
             this.txtForwarder.Name = "txtForwarder";
             this.txtForwarder.Size = new System.Drawing.Size(61, 23);
             this.txtForwarder.TabIndex = 10;
@@ -277,14 +278,14 @@
             this.dateOnBoardDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateOnBoardDate.DateBox2.TabIndex = 1;
             this.dateOnBoardDate.IsRequired = false;
-            this.dateOnBoardDate.Location = new System.Drawing.Point(118, 152);
+            this.dateOnBoardDate.Location = new System.Drawing.Point(120, 175);
             this.dateOnBoardDate.Name = "dateOnBoardDate";
             this.dateOnBoardDate.Size = new System.Drawing.Size(280, 23);
             this.dateOnBoardDate.TabIndex = 5;
             // 
             // labelOnBoardDate
             // 
-            this.labelOnBoardDate.Location = new System.Drawing.Point(13, 152);
+            this.labelOnBoardDate.Location = new System.Drawing.Point(13, 175);
             this.labelOnBoardDate.Name = "labelOnBoardDate";
             this.labelOnBoardDate.Size = new System.Drawing.Size(101, 23);
             this.labelOnBoardDate.TabIndex = 114;
@@ -292,18 +293,31 @@
             // 
             // radioPanel2
             // 
+            this.radioPanel2.Controls.Add(this.rdbtnMajorItem);
             this.radioPanel2.Controls.Add(this.rdbtnDetailList);
             this.radioPanel2.Controls.Add(this.rdbtnMainList);
-            this.radioPanel2.Location = new System.Drawing.Point(117, 62);
+            this.radioPanel2.Location = new System.Drawing.Point(119, 62);
             this.radioPanel2.Name = "radioPanel2";
-            this.radioPanel2.Size = new System.Drawing.Size(112, 52);
+            this.radioPanel2.Size = new System.Drawing.Size(112, 75);
             this.radioPanel2.TabIndex = 103;
+            // 
+            // rdbtnMajorItem
+            // 
+            this.rdbtnMajorItem.AutoSize = true;
+            this.rdbtnMajorItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnMajorItem.Location = new System.Drawing.Point(3, 46);
+            this.rdbtnMajorItem.Name = "rdbtnMajorItem";
+            this.rdbtnMajorItem.Size = new System.Drawing.Size(91, 21);
+            this.rdbtnMajorItem.TabIndex = 4;
+            this.rdbtnMajorItem.TabStop = true;
+            this.rdbtnMajorItem.Text = "Major Item";
+            this.rdbtnMajorItem.UseVisualStyleBackColor = true;
             // 
             // rdbtnDetailList
             // 
             this.rdbtnDetailList.AutoSize = true;
             this.rdbtnDetailList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetailList.Location = new System.Drawing.Point(3, 29);
+            this.rdbtnDetailList.Location = new System.Drawing.Point(3, 24);
             this.rdbtnDetailList.Name = "rdbtnDetailList";
             this.rdbtnDetailList.Size = new System.Drawing.Size(88, 21);
             this.rdbtnDetailList.TabIndex = 3;
@@ -337,7 +351,7 @@
             this.chkExcludePackingFOC.Checked = true;
             this.chkExcludePackingFOC.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludePackingFOC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludePackingFOC.Location = new System.Drawing.Point(13, 359);
+            this.chkExcludePackingFOC.Location = new System.Drawing.Point(13, 382);
             this.chkExcludePackingFOC.Name = "chkExcludePackingFOC";
             this.chkExcludePackingFOC.Size = new System.Drawing.Size(162, 21);
             this.chkExcludePackingFOC.TabIndex = 116;
@@ -350,7 +364,7 @@
             this.chkExcludePackingLocalOrder.Checked = true;
             this.chkExcludePackingLocalOrder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkExcludePackingLocalOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkExcludePackingLocalOrder.Location = new System.Drawing.Point(13, 386);
+            this.chkExcludePackingLocalOrder.Location = new System.Drawing.Point(13, 409);
             this.chkExcludePackingLocalOrder.Name = "chkExcludePackingLocalOrder";
             this.chkExcludePackingLocalOrder.Size = new System.Drawing.Size(209, 21);
             this.chkExcludePackingLocalOrder.TabIndex = 117;
@@ -359,7 +373,7 @@
             // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(545, 437);
+            this.ClientSize = new System.Drawing.Size(545, 457);
             this.Controls.Add(this.chkExcludePackingLocalOrder);
             this.Controls.Add(this.chkExcludePackingFOC);
             this.Controls.Add(this.radioPanel2);
@@ -448,5 +462,6 @@
         private Win.UI.Label label1;
         private Win.UI.CheckBox chkExcludePackingFOC;
         private Win.UI.CheckBox chkExcludePackingLocalOrder;
+        private Win.UI.RadioButton rdbtnMajorItem;
     }
 }
