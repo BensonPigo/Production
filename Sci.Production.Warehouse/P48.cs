@@ -571,7 +571,12 @@ from #tmp";
             for (int i = 0; i < listPoid.Count; i++)
             {
                 DataTable[] dts;
-                DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", tmpId[i].ToString()) }, out dts);
+                List<SqlParameter> para = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", tmpId[i].ToString()),
+                    new SqlParameter("@UserID", Env.User.UserID),
+                };
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out dts);
                 if (!res)
                 {
                     DataRow[] drfound = this.dtInventory.Select(string.Format("poid='{0}' and selected=1", listPoid[i].ToString()));
