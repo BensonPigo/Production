@@ -48,12 +48,12 @@
             this.dateOnBoardDate = new Sci.Win.UI.DateRange();
             this.labelOnBoardDate = new Sci.Win.UI.Label();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.rdbtnMajorItem = new Sci.Win.UI.RadioButton();
             this.rdbtnDetailList = new Sci.Win.UI.RadioButton();
             this.rdbtnMainList = new Sci.Win.UI.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
             this.chkExcludePackingFOC = new Sci.Win.UI.CheckBox();
             this.chkExcludePackingLocalOrder = new Sci.Win.UI.CheckBox();
-            this.rdbtnMajorItem = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -147,7 +147,7 @@
             // 
             this.radioPanel1.Controls.Add(this.radioRawMaterial);
             this.radioPanel1.Controls.Add(this.radioGarment);
-            this.radioPanel1.Location = new System.Drawing.Point(117, 10);
+            this.radioPanel1.Location = new System.Drawing.Point(119, 10);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(112, 52);
             this.radioPanel1.TabIndex = 101;
@@ -278,7 +278,7 @@
             this.dateOnBoardDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateOnBoardDate.DateBox2.TabIndex = 1;
             this.dateOnBoardDate.IsRequired = false;
-            this.dateOnBoardDate.Location = new System.Drawing.Point(118, 175);
+            this.dateOnBoardDate.Location = new System.Drawing.Point(120, 175);
             this.dateOnBoardDate.Name = "dateOnBoardDate";
             this.dateOnBoardDate.Size = new System.Drawing.Size(280, 23);
             this.dateOnBoardDate.TabIndex = 5;
@@ -296,10 +296,22 @@
             this.radioPanel2.Controls.Add(this.rdbtnMajorItem);
             this.radioPanel2.Controls.Add(this.rdbtnDetailList);
             this.radioPanel2.Controls.Add(this.rdbtnMainList);
-            this.radioPanel2.Location = new System.Drawing.Point(117, 62);
+            this.radioPanel2.Location = new System.Drawing.Point(119, 62);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(112, 75);
             this.radioPanel2.TabIndex = 103;
+            // 
+            // rdbtnMajorItem
+            // 
+            this.rdbtnMajorItem.AutoSize = true;
+            this.rdbtnMajorItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtnMajorItem.Location = new System.Drawing.Point(3, 46);
+            this.rdbtnMajorItem.Name = "rdbtnMajorItem";
+            this.rdbtnMajorItem.Size = new System.Drawing.Size(91, 21);
+            this.rdbtnMajorItem.TabIndex = 4;
+            this.rdbtnMajorItem.TabStop = true;
+            this.rdbtnMajorItem.Text = "Major Item";
+            this.rdbtnMajorItem.UseVisualStyleBackColor = true;
             // 
             // rdbtnDetailList
             // 
@@ -358,18 +370,6 @@
             this.chkExcludePackingLocalOrder.TabIndex = 117;
             this.chkExcludePackingLocalOrder.Text = "Exclude Packing Local Order";
             this.chkExcludePackingLocalOrder.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnMajorItem
-            // 
-            this.rdbtnMajorItem.AutoSize = true;
-            this.rdbtnMajorItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnMajorItem.Location = new System.Drawing.Point(3, 46);
-            this.rdbtnMajorItem.Name = "rdbtnMajorItem";
-            this.rdbtnMajorItem.Size = new System.Drawing.Size(91, 21);
-            this.rdbtnMajorItem.TabIndex = 4;
-            this.rdbtnMajorItem.TabStop = true;
-            this.rdbtnMajorItem.Text = "Major Item";
-            this.rdbtnMajorItem.UseVisualStyleBackColor = true;
             // 
             // R11
             // 

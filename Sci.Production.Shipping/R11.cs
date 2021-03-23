@@ -115,7 +115,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
             {
                 this.labelPulloutDate.Text = "Pullout Date";
                 this.labelPulloutDate.Size = new System.Drawing.Size(101, 23);
-                this.labelPulloutDate.Location = new System.Drawing.Point(13, 120);
+                this.labelPulloutDate.Location = new System.Drawing.Point(13, 143);
                 this.txtbrand.Enabled = true;
                 this.txtcustcd.Enabled = true;
                 this.dateOnBoardDate.Enabled = true;
@@ -124,7 +124,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
             {
                 this.labelPulloutDate.Text = "Arrive Port Date \r\n (Ship Date)";
                 this.labelPulloutDate.Size = new System.Drawing.Size(101, 36);
-                this.labelPulloutDate.Location = new System.Drawing.Point(13, 107);
+                this.labelPulloutDate.Location = new System.Drawing.Point(13, 130);
                 this.txtbrand.Enabled = false;
                 this.txtcustcd.Enabled = false;
                 this.dateOnBoardDate.Enabled = false;
