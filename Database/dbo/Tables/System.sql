@@ -69,6 +69,7 @@
     [Region]                      VARCHAR (2)    CONSTRAINT [DF_System_Region] DEFAULT ('') NOT NULL,
     [SewlineAvgCPU]               INT            CONSTRAINT [DF_System_SewlineAvgCPU] DEFAULT ((1100)) NULL,
     [SmallLogoCM]                 DECIMAL (5, 2) CONSTRAINT [DF_System_SmallLogoCM] DEFAULT ((15)) NULL,
+    [CheckRFIDCardDuplicateByWebservice] BIT    CONSTRAINT [DF_System_CheckRFIDCardDuplicateByWebservice] NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 
@@ -292,18 +293,6 @@ Go
 	EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ҽd���ɸ�|', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'ShippingMarkTemplatePath';
 
 
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Card Erase Before Printing', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'RFCardEraseBeforePrinting';
-
-
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'RF Card Erase Before Printing',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'System',
-    @level2type = N'COLUMN',
-    @level2name = N'RFCardEraseBeforePrinting'
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'RF Card Erase Before Printing', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'System', @level2type = N'COLUMN', @level2name = N'RFCardEraseBeforePrinting';
 
