@@ -280,7 +280,7 @@ select ID
 	, Price
 	, [Unit] = UnitID 
 from ShipExpense WITH (NOLOCK) 
-where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = {1})
+where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID in ({1}, 3))
 and Junk = 0 
 and LocalSuppID = '{0}' 
 and AccountID != ''",
@@ -323,7 +323,7 @@ select ID
 	, UnitID
 	, AccountID 
 from ShipExpense WITH (NOLOCK)
-where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = @expressTypeID)
+where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID in (@expressTypeID, 3))
 and Junk = 0 
 and LocalSuppID = @localsuppid 
 and ID = @shipexpenseid  
@@ -1384,7 +1384,7 @@ select ID
 	, [Unit] = UnitID 
     , AccountID 
 from ShipExpense WITH (NOLOCK) 
-where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID = {1})
+where exists (select 1 from SciFMS_AccountNo sa where sa.ID = ShipExpense.AccountID and sa.ExpressTypeID in ({1}, 3))
 and Junk = 0 
 and LocalSuppID = '{0}' 
 and AccountID != ''",
