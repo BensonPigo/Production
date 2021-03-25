@@ -441,7 +441,7 @@ Where 1=1
 {where2}
 
 select * from (
-Select distinct ReceivingID
+Select ReceivingID
 	,WKno
 	,POID
 	,Seq1
@@ -498,7 +498,7 @@ OUTER APPLY(
 		AND s.Seq=t.Seq1+'-'+t.Seq2
 )DefectCode
 
-UNION
+UNION ALL
 Select ReceivingID
 	,WKno
 	,POID
