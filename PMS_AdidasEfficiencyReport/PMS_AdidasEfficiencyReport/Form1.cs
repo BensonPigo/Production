@@ -135,8 +135,8 @@ namespace AdidasEfficiencyReport
             this.GetFactoryList();
             bool bolSintexEffReportCompare = this.chkSintexEfficiencyReport.Checked;
 
-            this.OutputDateS = DateTime.Now.AddDays(-30);
-            this.OutputDateE = DateTime.Now.AddDays(-20);
+            //this.OutputDateS = DateTime.Now.AddDays(-30);
+            //this.OutputDateE = DateTime.Now.AddDays(-20);
 
             DualResult result = Query(false, out printData);
             if (!result)
