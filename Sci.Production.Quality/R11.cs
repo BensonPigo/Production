@@ -440,13 +440,15 @@ LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
 Where 1=1
 {where2}
 
-select * from (
+select * 
+INTO #DefectSummary
+from (
 Select ReceivingID
 	,WKno
 	,POID
 	,Seq1
 	,Seq2
-	,WhseArrival
+	,[IssueDate]=WhseArrival
 	,Refno
 	,SCIRefno
 	,ColorID
@@ -557,9 +559,36 @@ OUTER APPLY(
 )DefectCode
 
 )Q
+
+SELECT ReceivingID
+	,WKno
+	,POID
+	,Seq1
+	,Seq2
+	,IssueDate
+	,Refno
+	,SCIRefno
+	,ColorID
+	,Name
+	,SuppID
+	,ArriveQty
+	,ArriveRoll
+	,WeaveTypeID
+	,NonPhysical = IIF(NonPhysical = 1,'Y','')
+	,HowManyDyelotArrived
+	,AlreadyInspecetedDyelot
+	,InspectionPercentage
+	,DefectCode
+	,TotalPoints = SUM(TotalPoints)
+FROM #DefectSummary
+GROUP BY ReceivingID ,WKno ,POID ,Seq1 ,Seq2 ,IssueDate ,Refno ,SCIRefno
+	,ColorID ,Name ,SuppID ,ArriveQty ,ArriveRoll ,WeaveTypeID ,NonPhysical
+	,HowManyDyelotArrived ,AlreadyInspecetedDyelot ,InspectionPercentage ,DefectCode
+
 ORDER BY ReceivingID,WKno,POID,Seq1,Seq2,TotalPoints
 
-drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2
+
+drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2,#DefectSummary
 ");
             #endregion
             return base.ValidateInput();
