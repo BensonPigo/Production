@@ -40,6 +40,7 @@ namespace Sci.Production.Warehouse
                 .Text("InventoryPOID", header: "Inventory POID", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("Inventoryseq1", header: "Inventory Seq1", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("InventorySEQ2", header: "Inventory Seq2", iseditingreadonly: true, width: Widths.AnsiChars(6))
+                .Text("FabricType", header: "Material Type", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Date("TaipeiLastOutput", header: "Taipei" + Environment.NewLine + "Last Output", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("TaipeiOutput", header: "Taipei" + Environment.NewLine + "Output", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
@@ -153,6 +154,7 @@ select  POID = rtrim(i.seq70poid)
 		, psd.StockUnit
         , TaipeiLastOutput = max(i.confirmdate) 
         , TaipeiOutput = sum(iif(i.type='2',i.qty,0-i.qty)) 
+		, psd.FabricType
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
@@ -162,7 +164,7 @@ inner join Orders o WITH (NOLOCK) on psd.ID = o.ID
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit
+group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType
 
 
 select  selected = cast(0 as bit)
@@ -197,6 +199,7 @@ select  selected = cast(0 as bit)
         , #tmp.InventorySEQ2
         , #tmp.TaipeiLastOutput
         , #tmp.TaipeiOutput
+		, #tmp.FabricType
 into #tmpDetailResult
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
@@ -213,6 +216,11 @@ select distinct  [POID] = ToPOID
 		        , InventoryPOID
                 , Inventoryseq1
                 , InventorySEQ2
+				, [FabricType]= CASE WHEN FabricType = 'F' THEN 'Fabric' 
+									 WHEN FabricType = 'A' THEN 'Accessory' 
+									 WHEN FabricType = 'O' THEN 'Other' 
+									 ELSE '' 
+								END
 		        , StockUnit
                 , TaipeiLastOutput
                 , TaipeiOutput
