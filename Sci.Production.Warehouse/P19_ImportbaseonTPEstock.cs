@@ -167,7 +167,7 @@ where (i.type='2' or i.type='6')
 group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType
 
 
-select  selected = cast(0 as bit)
+select  selected = cast(1 as bit)
 		, [WK] = Stuff((select distinct concat(',', r.ExportId)
 				from Receiving r WITH (NOLOCK)
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
@@ -224,12 +224,47 @@ select distinct  [POID] = ToPOID
 		        , StockUnit
                 , TaipeiLastOutput
                 , TaipeiOutput
-                , [TotalTransfer] = 0.0
+                , [TotalTransfer] = -- 庫存數大於 0 且庫存數量足夠 : 根據 Taipei Out 數量直接帶出 ; 庫存數大於 0 但庫存不足 : 挑選至庫存上限
+				                    CASE WHEN  FabricType = 'A'AND StockBalance >= TaipeiOutput THEN TaipeiOutput
+					                     WHEN  FabricType = 'A'AND StockBalance < TaipeiOutput THEN StockBalance
+					                     ELSE 0.0
+				                    END
 from #tmpDetailResult
 where   StockBalance > 0
 order by ToPOID, ToSeq1, ToSeq2;
 
-select  *
+select  selected 
+		, WK
+		, MDivisionID 
+        , id
+        , ftyinventoryukey
+        , POID 
+        , seq1 
+        , seq2 
+        , Seq
+        , roll 
+        , dyelot 
+        , stocktype
+		, StockUnit
+        , StockBalance 
+        , Description 
+        , Qty =  -- TransferQty 庫存數大於 0 且庫存數量足夠 : 根據 Taipei Out 數量直接帶出 ; 庫存數大於 0 但庫存不足 : 挑選至庫存上限
+				CASE WHEN  FabricType = 'A'AND StockBalance >= TaipeiOutput THEN TaipeiOutput
+					 WHEN  FabricType = 'A'AND StockBalance < TaipeiOutput THEN StockBalance
+					 ELSE 0.0
+				END
+        , [Location]
+        , ToPOID 
+        , ToSeq1 
+        , ToSeq2
+        , ToSeq
+        , GroupQty
+        , ToFactory
+        , InventoryPOID
+        , Inventoryseq1
+        , InventorySEQ2
+        , TaipeiLastOutput
+        , TaipeiOutput
 from    #tmpDetailResult
 where   StockBalance > 0
 
