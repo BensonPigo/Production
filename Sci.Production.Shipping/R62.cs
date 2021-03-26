@@ -77,11 +77,18 @@ select [Shipper] = g.Shipper
      , [PO] = o.CustPONo
 	 , [SP] = o.ID
      , [Style] = o.StyleID  
-     , [Qty] = kdd.ShipModeSeqQty 
-     , [CTN] = kdd.CTNQty 
-     , [FOB] = kdd.POPrice
-	 , [Ttl FOB] = (kdd.ShipModeSeqQty * kdd.POPrice)
-	 , [Act Ttl FOB] = kdd.ActTtlPOPrice
+	 , [Product Type] = case
+			when OL.Location = 'T' then 'TOP' 
+			when OL.Location = 'B' then 'BOTTOM' 
+			when OL.Location = 'I' then 'INNER'   
+			when OL.Location = 'O' then 'OUTER'
+			else '' end
+     , [Qty(By SP)] = isnull(kdd.ShipModeSeqQty, pld.ShipQty)
+     , [CTN(By SP)] = isnull(kdd.CTNQty, pld.CTNQty)
+     , [FOB] = isnull(kdd.POPrice * isnull(OL.rate, 1), r.FOB)
+	 , [Ttl FOB] = isnull(kdd.ShipModeSeqQty * kdd.POPrice * isnull(OL.rate, 1),  r.FOB * pld.ShipQty)
+	 , [Act Ttl FOB] = isnull(kdd.ActTtlPOPrice * isnull(OL.rate, 1),  r.FOB * pld.ShipQty)
+	 , [DiffTtlFOB] = isnull(kdd.ActTtlPOPrice * isnull(OL.rate, 1),  r.FOB * pld.ShipQty) - isnull(kdd.ShipModeSeqQty * kdd.POPrice * isnull(OL.rate, 1),  r.FOB * pld.ShipQty)
      , [Local Inv#] = kdd.LocalINVNO 
      , [Description] = kdd.Description 
      , [HS Code] = kdd.HSCode 
@@ -98,20 +105,48 @@ select [Shipper] = g.Shipper
 	 , [Dest] = g.Dest
 	 , [Continent] = c.Continent+'-'+c.NameEN
      , [Export without declaration] = (case when g.NonDeclare = 1 then 'Y' else 'N' end) 
-	 , [NW] = kdd.NetKg
-	 , [GW] = kdd.WeightKg
-	 , [Act NW] = kdd.ActNetKg
-	 , [Act GW] = kdd.ActWeightKg
-	 , [Diff NW] = kdd.NetKg - kdd.ActNetKg
-	 , [Diff GW] = kdd.WeightKg - kdd.ActWeightKg
+	 , [NW] = isnull(kdd.NetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + (pld.NW * 0.05)) end)) * isnull(OL.rate, 1)
+	 , [GW] = isnull(kdd.WeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05)) end)) * isnull(OL.rate, 1)
+	 , [Act NW] = isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end)) * isnull(OL.rate, 1)
+	 , [Act GW] = isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end)) * isnull(OL.rate, 1)
+	 , [Diff NW] = (isnull(kdd.NetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + (pld.NW * 0.05)) end)) - 
+					isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end)))* isnull(OL.rate, 1)
+	 , [Diff GW] = (isnull(kdd.WeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05)) end)) - 
+					isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end)))* isnull(OL.rate, 1)
 from GMTBooking g
 {where} KHExportDeclaration_Detail kdd on kdd.Invno=g.id
 {where} KHExportDeclaration kd on kd.id=kdd.id 
 left join PackingList pl on pl.INVNo = g.ID
-outer apply(select distinct pld.OrderID from PackingList_Detail pld where pld.ID = pl.ID)pld
+outer apply(
+	select
+		pld.OrderID,
+		ShipQty = sum(pld.ShipQty),
+		CTNQty = sum(pld.CTNQty),
+		NW = sum(pld.NW),
+		GW = sum(pld.GW)
+	from PackingList_Detail pld
+	where pld.ID = pl.ID
+	group by pld.OrderID
+)pld
 left join Orders o on o.ID = pld.OrderID
+left join Order_Location OL on OL.OrderID = pld.OrderID
 left join Brand b on b.ID = o.BrandID
 left join Country c on c.ID = kd.Dest
+outer apply(
+	select OrderID,AvgPrice = sum(ShipQty*POPrice)/sum(ShipQty)
+	from (
+		select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
+		from PackingList_Detail pd2
+		inner join PackingList p1 on pd2.ID = p1.ID
+		inner join Order_UnitPrice oup on oup.Id= pd2.OrderID
+		and oup.Article = pd2.Article and oup.SizeCode = pd2.SizeCode
+		where INVNo = g.ID
+		group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
+	) a
+	where OrderID = o.ID
+	group by OrderID
+)POPrice
+outer apply(select FOB = isnull(PoPrice.AvgPrice,o.PoPrice) * isnull(OL.rate, 1))r
 where 1=1
 ";
             #region where

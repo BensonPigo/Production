@@ -34,6 +34,8 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtCustCD = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.txtSP2 = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
             this.txtSP1 = new Sci.Win.UI.TextBox();
@@ -51,8 +53,6 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtCustCD = new Sci.Win.UI.TextBox();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -120,6 +120,24 @@
             this.groupBox1.Size = new System.Drawing.Size(973, 110);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
+            // 
+            // txtCustCD
+            // 
+            this.txtCustCD.BackColor = System.Drawing.Color.White;
+            this.txtCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCustCD.Location = new System.Drawing.Point(109, 80);
+            this.txtCustCD.MaxLength = 13;
+            this.txtCustCD.Name = "txtCustCD";
+            this.txtCustCD.Size = new System.Drawing.Size(160, 23);
+            this.txtCustCD.TabIndex = 16;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(25, 80);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(80, 23);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "CustCD";
             // 
             // txtSP2
             // 
@@ -272,7 +290,7 @@
             this.labPo.Name = "labPo";
             this.labPo.Size = new System.Drawing.Size(51, 23);
             this.labPo.TabIndex = 14;
-            this.labPo.Text = "PO";
+            this.labPo.Text = "PO#";
             // 
             // btnQuery
             // 
@@ -310,24 +328,6 @@
             this.grid1.Size = new System.Drawing.Size(973, 347);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(25, 80);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 15;
-            this.label2.Text = "CustCD";
-            // 
-            // txtCustCD
-            // 
-            this.txtCustCD.BackColor = System.Drawing.Color.White;
-            this.txtCustCD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustCD.Location = new System.Drawing.Point(109, 80);
-            this.txtCustCD.MaxLength = 13;
-            this.txtCustCD.Name = "txtCustCD";
-            this.txtCustCD.Size = new System.Drawing.Size(160, 23);
-            this.txtCustCD.TabIndex = 16;
             // 
             // P62_Import
             // 

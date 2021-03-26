@@ -39,12 +39,18 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
 select ked2.* 
-,[PoNo] = o.CustPONo
-,[DiffNw] = ked2.NetKg - ked2.ActNetKg
-,[DiffGW] = ked2.WeightKg - ked2.ActWeightKg
-,[TtlFOB] = ked2.POPrice * ked2.ShipModeSeqQty
-,[StyleID] = s.ID
-,g.CustCDID
+    ,[PoNo] = o.CustPONo
+    ,[DiffNw] = ked2.NetKg - ked2.ActNetKg
+    ,[DiffGW] = ked2.WeightKg - ked2.ActWeightKg
+    ,[TtlFOB] = ked2.POPrice * ked2.ShipModeSeqQty
+    ,[StyleID] = s.ID
+    ,g.CustCDID
+	,LocationDisp = case
+		when Location = 'T' then 'TOP' 
+        when Location = 'B' then 'BOTTOM' 
+        when Location = 'I' then 'INNER'   
+        when Location = 'O' then 'OUTER'
+        else '' end
 from KHExportDeclaration_Detail ked2
 left join Style s on ked2.StyleUkey = s.Ukey
 left join orders o on o.ID = ked2.OrderID
@@ -94,8 +100,9 @@ where ked2.id = '{masterID}'
            .Date("ETD", header: "ETD", width: Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("CustCDID", header: "CustCD", width: Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
-           .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
-           .Numeric("CTNQty", header: "CTN", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
+           .Text("LocationDisp", header: "Product Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
+           .Numeric("ShipModeSeqQty", header: "Qty(By SP)", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
+           .Numeric("CTNQty", header: "CT(By SP)N", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
            .Numeric("POPrice", header: "FOB", width: Widths.AnsiChars(9), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
            .Numeric("TtlFOB", header: "Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5, iseditingreadonly: true)
            .Numeric("ActTtlPOPrice", header: "Act Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5)
@@ -113,11 +120,6 @@ where ked2.id = '{masterID}'
            .Date("CODate", header: "CO Date", width: Widths.AnsiChars(10), iseditingreadonly: false);
         }
 
-        /// <inheritdoc/>
-        protected override bool ClickEditBefore()
-        {
-            return base.ClickEditBefore();
-        }
 
         /// <inheritdoc/>
         protected override void ClickEditAfter()

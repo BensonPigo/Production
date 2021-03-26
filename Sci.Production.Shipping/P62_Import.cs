@@ -32,9 +32,11 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid1)
                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                .Text("INVNo", header: "Invoice No.", iseditingreadonly: true, width: Widths.AnsiChars(18))
+               .Date("ETD", header: "ETD", width: Widths.AnsiChars(12), iseditingreadonly: true)
                .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(15))
-               .Text("CustPONO", header: "PO#", iseditingreadonly: true, width: Widths.AnsiChars(15))
+               .Text("PoNo", header: "PO#", iseditingreadonly: true, width: Widths.AnsiChars(15))
                .Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(13))
+               .Text("LocationDisp", header: "Product Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("Description", header: "Style Description", iseditingreadonly: true, width: Widths.AnsiChars(30))
                .Text("Season", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(8))
                .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
@@ -74,54 +76,61 @@ namespace Sci.Production.Shipping
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
 
-select selected = 0 
-, [INVNo] = g.id
-,[PoNo] = o.CustPONo
-, [OrderID] = pd.orderid
-, [StyleUkey] = s.Ukey
-, [StyleID] = o.styleid
-, [Description] = s.description
-, [Season] = o.SeasonID
-, [ETD] = g.ETD
-, [Brand] = g.BrandID
-, [ShipmodeID] = g.ShipModeID
-, [POPrice] = isnull(PoPrice.AvgPrice,o.PoPrice)
-,[ShipModeSeqQty] = sum(pd.ShipQty)
-,[CTNQty] = sum(pd.CTNQty)
-,[FOB] = isnull(PoPrice.AvgPrice,o.PoPrice)
-,[TtlFOB] = isnull(PoPrice.AvgPrice,o.PoPrice) * sum(pd.ShipQty)
-,[ActTtlPOPrice] = isnull(PoPrice.AvgPrice,o.PoPrice) * sum(pd.ShipQty)
-, [Forwarder] = g.Forwarder
-,[NetKg] =  (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else
-	(sum(pd.NW) + ( sum(pd.NW) * 0.05)) end)
-,[WeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else
-	(sum(pd.GW) + ( sum(pd.GW) * 0.05)) end)
-,[ActNetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else
-	(sum(pd.NW) + ( sum(pd.NW) * 0.05)) end)
-,[ActWeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else
-	(sum(pd.GW) + ( sum(pd.GW) * 0.05)) end)
-,[DiffNw] = 0
-,[DiffGW] = 0
-, [LocalINVNo] = g.id
-, s.Description
-, [HSCode] = ''
-, [COFormType] = ''
-, [COID] = ''
-, [CODate] = null
--- Grid顯示
-,[InvDate] = g.InvDate
-,[Shipper] = g.Shipper
-,[Dest] = g.Dest
-,[Forwarder] = g.Forwarder
-,[SONo] = g.SONo
-,[Remark] = g.Remark
-,g.CustCDID
+select
+	selected = 0 
+	, [INVNo] = g.id
+	, [PoNo] = o.CustPONo
+	, [OrderID] = pd.orderid
+	, [StyleUkey] = s.Ukey
+	, [StyleID] = o.styleid
+	, [Description] = s.description
+	, [Season] = o.SeasonID
+	, [ETD] = g.ETD
+	, [Brand] = g.BrandID
+	, [ShipmodeID] = g.ShipModeID
+	, [POPrice] = r.FOB
+	, [ShipModeSeqQty] = sum(pd.ShipQty)
+	, [CTNQty] = sum(pd.CTNQty)
+	, [FOB]
+	, [TtlFOB] = r.FOB * sum(pd.ShipQty)
+	, [ActTtlPOPrice] = r.FOB * sum(pd.ShipQty)
+	, [DiffTtlFOB] = r.FOB * sum(pd.ShipQty) - r.FOB * sum(pd.ShipQty) -- [ActTtlPOPrice] - [TtlFOB]
+	, [Forwarder] = g.Forwarder
+	, [NetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + (sum(pd.NW) * 0.05)) end) * isnull(OL.rate, 1)
+	, [WeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05)) end) * isnull(OL.rate, 1)
+	, [ActNetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + ( sum(pd.NW) * 0.05))end) * isnull(OL.rate, 1)
+	, [ActWeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05))end) * isnull(OL.rate, 1)
+	, [DiffNw] = 0
+	, [DiffGW] = 0
+	, [LocalINVNo] = g.id
+	, s.Description
+	, [HSCode] = ''
+	, [COFormType] = ''
+	, [COID] = ''
+	, [CODate] = null
+	-- Grid顯示
+	, [InvDate] = g.InvDate
+	, [Shipper] = g.Shipper
+	, [Dest] = g.Dest
+	, [Forwarder] = g.Forwarder
+	, [SONo] = g.SONo
+	, [Remark] = g.Remark
+	, g.CustCDID
+	, o.StyleUnit
+    , Location
+	, LocationDisp = case
+		when Location = 'T' then 'TOP' 
+        when Location = 'B' then 'BOTTOM' 
+        when Location = 'I' then 'INNER'   
+        when Location = 'O' then 'OUTER'
+        else '' end
 from GMTBooking g
 inner join PackingList p on g.ID = p.INVNo
 inner join PackingList_Detail pd on pd.id = p.id
 inner join Orders o on pd.OrderID = o.ID
 inner join Style s on s.Ukey = o.StyleUkey
 inner join Buyer b2 on o.BrandID =b2.id
+left join Order_Location OL on OL.OrderID = pd.OrderID
 outer apply (
 	select kd.status 
 		from KHExportDeclaration kd 
@@ -142,6 +151,7 @@ outer apply(
 	where OrderID = o.ID
 	group by OrderID
 )POPrice
+outer apply(select FOB = isnull(PoPrice.AvgPrice,o.PoPrice) * isnull(OL.rate, 1))r
 where 1=1
 and g.ShipModeID = @ShipMode
 and g.NonDeclare =0
@@ -206,7 +216,8 @@ and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=
             }
             #endregion
 
-            sqlcmd += @" group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID";
+            sqlcmd += @" 
+group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),Location";
 
             DualResult result;
             if (result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt))
