@@ -985,11 +985,16 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                     var groupBy = this.BarcodeObjs.GroupBy(o => new { o.PackingListID, o.CTNStartNO })
                                         .Select(o => o.First()).Distinct().ToList();
 
+                    List<string> filenamee = new List<string>();
+                    List<string> sQLs = new List<string>();
+                    List<byte[]> images = new List<byte[]>();
+                    int idxx = 0;
                     foreach (var group in groupBy)
                     {
                         var grupDatas = this.BarcodeObjs.Where(o => o.PackingListID == group.PackingListID && o.CTNStartNO == group.CTNStartNO).ToList();
 
                         int seq = 1;
+
                         foreach (var barcodeObj in grupDatas)
                         {
                             string barcode = barcodeObj.Barcode;
@@ -1026,11 +1031,37 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                                 bmp.Dispose();
                                 pic.Dispose();
 
-                                this.InsertImageToDatabase(barcode, "1", pDFImage);
+                                // this.InsertImageToDatabase(barcode, "1", pDFImage);
+                                string cmd = this.InsertImageToDatabase_List(barcode, idxx.ToString(), pDFImage);
+                                filenamee.Add(barcode);
+                                sQLs.Add(cmd);
+                                images.Add(pDFImage);
+                                idxx++;
                             }
                         }
                     }
 
+
+                    int idx = 0;
+                    List<SqlParameter> para = new List<SqlParameter>();
+                    string finalSQL = string.Empty;
+                    foreach (var sql in sQLs)
+                    {
+                        finalSQL += sql + Environment.NewLine;
+
+                        string name = filenamee[idx];
+                        byte[] image = images[idx];
+
+                        para.Add(new SqlParameter($"@FileName{idx}", name));
+                        para.Add(new SqlParameter($"@Image{idx}", image));
+                        idx++;
+                    }
+
+                    result = DBProxy.Current.Execute(null, finalSQL, para);
+                    if (!result)
+                    {
+
+                    }
                     transactionscope.Complete();
                     transactionscope.Dispose();
                 }
@@ -1841,6 +1872,64 @@ AND sd.Seq = (
                 this.ShowErr(result);
                 throw result.GetException();
             }
+        }
+
+
+        private string InsertImageToDatabase_List(string fileName, string seq, byte[] dataArry)
+        {
+            // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
+            string seqCmd = $@"
+    SELECT Seq FROM (
+	    SELECT [Rank]=RANK() OVER (ORDER BY sd.Seq ),sd.*
+	    FROM ShippingMarkPic_Detail sd 
+	    INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
+	    INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+	    INNER JOIN PackingList p ON p.ID = s.PackingListID
+	    where sd.FileName='{fileName}' AND st.FromTemplate = 0
+    )a
+    WHERE Rank={seq}
+
+";
+
+            string cmd = $@"
+----寫入圖片
+UPDATE sd
+SET sd.Image=@Image{seq}
+FROM ShippingMarkPic_Detail sd 
+INNER JOIN ShippingMarkPic s ON s.Ukey = sd.ShippingMarkPicUkey
+INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+WHERE 1=1 
+AND sd.FileName=@FileName{seq}
+AND sd.Seq = (
+    {seqCmd}
+)
+
+---- 更新P24表頭
+UPDATE s
+SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
+FROM ShippingMarkPic s WITH(NOLOCK)
+INNER JOIN ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
+INNER JOIN ShippingMarkType st ON st.Ukey = sd.ShippingMarkTypeUkey
+WHERE 1=1 
+AND sd.FileName=@FileName{seq}
+AND sd.Seq = (
+    {seqCmd}
+)
+";
+            return cmd;
+
+            //List<SqlParameter> para = new List<SqlParameter>();
+            //para.Add(new SqlParameter($"@FileName{this.imageIdx}", fileName));
+            //para.Add(new SqlParameter($"@Image{this.imageIdx}", dataArry));
+            //this.imageIdx++;
+
+            //DualResult result = DBProxy.Current.Execute(null, cmd, para);
+
+            //if (!result)
+            //{
+            //    this.ShowErr(result);
+            //    throw result.GetException();
+            //}
         }
 
         private enum UploadType
