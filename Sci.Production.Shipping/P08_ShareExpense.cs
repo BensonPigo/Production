@@ -24,6 +24,7 @@ namespace Sci.Production.Shipping
         private DataTable SEGroupData;
         private DataTable SAPP;
         private bool Apflag;
+        private bool IsReason;
         private string LocalSuppID;
         private int isFreightForwarder;
 
@@ -32,11 +33,13 @@ namespace Sci.Production.Shipping
         /// </summary>
         /// <param name="aPData">aPData</param>
         /// <param name="apflag">apflag</param>
-        public P08_ShareExpense(DataRow aPData, bool apflag)
+        /// <param name="isReasonAP007">Reason = AP007</param>
+        public P08_ShareExpense(DataRow aPData, bool apflag, bool isReasonAP007)
         {
             this.InitializeComponent();
             this.apData = aPData;
             this.Apflag = apflag;
+            this.IsReason = isReasonAP007;
             this.isFreightForwarder = apflag ? 1 : 0;
             this.displayCurrency.Value = MyUtility.Convert.GetString(this.apData["CurrencyID"]);
             this.numTtlAmt.DecimalPlaces = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup("Exact", MyUtility.Convert.GetString(this.apData["CurrencyID"]), "Currency", "ID"));
@@ -843,7 +846,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
         {
             if (this.btnSave.Text == "Edit")
             {
-                if (this.Apflag)
+                if (this.Apflag && !this.IsReason)
                 {
                     MyUtility.Msg.WarningBox("This supplier is freight forwarder, Cannot edit this share expense.");
                     return;
@@ -1148,7 +1151,7 @@ where   ShippingAPID = '{3}'
                 }
                 #endregion
 
-                if (this.Apflag)
+                if (this.Apflag && !this.IsReason)
                 {
                     DataTable tmp = (DataTable)this.listControlBindingSource1.DataSource;
                     DataTable dt;
