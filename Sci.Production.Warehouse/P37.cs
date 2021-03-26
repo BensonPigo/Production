@@ -335,6 +335,12 @@ where R.id= @ID";
                 return false;
             }
 
+            // 檢查是否有退還料紀錄和00004負數Qty 就不能存檔
+            if (!this.ChkNegativeNumber() || !this.ChkRecord())
+            {
+                return false;
+            }
+
             // 取單號
             if (this.IsDetailInserting)
             {
@@ -536,6 +542,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             }
 
             #endregion 檢查負數庫存
+
+            // 檢查是否有退還料紀錄和00004負數Qty 就不能Confirmed
+            if (!this.ChkNegativeNumber() || !this.ChkRecord())
+            {
+                return;
+            }
 
             #region -- 更新庫存數量  ftyinventory --
 
@@ -1139,6 +1151,56 @@ Where a.id = '{0}'", masterID);
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P37", this);
+        }
+
+        private bool ChkNegativeNumber()
+        {
+            string errormsg = string.Empty;
+            if (this.CurrentMaintain["whsereasonID"].ToString() == "00004")
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) < 0)
+                    {
+                        errormsg += $@"SP#: {dr["POID"]} Seq#: {dr["Seq1"]}-{dr["Seq2"]} Roll#: {dr["Roll"]} Dyelot: {dr["Dyelot"]} Issue Qty: {dr["Qty"]}" + Environment.NewLine;
+                    }
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errormsg))
+            {
+                MyUtility.Msg.WarningBox(@"The refund reason is 00004 (Excess delivery against packing list)
+You should encode negative number in issue qty column." + Environment.NewLine + errormsg);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ChkRecord()
+        {
+            string errormsg = string.Empty;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string sqlChk = $@"
+Select 1
+from FtyInventory f WITH (NOLOCK) 
+where f.poid = '{dr["POID"]}' and f.seq1 = '{dr["Seq1"]}' and f.seq2 = '{dr["Seq2"]}' and f.Dyelot = '{dr["Dyelot"]}' and f.roll = '{dr["Roll"]}' and f.stocktype = '{dr["stocktype"]}'
+and (f.OutQty > 0 or f.AdjustQty != 0 or f.ReturnQty != 0)
+";
+                if (MyUtility.Check.Seek(sqlChk))
+                {
+                    errormsg += $@"SP#: {dr["POID"]} Seq#: {dr["Seq1"]}-{dr["Seq2"]} Roll#: {dr["Roll"]} Dyelot: {dr["Dyelot"]} Issue Qty: {dr["Qty"]}" + Environment.NewLine;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errormsg))
+            {
+                MyUtility.Msg.WarningBox(@"These material have issued or adjusted or returned records , You can't return it." + Environment.NewLine + errormsg + Environment.NewLine + @"If you want to adjust these material qty, you should use W/H P34/P35 to adjust it.");
+                return false;
+            }
+
+            return true;
         }
     }
 }
