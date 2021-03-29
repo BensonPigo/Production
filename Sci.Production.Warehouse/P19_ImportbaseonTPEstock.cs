@@ -167,7 +167,7 @@ where (i.type='2' or i.type='6')
 group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType
 
 
-select  selected = cast(1 as bit)
+select  selected = IIF( #tmp.FabricType = 'A' ,cast(1 as bit) ,cast(0 as bit)  )   ----輔料才自動勾選
 		, [WK] = Stuff((select distinct concat(',', r.ExportId)
 				from Receiving r WITH (NOLOCK)
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
