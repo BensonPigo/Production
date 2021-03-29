@@ -3036,7 +3036,9 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
                     if (sameArticle.Length == 0)
                     {
                         sameArticle = processArticleSizeTb.Select($"Article = '{article}'").AsEnumerable()
-                            .OrderByDescending(o => MyUtility.Convert.GetInt(o["cutoutput"])).ToArray();
+                            .OrderBy(o => MyUtility.Convert.GetString(o["ColorID"]))
+                            .ThenBy(o => MyUtility.Convert.GetString(o["Sizecode"]))
+                            .ThenByDescending(o => MyUtility.Convert.GetInt(o["cutoutput"])).ToArray();
                     }
 
                     foreach (DataRow articleRow in sameArticle)
