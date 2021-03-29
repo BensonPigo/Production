@@ -70,7 +70,9 @@ namespace Sci.Production.PPIC
                 .Text("MRName", header: "MR", width: Widths.AnsiChars(38), iseditingreadonly: true)
                 .Text("SMRName", header: "SMR", width: Widths.AnsiChars(38), iseditingreadonly: true)
                 .Text("POHandleName", header: "PO Handle", width: Widths.AnsiChars(38), iseditingreadonly: true)
-                .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(38), iseditingreadonly: true);
+                .Text("POSMRName", header: "PO SMR", width: Widths.AnsiChars(38), iseditingreadonly: true)
+                .DateTime("MRLastDate", header: "MR Last Updated", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
 
             this.gridProductionKitsConfirm.Columns["ReceiveDate"].DefaultCellStyle.BackColor = Color.LightYellow;
             this.gridProductionKitsConfirm.Columns["FtyRemark"].DefaultCellStyle.BackColor = Color.LightYellow;
@@ -117,6 +119,7 @@ isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID 
 isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle)),sp.PoHandle) as POHandleName,
 isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR)),sp.POSMR) as POSMRName,
 iif(sp.IsPF = 1,'Y','N') as CPF
+,sp.MRLastDate
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''

@@ -146,7 +146,12 @@ Reason can’t be empty!!",
             }
 
             string id = this.CurrentMaintain["ID"].ToString();
-            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", new List<SqlParameter> { new SqlParameter("@ID", id) }, out DataTable[] dts);
+            List<SqlParameter> para = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", id),
+                new SqlParameter("@UserID", Env.User.UserID),
+            };
+            DualResult res = DBProxy.Current.SelectSP(string.Empty, "dbo.usp_RemoveScrapById", para, out DataTable[] dts);
             if (!res)
             {
                 MyUtility.Msg.ErrorBox(res.ToString(), "error");
@@ -378,9 +383,10 @@ END
 CLOSE _cursor
 DEALLOCATE _cursor
 
-update Adjust set Status ='New' where id = '{0}'
+update Adjust set Status ='New', EditName = '{1}', EditDate = Getdate() where id = '{0}'
 ",
-                this.CurrentMaintain["id"]);
+                this.CurrentMaintain["id"],
+                Env.User.UserID);
             if (!(dr = DBProxy.Current.Execute(null, upcmd)))
             {
                 MyUtility.Msg.WarningBox("Update datas error!!");

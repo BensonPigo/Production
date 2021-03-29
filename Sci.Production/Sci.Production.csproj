@@ -1115,6 +1115,9 @@
     <None Include="XLT\Shipping_R11_NonSharedListGarment_Main.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Shipping_R11_NonSharedListGarment_MajorItem.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Shipping_R15.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

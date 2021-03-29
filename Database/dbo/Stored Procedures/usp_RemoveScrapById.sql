@@ -4,7 +4,8 @@
 -- Description:	< Using in WareHouse_P45 Confirmed >
 -- =============================================
 CREATE PROCEDURE dbo.usp_RemoveScrapById
-	@ID varchar(13)
+	@ID varchar(13),
+	@UserID varchar(10)
 AS
 BEGIN	
 	SET NOCOUNT ON;
@@ -80,7 +81,7 @@ BEGIN Try
 			DEALLOCATE _cursor
 
 			--Update Adjust.Status
-			update Adjust set Status ='Confirmed' where id = @ID
+			update Adjust set Status ='Confirmed', EditName = @UserID, EditDate = Getdate() where id = @ID
 		END
 END Try
 BEGIN CATCH

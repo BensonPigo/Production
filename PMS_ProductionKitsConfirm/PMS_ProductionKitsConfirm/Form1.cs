@@ -302,6 +302,7 @@ select sp.FactoryID
 	,isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.PoHandle)),sp.PoHandle) as POHandleName
 	,isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR)),sp.POSMR) as POSMRName
     ,[Fty]='{fty}'
+    ,sp.MRLastDate
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''
@@ -411,6 +412,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
             {
                 Ict.Logs.APP.LogInfo("Create XLT Start - Detail");
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P03.xltx"); //預先開啟excel app
+                
                 objApp.Visible = false;
 
                 DataTable final = dataTables.FirstOrDefault().Value.Clone();
@@ -420,8 +422,48 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                     keyValuePair.Value.Columns.Remove("Fty");
                     final.Merge(keyValuePair.Value);
                 }
+
                 MyUtility.Excel.CopyToXls(final, null, "PPIC_P03.xltx", headerRow: 2, excelApp: objApp, showExcel: false, showSaveMsg: false); // 將datatable copy to excel
 
+                #region 產生樞紐分析表
+
+                Excel.Worksheet sheet2 = objApp.ActiveWorkbook.Worksheets[2];
+                Excel.PivotCaches pCaches = objApp.ActiveWorkbook.PivotCaches();
+
+                // 取的要樞紐分析的資料Range
+                string sourceRange = "A2:" + $"Q{final.Rows.Count + 2}";
+                Excel.PivotCache pCache = pCaches.Create(Excel.XlPivotTableSourceType.xlDatabase, sourceRange);
+                Excel.Range rngDes = sheet2.get_Range("A1");
+                Excel.PivotTable pTable = pCache.CreatePivotTable(TableDestination: rngDes, TableName: "PivotTable");
+
+                // 行標籤 vertical (TW Send date)
+                Excel.PivotField field_V = pTable.PivotFields(6);
+                field_V.Orientation = Excel.XlPivotFieldOrientation.xlRowField;
+                field_V.Name = "TW Send date";
+                pTable.CompactLayoutRowHeader = "TW Send date";
+
+                // 列標籤 horizontal (FactoryID)
+                Excel.PivotField field_H = pTable.PivotFields(1);
+                field_H.Orientation = Excel.XlPivotFieldOrientation.xlColumnField;
+                field_H.Name = "Factory";
+                pTable.CompactLayoutColumnHeader = "Factory";
+
+                // 設定要用何種方式計算, 此範例是用count(FactoryID)
+                Excel.PivotField field_F = pTable.PivotFields(1);//FactoryID
+                field_F.Orientation = Excel.XlPivotFieldOrientation.xlDataField;
+                Excel.XlConsolidationFunction function = Excel.XlConsolidationFunction.xlCount;
+                field_F.Function = function;
+
+                // 設定ttl 顯示的名稱
+                pTable.GrandTotalName = "Style Count";
+
+                //設定邊框線
+                pTable.DataBodyRange.Borders.Weight = 2;
+                pTable.DataLabelRange.Borders.Weight = 2;
+                pTable.ColumnRange.Borders.Weight = 2;
+                pTable.RowRange.Borders.Weight = 2;
+
+                #endregion
                 Ict.Logs.APP.LogInfo("Create XLT Start - Production Kits Confirm Report");
 
                 #region Save Excel
@@ -446,6 +488,7 @@ and sp.SendDate BETWEEN '{sendDateS}' AND '{sendDateE}'
                 return new List<string>();
             }
         }
+
 
         #region Call JobLog web api回傳執行結果
         private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
