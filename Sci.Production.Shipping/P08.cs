@@ -551,7 +551,8 @@ and Junk = 0",
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) &&
+                !(this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].EqualString("AP007")))
             {
                 this.txtBLNo.Focus();
                 MyUtility.Msg.WarningBox("B/L No. can't empty!!");
@@ -810,13 +811,16 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         protected override DualResult ClickSavePost()
         {
             int isFreightForwarder = this.checkIsFreightForwarder.Checked ? 1 : 0;
-            DualResult result = DBProxy.Current.Execute(
+            if (!(this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].EqualString("AP007")))
+            {
+                DualResult result = DBProxy.Current.Execute(
                 "Production",
                 string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
-            if (!result)
-            {
-                DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
-                return failResult;
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
+                    return failResult;
+                }
             }
 
             return base.ClickSavePost();
@@ -1027,7 +1031,8 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         // Share Expense
         private void BtnShareExpense_Click(object sender, EventArgs e)
         {
-            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, this.checkIsFreightForwarder.Checked);
+            bool isReasonAP007 = this.CurrentMaintain["Reason"].EqualString("AP007");
+            P08_ShareExpense callNextForm = new P08_ShareExpense(this.CurrentMaintain, this.checkIsFreightForwarder.Checked, isReasonAP007);
             callNextForm.ShowDialog(this);
         }
 
@@ -1225,7 +1230,7 @@ Non SP# Sample/Mock-up
         {
             this.IncludeFoundryRefresh(this.txtBLNo.Text);
 
-            if (this.txtBLNo.Text.Empty())
+            if (this.txtBLNo.Text.Empty() || this.comboType2.SelectedValue.EqualString("OTHER"))
             {
                 return;
             }
