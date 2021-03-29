@@ -606,7 +606,7 @@ select distinct
     ,[CmdTime] = GETDATE()
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
-    inner join Production.dbo.WorkOrder wo on cp2.POID = wo.ID and cp2.CutRef = wo.CutRef
+    inner join Production.dbo.WorkOrder wo on cp2.WorkorderUkey = wo.Ukey
     outer apply(
         select value = STUFF((
             select CONCAT(',',SizeCode)

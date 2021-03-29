@@ -56,7 +56,10 @@ BEGIN
 
 	
 		
-	SET @adddate = GETDATE()			 
+	SET @adddate = GETDATE()
+	
+	declare @ShippingReasonID as varchar(5)
+	select @ShippingReasonID = [Reason] from ShippingAP sp where sp.ID = @APID
 
 	DECLARE cursor_ShareExpense CURSOR FOR
 	select distinct ShippingAPID, Type
@@ -73,16 +76,20 @@ BEGIN
 		IF @Type = 'IMPORT'
 		BEGIN
 			/*
-			 * 將已不存在系統中的 BLNo Junk
+			 * 只有勾選[Is Freight Forwarder] 才需要將已不存在系統中的 BLNo Junk
 			 */
-			update s
-			set s.Junk = 1				
-				, s.EditName = @login
-				, s.EditDate = @adddate
-			from ShareExpense s
-			where s.ShippingAPID = @ShippingAPID
-			and s.WKNo != '' 
-			and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+			if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
+			BEGIN
+				update s
+				set s.Junk = 1				
+					, s.EditName = @login
+					, s.EditDate = @adddate
+				from ShareExpense s
+				where s.ShippingAPID = @ShippingAPID
+				and s.WKNo != '' 
+				and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+			END
+
 
 			/*
 			 * 將已不存在系統中的 WK Junk
@@ -132,16 +139,19 @@ BEGIN
 		ELSE
 		BEGIN
 			/*
-			 * 將已不存在系統中的 BLNo Junk
+			 * 只有勾選[Is Freight Forwarder] 才需要將已不存在系統中的 BLNo Junk
 			 */
-			update s
-			set s.Junk = 1				
-				, s.EditName = @login
-				, s.EditDate = @adddate
-			from ShareExpense s
-			where s.ShippingAPID = @ShippingAPID
-			and s.InvNo != '' 
-			and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+			if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
+			BEGIN
+				update s
+				set s.Junk = 1				
+					, s.EditName = @login
+					, s.EditDate = @adddate
+				from ShareExpense s
+				where s.ShippingAPID = @ShippingAPID
+				and s.InvNo != '' 
+				and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+			END
 
 			/*
 			 * 將已不存在系統中的 Inv Junk
@@ -432,7 +442,7 @@ BEGIN
 						/*
 						 * 只有勾選[Is Freight Forwarder] 才需要將資料自動帶入
 						 */
-						if @IsFreightFwd = 1
+						if @IsFreightFwd = 1 and @ShippingReasonID <> 'AP007'
 						BEGIN
 							INSERT INTO ShareExpense
 							(ShippingAPID,BLNo,WKNo,InvNo,Type,GW,CBM,CurrencyID,Amount,ShipModeID,ShareBase,FtyWK,AccountID,EditName,EditDate)
