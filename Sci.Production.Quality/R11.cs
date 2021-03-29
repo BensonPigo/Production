@@ -80,6 +80,7 @@ declare @Date2 date = @wDate2
                 this.parameters.Add(new SqlParameter("@Refno2", this.txtRefno2.Text));
             }
 
+            #region SQL
             this.Sqlcmd.Append($@"
 
 select
@@ -111,6 +112,7 @@ select
 	FP.DetailUkey,
 	FP.ActualYds,
     o.FactoryID
+	,f.ReceivingID
 into #tmp1
 from FIR F
 Inner join Receiving R on F.ReceivingID=R.Id
@@ -159,6 +161,7 @@ select
 	FP.DetailUkey,
 	FP.ActualYds,
     o.FactoryID
+	,f.ReceivingID
 into #tmp2
 from FIR F
 Inner join TransferIn T on F.ReceivingID=T.Id
@@ -263,6 +266,8 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds
 		end
+	,t.ReceivingID
+INTO #Sheet2
 from #tmp1 t
 outer apply(
     select
@@ -306,6 +311,7 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds 
 		end
+	,t.ReceivingID
 from #tmp2 t
 outer apply(
     select 
@@ -318,6 +324,14 @@ outer apply(
 )Defect
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
+
+SELECT 
+    Brandid,Supplier,Refno,ColorID,WeaveTypeID,Composition,Width,
+	Weight,ConstructionID,Description,POID,seq,WK,Dyelot,Roll,InspDate,
+	Result,Grade,DefectRecord,Type,DescriptionEN,
+    point,	Defectrate 
+FROM #Sheet2
+
 
 --Lacking yard分頁
 select
@@ -366,9 +380,217 @@ select
 from #tmp2 t
 where t.InspDate is not null
 
+----Defect Summary Report 分頁
 
-drop table #tmp1,#tmp2
+/*1. 準備基礎資料*/
+SELECT DISTINCT 
+[FIR_ID]=f.ID
+,f.ReceivingID
+,[WKno]=r.ExportID
+,f.POID
+,f.Seq1
+,f.Seq2
+,r.WhseArrival
+,psd.Refno
+,psd.SCIRefno
+,psd.ColorID
+,c.Name
+,f.SuppID
+,f.ArriveQty
+,Fabric.WeaveTypeID
+,f.NonPhysical
+INTO #tmp3
+from FIR F
+Inner join Receiving R on F.ReceivingID=R.Id
+Inner join Receiving_Detail RD on R.Id=RD.Id and F.POID=RD.PoId and F.SEQ1=RD.Seq1 and F.SEQ2=RD.Seq2
+Inner join PO_Supp_Detail PSD on PSD.ID=RD.PoId and PSD.SEQ1=RD.Seq1 and PSD.SEQ2=RD.Seq2
+Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
+Inner join Supp S on PS.SuppID=S.ID
+Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
+LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+Where 1=1
+{where1}
+
+
+SELECT DISTINCT 
+[FIR_ID]=f.ID
+,f.ReceivingID
+,[WKno]=''
+,f.POID
+,f.Seq1
+,f.Seq2
+,t.IssueDate
+,psd.Refno
+,psd.SCIRefno
+,psd.ColorID
+,c.Name
+,f.SuppID
+,f.ArriveQty
+,Fabric.WeaveTypeID
+,f.NonPhysical
+INTO #tmp4
+from FIR F
+Inner join TransferIn t on F.ReceivingID=t.Id
+Inner join TransferIn_Detail RD on t.Id=RD.Id and F.POID=RD.PoId and F.SEQ1=RD.Seq1 and F.SEQ2=RD.Seq2
+Inner join PO_Supp_Detail PSD on PSD.ID=RD.PoId and PSD.SEQ1=RD.Seq1 and PSD.SEQ2=RD.Seq2
+Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
+Inner join Supp S on PS.SuppID=S.ID
+Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
+LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+Where 1=1
+{where2}
+
+select * 
+INTO #DefectSummary
+from (
+Select ReceivingID
+	,WKno
+	,POID
+	,Seq1
+	,Seq2
+	,[IssueDate]=WhseArrival
+	,Refno
+	,SCIRefno
+	,ColorID
+	,Name
+	,SuppID
+	,ArriveQty
+	,[ArriveRoll]=ArriveRoll.Val
+	,WeaveTypeID
+	,NonPhysical
+	,[HowManyDyelotArrived]=HowManyDyelotArrived.Val
+	,[AlreadyInspecetedDyelot]=AlreadyInspecetedDyelot.Val
+	,[InspectionPercentage]=InspectionPercentage.Val
+	,[DefectCode]=DefectCode.DefectRecord
+	,[TotalPoints]= DefectCode.point
+from #tmp3 t
+OUTER APPLY(
+	SELECT Val=COUNT(1) FROM (
+		select  distinct Roll,Dyelot
+		from Receiving_Detail rd
+		where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	)x
+)ArriveRoll
+OUTER APPLY(
+	SELECT Val=COUNT(1) FROM (
+		select  distinct Dyelot
+		from Receiving_Detail rd
+		where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	)x
+)HowManyDyelotArrived
+OUTER APPLY(
+	select Val=COUNT(distinct fp.Dyelot)
+	from Receiving_Detail rd
+	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	AND fp.Result != '' AND fp.Result IS NOT NULL
+)AlreadyInspecetedDyelot
+OUTER APPLY(
+	select Val = SUM(fp.TicketYds) / t.ArriveQty
+	from Receiving_Detail rd
+	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	AND fp.Result != '' AND fp.Result IS NOT NULL
+)InspectionPercentage
+OUTER APPLY(
+		select DefectRecord , point
+		from #Sheet2 s
+		WHERE s.ReceivingID=t.ReceivingID
+		AND s.POID=t.POID
+		AND s.Seq=t.Seq1+'-'+t.Seq2
+)DefectCode
+
+UNION ALL
+Select ReceivingID
+	,WKno
+	,POID
+	,Seq1
+	,Seq2
+	,IssueDate
+	,Refno
+	,SCIRefno
+	,ColorID
+	,Name
+	,SuppID
+	,ArriveQty
+	,[ArriveRoll]=ArriveRoll.Val
+	,WeaveTypeID
+	,NonPhysical
+	,[HowManyDyelotArrived]=HowManyDyelotArrived.Val
+	,[AlreadyInspecetedDyelot]=AlreadyInspecetedDyelot.Val
+	,[InspectionPercentage]=InspectionPercentage.Val
+	,[DefectCode]=DefectCode.DefectRecord
+	,[TotalPoints]= DefectCode.point
+from #tmp4 t
+OUTER APPLY(
+	SELECT Val=COUNT(1) FROM (
+		select  distinct Roll,Dyelot
+		from TransferIn_Detail rd
+		where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	)x
+)ArriveRoll
+OUTER APPLY(
+	SELECT Val=COUNT(1) FROM (
+		select  distinct Dyelot
+		from TransferIn_Detail rd
+		where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	)x
+)HowManyDyelotArrived
+OUTER APPLY(
+	select Val=COUNT(distinct fp.Dyelot)
+	from TransferIn_Detail rd
+	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	AND fp.Result != '' AND fp.Result IS NOT NULL
+)AlreadyInspecetedDyelot
+OUTER APPLY(
+	select Val = SUM(fp.TicketYds) / t.ArriveQty
+	from TransferIn_Detail rd
+	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+	AND fp.Result != '' AND fp.Result IS NOT NULL
+)InspectionPercentage
+OUTER APPLY(
+		select DefectRecord , point
+		from #Sheet2 s
+		WHERE s.ReceivingID=t.ReceivingID
+		AND s.POID=t.POID
+		AND s.Seq=t.Seq1+'-'+t.Seq2
+)DefectCode
+
+)Q
+
+SELECT ReceivingID
+	,WKno
+	,POID
+	,Seq1
+	,Seq2
+	,IssueDate
+	,Refno
+	,SCIRefno
+	,ColorID
+	,Name
+	,SuppID
+	,ArriveQty
+	,ArriveRoll
+	,WeaveTypeID
+	,NonPhysical = IIF(NonPhysical = 1,'Y','')
+	,HowManyDyelotArrived
+	,AlreadyInspecetedDyelot
+	,InspectionPercentage
+	,DefectCode
+	,TotalPoints = SUM(TotalPoints)
+FROM #DefectSummary
+GROUP BY ReceivingID ,WKno ,POID ,Seq1 ,Seq2 ,IssueDate ,Refno ,SCIRefno
+	,ColorID ,Name ,SuppID ,ArriveQty ,ArriveRoll ,WeaveTypeID ,NonPhysical
+	,HowManyDyelotArrived ,AlreadyInspecetedDyelot ,InspectionPercentage ,DefectCode
+
+ORDER BY ReceivingID,WKno,POID,Seq1,Seq2,TotalPoints
+
+
+drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2,#DefectSummary
 ");
+            #endregion
             return base.ValidateInput();
         }
 
@@ -376,7 +598,7 @@ drop table #tmp1,#tmp2
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return DBProxy.Current.Select(null, this.Sqlcmd.ToString(), this.parameters, out this.PrintData);
-        }
+         }
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -397,6 +619,7 @@ drop table #tmp1,#tmp2
             {
                 MyUtility.Excel.CopyToXls(this.PrintData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]);
                 MyUtility.Excel.CopyToXls(this.PrintData[2], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[3]);
+                MyUtility.Excel.CopyToXls(this.PrintData[3], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[4]);
             }
 
             excelApp.Visible = true;
