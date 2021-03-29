@@ -656,7 +656,7 @@ select distinct
                     Seq2 = s["Seq2"].ToString(),
                     Refno = s["Refno"].ToString(),
                     Article = s["Article"].ToString(),
-                    Color = s["Color"].ToString(),
+                    ColorID = s["Color"].ToString(),
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
                     Status = s["Status"].ToString(),
