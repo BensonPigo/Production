@@ -960,7 +960,7 @@ Select
 	, iden = 0
 	, Pkey = ROW_NUMBER() over (order by wd.sizecode,wd.orderid,w.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
 	, w.cutref
-	, orderid = iif(wd.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), wd.OrderID)
+	, OrderID.OrderID
 	, article.article
 	, sizecode.sizecode
 	, isEXCESS = iif(wd.OrderID = 'EXCESS','Y','')
@@ -979,7 +979,7 @@ Select
 	, startno = 0
 	, o.StyleUkey
 	, w.MDivisionId
-    , o.BuyerDelivery
+    , BuyerDelivery = (select BuyerDelivery from orders o2 where o2.id = OrderID.OrderID)
 into #tmp
 from workorder w WITH (NOLOCK) 
 inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
@@ -996,6 +996,7 @@ outer apply(
 	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS'
 	order by wd.OrderID desc
 )l2
+outer apply(select OrderID = iif(wd.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), wd.OrderID))OrderID
 outer apply(
 	Select item = Reason.Name 
 	from Reason WITH (NOLOCK)
