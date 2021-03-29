@@ -91,17 +91,22 @@ namespace Sci.Production.Shipping
             listParameter.Add(new SqlParameter("@PackingID", this.txtFOCPL.Text));
             DataRow dr;
             string sqlcmdChk = @"
-select distinct p.ID as PulloutID
-from PackingList_Detail pd WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
-left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
-inner join Pullout_Detail p on p.PackingListID = pd.ID
-where pd.ID = @PackingID
-and Factory.IsProduceFty=1
+select pu.Status 
+from PackingList p 
+INNER join Pullout pu on pu.ID = p.PulloutID
+where p.ID = @PackingID
 ";
-            if (MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr))
+            bool exists = MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr);
+
+            if (!exists)
             {
-                MyUtility.Msg.WarningBox($@"FOC PL# already in pullout ID: {dr["PulloutID"]}");
+                MyUtility.Msg.WarningBox($@"Please create pullout report first!!");
+                return;
+            }
+
+            if (MyUtility.Convert.GetString(dr["Status"]).ToUpper() != "NEW")
+            {
+                MyUtility.Msg.WarningBox($@"This PL already pullout cannot import to HC.");
                 return;
             }
             #endregion
