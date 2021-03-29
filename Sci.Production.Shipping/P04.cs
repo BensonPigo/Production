@@ -60,7 +60,7 @@ select ed.*
 ,isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as Description
 ,(case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
 ,[ToSP]=IIF(ed.TransactionID = '',''
-		,(select td.ToPOID
+		,(select DISTINCT td.ToPOID
 		from TransferOut_Detail td
 		where td.POID=ed.POID
 		AND td.Seq1 = ed.Seq1 
@@ -68,7 +68,7 @@ select ed.*
 		AND td.ID=ed.TransactionID)
 	)
 ,[ToSEQ]=IIF(ed.TransactionID = '',''
-		,(select td.ToSeq1  + ' '+ td.ToSeq2
+		,(select DISTINCT td.ToSeq1  + ' '+ td.ToSeq2
 		from TransferOut_Detail td
 		where td.POID=ed.POID
 		AND td.Seq1 = ed.Seq1 
