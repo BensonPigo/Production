@@ -531,7 +531,7 @@ select	ob.Id		  ,
 			   ,oe.[isQT]
 			   ,oe.[MarkerDownloadID]
 	from [Order_EachCons] oe
-	inner join #tmp_order t on t.ID = oe.id
+	where exists(select 1 from #tmp_order t where t.POID = oe.id)
 	
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.[Order_EachCons_Color]	
 	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[Order_EachCons_Color]	
@@ -557,7 +557,7 @@ select	ob.Id		  ,
 			   ,oec.[Variance]
 			   ,oec.[YDS]
 	from [Order_EachCons_Color]	oec
-	inner join #tmp_order t on t.ID = oec.id
+	where exists(select 1 from #tmp_order t where t.POID = oec.id)
 
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess
 	insert into [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess(Id			  ,
@@ -574,10 +574,10 @@ select	ob.Id		  ,
 
 				
 ------[WorkOrder]
-	select w.[Ukey]
+	select distinct w.[Ukey]
 	into #tmpWorkOrderUkey
 	from #tmp_order t
-	inner join WorkOrder w on w.ID = t.ID
+	inner join WorkOrder w on w.ID = t.POID
 
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder]
 	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder]
@@ -656,8 +656,8 @@ select	ob.Id		  ,
 		,w.ActCuttingPerimeter
 		,w.[StraightLength]
 		,w.[CurvedLength]
-	from #tmp_order t
-	inner join WorkOrder w on w.ID = t.ID
+	from #tmpWorkOrderUkey t
+	inner join WorkOrder w on w.Ukey = t.Ukey
 	left join Order_EachCons oe on oe.Ukey = w.Order_EachconsUkey
 	outer apply
 	(
