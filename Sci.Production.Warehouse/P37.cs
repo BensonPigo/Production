@@ -1160,7 +1160,7 @@ Where a.id = '{0}'", masterID);
             {
                 foreach (DataRow dr in this.DetailDatas)
                 {
-                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) < 0)
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) > 0)
                     {
                         errormsg += $@"SP#: {dr["POID"]} Seq#: {dr["Seq1"]}-{dr["Seq2"]} Roll#: {dr["Roll"]} Dyelot: {dr["Dyelot"]} Issue Qty: {dr["Qty"]}" + Environment.NewLine;
                     }
