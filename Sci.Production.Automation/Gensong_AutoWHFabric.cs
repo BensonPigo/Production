@@ -1411,6 +1411,11 @@ and exists(
                     break;
             }
 
+            if (status != "NEW")
+            {
+                sqlcmd += Environment.NewLine + @" and rd.SentToWMS = 1";
+            }
+
             if (!MyUtility.Check.Empty(sqlcmd))
             {
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
@@ -1481,13 +1486,6 @@ and exists(
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='F'
 )
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)
 ";
                     break;
                 case "P16":
@@ -1531,13 +1529,6 @@ and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='F'
-)
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
 )
 ";
                     break;
@@ -1583,15 +1574,24 @@ and exists(
 		where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 		and FabricType='F'
 	)
+";
+                    break;
+            }
+
+            if (status == "NEW")
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
 	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
 	where f.Ukey = fd.Ukey
 	and ml.IsWMS = 1
-)
-";
-                    break;
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
             }
 
             if (!MyUtility.Check.Empty(sqlcmd))
@@ -1678,21 +1678,28 @@ and exists(
     where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2
     and FabricType='F'
 )
+";
+
+            if (status == "NEW")
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from MtlLocation ml 
-	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
-		and ml.StockType=sd.FromStockType
+	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID
+        and ml.StockType=sd.FromStockType
 	where ml.IsWMS = 1
-
 	union all
-
-    select 1 from MtlLocation ml 
+	select 1 from MtlLocation ml 
 	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
-	and ml.StockType=sd.ToStockType
+	    and ml.StockType=sd.ToStockType
 	where ml.IsWMS = 1
-)
-";
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and sd.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1743,14 +1750,23 @@ and exists(
     where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
     and psd.SEQ2 = rrd.Seq2 and psd.FabricType='F'
 )
+";
+
+            if (status == "NEW")
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd
 	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
 	where  fd.Ukey=f.Ukey
 	and ml.IsWMS =1 
-)
-";
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and rrd.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1826,20 +1842,34 @@ outer apply(
 )ToBarcode
 where 1=1
 and exists(
+    select 1 from Production.dbo.PO_Supp_Detail
+    where id = bb2.ToPOID and seq1=bb2.ToSeq1 and seq2=bb2.ToSeq2
+    and FabricType='F'
+)
+";
+
+            if (status == "NEW")
+            {
+                sqlcmd += Environment.NewLine + @"
+and exists(
 	select 1
 	from MtlLocation ml 
 	inner join dbo.SplitString(Fromlocation.listValue,',') sp on sp.Data = ml.ID 
 		and ml.StockType=bb2.FromStockType
 	where ml.IsWMS = 1
-
-	union all
-
-    select 1 from MtlLocation ml 
-	inner join dbo.SplitString(bb2.ToLocation,',') sp on sp.Data = ml.ID
-	and ml.StockType=bb2.ToStockType
+union all
+	select 1 
+    from MtlLocation ml 
+    inner join dbo.SplitString(bb2.ToLocation,',') sp on sp.Data = ml.ID 
+	    and ml.StockType = bb2.FromStockType
 	where ml.IsWMS = 1
 )
 ";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and bb2.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1888,6 +1918,10 @@ and exists(
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='F'
 )
+";
+            if (status == "NEW")
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
@@ -1896,6 +1930,11 @@ and exists(
 	and ml.IsWMS = 1
 )
 ";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
