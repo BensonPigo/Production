@@ -46,7 +46,7 @@ from (
 		,[Construction] = sty.Construction
 	from #tmp t
 	Outer apply (
-		SELECT o.CDCodeNew
+		SELECT s.CDCodeNew
 			, s.[ID]
 			, ProductType = r2.Name
 			, FabricType = r1.Name
@@ -115,7 +115,7 @@ from (
 	from #tmp T
 	LEFT JOIN ['+@LinkServerName+'].Production.dbo.Factory f WITH(NOLOCK) ON f.ID= T.TransFtyZone
 	Outer apply (
-		SELECT o.CDCodeNew
+		SELECT s.CDCodeNew
 			, s.[ID]
 			, ProductType = r2.Name
 			, FabricType = r1.Name
