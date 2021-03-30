@@ -88,17 +88,14 @@ namespace Sci.Production.Shipping
 
             #region PackingListID 存在Pullout 則不能匯入
             List<SqlParameter> listParameter = new List<SqlParameter>();
-            listParameter.Add(new SqlParameter("@PackingID", this.txtFOCPL.Text));
-            DataRow dr;
+            listParameter.Add(new SqlParameter("@MDivisionID", MyUtility.Convert.GetString(this.masterData["MDivisionID"])));
+            listParameter.Add(new SqlParameter("@PulloutDate", MyUtility.Convert.GetDate(this.masterData["ShipDate"])));
             string sqlcmdChk = @"
-select pu.Status 
-from PackingList p 
-INNER join Pullout pu on pu.ID = p.PulloutID
-where p.ID = @PackingID
+select pu.Status
+from Pullout pu
+where pu.[MDivisionID] = @MDivisionID and pu.[PulloutDate] = @PulloutDate
 ";
-            bool exists = MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr);
-
-            if (!exists)
+            if (!MyUtility.Check.Seek(sqlcmdChk, listParameter, out DataRow dr))
             {
                 MyUtility.Msg.WarningBox($@"Please create pullout report first!!");
                 return;
