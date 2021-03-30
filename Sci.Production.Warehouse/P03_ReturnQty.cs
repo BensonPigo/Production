@@ -40,7 +40,7 @@ select
 from ReturnReceipt r1
 inner join ReturnReceipt_Detail r2 on r1.Id = r2.Id
 left join WhseReason w on w.ID = r1.WhseReasonId and w.Type ='RR'
-left join WhseReason wa on wa.ID = r1.WhseReasonId and wa.Type ='RA'
+left join WhseReason wa on wa.ID = r1.actionid and wa.Type ='RA'
 where 1=1
 and r1.Status='Confirmed'
 and r2.POID = '{this.dr["ID"]}'
