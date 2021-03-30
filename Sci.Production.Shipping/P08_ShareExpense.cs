@@ -543,18 +543,12 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
                 .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(22));
 
-            string strCheckSql = $@"select 1 from ShareExpense WITH (NOLOCK)  where ShippingAPID = '{this.apData["ID"]}' and (Junk=0 or junk is null)";
-
-            if (this.apData["SubType"].ToString().ToUpper() == "GARMENT"
-                && this.apData["Type"].ToString().ToUpper() == "EXPORT"
-                && !MyUtility.Check.Seek(strCheckSql))
+            if (this.Apflag &&
+                !this.IsReason &&
+                ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
+                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false)
             {
-                if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty
-                    || (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
-                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false))
-                {
-                    this.AppendData();
-                }
+                this.AppendData();
             }
 
             #region tab Shared Amt by App grid
