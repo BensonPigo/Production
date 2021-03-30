@@ -40,6 +40,7 @@ namespace Sci.Production.Warehouse
                 .Text("InventoryPOID", header: "Inventory POID", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("Inventoryseq1", header: "Inventory Seq1", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Text("InventorySEQ2", header: "Inventory Seq2", iseditingreadonly: true, width: Widths.AnsiChars(6))
+                .Text("FabricType", header: "Material Type", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Date("TaipeiLastOutput", header: "Taipei" + Environment.NewLine + "Last Output", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("TaipeiOutput", header: "Taipei" + Environment.NewLine + "Output", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
@@ -153,6 +154,7 @@ select  POID = rtrim(i.seq70poid)
 		, psd.StockUnit
         , TaipeiLastOutput = max(i.confirmdate) 
         , TaipeiOutput = sum(iif(i.type='2',i.qty,0-i.qty)) 
+		, psd.FabricType
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
@@ -162,10 +164,10 @@ inner join Orders o WITH (NOLOCK) on psd.ID = o.ID
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit
+group by rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.TransferFactory, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType
 
 
-select  selected = cast(0 as bit)
+select  selected = 0
 		, [WK] = Stuff((select distinct concat(',', r.ExportId)
 				from Receiving r WITH (NOLOCK)
                 inner join Receiving_Detail rd WITH (NOLOCK) on r.id = rd.id
@@ -197,8 +199,9 @@ select  selected = cast(0 as bit)
         , #tmp.InventorySEQ2
         , #tmp.TaipeiLastOutput
         , #tmp.TaipeiOutput
-into #tmpDetailResult
-from #tmp  
+		, #tmp.FabricType
+into    #tmpDetailResult
+from    #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
                                                 and fi.seq1 = Inventoryseq1 
                                                 and fi.seq2 = InventorySEQ2 
@@ -206,27 +209,71 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
 where fi.Lock = 0
 Order by GroupQty desc, Dyelot, StockBalance desc
 
-select distinct  [POID] = ToPOID
-		        , [Seq1] = ToSeq1
-		        , [Seq2] = ToSeq2
-		        , ToFactory
-		        , InventoryPOID
-                , Inventoryseq1
-                , InventorySEQ2
-		        , StockUnit
-                , TaipeiLastOutput
-                , TaipeiOutput
-                , [TotalTransfer] = 0.0
-from #tmpDetailResult
-where   StockBalance > 0
-order by ToPOID, ToSeq1, ToSeq2;
-
-select  *
+select  selected = IIF(FabricType = 'A' and TaipeiOutput > 0,cast(1 as bit) ,cast(0 as bit)  )   ----輔料才自動勾選
+		, WK
+		, MDivisionID 
+        , id
+        , ftyinventoryukey
+        , POID 
+        , seq1 
+        , seq2 
+        , Seq
+        , roll 
+        , dyelot 
+        , stocktype
+		, StockUnit
+        , StockBalance 
+        , Description 
+        , Qty =  -- TransferQty 庫存數大於 0 且庫存數量足夠 : 根據 Taipei Out 數量直接帶出 ; 庫存數大於 0 但庫存不足 : 挑選至庫存上限
+				CASE 
+                    WHEN  FabricType = 'A'AND StockBalance >= TaipeiOutput THEN TaipeiOutput
+					WHEN  FabricType = 'A'AND StockBalance < TaipeiOutput THEN StockBalance
+					ELSE 0.0
+				END
+        , [Location]
+        , ToPOID 
+        , ToSeq1 
+        , ToSeq2
+        , ToSeq
+        , GroupQty
+        , ToFactory
+        , InventoryPOID
+        , Inventoryseq1
+        , InventorySEQ2
+        , TaipeiLastOutput
+        , TaipeiOutput
+        , FabricType =  CASE 
+                            WHEN FabricType = 'F' THEN 'Fabric' 
+							WHEN FabricType = 'A' THEN 'Accessory' 
+							WHEN FabricType = 'O' THEN 'Other' 
+							ELSE '' 
+						END
+into    #tmpDetail
 from    #tmpDetailResult
 where   StockBalance > 0
 
+select  [POID] = ToPOID
+		, [Seq1] = ToSeq1
+		, [Seq2] = ToSeq2
+		, ToFactory
+		, InventoryPOID
+        , Inventoryseq1
+        , InventorySEQ2
+		, FabricType
+		, StockUnit
+        , TaipeiLastOutput
+        , TaipeiOutput
+        , [TotalTransfer] = sum (Qty)
+from    #tmpDetail
+group by ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
+        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput        
+order by ToPOID, ToSeq1, ToSeq2;
 
-drop table #tmp, #tmpDetailResult
+select  *
+from    #tmpDetail
+
+
+drop table #tmp, #tmpDetailResult, #tmpDetail
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listPar, out DataTable[] dt);
