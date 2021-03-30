@@ -102,7 +102,7 @@ where ked2.id = '{masterID}'
            .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Text("LocationDisp", header: "Product Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
            .Numeric("ShipModeSeqQty", header: "Qty(By SP)", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
-           .Numeric("CTNQty", header: "CT(By SP)N", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
+           .Numeric("CTNQty", header: "CTN(By SP)", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
            .Numeric("POPrice", header: "FOB", width: Widths.AnsiChars(9), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
            .Numeric("TtlFOB", header: "Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5, iseditingreadonly: true)
            .Numeric("ActTtlPOPrice", header: "Act Ttl FOB", width: Widths.AnsiChars(11), decimal_places: 6, integer_places: 5)
@@ -119,7 +119,6 @@ where ked2.id = '{masterID}'
            .Text("COID", header: "COID", width: Widths.AnsiChars(25), iseditingreadonly: false)
            .Date("CODate", header: "CO Date", width: Widths.AnsiChars(10), iseditingreadonly: false);
         }
-
 
         /// <inheritdoc/>
         protected override void ClickEditAfter()

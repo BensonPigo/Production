@@ -96,10 +96,10 @@ select
 	, [ActTtlPOPrice] = r.FOB * sum(pd.ShipQty)
 	, [DiffTtlFOB] = r.FOB * sum(pd.ShipQty) - r.FOB * sum(pd.ShipQty) -- [ActTtlPOPrice] - [TtlFOB]
 	, [Forwarder] = g.Forwarder
-	, [NetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + (sum(pd.NW) * 0.05)) end) * isnull(OL.rate, 1)
-	, [WeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05)) end) * isnull(OL.rate, 1)
-	, [ActNetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + ( sum(pd.NW) * 0.05))end) * isnull(OL.rate, 1)
-	, [ActWeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05))end) * isnull(OL.rate, 1)
+	, [NetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + (sum(pd.NW) * 0.05)) end) * isnull(OL.rate, 1) / 100
+	, [WeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05)) end) * isnull(OL.rate, 1) / 100
+	, [ActNetKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.NW) else (sum(pd.NW) + ( sum(pd.NW) * 0.05))end) * isnull(OL.rate, 1) / 100
+	, [ActWeightKg] = (case when @ShipMode in ('A/C','A/P') then sum(pd.GW) else (sum(pd.GW) + ( sum(pd.GW) * 0.05))end) * isnull(OL.rate, 1) / 100
 	, [DiffNw] = 0
 	, [DiffGW] = 0
 	, [LocalINVNo] = g.id
@@ -151,7 +151,7 @@ outer apply(
 	where OrderID = o.ID
 	group by OrderID
 )POPrice
-outer apply(select FOB = isnull(PoPrice.AvgPrice,o.PoPrice) * isnull(OL.rate, 1))r
+outer apply(select FOB = isnull(PoPrice.AvgPrice,o.PoPrice) * isnull(OL.rate, 1) / 100)r
 where 1=1
 and g.ShipModeID = @ShipMode
 and g.NonDeclare =0
