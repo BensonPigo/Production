@@ -79,6 +79,7 @@ with temporder AS (
 	        , sty.Lining
 	        , sty.Gender
 	        , sty.Construction
+            , styCDCodeNew = sty.CDCodeNew
 	from Orders o WITH(NOLOCK)
 	inner join Factory f WITH(NOLOCK) on o.FactoryID = f.ID 
     Outer apply (
@@ -87,6 +88,7 @@ with temporder AS (
 		    , Lining
 		    , Gender
 		    , Construction = d1.Name
+            , s.CDCodeNew
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -116,7 +118,7 @@ select	O.ID
 		, O.StyleID
 		, O.SeasonID
 		, O.CdCodeID
-        , O.CDCodeNew
+        , CDCodeNew = O.styCDCodeNew
 	    , O.ProductType
 	    , O.FabricType
 	    , O.Lining

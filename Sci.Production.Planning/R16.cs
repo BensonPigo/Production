@@ -96,7 +96,7 @@ select o.FactoryID [Factory]
 	,o.SeasonID [Season]
 	,o.SciDelivery [Sci Dlv.]
 	,o.CdCodeID [CD Code]
-	,o.CDCodeNew
+	,s.CDCodeNew
 	,sty.ProductType
 	,sty.FabricType
 	,sty.Lining

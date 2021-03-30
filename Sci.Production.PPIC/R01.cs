@@ -1251,7 +1251,7 @@ select  s.SewingLineID
                         ) a for xml path('')
                     ), '') as Remark
             ,o.FtyGroup
-	        ,[CDCodeNew] = o.CDCodeNew
+	        ,[CDCodeNew] = sty.CDCodeNew
 	        ,[ProductType] = sty.ProductType
 	        ,[FabricType] = sty.FabricType
 	        ,[Lining] = sty.Lining
@@ -1285,6 +1285,7 @@ select  s.SewingLineID
 		    , Lining
 		    , Gender
 		    , Construction = d1.Name
+            , s.CDCodeNew
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -1561,7 +1562,7 @@ select  s.SewingLineID
 			,s.ID
             ,o.FtyGroup
 			,[FirststCuttingOutputDate] = FirststCuttingOutputDate.Date
-	        ,[CDCodeNew] = o.CDCodeNew
+	        ,[CDCodeNew] = sty.CDCodeNew
 	        ,[ProductType] = sty.ProductType
 	        ,[FabricType] = sty.FabricType
 	        ,[Lining] = sty.Lining
@@ -1595,6 +1596,7 @@ select  s.SewingLineID
 		    , Lining
 		    , Gender
 		    , Construction = d1.Name
+            , s.CDCodeNew
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType

@@ -250,7 +250,7 @@ with tmpOrders as (
             , o.ProgramID
 			, [NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
             , o.CdCodeID
-	        , o.CDCodeNew
+	        , s.CDCodeNew
             , [ProductType] = r2.Name
 		    , [FabricType] = r1.Name
 		    , s.Lining
@@ -599,7 +599,7 @@ tmpFilterZone as (
             , o.ProgramID
             , [NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
             , o.CdCodeID
-            , o.CDCodeNew
+            , s.CDCodeNew
             , [ProductType] = r2.Name
 		    , [FabricType] = r1.Name
 		    , s.Lining

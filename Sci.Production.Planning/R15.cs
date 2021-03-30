@@ -389,7 +389,7 @@ namespace Sci.Production.Planning
                            , InspHandle = QtyShip_Handle.Val
                            , O.Junk,CFACTN=isnull(o.CFACTN,0)
                            , InStartDate = Null, InEndDate = Null, OutStartDate = Null, OutEndDate = Null
-                           , O.CDCodeNew
+                           , s.CDCodeNew
                            , sty.ProductType
                            , sty.FabricType
                            , sty.Lining
@@ -398,6 +398,7 @@ namespace Sci.Production.Planning
                     into #cte 
                     from dbo.Orders o WITH (NOLOCK) 
                     inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
+                    left join Style s on s.Ukey = o.StyleUkey
                     left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
                     OUTER APPLY(
 	                    SELECT [Val]=STUFF((
@@ -1089,7 +1090,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , O.Junk,CFACTN=isnull(o.CFACTN,0)
 	   , oq.Article,oq.SizeCode
        , InStartDate = Null, InEndDate = Null, OutStartDate = Null, OutEndDate = Null
-       , O.CDCodeNew
+       , s.CDCodeNew
        , sty.ProductType
        , sty.FabricType
        , sty.Lining
@@ -1098,6 +1099,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
+left join Style s on s.Ukey = o.StyleUkey
 left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
 OUTER APPLY(
 	SELECT [Val]=STUFF((
