@@ -18,7 +18,7 @@
     [ToStockType]          VARCHAR (1)     CONSTRAINT [DF_SubTransfer_Detail_ToStockType] DEFAULT ('') NOT NULL,
     [ToDyelot]             VARCHAR (8)     CONSTRAINT [DF_SubTransfer_Detail_ToDyelot] DEFAULT ('') NULL,
     [Qty]                  NUMERIC (11, 2) CONSTRAINT [DF_SubTransfer_Detail_Qty] DEFAULT ((0)) NOT NULL,
-    [ToLocation]           VARCHAR (60)    CONSTRAINT [DF_SubTransfer_Detail_ToLocation] DEFAULT ('') NULL,
+    [ToLocation]           VARCHAR (500)    CONSTRAINT [DF_SubTransfer_Detail_ToLocation] DEFAULT ('') NULL,
     [ToCTNNo]              VARCHAR (10)    NULL,
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 

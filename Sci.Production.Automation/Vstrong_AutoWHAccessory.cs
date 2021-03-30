@@ -1270,7 +1270,7 @@ and exists(
 ,[StockQty] = {strQty}
 ,[PoUnit] = iif('{formName}' = 'P07',rd.PoUnit,'')
 ,[ShipQty] = iif('{formName}' = 'P07',rd.ShipQty,0.00)
-,[Color] = po3.ColorID
+,[Color] = Color.Value
 ,[SizeCode] = po3.SizeSpec
 ,[Weight] = iif('{formName}' = 'P07',rd.Weight,0.00)
 ,[StockType] = rd.StockType
@@ -1289,6 +1289,13 @@ left join Production.dbo.FtyInventory f on f.POID = rd.PoId
 	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
 	and f.StockType = rd.StockType
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+            THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+            ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1311,7 +1318,7 @@ SELECT
 ,[StockQty] = {strQty}
 ,[PoUnit] = ''
 ,[ShipQty] = 0.00
-,[Color] = po3.ColorID
+,[Color] =  Color.Value
 ,[SizeCode] = po3.SizeSpec
 ,[Weight] = rd.Weight
 ,[StockType] = rd.StockType
@@ -1330,6 +1337,12 @@ left join Production.dbo.FtyInventory f on f.POID = rd.PoId
 	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
 	and f.StockType = rd.StockType
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID),po3.SuppColor)
+		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1338,6 +1351,11 @@ and exists(
 )
 ";
                     break;
+            }
+
+            if (string.Compare(status, "New", true) != 0)
+            {
+                sqlcmd += Environment.NewLine + @" and rd.SentToWMS = 1";
             }
 
             if (!MyUtility.Check.Empty(sqlcmd))
@@ -1400,13 +1418,6 @@ and exists(
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='A'
 )
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)
 ";
                     break;
                 case "P15":
@@ -1440,13 +1451,6 @@ and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='A'
-)
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
 )
 ";
                     break;
@@ -1482,15 +1486,24 @@ and exists(
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='A'
 )
+";
+                    break;
+            }
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
 	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
 	where f.Ukey = fd.Ukey
 	and ml.IsWMS = 1
-)
-";
-                    break;
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
             }
 
             if (!MyUtility.Check.Empty(sqlcmd))
@@ -1541,14 +1554,22 @@ and exists(
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='A'
 )
+";
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
 	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
 	where f.Ukey = fd.Ukey
 	and ml.IsWMS = 1
-)
-";
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1605,6 +1626,11 @@ and exists(
     where id = sd.ToPOID and seq1=sd.ToSeq1 and seq2=sd.ToSeq2
     and FabricType='A'
 )
+";
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from MtlLocation ml 
@@ -1616,8 +1642,12 @@ and exists(
 	inner join dbo.SplitString(sd.ToLocation,',') sp on sp.Data = ml.ID
 	and ml.StockType=sd.ToStockType
 	where ml.IsWMS = 1
-)
-";
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and sd.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1659,14 +1689,23 @@ and exists(
     where psd.ID= rrd.POID and psd.SEQ1 = rrd.Seq1
     and psd.SEQ2 = rrd.Seq2 and psd.FabricType='A'
 )
+";
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd
 	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
 	where  fd.Ukey=f.Ukey
 	and ml.IsWMS =1 
-)
-";
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and rrd.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1732,6 +1771,11 @@ and exists(
     where id = bb2.ToPOID and seq1=bb2.ToSeq1 and seq2=bb2.ToSeq2
     and FabricType='A'
 )
+";
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from MtlLocation ml 
@@ -1746,6 +1790,11 @@ union all
 	where ml.IsWMS = 1
 )
 ";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and bb2.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1792,6 +1841,11 @@ and exists(
 	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
 	and FabricType='A'
 )
+";
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
 and exists(
 	select 1
 	from FtyInventory_Detail fd 
@@ -1800,6 +1854,11 @@ and exists(
 	and ml.IsWMS = 1
 )
 ";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and i2.SentToWMS = 1";
+            }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
             {
@@ -1828,7 +1887,7 @@ and exists(
 
             return resultObj;
         }
-         
+
         private void SetAutoAutomationErrMsg(string apiThread, string type = "")
         {
             this.automationErrMsg.apiThread = apiThread;

@@ -7,7 +7,7 @@
     [Roll]        VARCHAR (8)     CONSTRAINT [DF_TransferIn_Detail_Roll] DEFAULT ('') NOT NULL,
     [Dyelot]      VARCHAR (8)     CONSTRAINT [DF_TransferIn_Detail_Dyelot] DEFAULT ('') NOT NULL,
     [StockType]   VARCHAR (1)     CONSTRAINT [DF_TransferIn_Detail_StockType] DEFAULT ('') NOT NULL,
-    [Location]    VARCHAR (60)    CONSTRAINT [DF_TransferIn_Detail_Location] DEFAULT ('') NULL,
+    [Location]    VARCHAR (500)    CONSTRAINT [DF_TransferIn_Detail_Location] DEFAULT ('') NULL,
     [Qty]         NUMERIC (10, 2) CONSTRAINT [DF_TransferIn_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
     [Weight]      NUMERIC (7, 2)  DEFAULT ((0)) NOT NULL,
