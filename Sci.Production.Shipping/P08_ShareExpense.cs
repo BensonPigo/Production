@@ -598,7 +598,9 @@ using (
 ,[FtyWK] = 0
 ,[AccountID] = (
 	select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-   where sd.ID = '{this.apData["ID"]}' and sd.AccountID != '')
+    where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
 ,[Junk] = 0
 from GMTBooking g WITH (NOLOCK) 
 where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
