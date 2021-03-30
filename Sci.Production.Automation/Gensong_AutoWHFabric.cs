@@ -1411,7 +1411,7 @@ and exists(
                     break;
             }
 
-            if (status != "NEW")
+            if (string.Compare(status, "New", true) != 0)
             {
                 sqlcmd += Environment.NewLine + @" and rd.SentToWMS = 1";
             }
@@ -1578,7 +1578,7 @@ and exists(
                     break;
             }
 
-            if (status == "NEW")
+            if (string.Compare(status, "New", true) == 0)
             {
                 sqlcmd += Environment.NewLine + @"
 and exists(
@@ -1680,7 +1680,7 @@ and exists(
 )
 ";
 
-            if (status == "NEW")
+            if (string.Compare(status, "New", true) == 0)
             {
                 sqlcmd += Environment.NewLine + @"
 and exists(
@@ -1752,7 +1752,7 @@ and exists(
 )
 ";
 
-            if (status == "NEW")
+            if (string.Compare(status, "New", true) == 0)
             {
                 sqlcmd += Environment.NewLine + @"
 and exists(
@@ -1848,7 +1848,7 @@ and exists(
 )
 ";
 
-            if (status == "NEW")
+            if (string.Compare(status, "New", true) == 0)
             {
                 sqlcmd += Environment.NewLine + @"
 and exists(
@@ -1919,7 +1919,7 @@ and exists(
 	and FabricType='F'
 )
 ";
-            if (status == "NEW")
+            if (string.Compare(status, "New", true) == 0)
             {
                 sqlcmd += Environment.NewLine + @"
 and exists(
