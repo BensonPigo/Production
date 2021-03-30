@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P03_ReturnQty
+    partial class P03_AdjustQty
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -33,10 +33,10 @@
             this.labelTotal = new Sci.Win.UI.Label();
             this.numTotal = new Sci.Win.UI.NumericBox();
             this.btnClose = new Sci.Win.UI.Button();
-            this.gridReturn = new Sci.Win.UI.Grid();
+            this.gridAdjust = new Sci.Win.UI.Grid();
             this.bindingSource1 = new Sci.Win.UI.BindingSource(this.components);
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridReturn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAdjust)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,14 +46,14 @@
             this.panel2.Controls.Add(this.numTotal);
             this.panel2.Controls.Add(this.btnClose);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 392);
+            this.panel2.Location = new System.Drawing.Point(0, 380);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(924, 48);
-            this.panel2.TabIndex = 1;
+            this.panel2.Size = new System.Drawing.Size(939, 48);
+            this.panel2.TabIndex = 2;
             // 
             // labelTotal
             // 
-            this.labelTotal.Location = new System.Drawing.Point(651, 13);
+            this.labelTotal.Location = new System.Drawing.Point(657, 14);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(75, 23);
             this.labelTotal.TabIndex = 6;
@@ -65,7 +65,7 @@
             this.numTotal.DecimalPlaces = 2;
             this.numTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal.IsSupportEditMode = false;
-            this.numTotal.Location = new System.Drawing.Point(729, 13);
+            this.numTotal.Location = new System.Drawing.Point(735, 14);
             this.numTotal.Name = "numTotal";
             this.numTotal.NullValue = new decimal(new int[] {
             0,
@@ -85,7 +85,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(832, 11);
+            this.btnClose.Location = new System.Drawing.Point(847, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -93,41 +93,41 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // gridReturn
+            // gridAdjust
             // 
-            this.gridReturn.AllowUserToAddRows = false;
-            this.gridReturn.AllowUserToDeleteRows = false;
-            this.gridReturn.AllowUserToResizeRows = false;
-            this.gridReturn.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridReturn.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridReturn.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridReturn.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridReturn.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridReturn.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridReturn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridReturn.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridReturn.Location = new System.Drawing.Point(0, 0);
-            this.gridReturn.Name = "gridReturn";
-            this.gridReturn.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridReturn.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridReturn.RowTemplate.Height = 24;
-            this.gridReturn.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridReturn.ShowCellToolTips = false;
-            this.gridReturn.Size = new System.Drawing.Size(924, 392);
-            this.gridReturn.TabIndex = 2;
-            this.gridReturn.TabStop = false;
+            this.gridAdjust.AllowUserToAddRows = false;
+            this.gridAdjust.AllowUserToDeleteRows = false;
+            this.gridAdjust.AllowUserToResizeRows = false;
+            this.gridAdjust.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAdjust.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAdjust.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAdjust.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridAdjust.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAdjust.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAdjust.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAdjust.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAdjust.Location = new System.Drawing.Point(0, 0);
+            this.gridAdjust.Name = "gridAdjust";
+            this.gridAdjust.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAdjust.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAdjust.RowTemplate.Height = 24;
+            this.gridAdjust.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAdjust.ShowCellToolTips = false;
+            this.gridAdjust.Size = new System.Drawing.Size(939, 380);
+            this.gridAdjust.TabIndex = 3;
+            this.gridAdjust.TabStop = false;
             // 
-            // P03_ReturnQty
+            // P03_AdjustQty
             // 
-            this.ClientSize = new System.Drawing.Size(924, 440);
-            this.Controls.Add(this.gridReturn);
+            this.ClientSize = new System.Drawing.Size(939, 428);
+            this.Controls.Add(this.gridAdjust);
             this.Controls.Add(this.panel2);
-            this.Name = "P03_ReturnQty";
+            this.Name = "P03_AdjustQty";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "Return Transaction Detail";
+            this.Text = "Adjust Transaction Detail";
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridReturn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAdjust)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -136,10 +136,10 @@
         #endregion
 
         private Win.UI.Panel panel2;
-        private Win.UI.Button btnClose;
-        private Win.UI.Grid gridReturn;
-        private Win.UI.BindingSource bindingSource1;
         private Win.UI.Label labelTotal;
         private Win.UI.NumericBox numTotal;
+        private Win.UI.Button btnClose;
+        private Win.UI.Grid gridAdjust;
+        private Win.UI.BindingSource bindingSource1;
     }
 }

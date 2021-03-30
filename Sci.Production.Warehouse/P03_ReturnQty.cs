@@ -85,12 +85,12 @@ order by r1.IssueDate, r1.Id
             this.gridReturn.DataSource = this.bindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridReturn)
             .Date("Date", header: "Date", width: Widths.AnsiChars(12))
-            .Text("ID", header: "ID", width: Widths.AnsiChars(13), settings: col_ID)
-            .Text("Name", header: "Name", width: Widths.AnsiChars(25))
-            .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(12), decimal_places: 2, integer_places: 10)
-            .Text("Refund Reason", header: "Refund Reason", width: Widths.AnsiChars(35))
-            .Text("Action", header: "Action", width: Widths.AnsiChars(35))
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(30))
+            .Text("ID", header: "ID", width: Widths.AnsiChars(15), settings: col_ID)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(23))
+            .Numeric("ReturnQty", header: "Return Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)
+            .Text("Refund Reason", header: "Refund Reason", width: Widths.AnsiChars(25))
+            .Text("Action", header: "Action", width: Widths.AnsiChars(25))
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             ;
 }
 
