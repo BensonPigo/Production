@@ -11,6 +11,7 @@
     [Qty]              NUMERIC (10, 2) CONSTRAINT [DF_IssueReturn_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     [CompleteTime] DATETIME NULL, 
+    [Location ] VARCHAR(500) NULL DEFAULT (''), 
     CONSTRAINT [PK_IssueReturn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -52,3 +53,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料數�
 GO
 
 
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'儲位',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'IssueReturn_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Location '

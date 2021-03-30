@@ -13,7 +13,7 @@
     [ActualWeight] NUMERIC (7, 2)  CONSTRAINT [DF_Receiving_Detail_ActualWeight] DEFAULT ((0)) NULL,
     [StockUnit]    VARCHAR (8)     CONSTRAINT [DF_Receiving_Detail_StockUnit] DEFAULT ('') NULL,
     [Price]        NUMERIC (11, 3) CONSTRAINT [DF_Receiving_Detail_Price] DEFAULT ((0)) NULL,
-    [Location]     VARCHAR (60)    CONSTRAINT [DF_Receiving_Detail_Location] DEFAULT ('') NULL,
+    [Location]     VARCHAR (500)    CONSTRAINT [DF_Receiving_Detail_Location] DEFAULT ('') NULL,
     [Remark]       NVARCHAR (100)  CONSTRAINT [DF_Receiving_Detail_Remark] DEFAULT ('') NULL,
     [StockQty]     NUMERIC (11, 2) CONSTRAINT [DF_Receiving_Detail_StockQty] DEFAULT ((0)) NULL,
     [StockType]    VARCHAR (1)     CONSTRAINT [DF_Receiving_Detail_StockType] DEFAULT ('') NULL,

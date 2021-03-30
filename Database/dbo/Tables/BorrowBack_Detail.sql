@@ -21,10 +21,12 @@
     [Ukey]                 BIGINT          IDENTITY (1, 1) NOT NULL,
     [OriQty]               NUMERIC (11, 2) NULL,
     [CompleteTime]         DATETIME        NULL,
-    [ToLocation]           VARCHAR (200)   NULL,
-    [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [ToLocation]           VARCHAR (500)   NULL,
+    [SentToWMS]            BIT             DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_BorrowBack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
