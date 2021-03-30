@@ -320,6 +320,23 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
                 }
             };
             #endregion
+
+            #region Return Qty 開窗
+            DataGridViewGeneratorNumericColumnSettings col_Return = new DataGridViewGeneratorNumericColumnSettings();
+            col_Return.CellMouseDoubleClick += (s, e) =>
+             {
+                 var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
+                 if (dr == null)
+                 {
+                     return;
+                 }
+
+                 if (dr["From_Program"].Equals("P03"))
+                 {
+                     //var frm = 
+                 }
+             };
+            #endregion
             #region Inventory Qty 開窗
             DataGridViewGeneratorTextColumnSettings ts7 = new DataGridViewGeneratorTextColumnSettings();
             ts7.CellMouseDoubleClick += (s, e) =>

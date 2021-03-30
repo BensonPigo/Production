@@ -163,6 +163,12 @@
     <Compile Include="B07.Designer.cs">
       <DependentUpon>B07.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_ReturnQty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_ReturnQty.Designer.cs">
+      <DependentUpon>P03_ReturnQty.cs</DependentUpon>
+    </Compile>
     <Compile Include="P53.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1347,6 +1353,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Print.resx">
       <DependentUpon>P03_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_ReturnQty.resx">
+      <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
