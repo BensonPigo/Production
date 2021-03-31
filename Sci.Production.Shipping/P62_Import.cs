@@ -39,8 +39,8 @@ namespace Sci.Production.Shipping
                .Text("LocationDisp", header: "Product Type", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("Description", header: "Style Description", iseditingreadonly: true, width: Widths.AnsiChars(30))
                .Text("Season", header: "Season", iseditingreadonly: true, width: Widths.AnsiChars(8))
-               .Numeric("ShipModeSeqQty", header: "Qty", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
-               .Numeric("CTNQty", header: "CTN", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
+               .Numeric("ShipModeSeqQty", header: "Qty(By SP)", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
+               .Numeric("CTNQty", header: "CTN(By SP)", width: Widths.AnsiChars(9), decimal_places: 0, integer_places: 9, iseditingreadonly: true)
                .Numeric("FOB", header: "FOB", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
                .Numeric("NetKg", header: "N.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
                .Numeric("WeightKg", header: "G.W.", width: Widths.AnsiChars(9), decimal_places: 3, integer_places: 6, iseditingreadonly: true)
@@ -250,7 +250,9 @@ group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.B
             {
                 DataRow[] findrow = this.dt_detail.AsEnumerable()
                     .Where(row => row.RowState != DataRowState.Deleted
-                    && row["INVNo"].EqualString(tmp["INVNo"].ToString()) && row["OrderID"].EqualString(tmp["OrderID"])).ToArray();
+                    && row["INVNo"].EqualString(tmp["INVNo"].ToString()) &&
+                    row["OrderID"].EqualString(tmp["OrderID"]) &&
+                    row["Location"].EqualString(tmp["Location"])).ToArray();
                 if (findrow.Length == 0)
                 {
                     this.dt_detail.ImportRowAdded(tmp);
