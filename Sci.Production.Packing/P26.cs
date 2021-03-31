@@ -13,11 +13,9 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -312,6 +310,7 @@ namespace Sci.Production.Packing
                                                 Barcode = lastBarcode.Barcode,
                                                 PackingListID = lastBarcode.PackingListID,
                                                 CTNStartNO = lastBarcode.CTNStartNO,
+                                                SCICtnNo = lastBarcode == null ? null : lastBarcode.SCICtnNo,
                                             });
                                         }
                                     }
@@ -940,10 +939,10 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
             }
 
             SqlConnection sqlConn = null;
-            DBProxy.Current.OpenConnection(null, out sqlConn);
 
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
+                DBProxy.Current.OpenConnection(null, out sqlConn);
                 using (sqlConn)
                 {
                     try
@@ -1015,12 +1014,21 @@ ORDER BY  a.PackingListID , b.SCICtnNo
 
                             BarcodeObj barcodeObj = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo).FirstOrDefault();
 
+                            var barcodeObjs = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo);
                             string barcode = barcodeObj.Barcode;
 
                             // 如果Image是null，代表是PDF
-                            if (barcodeObj.Image != null)
+                            if (barcodeObjs.FirstOrDefault().Image != null)
                             {
-
+                                foreach (var item in barcodeObjs)
+                                {
+                                    string cmd = this.InsertImageToDatabase_List(idxx.ToString(), item.Image, packID, sCICtnNo, rank.ToString());
+                                    filenamee.Add(barcode);
+                                    sQLs.Add(cmd);
+                                    images.Add(item.Image);
+                                    rank++;
+                                    idxx++;
+                                }
                             }
                             else
                             {
@@ -1056,10 +1064,11 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         int idxw = 0;
                         List<SqlParameter> para = new List<SqlParameter>();
                         string finalSQL = string.Empty;
-                        int limit = 1000;
+                        int limit = 20;
                         int limitCounter = 0;
 
-                        List<DualResult> dualResults = new List<DualResult>();
+                        List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
+                        int total = 1;
 
                         foreach (var sql in sQLs)
                         {
@@ -1073,22 +1082,23 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             idxw++;
 
                             limitCounter += 2;
-                            if (limitCounter >= limit || limitCounter >= (sQLs.Count * 2))
+                            if (limitCounter >= limit || total == sQLs.Count)
                             {
-                                DualResult test = Task.Run(() => this.InsertImage(finalSQL, para, sqlConn)).Result;
-                                dualResults.Add(test);
+                                result = DBProxy.Current.Execute(null, finalSQL, para);
+                                if (!result)
+                                {
+                                    throw result.GetException();
+                                }
 
                                 finalSQL = string.Empty;
                                 para = new List<SqlParameter>();
                                 limitCounter = 0;
                             }
+
+                            total++;
                         }
 
-                        if (!dualResults.Any(o => o.Result == false))
-                        {
-                            transactionscope.Complete();
-                        }
-
+                        transactionscope.Complete();
                         transactionscope.Dispose();
                     }
                     catch (Exception ex)
@@ -1909,7 +1919,7 @@ AND sd.Seq = (
         }
 
 
-        private string InsertImageToDatabase_List(string counter, byte[] dataArry,string packingListID, string sCICtnNo, string rank)
+        private string InsertImageToDatabase_List(string counter, byte[] dataArry, string packingListID, string sCICtnNo, string rank)
         {
             // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
 
@@ -1925,7 +1935,6 @@ INTO #tmp{counter}
 from ShippingMarkPic a with(nolock)
 inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
 where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
-
 
 ----寫入圖片
 UPDATE sd
