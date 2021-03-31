@@ -543,18 +543,12 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
                 .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(22));
 
-            string strCheckSql = $@"select 1 from ShareExpense WITH (NOLOCK)  where ShippingAPID = '{this.apData["ID"]}' and (Junk=0 or junk is null)";
-
-            if (this.apData["SubType"].ToString().ToUpper() == "GARMENT"
-                && this.apData["Type"].ToString().ToUpper() == "EXPORT"
-                && !MyUtility.Check.Seek(strCheckSql))
+            if (this.Apflag &&
+                !this.IsReason &&
+                ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
+                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false)
             {
-                if (ConfigurationManager.AppSettings["TaipeiServer"] == string.Empty
-                    || (ConfigurationManager.AppSettings["TaipeiServer"] != string.Empty
-                        && DBProxy.Current.DefaultModuleName.Contains("PMSDB") == false))
-                {
-                    this.AppendData();
-                }
+                this.AppendData();
             }
 
             #region tab Shared Amt by App grid
@@ -598,7 +592,9 @@ using (
 ,[FtyWK] = 0
 ,[AccountID] = (
 	select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-   where sd.ID = '{this.apData["ID"]}' and sd.AccountID != '')
+    where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
 ,[Junk] = 0
 from GMTBooking g WITH (NOLOCK) 
 where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
