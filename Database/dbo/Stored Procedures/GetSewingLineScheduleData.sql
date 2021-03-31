@@ -9,7 +9,8 @@
 	@BuyerDelivery2 date = null,
 	@SciDelivery1 date = null,
 	@SciDelivery2 date = null,
-	@Brand varchar(10) = ''
+	@Brand varchar(10) = '',
+	@subprocess varchar(20) = ''
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -109,6 +110,9 @@ and (o.BuyerDelivery <= @BuyerDelivery2 or @BuyerDelivery2 is null)
 and (o.SciDelivery >= @SciDelivery1 or @SciDelivery1 is null)
 and (o.SciDelivery <= @SciDelivery2 or @SciDelivery2 is null)
 and (o.BrandID = @Brand or @Brand ='')
+and (@subprocess = '' or
+	(@subprocess<> '' 
+	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
 and s.APSno <> 0
 group by	s.APSNo ,
 			s.MDivisionID,
@@ -203,6 +207,9 @@ select  aps.APSNo,[OrderQty] =sum(o.Qty)
 from @APSList aps
 inner join SewingSchedule s with (nolock) on aps.APSNo = s.APSNo
 inner join Orders o with (nolock) on s.OrderID = o.ID
+where (@subprocess = '' or
+	(@subprocess<> '' 
+	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
 group by aps.APSNo
 
 declare @APSCuttingOutput TABLE(
@@ -270,7 +277,10 @@ where   (ot.Price > 0 or at.Classify in ('O','I') )
         and (at.Classify in ('S','I') or at.IsSubprocess = 1)
         and (ot.TMS > 0 or ot.Qty > 0)
         and at.Abbreviation !=''
-		and ot.ID in (select OrderID from SewingSchedule where exists(select 1 from @APSList where APSNo = SewingSchedule.APSNo)) 
+		and ot.ID in (select OrderID from SewingSchedule where exists(select 1 from @APSList where APSNo = SewingSchedule.APSNo)) 		
+		and (@subprocess = '' or
+			(@subprocess<> '' 
+			and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
 
 declare @tmpArtWork TABLE(
 	[StyleID] [varchar](15) NULL,
@@ -388,6 +398,9 @@ OUTER APPLY(
 	where wd2.OrderID =o.ID
 )FirststCuttingOutputDate
 where exists( select 1 from @APSList where APSNo = s.APSNo)
+and (@subprocess = '' or
+	(@subprocess<> '' 
+	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
 
 --填入資料串連欄位 by APSNo
 declare @APSMain TABLE(

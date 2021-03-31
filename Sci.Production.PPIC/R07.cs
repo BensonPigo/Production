@@ -18,6 +18,7 @@ namespace Sci.Production.PPIC
         private int _month;
         private string _mDivision;
         private string _factory;
+        private string subProcess;
         private DataTable _printData;
         private DateTime _startDate;
 
@@ -38,6 +39,10 @@ namespace Sci.Production.PPIC
             this.comboFactory.Text = Env.User.Factory;
             this.numericUpDownYear.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("yyyy"));
             this.numericUpDownMonth.Value = MyUtility.Convert.GetInt(DateTime.Today.ToString("MM"));
+
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
+            MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
+            this.comboSubProcess.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -60,6 +65,7 @@ namespace Sci.Production.PPIC
             this._mDivision = this.comboM.Text;
             this._factory = this.comboFactory.Text;
             this._startDate = Convert.ToDateTime(string.Format("{0}/{1}/1", MyUtility.Convert.GetString(this._year), MyUtility.Convert.GetString(this._month)));
+            this.subProcess = this.comboSubProcess.Text;
 
             return base.ValidateInput();
         }
@@ -67,6 +73,13 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            string where = string.Empty;
+            if (!MyUtility.Check.Empty(this.subProcess))
+            {
+                where += $@"
+and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = '{this.subProcess}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) )";
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
             #region 組SQL
             sqlCmd.Append(string.Format(
@@ -123,6 +136,7 @@ where (s.Inline between  @sewinginline and @sewingoffline
 	or @sewingoffline between s.Inline and s.Offline
 )
  and s.MDivisionID = @MDivisionID --and (s.FactoryID = @FactoryID or @FactpryID = '') --and SewingLineID = '18'
+{4}
 
 select distinct
 	d.FactoryID
@@ -240,7 +254,8 @@ drop table #daterange,#tmpd,#Holiday,#Sewtmp,#workhourtmp,#Stmp,#c,#ConcatStyle"
                 this._startDate.ToString("d"),
                 this._startDate.AddMonths(1).ToString("d"),
                 this._mDivision,
-                this._factory));
+                this._factory,
+                where));
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this._printData);
