@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[exp_BundleInfo]
+﻿CREATE PROCEDURE [dbo].[exp_BundleInfo]
 as
 begin
 	/*
@@ -460,6 +459,105 @@ select	ob.Id		  ,
 						FabricType
 				from #tmpOrder_ColorCombo
 
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.[Order_EachCons]
+	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[Order_EachCons]
+			   ([Id]
+			   ,[Ukey]
+			   ,[Seq]
+			   ,[MarkerName]
+			   ,[FabricCombo]
+			   ,[MarkerLength]
+			   ,[FabricPanelCode]
+			   ,[ConsPC]
+			   ,[CuttingPiece]
+			   ,[ActCuttingPerimeter]
+			   ,[StraightLength]
+			   ,[FabricCode]
+			   ,[CurvedLength]
+			   ,[Efficiency]
+			   ,[Article]
+			   ,[Remark]
+			   ,[MixedSizeMarker]
+			   ,[MarkerNo]
+			   ,[MarkerUpdate]
+			   ,[MarkerUpdateName]
+			   ,[AllSize]
+			   ,[PhaseID]
+			   ,[SMNoticeID]
+			   ,[MarkerVersion]
+			   ,[Direction]
+			   ,[CuttingWidth]
+			   ,[Width]
+			   ,[TYPE]
+			   ,[AddName]
+			   ,[AddDate]
+			   ,[EditName]
+			   ,[EditDate]
+			   ,[isQT]
+			   ,[MarkerDownloadID])
+	select
+				oe.[Id]
+			   ,oe.[Ukey]
+			   ,oe.[Seq]
+			   ,oe.[MarkerName]
+			   ,oe.[FabricCombo]
+			   ,oe.[MarkerLength]
+			   ,oe.[FabricPanelCode]
+			   ,oe.[ConsPC]
+			   ,oe.[CuttingPiece]
+			   ,oe.[ActCuttingPerimeter]
+			   ,oe.[StraightLength]
+			   ,oe.[FabricCode]
+			   ,oe.[CurvedLength]
+			   ,oe.[Efficiency]
+			   ,oe.[Article]
+			   ,oe.[Remark]
+			   ,oe.[MixedSizeMarker]
+			   ,oe.[MarkerNo]
+			   ,oe.[MarkerUpdate]
+			   ,oe.[MarkerUpdateName]
+			   ,oe.[AllSize]
+			   ,oe.[PhaseID]
+			   ,oe.[SMNoticeID]
+			   ,oe.[MarkerVersion]
+			   ,oe.[Direction]
+			   ,oe.[CuttingWidth]
+			   ,oe.[Width]
+			   ,oe.[TYPE]
+			   ,oe.[AddName]
+			   ,oe.[AddDate]
+			   ,oe.[EditName]
+			   ,oe.[EditDate]
+			   ,oe.[isQT]
+			   ,oe.[MarkerDownloadID]
+	from [Order_EachCons] oe
+	where exists(select 1 from #tmp_order t where t.POID = oe.id)
+	
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.[Order_EachCons_Color]	
+	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[Order_EachCons_Color]	
+			   ([Id]
+			   ,[Order_EachConsUkey]
+			   ,[Ukey]
+			   ,[ColorID]
+			   ,[CutQty]
+			   ,[Layer]
+			   ,[Orderqty]
+			   ,[SizeList]
+			   ,[Variance]
+			   ,[YDS])
+	select
+				oec.[Id]
+			   ,oec.[Order_EachConsUkey]
+			   ,oec.[Ukey]
+			   ,oec.[ColorID]
+			   ,oec.[CutQty]
+			   ,oec.[Layer]
+			   ,oec.[Orderqty]
+			   ,oec.[SizeList]
+			   ,oec.[Variance]
+			   ,oec.[YDS]
+	from [Order_EachCons_Color]	oec
+	where exists(select 1 from #tmp_order t where t.POID = oec.id)
 
 	delete [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess
 	insert into [RFID_Middle].[PMS_TO_RFID].dbo.SubProcess(Id			  ,
@@ -474,6 +572,160 @@ select	ob.Id		  ,
 						InOutRule
 				from #tmp_SubProcess
 
+				
+------[WorkOrder]
+	select distinct w.[Ukey]
+	into #tmpWorkOrderUkey
+	from #tmp_order t
+	inner join WorkOrder w on w.ID = t.POID
+
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder]
+	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder]
+			   ([Ukey]
+			   ,[CuttingID]
+			   ,[FactoryID]
+			   ,[MDivisionId]
+			   ,[CutRef]
+			   ,[Cutno]
+			   ,[Markername]
+			   ,[FabricCombo]
+			   ,[FabricPanelCode]
+			   ,[Article]
+			   ,[Colorid]
+			   ,[Layers]
+			   ,[CutQty]
+			   ,[OrderID]
+			   ,[SEQ1]
+			   ,[SEQ2]
+			   ,[Fabeta]
+			   ,[WKETA]
+			   ,[EstCutDate]
+			   ,[SpreadingNoID]
+			   ,[CutCellid]
+			   ,[Shift]
+			   ,[CutplanID]
+			   ,[ActCutDate]
+			   ,[EditDate]
+			   ,[EditName]
+			   ,[AddDate]
+			   ,[AddName]
+			   ,[MarkerNo]
+			   ,[MarkerVersion]
+			   ,[MarkerDownLoadId]
+			   ,[EachconsMarkerNo]
+			   ,[EachconsMarkerDownloadID]
+			   ,[EachconsMarkerVersion]
+			   ,[ActCuttingPerimeterNew]
+			   ,[StraightLengthNew]
+			   ,[CurvedLengthNew])
+	select
+		w.[Ukey]
+		,w.ID
+		,w.[FactoryID]
+		,w.[MDivisionId]
+		,w.[CutRef]
+		,w.[Cutno]
+		,w.[Markername]
+		,w.[FabricCombo]
+		,w.[FabricPanelCode]
+		,article.article
+		,w.[Colorid]
+		,w.Layer
+		,CutQty.CutQty
+		,w.[OrderID]
+		,w.[SEQ1]
+		,w.[SEQ2]
+		,fabeta.fabeta
+		,w.[WKETA]
+		,w.[EstCutDate]
+		,w.[SpreadingNoID]
+		,w.[CutCellid]
+		,w.[Shift]
+		,w.[CutplanID]
+		,actcutdate.actcutdate
+		,w.[EditDate]
+		,w.[EditName]
+		,w.[AddDate]
+		,w.[AddName]
+		,w.[MarkerNo]
+		,w.[MarkerVersion]
+		,w.[MarkerDownLoadId]
+		,[EachconsMarkerNo] = oe.MarkerNo
+		,[EachconsMarkerDownloadID] = oe.[MarkerVersion]
+		,[EachconsMarkerVersion]  = oe.[MarkerVersion]
+		,w.ActCuttingPerimeter
+		,w.[StraightLength]
+		,w.[CurvedLength]
+	from #tmpWorkOrderUkey t
+	inner join WorkOrder w on w.Ukey = t.Ukey
+	left join Order_EachCons oe on oe.Ukey = w.Order_EachconsUkey
+	outer apply
+	(
+		select article = stuff(
+		(
+			Select distinct concat('/' ,Article)
+			From WorkOrder_Distribute b WITH (NOLOCK) 
+			Where b.workorderukey = w.Ukey and b.article!=''
+			For XML path('')
+		),1,1,'')
+	) as article
+	outer apply
+	(
+		select CutQty = stuff(
+		(
+			Select concat(', ', c.sizecode, '/ ', c.qty * w.layer)
+			From WorkOrder_SizeRatio c WITH (NOLOCK) 
+			Where  c.WorkOrderUkey =w.Ukey 
+			For XML path('')
+		),1,1,'')
+	) as CutQty
+	outer apply
+	(
+		Select fabeta = iif(e.Complete=1, e.FinalETA, iif(e.Eta is not null, e.eta, iif(e.shipeta is not null, e.shipeta,e.finaletd)))
+		From PO_Supp_Detail e WITH (NOLOCK) 
+		Where e.id = (Select distinct poid from orders WITH (NOLOCK) where orders.cuttingsp = w.ID) and e.seq1 = w.seq1 and e.seq2 = w.seq2
+	) as fabeta
+	outer apply
+	(
+		Select actcutdate = iif(sum(cut_b.Layer) = w.Layer, Max(cut.cdate),null)
+		From cuttingoutput cut WITH (NOLOCK) 
+		inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
+		Where cut_b.workorderukey = w.Ukey and cut.Status != 'New' 
+	)  as actcutdate
+		
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder_Distribute]
+	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder_Distribute]
+			   ([WorkOrderUkey]
+			   ,[CuttingID]
+			   ,[OrderID]
+			   ,[Article]
+			   ,[SizeCode]
+			   ,[Qty])
+	select
+		[WorkOrderUkey]
+		,ID
+		,[OrderID]
+		,[Article]
+		,[SizeCode]
+		,[Qty]
+	from [WorkOrder_Distribute] wd
+	inner join #tmpWorkOrderUkey t on t.Ukey = wd.WorkOrderUkey
+	
+	delete [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder_SizeRatio]
+	INSERT INTO [RFID_Middle].[PMS_TO_RFID].dbo.[WorkOrder_SizeRatio]
+			   ([WorkOrderUkey]
+			   ,[CuttingID]
+			   ,[SizeCode]
+			   ,[Qty])
+	select
+		[WorkOrderUkey]
+		,ID
+		,[SizeCode]
+		,[Qty]
+	from [WorkOrder_SizeRatio] wd
+	inner join #tmpWorkOrderUkey t on t.Ukey = wd.WorkOrderUkey
+
+
  --commit
 
 
@@ -483,4 +735,5 @@ drop table #tmp_order, #tmp_order_Qty
  , #tmp_SubProcess, #tmp_Machine
  , #tmp_bof, #tmp_boa
  , #tmpOrder_ColorCombo
+ , #tmpWorkOrderUkey
 end
