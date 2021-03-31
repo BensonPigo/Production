@@ -934,7 +934,7 @@ select lt2.Id
 ,lt2.Ukey
 ,lt2.StockType
 ,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
 inner join #tmp lt on lt.Id=lt2.Id
@@ -1329,7 +1329,7 @@ SELECT [ID] = rd.id
 ,[IsInspection] = convert(bit, 0)
 ,[ETA] = r.ETA
 ,[WhseArrival] = r.WhseArrival
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[Barcode] = Barcode.value
 ,rd.SentToWMS,rd.CompleteTime
 FROM Production.dbo.Receiving_Detail rd
@@ -1375,7 +1375,7 @@ SELECT [ID] = rd.id
 ,[Roll] = rd.Roll
 ,[Dyelot] = rd.Dyelot
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
-,[StockQty] = rd.Qty
+,[StockQty] = {strQty}
 ,[PoUnit] = po3.PoUnit
 ,[ShipQty] = rd.Qty
 ,[Weight] = rd.Weight
@@ -1384,7 +1384,7 @@ SELECT [ID] = rd.id
 ,[IsInspection] = convert(bit, 0)
 ,[ETA] = null
 ,[WhseArrival] = r.IssueDate
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[Barcode] = Barcode.value
 ,rd.SentToWMS,rd.CompleteTime
 FROM Production.dbo.TransferIn_Detail rd
@@ -1461,7 +1461,7 @@ select distinct
 ,[Ukey] = i2.ukey
 ,CmdTime = GetDate()
 ,[Qty] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.Id=i.Id
@@ -1505,7 +1505,7 @@ select distinct
 ,[NewBarcode] = NewBarcode.value
 ,[Ukey] = i2.Ukey
 ,[Qty] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.IssueLack_Detail i2
@@ -1549,7 +1549,7 @@ select distinct
 ,[NewBarcode] = NewBarcode.value
 ,[Ukey] = i2.ukey
 ,[Qty] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.TransferOut_Detail i2
@@ -1631,7 +1631,7 @@ select distinct
                  ,IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
                  ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,[Qty] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,sd.SentToWMS,sd.CompleteTime
 ,sd.ukey
@@ -1731,7 +1731,7 @@ select rrd.Id
 ,rrd.Ukey
 ,[Barcode] = Barcode.value
 ,[Qty] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
 ,rrd.SentToWMS,rrd.CompleteTime
 from ReturnReceipt_Detail rrd
@@ -1802,7 +1802,7 @@ select distinct
                  ,IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
                  ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,bb2.Ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,bb2.SentToWMS,bb2.CompleteTime
 from Production.dbo.BorrowBack_Detail bb2
@@ -1899,9 +1899,9 @@ select distinct
 ,[Ukey] = i2.ukey
 ,[StockType] = i2.StockType
 ,[QtyBefore] = i2.QtyBefore
-,[Barcode] = f.Barcode
+,[Barcode] = Barcode.value
 ,[QtyAfter] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 ,i2.SentToWMS,i2.CompleteTime
 from Production.dbo.Adjust_Detail i2
@@ -1912,6 +1912,11 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
     and f.StockType = i2.StockType
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
 where 1=1 
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 

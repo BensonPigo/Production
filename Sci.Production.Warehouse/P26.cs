@@ -368,7 +368,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
             // AutoWHFabric WebAPI for Gensong
             if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                Task.Run(() => new Gensong_AutoWHFabric().SentLocationTrans_Detail_New(dt))
+                Task.Run(() => new Gensong_AutoWHFabric().SentLocationTrans_Detail_New(dt, "New"))
                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
 
