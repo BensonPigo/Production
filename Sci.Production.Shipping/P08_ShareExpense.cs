@@ -865,12 +865,13 @@ where sd.ID = '{this.apData["ID"]}'and (sd.AccountID = '61022001' or sd.AccountI
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
 
                 // 取得AccountNo
-                string accNo = MyUtility.GetValue.Lookup($@"
-select sd.AccountID 
+                string sqlCmd = $@"
+select distinct sd.AccountID 
 from ShippingAP_Detail sd WITH (NOLOCK)
 where sd.ID = '{this.apData["ID"]}'
 and sd.AccountID != ''
-and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)");
+and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1)";
+                DBProxy.Current.Select(null, sqlCmd, out DataTable dtAccNo);
 
                 List<CheckResult> listCheckResult = new List<CheckResult>();
                 StringBuilder msg = new StringBuilder();
@@ -1005,6 +1006,7 @@ Orders (Seq) :";
                 #region 將資料寫入Table
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
+                IList<string> updateCmds = new List<string>();
 
                 // Junk實體資料
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
@@ -1028,12 +1030,16 @@ where   s.ShippingAPID = '{0}'
                 // 新增實體資料
                 foreach (DataRow dr in this.SEGroupData.Rows)
                 {
+                    /* 原流程改變
+                     * 以前利用 SP [CalculateShareExpense]新增沒加到會科，所以通常只新增一筆資料。
+                     * 現在 ISP20210406 新規則導致，在新增時就要帶入所有會用到的會科
+                     */
                     if (dr.RowState == DataRowState.Added)
                     {
                         addCmds.Add(string.Format(
                             @"
 merge ShareExpense t
-using (select '{0}', '{2}', '{3}') as s (ShippingAPID, WKNO, InvNo)
+using (select [ShippingAPID] = '{0}', [WKNO] = '{2}', [InvNo] = '{3}', AccountID from #tmp) as s
 on	t.ShippingAPID = s.ShippingAPID 	
 	and t.WKNO = s.WKNO
 	and t.InvNo = s.InvNo
@@ -1044,7 +1050,9 @@ when matched then
     , CBM = {6} 
 when not matched then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values ('{0}', '{1}', '{2}', '{3}', '{4}', {5}, {6}, '{7}', '{8}', {9}, '{10}', 0);",
+	values (s.ShippingAPID, '{1}', s.WKNO, s.InvNo, '{4}', {5}, {6}, '{7}', '{8}', {9}, s.AccountID, 0);
+
+drop table #tmp;",
                             MyUtility.Convert.GetString(this.apData["ID"]),
                             MyUtility.Convert.GetString(dr["BLNo"]),
                             MyUtility.Convert.GetString(dr["WKNo"]),
@@ -1054,13 +1062,12 @@ when not matched then
                             MyUtility.Convert.GetString(dr["CBM"]),
                             MyUtility.Convert.GetString(this.apData["CurrencyID"]),
                             MyUtility.Convert.GetString(dr["ShipModeID"]),
-                            MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0",
-                            accNo));
+                            MyUtility.Convert.GetString(dr["FtyWK"]) == "True" ? "1" : "0"));
                     }
 
                     if (dr.RowState == DataRowState.Modified)
                     {
-                        addCmds.Add(string.Format(
+                        updateCmds.Add(string.Format(
                             @"
 update ShareExpense 
 set ShipModeID = '{0}'
@@ -1106,7 +1113,24 @@ where   ShippingAPID = '{3}'
 
                         if (addCmds.Count != 0)
                         {
-                            result1 = DBProxy.Current.ExecutesByConn(sqlConn, addCmds);
+                            foreach (string addCmd in addCmds)
+                            {
+                                result1 = MyUtility.Tool.ProcessWithDatatable(dtAccNo, "AccountID", addCmd, out DataTable dt2, conn: sqlConn);
+                                if (result1)
+                                {
+                                    lastResult = lastResult && true;
+                                }
+                                else
+                                {
+                                    lastResult = false;
+                                    errmsg = errmsg + result1.ToString() + "\r\n";
+                                }
+                            }
+                        }
+
+                        if (updateCmds.Count != 0)
+                        {
+                            result1 = DBProxy.Current.ExecutesByConn(sqlConn, updateCmds);
                             if (result1)
                             {
                                 lastResult = lastResult && true;
