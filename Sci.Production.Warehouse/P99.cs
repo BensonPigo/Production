@@ -2718,16 +2718,6 @@ inner join #tmp s on t.id = s.id
                                 default:
                                     break;
                             }
-
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
-                            {
-                                return;
-                            }
-
-                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
-                            {
-                                return;
-                            }
                         }
                         #endregion
 
@@ -3088,12 +3078,12 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #region 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
                             {
                                 return;
                             }
 
-                            if (!Gensong_AutoWHFabric.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
                             {
                                 return;
                             }
