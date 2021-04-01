@@ -135,6 +135,7 @@ namespace Sci.Production.PPIC
                     FontName = "Times New Roman",
                     FontSize = 14,
                 };
+
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_NOW", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_MAKER", drvar["MAKER"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_STYLENO", drvar["sty"].ToString());
@@ -144,6 +145,7 @@ namespace Sci.Production.PPIC
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_SI", drvar["SI"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Siname", string.IsNullOrEmpty(drvar["Customize2"].ToString()) ? string.Empty : drvar["Customize2"].ToString() + ":");
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_pono", drvar["pono"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "PO_First_Update", drvar["MnorderApv"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate", drvar["delDate"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "PO_ChangeMemoDate", drvar["ChangeMemoDate"] == DBNull.Value ? string.Empty : drvar["ChangeMemoDate"]);
                 DualResult res = DBProxy.Current.SelectSP(string.Empty, "PPIC_Report_SizeSpec", new List<SqlParameter> { new SqlParameter("@ID", poid), new SqlParameter("@WithZ", this.checkAdditionally.Checked), new SqlParameter("@fullsize", 1) }, out System.Data.DataTable[] dts);
@@ -340,6 +342,7 @@ order by ID";
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_SI" + idxStr, drvar["SI"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "Siname" + idxStr, string.IsNullOrEmpty(drvar["Customize2"].ToString()) ? string.Empty : drvar["Customize2"].ToString() + ":");
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_First_Update" + idxStr, drvar["MnorderApv"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "PO_delDate" + idxStr, drvar["delDate"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "sname1" + idxStr, orderComboID + "-1");
                     sxr.DicDatas.Add(sxr.VPrefix + "sname2" + idxStr, orderComboID + "-2");
@@ -619,6 +622,7 @@ order by ID";
                     sxr.DicDatas.Add(sxr.VPrefix + "CustCD" + idxStr, drvar["CustCD"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "SIno" + idxStr, drvar["SI"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "pono" + idxStr, drvar["pono"].ToString());
+                    sxr.DicDatas.Add(sxr.VPrefix + "PO_First_Update" + idxStr, drvar["MnorderApv"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "delDate" + idxStr, drvar["delDate"]);
                     sxr.DicDatas.Add(sxr.VPrefix + "coms1" + idxStr, drvar["Customize1"].ToString());
                     sxr.DicDatas.Add(sxr.VPrefix + "Siname" + idxStr, string.IsNullOrEmpty(drvar["Customize2"].ToString()) ? string.Empty : drvar["Customize2"].ToString() + ":");
@@ -811,6 +815,7 @@ SELECT MAKER=max(FactoryID)
 ,'SPNO'=RTRIM(POID)+b.spno 
 ,(select CustCDID from orders o where o.ID = @ID) as CustCD
 ,(select CustPONo from orders o where o.ID = @ID) as pono
+,(select MnorderApv from orders o where o.ID = @ID) as MnorderApv
 ,(select BuyerDelivery from orders o where o.ID = @ID) as delDate
 ,(select Customize1 from orders o where o.ID = @ID) as Customize1
 ,(select Customize2 from Orders o where o.ID = @ID) AS SI
@@ -844,6 +849,7 @@ SELECT
 ,'SPNO'=RTRIM(POID)+b.spno
 ,(select CustCDID from Orders o where o.ID = @ID) as CustCD
 ,(select CustPONo from Orders o where o.ID = @ID) as pono
+,(select MnorderApv from orders o where o.ID = @ID) as MnorderApv
 ,(select BuyerDelivery from Orders o where o.ID = @ID) as delDate
 ,(select Customize1 from Orders o where o.ID = @ID) as Customize1 
 ,(select Customize2 from Orders o where o.ID = @ID) AS SI
