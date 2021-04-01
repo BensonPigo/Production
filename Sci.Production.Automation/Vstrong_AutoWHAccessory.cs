@@ -919,7 +919,7 @@ select lt2.Id
 ,[MtlType] = Fabric.MtlTypeID
 ,lt2.Ukey
 ,lt2.StockType
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[CmdTime] = GETDATE()
 from LocationTrans_detail lt2
@@ -1278,7 +1278,7 @@ and exists(
 ,[Ukey] = rd.Ukey
 ,[ETA] = iif('{formName}' = 'P07',r.ETA,null)
 ,[WhseArrival] = iif('{formName}' = 'P07',r.WhseArrival,null)
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 {Environment.NewLine + strBody}
@@ -1326,7 +1326,7 @@ SELECT
 ,[Ukey] = rd.Ukey
 ,[ETA] = null
 ,[WhseArrival] = r.IssueDate
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 FROM Production.dbo.TransferIn_Detail rd
 inner join TransferIn r on rd.ID=r.Id
 {Environment.NewLine + strBody}
@@ -1402,7 +1402,7 @@ select distinct
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
 ,[Ukey] = i2.ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.Issue_Detail i2
 inner join Production.dbo.Issue i on i2.id = i.id
@@ -1436,7 +1436,7 @@ select distinct
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
 ,[Ukey] = i2.ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.IssueLack_Detail i2
 inner join Production.dbo.IssueLack i on i2.id = i.id
@@ -1470,7 +1470,7 @@ select distinct
 ,[StockSeq1] = po3.StockSeq1
 ,[StockSeq2] = po3.StockSeq2
 ,[Ukey] = i2.ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.TransferOut_Detail i2
 inner join Production.dbo.TransferOut i on i2.id = i.id
@@ -1538,7 +1538,7 @@ select distinct
 ,[Qty]  = {strQty}
 ,[Ukey] = i2.ukey
 ,i2.StockType
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.Adjust_Detail i2
 inner join Production.dbo.Adjust i on i2.id = i.id
@@ -1600,7 +1600,7 @@ select distinct
 ,[ToLocation] = sd.ToLocation
 ,[Qty] = {strQty}
 ,sd.Ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.SubTransfer_Detail sd
 inner join Production.dbo.SubTransfer s on s.id = sd.id
@@ -1676,7 +1676,7 @@ select rrd.Id
 ,[Qty] = {strQty}
 ,rrd.StockType
 ,rrd.Ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
 from ReturnReceipt_Detail rrd
 inner join Production.dbo.ReturnReceipt rr on rr.id = rrd.id
@@ -1742,7 +1742,7 @@ select distinct
 ,[MtlType] = Fabric.MtlTypeID
 ,[Qty] = {strQty}
 ,bb2.Ukey
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.BorrowBack_Detail bb2
 inner join Production.dbo.BorrowBack bb on bb.id = bb2.id
@@ -1825,7 +1825,7 @@ select distinct
 ,[StockType] = i2.StockType
 ,[QtyBefore] = i2.QtyBefore
 ,[QtyAfter] = {strQty}
-,[Status] = iif('{status}' = 'UnConfirmed', 'delete' ,'{status}')
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
 from Production.dbo.Adjust_Detail i2
 inner join Production.dbo.Adjust i on i.id = i2.id
