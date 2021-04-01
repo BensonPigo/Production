@@ -225,6 +225,7 @@ namespace Sci.Production.Automation
             }
             else if (saveAllmsg)
             {
+                automationErrMsg.json = jsonBody;
                 SaveAutomationCheckMsg(automationErrMsg);
             }
 
