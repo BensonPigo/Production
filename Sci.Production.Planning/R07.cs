@@ -153,7 +153,7 @@ namespace Sci.Production.Planning
             Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   // Sintex Eff Report Compare
             Excel.Worksheet objSheets3 = objApp.ActiveWorkbook.Worksheets[3];   // Adidas data
 
-            objApp.Visible = true;
+            objApp.Visible = false;
             if (this.radioDetail.Checked)
             {
                 this.SetExcelSheet1(objApp, objSheets1, this.printData[0]);
@@ -333,7 +333,6 @@ namespace Sci.Production.Planning
                 objSheets.Cells[i + 3, 2] = sessions[i];
             }
 
-            int row = sessions.Count + 3;
             for (int i = 0; i <= countrys.Count - 1; i++)
             {
                 objSheets.Cells[1, (i + 1) * 3] = countrys[i];
@@ -393,7 +392,7 @@ namespace Sci.Production.Planning
             #endregion
 
             #region 下半部
-            int initR = 13;
+            int initR = sessions.Count + 6;
             int initC = 2;
             int initI = 0;
             string initCountry = string.Empty;
