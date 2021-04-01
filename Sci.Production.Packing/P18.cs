@@ -1183,9 +1183,26 @@ WHERE o.ID='{dr.OrderID}'");
             }
         }
 
+        /// <inheritdoc/>
+        public static string P18_PackingError { get; set; }
+
+        /// <inheritdoc/>
+        public static int P18_PackingErrorQty { get; set; }
+
+        /// <inheritdoc/>
+        public static string P18_PackingAuditQC { get; set; }
+
         private void BtnLacking_Click(object sender, EventArgs e)
         {
-            this.UpdateLackingStatus();
+            var frm = new P18_PackingError();
+            if (frm.ShowDialog() == DialogResult.OK)
+            {
+                this.UpdateLackingStatus();
+            }
+
+            P18_PackingError = string.Empty;
+            P18_PackingErrorQty = 0;
+            P18_PackingAuditQC = string.Empty;
         }
 
         private void UpdateLackingStatus()
@@ -1220,6 +1237,9 @@ ScanQty = {(MyUtility.Check.Empty(dr["ScanQty"]) ? "0" : dr["ScanQty"])}
 , ScanName = '{Env.User.UserID}'   
 , Lacking = 1
 , BarCode = '{dr["Barcode"]}'
+, PackingReasonERID = '{P18_PackingError}'
+, ErrQty = '{P18_PackingErrorQty}'
+, AuditQCName = '{P18_PackingAuditQC}'
 output	inserted.ID
 into #tmpUpdatedID
 where Ukey={dr["Ukey"]}
@@ -1246,7 +1266,7 @@ drop table #tmpUpdatedID
 
                 this.AfterCompleteScanCarton();
 
-                MyUtility.Msg.InfoBox("Lacking successfully!!");
+                MyUtility.Msg.InfoBox("successfully!!");
             }
             else
             {

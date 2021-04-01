@@ -282,6 +282,9 @@ select
     ,[Scan Name] = dbo.getPass1_ExtNo(pld.ScanName)
     ,[Actual CTN Weight] = pld.ActCTNWeight
 	,[Lacking] = pld.Lacking
+    ,PackingError = concat(pr.ID,'-' + pr.Description)
+    ,pld.ErrQty
+    ,pld.AuditQCName
 INTO #TMP
 from PackingList_Detail pld with (nolock)
 inner join PackingList pl with (nolock) on pl.ID = pld.ID
@@ -289,6 +292,7 @@ inner join  Orders o with (nolock) on o.id = pld.OrderID
 INNER JOIN Order_QtyShip oq with (nolock) ON pld.OrderID = oq.ID AND pld.OrderShipModeSeq = oq.Seq
 left join Brand b with (nolock) on b.ID = pl.BrandID
 left join CustCD c with (nolock) on c.ID = o.CustCDID and c.BrandID = o.BrandID and c.Junk != 1
+left join PackingReason pr on pr.ID = pld.PackingReasonERID and pr.type = 'ER'
 where 1=1 
 {0}
 
@@ -301,6 +305,9 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewinglin
 	,[PC/CTN] = c5.QtyPerCTN
 	,[QTY] = SUM(t.Qty)
 	,[PC/CTN Scanned] = c6.ScanQty
+    ,PackingError
+    ,ErrQty
+    ,AuditQCName
     ,[Actual CTN Weight] = MAX([Actual CTN Weight])
 	,[Ref. Barcode] = c7.Barcode
 	,[Scan Date]
@@ -309,7 +316,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewinglin
 					   then 'Complete' 
 					   else 'Not Complete' end
 	,[Lacking] = iif(lacking=1,'Y','N')
-	,[Lacking Qty] = isnull( LackingQty.Qty,0)
+	,[Lacking Qty] = isnull( LackingQty.Qty,0)    
 FROM #TMP T
 outer apply(
 	select colorway = stuff((
@@ -374,6 +381,9 @@ outer apply(
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season], [Sewingline]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
 	,[CTN#],[CTN Barcode]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,Lacking,LackingQty.Qty
     ,[BuyerDelivery]
+    ,PackingError
+    ,ErrQty
+    ,AuditQCName
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
 ", sqlwhere.ToString());
