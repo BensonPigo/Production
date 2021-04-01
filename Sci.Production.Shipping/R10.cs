@@ -2821,46 +2821,54 @@ FOR AccountID IN ({account})) a
 
             if (factoryID == "PHI")
             {
+                reportData.A_61092102 = MyUtility.Convert.GetDecimal(reportData.A_59122102) + MyUtility.Convert.GetDecimal(reportData.A_61052102);
                 reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
                 reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
-                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001);
-                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "PH2")
             {
                 reportData.A_61022003 = MyUtility.Convert.GetDecimal(reportData.A_61022003) + MyUtility.Convert.GetDecimal(reportData.A_61012003);
-                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001);
-                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "ESP")
             {
                 reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
                 reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
-                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001);
-                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "SNP")
             {
-                // 無異動
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "SPT")
             {
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
                 reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
                 reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "SPR")
             {
-                // 無異動
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092105 = MyUtility.Convert.GetDecimal(reportData.A_61092105) + MyUtility.Convert.GetDecimal(reportData.A_61052105);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "SPS")
             {
-                reportData.A_61092105 = MyUtility.Convert.GetDecimal(reportData.A_61092105) + MyUtility.Convert.GetDecimal(reportData.A_61092005);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092105 = MyUtility.Convert.GetDecimal(reportData.A_61092105) + MyUtility.Convert.GetDecimal(reportData.A_61092005) + MyUtility.Convert.GetDecimal(reportData.A_61052105);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
             }
 
             if (factoryID == "HXG")
