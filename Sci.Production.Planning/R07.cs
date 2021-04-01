@@ -153,7 +153,7 @@ namespace Sci.Production.Planning
             Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   // Sintex Eff Report Compare
             Excel.Worksheet objSheets3 = objApp.ActiveWorkbook.Worksheets[3];   // Adidas data
 
-            objApp.Visible = false;
+            objApp.Visible = true;
             if (this.radioDetail.Checked)
             {
                 this.SetExcelSheet1(objApp, objSheets1, this.printData[0]);
@@ -321,17 +321,19 @@ namespace Sci.Production.Planning
 
             #region 上半部
 
+            for (int i = 1; i < sessions.Count; i++)
+            {
+                Excel.Range r = objSheets.get_Range($"A3", Type.Missing).EntireRow;
+                r.Copy();
+                r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
+            }
+
             for (int i = 0; i <= sessions.Count - 1; i++)
             {
-                if (i > 0)
-                {
-                    objSheets.get_Range(string.Format("B{0}", i + 2)).Copy();
-                    objSheets.get_Range(string.Format("B{0}", i + 3)).PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
-                }
-
                 objSheets.Cells[i + 3, 2] = sessions[i];
             }
 
+            int row = sessions.Count + 3;
             for (int i = 0; i <= countrys.Count - 1; i++)
             {
                 objSheets.Cells[1, (i + 1) * 3] = countrys[i];
@@ -384,6 +386,7 @@ namespace Sci.Production.Planning
                     objArrayTop[0, 1] = querySessionRow != null && querySessionRow.SIOEff.HasValue ? querySessionRow.SIOEff : 0;
                     objArrayTop[0, 2] = string.Format("=IFERROR({0}{2}-{1}{2}, \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 1), MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), j + 3);
                     objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].Value2 = objArrayTop;
+                    objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].NumberFormat = "##.##%";
                 }
             }
 
