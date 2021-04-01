@@ -1,10 +1,13 @@
 ﻿using Bytescout.BarCodeReader;
 using Ict;
 using Ict.Win;
+using PQScan.PDFToImage;
 using Sci.Data;
 using Sci.Production.Automation;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
+//using Spire.Pdf;
+//using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -973,6 +976,7 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                             idx++;
                         }
 
+                        // 為了得知圖片該寫進哪個Seq，因此Select出剛剛寫的東西，用Packing ID + SCICtnNo去對應
                         DataTable dt_ShippingMarkPic_Detail;
                         string cc = $@"
 select a.PackingListID
@@ -993,7 +997,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         List<string> sQLs = new List<string>();
                         List<List<string>> sQLList = new List<List<string>>();
                         List<byte[]> images = new List<byte[]>();
-                        int idxx = 0;
+                        int counter = 0;
 
                         int rank = 0;
                         string currentSCICtnNo = string.Empty;
@@ -1022,22 +1026,23 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             {
                                 foreach (var item in barcodeObjs)
                                 {
-                                    string cmd = this.InsertImageToDatabase_List(idxx.ToString(), item.Image, packID, sCICtnNo, rank.ToString());
+                                    string cmd = this.InsertImageToDatabase_List(counter.ToString(), item.Image, packID, sCICtnNo, rank.ToString());
                                     filenamee.Add(barcode);
                                     sQLs.Add(cmd);
                                     images.Add(item.Image);
                                     rank++;
-                                    idxx++;
+                                    counter++;
                                 }
                             }
                             else
                             {
-                                PdfDocument doc = new PdfDocument();
-                                doc.LoadFromFile(barcodeObj.FullFileName);
-                                Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
 
                                 byte[] pDFImage = null;
 
+                                // 原套件
+                                PdfDocument doc = new PdfDocument();
+                                doc.LoadFromFile(barcodeObj.FullFileName);
+                                Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
                                 // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
                                 Bitmap pic = new Bitmap(bmp);
 
@@ -1053,18 +1058,40 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                                 bmp.Dispose();
                                 pic.Dispose();
 
-                                string cmd = this.InsertImageToDatabase_List(idxx.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
+                                /*
+                                // 新套件
+                                PDFDocument pdfDoc = new PDFDocument();
+                                pdfDoc.LoadPDF(barcodeObj.FullFileName);
+                                pdfDoc.DPI = 230;
+                                Bitmap pic = pdfDoc.ToImage(0);
+
+                                // 準備要寫入DB的資料
+                                using (var stream = new MemoryStream())
+                                {
+                                    pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                    pDFImage = stream.ToArray();
+                                }
+
+                                pic.Dispose();
+                                pdfDoc.Dispose();
+                                */
+
+                                string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
                                 filenamee.Add(barcode);
                                 sQLs.Add(cmd);
                                 images.Add(pDFImage);
-                                idxx++;
+                                counter++;
                             }
                         }
 
                         int idxw = 0;
                         List<SqlParameter> para = new List<SqlParameter>();
+
+                        // 組合寫入圖片的SQL
                         string finalSQL = string.Empty;
-                        int limit = 20;
+
+                        // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
+                        int sqlParameterLimit = 500;
                         int limitCounter = 0;
 
                         List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
@@ -1082,7 +1109,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             idxw++;
 
                             limitCounter += 2;
-                            if (limitCounter >= limit || total == sQLs.Count)
+                            if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
                             {
                                 result = DBProxy.Current.Execute(null, finalSQL, para);
                                 if (!result)
@@ -1783,7 +1810,7 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
                 }
             }
         }
-
+        /*
         /// <summary>
         /// 將PDF文件轉換為圖片的方法
         /// </summary>
@@ -1854,7 +1881,7 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
             // 寫入DB
             this.InsertImageToDatabase(imageName, "1", data);
         }
-
+        */
         private int imageIdx = 0;
         /// <summary>
         /// 寫入Image欄位
