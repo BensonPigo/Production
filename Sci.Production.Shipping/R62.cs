@@ -85,10 +85,10 @@ select [Shipper] = g.Shipper
 			else '' end
      , [Qty(By SP)] = isnull(kdd.ShipModeSeqQty, pld.ShipQty)
      , [CTN(By SP)] = isnull(kdd.CTNQty, pld.CTNQty)
-     , [FOB] = isnull(kdd.POPrice * isnull(OL.rate, 1) / 100, r.FOB)
-	 , [Ttl FOB] = isnull(kdd.ShipModeSeqQty * kdd.POPrice * isnull(OL.rate, 1) / 100,  r.FOB * pld.ShipQty)
-	 , [Act Ttl FOB] = isnull(kdd.ActTtlPOPrice * isnull(OL.rate, 1) / 100,  r.FOB * pld.ShipQty)
-	 , [DiffTtlFOB] = isnull(kdd.ActTtlPOPrice * isnull(OL.rate, 1) / 100,  r.FOB * pld.ShipQty) - isnull(kdd.ShipModeSeqQty * kdd.POPrice * isnull(OL.rate, 1) / 100,  r.FOB * pld.ShipQty)
+     , [FOB] = isnull(kdd.POPrice, r.FOB)
+	 , [Ttl FOB] = isnull(kdd.ShipModeSeqQty * kdd.POPrice,  r.FOB * pld.ShipQty)
+	 , [Act Ttl FOB] = isnull(kdd.ActTtlPOPrice,  r.FOB * pld.ShipQty)
+	 , [DiffTtlFOB] = isnull(kdd.ActTtlPOPrice,  r.FOB * pld.ShipQty) - isnull(kdd.ShipModeSeqQty * kdd.POPrice,  r.FOB * pld.ShipQty)
      , [Local Inv#] = kdd.LocalINVNO 
      , [Description] = kdd.Description 
      , [HS Code] = kdd.HSCode 
@@ -105,14 +105,14 @@ select [Shipper] = g.Shipper
 	 , [Dest] = g.Dest
 	 , [Continent] = c.Continent+'-'+c.NameEN
      , [Export without declaration] = (case when g.NonDeclare = 1 then 'Y' else 'N' end) 
-	 , [NW] = isnull(kdd.NetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + (pld.NW * 0.05)) end)) * isnull(OL.rate, 1) / 100
-	 , [GW] = isnull(kdd.WeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05)) end)) * isnull(OL.rate, 1) / 100
-	 , [Act NW] = isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end)) * isnull(OL.rate, 1) / 100
-	 , [Act GW] = isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end)) * isnull(OL.rate, 1) / 100
+	 , [NW] = isnull(kdd.NetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + (pld.NW * 0.05)) end))
+	 , [GW] = isnull(kdd.WeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05)) end))
+	 , [Act NW] = isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end))
+	 , [Act GW] = isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end))
 	 , [Diff NW] = (isnull(kdd.NetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + (pld.NW * 0.05)) end)) - 
-					isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end)))* isnull(OL.rate, 1) / 100
+					isnull(kdd.ActNetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + ( pld.NW * 0.05))end)))
 	 , [Diff GW] = (isnull(kdd.WeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05)) end)) - 
-					isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end)))* isnull(OL.rate, 1) / 100
+					isnull(kdd.ActWeightKg, (case when g.ShipModeID in ('A/C','A/P') then pld.GW else (pld.GW + ( pld.GW * 0.05))end)))
 from GMTBooking g
 {where} KHExportDeclaration_Detail kdd on kdd.Invno=g.id
 {where} KHExportDeclaration kd on kd.id=kdd.id 
