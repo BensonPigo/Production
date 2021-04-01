@@ -129,7 +129,7 @@ outer apply(
 	group by pld.OrderID
 )pld
 left join Orders o on o.ID = pld.OrderID
-left join Order_Location OL on OL.OrderID = pld.OrderID
+left join Order_Location OL on OL.OrderID = pld.OrderID and ol.Location  = kdd.Location
 left join Brand b on b.ID = o.BrandID
 left join Country c on c.ID = kd.Dest
 outer apply(
