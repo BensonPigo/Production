@@ -2608,6 +2608,15 @@
     <Build Include="dbo\Tables\SpreadingSchedule_Detail.sql" />
     <Build Include="dbo\Tables\SpreadingSchedule.sql" />
     <Build Include="dbo\Functions\GetSpreadingSchedule.sql" />
+    <Build Include="dbo\Tables\SemiFinished.sql" />
+    <Build Include="dbo\Tables\SemiFinishedInventory.sql" />
+    <Build Include="dbo\Tables\SemiFinishedInventory_Location.sql" />
+    <Build Include="dbo\Tables\SemiFinishedReceiving.sql" />
+    <Build Include="dbo\Tables\SemiFinishedReceiving_Detail.sql" />
+    <Build Include="dbo\Tables\SemiFinishedIssue.sql" />
+    <Build Include="dbo\Tables\SemiFinishedIssue_Detail.sql" />
+    <Build Include="dbo\Tables\SemiFinishedAdjust.sql" />
+    <Build Include="dbo\Tables\SemiFinishedAdjust_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
