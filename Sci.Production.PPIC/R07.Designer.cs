@@ -36,28 +36,44 @@
             this.numericUpDownMonth = new Sci.Win.UI.NumericUpDown();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
+            this.comboSubProcess = new Sci.Win.UI.ComboBox();
+            this.labelSubProcess = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMonth)).BeginInit();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(317, 12);
+            this.print.Location = new System.Drawing.Point(453, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(317, 48);
+            this.toexcel.Location = new System.Drawing.Point(453, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(317, 84);
+            this.close.Location = new System.Drawing.Point(453, 84);
             this.close.TabIndex = 6;
+            // 
+            // buttonCustomized
+            // 
+            this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCustomized.Location = new System.Drawing.Point(407, 120);
+            // 
+            // checkUseCustomized
+            // 
+            this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkUseCustomized.Location = new System.Drawing.Point(433, 122);
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVersion.Location = new System.Drawing.Point(433, 120);
             // 
             // labelYear
             // 
-            this.labelYear.Lines = 0;
             this.labelYear.Location = new System.Drawing.Point(14, 12);
             this.labelYear.Name = "labelYear";
             this.labelYear.Size = new System.Drawing.Size(52, 23);
@@ -66,7 +82,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 48);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(52, 23);
@@ -75,7 +90,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 84);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(52, 23);
@@ -108,7 +122,6 @@
             // 
             // labelMonth
             // 
-            this.labelMonth.Lines = 0;
             this.labelMonth.Location = new System.Drawing.Point(183, 12);
             this.labelMonth.Name = "labelMonth";
             this.labelMonth.Size = new System.Drawing.Size(46, 23);
@@ -147,6 +160,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(69, 48);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(70, 24);
             this.comboM.TabIndex = 2;
             // 
@@ -158,12 +172,35 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(69, 84);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(70, 24);
             this.comboFactory.TabIndex = 3;
             // 
+            // comboSubProcess
+            // 
+            this.comboSubProcess.BackColor = System.Drawing.Color.White;
+            this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSubProcess.FormattingEnabled = true;
+            this.comboSubProcess.IsSupportUnselect = true;
+            this.comboSubProcess.Location = new System.Drawing.Point(106, 117);
+            this.comboSubProcess.Name = "comboSubProcess";
+            this.comboSubProcess.OldText = "";
+            this.comboSubProcess.Size = new System.Drawing.Size(165, 24);
+            this.comboSubProcess.TabIndex = 559;
+            // 
+            // labelSubProcess
+            // 
+            this.labelSubProcess.Location = new System.Drawing.Point(13, 117);
+            this.labelSubProcess.Name = "labelSubProcess";
+            this.labelSubProcess.Size = new System.Drawing.Size(90, 23);
+            this.labelSubProcess.TabIndex = 560;
+            this.labelSubProcess.Text = "Sub Process";
+            // 
             // R07
             // 
-            this.ClientSize = new System.Drawing.Size(409, 157);
+            this.ClientSize = new System.Drawing.Size(545, 190);
+            this.Controls.Add(this.comboSubProcess);
+            this.Controls.Add(this.labelSubProcess);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.numericUpDownMonth);
@@ -176,7 +213,11 @@
             this.DefaultControlForEdit = "numericUpDownYear";
             this.IsSupportToPrint = false;
             this.Name = "R07";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R07. Sewing Schedule Gantt Chart";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -188,6 +229,8 @@
             this.Controls.SetChildIndex(this.numericUpDownMonth, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.labelSubProcess, 0);
+            this.Controls.SetChildIndex(this.comboSubProcess, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMonth)).EndInit();
             this.ResumeLayout(false);
@@ -205,5 +248,7 @@
         private Win.UI.NumericUpDown numericUpDownMonth;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
+        private Win.UI.ComboBox comboSubProcess;
+        private Win.UI.Label labelSubProcess;
     }
 }

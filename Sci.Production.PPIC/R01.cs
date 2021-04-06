@@ -23,6 +23,7 @@ namespace Sci.Production.PPIC
         private string line2;
         private string brand;
         private string type;
+        private string subProcess;
         private DateTime? SewingDate1;
         private DateTime? SewingDate2;
         private DateTime? buyerDelivery1;
@@ -52,6 +53,10 @@ namespace Sci.Production.PPIC
             this.comboSummaryBy.Add("Article / Size", "Article / Size");
             this.comboSummaryBy.Add("Style, per each sewing date", "StylePerEachSewingDate");
             this.comboSummaryBy.SelectedIndex = 0;
+
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
+            MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
+            this.comboSubProcess.SelectedIndex = 0;
         }
 
         // Sewing Line
@@ -98,6 +103,7 @@ namespace Sci.Production.PPIC
             this.sciDelivery1 = this.dateSCIDelivery.Value1;
             this.sciDelivery2 = this.dateSCIDelivery.Value2;
             this.brand = this.txtbrand.Text;
+            this.subProcess = this.comboSubProcess.Text;
 
             this.type = this.comboSummaryBy.SelectedValue2.ToString();
 
@@ -273,6 +279,12 @@ namespace Sci.Production.PPIC
                     if (!MyUtility.Check.Empty(this.brand))
                     {
                         whereList += $" and o.BrandID = '{this.brand}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.subProcess))
+                    {
+                        whereList += $@"
+and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = '{this.subProcess}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) )";
                     }
                     #endregion
 
@@ -1251,7 +1263,7 @@ select  s.SewingLineID
                         ) a for xml path('')
                     ), '') as Remark
             ,o.FtyGroup
-	        ,[CDCodeNew] = o.CDCodeNew
+	        ,[CDCodeNew] = sty.CDCodeNew
 	        ,[ProductType] = sty.ProductType
 	        ,[FabricType] = sty.FabricType
 	        ,[Lining] = sty.Lining
@@ -1285,6 +1297,7 @@ select  s.SewingLineID
 		    , Lining
 		    , Gender
 		    , Construction = d1.Name
+            , s.CDCodeNew
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -1348,6 +1361,13 @@ select  s.SewingLineID
             if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.subProcess))
+            {
+                sqlCmd.Append(string.Format(
+                    @"
+and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) )", this.subProcess));
             }
             #endregion
 
@@ -1561,7 +1581,7 @@ select  s.SewingLineID
 			,s.ID
             ,o.FtyGroup
 			,[FirststCuttingOutputDate] = FirststCuttingOutputDate.Date
-	        ,[CDCodeNew] = o.CDCodeNew
+	        ,[CDCodeNew] = sty.CDCodeNew
 	        ,[ProductType] = sty.ProductType
 	        ,[FabricType] = sty.FabricType
 	        ,[Lining] = sty.Lining
@@ -1595,6 +1615,7 @@ select  s.SewingLineID
 		    , Lining
 		    , Gender
 		    , Construction = d1.Name
+            , s.CDCodeNew
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -1659,6 +1680,13 @@ select  s.SewingLineID
             if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.subProcess))
+            {
+                sqlCmd.Append(string.Format(
+                    @"
+and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) )", this.subProcess));
             }
             #endregion
 
@@ -1921,6 +1949,7 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
 
             // Brand
             sqlCmd.Append(!MyUtility.Check.Empty(this.brand) ? $" '{this.brand}'," : " '',");
+            sqlCmd.Append(!MyUtility.Check.Empty(this.subProcess) ? $" '{this.subProcess}'," : " '',");
 
             #endregion
 

@@ -49,6 +49,8 @@
             this.labSewingDate = new Sci.Win.UI.Label();
             this.chkGanttChart = new Sci.Win.UI.CheckBox();
             this.btnLastDownloadAPSDate = new Sci.Win.UI.Button();
+            this.comboSubProcess = new Sci.Win.UI.ComboBox();
+            this.labelSubProcess = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -323,9 +325,31 @@
             this.btnLastDownloadAPSDate.UseVisualStyleBackColor = true;
             this.btnLastDownloadAPSDate.Click += new System.EventHandler(this.BtnLastDownloadAPSDate_Click);
             // 
+            // comboSubProcess
+            // 
+            this.comboSubProcess.BackColor = System.Drawing.Color.White;
+            this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSubProcess.FormattingEnabled = true;
+            this.comboSubProcess.IsSupportUnselect = true;
+            this.comboSubProcess.Location = new System.Drawing.Point(114, 292);
+            this.comboSubProcess.Name = "comboSubProcess";
+            this.comboSubProcess.OldText = "";
+            this.comboSubProcess.Size = new System.Drawing.Size(165, 24);
+            this.comboSubProcess.TabIndex = 557;
+            // 
+            // labelSubProcess
+            // 
+            this.labelSubProcess.Location = new System.Drawing.Point(13, 293);
+            this.labelSubProcess.Name = "labelSubProcess";
+            this.labelSubProcess.Size = new System.Drawing.Size(97, 23);
+            this.labelSubProcess.TabIndex = 558;
+            this.labelSubProcess.Text = "Sub Process";
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(506, 339);
+            this.ClientSize = new System.Drawing.Size(506, 345);
+            this.Controls.Add(this.comboSubProcess);
+            this.Controls.Add(this.labelSubProcess);
             this.Controls.Add(this.btnLastDownloadAPSDate);
             this.Controls.Add(this.chkGanttChart);
             this.Controls.Add(this.dateSewingDate);
@@ -380,6 +404,8 @@
             this.Controls.SetChildIndex(this.dateSewingDate, 0);
             this.Controls.SetChildIndex(this.chkGanttChart, 0);
             this.Controls.SetChildIndex(this.btnLastDownloadAPSDate, 0);
+            this.Controls.SetChildIndex(this.labelSubProcess, 0);
+            this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -408,5 +434,7 @@
         private Win.UI.Label labSewingDate;
         private Win.UI.CheckBox chkGanttChart;
         private Win.UI.Button btnLastDownloadAPSDate;
+        private Win.UI.ComboBox comboSubProcess;
+        private Win.UI.Label labelSubProcess;
     }
 }
