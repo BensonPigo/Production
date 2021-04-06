@@ -775,7 +775,7 @@ outer apply (
 
                 for (int j = 0; j <= sessions.Count - 1; j++)
                 {
-                    var querySessionRow = dt[1].AsEnumerable()
+                    var querySessionRow = dt[2].AsEnumerable()
                         .Where(x => x.Field<string>("Country").EqualString(countrys[i]) &&
                                     x.Field<string>("SeasonID").EqualString(sessions[j]))
                         .Select(x => new
@@ -802,7 +802,7 @@ outer apply (
             int initI = 0;
             string initCountry = string.Empty;
             object[,] objArray = new object[1, 10];
-            foreach (DataRow dr in dt[0].Rows)
+            foreach (DataRow dr in dt[1].Rows)
             {
                 if (initCountry.Empty())
                 {
@@ -825,10 +825,10 @@ outer apply (
                 initR++;
                 initI++;
 
-                if (initI >= dt[0].Rows.Count || !initCountry.EqualString(dt[0].Rows[initI]["Country"]))
+                if (initI >= dt[1].Rows.Count || !initCountry.EqualString(dt[1].Rows[initI]["Country"]))
                 {
-                    int rcount = dt[0].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).Count();
-                    DataRow drYTD = dt[2].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).FirstOrDefault();
+                    int rcount = dt[1].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).Count();
+                    DataRow drYTD = dt[3].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).FirstOrDefault();
 
                     objArray[0, 0] = dr["Country"].ToString();
                     objArray[0, 1] = "YTD";
@@ -844,7 +844,7 @@ outer apply (
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(dr["Country"].ToString());
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Font.Bold = true;
                     objSheets.get_Range(string.Format("B{0}:K{0}", initR)).Borders.LineStyle = 1;
-                    initCountry = initI >= dt[0].Rows.Count ? dr["Country"].ToString() : dt[0].Rows[initI]["Country"].ToString();
+                    initCountry = initI >= dt[1].Rows.Count ? dr["Country"].ToString() : dt[1].Rows[initI]["Country"].ToString();
                     initR++;
                 }
             }
