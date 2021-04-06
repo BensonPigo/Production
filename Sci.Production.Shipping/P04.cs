@@ -59,22 +59,10 @@ select ed.*
 ,ed.RefNo
 ,isnull(iif(fe.Type = 4,(select Description from LocalItem WITH (NOLOCK) where RefNo = ed.RefNo),(select DescDetail from Fabric WITH (NOLOCK) where SCIRefno = ed.SCIRefNo)),'') as Description
 ,(case when ed.FabricType = 'F' then 'Fabric' when ed.FabricType = 'A' then 'Accessory' else '' end) as Type
-,[ToSP]=IIF(ed.TransactionID = '',''
-		,(select DISTINCT td.ToPOID
-		from TransferOut_Detail td
-		where td.POID=ed.POID
-		AND td.Seq1 = ed.Seq1 
-		AND td.Seq2 = ed.Seq2
-		AND td.ID=ed.TransactionID)
-	)
-,[ToSEQ]=IIF(ed.TransactionID = '',''
-		,(select DISTINCT td.ToSeq1  + ' '+ td.ToSeq2
-		from TransferOut_Detail td
-		where td.POID=ed.POID
-		AND td.Seq1 = ed.Seq1 
-		AND td.Seq2 = ed.Seq2
-		AND td.ID=ed.TransactionID)
-	)
+,ed.ToPOID
+,ed.ToSeq1
+,ed.ToSeq2
+,[ToSEQ] = ed.ToSeq1  + ' '+ ed.ToSeq2
 from FtyExport_Detail ed WITH (NOLOCK) 
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
@@ -135,12 +123,12 @@ where ed.ID = '{0}'", masterID);
             // 表身[TO SP]及[TO SEQ]欄位只在表題Type = 'Transfer Out'時顯示
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Type"]) == "3")
             {
-                this.detailgrid.Columns["ToSP"].Visible = true;
+                this.detailgrid.Columns["ToPOID"].Visible = true;
                 this.detailgrid.Columns["ToSEQ"].Visible = true;
             }
             else
             {
-                this.detailgrid.Columns["ToSP"].Visible = false;
+                this.detailgrid.Columns["ToPOID"].Visible = false;
                 this.detailgrid.Columns["ToSEQ"].Visible = false;
             }
 
@@ -158,7 +146,7 @@ where ed.ID = '{0}'", masterID);
                 .Text("Seq", header: "FM SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Del.", iseditingreadonly: true)
-                .Text("ToSP", header: "To SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ToPOID", header: "To SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ToSEQ", header: "To SEQ", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -528,7 +516,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 this.dateArrivePortDate.DataBindings.Clear();
                 this.dateArrivePortDate.DataBindings.Add(new Binding("Value", this.mtbs, "ETA", true));
 
-                this.detailgrid.Columns["ToSP"].Visible = true;
+                this.detailgrid.Columns["ToPOID"].Visible = true;
                 this.detailgrid.Columns["ToSEQ"].Visible = true;
             }
             else
@@ -539,7 +527,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 this.dateArrivePortDate.DataBindings.Clear();
                 this.dateArrivePortDate.DataBindings.Add(new Binding("Value", this.mtbs, "PortArrival", true));
 
-                this.detailgrid.Columns["ToSP"].Visible = false;
+                this.detailgrid.Columns["ToPOID"].Visible = false;
                 this.detailgrid.Columns["ToSEQ"].Visible = false;
             }
 
