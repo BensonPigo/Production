@@ -131,7 +131,7 @@ SELECT o.FtyGroup
 	,o.ID
     ,SciDelivery = min(o.SciDelivery)over(partition by o.Styleid)
     ,oa.Article,o.brandid
-	,o.CDCodeNew
+	,s.CDCodeNew
 	,sty.ProductType
 	,sty.FabricType
 	,sty.Lining
@@ -139,6 +139,7 @@ SELECT o.FtyGroup
 	,sty.Construction
 into #tmpo
 FROM Orders o WITH (NOLOCK)
+left join Style s on s.Ukey = o.StyleUkey
 outer apply(
 	select Article= STUFF((select distinct CONCAT(',',Article) 
 					from Order_Article oa WITH (NOLOCK)

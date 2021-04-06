@@ -62,10 +62,12 @@
             this.btnbdown = new Sci.Win.UI.Button();
             this.numQtyCarton = new Sci.Win.UI.NumericBox();
             this.labelQtyCarton = new Sci.Win.UI.Label();
+            this.txtdropdownlistPackingMethod = new Sci.Production.Class.Txtdropdownlist();
             this.labelPackingMethod = new Sci.Win.UI.Label();
             this.displaySampleReason2 = new Sci.Win.UI.DisplayBox();
             this.displaySampleReason = new Sci.Win.UI.DisplayBox();
             this.labelSampleReason = new Sci.Win.UI.Label();
+            this.txtdropdownlistArtworkCost = new Sci.Production.Class.Txtdropdownlist();
             this.labelArtworkCost = new Sci.Win.UI.Label();
             this.editSizeRange = new Sci.Win.UI.EditBox();
             this.numGarmentLT = new Sci.Win.UI.NumericBox();
@@ -156,6 +158,10 @@
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.txttpeuser3 = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuser5 = new Sci.Production.Class.Txttpeuser();
+            this.PcHandleText = new Sci.Production.Class.Txttpeuser();
+            this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -314,12 +320,6 @@
             this.txtuser1 = new Sci.Production.Class.Txtuser();
             this.txttpeuser2 = new Sci.Production.Class.Txttpeuser();
             this.txttpeuser1 = new Sci.Production.Class.Txttpeuser();
-            this.txtdropdownlistPackingMethod = new Sci.Production.Class.Txtdropdownlist();
-            this.txtdropdownlistArtworkCost = new Sci.Production.Class.Txtdropdownlist();
-            this.txttpeuser3 = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuser5 = new Sci.Production.Class.Txttpeuser();
-            this.PcHandleText = new Sci.Production.Class.Txttpeuser();
-            this.txttpeuser4 = new Sci.Production.Class.Txttpeuser();
             this.displayLining = new Sci.Win.UI.DisplayBox();
             this.displayGender = new Sci.Win.UI.DisplayBox();
             this.displayProductType = new Sci.Win.UI.DisplayBox();
@@ -505,7 +505,7 @@
             // browse
             // 
             this.browse.Location = new System.Drawing.Point(4, 24);
-            this.browse.Size = new System.Drawing.Size(1000, 661);
+            this.browse.Size = new System.Drawing.Size(1000, 691);
             // 
             // tabs
             // 
@@ -1013,6 +1013,22 @@
             this.labelQtyCarton.TabIndex = 93;
             this.labelQtyCarton.Text = "Q\'ty/Carton";
             // 
+            // txtdropdownlistPackingMethod
+            // 
+            this.txtdropdownlistPackingMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistPackingMethod.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CtnType", true));
+            this.txtdropdownlistPackingMethod.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlistPackingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistPackingMethod.FormattingEnabled = true;
+            this.txtdropdownlistPackingMethod.IsSupportUnselect = true;
+            this.txtdropdownlistPackingMethod.Location = new System.Drawing.Point(101, 502);
+            this.txtdropdownlistPackingMethod.Name = "txtdropdownlistPackingMethod";
+            this.txtdropdownlistPackingMethod.OldText = "";
+            this.txtdropdownlistPackingMethod.ReadOnly = true;
+            this.txtdropdownlistPackingMethod.Size = new System.Drawing.Size(277, 23);
+            this.txtdropdownlistPackingMethod.TabIndex = 92;
+            this.txtdropdownlistPackingMethod.Type = "PackingMethod";
+            // 
             // labelPackingMethod
             // 
             this.labelPackingMethod.Location = new System.Drawing.Point(5, 503);
@@ -1047,6 +1063,22 @@
             this.labelSampleReason.Size = new System.Drawing.Size(92, 21);
             this.labelSampleReason.TabIndex = 88;
             this.labelSampleReason.Text = "Sample Reason";
+            // 
+            // txtdropdownlistArtworkCost
+            // 
+            this.txtdropdownlistArtworkCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistArtworkCost.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ArtWorkCost", true));
+            this.txtdropdownlistArtworkCost.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlistArtworkCost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtdropdownlistArtworkCost.FormattingEnabled = true;
+            this.txtdropdownlistArtworkCost.IsSupportUnselect = true;
+            this.txtdropdownlistArtworkCost.Location = new System.Drawing.Point(269, 424);
+            this.txtdropdownlistArtworkCost.Name = "txtdropdownlistArtworkCost";
+            this.txtdropdownlistArtworkCost.OldText = "";
+            this.txtdropdownlistArtworkCost.ReadOnly = true;
+            this.txtdropdownlistArtworkCost.Size = new System.Drawing.Size(121, 23);
+            this.txtdropdownlistArtworkCost.TabIndex = 87;
+            this.txtdropdownlistArtworkCost.Type = "ArtworkCost";
             // 
             // labelArtworkCost
             // 
@@ -1889,6 +1921,43 @@
             this.lineShape5.X2 = 988;
             this.lineShape5.Y1 = 53;
             this.lineShape5.Y2 = 53;
+            // 
+            // txttpeuser3
+            // 
+            this.txttpeuser3.DisplayBox1Binding = "";
+            this.txttpeuser3.DisplayBox2Binding = "";
+            this.txttpeuser3.Location = new System.Drawing.Point(279, 4);
+            this.txttpeuser3.Name = "txttpeuser3";
+            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser3.TabIndex = 6;
+            // 
+            // txttpeuser5
+            // 
+            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
+            this.txttpeuser5.DisplayBox1Binding = "";
+            this.txttpeuser5.DisplayBox2Binding = "";
+            this.txttpeuser5.Location = new System.Drawing.Point(179, 339);
+            this.txttpeuser5.Name = "txttpeuser5";
+            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser5.TabIndex = 70;
+            // 
+            // PcHandleText
+            // 
+            this.PcHandleText.DisplayBox1Binding = "";
+            this.PcHandleText.DisplayBox2Binding = "";
+            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
+            this.PcHandleText.Name = "PcHandleText";
+            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
+            this.PcHandleText.TabIndex = 191;
+            // 
+            // txttpeuser4
+            // 
+            this.txttpeuser4.DisplayBox1Binding = "";
+            this.txttpeuser4.DisplayBox2Binding = "";
+            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
+            this.txttpeuser4.Name = "txttpeuser4";
+            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser4.TabIndex = 7;
             // 
             // lineShape10
             // 
@@ -3367,7 +3436,6 @@
             // displayCDCodeNew
             // 
             this.displayCDCodeNew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCDCodeNew.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CDCodeNew", true));
             this.displayCDCodeNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCDCodeNew.Location = new System.Drawing.Point(519, 336);
             this.displayCDCodeNew.Name = "displayCDCodeNew";
@@ -3524,75 +3592,6 @@
             this.txttpeuser1.Name = "txttpeuser1";
             this.txttpeuser1.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser1.TabIndex = 3;
-            // 
-            // txtdropdownlistPackingMethod
-            // 
-            this.txtdropdownlistPackingMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtdropdownlistPackingMethod.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "CtnType", true));
-            this.txtdropdownlistPackingMethod.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlistPackingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtdropdownlistPackingMethod.FormattingEnabled = true;
-            this.txtdropdownlistPackingMethod.IsSupportUnselect = true;
-            this.txtdropdownlistPackingMethod.Location = new System.Drawing.Point(101, 502);
-            this.txtdropdownlistPackingMethod.Name = "txtdropdownlistPackingMethod";
-            this.txtdropdownlistPackingMethod.OldText = "";
-            this.txtdropdownlistPackingMethod.ReadOnly = true;
-            this.txtdropdownlistPackingMethod.Size = new System.Drawing.Size(277, 23);
-            this.txtdropdownlistPackingMethod.TabIndex = 92;
-            this.txtdropdownlistPackingMethod.Type = "PackingMethod";
-            // 
-            // txtdropdownlistArtworkCost
-            // 
-            this.txtdropdownlistArtworkCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtdropdownlistArtworkCost.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "ArtWorkCost", true));
-            this.txtdropdownlistArtworkCost.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.txtdropdownlistArtworkCost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtdropdownlistArtworkCost.FormattingEnabled = true;
-            this.txtdropdownlistArtworkCost.IsSupportUnselect = true;
-            this.txtdropdownlistArtworkCost.Location = new System.Drawing.Point(269, 424);
-            this.txtdropdownlistArtworkCost.Name = "txtdropdownlistArtworkCost";
-            this.txtdropdownlistArtworkCost.OldText = "";
-            this.txtdropdownlistArtworkCost.ReadOnly = true;
-            this.txtdropdownlistArtworkCost.Size = new System.Drawing.Size(121, 23);
-            this.txtdropdownlistArtworkCost.TabIndex = 87;
-            this.txtdropdownlistArtworkCost.Type = "ArtworkCost";
-            // 
-            // txttpeuser3
-            // 
-            this.txttpeuser3.DisplayBox1Binding = "";
-            this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(279, 4);
-            this.txttpeuser3.Name = "txttpeuser3";
-            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser3.TabIndex = 6;
-            // 
-            // txttpeuser5
-            // 
-            this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
-            this.txttpeuser5.DisplayBox1Binding = "";
-            this.txttpeuser5.DisplayBox2Binding = "";
-            this.txttpeuser5.Location = new System.Drawing.Point(179, 339);
-            this.txttpeuser5.Name = "txttpeuser5";
-            this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser5.TabIndex = 70;
-            // 
-            // PcHandleText
-            // 
-            this.PcHandleText.DisplayBox1Binding = "";
-            this.PcHandleText.DisplayBox2Binding = "";
-            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
-            this.PcHandleText.Name = "PcHandleText";
-            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
-            this.PcHandleText.TabIndex = 191;
-            // 
-            // txttpeuser4
-            // 
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 7;
             // 
             // displayLining
             // 

@@ -389,7 +389,7 @@ select
 	[Style] = C.STYLEID,
     c.BuyerDelivery ,
 	[CDCode] = C.CDCODEID,
-    C.CDCodeNew,
+    sty.CDCodeNew,
 	sty.ProductType,
 	sty.FabricType,
 	sty.Lining,
@@ -420,6 +420,7 @@ Outer apply (
 		, Lining
 		, Gender
 		, Construction = d1.Name
+        , s.CDCodeNew
 	FROM Style s WITH(NOLOCK)
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
