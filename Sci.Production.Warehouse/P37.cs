@@ -335,6 +335,12 @@ where R.id= @ID";
                 return false;
             }
 
+            // 檢查是否有退還料紀錄和00004負數Qty 就不能存檔
+            if (!this.ChkNegativeNumber() || !this.ChkRecord())
+            {
+                return false;
+            }
+
             // 取單號
             if (this.IsDetailInserting)
             {
@@ -451,7 +457,6 @@ where R.id= @ID";
             DualResult result, result2;
             DataTable datacheck;
             string upd_MD_37T = string.Empty;
-            string upd_MD_8T = string.Empty;
             string upd_Fty_37T = string.Empty;
 
             #region -- 檢查庫存項lock --
@@ -537,6 +542,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             #endregion 檢查負數庫存
 
+            // 檢查是否有退還料紀錄和00004負數Qty 就不能Confirmed
+            if (!this.ChkNegativeNumber() || !this.ChkRecord())
+            {
+                return;
+            }
+
             #region -- 更新庫存數量  ftyinventory --
 
             var data_Fty_37T = (from b in this.DetailDatas
@@ -573,24 +584,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                            location = m.First().Field<string>("location"),
                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
-            var data_MD_8T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            poid = b.Field<string>("poid").Trim(),
-                            seq1 = b.Field<string>("seq1").Trim(),
-                            seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
-                        }
-                        into m
-                        select new Prgs_POSuppDetailData
-                        {
-                            Poid = m.First().Field<string>("poid"),
-                            Seq1 = m.First().Field<string>("seq1"),
-                            Seq2 = m.First().Field<string>("seq2"),
-                            Stocktype = m.First().Field<string>("stocktype"),
-                            Location = m.First().Field<string>("location"),
-                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
-                        }).ToList();
 
             #endregion
 
@@ -632,11 +625,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         upd_MD_37T = Prgs.UpdateMPoDetail(37, null, true, sqlConn: sqlConn);
                     }
 
-                    if (data_MD_8T.Count > 0)
-                    {
-                        upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
-                    }
-
                     if (data_MD_37T.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37T, string.Empty, upd_MD_37T, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -647,15 +635,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         }
                     }
 
-                    if (data_MD_8T.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
-                    }
                     #endregion
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
@@ -724,7 +703,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             DualResult result, result2;
 
             string upd_MD_37F = string.Empty;
-            string upd_MD_8F = string.Empty;
             string upd_Fty_37F = string.Empty;
 
             #region -- 檢查庫存項lock --
@@ -852,23 +830,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                            Stocktype = m.First().Field<string>("stocktype"),
                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
-            var data_MD_8F = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            poid = b.Field<string>("poid").Trim(),
-                            seq1 = b.Field<string>("seq1").Trim(),
-                            seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
-                        }
-                        into m
-                        select new Prgs_POSuppDetailData
-                        {
-                            Poid = m.First().Field<string>("poid"),
-                            Seq1 = m.First().Field<string>("seq1"),
-                            Seq2 = m.First().Field<string>("seq2"),
-                            Stocktype = m.First().Field<string>("stocktype"),
-                            Qty = m.Sum(w => w.Field<decimal>("qty")),
-                        }).ToList();
 
             #endregion
 
@@ -910,11 +871,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         upd_MD_37F = Prgs.UpdateMPoDetail(37, null, false, sqlConn: sqlConn);
                     }
 
-                    if (data_MD_8F.Count > 0)
-                    {
-                        upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false, sqlConn: sqlConn);
-                    }
-
                     if (data_MD_37F.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37F, string.Empty, upd_MD_37F, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -925,15 +881,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         }
                     }
 
-                    if (data_MD_8F.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource", conn: sqlConn)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
-                    }
                     #endregion
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
@@ -1139,6 +1086,56 @@ Where a.id = '{0}'", masterID);
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P37", this);
+        }
+
+        private bool ChkNegativeNumber()
+        {
+            string errormsg = string.Empty;
+            if (this.CurrentMaintain["whsereasonID"].ToString() == "00004")
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) > 0)
+                    {
+                        errormsg += $@"SP#: {dr["POID"]} Seq#: {dr["Seq1"]}-{dr["Seq2"]} Roll#: {dr["Roll"]} Dyelot: {dr["Dyelot"]} Issue Qty: {dr["Qty"]}" + Environment.NewLine;
+                    }
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errormsg))
+            {
+                MyUtility.Msg.WarningBox(@"The refund reason is 00004 (Excess delivery against packing list)
+You should encode negative number in issue qty column." + Environment.NewLine + errormsg);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ChkRecord()
+        {
+            string errormsg = string.Empty;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string sqlChk = $@"
+Select 1
+from FtyInventory f WITH (NOLOCK) 
+where f.poid = '{dr["POID"]}' and f.seq1 = '{dr["Seq1"]}' and f.seq2 = '{dr["Seq2"]}' and f.Dyelot = '{dr["Dyelot"]}' and f.roll = '{dr["Roll"]}' and f.stocktype = '{dr["stocktype"]}'
+and (f.OutQty > 0 or f.AdjustQty != 0 or f.ReturnQty != 0)
+";
+                if (MyUtility.Check.Seek(sqlChk))
+                {
+                    errormsg += $@"SP#: {dr["POID"]} Seq#: {dr["Seq1"]}-{dr["Seq2"]} Roll#: {dr["Roll"]} Dyelot: {dr["Dyelot"]} Issue Qty: {dr["Qty"]}" + Environment.NewLine;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(errormsg))
+            {
+                MyUtility.Msg.WarningBox(@"These material have issued or adjusted or returned records , You can't return it." + Environment.NewLine + errormsg + Environment.NewLine + @"If you want to adjust these material qty, you should use W/H P34/P35 to adjust it.");
+                return false;
+            }
+
+            return true;
         }
     }
 }

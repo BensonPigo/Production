@@ -3958,7 +3958,7 @@ inner join #tmp s on t.ID = s.ID
                                                   seq1 = b.Field<string>("seq1"),
                                                   seq2 = b.Field<string>("seq2"),
                                                   stocktype = b.Field<string>("stocktype"),
-                                                  qty = b.Field<decimal>("qty"),
+                                                  qty = b.Field<decimal>("Old_Qty"),
                                                   roll = b.Field<string>("roll"),
                                                   dyelot = b.Field<string>("dyelot"),
                                               }).ToList();
@@ -3966,7 +3966,7 @@ inner join #tmp s on t.ID = s.ID
                         #endregion
 
                         #region -- update mdivisionPoDetail --
-                        var data_MD_2T_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable()
+                        var data_MD_37 = (from b in upd_list.CopyToDataTable().AsEnumerable()
                                              group b by new
                                              {
                                                  poid = b.Field<string>("poid"),
@@ -3981,27 +3981,8 @@ inner join #tmp s on t.ID = s.ID
                                                  Seq1 = m.First().Field<string>("seq1"),
                                                  Seq2 = m.First().Field<string>("seq2"),
                                                  Stocktype = m.First().Field<string>("stocktype"),
-                                                 Qty = m.Sum(w => w.Field<decimal>("qty")),
+                                                 Qty = - m.Sum(w => w.Field<decimal>("Old_Qty")),
                                              }).ToList();
-                        var data_MD_8T_v2 = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                                             group b by new
-                                             {
-                                                 poid = b.Field<string>("poid").Trim(),
-                                                 seq1 = b.Field<string>("seq1").Trim(),
-                                                 seq2 = b.Field<string>("seq2").Trim(),
-                                                 stocktype = b.Field<string>("stocktype").Trim(),
-                                             }
-                                    into m
-                                             select new Prgs_POSuppDetailData
-                                             {
-                                                 Poid = m.First().Field<string>("poid"),
-                                                 Seq1 = m.First().Field<string>("seq1"),
-                                                 Seq2 = m.First().Field<string>("seq2"),
-                                                 Stocktype = m.First().Field<string>("stocktype"),
-                                                 Location = m.First().Field<string>("location"),
-                                                 Qty = m.Sum(w => w.Field<decimal>("qty")),
-                                             }).ToList();
-
                         #endregion
 
                         #region delete Qty
@@ -4025,7 +4006,7 @@ inner join #tmp s on t.ID = s.ID
 
                         #endregion
 
-                        string upd_MD_2T = string.Empty;
+                        string upd_MD_37 = string.Empty;
                         string upd_MD_8T = string.Empty;
                         transactionscope = new TransactionScope();
                         using (transactionscope)
@@ -4042,19 +4023,14 @@ inner join #tmp s on t.ID = s.ID
                                 #endregion
 
                                 #region MDivisionPoDetail
-                                if (data_MD_2T_v2.Count > 0)
+                                if (data_MD_37.Count > 0)
                                 {
-                                    upd_MD_2T = Prgs.UpdateMPoDetail_P99(2, false);
+                                    upd_MD_37 = Prgs.UpdateMPoDetail_P99(37, false);
                                 }
 
-                                if (data_MD_8T_v2.Count > 0)
+                                if (data_MD_37.Count > 0)
                                 {
-                                    upd_MD_8T = Prgs.UpdateMPoDetail_P99(8, false);
-                                }
-
-                                if (data_MD_2T_v2.Count > 0)
-                                {
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_2T_v2, string.Empty, upd_MD_2T, out resulttb, "#TmpSource")))
+                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37, string.Empty, upd_MD_37, out resulttb, "#TmpSource")))
                                     {
                                         transactionscope.Dispose();
                                         this.ShowErr(result);
@@ -4062,15 +4038,7 @@ inner join #tmp s on t.ID = s.ID
                                     }
                                 }
 
-                                if (data_MD_8T_v2.Count > 0)
-                                {
-                                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T_v2, string.Empty, upd_MD_8T, out resulttb, "#TmpSource")))
-                                    {
-                                        transactionscope.Dispose();
-                                        this.ShowErr(result);
-                                        return;
-                                    }
-                                }
+
                                 #endregion
 
                                 transactionscope.Complete();
