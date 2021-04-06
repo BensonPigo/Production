@@ -911,7 +911,13 @@ where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToVstrong_AutoWH_ACC(true);
+
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssueReturn_Detail_New(dt, "New"))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
 
             // AutoWHFabric WebAPI for Gensong (移除轉出ISP20201856)
             // this.SentToGensong_AutoWHFabric();
@@ -1014,6 +1020,17 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #endregion 檢查負數庫存
 
+            #region UnConfirmed 先檢查WMS是否傳送成功
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
+            }
+            #endregion
+
             #region 更新表頭狀態資料
 
             sqlupd3 = string.Format(
@@ -1098,7 +1115,6 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             transactionscope.Dispose();
             transactionscope = null;
-            this.SentToVstrong_AutoWH_ACC(false);
 
             // AutoWHFabric WebAPI for Gensong
             // this.SentToGensong_AutoWHFabric();
@@ -1218,19 +1234,6 @@ AND o.Category <> 'A'
             var frm = new P17_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
-        }
-
-        /// <summary>
-        ///  AutoWH ACC WebAPI for Vstrong
-        /// </summary>
-        private void SentToVstrong_AutoWH_ACC(bool isConfirmed)
-        {
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssueReturn_DetailToVstrongAutoWHAccessory(dtMain, isConfirmed))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-            }
         }
     }
 }

@@ -667,6 +667,42 @@ and po3.FabricType='F'
 and t1.Status = 'Confirmed'
 ";
                     break;
+                case "P17":
+                    sqlcmd = @"
+select [Selected] = 0 --0
+, [SentToWMS] = iif(t2.SentToWMS=1,'V','')
+, [CompleteTime] = t2.CompleteTime
+,t2.id
+, t2.PoId
+, t2.Seq1
+, t2.Seq2
+, t2.StockType
+, seq = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)
+, t2.Roll
+, t2.Dyelot
+, po3.stockunit
+, [Description] = dbo.getMtlDesc(t2.poid,t2.seq1,t2.seq2,2,0) 
+, t2.Qty
+, [Old_Qty] = t2.Qty
+, [diffQty] = 0.00
+, t2.StockType
+, location = dbo.Getlocation(f.Ukey) 
+, t2.ukey
+, t2.FtyInventoryUkey
+from dbo.IssueReturn_Detail t2 WITH (NOLOCK) 
+inner join dbo.IssueReturn t1 WITH (NOLOCK) on t1.Id = t2.Id
+left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
+										and po3.SEQ2 = t2.seq2
+left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID 
+									and t2.Seq1 = f.Seq1 
+									and t2.Seq2 = f.Seq2 
+									and t2.Roll = f.Roll 
+									and t2.Dyelot = f.Dyelot 
+									and t2.StockType = f.StockType
+where 1=1
+and t1.Status = 'Confirmed'
+";
+                    break;
                 case "P19":
                     sqlcmd = @"
 select [Selected] = 0 --0
@@ -1478,6 +1514,7 @@ and t1.Type='I'
                 case "P13":
                 case "P15":
                 case "P16":
+                case "P17":
                 case "P19":
                 case "P37":
                 case "P31":
@@ -1834,6 +1871,22 @@ and t1.Type='I'
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
                     #endregion
+                    break;
+                case "P17":
+                    this.gridUpdate.IsEditingReadOnly = false;
+                    this.Helper.Controls.Grid.Generator(this.gridUpdate)
+                    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                    .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+                    .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
+                    .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                    .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 3
+                    .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
+                    .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
+                    .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
+                    ;
                     break;
                 case "P19":
                     #region P19 Grid
@@ -3265,6 +3318,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                     case "P13":
                     case "P15":
                     case "P16":
+                    case "P17":
                     case "P19":
                     case "P33":
                     case "P62":
@@ -3285,6 +3339,10 @@ inner join #tmp s on t.Ukey = s.Ukey
                             case "P16":
                                 strTable = "IssueLack_Detail";
                                 strMainTable = "IssueLack";
+                                break;
+                            case "P17":
+                                strTable = "IssueReturn_Detail";
+                                strMainTable = "IssueReturn";
                                 break;
                             case "P19":
                                 strTable = "TransferOut_Detail";
@@ -5192,6 +5250,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                 case "P13":
                 case "P15":
                 case "P16":
+                case "P17":
                 case "P19":
                 case "P37":
                     symbol = isConfirmed ? "- (t.diffQty)" : isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
