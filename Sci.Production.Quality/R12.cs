@@ -171,22 +171,32 @@ where 1 = 1
 
         private string AddJoinByReportType(string fromType, string inspectionTypeTable)
         {
+            string joinString = $@"
+outer apply(
+    select Dyelot = count(1)
+    from(
+        select distinct b.Dyelot
+        from Receiving_Detail b with (nolock)
+		inner join FIR_Physical i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot and i.Result <> ''
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ct3
+";
+
             if (this.radioWKSeq.Checked)
             {
-                return string.Empty;
+                return joinString;
             }
-
-            string joinString = string.Empty;
 
             if (fromType == "TransferIn")
             {
-                joinString = $@"
+                joinString += $@"
 inner join TransferIn_Detail b with (nolock) on a.id = b.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
 left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot";
             }
             else
             {
-                joinString = $@"
+                joinString += $@"
 inner join Receiving_Detail b with (nolock) on b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
 left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot";
             }
@@ -257,6 +267,7 @@ left join pass1 p2 with (nolock) on p2.id = f.Approve
                 string colPhysicalDateWKSeqOnly = this.radioWKSeq.Checked ? "f.PhysicalDate," : string.Empty;
 
                 string colPhysical = $@"
+Dyelot2=ct3.Dyelot,
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
 {colPhysicalWKSeqOnly}
