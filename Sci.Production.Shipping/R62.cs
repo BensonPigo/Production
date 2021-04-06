@@ -99,10 +99,10 @@ select [Shipper] = g.Shipper
      , [Declaration Date] = kd.CDate 
      , [ETD] = g.ETD 
      , [Customer CD] = g.CustCDID 
+	 , [Dest] = g.Dest
      , [Shipmode] = g.ShipModeID 
      , [Forwarder] = g.Forwarder 
      , [Port of loading] = kd.ExportPort 
-	 , [Dest] = g.Dest
 	 , [Continent] = c.Continent+'-'+c.NameEN
      , [Export without declaration] = (case when g.NonDeclare = 1 then 'Y' else 'N' end) 
 	 , [NW] = isnull(kdd.NetKg, (case when g.ShipModeID in ('A/C','A/P') then pld.NW else (pld.NW + (pld.NW * 0.05)) end))
