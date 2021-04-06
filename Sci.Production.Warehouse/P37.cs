@@ -457,7 +457,6 @@ where R.id= @ID";
             DualResult result, result2;
             DataTable datacheck;
             string upd_MD_37T = string.Empty;
-            string upd_MD_8T = string.Empty;
             string upd_Fty_37T = string.Empty;
 
             #region -- 檢查庫存項lock --
@@ -585,24 +584,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                            location = m.First().Field<string>("location"),
                            Qty = m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
-            var data_MD_8T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            poid = b.Field<string>("poid").Trim(),
-                            seq1 = b.Field<string>("seq1").Trim(),
-                            seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
-                        }
-                        into m
-                        select new Prgs_POSuppDetailData
-                        {
-                            Poid = m.First().Field<string>("poid"),
-                            Seq1 = m.First().Field<string>("seq1"),
-                            Seq2 = m.First().Field<string>("seq2"),
-                            Stocktype = m.First().Field<string>("stocktype"),
-                            Location = m.First().Field<string>("location"),
-                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
-                        }).ToList();
 
             #endregion
 
@@ -644,11 +625,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         upd_MD_37T = Prgs.UpdateMPoDetail(37, null, true, sqlConn: sqlConn);
                     }
 
-                    if (data_MD_8T.Count > 0)
-                    {
-                        upd_MD_8T = Prgs.UpdateMPoDetail(8, data_MD_8T, true, sqlConn: sqlConn);
-                    }
-
                     if (data_MD_37T.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37T, string.Empty, upd_MD_37T, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -659,15 +635,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         }
                     }
 
-                    if (data_MD_8T.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, string.Empty, upd_MD_8T, out resulttb, "#TmpSource", conn: sqlConn)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
-                    }
                     #endregion
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
@@ -736,7 +703,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             DualResult result, result2;
 
             string upd_MD_37F = string.Empty;
-            string upd_MD_8F = string.Empty;
             string upd_Fty_37F = string.Empty;
 
             #region -- 檢查庫存項lock --
@@ -864,23 +830,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                            Stocktype = m.First().Field<string>("stocktype"),
                            Qty = -m.Sum(w => w.Field<decimal>("qty")),
                        }).ToList();
-            var data_MD_8F = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            poid = b.Field<string>("poid").Trim(),
-                            seq1 = b.Field<string>("seq1").Trim(),
-                            seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype").Trim(),
-                        }
-                        into m
-                        select new Prgs_POSuppDetailData
-                        {
-                            Poid = m.First().Field<string>("poid"),
-                            Seq1 = m.First().Field<string>("seq1"),
-                            Seq2 = m.First().Field<string>("seq2"),
-                            Stocktype = m.First().Field<string>("stocktype"),
-                            Qty = m.Sum(w => w.Field<decimal>("qty")),
-                        }).ToList();
 
             #endregion
 
@@ -922,11 +871,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         upd_MD_37F = Prgs.UpdateMPoDetail(37, null, false, sqlConn: sqlConn);
                     }
 
-                    if (data_MD_8F.Count > 0)
-                    {
-                        upd_MD_8F = Prgs.UpdateMPoDetail(8, data_MD_8F, false, sqlConn: sqlConn);
-                    }
-
                     if (data_MD_37F.Count > 0)
                     {
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_37F, string.Empty, upd_MD_37F, out resulttb, "#TmpSource", conn: sqlConn)))
@@ -937,15 +881,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                         }
                     }
 
-                    if (data_MD_8F.Count > 0)
-                    {
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8F, string.Empty, upd_MD_8F, out resulttb, "#TmpSource", conn: sqlConn)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return;
-                        }
-                    }
                     #endregion
 
                     if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
