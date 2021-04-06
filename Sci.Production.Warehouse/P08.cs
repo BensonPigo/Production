@@ -8,10 +8,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -30,7 +32,7 @@ namespace Sci.Production.Warehouse
             string factory = Env.User.Factory;
             string mdvision = Env.User.Keyword;
 
-          // ChangeDetailColor();
+            // ChangeDetailColor();
             this.di_fabrictype.Add("F", "Fabric");
             this.di_fabrictype.Add("A", "Accessory");
             this.di_stocktype.Add("B", "Bulk");
@@ -60,14 +62,12 @@ namespace Sci.Production.Warehouse
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
 
-          // ChangeDetailColor();
+            // ChangeDetailColor();
             this.di_fabrictype.Add("F", "Fabric");
             this.di_fabrictype.Add("A", "Accessory");
             this.di_stocktype.Add("B", "Bulk");
             this.di_stocktype.Add("I", "Inventory");
         }
-
-        // 新增時預設資料
 
         /// <inheritdoc/>
         protected override void ClickNewAfter()
@@ -81,8 +81,6 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["WhseArrival"] = DateTime.Now;
         }
 
-        // delete前檢查
-
         /// <inheritdoc/>
         protected override bool ClickDeleteBefore()
         {
@@ -94,8 +92,6 @@ namespace Sci.Production.Warehouse
 
             return base.ClickDeleteBefore();
         }
-
-        // edit前檢查
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
@@ -109,8 +105,6 @@ namespace Sci.Production.Warehouse
 
             return base.ClickEditBefore();
         }
-
-        // save前檢查 & 取id
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
@@ -225,15 +219,11 @@ where p.junk = 1
             return base.ClickSaveBefore();
         }
 
-        // grid 加工填值
-
         /// <inheritdoc/>
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
             return base.OnRenewDataDetailPost(e);
         }
-
-        // refresh
 
         /// <inheritdoc/>
         protected override void OnDetailEntered()
@@ -265,16 +255,12 @@ where p.junk = 1
             }
         }
 
-        // detail 新增時設定預設值
-
         /// <inheritdoc/>
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
             this.CurrentDetailData["stocktype"] = "B";
         }
-
-        // Detail Grid 設定
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
@@ -456,8 +442,6 @@ WHERE   StockType='{0}'
             #endregion 欄位設定
         }
 
-        // Confirm
-
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override void ClickConfirm()
@@ -587,39 +571,39 @@ drop table #tmp2
 
             #region 更新倉數量
             var data_MD_2T = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype"),
-                       }
+                              group b by new
+                              {
+                                  poid = b.Field<string>("poid"),
+                                  seq1 = b.Field<string>("seq1"),
+                                  seq2 = b.Field<string>("seq2"),
+                                  stocktype = b.Field<string>("stocktype"),
+                              }
                         into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           Poid = m.First().Field<string>("poid"),
-                           Seq1 = m.First().Field<string>("seq1"),
-                           Seq2 = m.First().Field<string>("seq2"),
-                           Stocktype = m.First().Field<string>("stocktype"),
-                           Qty = m.Sum(w => w.Field<decimal>("stockqty")),
-                       }).ToList();
+                              select new Prgs_POSuppDetailData
+                              {
+                                  Poid = m.First().Field<string>("poid"),
+                                  Seq1 = m.First().Field<string>("seq1"),
+                                  Seq2 = m.First().Field<string>("seq2"),
+                                  Stocktype = m.First().Field<string>("stocktype"),
+                                  Qty = m.Sum(w => w.Field<decimal>("stockqty")),
+                              }).ToList();
 
             #endregion
 
             #region 更新庫存數量  ftyinventory
 
             var data_Fty_2T = (from b in this.DetailDatas
-                         select new
-                         {
-                             poid = b.Field<string>("poid"),
-                             seq1 = b.Field<string>("seq1"),
-                             seq2 = b.Field<string>("seq2"),
-                             stocktype = b.Field<string>("stocktype"),
-                             qty = b.Field<decimal>("stockqty"),
-                             location = b.Field<string>("location"),
-                             roll = b.Field<string>("roll"),
-                             dyelot = b.Field<string>("dyelot"),
-                         }).ToList();
+                               select new
+                               {
+                                   poid = b.Field<string>("poid"),
+                                   seq1 = b.Field<string>("seq1"),
+                                   seq2 = b.Field<string>("seq2"),
+                                   stocktype = b.Field<string>("stocktype"),
+                                   qty = b.Field<decimal>("stockqty"),
+                                   location = b.Field<string>("location"),
+                                   roll = b.Field<string>("roll"),
+                                   dyelot = b.Field<string>("dyelot"),
+                               }).ToList();
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion
 
@@ -688,8 +672,6 @@ drop table #tmp2
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
-
-        // Unconfirm
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
@@ -817,38 +799,38 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
 
             #region 更新倉數量
             var data_MD_2F = (from b in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid"),
-                           seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2"),
-                           stocktype = b.Field<string>("stocktype"),
-                       }
+                              group b by new
+                              {
+                                  poid = b.Field<string>("poid"),
+                                  seq1 = b.Field<string>("seq1"),
+                                  seq2 = b.Field<string>("seq2"),
+                                  stocktype = b.Field<string>("stocktype"),
+                              }
                         into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           Poid = m.First().Field<string>("poid"),
-                           Seq1 = m.First().Field<string>("seq1"),
-                           Seq2 = m.First().Field<string>("seq2"),
-                           Stocktype = m.First().Field<string>("stocktype"),
-                           Qty = -m.Sum(w => w.Field<decimal>("stockqty")),
-                       }).ToList();
+                              select new Prgs_POSuppDetailData
+                              {
+                                  Poid = m.First().Field<string>("poid"),
+                                  Seq1 = m.First().Field<string>("seq1"),
+                                  Seq2 = m.First().Field<string>("seq2"),
+                                  Stocktype = m.First().Field<string>("stocktype"),
+                                  Qty = -m.Sum(w => w.Field<decimal>("stockqty")),
+                              }).ToList();
 
             #endregion
 
             #region 更新庫存數量  ftyinventory
             var data_Fty_2F = (from m in ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("poid"),
-                             seq1 = m.Field<string>("seq1"),
-                             seq2 = m.Field<string>("seq2"),
-                             stocktype = m.Field<string>("stocktype"),
-                             qty = -m.Field<decimal>("stockqty"),
-                             location = m.Field<string>("location"),
-                             roll = m.Field<string>("roll"),
-                             dyelot = m.Field<string>("dyelot"),
-                         }).ToList();
+                               select new
+                               {
+                                   poid = m.Field<string>("poid"),
+                                   seq1 = m.Field<string>("seq1"),
+                                   seq2 = m.Field<string>("seq2"),
+                                   stocktype = m.Field<string>("stocktype"),
+                                   qty = -m.Field<decimal>("stockqty"),
+                                   location = m.Field<string>("location"),
+                                   roll = m.Field<string>("roll"),
+                                   dyelot = m.Field<string>("dyelot"),
+                               }).ToList();
             upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
@@ -909,8 +891,6 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             transactionscope = null;
         }
 
-        // 寫明細撈出的sql command
-
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -941,7 +921,6 @@ Where a.id = '{0}' ", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        // delete all
         private void BtnDeleteAll_Click(object sender, EventArgs e)
         {
             ((DataTable)this.detailgridbs.DataSource).Rows.Clear();  // 清空表身資料
@@ -990,6 +969,59 @@ Where a.id = '{0}' ", masterID);
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P08", this);
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            string sqlcmd = $@"
+select
+	r.PoId,
+	seq = concat(Ltrim(Rtrim(r.seq1)), ' ', r.Seq2),
+	r.Roll,
+	r.Dyelot,
+	Description = dbo.getmtldesc(r.poid,r.seq1,r.seq2,2,0),	
+	r.StockUnit,
+	useqty = (
+		select Round(sum(dbo.GetUnitQty(b.POUnit, StockUnit, b.Qty)), 2)
+		from po_supp_detail b WITH (NOLOCK) 
+		where b.id= r.poid and b.seq1 = r.seq1 and b.seq2 = r.seq2),
+	r.StockQty
+from Receiving_Detail r WITH (NOLOCK) 
+Where r.id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
+
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P08.xltx");
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Warehouse_P08.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: excelApp);
+
+            Excel.Worksheet worksheet = excelApp.Sheets[1];
+            worksheet.get_Range((Excel.Range)worksheet.Cells[4, 1], (Excel.Range)worksheet.Cells[dt.Rows.Count + 3, 9]).Borders.Weight = 2; // 設定全框線
+            worksheet.Columns[1].ColumnWidth = 18;
+            worksheet.Columns[2].ColumnWidth = 8;
+            worksheet.Columns[3].ColumnWidth = 8;
+            worksheet.Columns[4].ColumnWidth = 8;
+            worksheet.Columns[5].ColumnWidth = 46;
+            worksheet.Columns[6].ColumnWidth = 9;
+            worksheet.Columns[7].ColumnWidth = 12;
+            worksheet.Columns[8].ColumnWidth = 12;
+            worksheet.Columns[9].ColumnWidth = 45;
+            excelApp.Visible = true;
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(excelApp);
+
+            return base.ClickPrint();
         }
     }
 }
