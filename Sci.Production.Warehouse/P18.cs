@@ -126,6 +126,7 @@ namespace Sci.Production.Warehouse
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool ClickPrint()
         {
+
             // 329: WAREHOUSE_P18 Print，資料如果未confirm不能列印。
             if (this.CurrentMaintain["status"].ToString().ToUpper() != "CONFIRMED")
             {
@@ -133,129 +134,10 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            DataRow row = this.CurrentMaintain;
-            string id = row["ID"].ToString();
-            string fromFactory = row["FromFtyID"].ToString();
-            string remark = row["Remark"].ToString();
-            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["IssueDate"])).ToShortDateString();
-            #region -- 撈表頭資料 --
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dt;
-            string cmdd = @"
-select  b.name 
-from dbo.Transferin  a WITH (NOLOCK) 
-inner join dbo.mdivision  b WITH (NOLOCK) on b.id = a.mdivisionid
-where   b.id = a.mdivisionid
-        and a.id = @ID";
-            DualResult result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
+            P18_Print from = new P18_Print(this.CurrentMaintain);
+            from.ShowDialog();
 
-            if (dt == null || dt.Rows.Count == 0)
-            {
-                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dt");
-                return false;
-            }
-
-            // 抓M的EN NAME
-            DataTable dtNAME;
-            DBProxy.Current.Select(
-                string.Empty,
-                string.Format(@"select NameEN from MDivision where ID='{0}'", Env.User.Keyword), out dtNAME);
-            string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
-            report.ReportParameters.Add(new ReportParameter("ID", id));
-            report.ReportParameters.Add(new ReportParameter("FromFtyID", fromFactory));
-            report.ReportParameters.Add(new ReportParameter("Remark", remark));
-            report.ReportParameters.Add(new ReportParameter("IssueDate", issuedate));
-
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            #endregion
-            #region -- 撈表身資料 --
-            DataTable dtDetail;
-            string tmp = @"
-select  a.POID
-        , a.Seq1 + '-' + a.seq2 as SEQ
-        , a.Roll
-        , a.Dyelot 
-	    , [Description] = IIF((b.ID =   lag(b.ID,1,'') over (order by b.ID,b.seq1,b.seq2) 
-			                   AND (b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-			                   AND (b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-			                  , ''
-                              , dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
-        , StockUnit = dbo.GetStockUnitBySpSeq (a.poid, a.seq1, a.seq2)
-	    , a.Qty
-        , a.Weight
-        , dbo.Getlocation(f.ukey)[Location] 
-from dbo.TransferIn_detail a WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
-                                                and b.SEQ1 = a.Seq1 
-                                                and b.SEQ2=a.seq2
-inner join FtyInventory f WITH (NOLOCK) on  f.POID = a.poid
-		                                    And f.Seq1 = a.seq1
-		                                    And f.Seq2 = a.seq2
-		                                    And f.Roll =  a.roll
-		                                    And f.Dyelot = a.dyelot
-		                                    And f.StockType = a.stocktype
-where a.id = @ID";
-            result = DBProxy.Current.Select(string.Empty, tmp, pars, out dtDetail);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            if (dtDetail == null || dtDetail.Rows.Count == 0)
-            {
-                MyUtility.Msg.InfoBox("Data not found!!!", "DataTable dtDetail");
-                return false;
-            }
-
-            // 傳 list 資料
-            List<P18_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P18_PrintData()
-                {
-                    POID = row1["POID"].ToString().Trim(),
-                    SEQ = row1["SEQ"].ToString().Trim(),
-                    Roll = row1["Roll"].ToString().Trim(),
-                    DYELOT = row1["DYELOT"].ToString().Trim(),
-                    DESC = row1["Description"].ToString().Trim(),
-                    Unit = row1["StockUnit"].ToString().Trim(),
-                    QTY = row1["QTY"].ToString().Trim(),
-                    GW = row1["Weight"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim(),
-                }).ToList();
-
-            report.ReportDataSource = data;
-            #endregion
-
-            // 指定是哪個 RDLC
-            // DualResult result;
-            Type reportResourceNamespace = typeof(P18_PrintData);
-            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P18_Print.rdlc";
-
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
-            {
-                // this.ShowException(result);
-                return false;
-            }
-
-            report.ReportResource = reportresource;
-
-            // 開啟 report view
-            var frm = new Win.Subs.ReportView(report)
-            {
-                MdiParent = this.MdiParent,
-            };
-            frm.Show();
-
-            return true;
+            return true;            
         }
 
         // print for SubReport

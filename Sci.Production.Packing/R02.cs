@@ -275,7 +275,7 @@ select
 	o.Category,
 	VasShas=iif(o.VasShas = 0,'N','Y'),
 	o.SeasonID,o.ProgramID,o.CdCodeID,
-    o.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction,
+    sty.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction,
     o.Qty,o.CustCDID,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
 	o.BuyerDelivery,
 	ScanQty=sum(pld.ScanQty),
@@ -290,6 +290,7 @@ Outer apply (
 		, Lining
 		, Gender
 		, Construction = d1.Name
+        , s.CDCodeNew
 	FROM Style s WITH(NOLOCK)
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -300,7 +301,7 @@ where 1=1
 {where}
 group by o.MDivisionID,o.FactoryID,o.SewLine,o.CustPONo,o.ID,o.Junk,o.StyleID,o.Category,o.VasShas,
 o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
-o.BuyerDelivery,o.CustCDID,o.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
+o.BuyerDelivery,o.CustCDID,sty.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
 {having}
 order by o.CustPONo
 

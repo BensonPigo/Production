@@ -193,6 +193,18 @@
     <Compile Include="B49.Designer.cs">
       <DependentUpon>B49.cs</DependentUpon>
     </Compile>
+    <Compile Include="B61.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B61.Designer.cs">
+      <DependentUpon>B61.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B62.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B62.Designer.cs">
+      <DependentUpon>B62.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_FTYRegularSendingSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -741,6 +753,24 @@
     <Compile Include="P43.Designer.cs">
       <DependentUpon>P43.cs</DependentUpon>
     </Compile>
+    <Compile Include="P61.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P61.Designer.cs">
+      <DependentUpon>P61.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P62.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P62.Designer.cs">
+      <DependentUpon>P62.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P62_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P62_Import.Designer.cs">
+      <DependentUpon>P62_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="P04_ImportLocalPO.cs">
       <SubType>Form</SubType>
@@ -926,6 +956,18 @@
     <Compile Include="R43.Designer.cs">
       <DependentUpon>R43.cs</DependentUpon>
     </Compile>
+    <Compile Include="R61.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R61.Designer.cs">
+      <DependentUpon>R61.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R62.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R62.Designer.cs">
+      <DependentUpon>R62.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shipping.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -985,6 +1027,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B49.resx">
       <DependentUpon>B49.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B61.resx">
+      <DependentUpon>B61.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B62.resx">
+      <DependentUpon>B62.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_FTYRegularSendingSchedule.resx">
       <DependentUpon>P02_FTYRegularSendingSchedule.cs</DependentUpon>
@@ -1278,6 +1326,15 @@
     <EmbeddedResource Include="P43.resx">
       <DependentUpon>P43.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P61.resx">
+      <DependentUpon>P61.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P62.resx">
+      <DependentUpon>P62.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P62_Import.resx">
+      <DependentUpon>P62_Import.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -1365,6 +1422,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R43.resx">
       <DependentUpon>R43.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R61.resx">
+      <DependentUpon>R61.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R62.resx">
+      <DependentUpon>R62.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

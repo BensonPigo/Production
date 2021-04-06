@@ -107,7 +107,7 @@ group by case when CFAFinalInspectResult in('Pass','Fail but release') then 'Pas
             sqlcmd = string.Format(
                 @"
 SELECT s.Description
-    , o.CDCodeNew
+    , s.CDCodeNew
     , ProductType = r2.Name
 	, FabricType = r1.Name
 	, s.Lining

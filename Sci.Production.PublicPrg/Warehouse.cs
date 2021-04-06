@@ -1034,6 +1034,23 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
 ;drop Table #TmpSource";
                     #endregion
                     break;
+                case 37:
+                    #region Case 37 Return Qty
+                    sqlcmd = @"
+alter table #TmpSource alter column poid varchar(20)
+alter table #TmpSource alter column seq1 varchar(3)
+alter table #TmpSource alter column seq2 varchar(3)
+
+update t
+set t.ReturnQty  = isnull(t.ReturnQty ,0.00) + s.qty
+from mdivisionpodetail t 
+inner join #TmpSource s
+on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2 = s.seq2;
+
+drop Table #TmpSource;
+";
+                    break;
+                    #endregion
             }
 
             return sqlcmd;

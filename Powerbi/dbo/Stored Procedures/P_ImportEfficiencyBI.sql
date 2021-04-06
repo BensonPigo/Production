@@ -45,7 +45,6 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'''')
     ,o.SciDelivery
-	,[CDCodeNew] = o.CDCodeNew
 into #tmpSewingDetail
 from ['+@LinkServerName+'].Production.dbo.System WITH (NOLOCK),['+@LinkServerName+'].Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join  ['+@LinkServerName+'].Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -104,7 +103,7 @@ select distinct ID
     ,SubConOutContractNumber
     ,SubconInSisterFty
     ,SewingReasonDesc
-	,CDCodeNew
+	,sty.CDCodeNew
 	,[ProductType] = sty.ProductType
 	,[FabricType] = sty.FabricType
 	,[Lining] = sty.Lining
@@ -123,6 +122,7 @@ Outer apply (
 		, Lining
 		, Gender
 		, Construction = d1.Name
+		, s.CDCodeNew
 	FROM ['+@LinkServerName+'].Production.dbo.Style s WITH(NOLOCK)
 	left join ['+@LinkServerName+'].Production.dbo.DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
 	left join ['+@LinkServerName+'].Production.dbo.Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType

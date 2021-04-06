@@ -301,7 +301,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 570);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Sketch";
             // 
@@ -1215,7 +1215,7 @@
             // 
             // lbGender
             // 
-            this.lbGender.Location = new System.Drawing.Point(571, 88);
+            this.lbGender.Location = new System.Drawing.Point(571, 116);
             this.lbGender.Name = "lbGender";
             this.lbGender.Size = new System.Drawing.Size(98, 23);
             this.lbGender.TabIndex = 87;
@@ -1223,7 +1223,7 @@
             // 
             // lbConstruction
             // 
-            this.lbConstruction.Location = new System.Drawing.Point(571, 115);
+            this.lbConstruction.Location = new System.Drawing.Point(571, 88);
             this.lbConstruction.Name = "lbConstruction";
             this.lbConstruction.Size = new System.Drawing.Size(98, 23);
             this.lbConstruction.TabIndex = 88;
@@ -1236,7 +1236,7 @@
             this.comboGender1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboGender1.FormattingEnabled = true;
             this.comboGender1.IsSupportUnselect = true;
-            this.comboGender1.Location = new System.Drawing.Point(672, 87);
+            this.comboGender1.Location = new System.Drawing.Point(672, 115);
             this.comboGender1.Name = "comboGender1";
             this.comboGender1.OldText = "";
             this.comboGender1.Size = new System.Drawing.Size(80, 24);
@@ -1294,7 +1294,7 @@
             this.comboConstruction1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboConstruction1.FormattingEnabled = true;
             this.comboConstruction1.IsSupportUnselect = true;
-            this.comboConstruction1.Location = new System.Drawing.Point(672, 114);
+            this.comboConstruction1.Location = new System.Drawing.Point(672, 87);
             this.comboConstruction1.Name = "comboConstruction1";
             this.comboConstruction1.OldText = "";
             this.comboConstruction1.Size = new System.Drawing.Size(80, 24);
