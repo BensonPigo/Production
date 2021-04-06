@@ -18,7 +18,14 @@
     [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
     [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
 	TransactionID varchar(13) NOT NULL CONSTRAINT [DF_FtyExport_Detail_TransactionID] DEFAULT(''),
-    CONSTRAINT [PK_FtyExport_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC, [SCIRefno] ASC, [RefNo] ASC, [LocalPOID] ASC)
+	ToPOID varchar(13) NOT NULL CONSTRAINT [DF_FtyExport_Detail_ToPOID] DEFAULT(''),
+	ToSeq1 varchar(3) NOT NULL CONSTRAINT [DF_FtyExport_Detail_ToSeq1] DEFAULT(''),
+	ToSeq2 varchar(2) NOT NULL CONSTRAINT [DF_FtyExport_Detail_ToSeq2] DEFAULT(''),
+    CONSTRAINT [PK_FtyExport_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC, [SCIRefno] ASC, [RefNo] ASC, [LocalPOID] ASC,
+		ToPOID ASC,
+		ToSeq1 ASC,
+		ToSeq2 ASC
+	)
 );
 
 

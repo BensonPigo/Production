@@ -44,7 +44,9 @@ namespace Sci.Production.Shipping
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("Qty", header: "Q'ty", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
-                .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
+                .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2)
+                .Text("ToPOID", header: "To SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ToSeq", header: "To Seq", width: Widths.AnsiChars(6), iseditingreadonly: true);
         }
 
         // Qurey
@@ -90,6 +92,10 @@ select Selected = 1
 	   , BrandID = isnull(o.BrandID, '')
 	   , FactoryID = isnull(o.FactoryID, '')
 	   , o.SciDelivery
+	   ,td.ToPOID
+	   ,td.ToSeq1
+	   ,td.ToSeq2
+       ,[ToSeq] = td.ToSeq1 + ' ' +td.ToSeq2
 from TransferOut_Detail td WITH (NOLOCK) 
 left join PO_Supp ps WITH (NOLOCK) on ps.ID = td.Poid and ps.SEQ1 = td.Seq1
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = td.Poid and psd.SEQ1= td.Seq1 and psd.SEQ2 = td.Seq2
@@ -151,11 +157,15 @@ select TransactionID
 	   , BrandID
 	   , FactoryID
 	   , SciDelivery
+	   , ToPOID
+	   , ToSeq1
+	   , ToSeq2
+
 from #tmp
 group by TransactionID,Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
 		 , SCIRefNo, Description, FabricType, Type 
 	   	 , MtlTypeID, UnitId, BuyerDelivery, BrandID
-	   	 , FactoryID, SciDelivery";
+	   	 , FactoryID, SciDelivery, ToPOID , ToSeq1, ToSeq2";
                 MyUtility.Tool.ProcessWithDatatable(dr.CopyToDataTable(), string.Empty, strComputeQtySQL, out dtComputeQty);
                 foreach (DataRow currentRow in dtComputeQty.Rows)
                 {
@@ -164,7 +174,11 @@ group by TransactionID,Poid, Seq1, Seq2, Seq, SuppID, Supp, RefNo
 TransactionID = '{MyUtility.Convert.GetString(currentRow["TransactionID"])}' 
 AND POID = '{MyUtility.Convert.GetString(currentRow["POID"])}' 
 AND Seq1 = '{MyUtility.Convert.GetString(currentRow["Seq1"])}'
-AND Seq2 = '{MyUtility.Convert.GetString(currentRow["Seq2"])}'");
+AND Seq2 = '{MyUtility.Convert.GetString(currentRow["Seq2"])}'
+AND ToPOID = '{MyUtility.Convert.GetString(currentRow["ToPOID"])}' 
+AND ToSeq1 = '{MyUtility.Convert.GetString(currentRow["ToSeq1"])}'
+AND ToSeq2 = '{MyUtility.Convert.GetString(currentRow["ToSeq2"])}'
+");
 
                     if (findrow.Length == 0)
                     {

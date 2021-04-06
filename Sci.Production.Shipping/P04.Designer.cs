@@ -961,7 +961,7 @@
             this.DefaultOrder = "ID";
             this.GridAlias = "FtyExport_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "ID,POID,Seq1,Seq2,SCIRefNo,RefNo,LocalPOID";
+            this.GridUniqueKey = "ID,POID,Seq1,Seq2,SCIRefNo,RefNo,LocalPOID,ToPOID,ToSeq1,ToSeq2";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";
