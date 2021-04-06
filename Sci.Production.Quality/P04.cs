@@ -177,7 +177,13 @@ namespace Sci.Production.Quality
                 this.dateDeadLine.Value = Convert.ToDateTime(this.CurrentMaintain["Deadline"]);
             }
 
-            DataTable datas = (DataTable)this.detailgridbs.DataSource;
+            string sqlcmd = $@"
+select r.Name 
+from Style s
+inner join Reason r on r.ReasonTypeID = s.SpecialMark
+where s.ID = '{this.CurrentMaintain["StyleID"]}' and s.SeasonID = '{this.CurrentMaintain["SeasonID"]}' and s.BrandID = '{this.CurrentMaintain["BrandID"]}'
+";
+            this.disSpeciealMark.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }
 
         /// <inheritdoc/>

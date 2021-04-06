@@ -48,6 +48,8 @@
             this.dateBoxReceivedDate = new Sci.Win.UI.DateBox();
             this.dateBoxDeadline = new Sci.Win.UI.DateBox();
             this.dateBoxInspDate = new Sci.Win.UI.DateBox();
+            this.disSpeciealMark = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,6 +66,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disSpeciealMark);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.displayBoxLastResult);
             this.masterpanel.Controls.Add(this.displayBoxBrand);
             this.masterpanel.Controls.Add(this.displayBoxSeason);
@@ -106,6 +110,8 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBoxSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxLastResult, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disSpeciealMark, 0);
             // 
             // detailpanel
             // 
@@ -115,7 +121,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.gridicon.Location = new System.Drawing.Point(833, 101);
+            this.gridicon.Location = new System.Drawing.Point(865, 101);
             // 
             // detailgridcont
             // 
@@ -143,7 +149,6 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(956, 38);
             // 
             // browse
@@ -334,6 +339,23 @@
             this.dateBoxInspDate.Size = new System.Drawing.Size(130, 23);
             this.dateBoxInspDate.TabIndex = 23;
             // 
+            // disSpeciealMark
+            // 
+            this.disSpeciealMark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disSpeciealMark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disSpeciealMark.Location = new System.Drawing.Point(822, 11);
+            this.disSpeciealMark.Name = "disSpeciealMark";
+            this.disSpeciealMark.Size = new System.Drawing.Size(128, 23);
+            this.disSpeciealMark.TabIndex = 74;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(725, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.TabIndex = 73;
+            this.label1.Text = "Specieal Mark";
+            // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(964, 449);
@@ -390,5 +412,7 @@
         private Win.UI.DateBox dateBoxReleasedDate;
         private Win.UI.DateBox dateBoxInspDate;
         private Win.UI.DateBox dateBoxDeadline;
+        private Win.UI.DisplayBox disSpeciealMark;
+        private Win.UI.Label label1;
     }
 }
