@@ -29,7 +29,7 @@ namespace Sci.Production.Packing
             if (string.IsNullOrWhiteSpace(this.CurrentMaintain["id"].ToString()))
             {
                 this.CurrentMaintain["type"] = "ER";
-                if (cbResult = DBProxy.Current.Select("ProductionTPE", "select max(id) max_id from PackingReason WITH (NOLOCK) where type='ER'", out whseReasonDt))
+                if (cbResult = DBProxy.Current.Select(null, "select max(id) max_id from PackingReason WITH (NOLOCK) where type='ER'", out whseReasonDt))
                 {
                     string id = whseReasonDt.Rows[0]["max_id"].ToString();
                     if (string.IsNullOrWhiteSpace(id))
@@ -49,6 +49,12 @@ namespace Sci.Production.Packing
             }
 
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.textBox1.ReadOnly = true;
         }
     }
 }

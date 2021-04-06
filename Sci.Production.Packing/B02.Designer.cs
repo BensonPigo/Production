@@ -32,7 +32,7 @@
             this.labelDescription = new Sci.Win.UI.Label();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.displayID = new Sci.Win.UI.DisplayBox();
-            this.displayDescription = new Sci.Win.UI.DisplayBox();
+            this.textBox1 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,7 +47,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.displayDescription);
+            this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.displayID);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDescription);
@@ -117,15 +117,15 @@
             this.displayID.Size = new System.Drawing.Size(50, 23);
             this.displayID.TabIndex = 5;
             // 
-            // displayDescription
+            // textBox1
             // 
-            this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
-            this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDescription.Location = new System.Drawing.Point(149, 87);
-            this.displayDescription.Name = "displayDescription";
-            this.displayDescription.Size = new System.Drawing.Size(380, 23);
-            this.displayDescription.TabIndex = 6;
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(149, 87);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(409, 23);
+            this.textBox1.TabIndex = 7;
             // 
             // B02
             // 
@@ -158,7 +158,7 @@
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelID;
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.DisplayBox displayDescription;
         private Win.UI.DisplayBox displayID;
+        private Win.UI.TextBox textBox1;
     }
 }
