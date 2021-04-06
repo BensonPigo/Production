@@ -726,14 +726,15 @@ outer apply (
 
             #region 上半部
 
+            for (int i = 1; i < sessions.Count; i++)
+            {
+                Excel.Range r = objSheets.get_Range($"A3", Type.Missing).EntireRow;
+                r.Copy();
+                r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
+            }
+
             for (int i = 0; i <= sessions.Count - 1; i++)
             {
-                if (i > 0)
-                {
-                    objSheets.get_Range(string.Format("B{0}", i + 2)).Copy();
-                    objSheets.get_Range(string.Format("B{0}", i + 3)).PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
-                }
-
                 objSheets.Cells[i + 3, 2] = sessions[i];
             }
 
@@ -774,7 +775,7 @@ outer apply (
 
                 for (int j = 0; j <= sessions.Count - 1; j++)
                 {
-                    var querySessionRow = dt[2].AsEnumerable()
+                    var querySessionRow = dt[1].AsEnumerable()
                         .Where(x => x.Field<string>("Country").EqualString(countrys[i]) &&
                                     x.Field<string>("SeasonID").EqualString(sessions[j]))
                         .Select(x => new
@@ -789,18 +790,19 @@ outer apply (
                     objArrayTop[0, 1] = querySessionRow != null && querySessionRow.SIOEff.HasValue ? querySessionRow.SIOEff : 0;
                     objArrayTop[0, 2] = string.Format("=IFERROR({0}{2}-{1}{2}, \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 1), MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), j + 3);
                     objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].Value2 = objArrayTop;
+                    objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].NumberFormat = "##.##%";
                 }
             }
 
             #endregion
 
             #region 下半部
-            int initR = 13;
+            int initR = sessions.Count + 6;
             int initC = 2;
             int initI = 0;
             string initCountry = string.Empty;
             object[,] objArray = new object[1, 10];
-            foreach (DataRow dr in dt[1].Rows)
+            foreach (DataRow dr in dt[0].Rows)
             {
                 if (initCountry.Empty())
                 {
@@ -823,10 +825,10 @@ outer apply (
                 initR++;
                 initI++;
 
-                if (initI >= dt[1].Rows.Count || !initCountry.EqualString(dt[1].Rows[initI]["Country"]))
+                if (initI >= dt[0].Rows.Count || !initCountry.EqualString(dt[0].Rows[initI]["Country"]))
                 {
-                    int rcount = dt[1].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).Count();
-                    DataRow drYTD = dt[3].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).FirstOrDefault();
+                    int rcount = dt[0].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).Count();
+                    DataRow drYTD = dt[2].AsEnumerable().Where(x => x.Field<string>("Country").EqualString(dr["Country"].ToString())).FirstOrDefault();
 
                     objArray[0, 0] = dr["Country"].ToString();
                     objArray[0, 1] = "YTD";
@@ -842,7 +844,7 @@ outer apply (
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Interior.ColorIndex = this.SetExcelColor(dr["Country"].ToString());
                     objSheets.get_Range(string.Format("B{0}:C{0}", initR)).Font.Bold = true;
                     objSheets.get_Range(string.Format("B{0}:K{0}", initR)).Borders.LineStyle = 1;
-                    initCountry = initI >= dt[1].Rows.Count ? dr["Country"].ToString() : dt[1].Rows[initI]["Country"].ToString();
+                    initCountry = initI >= dt[0].Rows.Count ? dr["Country"].ToString() : dt[0].Rows[initI]["Country"].ToString();
                     initR++;
                 }
             }
