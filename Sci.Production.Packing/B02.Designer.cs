@@ -41,6 +41,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(831, 395);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayDescription);
@@ -48,6 +52,11 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelID);
+            this.detailcont.Size = new System.Drawing.Size(831, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(831, 38);
             // 
             // browse
             // 
@@ -90,11 +99,9 @@
             // 
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkJunk.IsSupportEditMode = false;
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkJunk.Location = new System.Drawing.Point(400, 38);
             this.checkJunk.Name = "checkJunk";
-            this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 4;
             this.checkJunk.Text = "Junk";
@@ -127,8 +134,6 @@
             this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B02";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
