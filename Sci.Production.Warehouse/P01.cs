@@ -525,7 +525,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
                 bool existsFtyInventoryLock = MyUtility.Check.Seek($"select 1 from FtyInventory with (nolock) where POID = '{dr["poid"].ToString()}' and StockType='B' and Lock = 1");
                 if (existsFtyInventoryLock)
                 {
-                    MyUtility.Msg.WarningBox("Still lock material. can not do close.");
+                    MyUtility.Msg.WarningBox("Material locked. Can not close.");
                     return;
                 }
                 #endregion

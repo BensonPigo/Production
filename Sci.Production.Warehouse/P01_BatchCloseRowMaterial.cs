@@ -17,8 +17,7 @@ namespace Sci.Production.Warehouse
         private DataRow dr_master;
         private DataTable dt_detail;
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        private DataTable[] dtBatch;
+        private DataTable dtBatch;
 
         /// <inheritdoc/>
         public P01_BatchCloseRowMaterial()
@@ -137,11 +136,10 @@ select * into #cte_temp
 from cte_order
 
 select  fty.POID
-        ,fty.Seq1
-        ,fty.Seq2 
+INTO #LockList
 from #cte_temp cte 
 left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
-where fty.Lock=1 and StockType='B'
+where fty.Lock=1  AND fty.StockType = 'B'
 
 select  0 Selected
         , m.poid
@@ -160,20 +158,14 @@ select  0 Selected
     ,dbo.getPOComboList(m.poid,m.poid) [PoCombo] 
     ,[MCHandle] = dbo.getPass1_ExtNo((select MCHandle from orders where id=m.POID))
     ,x.WhseClose
+	,[Lock]= Cast( IIF(EXISTS( select 1 from #LockList l where l.POID = m.poID) , 1,0) as bit)
 from (
     select  a.POID
             ,max(a.ActPulloutDate) ActPulloutDate
             , max(a.gmtclose) ppicClose
     from dbo.orders a WITH (NOLOCK) 
     LEFT JOIN dbo.Factory f on a.FtyGroup=f.ID
-    inner join (
-        select poid from #cte_temp 
-		EXCEPT
-		select distinct fty.POID 
-        from #cte_temp cte 
-		left join FtyInventory fty WITH (NOLOCK) on cte.POID=fty.POID 
-		where fty.Lock=1 and StockType='B'
-	) b on b.POID = a.POID
+    inner join #cte_temp  b on b.POID = a.POID
     where  f.MDivisionID = '{0}' and a.Finished=1 and a.WhseClose is null 
     group by a.poid
 ) m
@@ -191,13 +183,13 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
             DualResult result;
             if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtBatch))
             {
-                if (this.dtBatch[1].Rows.Count == 0)
+                if (this.dtBatch.Rows.Count == 0)
                 {
                     this.HideWaitMessage();
                     MyUtility.Msg.WarningBox("Data not found!!");
                 }
 
-                this.listControlBindingSource1.DataSource = this.dtBatch[1];
+                this.listControlBindingSource1.DataSource = this.dtBatch;
             }
             else
             {
@@ -211,11 +203,29 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_chk.CellEditable += (s, e) =>
+            {
+                if (MyUtility.Check.Empty(this.listControlBindingSource1))
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchCloseRowMaterial.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetBool(dr["Lock"]))
+                {
+                    e.IsEditable = false;
+                }
+                else
+                {
+                    e.IsEditable = true;
+                }
+            };
 
             this.gridBatchCloseRowMaterial.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridBatchCloseRowMaterial.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridBatchCloseRowMaterial)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk) // 0
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 1
                 .Text("factoryid", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 1
                 .Text("category", header: "Category", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 4
@@ -227,6 +237,7 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 .Date("ppicclose", header: "Last PPIC Close", iseditingreadonly: true) // 5
                 .EditText("pocombo", header: "PO Combo", iseditingreadonly: true, width: Widths.AnsiChars(25))
                 .Text("MCHandle", header: "MC Handle", iseditingreadonly: true, width: Widths.AnsiChars(30))
+                .CheckBox("Lock", header: "Material Lock", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0) // 0
                ; // 8
         }
 
@@ -258,9 +269,24 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                 return;
             }
 
+            List<string> lockPOID = new List<string>();
+
             foreach (DataRow tmp in dr2)
             {
                 this.ShowWaitMessage(string.Format("Closing R/Mtl of {0}.", tmp["poid"]));
+                bool existsFtyInventoryLock = MyUtility.Check.Seek($"select 1 from FtyInventory with (nolock) where POID = '{tmp["poid"]}' and StockType='B' and Lock = 1");
+
+                if (existsFtyInventoryLock)
+                {
+                    lockPOID.Add(MyUtility.Convert.GetString(tmp["poid"]));
+                    continue;
+                }
+
+                if (lockPOID.Count > 0)
+                {
+                    continue;
+                }
+
                 DualResult result;
                 #region store procedure parameters
                 IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -287,6 +313,14 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
                     Exception ex = result.GetException();
                     MyUtility.Msg.WarningBox(ex.Message);
                 }
+            }
+
+            if (lockPOID.Count > 0)
+            {
+                this.HideWaitMessage();
+                string msg = "Material locked. Can not close." + Environment.NewLine + lockPOID.JoinToString(Environment.NewLine);
+                MyUtility.Msg.ErrorBox(msg);
+                return;
             }
 
             #region Sent W/H Fabric to Gensong
@@ -371,11 +405,37 @@ Drop table #cte_temp;", Env.User.Keyword, categorySql));
 from #tmp";
             DataTable printDatatable;
 
-            if (this.dtBatch != null && this.dtBatch[1].Rows.Count > 0)
+            if (this.dtBatch != null && this.dtBatch.Rows.Count > 0)
             {
-                MyUtility.Tool.ProcessWithDatatable(this.dtBatch[1], string.Empty, cmd, out printDatatable, "#Tmp");
+                MyUtility.Tool.ProcessWithDatatable(this.dtBatch, string.Empty, cmd, out printDatatable, "#Tmp");
                 Utility.Excel.SaveDataToExcel sdExcel = new Utility.Excel.SaveDataToExcel(printDatatable);
                 sdExcel.Save(Class.MicrosoftFile.GetName("Warehouse_P01_BatchCloseRowMaterial"));
+            }
+        }
+
+        private void GridBatchCloseRowMaterial_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                this.gridBatchCloseRowMaterial.ValidateControl();
+                DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+                if (dt != null || dt.Rows.Count > 0)
+                {
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        if (!MyUtility.Convert.GetBool(item["Lock"]))
+                        {
+                            bool old = MyUtility.Convert.GetBool(item["Selected"]);
+                            item["Selected"] = !old;
+                        }
+                        else
+                        {
+                            item["Selected"] = false;
+                        }
+
+                        item.EndEdit();
+                    }
+                }
             }
         }
     }
