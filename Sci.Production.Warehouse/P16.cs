@@ -757,8 +757,8 @@ select
 ,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[NewBarcode] = ''
 ,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
-from Production.dbo.Issue_Detail i2
-inner join Production.dbo.Issue i on i2.Id=i.Id 
+from Production.dbo.Issuelack_Detail i2
+inner join Production.dbo.Issuelack i on i2.Id=i.Id 
 inner join FtyInventory f on f.POID = i2.POID
 and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
 and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
