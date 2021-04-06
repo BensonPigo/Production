@@ -3120,6 +3120,8 @@ FOR AccountID IN ({account})) a
 
             public string BLNo { get; set; }
 
+            public string CurrencyID { get; set; }
+
             public string AccountID { get; set; }
 
             public decimal? A_61022001 { get; set; }
