@@ -150,6 +150,9 @@
     <Reference Include="pdfbox-1.8.9, Version=1.8.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\_DLL\pdfbox-1.8.9.dll</HintPath>
     </Reference>
+    <Reference Include="PQScan.PDFToImage">
+      <HintPath>..\_Dll\PQScan.PDFToImage.dll</HintPath>
+    </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>

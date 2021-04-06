@@ -1,10 +1,13 @@
 ﻿using Bytescout.BarCodeReader;
 using Ict;
 using Ict.Win;
+using PQScan.PDFToImage;
 using Sci.Data;
 using Sci.Production.Automation;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
+//using Spire.Pdf;
+//using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,7 +16,6 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -311,6 +313,7 @@ namespace Sci.Production.Packing
                                                 Barcode = lastBarcode.Barcode,
                                                 PackingListID = lastBarcode.PackingListID,
                                                 CTNStartNO = lastBarcode.CTNStartNO,
+                                                SCICtnNo = lastBarcode == null ? null : lastBarcode.SCICtnNo,
                                             });
                                         }
                                     }
@@ -389,7 +392,7 @@ namespace Sci.Production.Packing
         {
             DataTable dt;
             string cmd = $@"
-SELECT DISTINCT pd.ID, pd.CTNStartNo
+SELECT DISTINCT pd.ID, pd.CTNStartNo , pd.SCICtnNo
 FROM PackingList p
 LEFT JOIN Pullout pu ON pu.ID = p.PulloutID
 INNER JOIN PackingList_Detail pd ON p.ID = pd.ID
@@ -442,6 +445,7 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
                         FileName = fileName,
                         PackingListID = MyUtility.Convert.GetString(dt.Rows[0]["ID"]),
                         CTNStartNO = MyUtility.Convert.GetString(dt.Rows[0]["CTNStartNo"]),
+                        SCICtnNo = MyUtility.Convert.GetString(dt.Rows[0]["SCICtnNo"]),
                     });
                 }
             }
@@ -497,6 +501,7 @@ AND (pu.Status IS NULL OR pu.Status NOT IN ('Confirmed', 'Locked'))
                         FullFileName = fullFileName,
                         PackingListID = MyUtility.Convert.GetString(dt.Rows[0]["ID"]),
                         CTNStartNO = MyUtility.Convert.GetString(dt.Rows[0]["CTNStartNo"]),
+                        SCICtnNo = MyUtility.Convert.GetString(dt.Rows[0]["SCICtnNo"]),
                     });
                 }
             }
@@ -910,7 +915,7 @@ SELECT
 	,t.ShippingMarkCombinationUkey
 	,t.ShippingMarkTypeUkey
 	--,[FileName]=dt.CustCTN 
-	,[FileName]=(SELECT TOP 1 CustCTN FROM #tmp0 dt WHERE t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo)
+	,[FileName]=''  ----(SELECT TOP 1 CustCTN FROM #tmp0 dt WHERE t.PackingListID = dt.PackingListID AND t.RefNo = dt.RefNo AND t.SCICtnNo = dt.SCICtnNo)
 	,b.Side
 	,b.Seq
 	,b.Is2Side
@@ -936,81 +941,108 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                 i++;
             }
 
+            SqlConnection sqlConn = null;
+
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
-                try
+                DBProxy.Current.OpenConnection(null, out sqlConn);
+                using (sqlConn)
                 {
-                    // 開始更新DB
-                    foreach (var p24_Head in p24_HeadList)
+                    try
                     {
-                        if (!(result = DBProxy.Current.Execute(null, p24_Head.ToString())))
+                        // 開始更新DB
+                        foreach (var p24_Head in p24_HeadList)
                         {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return false;
-                        }
-                    }
-
-                    int idx = 0;
-                    foreach (DataTable dt in dtList)
-                    {
-                        string cmd = p24_BodyList[idx];
-
-                        if (!(result = DBProxy.Current.Execute(null, cmd)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(result);
-                            return false;
-                        }
-
-                        idx++;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
-                    return false;
-                }
-            }
-
-            // 轉出圖片檔，以及寫入Packing P24 的Image
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
-            {
-                try
-                {
-                    var groupBy = this.BarcodeObjs.GroupBy(o => new { o.PackingListID, o.CTNStartNO })
-                                        .Select(o => o.First()).Distinct().ToList();
-
-                    foreach (var group in groupBy)
-                    {
-                        var grupDatas = this.BarcodeObjs.Where(o => o.PackingListID == group.PackingListID && o.CTNStartNO == group.CTNStartNO).ToList();
-
-                        int seq = 1;
-                        foreach (var barcodeObj in grupDatas)
-                        {
-                            string barcode = barcodeObj.Barcode;
-
-                            // 如果Image是null，代表是PDF
-                            if (barcodeObj.Image != null)
+                            if (!(result = DBProxy.Current.ExecuteByConn(sqlConn, p24_Head.ToString())))
                             {
-                                string strSeq = seq.ToString();
+                                transactionscope.Dispose();
+                                this.ShowErr(result);
+                                return false;
+                            }
+                        }
 
-                                this.InsertImageToDatabase(barcode, strSeq, barcodeObj.Image);
+                        int idx = 0;
+                        foreach (DataTable dt in dtList)
+                        {
+                            string cmd = p24_BodyList[idx];
 
-                                seq++;
+                            if (!(result = DBProxy.Current.ExecuteByConn(sqlConn, cmd)))
+                            {
+                                transactionscope.Dispose();
+                                this.ShowErr(result);
+                                return false;
+                            }
+
+                            idx++;
+                        }
+
+                        // 為了得知圖片該寫進哪個Seq，因此Select出剛剛寫的東西，用Packing ID + SCICtnNo去對應
+                        DataTable dt_ShippingMarkPic_Detail;
+                        string cc = $@"
+select a.PackingListID
+, b.SCICtnNo 
+, b.ShippingMarkTypeUkey
+, b.ShippingMarkPicUkey
+, b.Seq
+, [Rank]=RANK() OVER (PARTITION BY b.ShippingMarkPicUkey,b.SCICtnNo  ORDER BY b.Seq)
+from ShippingMarkPic a with(nolock)
+inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
+where a.PackingListID IN ('{idList.Select(o => o.PackingListID).JoinToString("','")}')
+ORDER BY  a.PackingListID , b.SCICtnNo 
+";
+
+                        DBProxy.Current.Select(null, cc, out dt_ShippingMarkPic_Detail);
+
+                        List<string> filenamee = new List<string>();
+                        List<string> sQLs = new List<string>();
+                        List<List<string>> sQLList = new List<List<string>>();
+                        List<byte[]> images = new List<byte[]>();
+                        int counter = 0;
+
+                        int rank = 0;
+                        string currentSCICtnNo = string.Empty;
+                        foreach (DataRow dr in dt_ShippingMarkPic_Detail.Rows)
+                        {
+                            string packID = MyUtility.Convert.GetString(dr["PackingListID"]);
+                            string sCICtnNo = MyUtility.Convert.GetString(dr["SCICtnNo"]);
+
+                            if (currentSCICtnNo == sCICtnNo)
+                            {
+                                rank++;
                             }
                             else
                             {
-                                PdfDocument doc = new PdfDocument();
-                                doc.LoadFromFile(barcodeObj.FullFileName);
-                                Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
+                                rank = 1;
+                                currentSCICtnNo = sCICtnNo;
+                            }
+
+                            BarcodeObj barcodeObj = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo).FirstOrDefault();
+
+                            var barcodeObjs = this.BarcodeObjs.Where(o => o.PackingListID == packID && o.SCICtnNo == sCICtnNo);
+                            string barcode = barcodeObj.Barcode;
+
+                            // 如果Image是null，代表是PDF
+                            if (barcodeObjs.FirstOrDefault().Image != null)
+                            {
+                                foreach (var item in barcodeObjs)
+                                {
+                                    string cmd = this.InsertImageToDatabase_List(counter.ToString(), item.Image, packID, sCICtnNo, rank.ToString());
+                                    filenamee.Add(barcode);
+                                    sQLs.Add(cmd);
+                                    images.Add(item.Image);
+                                    rank++;
+                                    counter++;
+                                }
+                            }
+                            else
+                            {
 
                                 byte[] pDFImage = null;
 
+                                // 原套件
+                                PdfDocument doc = new PdfDocument();
+                                doc.LoadFromFile(barcodeObj.FullFileName);
+                                Image bmp = doc.SaveAsImage(0, PdfImageType.Bitmap, 300, 300);
                                 // Note : 工廠換了變出PDF的軟體，因此不需要裁切圖片了，直接把Source轉出
                                 Bitmap pic = new Bitmap(bmp);
 
@@ -1026,23 +1058,93 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
                                 bmp.Dispose();
                                 pic.Dispose();
 
-                                this.InsertImageToDatabase(barcode, "1", pDFImage);
+                                /*
+                                // 新套件
+                                PDFDocument pdfDoc = new PDFDocument();
+                                pdfDoc.LoadPDF(barcodeObj.FullFileName);
+                                pdfDoc.DPI = 230;
+                                Bitmap pic = pdfDoc.ToImage(0);
+
+                                // 準備要寫入DB的資料
+                                using (var stream = new MemoryStream())
+                                {
+                                    pic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                    pDFImage = stream.ToArray();
+                                }
+
+                                pic.Dispose();
+                                pdfDoc.Dispose();
+                                */
+
+                                string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
+                                filenamee.Add(barcode);
+                                sQLs.Add(cmd);
+                                images.Add(pDFImage);
+                                counter++;
                             }
                         }
-                    }
 
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr(ex);
-                    return false;
+                        int idxw = 0;
+                        List<SqlParameter> para = new List<SqlParameter>();
+
+                        // 組合寫入圖片的SQL
+                        string finalSQL = string.Empty;
+
+                        // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
+                        int sqlParameterLimit = 500;
+                        int limitCounter = 0;
+
+                        List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
+                        int total = 1;
+
+                        foreach (var sql in sQLs)
+                        {
+                            finalSQL += sql + Environment.NewLine;
+
+                            string name = filenamee[idxw];
+                            byte[] image = images[idxw];
+
+                            para.Add(new SqlParameter($"@FileName{idxw}", name));
+                            para.Add(new SqlParameter($"@Image{idxw}", image));
+                            idxw++;
+
+                            limitCounter += 2;
+                            if (limitCounter >= sqlParameterLimit || total == sQLs.Count)
+                            {
+                                result = DBProxy.Current.Execute(null, finalSQL, para);
+                                if (!result)
+                                {
+                                    throw result.GetException();
+                                }
+
+                                finalSQL = string.Empty;
+                                para = new List<SqlParameter>();
+                                limitCounter = 0;
+                            }
+
+                            total++;
+                        }
+
+                        transactionscope.Complete();
+                        transactionscope.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(ex);
+                        return false;
+                    }
                 }
             }
 
             return true;
+        }
+
+        private DualResult InsertImage(string sql, List<SqlParameter> para, SqlConnection sqlConn)
+        {
+            DualResult result = DBProxy.Current.ExecuteByConn(sqlConn, sql, para);
+
+            return result;
         }
 
         private string Get_MatchSQL(string packingListID, string sSCC)
@@ -1708,7 +1810,7 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
                 }
             }
         }
-
+        /*
         /// <summary>
         /// 將PDF文件轉換為圖片的方法
         /// </summary>
@@ -1779,7 +1881,7 @@ WHERE PackingListID IN ('{string.Join("','", selecteds.ToList().Select(o => o["I
             // 寫入DB
             this.InsertImageToDatabase(imageName, "1", data);
         }
-
+        */
         private int imageIdx = 0;
         /// <summary>
         /// 寫入Image欄位
@@ -1841,6 +1943,48 @@ AND sd.Seq = (
                 this.ShowErr(result);
                 throw result.GetException();
             }
+        }
+
+
+        private string InsertImageToDatabase_List(string counter, byte[] dataArry, string packingListID, string sCICtnNo, string rank)
+        {
+            // 第一張圖片，對應Combnation的最小Seq，第二張圖片對應第二小Seq，以此類推
+
+            string cmd = $@"
+----找出P24表身的唯一值
+select a.PackingListID
+, b.SCICtnNo 
+, b.ShippingMarkTypeUkey
+, b.ShippingMarkPicUkey
+, b.Seq
+, [Rank]=RANK() OVER (PARTITION BY b.ShippingMarkPicUkey,b.SCICtnNo  ORDER BY b.Seq)
+INTO #tmp{counter}
+from ShippingMarkPic a with(nolock)
+inner join ShippingMarkPic_Detail b with(nolock) on a.Ukey = b.ShippingMarkPicUkey
+where a.PackingListID = '{packingListID}'  and b.SCICtnNo ='{sCICtnNo}'
+
+----寫入圖片
+UPDATE sd
+SET sd.Image=@Image{counter}
+FROM ShippingMarkPic_Detail sd 
+INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
+                    AND sd.SCICtnNo = t.SCICtnNo 
+                    AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
+                    AND sd.Seq = t.Seq
+WHERE t.Rank = {rank}
+
+---- 更新P24表頭
+UPDATE s
+SET s.EditDate=GETDATE() , s.EditName='{Sci.Env.User.UserID}'
+FROM ShippingMarkPic s WITH(NOLOCK)
+INNER JOIN ShippingMarkPic_Detail sd WITH(NOLOCK) ON s.Ukey=sd.ShippingMarkPicUkey
+INNER JOIN #tmp{counter} t on sd.ShippingMarkPicUkey = t.ShippingMarkPicUkey 
+                    AND sd.SCICtnNo = t.SCICtnNo 
+                    AND sd.ShippingMarkTypeUkey = t.ShippingMarkTypeUkey
+                    AND sd.Seq = t.Seq
+WHERE t.Rank = {rank}
+";
+            return cmd;
         }
 
         private enum UploadType
@@ -1956,6 +2100,9 @@ AND sd.Seq = (
 
             /// <inheritdoc/>
             public string PackingListID { get; set; }
+
+            /// <inheritdoc/>
+            public string SCICtnNo { get; set; }
 
             /// <inheritdoc/>
             public string CTNStartNO { get; set; }
