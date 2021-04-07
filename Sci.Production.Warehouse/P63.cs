@@ -82,7 +82,7 @@ select  sfi.POID,
         sfi.StockType
 from    SemiFinishedInventory sfi with (nolock) 
 inner join  SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
-outer apply(SELECT val =  Stuff((select concat( ',',sfl.MtlLocationID)   
+outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
                                     where   sfl.POID        = sfi.POID          and
                                             sfl.Refno       = sfi.Refno         and
