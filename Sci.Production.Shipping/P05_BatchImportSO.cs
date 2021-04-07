@@ -100,6 +100,10 @@ where fwd.whseno = '{e.FormattedValue}'
 
                 dr.EndEdit();
             };
+
+            DataGridViewGeneratorTextColumnSettings soNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 16 };
+            DataGridViewGeneratorTextColumnSettings documentRefNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
+
             this.grid.IsEditingReadOnly = false;
             this.grid.DataSource = this.listControlBindingSource1;
 
@@ -109,9 +113,9 @@ where fwd.whseno = '{e.FormattedValue}'
                .Text("Shipper", header: "Shipper", iseditingreadonly: true, width: Widths.AnsiChars(8))
                .Text("BrandID", header: "Brand", iseditingreadonly: true, width: Widths.AnsiChars(15))
                .Text("InvDate", header: "Invoice Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
-               .Text("SoNo", header: "S/O#", iseditingreadonly: false, width: Widths.AnsiChars(15))
+               .Text("SoNo", header: "S/O#", iseditingreadonly: false, width: Widths.AnsiChars(15), settings: soNo)
                .Text("ForwarderWhse_DetailUKey_ForShow", header: "Terminal/Whse#", iseditingreadonly: false, width: Widths.AnsiChars(6), settings: setTerminal)
-               .Text("DocumentRefNo", header: "Document Ref#", iseditingreadonly: false, width: Widths.AnsiChars(15))
+               .Text("DocumentRefNo", header: "Document Ref#", iseditingreadonly: false, width: Widths.AnsiChars(15), settings: documentRefNo)
                .Date("CutOffDate", header: "Cut-Off Date", iseditingreadonly: false)
                .Date("SOCFMDate", header: "S/O Cfm Date", iseditingreadonly: false)
               ;
