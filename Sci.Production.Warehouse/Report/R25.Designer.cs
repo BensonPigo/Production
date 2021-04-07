@@ -53,6 +53,7 @@
             this.txtfactory = new Sci.Win.UI.TextBox();
             this.comboDropDownList1 = new Sci.Production.Class.ComboDropDownList(this.components);
             this.label10 = new Sci.Win.UI.Label();
+            this.chkRecLessArv = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -313,6 +314,7 @@
             // 
             // comboDropDownList1
             // 
+            this.comboDropDownList1.AddAllItem = false;
             this.comboDropDownList1.BackColor = System.Drawing.Color.White;
             this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList1.FormattingEnabled = true;
@@ -332,9 +334,21 @@
             this.label10.TabIndex = 164;
             this.label10.Text = "Mtl Type";
             // 
+            // chkRecLessArv
+            // 
+            this.chkRecLessArv.AutoSize = true;
+            this.chkRecLessArv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkRecLessArv.Location = new System.Drawing.Point(12, 304);
+            this.chkRecLessArv.Name = "chkRecLessArv";
+            this.chkRecLessArv.Size = new System.Drawing.Size(183, 21);
+            this.chkRecLessArv.TabIndex = 165;
+            this.chkRecLessArv.Text = "Receive Qty < Arrive Qty";
+            this.chkRecLessArv.UseVisualStyleBackColor = true;
+            // 
             // R25
             // 
-            this.ClientSize = new System.Drawing.Size(584, 332);
+            this.ClientSize = new System.Drawing.Size(584, 357);
+            this.Controls.Add(this.chkRecLessArv);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.comboDropDownList1);
             this.Controls.Add(this.txtfactory);
@@ -362,6 +376,9 @@
             this.Name = "R25";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R25. Import Schedule List(Fabric/Accessory)";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.txtSP1, 0);
             this.Controls.SetChildIndex(this.txtSP2, 0);
             this.Controls.SetChildIndex(this.label8, 0);
@@ -389,6 +406,7 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboDropDownList1, 0);
             this.Controls.SetChildIndex(this.label10, 0);
+            this.Controls.SetChildIndex(this.chkRecLessArv, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -419,5 +437,6 @@
         private Win.UI.TextBox txtfactory;
         private Class.ComboDropDownList comboDropDownList1;
         private Win.UI.Label label10;
+        private Win.UI.CheckBox chkRecLessArv;
     }
 }
