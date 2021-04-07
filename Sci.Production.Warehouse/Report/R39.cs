@@ -100,7 +100,7 @@ select  sfi.POID,
 from    SemiFinishedInventory sfi with (nolock) 
 inner join orders o  with (nolock) on o.ID = sfi.POID
 inner join  SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
-outer apply(SELECT val =  Stuff((select concat( ',',sfl.MtlLocationID)   
+outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
                                     where   sfl.POID        = sfi.POID          and
                                             sfl.Refno       = sfi.Refno         and
@@ -134,11 +134,13 @@ select  sfi.POID,
 from    SemiFinishedInventory sfi with (nolock) 
 inner join orders o  with (nolock) on o.ID = sfi.POID
 inner join  SemiFinished sf with (nolock) on sf.Refno = sfi.Refno
-outer apply(SELECT val =  Stuff((select concat( ',',sfl.MtlLocationID)   
+outer apply(SELECT val =  Stuff((select distinct concat( ',',sfl.MtlLocationID)   
                                     from SemiFinishedInventory_Location sfl with (nolock)
                                     where   sfl.POID        = sfi.POID          and
                                             sfl.Refno       = sfi.Refno         and
-                                            sfl.StockType   = sfi.StockType
+                                            sfl.StockType   = sfi.StockType     and
+                                            sfl.Roll   = sfi.Roll     and
+                                            sfl.Dyelot   = sfi.Dyelot     
                                 FOR XML PATH('')),1,1,'') 
                 ) BulkLocation
 where   StockType = 'B' {sqlWhere}
