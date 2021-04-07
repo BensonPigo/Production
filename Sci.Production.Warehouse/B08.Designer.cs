@@ -42,11 +42,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 27);
-            this.detail.Size = new System.Drawing.Size(897, 393);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtRefno);
@@ -55,16 +50,10 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(897, 355);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 355);
             // 
             // browse
             // 
-            this.browse.Location = new System.Drawing.Point(4, 27);
-            this.browse.Size = new System.Drawing.Size(792, 345);
+            this.browse.Size = new System.Drawing.Size(792, 347);
             // 
             // tabs
             // 
@@ -101,7 +90,7 @@
             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDesc.Location = new System.Drawing.Point(109, 57);
             this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(638, 24);
+            this.txtDesc.Size = new System.Drawing.Size(638, 23);
             this.txtDesc.TabIndex = 2;
             // 
             // txtUnit
@@ -111,7 +100,7 @@
             this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtUnit.Location = new System.Drawing.Point(109, 91);
             this.txtUnit.Name = "txtUnit";
-            this.txtUnit.Size = new System.Drawing.Size(100, 24);
+            this.txtUnit.Size = new System.Drawing.Size(100, 23);
             this.txtUnit.TabIndex = 3;
             // 
             // txtRefno
@@ -121,15 +110,16 @@
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRefno.Location = new System.Drawing.Point(109, 22);
             this.txtRefno.Name = "txtRefno";
-            this.txtRefno.Size = new System.Drawing.Size(132, 24);
+            this.txtRefno.Size = new System.Drawing.Size(132, 23);
             this.txtRefno.TabIndex = 1;
             // 
             // B08
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 409);
             this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
             this.Name = "B08";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B08. Semi-finished material";

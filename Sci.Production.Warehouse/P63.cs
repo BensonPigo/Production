@@ -133,6 +133,7 @@ group by    sfi.POID,
         private void BtnNewSearch_Click(object sender, EventArgs e)
         {
             this.txtSP.Text = string.Empty;
+            this.txtSP.Focus();
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)

@@ -151,6 +151,7 @@ from    #tmpDetail
         {
             if (this.gridLeft.SelectedRows.Count == 0)
             {
+                this.gridRight.DataSource = null;
                 return;
             }
 
@@ -162,6 +163,7 @@ from    #tmpDetail
 
             if (!srcRight.Any())
             {
+                this.gridRight.DataSource = null;
                 return;
             }
 
