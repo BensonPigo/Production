@@ -163,6 +163,12 @@
     <Compile Include="B07.Designer.cs">
       <DependentUpon>B07.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_Seq.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Seq.Designer.cs">
+      <DependentUpon>P03_Seq.cs</DependentUpon>
+    </Compile>
     <Compile Include="P18_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1362,6 +1368,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_Cartondetail.resx">
       <DependentUpon>P02_Cartondetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_Seq.resx">
+      <DependentUpon>P03_Seq.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_AdjustQty.resx">
       <DependentUpon>P03_AdjustQty.cs</DependentUpon>
