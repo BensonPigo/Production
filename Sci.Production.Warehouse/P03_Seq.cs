@@ -566,7 +566,7 @@ order by Date,AddDate
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .Date("Date", header: "Date", width: Widths.AnsiChars(12))
                 .Text("ID", header: "Transaction#", width: Widths.AnsiChars(15), settings: ts2)
-                .Text("Name", header: "Name", width: Widths.AnsiChars(25))
+                .Text("Name", header: "Name", width: Widths.AnsiChars(35))
                 .Numeric("BulkArrivedQty", header: "Bulk\r\nArrivedQty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)
                 .Numeric("BulkOutQty", header: "Bulk\r\nOutQty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)
                 .Numeric("BulkAdjustQty", header: "Bulk\r\nAdjustQty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)
