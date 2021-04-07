@@ -6,6 +6,7 @@ using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -641,7 +642,7 @@ namespace Sci.Production.Packing
                     }
                     else
                     {
-                        packingFileDt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == item.Filename).FirstOrDefault()["Result"] = "Fail";
+                        packingFileDt.AsEnumerable().Where(o => MyUtility.Convert.GetString(o["FileName"]) == item.Filename).FirstOrDefault()["Result"] = "Fail:" + r.GetException().Message;
                     }
                 }
 
@@ -1322,18 +1323,25 @@ DROP TABLE #tmp ,#tmpPackingList_Detail
             }
             #endregion
 
+            SqlConnection sqlConn = null;
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
-                DualResult r = DBProxy.Current.Execute(null, cmd);
-                if (!r)
+                DBProxy.Current.DefaultTimeout = 3600;
+                DBProxy.Current.OpenConnection(null, out sqlConn);
+
+                using (sqlConn)
                 {
-                    transactionscope.Dispose();
-                    return r;
-                }
-                else
-                {
-                    transactionscope.Complete();
-                    return new DualResult(true);
+                    DualResult r = DBProxy.Current.Execute(null, cmd);
+                    if (!r)
+                    {
+                        transactionscope.Dispose();
+                        return r;
+                    }
+                    else
+                    {
+                        transactionscope.Complete();
+                        return new DualResult(true);
+                    }
                 }
             }
         }
