@@ -77,11 +77,11 @@ BEGIN
 		from #tmp2_WIP_Qty a
 		left join #tmp2_B b on a.Article=b.Article and a.MDivisionid=b.MDivisionid and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
 		left join #tmp2_A c on a.Article=c.Article and a.MDivisionid=c.MDivisionid and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
-
+		
         Select o.poid,a.orderid,a.article,a.sizecode,
 			order_cpu = o.cpu,
 			cutqty = min(isnull(b.cutqty,0)),
-			cpu = o.cpu*min(isnull(b.cutqty,0)),
+			cpu = isnull((select Price from Order_TmsCost ot with(nolock) where id = o.id and ot.ArtworkTypeID='Cutting'), 0)*min(isnull(b.cutqty,0)),
 			pre_cutqty = min(isnull(b.pre_cutqty,0)),
 			pre_cpu = o.cpu*min(isnull(b.pre_cutqty,0)),
 			WIP_Qty = min(isnull(b.WIP_Qty,0))
@@ -89,7 +89,7 @@ BEGIN
         from #tmp1 a 
         left join #tmp2 b on a.orderid = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
         left join orders o WITH (NOLOCK) on o.id = a.orderid
-        group by o.poid,a.orderid,a.article,a.sizecode ,o.cpu
+        group by o.poid,a.orderid,a.article,a.sizecode ,o.id
 
 		--update CuttingOutput.ActGarment/ PPH/ ActTTCPU
 		IF(@Run_type = 'Confirm')
