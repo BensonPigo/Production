@@ -42,6 +42,11 @@ namespace Sci.Production.Class
         /// </summary>
         public bool IsMisc { get; set; }
 
+        /// <summary>
+        /// LocalSupp.IsFreightForwarder
+        /// </summary>
+        public bool IsFreightForwarder { get; set; }
+
         /// <inheritdoc/>
         public Win.UI.TextBox TextBox1 { get; private set; }
 
@@ -89,6 +94,11 @@ namespace Sci.Production.Class
                 if (this.IsMisc)
                 {
                     sql += " and IsMisc = 1 ";
+                }
+
+                if (this.IsFreightForwarder)
+                {
+                    sql += " and IsFreightForwarder = 1 ";
                 }
 
                 if (!MyUtility.Check.Seek(sql, "Production"))
@@ -152,6 +162,11 @@ namespace Sci.Production.Class
             if (this.IsMisc)
             {
                 selectCommand += " and IsMisc = 1 ";
+            }
+
+            if (this.IsFreightForwarder)
+            {
+                selectCommand += " and IsFreightForwarder = 1 ";
             }
 
             selectCommand += " Order by ID";
