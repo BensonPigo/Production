@@ -100,8 +100,11 @@ where sd.id='{0}' order by sd.No
             string sqlcmd = $@"
 select r.Name 
 from Style s
-inner join Reason r on r.ReasonTypeID = s.SpecialMark
-where s.ID = '{this.CurrentMaintain["StyleID"]}' and s.SeasonID = '{this.CurrentMaintain["SeasonID"]}' and s.BrandID = '{this.CurrentMaintain["BrandID"]}'
+inner join Reason r on r.ID = s.SpecialMark
+where s.ID = '{this.CurrentMaintain["StyleID"]}' 
+        and s.SeasonID = '{this.CurrentMaintain["SeasonID"]}' 
+        and s.BrandID = '{this.CurrentMaintain["BrandID"]}'
+        and r.ReasonTypeID = 'Style_SpecialMark'
 ";
             this.disSpeciealMark.Text = MyUtility.GetValue.Lookup(sqlcmd);
         }

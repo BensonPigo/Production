@@ -108,7 +108,7 @@
             this.masterpanel.Controls.Add(this.labelSP);
             this.masterpanel.Controls.Add(this.labelFirstSP);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 215);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 178);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFirstSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
@@ -145,12 +145,12 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 215);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 241);
+            this.detailpanel.Location = new System.Drawing.Point(0, 178);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 278);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(892, 180);
+            this.gridicon.Location = new System.Drawing.Point(892, 143);
             // 
             // refresh
             // 
@@ -158,7 +158,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 241);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 278);
             // 
             // detail2
             // 
@@ -216,7 +216,7 @@
             // 
             // labelFirstSP
             // 
-            this.labelFirstSP.Location = new System.Drawing.Point(5, 36);
+            this.labelFirstSP.Location = new System.Drawing.Point(5, 33);
             this.labelFirstSP.Name = "labelFirstSP";
             this.labelFirstSP.Size = new System.Drawing.Size(97, 23);
             this.labelFirstSP.TabIndex = 2;
@@ -224,7 +224,7 @@
             // 
             // labelSP
             // 
-            this.labelSP.Location = new System.Drawing.Point(5, 65);
+            this.labelSP.Location = new System.Drawing.Point(5, 59);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(97, 23);
             this.labelSP.TabIndex = 3;
@@ -232,7 +232,7 @@
             // 
             // labelMDivisionID
             // 
-            this.labelMDivisionID.Location = new System.Drawing.Point(5, 94);
+            this.labelMDivisionID.Location = new System.Drawing.Point(5, 84);
             this.labelMDivisionID.Name = "labelMDivisionID";
             this.labelMDivisionID.Size = new System.Drawing.Size(97, 23);
             this.labelMDivisionID.TabIndex = 4;
@@ -240,7 +240,7 @@
             // 
             // labelLastResult
             // 
-            this.labelLastResult.Location = new System.Drawing.Point(5, 123);
+            this.labelLastResult.Location = new System.Drawing.Point(5, 109);
             this.labelLastResult.Name = "labelLastResult";
             this.labelLastResult.Size = new System.Drawing.Size(97, 23);
             this.labelLastResult.TabIndex = 5;
@@ -256,7 +256,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(248, 36);
+            this.labelBrand.Location = new System.Drawing.Point(248, 33);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(97, 23);
             this.labelBrand.TabIndex = 7;
@@ -264,7 +264,7 @@
             // 
             // labelEarliestInline
             // 
-            this.labelEarliestInline.Location = new System.Drawing.Point(248, 65);
+            this.labelEarliestInline.Location = new System.Drawing.Point(248, 59);
             this.labelEarliestInline.Name = "labelEarliestInline";
             this.labelEarliestInline.Size = new System.Drawing.Size(97, 23);
             this.labelEarliestInline.TabIndex = 8;
@@ -272,7 +272,7 @@
             // 
             // labelEarliestOffline
             // 
-            this.labelEarliestOffline.Location = new System.Drawing.Point(248, 94);
+            this.labelEarliestOffline.Location = new System.Drawing.Point(248, 84);
             this.labelEarliestOffline.Name = "labelEarliestOffline";
             this.labelEarliestOffline.Size = new System.Drawing.Size(97, 23);
             this.labelEarliestOffline.TabIndex = 9;
@@ -280,7 +280,7 @@
             // 
             // labelLastTestDate
             // 
-            this.labelLastTestDate.Location = new System.Drawing.Point(5, 152);
+            this.labelLastTestDate.Location = new System.Drawing.Point(5, 135);
             this.labelLastTestDate.Name = "labelLastTestDate";
             this.labelLastTestDate.Size = new System.Drawing.Size(97, 23);
             this.labelLastTestDate.TabIndex = 10;
@@ -288,7 +288,7 @@
             // 
             // labelDeadLine
             // 
-            this.labelDeadLine.Location = new System.Drawing.Point(491, 36);
+            this.labelDeadLine.Location = new System.Drawing.Point(491, 33);
             this.labelDeadLine.Name = "labelDeadLine";
             this.labelDeadLine.Size = new System.Drawing.Size(118, 23);
             this.labelDeadLine.TabIndex = 11;
@@ -296,7 +296,7 @@
             // 
             // labelEarliestSCIDlv
             // 
-            this.labelEarliestSCIDlv.Location = new System.Drawing.Point(491, 65);
+            this.labelEarliestSCIDlv.Location = new System.Drawing.Point(491, 59);
             this.labelEarliestSCIDlv.Name = "labelEarliestSCIDlv";
             this.labelEarliestSCIDlv.Size = new System.Drawing.Size(118, 23);
             this.labelEarliestSCIDlv.TabIndex = 12;
@@ -304,7 +304,7 @@
             // 
             // labelEarliestBuyerDlv
             // 
-            this.labelEarliestBuyerDlv.Location = new System.Drawing.Point(491, 94);
+            this.labelEarliestBuyerDlv.Location = new System.Drawing.Point(491, 84);
             this.labelEarliestBuyerDlv.Name = "labelEarliestBuyerDlv";
             this.labelEarliestBuyerDlv.Size = new System.Drawing.Size(118, 23);
             this.labelEarliestBuyerDlv.TabIndex = 13;
@@ -320,7 +320,7 @@
             // 
             // labelLastComment
             // 
-            this.labelLastComment.Location = new System.Drawing.Point(248, 123);
+            this.labelLastComment.Location = new System.Drawing.Point(248, 109);
             this.labelLastComment.Name = "labelLastComment";
             this.labelLastComment.Size = new System.Drawing.Size(97, 23);
             this.labelLastComment.TabIndex = 15;
@@ -331,7 +331,7 @@
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "OrderID", true));
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(105, 65);
+            this.txtSP.Location = new System.Drawing.Point(105, 59);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(140, 23);
             this.txtSP.TabIndex = 18;
@@ -354,7 +354,7 @@
             this.displayFirstSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FirstOrderID", true));
             this.displayFirstSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayFirstSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFirstSP.Location = new System.Drawing.Point(105, 37);
+            this.displayFirstSP.Location = new System.Drawing.Point(105, 34);
             this.displayFirstSP.Name = "displayFirstSP";
             this.displayFirstSP.Size = new System.Drawing.Size(140, 21);
             this.displayFirstSP.TabIndex = 33;
@@ -365,7 +365,7 @@
             this.displayMDivisionID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MDivisionid", true));
             this.displayMDivisionID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayMDivisionID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMDivisionID.Location = new System.Drawing.Point(105, 95);
+            this.displayMDivisionID.Location = new System.Drawing.Point(105, 85);
             this.displayMDivisionID.Name = "displayMDivisionID";
             this.displayMDivisionID.Size = new System.Drawing.Size(140, 21);
             this.displayMDivisionID.TabIndex = 34;
@@ -387,7 +387,7 @@
             this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Brandid", true));
             this.displayBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBrand.Location = new System.Drawing.Point(348, 37);
+            this.displayBrand.Location = new System.Drawing.Point(348, 34);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(140, 21);
             this.displayBrand.TabIndex = 38;
@@ -399,7 +399,7 @@
             this.displayLastComment.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "remark", true));
             this.displayLastComment.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayLastComment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayLastComment.Location = new System.Drawing.Point(348, 123);
+            this.displayLastComment.Location = new System.Drawing.Point(348, 109);
             this.displayLastComment.Multiline = true;
             this.displayLastComment.Name = "displayLastComment";
             this.displayLastComment.Size = new System.Drawing.Size(459, 62);
@@ -419,7 +419,7 @@
             // dateLastTestDate
             // 
             this.dateLastTestDate.IsSupportEditMode = false;
-            this.dateLastTestDate.Location = new System.Drawing.Point(105, 152);
+            this.dateLastTestDate.Location = new System.Drawing.Point(105, 135);
             this.dateLastTestDate.Name = "dateLastTestDate";
             this.dateLastTestDate.ReadOnly = true;
             this.dateLastTestDate.Size = new System.Drawing.Size(140, 23);
@@ -428,7 +428,7 @@
             // dateEarliestInline
             // 
             this.dateEarliestInline.IsSupportEditMode = false;
-            this.dateEarliestInline.Location = new System.Drawing.Point(348, 65);
+            this.dateEarliestInline.Location = new System.Drawing.Point(348, 59);
             this.dateEarliestInline.Name = "dateEarliestInline";
             this.dateEarliestInline.ReadOnly = true;
             this.dateEarliestInline.Size = new System.Drawing.Size(140, 23);
@@ -437,7 +437,7 @@
             // dateEarliestOffline
             // 
             this.dateEarliestOffline.IsSupportEditMode = false;
-            this.dateEarliestOffline.Location = new System.Drawing.Point(348, 94);
+            this.dateEarliestOffline.Location = new System.Drawing.Point(348, 84);
             this.dateEarliestOffline.Name = "dateEarliestOffline";
             this.dateEarliestOffline.ReadOnly = true;
             this.dateEarliestOffline.Size = new System.Drawing.Size(140, 23);
@@ -446,7 +446,7 @@
             // dateDeadLine
             // 
             this.dateDeadLine.IsSupportEditMode = false;
-            this.dateDeadLine.Location = new System.Drawing.Point(614, 36);
+            this.dateDeadLine.Location = new System.Drawing.Point(614, 33);
             this.dateDeadLine.Name = "dateDeadLine";
             this.dateDeadLine.ReadOnly = true;
             this.dateDeadLine.Size = new System.Drawing.Size(150, 23);
@@ -455,7 +455,7 @@
             // dateEarliestSCIDlv
             // 
             this.dateEarliestSCIDlv.IsSupportEditMode = false;
-            this.dateEarliestSCIDlv.Location = new System.Drawing.Point(614, 65);
+            this.dateEarliestSCIDlv.Location = new System.Drawing.Point(614, 59);
             this.dateEarliestSCIDlv.Name = "dateEarliestSCIDlv";
             this.dateEarliestSCIDlv.ReadOnly = true;
             this.dateEarliestSCIDlv.Size = new System.Drawing.Size(150, 23);
@@ -464,7 +464,7 @@
             // dateEarliestBuyerDlv
             // 
             this.dateEarliestBuyerDlv.IsSupportEditMode = false;
-            this.dateEarliestBuyerDlv.Location = new System.Drawing.Point(614, 94);
+            this.dateEarliestBuyerDlv.Location = new System.Drawing.Point(614, 84);
             this.dateEarliestBuyerDlv.Name = "dateEarliestBuyerDlv";
             this.dateEarliestBuyerDlv.ReadOnly = true;
             this.dateEarliestBuyerDlv.Size = new System.Drawing.Size(150, 23);
@@ -475,7 +475,7 @@
             this.txtLastResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtLastResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtLastResult.IsSupportEditMode = false;
-            this.txtLastResult.Location = new System.Drawing.Point(105, 123);
+            this.txtLastResult.Location = new System.Drawing.Point(105, 109);
             this.txtLastResult.Name = "txtLastResult";
             this.txtLastResult.ReadOnly = true;
             this.txtLastResult.Size = new System.Drawing.Size(140, 23);
@@ -483,7 +483,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(767, 8);
+            this.label1.Location = new System.Drawing.Point(767, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 23);
             this.label1.TabIndex = 71;
@@ -493,7 +493,7 @@
             // 
             this.disSpeciealMark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disSpeciealMark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disSpeciealMark.Location = new System.Drawing.Point(864, 8);
+            this.disSpeciealMark.Location = new System.Drawing.Point(864, 9);
             this.disSpeciealMark.Name = "disSpeciealMark";
             this.disSpeciealMark.Size = new System.Drawing.Size(128, 23);
             this.disSpeciealMark.TabIndex = 72;
