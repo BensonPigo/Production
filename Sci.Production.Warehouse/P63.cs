@@ -109,6 +109,22 @@ group by    sfi.POID,
             this.gridSemiFinishedInventory.DataSource = dtResult;
         }
 
+        /// <inheritdoc/>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (this.txtSP.Focused)
+            {
+                switch (keyData)
+                {
+                    case Keys.Enter:
+                        this.Query();
+                        break;
+                }
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();

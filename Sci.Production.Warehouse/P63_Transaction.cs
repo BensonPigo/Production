@@ -88,7 +88,8 @@ from (
     inner   join  SemiFinishedReceiving_Detail sfrd with (nolock) on sfr.ID = sfrd.ID
     where   sfrd.POID = '{this.drMain["POID"]}' and
             sfrd.Refno = '{this.drMain["Refno"]}' and
-            sfrd.StockType = '{this.drMain["StockType"]}'
+            sfrd.StockType = '{this.drMain["StockType"]}' and
+            sfr.Status = 'Confirmed'
     union all
     select  sfi.IssueDate,
             sfi.ID,
@@ -106,7 +107,8 @@ from (
     inner   join  SemiFinishedIssue_Detail sfid with (nolock) on sfi.ID = sfid.ID
     where   sfid.POID = '{this.drMain["POID"]}' and
             sfid.Refno = '{this.drMain["Refno"]}' and
-            sfid.StockType = '{this.drMain["StockType"]}'
+            sfid.StockType = '{this.drMain["StockType"]}' and
+            sfi.Status = 'Confirmed'
     union all
     select  sfa.IssueDate,
             sfa.ID,
@@ -124,7 +126,8 @@ from (
     inner   join  SemiFinishedAdjust_Detail sfad with (nolock) on sfa.ID = sfad.ID
     where   sfad.POID = '{this.drMain["POID"]}' and
             sfad.Refno = '{this.drMain["Refno"]}' and
-            sfad.StockType = '{this.drMain["StockType"]}'
+            sfad.StockType = '{this.drMain["StockType"]}' and
+            sfa.Status = 'Confirmed'
 ) a
 
 select  *,

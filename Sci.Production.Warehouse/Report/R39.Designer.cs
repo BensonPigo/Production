@@ -240,7 +240,7 @@
             this.Controls.Add(this.label1);
             this.Name = "R39";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
-            this.Text = "R39";
+            this.Text = "R39. RStock List Report (Semi-finished)";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
