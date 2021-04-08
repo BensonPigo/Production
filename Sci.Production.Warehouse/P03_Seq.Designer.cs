@@ -66,7 +66,7 @@
             this.Controls.Add(this.grid1);
             this.Name = "P03_Seq";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "Title : Bulk, Inventory, Scrap Transaction Detail";
+            this.Text = "Bulk, Inventory, Scrap Transaction Detail";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
