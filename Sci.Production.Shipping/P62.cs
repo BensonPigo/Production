@@ -118,6 +118,8 @@ where ked2.id = '{masterID}'
            .Text("COFormType", header: "CO Form Type", width: Widths.AnsiChars(20), iseditingreadonly: false)
            .Text("COID", header: "COID", width: Widths.AnsiChars(25), iseditingreadonly: false)
            .Date("CODate", header: "CO Date", width: Widths.AnsiChars(10), iseditingreadonly: false);
+
+            this.detailgrid.ColumnFrozen(this.detailgrid.Columns["PoNo"].Index);
         }
 
         /// <inheritdoc/>
