@@ -1043,6 +1043,7 @@ using (select [ShippingAPID] = '{0}', [WKNO] = '{2}', [InvNo] = '{3}', AccountID
 on	t.ShippingAPID = s.ShippingAPID 	
 	and t.WKNO = s.WKNO
 	and t.InvNo = s.InvNo
+	and t.AccountID = s.AccountID
 when matched then
 	update set t.Junk = 0
     , ShipModeID = '{8}'
