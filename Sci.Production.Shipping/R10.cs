@@ -2487,8 +2487,6 @@ outer apply (
 	)s
 outer apply(select top 1 Foundry from #temp1 d where d.id=a.id and Foundry = 'Y')f
 
-
-
 select Origin
 	, RgCode
 	, [type]
@@ -2499,7 +2497,7 @@ select Origin
 	, SisFtyAPID
 	, BrandID
 	, [Category] = Category.value
-	, [OQty]=sum(oqs.OQty)
+	, [OQty]=oqs.OQty
 	, CustCDID
 	, Dest
 	, ShipModeID
@@ -2515,7 +2513,16 @@ select Origin
 	, Amount
 into #temp3
 from #temp2 a
-outer apply(select sum(qty) as OQty from Order_QtyShip  WITH (NOLOCK) where id=a.OrderID) as oqs
+outer apply(
+	select sum(qty) as OQty 
+	from Order_QtyShip  WITH (NOLOCK) 
+	where id IN(
+		select DISTINCT pd.OrderID
+		from PackingList p 
+		inner join PackingList_Detail pd ON p.Id = pd.ID
+		where p.INVNo = a.ID
+	)
+) as oqs
 outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
 outer apply(
 	select value = Stuff((
@@ -2530,7 +2537,7 @@ outer apply(
 ) Category
 group by Origin, RgCode,type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
-,AccountID,Amount, Foundry, SisFtyAPID
+,AccountID,Amount, Foundry, SisFtyAPID,oqs.OQty
 
 select Origin
 	, RgCode
