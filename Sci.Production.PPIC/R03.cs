@@ -1324,6 +1324,30 @@ drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_Packi
             , FakeID = '9999ZZ'
             , ColumnN = 'SubCon'
             , ColumnSeq = '999'";
+                    string printingDetailcol = string.Empty;
+                    if (this.printingDetail)
+                    {
+                        printingDetailcol = @"
+		union all
+		select ID = 'PRINTING'
+                , Seq=''
+                , ArtworkUnit=''
+                , ProductionUnit=''
+                , SystemType=''
+                , FakeID = ''
+                , ColumnN = 'Printing LT'
+                , ColumnSeq = -1 
+
+		union all
+		select ID = 'PRINTING'
+                , Seq=''
+                , ArtworkUnit=''
+                , ProductionUnit=''
+                , SystemType=''
+                , FakeID = ''
+                , ColumnN = 'InkType/color/size'
+                , ColumnSeq = 0 ";
+                    }
 
                     sqlCmd.Append(string.Format(
                         @"
@@ -1372,6 +1396,7 @@ With SubProcess  as (
                 and ProductionUnit = '' 
                 and Classify in ({0}) 
         {1}
+        {4}
     ) a
 ), TTL_Subprocess as (
     select  ID = 'TTL' + ID 
@@ -1384,7 +1409,7 @@ With SubProcess  as (
             , ColumnSeq
             , rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000
             from SubProcess 
-            where ID <> 'PrintSubCon'
+            where ID <> 'PrintSubCon' and ColumnN <> 'Printing LT' and ColumnN <> 'InkType/color/size'
 )
 select  ID
         , Seq
@@ -1416,7 +1441,8 @@ from (
                         classify,
                         !this.artwork ? string.Empty : strUnion,
                         this.lastColA,
-                        this.checkByCPU.Checked));
+                        this.checkByCPU.Checked,
+                        printingDetailcol));
                     #endregion
                     result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.subprocessColumnName);
                     if (!result)
@@ -1700,16 +1726,6 @@ drop table #tmp,#tmp2,#tmp3
                     {
                         return result;
                     }
-
-                    // 在PRINTING (PCS)前面插入兩個欄位
-                    int rno = this.subprocessColumnName.Select("ColumnN = 'PRINTING (PCS)'").Select(s => MyUtility.Convert.GetInt(s["rno"])).FirstOrDefault();
-                    if (this.printingDetailDatas.Rows.Count > 0 && rno > 0)
-                    {
-                        foreach (DataRow item in this.subprocessColumnName.Select($"rno >= {rno}"))
-                        {
-                            item["rno"] = MyUtility.Convert.GetInt(item["rno"]) + 2; // 插入 [Printing LT], [InkType/color/size] 兩個欄位
-                        }
-                    }
                 }
             }
 
@@ -1756,10 +1772,8 @@ drop table #tmp,#tmp2,#tmp3
                     worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"])] = MyUtility.Convert.GetString(dr["ColumnN"]);
                     lastCol = MyUtility.Convert.GetInt(dr["rno"]);
 
-                    if (this.printingDetail && MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "PRINTING (PCS)")
+                    if (this.printingDetail && MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "PRINTING LT")
                     {
-                        worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"]) - 2] = "Printing LT";
-                        worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"]) - 1] = "InkType/color/size";
                         printingDetailCol = MyUtility.Convert.GetInt(dr["rno"]);
                     }
 
@@ -2066,8 +2080,8 @@ drop table #tmp,#tmp2,#tmp3
                         DataRow pdr = this.printingDetailDatas.Select($"ID = '{dr["ID"]}'").FirstOrDefault();
                         if (pdr != null)
                         {
-                            objArray[intRowsStart, printingDetailCol - 3] = pdr["PrintingLT"];
-                            objArray[intRowsStart, printingDetailCol - 2] = pdr["InkTypecolorsize"];
+                            objArray[intRowsStart, printingDetailCol - 1] = pdr["PrintingLT"];
+                            objArray[intRowsStart, printingDetailCol] = pdr["InkTypecolorsize"];
                         }
                     }
                 }
