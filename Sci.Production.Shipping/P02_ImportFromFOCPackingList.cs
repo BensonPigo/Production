@@ -103,7 +103,7 @@ where pu.[MDivisionID] = @MDivisionID and pu.[PulloutDate] = @PulloutDate
 
             if (MyUtility.Convert.GetString(dr["Status"]).ToUpper() != "NEW")
             {
-                MyUtility.Msg.WarningBox($@"This PL already pullout cannot import to HC.");
+                MyUtility.Msg.WarningBox($@"Ship Date({MyUtility.Convert.GetDate(this.masterData["ShipDate"]).Value.ToShortDateString()}) already pullout cannot import to HC.");
                 return;
             }
             #endregion
