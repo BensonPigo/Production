@@ -28,11 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.label_TotalQty = new Sci.Win.UI.Label();
@@ -42,7 +37,6 @@
             this.numTotalPart = new Sci.Win.UI.NumericBox();
             this.label7 = new Sci.Win.UI.Label();
             this.btnGarmentList = new Sci.Win.UI.Button();
-            this.label5 = new Sci.Win.UI.Label();
             this.btn_LefttoRight = new Sci.Win.UI.Button();
             this.btn_RighttoLeft = new Sci.Win.UI.Button();
             this.numNoOfBundle = new Sci.Win.UI.NumericBox();
@@ -56,7 +50,7 @@
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.txtCutref = new Sci.Win.UI.TextBox();
             this.labelCutref = new Sci.Win.UI.Label();
-            this.gridCutpart = new Sci.Win.UI.Grid();
+            this.gridPattern = new Sci.Win.UI.Grid();
             this.art_contextMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.insertIntoRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,11 +80,14 @@
             this.labelTotalCutOutput = new Sci.Win.UI.Label();
             this.splitContainer6 = new System.Windows.Forms.SplitContainer();
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
+            this.chkNoneShellNoCreateAllParts = new Sci.Win.UI.CheckBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.chkCombineSubprocess = new Sci.Win.UI.CheckBox();
             this.numTone = new Sci.Win.UI.NumericBox();
             this.label3 = new Sci.Win.UI.Label();
             this.chkTone = new Sci.Win.UI.CheckBox();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
-            ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPattern)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridArticleSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).BeginInit();
@@ -205,7 +202,7 @@
             this.numTotalPart.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.numTotalPart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numTotalPart.IsSupportEditMode = false;
-            this.numTotalPart.Location = new System.Drawing.Point(447, 6);
+            this.numTotalPart.Location = new System.Drawing.Point(263, 6);
             this.numTotalPart.Minimum = new decimal(new int[] {
             0,
             0,
@@ -228,7 +225,7 @@
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label7.Location = new System.Drawing.Point(363, 5);
+            this.label7.Location = new System.Drawing.Point(179, 5);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(82, 23);
             this.label7.TabIndex = 95;
@@ -237,25 +234,13 @@
             // btnGarmentList
             // 
             this.btnGarmentList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnGarmentList.Location = new System.Drawing.Point(489, 1);
+            this.btnGarmentList.Location = new System.Drawing.Point(305, 1);
             this.btnGarmentList.Name = "btnGarmentList";
             this.btnGarmentList.Size = new System.Drawing.Size(97, 30);
             this.btnGarmentList.TabIndex = 9;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
             this.btnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label5.Location = new System.Drawing.Point(808, 5);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(116, 23);
-            this.label5.TabIndex = 93;
-            this.label5.Text = "All Parts Detail";
-            this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // btn_LefttoRight
             // 
@@ -304,7 +289,7 @@
             // 
             this.label_TotalCutOutput.BackColor = System.Drawing.Color.Transparent;
             this.label_TotalCutOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label_TotalCutOutput.Location = new System.Drawing.Point(251, 5);
+            this.label_TotalCutOutput.Location = new System.Drawing.Point(109, 28);
             this.label_TotalCutOutput.Name = "label_TotalCutOutput";
             this.label_TotalCutOutput.Size = new System.Drawing.Size(54, 23);
             this.label_TotalCutOutput.TabIndex = 5;
@@ -334,9 +319,9 @@
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.label4.Location = new System.Drawing.Point(140, 5);
+            this.label4.Location = new System.Drawing.Point(9, 28);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(111, 23);
+            this.label4.Size = new System.Drawing.Size(100, 23);
             this.label4.TabIndex = 86;
             this.label4.Text = "Total Cut Output:";
             this.label4.TextStyle.BorderColor = System.Drawing.Color.Transparent;
@@ -397,38 +382,31 @@
             this.labelCutref.TabIndex = 80;
             this.labelCutref.Text = "Cutref#";
             // 
-            // gridCutpart
+            // gridPattern
             // 
-            this.gridCutpart.AllowUserToAddRows = false;
-            this.gridCutpart.AllowUserToDeleteRows = false;
-            this.gridCutpart.AllowUserToResizeRows = false;
-            this.gridCutpart.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridCutpart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridCutpart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridCutpart.ContextMenuStrip = this.art_contextMenuStrip;
-            this.gridCutpart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridCutpart.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridCutpart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridCutpart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridCutpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCutpart.Location = new System.Drawing.Point(0, 0);
-            this.gridCutpart.Name = "gridCutpart";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutpart.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridCutpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridCutpart.RowTemplate.Height = 24;
-            this.gridCutpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutpart.ShowCellToolTips = false;
-            this.gridCutpart.Size = new System.Drawing.Size(514, 273);
-            this.gridCutpart.TabIndex = 79;
-            this.gridCutpart.TabStop = false;
+            this.gridPattern.AllowUserToAddRows = false;
+            this.gridPattern.AllowUserToDeleteRows = false;
+            this.gridPattern.AllowUserToResizeRows = false;
+            this.gridPattern.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPattern.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPattern.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPattern.ContextMenuStrip = this.art_contextMenuStrip;
+            this.gridPattern.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridPattern.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPattern.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPattern.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPattern.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPattern.Location = new System.Drawing.Point(0, 0);
+            this.gridPattern.Name = "gridPattern";
+            this.gridPattern.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPattern.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPattern.RowTemplate.Height = 24;
+            this.gridPattern.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPattern.ShowCellToolTips = false;
+            this.gridPattern.Size = new System.Drawing.Size(514, 254);
+            this.gridPattern.TabIndex = 79;
+            this.gridPattern.TabStop = false;
+            this.gridPattern.SelectionChanged += new System.EventHandler(this.GridPattern_SelectionChanged);
             // 
             // art_contextMenuStrip
             // 
@@ -436,19 +414,19 @@
             this.insertIntoRecordToolStripMenuItem,
             this.deleteRecordToolStripMenuItem});
             this.art_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.art_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
+            this.art_contextMenuStrip.Size = new System.Drawing.Size(174, 48);
             // 
             // insertIntoRecordToolStripMenuItem
             // 
             this.insertIntoRecordToolStripMenuItem.Name = "insertIntoRecordToolStripMenuItem";
-            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.insertIntoRecordToolStripMenuItem.Text = "Insert into Record";
             this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertIntoRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
-            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
             this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
@@ -467,14 +445,6 @@
             this.gridArticleSize.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridArticleSize.Location = new System.Drawing.Point(0, 0);
             this.gridArticleSize.Name = "gridArticleSize";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridArticleSize.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridArticleSize.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridArticleSize.RowTemplate.Height = 24;
@@ -501,20 +471,12 @@
             this.gridAllPart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridAllPart.Location = new System.Drawing.Point(0, 0);
             this.gridAllPart.Name = "gridAllPart";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAllPart.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAllPart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAllPart.RowTemplate.Height = 24;
             this.gridAllPart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAllPart.ShowCellToolTips = false;
-            this.gridAllPart.Size = new System.Drawing.Size(424, 273);
+            this.gridAllPart.Size = new System.Drawing.Size(424, 254);
             this.gridAllPart.TabIndex = 76;
             this.gridAllPart.TabStop = false;
             // 
@@ -524,19 +486,19 @@
             this.allpart_insert,
             this.allpart_delete});
             this.allpart_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
+            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(174, 48);
             // 
             // allpart_insert
             // 
             this.allpart_insert.Name = "allpart_insert";
-            this.allpart_insert.Size = new System.Drawing.Size(175, 22);
+            this.allpart_insert.Size = new System.Drawing.Size(173, 22);
             this.allpart_insert.Text = "Insert into Record";
             this.allpart_insert.Click += new System.EventHandler(this.Allpart_insert_Click);
             // 
             // allpart_delete
             // 
             this.allpart_delete.Name = "allpart_delete";
-            this.allpart_delete.Size = new System.Drawing.Size(175, 22);
+            this.allpart_delete.Size = new System.Drawing.Size(173, 22);
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
@@ -555,20 +517,12 @@
             this.gridQty.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQty.Location = new System.Drawing.Point(0, 0);
             this.gridQty.Name = "gridQty";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQty.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQty.RowTemplate.Height = 24;
             this.gridQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQty.ShowCellToolTips = false;
-            this.gridQty.Size = new System.Drawing.Size(172, 273);
+            this.gridQty.Size = new System.Drawing.Size(172, 254);
             this.gridQty.TabIndex = 77;
             this.gridQty.TabStop = false;
             // 
@@ -587,14 +541,6 @@
             this.gridCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridCutRef.Location = new System.Drawing.Point(0, 0);
             this.gridCutRef.Name = "gridCutRef";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridCutRef.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutRef.RowTemplate.Height = 24;
@@ -669,7 +615,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1169, 273);
+            this.splitContainer2.Size = new System.Drawing.Size(1169, 254);
             this.splitContainer2.SplitterDistance = 172;
             this.splitContainer2.TabIndex = 99;
             // 
@@ -681,12 +627,12 @@
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.gridCutpart);
+            this.splitContainer3.Panel1.Controls.Add(this.gridPattern);
             // 
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
-            this.splitContainer3.Size = new System.Drawing.Size(993, 273);
+            this.splitContainer3.Size = new System.Drawing.Size(993, 254);
             this.splitContainer3.SplitterDistance = 514;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -704,7 +650,7 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.gridAllPart);
-            this.splitContainer4.Size = new System.Drawing.Size(475, 273);
+            this.splitContainer4.Size = new System.Drawing.Size(475, 254);
             this.splitContainer4.SplitterDistance = 47;
             this.splitContainer4.TabIndex = 0;
             // 
@@ -864,6 +810,9 @@
             // 
             // splitContainer7.Panel1
             // 
+            this.splitContainer7.Panel1.Controls.Add(this.chkNoneShellNoCreateAllParts);
+            this.splitContainer7.Panel1.Controls.Add(this.label5);
+            this.splitContainer7.Panel1.Controls.Add(this.chkCombineSubprocess);
             this.splitContainer7.Panel1.Controls.Add(this.numTone);
             this.splitContainer7.Panel1.Controls.Add(this.label3);
             this.splitContainer7.Panel1.Controls.Add(this.chkTone);
@@ -871,7 +820,6 @@
             this.splitContainer7.Panel1.Controls.Add(this.label4);
             this.splitContainer7.Panel1.Controls.Add(this.label_TotalCutOutput);
             this.splitContainer7.Panel1.Controls.Add(this.numNoOfBundle);
-            this.splitContainer7.Panel1.Controls.Add(this.label5);
             this.splitContainer7.Panel1.Controls.Add(this.btnGarmentList);
             this.splitContainer7.Panel1.Controls.Add(this.label7);
             this.splitContainer7.Panel1.Controls.Add(this.numTotalPart);
@@ -881,15 +829,52 @@
             // 
             this.splitContainer7.Panel2.Controls.Add(this.splitContainer8);
             this.splitContainer7.Size = new System.Drawing.Size(1169, 359);
-            this.splitContainer7.SplitterDistance = 33;
+            this.splitContainer7.SplitterDistance = 55;
             this.splitContainer7.TabIndex = 0;
+            // 
+            // chkNoneShellNoCreateAllParts
+            // 
+            this.chkNoneShellNoCreateAllParts.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.chkNoneShellNoCreateAllParts.AutoSize = true;
+            this.chkNoneShellNoCreateAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNoneShellNoCreateAllParts.Location = new System.Drawing.Point(743, 32);
+            this.chkNoneShellNoCreateAllParts.Name = "chkNoneShellNoCreateAllParts";
+            this.chkNoneShellNoCreateAllParts.Size = new System.Drawing.Size(216, 21);
+            this.chkNoneShellNoCreateAllParts.TabIndex = 115;
+            this.chkNoneShellNoCreateAllParts.Text = "None Shell No Create AllParts";
+            this.chkNoneShellNoCreateAllParts.UseVisualStyleBackColor = true;
+            this.chkNoneShellNoCreateAllParts.CheckedChanged += new System.EventHandler(this.ChkNoneShellNoCreateAllParts_CheckedChanged);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label5.Location = new System.Drawing.Point(745, 6);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(221, 23);
+            this.label5.TabIndex = 114;
+            this.label5.Text = "All Parts Detail";
+            this.label5.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // chkCombineSubprocess
+            // 
+            this.chkCombineSubprocess.AutoSize = true;
+            this.chkCombineSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCombineSubprocess.Location = new System.Drawing.Point(179, 31);
+            this.chkCombineSubprocess.Name = "chkCombineSubprocess";
+            this.chkCombineSubprocess.Size = new System.Drawing.Size(162, 21);
+            this.chkCombineSubprocess.TabIndex = 113;
+            this.chkCombineSubprocess.Text = "Combine SubProcess";
+            this.chkCombineSubprocess.UseVisualStyleBackColor = true;
+            this.chkCombineSubprocess.CheckedChanged += new System.EventHandler(this.ChkCombineSubprocess_CheckedChanged);
             // 
             // numTone
             // 
             this.numTone.BackColor = System.Drawing.Color.White;
             this.numTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numTone.IsSupportEditMode = false;
-            this.numTone.Location = new System.Drawing.Point(738, 5);
+            this.numTone.Location = new System.Drawing.Point(554, 6);
             this.numTone.Maximum = new decimal(new int[] {
             99,
             0,
@@ -917,7 +902,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(613, 5);
+            this.label3.Location = new System.Drawing.Point(429, 5);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(122, 23);
             this.label3.TabIndex = 97;
@@ -927,7 +912,7 @@
             // 
             this.chkTone.AutoSize = true;
             this.chkTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkTone.Location = new System.Drawing.Point(595, 10);
+            this.chkTone.Location = new System.Drawing.Point(411, 10);
             this.chkTone.Name = "chkTone";
             this.chkTone.Size = new System.Drawing.Size(15, 14);
             this.chkTone.TabIndex = 96;
@@ -953,8 +938,8 @@
             this.splitContainer8.Panel2.Controls.Add(this.btnClose);
             this.splitContainer8.Panel2.Controls.Add(this.label_TotalQty);
             this.splitContainer8.Panel2.Controls.Add(this.btnBatchCreate);
-            this.splitContainer8.Size = new System.Drawing.Size(1169, 322);
-            this.splitContainer8.SplitterDistance = 273;
+            this.splitContainer8.Size = new System.Drawing.Size(1169, 300);
+            this.splitContainer8.SplitterDistance = 254;
             this.splitContainer8.TabIndex = 0;
             // 
             // P11
@@ -968,7 +953,7 @@
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P11.Batch Create Bundle Card";
             this.Controls.SetChildIndex(this.splitContainer5, 0);
-            ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPattern)).EndInit();
             this.art_contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridArticleSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridAllPart)).EndInit();
@@ -1023,7 +1008,6 @@
         private Win.UI.NumericBox numTotalPart;
         private Win.UI.Label label7;
         private Win.UI.Button btnGarmentList;
-        private Win.UI.Label label5;
         private Win.UI.Button btn_LefttoRight;
         private Win.UI.Button btn_RighttoLeft;
         private Win.UI.NumericBox numNoOfBundle;
@@ -1037,7 +1021,7 @@
         private Win.UI.Label labelEstCutDate;
         private Win.UI.TextBox txtCutref;
         private Win.UI.Label labelCutref;
-        private Win.UI.Grid gridCutpart;
+        private Win.UI.Grid gridPattern;
         private Win.UI.Grid gridArticleSize;
         private Win.UI.Grid gridAllPart;
         private Win.UI.Grid gridQty;
@@ -1071,5 +1055,8 @@
         private Win.UI.CheckBox chkTone;
         private Win.UI.Label labelAccumulateQty;
         private Win.UI.Label label6;
+        private Win.UI.CheckBox chkCombineSubprocess;
+        private Win.UI.Label label5;
+        private Win.UI.CheckBox chkNoneShellNoCreateAllParts;
     }
 }

@@ -16,6 +16,20 @@ namespace Sci.Production.PublicPrg
     public static partial class Prgs
     {
         /// <summary>
+        /// Compare Arr 內容相同返回true,反之返回false。
+        /// </summary>
+        /// <param name="arr1">arr1</param>
+        /// <param name="arr2">arr2</param>
+        /// <returns>bool</returns>
+        public static bool CompareArr(string[] arr1, string[] arr2)
+        {
+            var q = from a in arr1 join b in arr2 on a equals b select a;
+            bool flag = arr1.Length == arr2.Length && q.Count() == arr1.Length;
+
+            return flag;
+        }
+
+        /// <summary>
         /// 將 ExcelColumnName 轉 int
         /// </summary>
         /// <param name="columnName">A~</param>

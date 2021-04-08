@@ -107,10 +107,12 @@
             this.numQCMachineDelayTime = new Sci.Win.UI.NumericUpDown();
             this.lbQCMachineDelayTime = new Sci.Win.UI.Label();
             this.labelClipFilesPath = new Sci.Win.UI.Label();
-            this.txtuserMiscPOApproveName = new Sci.Production.Class.Txtuser();
             this.txtUserPOApproved = new Sci.Production.Class.Txtuser();
+            this.txtuserMiscPOApproveName = new Sci.Production.Class.Txtuser();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.checkbcs = new Sci.Win.UI.CheckBox();
+            this.checknsncap = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -716,6 +718,8 @@
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.panel1.Controls.Add(this.checknsncap);
+            this.panel1.Controls.Add(this.checkbcs);
             this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.label5);
@@ -1048,16 +1052,6 @@
             this.labelClipFilesPath.TabIndex = 43;
             this.labelClipFilesPath.Text = "Clip Files Path";
             // 
-            // txtuserMiscPOApproveName
-            // 
-            this.txtuserMiscPOApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MiscPOApproveName", true));
-            this.txtuserMiscPOApproveName.DisplayBox1Binding = "";
-            this.txtuserMiscPOApproveName.Location = new System.Drawing.Point(374, 124);
-            this.txtuserMiscPOApproveName.Name = "txtuserMiscPOApproveName";
-            this.txtuserMiscPOApproveName.Size = new System.Drawing.Size(300, 23);
-            this.txtuserMiscPOApproveName.TabIndex = 59;
-            this.txtuserMiscPOApproveName.TextBox1Binding = "";
-            // 
             // txtUserPOApproved
             // 
             this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
@@ -1067,6 +1061,16 @@
             this.txtUserPOApproved.Size = new System.Drawing.Size(300, 23);
             this.txtUserPOApproved.TabIndex = 5;
             this.txtUserPOApproved.TextBox1Binding = "";
+            // 
+            // txtuserMiscPOApproveName
+            // 
+            this.txtuserMiscPOApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MiscPOApproveName", true));
+            this.txtuserMiscPOApproveName.DisplayBox1Binding = "";
+            this.txtuserMiscPOApproveName.Location = new System.Drawing.Point(374, 124);
+            this.txtuserMiscPOApproveName.Name = "txtuserMiscPOApproveName";
+            this.txtuserMiscPOApproveName.Size = new System.Drawing.Size(300, 23);
+            this.txtuserMiscPOApproveName.TabIndex = 59;
+            this.txtuserMiscPOApproveName.TextBox1Binding = "";
             // 
             // shapeContainer2
             // 
@@ -1096,6 +1100,30 @@
             this.lineShape10.X2 = 727;
             this.lineShape10.Y1 = 338;
             this.lineShape10.Y2 = 338;
+            // 
+            // checkbcs
+            // 
+            this.checkbcs.AutoSize = true;
+            this.checkbcs.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsCombineSubProcess", true));
+            this.checkbcs.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkbcs.Location = new System.Drawing.Point(246, 231);
+            this.checkbcs.Name = "checkbcs";
+            this.checkbcs.Size = new System.Drawing.Size(209, 21);
+            this.checkbcs.TabIndex = 66;
+            this.checkbcs.Text = "Bundle Combine Subprocess";
+            this.checkbcs.UseVisualStyleBackColor = true;
+            // 
+            // checknsncap
+            // 
+            this.checknsncap.AutoSize = true;
+            this.checknsncap.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsNoneShellNoCreateAllParts", true));
+            this.checknsncap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checknsncap.Location = new System.Drawing.Point(496, 232);
+            this.checknsncap.Name = "checknsncap";
+            this.checknsncap.Size = new System.Drawing.Size(226, 21);
+            this.checknsncap.TabIndex = 67;
+            this.checknsncap.Text = "None \"Shell\" no create All Parts";
+            this.checknsncap.UseVisualStyleBackColor = true;
             // 
             // B02
             // 
@@ -1205,5 +1233,7 @@
         private Class.Txtuser txtuserMiscPOApproveName;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label label9;
+        private Win.UI.CheckBox checknsncap;
+        private Win.UI.CheckBox checkbcs;
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -12,6 +13,111 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+        /// <summary>
+        /// 取得哪些 annotation 是次要
+        /// </summary>
+        /// <inheritdoc/>
+        public static List<string> GetNotMain(DataRow dr, DataRow[] drs)
+        {
+            List<string> annList = new List<string>();
+            if (MyUtility.Convert.GetBool(dr["Main"]))
+            {
+                return annList;
+            }
+
+            string[] ann = MyUtility.Convert.GetString(dr["annotation"]).Split('+'); // 剖析Annotation 不去除數字 EX:AT01
+
+            // 每一筆 Annotation 去回找是否有標記主裁片
+            foreach (string item in ann)
+            {
+                string anno = Regex.Replace(item, @"[\d]", string.Empty);
+
+                // 判斷此 Annotation 在Cutting B01 是否為 IsBoundedProcess
+                string sqlcmd = $@"select 1 from Subprocess with(nolock) where id = '{anno}' and IsBoundedProcess =1 ";
+                bool isBoundedProcess = MyUtility.Check.Seek(sqlcmd);
+
+                // 是否有主裁片存在
+                bool hasMain = drs.AsEnumerable().
+                    Where(w => MyUtility.Convert.GetString(w["annotation"]).Split('+').Contains(item) && MyUtility.Convert.GetBool(w["Main"])).Any();
+
+                if (isBoundedProcess && hasMain)
+                {
+                    annList.Add(anno); // 去除字串中數字並加入List
+                }
+            }
+
+            return annList;
+        }
+
+        /// <summary>
+        /// 1.先判斷 PatternCode + PatternDesc 是否存在 GarmentTb
+        /// 2.判斷選擇的 Artwork  EX:選擇 AT+HT, 在PatternCode + PatternDes找到 HT+AT01, 才算此筆為 GarmentTb 內的資料
+        /// 3.判斷是否為次要裁
+        /// </summary>
+        /// <inheritdoc/>
+        public static void CheckNotMain(DataRow dr, DataTable garmentTb)
+        {
+            DataRow[] drs = garmentTb.Select($"PatternCode='{dr["PatternCode"]}'and PatternDesc = '{dr["PatternDesc"]}'");
+            if (drs.Length == 0)
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+
+            DataRow dr1 = drs[0]; // 找到也只會有一筆
+            string[] ann = Regex.Replace(dr1["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation 去除字串中數字
+            string[] anns = dr["art"].ToString().Split('+'); // 剖析Annotation, 已經是去除數字
+
+            // 兩個陣列內容要完全一樣，不管順序
+            if (!Prgs.CompareArr(ann, anns))
+            {
+                dr["NoBundleCardAfterSubprocess_String"] = string.Empty;
+                dr.EndEdit();
+                return;
+            }
+
+            List<string> notMainList = Prgs.GetNotMain(dr1, garmentTb.Select()); // 帶入未去除數字的annotation資料
+            string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
+            dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
+            dr.EndEdit();
+        }
+
+        /// <summary>
+        /// 尚未解析前<相同的 annotation>，須有一個為左下Grid代表。
+        /// 原本是 Main 直接標記為 IsMain
+        /// 若無Main 則以 seq 最小為 IsMain
+        /// IsMain 最後要寫入 Bundle_Detail_CombineSubprocess.IsMain / FtyStyleInnovationCombineSubprocess.IsMain
+        /// </summary>
+        /// <inheritdoc/>
+        public static void SetCombineSubprocessGroup_IsMain(DataRow[] garmentar)
+        {
+            var annotationList = garmentar.Where(w => !MyUtility.Check.Empty(w["annotation"]))
+                .Select(s => MyUtility.Convert.GetString(s["annotation"])).Distinct().ToList();
+            var x = garmentar.Where(w => !MyUtility.Check.Empty(w["annotation"]));
+
+            garmentar.AsEnumerable().ToList().ForEach(f => f["IsMain"] = f["Main"]);
+            foreach (string annotation in annotationList)
+            {
+                var x2 = x.Where(w => MyUtility.Convert.GetString(w["annotation"]) == annotation);
+                var x3 = x2.OrderBy(o => MyUtility.Convert.GetString(o["Seq"])).FirstOrDefault();
+                if (!x2.Where(w => MyUtility.Convert.GetBool(w["Main"])).Any() && x3 != null)
+                {
+                    x3["IsMain"] = true;
+                }
+            }
+
+            int combineSubprocessGroup = 1;
+            foreach (string annotation in annotationList)
+            {
+                x.Where(w => MyUtility.Convert.GetString(w["annotation"]) == annotation
+                        && MyUtility.Check.Empty(w["CombineSubprocessGroup"]))
+                    .ToList()
+                    .ForEach(f => f["CombineSubprocessGroup"] = combineSubprocessGroup);
+                combineSubprocessGroup++;
+            }
+        }
+
         /// <summary>
         /// 取得最新 SubCutNo
         /// </summary>
@@ -275,8 +381,7 @@ WHERE HolidayDate >= '{start.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date_where.ToString("yyyy/MM/dd")}'
 AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
-            DataTable dt2;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt2);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt2);
 
             // 開始組合時間軸
             for (int day1 = 0; day1 <= leadtime; day1++)
@@ -333,8 +438,7 @@ WHERE HolidayDate >= '{date1.ToString("yyyy/MM/dd")}'
 AND HolidayDate <= '{date2.ToString("yyyy/MM/dd")}'
 AND FactoryID IN ('{ftyFroup.JoinToString("','")}')
 ";
-            DataTable dt2;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt2);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt2);
 
             int days = (int)(date2.Date - date1.Date).TotalDays;
             for (int day1 = 0; day1 <= days; day1++)
@@ -375,8 +479,7 @@ outer apply(select * from [dbo].[getDailystdq](s.APSNo))x
 WHERE OrderID IN ('{orderIDs.JoinToString("','")}')
 and x.APSNo is not null
 ";
-            DataTable tmpDt;
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out tmpDt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable tmpDt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -402,7 +505,6 @@ and x.APSNo is not null
         /// <returns>DataTable</returns>
         public static DataTable GetCuttingTapeData(string cuttingID)
         {
-            DataTable[] dt;
             string sqlcmd = $@"
 declare @CuttingSP varchar(13) = '{cuttingID}'
 
@@ -445,7 +547,7 @@ where o.CuttingSP = @CuttingSP and o.Junk = 0
 order by o.SewInLine
 ";
 
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -565,10 +667,6 @@ order by o.SewInLine
         /// <returns>List<GarmentQty></returns>
         public static List<GarmentQty> GetCutPlanQty(List<string> orderIDs)
         {
-            DataTable headDt;
-            DataTable tmpDt;
-            DualResult result;
-
             // 取得該訂單的組成
             #region 取得by SP, Size 應該完成的 FabricPanelCode
             string tmpCmd = $@"
@@ -591,7 +689,7 @@ AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and 
 --AND o.id='20032468LL004'
 ";
 
-            result = DBProxy.Current.Select(null, tmpCmd, out headDt);
+            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable headDt);
             var headList = headDt.AsEnumerable()
                 .Select(s => new
                 {
@@ -631,7 +729,7 @@ GROUP BY WOD.OrderID
 		,EstCutDate.EstCutDate
 ORDER BY WOD.OrderID
 ";
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
 
             var cutList = tmpDt.AsEnumerable()
                 .Select(s => new
@@ -722,8 +820,6 @@ ORDER BY WOD.OrderID
         public static List<FabricPanelCodeCutPlanQty> GetSPFabricPanelCodeList(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
-            DataTable tmpDt;
-            DualResult result;
             #region SQL
             string tmpCmd = $@"
 SELECT DISTINCT 
@@ -741,7 +837,7 @@ order by o.ID,cons.FabricPanelCode
 ";
             #endregion
 
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -764,8 +860,6 @@ order by o.ID,cons.FabricPanelCode
         public static List<FabricPanelCodeCutPlanQty> GetCutPlanQty_byFabricPanelCode(List<string> orderIDs)
         {
             // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
-            DataTable tmpDt;
-            DualResult result;
             #region SQL
             string tmpCmd = $@"
 SELECT  WOD.OrderID
@@ -788,7 +882,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 ";
             #endregion
 
-            result = DBProxy.Current.Select(null, tmpCmd, out tmpDt);
+            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString());
@@ -838,8 +932,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
-            string annotationStr;
-            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out annotationStr);
+            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out string annotationStr);
             if (leadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
@@ -858,7 +951,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             } // 10%
 
             List<GarmentQty> garmentList = GetCutPlanQty(allOrder);
-            processInt = processInt + 5;
+            processInt += 5;
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
@@ -998,7 +1091,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                 if (bw != null)
                 {
-                    processInt = processInt + pc;
+                    processInt += pc;
                     if (bw.CancellationPending == true)
                     {
                         return null;
@@ -1072,8 +1165,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<string> allOrder = dt_SewingSchedule.AsEnumerable().Select(o => o["OrderID"].ToString()).Distinct().ToList();
 
             #region LeadTimeList
-            string annotationStr;
-            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out annotationStr);
+            List<LeadTime> leadTimeList = GetLeadTimeList(allOrder, out string annotationStr);
             if (leadTimeList == null)
             {
                 return null; // 表示Lead Time有缺
@@ -1094,7 +1186,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             List<FabricPanelCodeCutPlanQty> sPFabricPanelCodeList = GetSPFabricPanelCodeList(allOrder); // 基底用來跑主迴圈 SP + FabricPanelCode
 
             List<FabricPanelCodeCutPlanQty> cutPlanQtyList = GetCutPlanQty_byFabricPanelCode(allOrder);
-            processInt = processInt + 5;
+            processInt += 5;
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
@@ -1233,7 +1325,7 @@ order by WOD.OrderID,EstCutDate.EstCutDate
 
                 if (bw != null)
                 {
-                    processInt = processInt + pc;
+                    processInt += pc;
                     if (bw.CancellationPending == true)
                     {
                         return null;
@@ -1962,11 +2054,6 @@ order by WOD.OrderID,EstCutDate.EstCutDate
         public static List<LeadTime> GetLeadTimeList(List<string> orderIDs, out string annotationStr)
         {
             List<LeadTime> leadTimeList = new List<LeadTime>();
-
-            DataTable poID_dt;
-            DataTable garmentTb;
-            DataTable leadTime_dt;
-            DualResult result;
             annotationStr = string.Empty;
 
             string cmd = $@"
@@ -1985,7 +2072,7 @@ INNER JOIN Orders b ON a.OrderID= b.ID
 
 drop table #OrderList
 ";
-            result = DBProxy.Current.Select(null, cmd, out poID_dt);
+            DualResult result = DBProxy.Current.Select(null, cmd, out DataTable poID_dt);
             if (!result)
             {
                 return null;
@@ -2000,7 +2087,7 @@ drop table #OrderList
                 string mDivisionID = dr["MDivisionID"].ToString();
                 string factoryID = dr["FactoryID"].ToString();
 
-                GetGarmentListTable(string.Empty, pOID, string.Empty, out garmentTb);
+                GetGarmentListTable(string.Empty, pOID, string.Empty, out DataTable garmentTb);
 
                 List<string> annotationList = garmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
 
@@ -2014,8 +2101,7 @@ drop table #OrderList
                         for (int i = 0; i <= item.Length - 1; i++)
                         {
                             // 排除掉數字
-                            int x = 0;
-                            if (!int.TryParse(item[i].ToString(), out x))
+                            if (!int.TryParse(item[i].ToString(), out int x))
                             {
                                 input += item[i].ToString();
                             }
@@ -2051,7 +2137,7 @@ WHERE Subprocess.IDs = '{annotationStr1}'
 and s.MDivisionID = '{mDivisionID}'
 and s.FactoryID = '{factoryID}'
 ";
-                result = DBProxy.Current.Select(null, chk_LeadTime, out leadTime_dt);
+                result = DBProxy.Current.Select(null, chk_LeadTime, out DataTable leadTime_dt);
                 if (!result)
                 {
                     return null;

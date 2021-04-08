@@ -146,6 +146,30 @@ namespace Sci.Production.Prg
         }
 
         /// <summary>
+        /// 全複製 source,target 結構必須一樣
+        /// </summary>
+        /// <inheritdoc/>
+        public static DataRow CopyTo(this DataRow source, DataRow target)
+        {
+            try
+            {
+                List<string> columnList = new List<string>();
+                foreach (DataColumn column in source.Table.Columns)
+                {
+                    columnList.Add(column.ColumnName);
+                }
+
+                string fieldNames = columnList.JoinToString(",");
+                return source.CopyTo(target, fieldNames);
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.WarningBox(ex.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
         /// 如果資料列大於0，則會呼叫原本的CopyToDataTable，不然會用SrcTable做Clone
         /// </summary>
         /// <inheritdoc/>
