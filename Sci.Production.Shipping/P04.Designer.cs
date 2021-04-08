@@ -88,6 +88,7 @@
             this.lbShipDate = new Sci.Win.UI.Label();
             this.dateShipDate = new Sci.Win.UI.DateBox();
             this.btnConsigneeMail = new Sci.Win.UI.Button();
+            this.txtSupplier = new Sci.Production.Class.Txtsupplier();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -106,6 +107,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSupplier);
             this.masterpanel.Controls.Add(this.lbShipDate);
             this.masterpanel.Controls.Add(this.txtLocalSupp1);
             this.masterpanel.Controls.Add(this.chkNonDeclare);
@@ -219,6 +221,7 @@
             this.masterpanel.Controls.SetChildIndex(this.chkNonDeclare, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp1, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbShipDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSupplier, 0);
             // 
             // detailpanel
             // 
@@ -773,6 +776,7 @@
             // 
             this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
             this.txtSubconForwarder.DisplayBox1Binding = "";
+            this.txtSubconForwarder.IsFreightForwarder = true;
             this.txtSubconForwarder.IsIncludeJunk = false;
             this.txtSubconForwarder.IsMisc = false;
             this.txtSubconForwarder.IsShipping = false;
@@ -818,6 +822,7 @@
             this.txtLocalSupp.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Shipper", true));
             this.txtLocalSupp.DisplayBox1Binding = "";
             this.txtLocalSupp.IsFactory = false;
+            this.txtLocalSupp.IsMisc = false;
             this.txtLocalSupp.Location = new System.Drawing.Point(109, 117);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(230, 23);
@@ -919,6 +924,7 @@
             this.txtLocalSupp1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Consignee", true));
             this.txtLocalSupp1.DisplayBox1Binding = "";
             this.txtLocalSupp1.IsFactory = true;
+            this.txtLocalSupp1.IsMisc = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(109, 146);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(228, 23);
@@ -951,6 +957,16 @@
             this.btnConsigneeMail.Text = "Consignee Mail";
             this.btnConsigneeMail.UseVisualStyleBackColor = true;
             this.btnConsigneeMail.Click += new System.EventHandler(this.BtnConsigneeMail_Click);
+            // 
+            // txtSupplier
+            // 
+            this.txtSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Shipper", true));
+            this.txtSupplier.DisplayBox1Binding = "";
+            this.txtSupplier.Location = new System.Drawing.Point(109, 117);
+            this.txtSupplier.Name = "txtSupplier";
+            this.txtSupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtSupplier.TabIndex = 92;
+            this.txtSupplier.TextBox1Binding = "";
             // 
             // P04
             // 
@@ -1055,5 +1071,6 @@
         private Win.UI.DateBox dateShipDate;
         private Win.UI.Label lbShipDate;
         private Win.UI.Button btnConsigneeMail;
+        private Class.Txtsupplier txtSupplier;
     }
 }
