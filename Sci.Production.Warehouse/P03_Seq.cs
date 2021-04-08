@@ -203,7 +203,7 @@ select
 	ID = a.ID,
     name = Case type
 		when 'A' then 'P35. Adjust Bulk Qty'
-		when 'B' then 'P34. Adjust Stock Qty'
+		when 'B' then 'P34. Adjust Inventory Qty'
 		when 'O' then 'P43. Adjust Scrap Qty'
 		when 'R' then 'P45. Remove from Scrap Whse' end,
 	BulkArrivedQty = Null,
