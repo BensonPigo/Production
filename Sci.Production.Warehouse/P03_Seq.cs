@@ -208,11 +208,11 @@ select
 		when 'R' then 'P45. Remove from Scrap Whse' end,
 	BulkArrivedQty = Null,
 	BulkOutQty = Null,
-	BulkAdjustQty =  Case type when 'B' then Q.Qty else Null end,
+	BulkAdjustQty =  Case type when 'A' then Q.Qty else Null end,
 	BulkReturnQty = Null,
 	InventoryArrivedQty = Null,
 	InventoryOutQty = Null,
-	InventoryAdjustQty = Case type when 'A' then Q.Qty else Null end,
+	InventoryAdjustQty = Case type when 'B' then Q.Qty else Null end,
 	InventoryReturnQty = Null,
 	ScrapArrivedQty = Null,
 	ScrapOutQty = Null,
@@ -223,7 +223,7 @@ outer apply (
 	from Adjust_Detail b WITH (NOLOCK)
 	where a.id = b.id and  b.poid='{0}' and b.seq1 = '{1}' and b.seq2 = '{2}' 
 ) Q
-where a.Status = 'Confirmed' and a.Type not in  ('R','O')
+where a.Status = 'Confirmed'
 and exists (select 1 from Adjust_Detail b WITH (NOLOCK) where a.Id = b.Id and poid = '{0}' and seq1 = '{1}' and seq2 = '{2}')
 
 union all
@@ -406,7 +406,7 @@ outer apply (
 	where a.id = b.id and  b.ToPoId = '{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}' and b.ToStockType = 'I'
 ) QTI
 where Status='Confirmed' and Type in('A','B')
-and exists (select 1 from BorrowBack_Detail b WITH (NOLOCK) where a.Id = b.Id and b.ToPoId = '{0}' and b.ToSeq1 = '{1}' and b.ToStockType = '{2}')
+and exists (select 1 from BorrowBack_Detail b WITH (NOLOCK) where a.Id = b.Id and b.ToPoId = '{0}' and b.ToSeq1 = '{1}' and b.ToSeq2 = '{2}')
 
 order by Date,AddDate
 ",
