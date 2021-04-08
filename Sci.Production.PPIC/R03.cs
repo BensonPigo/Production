@@ -1409,7 +1409,7 @@ With SubProcess  as (
             , ColumnSeq
             , rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000
             from SubProcess 
-            where ID <> 'PrintSubCon'
+            where ID <> 'PrintSubCon' and ColumnN <> 'Printing LT' and ColumnN <> 'InkType/color/size'
 )
 select  ID
         , Seq
