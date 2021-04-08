@@ -1238,6 +1238,11 @@ Non SP# Sample/Mock-up
             #region ISP20210237 check [GB#]and[WK#]and[FTY WK#]
             if (this.checkIsFreightForwarder.Checked)
             {
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["SisFtyAPID"]))
+                {
+                    return;
+                }
+
                 string sqlBLNoCheck = $@"
 if  not exists (select  1
                 from GMTBooking with (nolock) where BLno = @BLno or BL2no = @BLno
