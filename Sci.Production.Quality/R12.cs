@@ -171,7 +171,24 @@ where 1 = 1
 
         private string AddJoinByReportType(string fromType, string inspectionTypeTable)
         {
-            string joinString = $@"
+            string joinString = string.Empty;
+            if (fromType == "TransferIn")
+            {
+                joinString = $@"
+outer apply(
+    select Dyelot = count(1)
+    from(
+        select distinct b.Dyelot
+        from TransferIn_Detail b with (nolock)
+		inner join FIR_Physical i with (nolock) on i.ID = f.ID and i.Roll = b.Roll and i.Dyelot = b.Dyelot and i.Result <> ''
+        where b.id = a.id and b.POID = f.POID and b.SEQ1 = f.SEQ1 and b.SEQ2 = f.SEQ2
+    )x
+)ct3
+";
+            }
+            else
+            {
+                joinString = $@"
 outer apply(
     select Dyelot = count(1)
     from(
@@ -182,6 +199,7 @@ outer apply(
     )x
 )ct3
 ";
+            }
 
             if (this.radioWKSeq.Checked)
             {
