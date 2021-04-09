@@ -465,7 +465,16 @@ select  convert(bit,0) as selected
         , fi.Dyelot toDyelot
         ,'O' tostocktype 
         , dbo.Getlocation(fi.ukey) fromlocation
-        , '' tolocation
+        , tolocation = stuff((select distinct isnull(CONCAT(',' , s.Data), '')
+			                 from (	
+				                select s.Data
+				                from [dbo].[SplitString](dbo.Getlocation(fi.ukey), ',') s
+				                inner join MtlLocation m on s.Data = m.ID
+				                where StockType = 'O'
+				                and junk = 0
+			                ) s
+			                for xml path(''))
+		                , 1, 1, '')
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over(partition by t.poid,t.seq1,t.SEQ2,t.FactoryID,t.POID,t.Seq1,t.Seq2,fi.Dyelot)
 from #tmp t 
 inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.poid 

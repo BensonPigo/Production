@@ -85,7 +85,16 @@ select 	selected = 0
         , toFactoryID = orders.FactoryID
 		, toStocktype = 'O' 
 		, Fromlocation = dbo.Getlocation(c.ukey)
-        , ToLocation=''
+        , ToLocation = stuff((select distinct isnull(CONCAT(',' , s.Data), '')
+			                 from (	
+				                select s.Data
+				                from [dbo].[SplitString](dbo.Getlocation(c.ukey), ',') s
+				                inner join MtlLocation m on s.Data = m.ID
+				                where StockType = 'O'
+				                and junk = 0
+			                ) s
+			                for xml path(''))
+		                , 1, 1, '')
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = orders.id
