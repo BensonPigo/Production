@@ -1,180 +1,387 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using Ict;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
-
+using System.Linq;
 
 namespace Sci.Production.Warehouse
 {
-    public partial class R40 : Sci.Win.Tems.PrintForm
+    /// <summary>
+    /// R40
+    /// </summary>
+    public partial class R40 : Win.Tems.PrintForm
     {
-        string strSP1, strSP2, strRefno1, strRefno2, strColor1, strColor2, strSupp, strFactory;
-        DataTable dataTable;
-        public R40(ToolStripMenuItem menuitem) 
-            :base(menuitem)
+        private string strSp1;
+        private string strSp2;
+        private DateTime? arriveDateStart;
+        private DateTime? arriveDateEnd;
+        private string wkStart;
+        private string wkEnd;
+        private string updateInfo;
+        private string status;
+        private DataTable[] listResult;
+
+        /// <summary>
+        /// R40
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
+        public R40(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.EditMode = true;
+            Dictionary<string, string> updateInfo_source = new Dictionary<string, string>
+            {
+                { "ALL", "*" },
+                { "Receiving Act. (kg)", "0" },
+                { "Cut Shadeband", "1" },
+                { "Fabric to Lab", "2" },
+            };
+            this.comboUpdateInfo.DataSource = new BindingSource(updateInfo_source, null);
+            this.comboUpdateInfo.DisplayMember = "Key";
+            this.comboUpdateInfo.ValueMember = "Value";
+
+            this.comboUpdateInfo.SelectedIndex = 0;
+
+            // Status下拉選單
+            Dictionary<string, string> status_source = new Dictionary<string, string>
+            {
+                { "ALL", "All" },
+                { "Already updated", "AlreadyUpdated" },
+                { "Not yet Update", "NotYetUpdate" },
+            };
+
+            this.comboStatus.DataSource = new BindingSource(status_source, null);
+            this.comboStatus.DisplayMember = "Key";
+            this.comboStatus.ValueMember = "Value";
+            this.comboStatus.SelectedIndex = 0;
         }
 
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            #region Set Filter Date
-            strSP1 = txtSPNoStart.Text.Trim();
-            strSP2 = txtSPNoEnd.Text.Trim();
-            strRefno1 = txtRefnoStart.Text.Trim();
-            strRefno2 = txtRefnoEnd.Text.Trim();
-            strColor1 = txtThreadColorStart.Text.Trim();
-            strColor2 = txtThreadColorStart.Text.Trim();
-            strSupp = txtSupplier.TextBox1.Text.Trim();
-            strFactory = txtfactory.Text.Trim();
-            #endregion 
+            if (!this.dateRangeArriveDate.HasValue &&
+                MyUtility.Check.Empty(this.txtSPNoStart.Text) &&
+                MyUtility.Check.Empty(this.txtSPNoEnd.Text) &&
+                MyUtility.Check.Empty(this.txtWKStart.Text) &&
+                MyUtility.Check.Empty(this.txtWKEnd.Text))
+            {
+                MyUtility.Msg.WarningBox("<Arrive W/H Date>, <SP#>, <WK#> can not be empty");
+                return false;
+            }
+
+            this.arriveDateStart = this.dateRangeArriveDate.DateBox1.Value;
+            this.arriveDateEnd = this.dateRangeArriveDate.DateBox2.Value;
+            this.strSp1 = this.txtSPNoStart.Text.Trim();
+            this.strSp2 = this.txtSPNoEnd.Text.Trim();
+            this.wkStart = this.txtWKStart.Text.Trim();
+            this.wkEnd = this.txtWKEnd.Text.Trim();
+            this.updateInfo = this.comboUpdateInfo.SelectedValue.ToString().Trim();
+            this.status = this.comboStatus.SelectedValue.ToString().Trim();
             return base.ValidateInput();
         }
 
-        protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
+        /// <inheritdoc/>
+        protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region Set SQL Command & SQLParameter
-            string strSql = @"
-select	[SP#] = Linv.OrderID
-		, [Factory] = O.FactoryID
-		, Linv.Refno
-		, Litem.Description
-		, [Unit] = Linv.UnitID
-		, [Supplier] = LSupp.ID + '-' + LSupp.Abb 
-		, [Thread Color] = Linv.ThreadColorID
-		, [Arrived Qty] = Linv.InQty
-		, [Released Qty] = Linv.OutQty
-		, Linv.AdjustQty
- 		, [Balance] = InQty - OutQty + AdjustQty
-from LocalInventory Linv 
-left join LocalItem Litem on Linv.Refno = Litem.RefNo
-left join LocalSupp LSupp on Litem.LocalSuppid = LSupp.ID
-left join Orders O ON Linv.OrderID = O.ID
-";
-
-            List<string> listWhere = new List<string>();
+            string whereReceiving = string.Empty;
+            string whereTransferIn = string.Empty;
             List<SqlParameter> listPar = new List<SqlParameter>();
 
-            /*--- SP# ---*/
-            if (!strSP1.Empty() && !strSP2.Empty())
+            if (!MyUtility.Check.Empty(this.strSp1))
             {
-                //若 sp 兩個都輸入則尋找 sp1 - sp2 區間的資料                
-                listPar.Add(new SqlParameter("@SP1", strSP1.PadRight(10, '0')));
-                listPar.Add(new SqlParameter("@SP2", strSP2.PadRight(10, 'Z')));
-                listWhere.Add(" Linv.OrderID between @SP1 and @SP2 ");
-            } else if (!strSP1.Empty())
-            {
-                //只有 sp1 輸入資料
-                listPar.Add(new SqlParameter("@SP1", strSP1 + "%"));
-                listWhere.Add(" Linv.OrderID like @SP1 ");
-            } else if (!strSP2.Empty())
-            {
-                //只有 sp2 輸入資料
-                listPar.Add(new SqlParameter("@SP2", strSP2 + "%"));
-                listWhere.Add(" Linv.OrderID like @SP2 ");
+                whereReceiving += " and rd.POID >= @Sp1 ";
+                whereTransferIn += " and rd.POID >= @Sp1 ";
+                listPar.Add(new SqlParameter("@Sp1", this.strSp1));
             }
 
-            /*--- Refno ---*/
-            if (!strRefno1.Empty() && !strColor2.Empty())
+            if (!MyUtility.Check.Empty(this.strSp2))
             {
-                listPar.Add(new SqlParameter("@Refno1", strRefno1));
-                listPar.Add(new SqlParameter("@Refno2", strRefno2));
-                listWhere.Add(" Linv.Refno between @Refno1 and @Refno2 ");
-            }
-            else if (!strRefno1.Empty())
-            {
-                listPar.Add(new SqlParameter("@Refno1", strRefno1 + "%"));
-                listWhere.Add(" Linv.Refno like @Refno1 ");
-            }
-            else if (!strRefno2.Empty())
-            {
-                listPar.Add(new SqlParameter("@Refno2", strRefno2 + "%"));
-                listWhere.Add(" Linv.Refno like @Refno2 ");
+                whereReceiving += " and rd.POID <= @Sp2 ";
+                whereTransferIn += " and rd.POID <= @Sp2 ";
+                listPar.Add(new SqlParameter("@Sp2", this.strSp2));
             }
 
-            /*--- Thread Color ---*/
-            if (!strColor1.Empty() && !strColor2.Empty())
+            if (this.arriveDateStart.HasValue)
             {
-                listPar.Add(new SqlParameter("@Color1", strColor1));
-                listPar.Add(new SqlParameter("@Color2", strColor2));
-                listWhere.Add(" Linv.ThreadColorID between @Color1 and @Color2 ");
-            } else if (!strColor1.Empty())
-            {
-                listPar.Add(new SqlParameter("@Color1", strColor1 + "%"));
-                listWhere.Add(" Linv.ThreadColorID like @Color1 ");
-            } else if (!strColor2.Empty())
-            {
-                listPar.Add(new SqlParameter("@Colro2", strColor2 + "%"));
-                listWhere.Add(" Linv.ThreadColorID like @Color2 ");
+                whereReceiving += " and r.WhseArrival >= @arriveDateStart ";
+                whereTransferIn += " and r.IssueDate >= @arriveDateStart ";
+                listPar.Add(new SqlParameter("@arriveDateStart", this.arriveDateStart));
             }
 
-            /*--- Supplier ---*/
-            if (!strSupp.Empty())
+            if (this.arriveDateEnd.HasValue)
             {
-                listPar.Add(new SqlParameter("@Supp", strSupp));
-                listWhere.Add(" LSupp.ID = @Supp ");
+                whereReceiving += " and r.WhseArrival <= @arriveDateEnd ";
+                whereTransferIn += " and r.IssueDate <= @arriveDateEnd ";
+                listPar.Add(new SqlParameter("@arriveDateEnd", this.arriveDateEnd));
             }
 
-            /*--- Factory ---*/
-            if (!strFactory.Empty())
+            if (!MyUtility.Check.Empty(this.wkStart))
             {
-                listPar.Add(new SqlParameter("@factory", strFactory));
-                listWhere.Add(" O.FactoryID = @factory ");
+                whereReceiving += " and r.ExportID >= @wkStart ";
+                whereTransferIn += " and 1 = 0 ";
+                listPar.Add(new SqlParameter("@wkStart", this.wkStart));
             }
 
-            if (listWhere.Count > 0)
-                strSql += "where" + listWhere.JoinToString("and");
-            #endregion 
-            #region SQL Data Loading...
-            DualResult result = DBProxy.Current.Select(null, strSql, listPar, out dataTable);
+            if (!MyUtility.Check.Empty(this.wkEnd))
+            {
+                whereReceiving += " and r.ExportID <= @wkEnd ";
+                whereTransferIn += " and 1 = 0 ";
+                listPar.Add(new SqlParameter("@wkEnd", this.wkEnd));
+            }
+
+            string whereReceivingAct = string.Empty;
+            string whereCutShadeband = string.Empty;
+            string whereFabricLab = string.Empty;
+
+            if (this.status == "AlreadyUpdated")
+            {
+                whereReceivingAct += " and ActualWeight != 0 ";
+                whereCutShadeband += " and CutShadebandTime is not null";
+                whereFabricLab += " and Fabric2LabTime is not null";
+            }
+
+            if (this.status == "NotYetUpdate")
+            {
+                whereReceivingAct += " and ActualWeight = 0 ";
+                whereCutShadeband += " and CutShadebandTime is null";
+                whereFabricLab += " and Fabric2LabTime is null";
+            }
+
+            string strSql = $@"
+select * into #tmpResult
+ from (
+		select
+			[ReceivingID] = r.ID
+		    ,r.ExportID
+			,[ArriveDate] = r.WhseArrival
+		    ,rd.PoId
+			,[Seq] = rd.Seq1 + ' ' + rd.Seq2
+			,o.BrandID
+			,psd.refno
+			,fb.WeaveTypeID
+			,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
+						, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
+						, psd.ColorID)
+			,rd.Roll
+		    ,rd.Dyelot
+			,rd.StockQty
+			,StockType = isnull (ddl.Name, rd.StockType)
+			,rd.Location
+			,rd.Weight
+			,rd.ActualWeight
+			,[CutShadebandTime]=cutTime.CutTime
+		    ,cutTime.CutBy
+			,rd.Fabric2LabBy
+			,rd.Fabric2LabTime
+		from  Receiving r with (nolock)
+		inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
+		inner join Orders o with (nolock) on o.ID = rd.POID 
+		inner join PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+		inner join Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+        left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
+                                                    and REPLACE(ddl.ID,'''','') = rd.StockType
+		OUTER APPLY(
+		    SELECT  fs.CutTime,fs.CutBy
+		    FROM FIR f
+		    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+		    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+		) cutTime
+        where   psd.FabricType ='F' {whereReceiving}
+		union all
+		SELECT 
+			[ReceivingID] = r.ID
+		    ,[ExportID] = ''
+			,[ArriveDate] = r.IssueDate
+		    ,rd.PoId
+			,[Seq] = rd.Seq1 + ' ' + rd.Seq2
+			,o.BrandID
+			,psd.refno
+			,fb.WeaveTypeID
+			,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
+						, IIF(psd.SuppColor = '', dbo.GetColorMultipleID (o.BrandID, psd.ColorID) , psd.SuppColor)
+						, psd.ColorID)
+			,rd.Roll
+		    ,rd.Dyelot
+			,[StockQty] = rd.Qty
+			,StockType = isnull (ddl.Name, rd.StockType)
+			,rd.Location
+			,rd.Weight
+			,rd.ActualWeight
+			,[CutShadebandTime]=cutTime.CutTime
+		    ,cutTime.CutBy
+			,rd.Fabric2LabBy
+			,rd.Fabric2LabTime
+		FROM TransferIn r with (nolock)
+		INNER JOIN TransferIn_Detail rd with (nolock) ON r.ID = rd.ID
+		INNER JOIN Orders o with (nolock) ON o.ID = rd.POID
+		INNER JOIN PO_Supp_Detail psd with (nolock) on rd.PoId = psd.ID and rd.Seq1 = psd.SEQ1 and rd.Seq2 = psd.SEQ2
+		INNER JOIN Fabric fb with (nolock) on psd.SCIRefno = fb.SCIRefno
+        left join DropDownList ddl WITH (NOLOCK) on ddl.Type = 'Pms_StockType'
+                                                    and REPLACE(ddl.ID,'''','') = rd.StockType
+		OUTER APPLY(
+		    SELECT  fs.CutTime,fs.CutBy
+		    FROM FIR f
+		    INNER JOIN FIR_Shadebone fs with (nolock) on f.id = fs.ID 	
+		    WHERE  r.id = f.ReceivingID and rd.PoId = F.POID and rd.Seq1 = F.SEQ1 and rd.Seq2 = F.SEQ2 AND rd.Roll = fs.Roll and rd.Dyelot = fs.Dyelot
+		)cutTime
+        where   psd.FabricType ='F' {whereTransferIn}
+	) a
+
+select  ReceivingID
+		,ExportID
+		,ArriveDate
+		,PoId
+		,Seq
+		,BrandID
+		,refno
+		,WeaveTypeID
+		,Color
+		,Roll
+		,Dyelot
+		,StockQty
+		,StockType
+		,Location
+		,Weight
+		,ActualWeight
+from #tmpResult
+where 1 = 1 {whereReceivingAct}
+
+select  ReceivingID
+		,ExportID
+		,ArriveDate
+		,PoId
+		,Seq
+		,BrandID
+		,refno
+		,WeaveTypeID
+		,Color
+		,Roll
+		,Dyelot
+		,StockQty
+		,StockType
+		,Location
+		,Weight
+		,CutShadebandTime
+		,CutBy
+from #tmpResult
+where 1 = 1 {whereCutShadeband}
+
+select  ReceivingID
+		,ExportID
+		,ArriveDate
+		,PoId
+		,Seq
+		,BrandID
+		,refno
+		,WeaveTypeID
+		,Color
+		,Roll
+		,Dyelot
+		,StockQty
+		,StockType
+		,Location
+		,Weight
+		,Fabric2LabTime
+		,Fabric2LabBy
+from #tmpResult
+where 1 = 1 {whereFabricLab}
+
+drop table #tmpResult
+";
             #endregion
+            #region SQL Data Loading...
+            DualResult result = DBProxy.Current.Select(null, strSql, listPar, out this.listResult);
+            #endregion
+
             if (result)
             {
-                return Result.True;
-            } else
+                return Ict.Result.True;
+            }
+            else
             {
                 return new DualResult(false, "Query data fail\r\n" + result.ToString());
-            }            
+            }
         }
 
+        /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-                this.SetCount(dataTable.Rows.Count);
-                this.ShowWaitMessage("Excel Processing...");
+            int dataCnt = 0;
 
-                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R40_LocalItemInventoryReport.xltx"); //預先開啟excel app
-                MyUtility.Excel.CopyToXls(dataTable, "", "Warehouse_R40_LocalItemInventoryReport.xltx", 1, showExcel: false, showSaveMsg: true, excelApp: objApp);
+            if (this.updateInfo == "*")
+            {
+                dataCnt = this.listResult.Sum(s => s.Rows.Count);
+            }
+            else
+            {
+                int dataNum = MyUtility.Convert.GetInt(this.updateInfo);
+                dataCnt = this.listResult[dataNum].Rows.Count;
+            }
+
+            this.SetCount(dataCnt);
+            if (dataCnt == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found!!");
+                return false;
+            }
+
+            this.ShowWaitMessage("Excel Processing...");
+            int serReport = 0;
+            foreach (DataTable dataTable in this.listResult)
+            {
+                string excelName = string.Empty;
+
+                if (this.updateInfo != "*" && this.updateInfo != serReport.ToString())
+                {
+                    serReport++;
+                    continue;
+                }
+
+                switch (serReport)
+                {
+                    case 0:
+                        excelName = "Warehouse_R39_ReceivingActkg";
+                        break;
+                    case 1:
+                        excelName = "Warehouse_R39_CutShadeband";
+                        break;
+                    case 2:
+                        excelName = "Warehouse_R39_FabrictoLab";
+                        break;
+                    default:
+                        continue;
+                }
+
+                Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
+                if (dataTable.Rows.Count > 0)
+                {
+                    MyUtility.Excel.CopyToXls(dataTable, null, $"{excelName}.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                }
+
                 Excel.Worksheet worksheet = objApp.Sheets[1];
                 worksheet.Rows.AutoFit();
                 worksheet.Columns.AutoFit();
 
                 #region Save & Show Excel
-                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Warehouse_R40_LocalItemInventoryReport");
+                string strExcelName = Class.MicrosoftFile.GetName(excelName);
                 objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
                 Marshal.ReleaseComObject(worksheet);
 
                 strExcelName.OpenFile();
-                #endregion
-                this.HideWaitMessage();
-            } else
-            {
-                this.SetCount(0);
-                MyUtility.Msg.InfoBox("Data not found!!");
+                serReport++;
             }
+
+            this.HideWaitMessage();
+            #endregion
             return true;
         }
     }
