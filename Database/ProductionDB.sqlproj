@@ -2629,6 +2629,7 @@
     <Build Include="dbo\Stored Procedures\imp_BundleInOut.sql" />
     <Build Include="dbo\Tables\FtyStyleInnovationCombineSubprocess.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_CombineSubprocess.sql" />
+    <Build Include="dbo\Tables\QAWeaveTypeSetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
