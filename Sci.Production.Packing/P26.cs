@@ -945,6 +945,7 @@ INNER JOIN ShippingMarkPic pic ON pic.PackingListID = t.PackingListID
 
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.MaxValue))
             {
+                DBProxy.Current.DefaultTimeout = 7200;
                 DBProxy.Current.OpenConnection(null, out sqlConn);
                 using (sqlConn)
                 {
@@ -991,7 +992,11 @@ where a.PackingListID IN ('{idList.Select(o => o.PackingListID).JoinToString("',
 ORDER BY  a.PackingListID , b.SCICtnNo 
 ";
 
-                        DBProxy.Current.Select(null, cc, out dt_ShippingMarkPic_Detail);
+                        result = DBProxy.Current.Select(null, cc, out dt_ShippingMarkPic_Detail);
+                        if (!result)
+                        {
+                            throw result.GetException();
+                        }
 
                         List<string> filenamee = new List<string>();
                         List<string> sQLs = new List<string>();
@@ -1036,7 +1041,6 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                             }
                             else
                             {
-
                                 byte[] pDFImage = null;
 
                                 // 原套件
@@ -1091,7 +1095,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         string finalSQL = string.Empty;
 
                         // SqlParameter上限是2100個，因此訂一個上限值，超過的話就分段
-                        int sqlParameterLimit = 500;
+                        int sqlParameterLimit = 1000;
                         int limitCounter = 0;
 
                         List<Task<DualResult>> dualResults = new List<Task<DualResult>>();
