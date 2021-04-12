@@ -37,6 +37,8 @@ namespace Sci.Production.Warehouse
 
             this.dateTimePicker.CustomFormat = "yyyy/MM/dd HH:mm:ss";
             this.dateTimePicker.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            this.dateTimeFabric2LabBy.CustomFormat = "yyyy/MM/dd HH:mm:ss";
+            this.dateTimeFabric2LabBy.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.dateTimePicker1.Format = DateTimePickerFormat.Custom;
             this.dateTimePicker2.Format = DateTimePickerFormat.Custom;
             this.ChangeCutShadebandTime();
@@ -135,6 +137,8 @@ namespace Sci.Production.Warehouse
                  .Text("StockTypeDesc", header: "Stock Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .DateTime("CutShadebandTime", header: "Cut Shadeband Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
                  .Text("CutBy", header: "Cut Shadeband By", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .DateTime("Fabric2LabTime", header: "Fabric to Lab Time", width: Widths.AnsiChars(20), iseditingreadonly: false)
+                 .Text("Fabric2LabBy", header: "Fabric to Lab By", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("Location", header: "Location", width: Widths.AnsiChars(12), settings: cellLocation)
                  .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
                  .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(8), decimal_places: 2, settings: cellActWeight)
@@ -149,6 +153,7 @@ namespace Sci.Production.Warehouse
             this.gridReceiving.Columns["ActualWeight"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["CutShadebandTime"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridReceiving.Columns["Fabric2LabTime"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridReceiving.Columns["rid"].Visible = false;
         }
 
@@ -348,6 +353,10 @@ from
         ,cutTime.CutBy
         ,o.BrandID
         ,fb.WeaveTypeID
+        ,[OldFabric2LabTime]=rd.Fabric2LabTime
+        ,rd.Fabric2LabTime
+        ,rd.Fabric2LabBy
+        ,[ReceivingTransferInUkey] = rd.Ukey
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -425,6 +434,10 @@ from
         ,cutTime.CutBy
         ,o.BrandID
         ,fb.WeaveTypeID
+        ,[OldFabric2LabTime]=td.Fabric2LabTime
+        ,td.Fabric2LabTime
+        ,td.Fabric2LabBy
+        ,[ReceivingTransferInUkey] = td.Ukey
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN Orders o with (nolock) ON o.ID = td.POID
@@ -491,6 +504,7 @@ DROP TABLE #tmpStockType
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.dateTimePicker.Value = DateTime.Now;
+            this.dateTimeFabric2LabBy.Value = DateTime.Now;
             this.Query();
         }
 
@@ -507,6 +521,7 @@ DROP TABLE #tmpStockType
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             this.dateTimePicker.Value = DateTime.Now;
+            this.dateTimeFabric2LabBy.Value = DateTime.Now;
 
             var selectedReceiving = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1);
             if (!selectedReceiving.Any())
@@ -529,8 +544,18 @@ DROP TABLE #tmpStockType
             DataRow[] drArryNotExistRemark = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && MyUtility.Check.Empty(x.Field<string>("Remark"))
                                                                              && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
-            DataRow[] drArryActualWeight = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-                                                                             && x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight")).ToArray();
+            var listUpdateReceivingTransferIn = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                             && (x.Field<decimal>("ActualWeight") != x.Field<decimal>("OldActualWeight") ||
+                                                                                 !MyUtility.Convert.GetDate(x["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(x["OldFabric2LabTime"]))))
+                                                                                .Select(s => new
+                                                                                {
+                                                                                    ReceivingSource = s["ReceivingSource"].ToString(),
+                                                                                    ActualWeight = MyUtility.Convert.GetDecimal(s["ActualWeight"]),
+                                                                                    Ukey = s["ReceivingTransferInUkey"],
+                                                                                    Fabric2LabTime = s["Fabric2LabTime"],
+                                                                                    IsNeedUpdateFabric2LabBy = !MyUtility.Convert.GetDate(s["Fabric2LabTime"]).EqualString(MyUtility.Convert.GetDate(s["OldFabric2LabTime"])),
+                                                                                });
+
             DataRow[] drArryCutShadebandTime = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
 
                                                                              // && !MyUtility.Check.Empty(x["CutShadebandTime"])
@@ -570,7 +595,7 @@ DROP TABLE #tmpStockType
             List<string> id_list = MyUtility.GetValue.GetBatchID(Env.User.Keyword + "LH", "LocationTrans", batchNumber: cntID, sequenceMode: 2); // 批次產生ID
             int idcnt = 0;
 
-            if (id_list.Count == 0 && drArryActualWeight.Length == 0 && drArryCutShadebandTime.Length == 0)
+            if (id_list.Count == 0 && listUpdateReceivingTransferIn.Count() == 0 && drArryCutShadebandTime.Length == 0)
             {
                 MyUtility.Msg.WarningBox("There is no Location, Act.(kg), Cut Shadeband Time changed.");
                 return;
@@ -682,29 +707,27 @@ Insert into LocationTrans_Detail(   ID,
             }
 
             string sqlUpdateReceiving_Detail = string.Empty;
-            foreach (var updateItem in drArryActualWeight)
+            foreach (var updateItem in listUpdateReceivingTransferIn)
             {
-                if (updateItem["ReceivingSource"].ToString() == "Receiving")
+                string updateFabric2Lab = string.Empty;
+
+                if (updateItem.IsNeedUpdateFabric2LabBy)
                 {
-                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem["ActualWeight"]}
-                                                    where   ID = '{updateItem["ID"]}' and
-                                                            POID = '{updateItem["POID"]}' and
-                                                            Seq1 = '{updateItem["Seq1"]}' and
-                                                            Seq2 = '{updateItem["Seq2"]}' and
-                                                            Roll = '{updateItem["Roll"]}' and
-                                                            Dyelot = '{updateItem["Dyelot"]}'
+                    string fabric2LabTime = MyUtility.Convert.GetDate(updateItem.Fabric2LabTime).HasValue ? "'" + MyUtility.Convert.GetDate(updateItem.Fabric2LabTime).Value.ToString("yyyy/MM/dd HH:mm:ss") + "'" : "NULL";
+                    updateFabric2Lab = $",Fabric2LabTime = {fabric2LabTime}, Fabric2LabBy = '{Env.User.UserID}' ";
+                }
+
+                if (updateItem.ReceivingSource == "Receiving")
+                {
+                    sqlUpdateReceiving_Detail += $@"update Receiving_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}
+                                                    where   UKey = '{updateItem.Ukey}'
 ";
                 }
 
-                if (updateItem["ReceivingSource"].ToString() == "TransferIn")
+                if (updateItem.ReceivingSource == "TransferIn")
                 {
-                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem["ActualWeight"]}
-                                                    where   ID = '{updateItem["ID"]}' and
-                                                            POID = '{updateItem["POID"]}' and
-                                                            Seq1 = '{updateItem["Seq1"]}' and
-                                                            Seq2 = '{updateItem["Seq2"]}' and
-                                                            Roll = '{updateItem["Roll"]}' and
-                                                            Dyelot = '{updateItem["Dyelot"]}'
+                    sqlUpdateReceiving_Detail += $@"update TransferIn_Detail set ActualWeight  = {updateItem.ActualWeight} {updateFabric2Lab}
+                                                    where   UKey = '{updateItem.Ukey}'
 ";
                 }
             }
@@ -984,6 +1007,22 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
             else
             {
                 dateTimePicker.CustomFormat = " ";
+            }
+        }
+
+        private void BtnUpdateFabric2LabTime_Click(object sender, EventArgs e)
+        {
+            if (this.dtReceiving != null && this.dtReceiving.Rows.Count > 0)
+            {
+                var selectedReceiving = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1);
+                DateTime dateTime = this.dateTimeFabric2LabBy.Value;
+
+                DataRow[] dataRows = this.dtReceiving.Select("select=1");
+
+                foreach (var item in dataRows)
+                {
+                    item["Fabric2LabTime"] = dateTime;
+                }
             }
         }
     }

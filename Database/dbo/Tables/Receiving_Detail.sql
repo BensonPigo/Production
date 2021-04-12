@@ -23,6 +23,8 @@
     [Unoriginal] BIT NULL, 
     [EncodeSeq] INT NOT NULL DEFAULT ((0)), 
     [SentToWMS] BIT NOT NULL DEFAULT ((0)), 
+    [Fabric2LabTime] DATETIME  NULL,
+    [Fabric2LabBy] VARCHAR(10) CONSTRAINT [DF_Receiving_Detail_Fabric2LabBy] DEFAULT ('') not NULL,
     CONSTRAINT [PK_Receiving_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -39,6 +41,13 @@
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Receiving Detail', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'倉庫剪布給實驗室的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Fabric2LabTime';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'更新倉庫剪布給實驗室時間的人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Receiving_Detail', @level2type = N'COLUMN', @level2name = N'Fabric2LabBy';
 
 
 GO

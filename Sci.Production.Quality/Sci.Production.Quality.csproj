@@ -247,6 +247,12 @@
     <Compile Include="B22.Designer.cs">
       <DependentUpon>B22.cs</DependentUpon>
     </Compile>
+    <Compile Include="B23.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B23.Designer.cs">
+      <DependentUpon>B23.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_Moisture.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -818,6 +824,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B22.resx">
       <DependentUpon>B22.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B23.resx">
+      <DependentUpon>B23.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
