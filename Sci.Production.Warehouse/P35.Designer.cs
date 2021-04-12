@@ -327,7 +327,6 @@
             this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,Dyelot,roll";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P35";
