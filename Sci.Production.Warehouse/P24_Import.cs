@@ -216,10 +216,6 @@ WHERE   StockType='{dr["toStocktype"]}'
                         {
                             dr["tolocation"] = dr["fromlocation"];
                         }
-                        else
-                        {
-                            dr["tolocation"] = string.Empty;
-                        }
                     }
 
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
