@@ -197,7 +197,7 @@ WHERE Type='Pms_LocalItem_UnPack'
                 }
             }
 
-            string chk = $@"select 1 from LocalItem where RefNo='{this.CurrentMaintain["Refno"]}' AND CtnHeight = {this.CurrentMaintain["CtnHeight"]} AND CtnUnit = '{this.CurrentMaintain["CtnUnit"]}' ";
+            string chk = $@"select 1 from LocalItem where RefNo='{this.CurrentMaintain["Refno"]}' AND CtnHeight = '{this.CurrentMaintain["CtnHeight"]}' AND CtnUnit = '{this.CurrentMaintain["CtnUnit"]}' ";
 
             if (!MyUtility.Check.Seek(chk))
             {
