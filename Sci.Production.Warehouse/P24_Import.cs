@@ -202,22 +202,6 @@ Where   1=1
                 if (this.gridImport.Columns[e.ColumnIndex].Name == this.col_chk.Name)
                 {
                     DataRow dr = this.gridImport.GetDataRow(e.RowIndex);
-                    if (Convert.ToBoolean(dr["selected"]) == true)
-                    {
-                        if (MyUtility.Check.Seek($@"
-SELECT  id
-        , Description
-        , StockType 
-FROM    DBO.MtlLocation WITH (NOLOCK) 
-WHERE   StockType='{dr["toStocktype"]}'
-        and junk != '1'
-        and  id ='{dr["fromlocation"]}'
-"))
-                        {
-                            dr["tolocation"] = dr["fromlocation"];
-                        }
-                    }
-
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         dr["qty"] = dr["balance"];
