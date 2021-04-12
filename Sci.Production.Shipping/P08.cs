@@ -813,13 +813,50 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
             int isFreightForwarder = this.checkIsFreightForwarder.Checked ? 1 : 0;
             if (!(this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].EqualString("AP007")))
             {
-                DualResult result = DBProxy.Current.Execute(
+                string strSqlCmd = $@"
+merge ShareExpense t
+using (
+select distinct
+    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+    ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
+    ,[WKNo] = ''
+    ,[InvNo] = id
+    ,[Type] = '{this.CurrentMaintain["SubType"]}'
+    ,[GW] = TotalGW
+    ,[CBM] = TotalCBM
+    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+    ,[ShipModeID] = ShipModeID
+    ,[FtyWK] = 0
+    ,[AccountID] = (
+	    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+        where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+        and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+    ,[Junk] = 0
+from GMTBooking g WITH (NOLOCK) 
+where BLNo='{this.CurrentMaintain["BLNO"]}' or BL2No='{this.CurrentMaintain["BLNO"]}' ) as s 
+on	t.ShippingAPID = s.ShippingAPID 
+	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+when matched AND t.junk=1 then
+	update set
+	t.junk=0
+when not matched by target then 
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
+
+                DualResult result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
+
+                if (!result)
+                {
+                    return new DualResult(false, "Append Data failed!");
+                }
+
+                result = DBProxy.Current.Execute(
                 "Production",
                 string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
                 if (!result)
                 {
-                    DualResult failResult = new DualResult(false, "Re-calcute share expense failed!");
-                    return failResult;
+                    return new DualResult(false, "Re-calcute share expense failed!");
                 }
             }
 
