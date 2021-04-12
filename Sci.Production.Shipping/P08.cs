@@ -811,7 +811,9 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
         protected override DualResult ClickSavePost()
         {
             int isFreightForwarder = this.checkIsFreightForwarder.Checked ? 1 : 0;
-            if (!(this.checkIsFreightForwarder.Checked && this.CurrentMaintain["Reason"].EqualString("AP007")))
+            DualResult result;
+
+            if (this.checkIsFreightForwarder.Checked && !this.CurrentMaintain["Reason"].EqualString("AP007"))
             {
                 string strSqlCmd = $@"
 merge ShareExpense t
@@ -844,20 +846,20 @@ when not matched by target then
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
 	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
 
-                DualResult result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
+                result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
 
                 if (!result)
                 {
                     return new DualResult(false, "Append Data failed!");
                 }
+            }
 
-                result = DBProxy.Current.Execute(
-                "Production",
-                string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
-                if (!result)
-                {
-                    return new DualResult(false, "Re-calcute share expense failed!");
-                }
+            result = DBProxy.Current.Execute(
+"Production",
+string.Format("exec CalculateShareExpense '{0}','{1}',{2}", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Env.User.UserID, isFreightForwarder));
+            if (!result)
+            {
+                return new DualResult(false, "Re-calcute share expense failed!");
             }
 
             return base.ClickSavePost();
