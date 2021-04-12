@@ -190,6 +190,20 @@ namespace Sci.Production.Warehouse
 
             this.comboSortBy.SelectedIndex = 0;
 
+            #region Seq 開窗
+            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
+            seq.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                var frm = new P03_Seq(dr);
+                frm.ShowDialog(this);
+            };
+            #endregion
             #region Supp 開窗
             DataGridViewGeneratorTextColumnSettings ts1 = new DataGridViewGeneratorTextColumnSettings();
             ts1.CellMouseDoubleClick += (s, e) =>
@@ -469,8 +483,8 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'", out dr
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.gridMaterialStatus)
             .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) // 1
-            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 2
-            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2)) // 3
+            .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: seq) // 2
+            .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2), settings: seq) // 3
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1) // 3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true) // 5

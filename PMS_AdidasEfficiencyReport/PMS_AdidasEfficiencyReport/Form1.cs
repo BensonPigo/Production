@@ -726,14 +726,15 @@ outer apply (
 
             #region 上半部
 
+            for (int i = 1; i < sessions.Count; i++)
+            {
+                Excel.Range r = objSheets.get_Range($"A3", Type.Missing).EntireRow;
+                r.Copy();
+                r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
+            }
+
             for (int i = 0; i <= sessions.Count - 1; i++)
             {
-                if (i > 0)
-                {
-                    objSheets.get_Range(string.Format("B{0}", i + 2)).Copy();
-                    objSheets.get_Range(string.Format("B{0}", i + 3)).PasteSpecial(Excel.XlPasteType.xlPasteAll, Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
-                }
-
                 objSheets.Cells[i + 3, 2] = sessions[i];
             }
 
@@ -789,13 +790,14 @@ outer apply (
                     objArrayTop[0, 1] = querySessionRow != null && querySessionRow.SIOEff.HasValue ? querySessionRow.SIOEff : 0;
                     objArrayTop[0, 2] = string.Format("=IFERROR({0}{2}-{1}{2}, \"\")", MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 1), MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), j + 3);
                     objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].Value2 = objArrayTop;
+                    objSheets.Range[string.Format("{0}{2}:{1}{2}", MyUtility.Excel.ConvertNumericToExcelColumn((i + 1) * 3), MyUtility.Excel.ConvertNumericToExcelColumn(((i + 1) * 3) + 2), j + 3)].NumberFormat = "##.##%";
                 }
             }
 
             #endregion
 
             #region 下半部
-            int initR = 13;
+            int initR = sessions.Count + 6;
             int initC = 2;
             int initI = 0;
             string initCountry = string.Empty;

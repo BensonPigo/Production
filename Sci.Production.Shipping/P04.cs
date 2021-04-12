@@ -508,6 +508,47 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
         // Radio
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
         {
+            /*
+                [表頭][Type]=[3rd country], [表頭][Shipper]元件使用 Txtsupplier
+                [表頭][Type]=[Transfer In]或[Transfer Out],[表頭][Shipper]元件使用 TxtLocalSupp, 並設定IsFactory=True
+                [表頭][Type]=[Local Purchase], [表頭][Shipper]元件使用 TxtLocalSupp, 並設定IsMisc=True
+             */
+            switch (this.radioPanel1.Value)
+            {
+                case "1":
+                    this.txtLocalSupp.Visible = false;
+                    this.txtSupplier.Visible = true;
+                    break;
+                case "2":
+                    this.txtLocalSupp.Visible = true;
+                    this.txtSupplier.Visible = false;
+
+                    this.txtLocalSupp.IsFactory = true;
+                    this.txtLocalSupp.IsMisc = false;
+                    break;
+                case "3":
+                    this.txtLocalSupp.Visible = true;
+                    this.txtSupplier.Visible = false;
+
+                    this.txtLocalSupp.IsFactory = true;
+                    this.txtLocalSupp.IsMisc = false;
+                    break;
+                case "4":
+                    this.txtLocalSupp.Visible = true;
+                    this.txtSupplier.Visible = false;
+
+                    this.txtLocalSupp.IsFactory = false;
+                    this.txtLocalSupp.IsMisc = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                this.CurrentMaintain["Shipper"] = string.Empty;
+            }
+
             if (this.radioPanel1.Value == "3")
             {
                 this.labelArrivePortDate.Text = "ETA";

@@ -27,7 +27,22 @@ namespace Sci.Production.Warehouse
             this.gridicon.Insert.Visible = false;
         }
 
-        // 新增時預設資料
+        /// <inheritdoc/>
+        public P43(ToolStripMenuItem menuitem, string transID)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("Type='O' and id='{0}'", transID);
+            this.IsSupportNew = false;
+            this.IsSupportEdit = false;
+            this.IsSupportDelete = false;
+            this.IsSupportConfirm = false;
+            this.IsSupportUnconfirm = false;
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
+        }
 
         /// <inheritdoc/>
         protected override void ClickNewAfter()

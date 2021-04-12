@@ -10,6 +10,9 @@ using System.Runtime.InteropServices;
 
 namespace Sci.Production.Warehouse
 {
+    /// <summary>
+    /// R38
+    /// </summary>
     public partial class R38 : Win.Tems.PrintForm
     {
         private string strSp1;
@@ -20,10 +23,10 @@ namespace Sci.Production.Warehouse
         private string strLockStatus;
         private DataTable dataTable;
 
-        private void Label1_Click(object sender, EventArgs e)
-        {
-        }
-
+        /// <summary>
+        /// R38
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
         public R38(ToolStripMenuItem menuitem)
             : base(menuitem)
         {

@@ -215,7 +215,7 @@ select  F.MDivisionID
         ,PSD.POUnit
         ,iif(PSD.Complete=1,'Y','N')
         --,PSD.ETA
-        ,PSD.FinalETA
+        --,PSD.FinalETA
         ,orderlist = a.orderlist
         ,MDPD.InQty
         ,PSD.StockUnit

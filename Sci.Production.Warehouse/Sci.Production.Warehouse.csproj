@@ -163,6 +163,12 @@
     <Compile Include="B07.Designer.cs">
       <DependentUpon>B07.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_Seq.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_Seq.Designer.cs">
+      <DependentUpon>P03_Seq.cs</DependentUpon>
+    </Compile>
     <Compile Include="P18_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,11 +187,59 @@
     <Compile Include="P03_ReturnQty.Designer.cs">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </Compile>
+    <Compile Include="B08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B08.Designer.cs">
+      <DependentUpon>B08.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P63_Transaction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P63_Transaction.Designer.cs">
+      <DependentUpon>P63_Transaction.cs</DependentUpon>
+    </Compile>
     <Compile Include="P53.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P53.Designer.cs">
       <DependentUpon>P53.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P63.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P63.Designer.cs">
+      <DependentUpon>P63.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P66.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P66.Designer.cs">
+      <DependentUpon>P66.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P65.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P65.Designer.cs">
+      <DependentUpon>P65.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P64.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P64.Designer.cs">
+      <DependentUpon>P64.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P66_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P66_Import.Designer.cs">
+      <DependentUpon>P66_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P65_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P65_Import.Designer.cs">
+      <DependentUpon>P65_Import.cs</DependentUpon>
     </Compile>
     <Compile Include="P99_CallForm.cs" />
     <Compile Include="P01.cs">
@@ -1313,6 +1367,12 @@
     <Compile Include="Report\R25.Designer.cs">
       <DependentUpon>R25.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R40.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R40.Designer.cs">
+      <DependentUpon>R40.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R38.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1320,6 +1380,12 @@
       <DependentUpon>R38.cs</DependentUpon>
     </Compile>
     <Compile Include="P14_PrintData.cs" />
+    <Compile Include="Report\R39.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R39.Designer.cs">
+      <DependentUpon>R39.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1347,6 +1413,9 @@
     <EmbeddedResource Include="B07.resx">
       <DependentUpon>B07.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B08.resx">
+      <DependentUpon>B08.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -1363,6 +1432,9 @@
     <EmbeddedResource Include="P02_Cartondetail.resx">
       <DependentUpon>P02_Cartondetail.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P03_Seq.resx">
+      <DependentUpon>P03_Seq.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P03_AdjustQty.resx">
       <DependentUpon>P03_AdjustQty.cs</DependentUpon>
     </EmbeddedResource>
@@ -1371,6 +1443,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_ReturnQty.resx">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P63_Transaction.resx">
+      <DependentUpon>P63_Transaction.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
@@ -1613,6 +1688,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11_PrintKarbanCard.resx">
       <DependentUpon>P11_PrintKarbanCard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P63.resx">
+      <DependentUpon>P63.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P66.resx">
+      <DependentUpon>P66.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P65.resx">
+      <DependentUpon>P65.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P64.resx">
+      <DependentUpon>P64.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P66_Import.resx">
+      <DependentUpon>P66_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P65_Import.resx">
+      <DependentUpon>P65_Import.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P99.resx">
       <DependentUpon>P99.cs</DependentUpon>
@@ -2012,8 +2105,14 @@
     <EmbeddedResource Include="Report\R25.resx">
       <DependentUpon>R25.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R40.resx">
+      <DependentUpon>R40.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R38.resx">
       <DependentUpon>R38.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R39.resx">
+      <DependentUpon>R39.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -11,10 +11,16 @@ namespace Sci.Production.Class
     public partial class TxtLocalSupp : Win.UI._UserControl
     {
         /// <summary>
-        /// 是否要顯示 Junk 的資料
+        /// 是否要顯示 IsFactory 的資料
         /// </summary>
-        [Description("是否要顯示 LocalSupp.IsFactory 的資料")]
+        [Description("是否只顯示 LocalSupp.IsFactory 的資料")]
         public bool IsFactory { get; set; } = false;
+
+        /// <summary>
+        /// 是否要顯示 IsMisc 的資料
+        /// </summary>
+        [Description("是否只顯示 LocalSupp.IsMisc 的資料")]
+        public bool IsMisc { get; set; } = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TxtLocalSupp"/> class.
@@ -59,16 +65,20 @@ namespace Sci.Production.Class
 
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.TextBox1.OldValue)
             {
-                string sql = string.Format(
-                    @"
+                string sql = $@"
 select l.ID
 from dbo.LocalSupp l WITH (NOLOCK) 
-WHERE  l.ID = '{0}'
-and l.Junk=0 
-{1}
-",
-                    textValue,
-                    this.IsFactory ? "and IsFactory = 1" : string.Empty);
+where l.Junk=0 AND l.ID ='{textValue}'
+";
+                if (this.IsFactory)
+                {
+                    sql += "and l.IsFactory = 1" + Environment.NewLine;
+                }
+
+                if (this.IsMisc)
+                {
+                    sql += "and l.IsMisc = 1" + Environment.NewLine;
+                }
 
                 if (!MyUtility.Check.Seek(sql))
                 {
@@ -90,15 +100,22 @@ and l.Junk=0
                 return;
             }
 
-            string sql = string.Format(
-                @"
+            string sql = $@"
 select l.ID,l.Name,l.Abb 
-from LocalSupp l WITH (NOLOCK) 
-WHERE l.Junk = 0
-{0}
-order by l.ID
-",
-                this.IsFactory ? "and IsFactory = 1" : string.Empty);
+from dbo.LocalSupp l WITH (NOLOCK) 
+where l.Junk=0 
+";
+            if (this.IsFactory)
+            {
+                sql += "and l.IsFactory = 1" + Environment.NewLine;
+            }
+
+            if (this.IsMisc)
+            {
+                sql += "and l.IsMisc = 1" + Environment.NewLine;
+            }
+
+            sql += "order by l.ID" + Environment.NewLine;
 
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(
                 sql,

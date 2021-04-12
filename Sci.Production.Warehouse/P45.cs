@@ -38,6 +38,23 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        public P45(ToolStripMenuItem menuitem, string transID)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = string.Format("Type='R' and id='{0}'", transID);
+            this.IsSupportNew = false;
+            this.IsSupportEdit = false;
+            this.IsSupportDelete = false;
+            this.IsSupportConfirm = false;
+            this.IsSupportUnconfirm = false;
+            this.gridicon.Append.Enabled = false;
+            this.gridicon.Append.Visible = false;
+            this.gridicon.Insert.Enabled = false;
+            this.gridicon.Insert.Visible = false;
+        }
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();

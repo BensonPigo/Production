@@ -63,7 +63,7 @@ namespace Sci.Production.Warehouse
         public P33(ToolStripMenuItem menuitem, string transID)
             : this(menuitem)
         {
-            this.DefaultFilter = string.Format("Type='B' and id='{0}'", transID);
+            this.DefaultFilter = string.Format("Type = 'E' and id='{0}'", transID);
             this.IsSupportNew = false;
             this.IsSupportEdit = false;
             this.IsSupportDelete = false;

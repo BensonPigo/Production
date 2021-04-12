@@ -31,13 +31,20 @@ select
 [Category]=d.Category,
 [WhseArrival] = e.WhseArrival,
 [fabricType]=b.FabricType,
-FirNonMoisture = IIF(exists(select 1 from Brand_QAMoistureStandardList where brandid = b.BrandId),0 ,1)
+[NonPhysical]		= isnull(qts.NonPhysical, 0)	  ,
+[NonWeight]	= isnull(qts.NonWeight, 0)	  ,
+[NonShadebond]	= isnull(qts.NonShadebond, 0)  ,
+[NonContinuity]	= isnull(qts.NonContinuity, 0)  ,
+[NonOdor]			= isnull(qts.NonOdor, 0)		  ,
+[NonMoisture]		= IIF(exists(select 1 from Brand_QAMoistureStandardList where brandid = b.BrandId) and isnull(qts.NonMoisture, 0) = 0, 0, 1) 
 into #tempTableAll
 from Receiving_Detail a
 inner join PO_Supp_Detail b on a.PoId=b.ID and a.Seq1=b.SEQ1 and a.Seq2=b.SEQ2
 inner join PO_Supp c on c.ID=a.PoId and c.SEQ1 = a.Seq1
 inner join Orders d on d.id=a.PoId
 inner join Receiving e on a.Id=e.Id
+inner join Fabric fb with (nolock) on b.SCIRefno = fb.SCIRefno
+left join QAWeaveTypeSetting qts with (nolock) on fb.WeaveTypeID = qts.WeaveTypeID
 where a.Id = @ID
 
 declare @fabricType varchar(2)
@@ -102,7 +109,12 @@ using (
 			a.WhseArrival ,
 			a.fabricType ,
 			b.InspDeadLine,
-			FirNonMoisture
+			a.NonPhysical,
+			a.NonWeight,
+			a.NonShadebond,
+			a.NonContinuity,
+			a.NonOdor,
+			a.NonMoisture
 			from #tempTableAll a
 			left join #InspDeadLine b on a.PoId = b.PoId and a.Seq1 =b.Seq1 and a.Seq2 = b.Seq2
 			where fabricType='F' 
@@ -123,7 +135,12 @@ using (
 			a.WhseArrival ,
 			a.fabricType,
 			b.InspDeadLine,
-			FirNonMoisture
+			a.NonPhysical,
+			a.NonWeight,
+			a.NonShadebond,
+			a.NonContinuity,
+			a.NonOdor,
+			a.NonMoisture
  ) as s
 on t.poid=s.poid and t.seq1=s.seq1 and t.seq2=s.seq2 and t.receivingid=s.id 
 when matched then
@@ -136,8 +153,10 @@ when matched then
  t.AddName=s.AddName,
  t.AddDate=s.AddDate
  when not matched by target then
- insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[NonMoisture],[AddName],[AddDate])
- values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,FirNonMoisture,s.AddName,AddDate)
+ insert([PoId],[SEQ1],[SEQ2],[SuppID],[SCIRefno],[Refno],[ReceivingID],[ArriveQty],[InspDeadLine],[AddName],[AddDate],
+		[NonPhysical], [NonWeight], [NonShadebond], [NonContinuity], [NonOdor], [NonMoisture])
+ values(s.PoId,s.Seq1,s.Seq2,s.SuppID,s.SCIRefno,s.Refno,s.Id,s.ArriveQty,s.InspDeadLine,s.AddName,AddDate,
+		s.NonPhysical, s.NonWeight, s.NonShadebond, s.NonContinuity, s.NonOdor, s.NonMoisture)
 when not matched by source and t.ReceivingID=@ID then
  delete
  output inserted.id as Id ,DELETED.id as deID

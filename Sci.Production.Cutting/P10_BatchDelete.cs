@@ -196,6 +196,7 @@ delete Bundle_Detail_Art where id = '{0}';
 delete Bundle_Detail_AllPart where id = '{0}';
 delete Bundle_Detail_qty where id = '{0}';
 delete Bundle_Detail_Order where id = '{0}';
+delete Bundle_Detail_CombineSubprocess where id = '{0}';
 ", dr["ID"]);
             }
 
