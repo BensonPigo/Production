@@ -32,10 +32,11 @@ namespace Sci.Production.PPIC
                 .Date("PFETA", header: "PF ETA", width: Widths.AnsiChars(12))
                 .Date("LETA", header: "SCHD L/ETA", width: Widths.AnsiChars(12))
                 .Date("SewETA", header: "Sew. MTL ETA(SP)", width: Widths.AnsiChars(12))
-                .Text("Colorway", header: "Colorway", width: Widths.AnsiChars(20));
+                .Text("Colorway", header: "Colorway", width: Widths.AnsiChars(20))
+                .Date("SewInLine", header: "Sewing Inline", width: Widths.AnsiChars(12));
 
             string sqlCmd = $@"
-select CuttingSP,ID,KPILETA,PFETA,LETA,SewETA,oq.Colorway
+select CuttingSP,ID,KPILETA,PFETA,LETA,SewETA,oq.Colorway,o.SewInLine
 from Orders o WITH (NOLOCK)
 outer apply(
 	select Colorway = STUFF((
