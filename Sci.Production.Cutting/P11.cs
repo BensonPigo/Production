@@ -26,8 +26,6 @@ namespace Sci.Production.Cutting
     /// </summary>
     public partial class P11 : Win.Tems.QueryForm
     {
-        private string loginID = Env.User.UserID;
-        private string keyWord = Env.User.Keyword;
         private DataTable CutRefTb;
         private DataTable ArticleSizeTb;
         private DataTable ExcessTb;
@@ -37,9 +35,7 @@ namespace Sci.Production.Cutting
         private DataTable artTb;
         private DataTable qtyTb;
         private DataTable SizeRatioTb;
-        private DataTable headertb;
         private DataTable ArticleSizeTb_View;
-        private string f_code;
 
         /// <summary>
         /// P11
@@ -504,7 +500,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 DataRow dr = this.gridCutRef.GetDataRow(e.RowIndex);
                 if (this.ArticleSizeTb != null)
                 {
-                    if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1" ? true : false))
+                    if ((bool)e.FormattedValue == (dr["sel"].ToString() == "1"))
                     {
                         return;
                     }
@@ -755,7 +751,6 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             this.ArticleSizeTb_View = null;
             this.ExcessTb = null;
             this.SizeRatioTb = null;
-            this.headertb = null;
             this.gridCutpart.DataSource = null;
             this.gridAllPart.DataSource = null;
             this.gridQty.DataSource = null;
@@ -822,7 +817,7 @@ outer apply(
     AND DD.[type] = 'FabricKind'
     AND DD.id = LIST.kind
 )FabricKind
-where  ord.mDivisionid = '{this.keyWord}' 
+where  ord.mDivisionid = '{Env.User.Keyword}' 
 and isnull(a.CutRef,'') <> ''
 ";
 
@@ -862,7 +857,7 @@ from workorder a WITH (NOLOCK)
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
 Where   isnull(a.CutRef,'') <> ''
-        and ord.mDivisionid = '{0}'", this.keyWord);
+        and ord.mDivisionid = '{0}'", Env.User.Keyword);
 
             string distru_cmd_Excess = $@"
 union all
@@ -906,7 +901,7 @@ outer apply(
 )l
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp and l.OrderID = ord.id
 Where   isnull(a.CutRef,'') <> '' 
-        and ord.mDivisionid = '{this.keyWord}'  and b.orderid ='EXCESS'
+        and ord.mDivisionid = '{Env.User.Keyword}'  and b.orderid ='EXCESS'
 ";
 
             string excess_cmd = string.Format(
@@ -921,7 +916,7 @@ Where   a.ukey = b.workorderukey
         and a.id = b.id 
         and b.orderid = 'EXCESS' 
         and a.id = ord.cuttingsp 
-        and isnull(a.CutRef,'') <> '' ", this.keyWord);
+        and isnull(a.CutRef,'') <> '' ", Env.User.Keyword);
 
             StringBuilder sizeRatio = new StringBuilder();
             sizeRatio.Append(string.Format(
@@ -936,7 +931,7 @@ Where   a.ukey = b.workorderukey
 	inner join workorder_PatternPanel c WITH (NOLOCK) on a.ukey = c.workorderukey and c.id = a.id
 	Where   isnull(a.CutRef,'') <> '' 
             and ord.mDivisionid = '{0}'
-", this.keyWord));
+", Env.User.Keyword));
             #endregion
             #region where 條件
             if (!MyUtility.Check.Empty(cutref))
@@ -1066,7 +1061,7 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
                 // MANTIS 9044
                 // createPattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, dr["ArticleGroup"].ToString());
                 this.ArticleSizeTb_View = this.ArticleSizeTb.Select($"Ukey ='{dr["Ukey"]}' and Fabriccombo = '{dr["Fabriccombo"]}'").CopyToDataTable();
-                this.CreatePattern(dr["POID"].ToString(), dr["Article"].ToString(), dr["FabricPanelCode"].ToString(), dr["Cutref"].ToString(), iden, string.Empty);
+                this.CreatePattern(dr, iden);
                 int totalpart = MyUtility.Convert.GetInt(this.patternTb.Compute("sum(Parts)", string.Format("iden ={0}", iden)));
                 dr["TotalParts"] = totalpart;
                 iden++;
@@ -1108,106 +1103,23 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
             }
         }
 
-        /// <summary>
-        /// CreatePattern
-        /// </summary>
-        /// <param name="poid">poid</param>
-        /// <param name="article">article</param>
-        /// <param name="patternpanel">patternpanel</param>
-        /// <param name="cutref">cutref</param>
-        /// <param name="iden">iden</param>
-        /// <param name="articleGroup">articleGroup</param>
-        public void CreatePattern(string poid, string article, string patternpanel, string cutref, int iden, string articleGroup)
+        private void CreatePattern(DataRow row, int iden)
         {
-            if (articleGroup == string.Empty)
-            {
-                this.f_code = "F_Code";
-            }
-            else
-            {
-                this.f_code = articleGroup;
-            }
+            string poid = row["POID"].ToString();
+            string article = row["Article"].ToString();
+            string sizeCode = row["SizeCode"].ToString();
+            string fabricPanelCode = row["FabricPanelCode"].ToString();
+            string cutref = row["Cutref"].ToString();
 
             // 找出相同PatternPanel 的subprocessid
             int npart = 0; // allpart 數量
-            string patidsql;
-            #region 輸出GarmentTb
-            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
 
-            var sizelist = this.ArticleSizeTb_View.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
-            string sizes = "'" + string.Join("','", sizelist) + "'";
-            string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{poid}' and SizeCode IN ({sizes})";
-            string sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{styleyukey},'{sizeGroup}')s";
-
-            string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            string headercodesql = string.Format(
-                @"
-Select distinct ArticleGroup 
-from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{0}' 
-order by ArticleGroup", patternukey);
-
-            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out this.headertb);
-            if (!headerResult)
-            {
-                return;
-            }
-            #region 建立Table
-            string tablecreatesql = string.Format(@"Select '{0}' as orderid,a.*,'' as F_CODE", poid);
-            foreach (DataRow dr in this.headertb.Rows)
-            {
-                tablecreatesql += string.Format(" ,'' as {0}", dr["ArticleGroup"]);
-            }
-
-            tablecreatesql += string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
-            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out DataTable garmentListTb);
-            if (!tablecreateResult)
-            {
-                return;
-            }
-            #endregion
-
-            #region 寫入FCode~CodeA~CodeZ
-            string lecsql = string.Empty;
-            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
-            DualResult drre = DBProxy.Current.Select(null, lecsql, out DataTable drtb);
-            if (!drre)
-            {
-                return;
-            }
-
-            foreach (DataRow dr in garmentListTb.Rows)
-            {
-                DataRow[] lecdrar = drtb.Select(string.Format("SEQ = '{0}'", dr["SEQ"]));
-                foreach (DataRow lecdr in lecdrar)
-                {
-                    string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-
-                    // dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
-                    // Mantis_7045 比照舊系統對應FabricPanelCode
-                    dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
-                }
-
-                if (dr["SEQ"].ToString() == "0001")
-                {
-                    dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
-                }
-            }
-            #endregion
-            this.GarmentTb = garmentListTb;
-            #endregion
-
-            StringBuilder w = new StringBuilder();
-            w.Append(string.Format("orderid = '{0}' and (1=0", poid));
-            foreach (DataRow dr in this.headertb.Rows)
-            {
-                w.Append(string.Format(" or {0} = '{1}' ", dr[0], patternpanel));
-            }
-
-            w.Append(")");
-            DataRow[] garmentar = this.GarmentTb.Select(w.ToString());
-            foreach (DataRow dr in garmentar)
+            // 取得 GarmentTb
+            string sizes = $"'{sizeCode}'"; // P11 此處單一 sizeCode
+            string articles = $"'{article}'"; // P11 此處單一 Article
+            Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
+            string w = $"orderid = '{poid}' and (1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} )";
+            foreach (DataRow dr in this.GarmentTb.Select(w))
             {
                 // 若無ANNOTATion直接寫入All Parts
                 if (MyUtility.Check.Empty(dr["annotation"]))
@@ -1498,8 +1410,6 @@ order by ArticleGroup", patternukey);
                 return;
             }
 
-            string art = selectartDr["art"].ToString();
-
             // 移動此筆
             DataRow ndr = this.allpartTb.NewRow();
             ndr["PatternCode"] = selectartDr["PatternCode"];
@@ -1568,21 +1478,17 @@ order by ArticleGroup", patternukey);
                 return;
             }
 
-            DataRow selectartDr = ((DataRowView)this.gridCutpart.GetSelecteds(SelectedSort.Index)[0]).Row;
-            DataRow selectallparteDr = ((DataRowView)this.gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
-
             DataRow[] checkdr = this.allpartTb.Select("sel=1");
             #region 確認有勾選
             if (checkdr.Length > 0)
             {
                 foreach (DataRow chdr in checkdr)
                 {
-                    string art = string.Empty;
                     string[] ann = Regex.Replace(chdr["annotation"].ToString(), @"[\d]", string.Empty).Split('+'); // 剖析Annotation
                     if (ann.Length > 0)
                     {
                         #region 算Subprocess
-                        art = Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out bool lallpart);
+                        Prgs.BundleCardCheckSubprocess(ann, chdr["PatternCode"].ToString(), this.artTb, out bool lallpart);
                         #endregion
                     }
 
@@ -1896,7 +1802,6 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     return;
                 }
 
-                int iden = Convert.ToInt16(selectDr["iden"]);
                 DataRow[] artDrAy = this.ArticleSizeTb.Select(string.Format("Cutref='{0}'", copycutref));
                 DataRow[] oldPatternDr = this.patternTb.Select(string.Format("Cutref='{0}'", copycutref));
                 DataRow[] oldAllPartDr = this.allpartTb.Select(string.Format("Cutref='{0}' ", copycutref));
@@ -2201,7 +2106,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             }
 
             #endregion
-            string iDKeyword = this.keyWord + "BC";
+            string iDKeyword = Env.User.Keyword + "BC";
             List<string> id_list = MyUtility.GetValue.GetBatchID(iDKeyword, "Bundle", batchNumber: idofnum, sequenceMode: 2);
             List<string> bundleno_list = MyUtility.GetValue.GetBatchID(string.Empty, "Bundle_Detail", format: 3, checkColumn: "Bundleno", batchNumber: bundleofnum, sequenceMode: 2);
 
@@ -2241,7 +2146,7 @@ values
  , '{18}'         , {19}        , '{20}')",
                 id_list[idcount],
                 artar["POID"],
-                this.keyWord,
+                Env.User.Keyword,
                 artar["SizeCode"],
                 artar["colorid"],
                 artar["Article"],
@@ -2256,7 +2161,7 @@ values
                 artar["Qty"],
                 artar["TotalParts"],
                 artar["Cutref"],
-                this.loginID,
+                Env.User.UserID,
                 artar["FabricPanelCode"],
                 artar["isEXCESS"].EqualString("Y") ? 1 : 0,
                 subCut);

@@ -1,18 +1,21 @@
 ﻿CREATE TABLE [dbo].[Pattern_GL_Article] (
     [ID]           VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_ID] DEFAULT ('') NOT NULL,
-    [Seq]          VARCHAR (2)    DEFAULT ('') NOT NULL,
+    [Seq]          VARCHAR (2)    CONSTRAINT [DF__Pattern_GL___Seq__7A1DE0A6] DEFAULT ('') NOT NULL,
     [Version]      VARCHAR (3)    CONSTRAINT [DF_Pattern_GL_Article_Version] DEFAULT ('') NOT NULL,
     [PatternUKEY]  BIGINT         CONSTRAINT [DF_Pattern_GL_Article_PatternUKEY] DEFAULT ((0)) NOT NULL,
     [ArticleGroup] VARCHAR (6)    CONSTRAINT [DF_Pattern_GL_Article_ArticleGroup] DEFAULT ('') NOT NULL,
-    [Article]      NVARCHAR(100)    CONSTRAINT [DF_Pattern_GL_Article_Article] DEFAULT ('') NOT NULL,
+    [Article]      NVARCHAR (100) CONSTRAINT [DF_Pattern_GL_Article_Article] DEFAULT ('') NOT NULL,
     [SizeRange]    NVARCHAR (MAX) CONSTRAINT [DF_Pattern_GL_Article_SizeRange] DEFAULT ('') NULL,
     [Remark]       VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_Article_Remark] DEFAULT ('') NULL,
     [AddName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_AddName] DEFAULT ('') NULL,
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
+    [App]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_Article_App] DEFAULT ('') NULL,
     CONSTRAINT [PK_Pattern_GL_Article] PRIMARY KEY CLUSTERED ([ID] ASC, [Seq] ASC, [Version] ASC, [Article] ASC, [ArticleGroup] ASC)
 );
+
+
 
 
 
@@ -79,4 +82,8 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 GO
 CREATE NONCLUSTERED INDEX [article]
     ON [dbo].[Pattern_GL_Article]([Article] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'紀錄該成衣檔特殊用途的id(DropDownList.Type= ''GLApplication'')', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Pattern_GL_Article', @level2type = N'COLUMN', @level2name = N'App';
 

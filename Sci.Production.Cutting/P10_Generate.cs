@@ -25,7 +25,7 @@ namespace Sci.Production.Cutting
         private DataTable patternTb;
         private DataTable artTb;
         private DataTable sizeTb;
-        private DataTable garmentTb;
+        private DataTable GarmentTb;
         private DataTable detailTb;
         private DataTable alltmpTb;
         private DataTable bundle_detail_artTb;
@@ -34,9 +34,10 @@ namespace Sci.Production.Cutting
         private DataTable alltmpTb2;
         private DataTable bundle_detail_artTb2;
         private DataTable qtyTb2;
-        private DataTable f_codeTb;
+        private DataTable articleGroupDT;
         private DataTable garmentarRC;
         private bool ByToneGenerate;
+        private string w;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P10_Generate"/> class.
@@ -72,11 +73,13 @@ namespace Sci.Production.Cutting
             DBProxy.Current.Select(null, cmd_art, out this.artTb);
             #endregion
 
+            string cutref = MyUtility.Convert.GetString(maindr["cutref"]);
+
             #region Size-CutQty
             int totalCutQty = 0;
 
             // 無CutRef 就直接抓取Order_Qty 的SizeCode
-            if (MyUtility.Check.Empty(maindr["cutref"]))
+            if (MyUtility.Check.Empty(cutref))
             {
                 this.labelTotalCutOutput.Visible = false;
                 this.displayTotalCutOutput.Visible = false;
@@ -85,15 +88,13 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                string size_cmd = string.Format(
-                    @"
+                string size_cmd = $@"
 Select b.sizecode,isnull(sum(b.Qty),0)  as Qty 
 from Workorder a WITH (NOLOCK) 
 inner join Workorder_distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
-where a.cutref='{0}' and b.orderid='{1}'
-group by sizeCode",
-                    maindr["cutref"],
-                    maindr["Orderid"]);
+where a.cutref='{cutref}' and b.orderid='{maindr["Orderid"]}'
+group by sizeCode
+";
                 DualResult dResult = DBProxy.Current.Select(null, size_cmd, out this.sizeTb);
                 if (this.sizeTb.Rows.Count != 0)
                 {
@@ -111,7 +112,7 @@ group by sizeCode",
 
             #region 左上qtyTb
             this.numNoOfBundle.Value = (decimal)maindr["Qty"];
-            if (!MyUtility.Check.Empty(this.maindatarow["cutref"]) && this.qtyTb.Rows.Count == 0)
+            if (!MyUtility.Check.Empty(cutref) && this.qtyTb.Rows.Count == 0)
             {
                 int j = 1;
                 foreach (DataRow dr in this.sizeTb.Rows)
@@ -141,43 +142,24 @@ group by sizeCode",
             #endregion
 
             #region 準備GarmentList & ArticleGroup
-            string sizes = string.Empty;
+            string sizes = "''";
             if (this.qtyTb != null)
             {
                 var sizeList = this.qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
                 sizes = "'" + string.Join("','", sizeList) + "'";
             }
 
-            string sizeGroup = string.Empty;
-            if (!MyUtility.Check.Empty(sizes))
-            {
-                string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{this.maindatarow["poid"].ToString()}' and SizeCode IN ({sizes})";
-                sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
-            }
-
-            // GarmentList
-            Prgs.GetGarmentListTable(maindr["cutref"].ToString(), this.maindatarow["poid"].ToString(), sizeGroup, out this.garmentTb);
-
-            // ArticleGroup
-            string patidsql;
-            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", this.maindatarow["poid"].ToString(), "Orders", "ID");
-
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{this.maindatarow["poid"].ToString()}','{this.maindatarow["cutref"].ToString()}','',{styleyukey},'{sizeGroup}')s";
-
-            string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            string headercodesql = string.Format(
-                @"
-Select distinct ArticleGroup 
-from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{0}'
-order by ArticleGroup", patternukey);
-            DBProxy.Current.Select(null, headercodesql, out this.f_codeTb);
+            string poid = MyUtility.Convert.GetString(maindr["poid"]);
+            string articles = $"'{maindr["Article"]}'";
+            string fabricPanelCode = MyUtility.Convert.GetString(maindr["FabricPanelCode"]);
+            Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out this.articleGroupDT);
+            this.w = $"1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} ";
+            this.garmentarRC = this.GarmentTb.Select(this.w).TryCopyToDataTable(this.GarmentTb);
             #endregion
 
             // 計算左上TotalQty
             this.CalsumQty();
 
-            // if (detailTb.Rows.Coun!= 0 && maindatarow.RowState!=DataRowState.Added)
             int detailTbCnt = this.detailTb.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count();
             if (detailTbCnt > 0)
             {
@@ -209,15 +191,7 @@ order by ArticleGroup", patternukey);
             // 找出相同PatternPanel 的subprocessid
             // allpart 數量
             int npart = 0;
-            StringBuilder w = new StringBuilder();
-            w.Append("1 = 0");
-            foreach (DataRow dr in this.f_codeTb.Rows)
-            {
-                w.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
-            }
-
-            DataRow[] garmentar = this.garmentTb.Select(w.ToString());
-            foreach (DataRow dr in garmentar)
+            foreach (DataRow dr in this.GarmentTb.Select(this.w))
             {
                 // 若無ANNOTATion直接寫入All Parts
                 if (MyUtility.Check.Empty(dr["annotation"]))
@@ -234,7 +208,7 @@ order by ArticleGroup", patternukey);
                 else
                 {
                     // 取得哪些 annotation 是次要
-                    List<string> notMainList = this.GetNotMain(dr, this.garmentTb.Select());
+                    List<string> notMainList = this.GetNotMain(dr, this.GarmentTb.Select());
                     string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
 
                     // Annotation
@@ -311,13 +285,6 @@ order by ArticleGroup", patternukey);
             pdr["PatternDesc"] = "All Parts";
             pdr["parts"] = npart;
             this.patternTb.Rows.Add(pdr);
-
-            this.garmentarRC = null;
-            this.garmentarRC = this.garmentTb.Clone();
-            foreach (DataRow gdr in garmentar)
-            {
-                this.garmentarRC.ImportRow(gdr);
-            }
         }
 
         /// <summary>
@@ -379,7 +346,7 @@ drop table #tmp,#tmp2";
             MyUtility.Tool.ProcessWithDatatable(this.alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation,isPair,Location", "Select distinct sel,PatternCode,PatternDesc,parts,annotation,isPair,Location from #tmp", out this.allpartTb);
             foreach (DataRow dr in this.allpartTb.Rows)
             {
-                DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", dr["patternCode"]));
+                DataRow[] adr = this.GarmentTb.Select(string.Format("PatternCode='{0}'", dr["patternCode"]));
                 if (adr.Length > 0)
                 {
                     dr["annotation"] = adr[0]["annotation"];
@@ -388,15 +355,7 @@ drop table #tmp,#tmp2";
 
             if (this.allpartTb.Rows.Count == 0)
             {
-                StringBuilder w = new StringBuilder();
-                w.Append("1 = 0");
-                foreach (DataRow dr in this.f_codeTb.Rows)
-                {
-                    w.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["PatternPanel"]));
-                }
-
-                DataRow[] garmentar = this.garmentTb.Select(w.ToString());
-                foreach (DataRow dr in garmentar)
+                foreach (DataRow dr in this.GarmentTb.Select(this.w))
                 {
                     bool f = false;
                     foreach (DataRow drp in this.patternTb.Rows)
@@ -417,15 +376,6 @@ drop table #tmp,#tmp2";
                     }
                 }
             }
-
-            StringBuilder w2 = new StringBuilder();
-            w2.Append("1 = 0");
-            foreach (DataRow dr in this.f_codeTb.Rows)
-            {
-                w2.Append(string.Format(" or {0} = '{1}' ", dr[0], this.maindatarow["FabricPanelCode"]));
-            }
-
-            this.garmentarRC = this.garmentTb.Select(w2.ToString()).TryCopyToDataTable(this.garmentTb);
         }
 
         /// <summary>
@@ -964,7 +914,7 @@ drop table #tmp,#tmp2";
             ndr["isPair"] = selectartDr["isPair"];
 
             // Annotation
-            DataRow[] adr = this.garmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["patternCode"]));
+            DataRow[] adr = this.GarmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["patternCode"]));
             if (adr.Length > 0)
             {
                 ndr["annotation"] = adr[0]["annotation"];
@@ -1841,7 +1791,7 @@ drop table #tmp,#tmp2";
                 return;
             }
 
-            List<string> notMainList = this.GetNotMain(dr1, this.garmentTb.Select()); // 帶入未去除數字的annotation資料
+            List<string> notMainList = this.GetNotMain(dr1, this.GarmentTb.Select()); // 帶入未去除數字的annotation資料
             string noBundleCardAfterSubprocess_String = string.Join("+", notMainList);
             dr["NoBundleCardAfterSubprocess_String"] = noBundleCardAfterSubprocess_String;
             dr.EndEdit();
