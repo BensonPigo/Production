@@ -1011,6 +1011,9 @@ Where r.id = '{this.CurrentMaintain["ID"]}'
                 r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); // 新增Row
             }
 
+            worksheet.Cells[2, 1] = $"ID : {this.CurrentMaintain["ID"]}";
+            worksheet.Cells[2, 4] = $"Remarks : {this.CurrentMaintain["Remark"]}";
+
             MyUtility.Excel.CopyToXls(dt, string.Empty, "Warehouse_P08.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: excelApp);
             worksheet.get_Range((Excel.Range)worksheet.Cells[4, 1], (Excel.Range)worksheet.Cells[dt.Rows.Count + 3, 9]).Borders.Weight = 2; // 設定全框線
             worksheet.Columns[1].ColumnWidth = 18;
