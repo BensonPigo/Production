@@ -29,16 +29,6 @@ namespace Sci.Production.Cutting
         private DataTable artTb;
         private DataTable sizeTb;
         private DataTable GarmentTb;
-        private DataTable f_codeTb;
-        private DataTable detailTb;
-        private DataTable alltmpTb;
-        private DataTable bundle_detail_artTb;
-        private DataTable qtyTb;
-        private DataTable detailTb2;
-        private DataTable alltmpTb2;
-        private DataTable bundle_detail_artTb2;
-        private DataTable qtyTb2;
-        private DataTable articleGroupDT;
         private DataTable garmentarRC;
 
         // 不論新增/編輯，複製一份Load後的資料，用在勾選ComBine/取消ComBine塞回資料用
@@ -173,7 +163,7 @@ group by sizeCode
             string poid = MyUtility.Convert.GetString(maindr["poid"]);
             string articles = $"'{maindr["Article"]}'";
             string fabricPanelCode = MyUtility.Convert.GetString(maindr["FabricPanelCode"]);
-            Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out this.articleGroupDT);
+            Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
             this.w = $"1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} ";
             this.garmentarRC = this.GarmentTb.Select(this.w).TryCopyToDataTable(this.GarmentTb);
             #endregion
