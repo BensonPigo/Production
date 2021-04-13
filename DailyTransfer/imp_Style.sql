@@ -1480,44 +1480,6 @@ when not matched by target then
 when not matched by source  AND T.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
-
------------------Style_ThreadColorCombo-------------------
-Merge Production.dbo.Style_ThreadColorCombo as t
-Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo a ) as s
-on t.StyleUkey=s.StyleUkey and t.Thread_ComboID = s.Thread_ComboID and t.MachineTypeID = s.MachineTypeID
-when matched then 
-	update set	t.SeamLength	  = s.SeamLength	,
-				t.ConsPC		  = s.ConsPC		,
-				t.AddName		  = s.AddName		,
-				t.AddDate		  = s.AddDate		,
-				t.EditName		  = s.EditName		,
-				t.EditDate		  = s.EditDate		,
-				t.Ukey			  = s.Ukey
-when not matched by target then
-	insert (StyleUkey		,
-			Thread_ComboID,
-			MachineTypeID	,
-			SeamLength	,
-			ConsPC		,
-			AddName		,
-			AddDate		,
-			EditName		,
-			EditDate		,
-			Ukey
-			) 
-		values (s.StyleUkey		,
-				s.Thread_ComboID,
-				s.MachineTypeID	,
-				s.SeamLength	,
-				s.ConsPC		,
-				s.AddName		,
-				s.AddDate		,
-				s.EditName		,
-				s.EditDate		,
-				s.Ukey	)
-when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
-	delete;
-
 -----------------Style_ThreadColorCombo_Detail-------------------
 Merge Production.dbo.Style_ThreadColorCombo_Detail as t
 Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_Detail a ) as s
@@ -1558,10 +1520,20 @@ when not matched by target then
 				s.EditName				   ,
 				s.EditDate				   ,
 				s.Ukey	)
-when not matched by source AND t.Style_ThreadColorComboUkey IN (SELECT Ukey FROM Production.dbo.Style_ThreadColorCombo) then 
-	delete
 ;
-
+----刪除條件：Trade不存在，且表頭還存在
+DELETE t
+FROM Production.dbo.Style_ThreadColorCombo_Detail t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Trade_To_Pms.dbo.Style_ThreadColorCombo_Detail s
+	WHERE t.Style_ThreadColorComboUkey=s.Style_ThreadColorComboUkey AND t.Seq = s.Seq AND t.Article = s.Article
+)
+AND EXISTS(
+	SELECT 1 
+	FROM Production.dbo.Style_ThreadColorCombo st
+	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
+	WHERE st.Ukey = t.Style_ThreadColorComboUkey
+)
 
 -----------------Style_ThreadColorCombo_Operation-------------------
 Merge Production.dbo.Style_ThreadColorCombo_Operation as t
@@ -1596,62 +1568,59 @@ when not matched by target then
 				s.EditName				   ,
 				s.EditDate				   ,
 				s.Ukey	)
-when not matched by source AND t.Style_ThreadColorComboUkey IN (SELECT Ukey FROM Production.dbo.Style_ThreadColorCombo) then 
-	delete
 ;
-	
------------------Style_ThreadColorCombo_History-------------------
-Merge Production.dbo.Style_ThreadColorCombo_History as t
-Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History a ) as s
-on t.StyleUkey=s.StyleUkey 
-	and t.Thread_ComboID = s.Thread_ComboID 
-	and t.MachineTypeID = s.MachineTypeID 
-	and t.LockDate = s.LockDate
-when matched then 
-   update SET t.SeamLength = s.SeamLength
-      ,t.ConsPC = s.ConsPCs
-      ,t.AddName = s.AddName
-      ,t.AddDate = s.AddDate
-      ,t.EditName = s.EditName
-      ,t.EditDate = s.EditDate
-      ,t.Category = s.Category
-      ,t.TPDate = s.TPDate
-      ,t.IETMSID_Thread = s.IETMSID_Thread
-      ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
-when not matched by target then
-	INSERT (StyleUkey
-           ,Thread_ComboID
-           ,MachineTypeID
-           ,SeamLength
-           ,ConsPC
-           ,AddName
-           ,AddDate
-           ,EditName
-           ,EditDate
-           ,LockDate
-           ,Category
-           ,TPDate
-           ,IETMSID_Thread
-           ,IETMSVersion_Thread)
-		VALUES (
-			s.StyleUkey
-           ,s.Thread_ComboID
-           ,s.MachineTypeID
-           ,s.SeamLength
-           ,s.ConsPC
-           ,s.AddName
-           ,s.AddDate
-           ,s.EditName
-           ,s.EditDate
-           ,s.LockDate
-           ,s.Category
-           ,s.TPDate
-           ,s.IETMSID_Thread
-           ,s.IETMSVersion_Thread )
-when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
-	delete
-;
+----刪除條件：Trade不存在，且表頭還存在
+DELETE t
+FROM Production.dbo.Style_ThreadColorCombo_Operation t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Trade_To_Pms.dbo.Style_ThreadColorCombo_Operation s
+	WHERE t.Style_ThreadColorComboUkey=s.Style_ThreadColorComboUkey and t.Seq = s.Seq and t.OperationID = s.OperationID
+)
+AND EXISTS(
+	SELECT 1 
+	FROM Production.dbo.Style_ThreadColorCombo st
+	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
+	WHERE st.Ukey = t.Style_ThreadColorComboUkey
+)
 
+
+-----------------Style_ThreadColorCombo-------------------
+Merge Production.dbo.Style_ThreadColorCombo as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo a ) as s
+on t.StyleUkey=s.StyleUkey and t.Thread_ComboID = s.Thread_ComboID and t.MachineTypeID = s.MachineTypeID
+when matched then 
+	update set	t.SeamLength	  = s.SeamLength	,
+				t.ConsPC		  = s.ConsPC		,
+				t.AddName		  = s.AddName		,
+				t.AddDate		  = s.AddDate		,
+				t.EditName		  = s.EditName		,
+				t.EditDate		  = s.EditDate		,
+				t.Ukey			  = s.Ukey
+when not matched by target then
+	insert (StyleUkey		,
+			Thread_ComboID,
+			MachineTypeID	,
+			SeamLength	,
+			ConsPC		,
+			AddName		,
+			AddDate		,
+			EditName		,
+			EditDate		,
+			Ukey
+			) 
+		values (s.StyleUkey		,
+				s.Thread_ComboID,
+				s.MachineTypeID	,
+				s.SeamLength	,
+				s.ConsPC		,
+				s.AddName		,
+				s.AddDate		,
+				s.EditName		,
+				s.EditDate		,
+				s.Ukey	)
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete;
+	
 
 -----------------Style_ThreadColorCombo_History_Detail-------------------
 Merge Production.dbo.Style_ThreadColorCombo_History_Detail as t
@@ -1701,10 +1670,23 @@ when not matched by target then
            ,s.Allowance
            ,s.AllowanceTubular
 		   )
-when not matched by source and t.Style_ThreadColorCombo_HistoryUkey NOT IN  (SELECt Ukey FROM Production.dbo.Style_ThreadColorCombo_History) then 
-	----刪除沒有表頭的Detail
-	delete
 ;
+
+----刪除條件：Trade不存在，且表頭還存在
+DELETE t
+FROM Production.dbo.Style_ThreadColorCombo_History_Detail t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Trade_To_Pms.dbo.Style_ThreadColorCombo_History_Detail s
+	WHERE t.Style_ThreadColorCombo_HistoryUkey=s.Style_ThreadColorCombo_HistoryUkey 	
+	AND t.Seq = s.Seq 
+	AND t.Article = s.Article 
+)
+AND EXISTS(
+	SELECT 1 
+	FROM Production.dbo.Style_ThreadColorCombo_History st
+	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
+	WHERE st.Ukey = t.Style_ThreadColorCombo_HistoryUkey
+)
 
 -----------------Style_ThreadColorCombo_History_Operation-------------------
 Merge Production.dbo.Style_ThreadColorCombo_History_Operation as t
@@ -1738,8 +1720,72 @@ when not matched by target then
            ,s.AddDate
            ,s.EditName
            ,s.EditDate)
-when not matched by source and t.Style_ThreadColorCombo_HistoryUkey NOT IN  (SELECt Ukey FROM Production.dbo.Style_ThreadColorCombo_History) then 
-	----刪除沒有表頭的Operation
+;
+----刪除條件：Trade不存在，且表頭還存在
+DELETE t
+FROM Production.dbo.Style_ThreadColorCombo_History_Operation t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Trade_To_Pms.dbo.Style_ThreadColorCombo_History_Operation s
+	WHERE t.Style_ThreadColorCombo_HistoryUkey=s.Style_ThreadColorCombo_HistoryUkey 
+	AND t.Seq = s.Seq 
+	AND t.OperationID = s.OperationID 
+)
+AND EXISTS(
+	SELECT 1 
+	FROM Production.dbo.Style_ThreadColorCombo_History st
+	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
+	WHERE st.Ukey = t.Style_ThreadColorCombo_HistoryUkey
+)
+
+-----------------Style_ThreadColorCombo_History-------------------
+Merge Production.dbo.Style_ThreadColorCombo_History as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History a ) as s
+on t.StyleUkey=s.StyleUkey 
+	and t.Thread_ComboID = s.Thread_ComboID 
+	and t.MachineTypeID = s.MachineTypeID 
+	and t.LockDate = s.LockDate
+when matched then 
+   update SET t.SeamLength = s.SeamLength
+      ,t.ConsPC = s.ConsPCs
+      ,t.AddName = s.AddName
+      ,t.AddDate = s.AddDate
+      ,t.EditName = s.EditName
+      ,t.EditDate = s.EditDate
+      ,t.Category = s.Category
+      ,t.TPDate = s.TPDate
+      ,t.IETMSID_Thread = s.IETMSID_Thread
+      ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
+when not matched by target then
+	INSERT (StyleUkey
+           ,Thread_ComboID
+           ,MachineTypeID
+           ,SeamLength
+           ,ConsPC
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate
+           ,LockDate
+           ,Category
+           ,TPDate
+           ,IETMSID_Thread
+           ,IETMSVersion_Thread)
+		VALUES (
+			s.StyleUkey
+           ,s.Thread_ComboID
+           ,s.MachineTypeID
+           ,s.SeamLength
+           ,s.ConsPC
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate
+           ,s.LockDate
+           ,s.Category
+           ,s.TPDate
+           ,s.IETMSID_Thread
+           ,s.IETMSVersion_Thread )
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
 ;
 
