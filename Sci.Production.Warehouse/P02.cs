@@ -164,7 +164,7 @@ select FactoryID = iif(ed.PoType='M'
                                            end)
                                         , '')
         , ed.UnitId
-        , ColorID = isnull(psd.ColorID,'')
+        , ColorID = Color.Value
         , SizeSpec = isnull(psd.SizeSpec,'')
         , ed.Qty
         , ed.Foc
@@ -222,6 +222,12 @@ Outer APPLY (
     and mpo.Seq1 = ed.Seq1 
     and mpo.Seq2 = ed.Seq2
 )mipo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(psd.BrandID,psd.ColorID),psd.SuppColor)
+		 ELSE dbo.GetColorMultipleID(psd.BrandID,psd.ColorID)
+	 END
+)Color
 where ed.ID = '{0}'
 
 drop table #tmp, #tmp_MachinePO, #tmp_MiscPO, #tmp_PartPO", masterID);
