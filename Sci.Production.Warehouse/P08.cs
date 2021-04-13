@@ -1004,9 +1004,14 @@ Where r.id = '{this.CurrentMaintain["ID"]}'
             }
 
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_P08.xltx");
-            MyUtility.Excel.CopyToXls(dt, string.Empty, "Warehouse_P08.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: excelApp);
-
             Excel.Worksheet worksheet = excelApp.Sheets[1];
+            for (int i = 0; i < dt.Rows.Count - 1; i++)
+            {
+                Excel.Range r = worksheet.get_Range("A5", "A5").EntireRow;
+                r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); // 新增Row
+            }
+
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Warehouse_P08.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: excelApp);
             worksheet.get_Range((Excel.Range)worksheet.Cells[4, 1], (Excel.Range)worksheet.Cells[dt.Rows.Count + 3, 9]).Borders.Weight = 2; // 設定全框線
             worksheet.Columns[1].ColumnWidth = 18;
             worksheet.Columns[2].ColumnWidth = 8;
@@ -1017,6 +1022,7 @@ Where r.id = '{this.CurrentMaintain["ID"]}'
             worksheet.Columns[7].ColumnWidth = 12;
             worksheet.Columns[8].ColumnWidth = 12;
             worksheet.Columns[9].ColumnWidth = 45;
+
             excelApp.Visible = true;
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(excelApp);
