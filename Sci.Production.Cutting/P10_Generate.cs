@@ -897,7 +897,6 @@ drop table #tmp,#tmp2";
             {
                 double totalCutQty = Convert.ToDouble(dr["Qty"]);
                 DataRow[] qtyarry = this.bundle_Detail_Qty_T.Select(string.Format("SizeCode='{0}'", dr["SizeCode"]), string.Empty);
-                double rowcount = qtyarry.Length;
                 Prgs.AverageNumeric(qtyarry, "Qty", (int)totalCutQty, true);
             }
 
