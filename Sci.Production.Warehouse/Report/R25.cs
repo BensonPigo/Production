@@ -26,6 +26,7 @@ namespace Sci.Production.Warehouse
         private string M;
         private string Factorys;
         private string MtlType;
+        private bool RecLessArv;
         private DataTable dataTable;
 
         public R25(ToolStripMenuItem menuitem)
@@ -128,6 +129,7 @@ namespace Sci.Production.Warehouse
             this.Brand = this.txtbrand1.Text;
             this.Supplier = this.txtsupplier1.TextBox1.Text;
             this.M = this.comboMDivision1.Text;
+            this.RecLessArv = this.chkRecLessArv.Checked;
 
             if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
@@ -180,6 +182,7 @@ select
 	ed.suppid,
 	[SuppName] = supp.AbbEN,
 	ed.UnitId,
+	psd.StockUnit,
     psd.SizeSpec,
     [ShipQty]=ed.Qty,
     ed.FOC,
@@ -193,9 +196,10 @@ select
 	o.KPILETA,
 	 (SELECT MinSciDelivery FROM DBO.GetSCI(ed.Poid,o.Category)) as [Earliest SCI Delivery],
 	EarlyDays=DATEDIFF(day,e.WhseArrival,o.KPILETA),
-	TEPPOHandle.Email,
-    TEPPOSMR.Email,
+	[MR_Mail]=TEPPOHandle.Email,
+    [SMR_Mail]=TEPPOSMR.Email,
     [EditName]=dbo.getTPEPass1(e.EditName)
+INTO #tmp
 from Export e
 Inner join Export_Detail ed on e.ID = ed.ID
 inner join orders o on o.id = ed.poid
@@ -283,6 +287,48 @@ and ed.PoType = 'G'
             }
 
             strSql += $@" and ed.FabricType in ({this.MtlType})";
+
+            strSql += $@"
+
+ select 
+	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
+	BrandID, styleid, t.PoID, seq, Refno,	[Color] , [Description], [MtlType], WeaveTypeID, suppid, [SuppName] 
+	, UnitId
+	, SizeSpec,
+    [ShipQty]=SUM(t.ShipQty),
+    [FOC]=SUM(FOC),
+    [NetKg]=SUM(NetKg),
+    [WeightKg]=SUM(WeightKg),
+    [ArriveQty]=  SUM(ArriveQty),
+    [ArriveQty_StockUnit]=dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty)),
+	Receiving_Detail.ReceiveQty,
+	StockUnit,
+    [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,KPILETA,
+	[Earliest SCI Delivery],
+	EarlyDays,
+	[MR_Mail],
+    [SMR_Mail],
+    t.EditName
+ from #tmp t
+OUTER APPLY(
+	SELECT [ReceiveQty]=SUM(rd.StockQty)
+	FROM Receiving r 
+	INNER JOIN Receiving_Detail rd ON rd.ID = r.ID AND rd.PoId = t.PoID ANd rd.Seq1 + ' ' +rd.Seq2 = t.Seq
+	WHERE t.WK = r.ExportId AND r.Status = 'Confirmed'
+)Receiving_Detail
+ GROUP BY 
+	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID,styleid,t.PoID,seq,
+	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,
+	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit
+HAVING 1=1
+";
+            if (this.RecLessArv)
+            {
+                strSql += $@" AND  (Receiving_Detail.ReceiveQty is null or (Receiving_Detail.ReceiveQty < dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty))))  ";
+            }
+
+            strSql += $@"drop table #tmp";
+
             #endregion
             #region SQL Data Loading...
             DualResult result = DBProxy.Current.Select(null, strSql,  out this.dataTable);
