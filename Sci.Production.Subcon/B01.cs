@@ -377,6 +377,14 @@ DROP TABLE #tmp
 
         private void W_H_L_Validated(object sender, EventArgs e)
         {
+            bool l = MyUtility.Convert.GetDouble(this.CurrentMaintain["ctnlength"]) == MyUtility.Convert.GetDouble(this.numL.Text);
+            bool w = MyUtility.Convert.GetDouble(this.CurrentMaintain["ctnwidth"]) == MyUtility.Convert.GetDouble(this.numW.Text);
+            bool h = MyUtility.Convert.GetDouble(this.CurrentMaintain["ctnheight"]) == MyUtility.Convert.GetDouble(this.numH.Text);
+            if (l && w && h)
+            {
+                return;
+            }
+
             this.GetCBM();
         }
 
@@ -593,8 +601,14 @@ DROP TABLE #tmp
             }
 
             if (string.IsNullOrWhiteSpace(this.numL.Text)
-           || string.IsNullOrWhiteSpace(this.numW.Text)
-           || string.IsNullOrWhiteSpace(this.numH.Text))
+               || string.IsNullOrWhiteSpace(this.numW.Text)
+               || string.IsNullOrWhiteSpace(this.numH.Text)
+               || !this.EditMode)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain["CtnUnit"].ToString().EqualString(this.comboCartonDimension.SelectedValue))
             {
                 return;
             }
