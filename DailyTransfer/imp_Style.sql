@@ -1480,40 +1480,42 @@ when not matched by target then
 when not matched by source  AND T.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
------------------Style_ThreadColorCombo_Operation-------------------
-Merge Production.dbo.Style_ThreadColorCombo_Operation as t
-Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_Operation a ) as s
-on t.Style_ThreadColorComboUkey=s.Style_ThreadColorComboUkey and t.Seq = s.Seq and t.OperationID = s.OperationID
+
+-----------------Style_ThreadColorCombo-------------------
+Merge Production.dbo.Style_ThreadColorCombo as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo a ) as s
+on t.StyleUkey=s.StyleUkey and t.Thread_ComboID = s.Thread_ComboID and t.MachineTypeID = s.MachineTypeID
 when matched then 
-	update set	t.ComboType	= s.ComboType	,
-				t.Frequency	= s.Frequency	,
-				t.AddName	= s.AddName		,
-				t.AddDate	= s.AddDate		,
-				t.EditName	= s.EditName	,
-				t.EditDate	= s.EditDate	,
-				t.Ukey		= s.Ukey
+	update set	t.SeamLength	  = s.SeamLength	,
+				t.ConsPC		  = s.ConsPC		,
+				t.AddName		  = s.AddName		,
+				t.AddDate		  = s.AddDate		,
+				t.EditName		  = s.EditName		,
+				t.EditDate		  = s.EditDate		,
+				t.Ukey			  = s.Ukey
 when not matched by target then
-	insert (Style_ThreadColorComboUkey ,
-			Seq						   ,
-			OperationID				   ,
-			ComboType				   ,
-			Frequency				   ,
-			AddName					   ,
-			AddDate					   ,
-			EditName				   ,
-			EditDate				   ,
-			Ukey) 
-		values (s.Style_ThreadColorComboUkey ,
-				s.Seq						   ,
-				s.OperationID				   ,
-				s.ComboType				   ,
-				s.Frequency				   ,
-				s.AddName					   ,
-				s.AddDate					   ,
-				s.EditName				   ,
-				s.EditDate				   ,
+	insert (StyleUkey		,
+			Thread_ComboID,
+			MachineTypeID	,
+			SeamLength	,
+			ConsPC		,
+			AddName		,
+			AddDate		,
+			EditName		,
+			EditDate		,
+			Ukey
+			) 
+		values (s.StyleUkey		,
+				s.Thread_ComboID,
+				s.MachineTypeID	,
+				s.SeamLength	,
+				s.ConsPC		,
+				s.AddName		,
+				s.AddDate		,
+				s.EditName		,
+				s.EditDate		,
 				s.Ukey	)
-when not matched by source then 
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete;
 
 -----------------Style_ThreadColorCombo_Detail-------------------
@@ -1556,45 +1558,190 @@ when not matched by target then
 				s.EditName				   ,
 				s.EditDate				   ,
 				s.Ukey	)
-when not matched by source then 
-	delete;
+when not matched by source AND t.Style_ThreadColorComboUkey IN (SELECT Ukey FROM Production.dbo.Style_ThreadColorCombo) then 
+	delete
+;
 
------------------Style_ThreadColorCombo-------------------
-Merge Production.dbo.Style_ThreadColorCombo as t
-Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo a ) as s
-on t.StyleUkey=s.StyleUkey and t.Thread_ComboID = s.Thread_ComboID and t.MachineTypeID = s.MachineTypeID
+
+-----------------Style_ThreadColorCombo_Operation-------------------
+Merge Production.dbo.Style_ThreadColorCombo_Operation as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_Operation a ) as s
+on t.Style_ThreadColorComboUkey=s.Style_ThreadColorComboUkey and t.Seq = s.Seq and t.OperationID = s.OperationID
 when matched then 
-	update set	t.SeamLength	  = s.SeamLength	,
-				t.ConsPC		  = s.ConsPC		,
-				t.AddName		  = s.AddName		,
-				t.AddDate		  = s.AddDate		,
-				t.EditName		  = s.EditName		,
-				t.EditDate		  = s.EditDate		,
-				t.Ukey			  = s.Ukey
+	update set	t.ComboType	= s.ComboType	,
+				t.Frequency	= s.Frequency	,
+				t.AddName	= s.AddName		,
+				t.AddDate	= s.AddDate		,
+				t.EditName	= s.EditName	,
+				t.EditDate	= s.EditDate	,
+				t.Ukey		= s.Ukey
 when not matched by target then
-	insert (StyleUkey		,
-			Thread_ComboID,
-			MachineTypeID	,
-			SeamLength	,
-			ConsPC		,
-			AddName		,
-			AddDate		,
-			EditName		,
-			EditDate		,
-			Ukey
-			) 
-		values (s.StyleUkey		,
-				s.Thread_ComboID,
-				s.MachineTypeID	,
-				s.SeamLength	,
-				s.ConsPC		,
-				s.AddName		,
-				s.AddDate		,
-				s.EditName		,
-				s.EditDate		,
+	insert (Style_ThreadColorComboUkey ,
+			Seq						   ,
+			OperationID				   ,
+			ComboType				   ,
+			Frequency				   ,
+			AddName					   ,
+			AddDate					   ,
+			EditName				   ,
+			EditDate				   ,
+			Ukey) 
+		values (s.Style_ThreadColorComboUkey ,
+				s.Seq						   ,
+				s.OperationID				   ,
+				s.ComboType				   ,
+				s.Frequency				   ,
+				s.AddName					   ,
+				s.AddDate					   ,
+				s.EditName				   ,
+				s.EditDate				   ,
 				s.Ukey	)
-when not matched by source then 
-	delete;
+when not matched by source AND t.Style_ThreadColorComboUkey IN (SELECT Ukey FROM Production.dbo.Style_ThreadColorCombo) then 
+	delete
+;
+	
+-----------------Style_ThreadColorCombo_History-------------------
+Merge Production.dbo.Style_ThreadColorCombo_History as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History a ) as s
+on t.StyleUkey=s.StyleUkey 
+	and t.Thread_ComboID = s.Thread_ComboID 
+	and t.MachineTypeID = s.MachineTypeID 
+	and t.LockDate = s.LockDate
+when matched then 
+   update SET t.SeamLength = s.SeamLength
+      ,t.ConsPC = s.ConsPCs
+      ,t.AddName = s.AddName
+      ,t.AddDate = s.AddDate
+      ,t.EditName = s.EditName
+      ,t.EditDate = s.EditDate
+      ,t.Category = s.Category
+      ,t.TPDate = s.TPDate
+      ,t.IETMSID_Thread = s.IETMSID_Thread
+      ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
+when not matched by target then
+	INSERT (StyleUkey
+           ,Thread_ComboID
+           ,MachineTypeID
+           ,SeamLength
+           ,ConsPC
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate
+           ,LockDate
+           ,Category
+           ,TPDate
+           ,IETMSID_Thread
+           ,IETMSVersion_Thread)
+		VALUES (
+			s.StyleUkey
+           ,s.Thread_ComboID
+           ,s.MachineTypeID
+           ,s.SeamLength
+           ,s.ConsPC
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate
+           ,s.LockDate
+           ,s.Category
+           ,s.TPDate
+           ,s.IETMSID_Thread
+           ,s.IETMSVersion_Thread )
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete
+;
+
+
+-----------------Style_ThreadColorCombo_History_Detail-------------------
+Merge Production.dbo.Style_ThreadColorCombo_History_Detail as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History_Detail a ) as s
+on t.Style_ThreadColorCombo_HistoryUkey=s.Style_ThreadColorCombo_HistoryUkey 
+	and t.Seq = s.Seq 
+	and t.Article = s.Article 
+when matched then 
+   update SET t.SCIRefNo = s.SCIRefNo
+      ,t.SuppId = s.SuppId
+      ,t.ColorID = s.ColorID
+      ,t.SuppColor = s.SuppColor
+      ,t.AddName = s.AddName
+      ,t.AddDate = s.AddDate
+      ,t.EditName = s.EditName
+      ,t.EditDate = s.EditDate	  
+      ,t.UseRatio = s.UseRatio
+      ,t.Allowance = s.Allowance
+      ,t.AllowanceTubular = s.AllowanceTubular
+when not matched by target then
+	INSERT (Style_ThreadColorCombo_HistoryUkey
+           ,Seq
+           ,SCIRefNo
+           ,SuppId
+           ,Article
+           ,ColorID
+           ,SuppColor
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate
+           ,UseRatio
+           ,Allowance
+           ,AllowanceTubular)
+		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
+           ,s.Seq
+           ,s.SCIRefNo
+           ,s.SuppId
+           ,s.Article
+           ,s.ColorID
+           ,s.SuppColor
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate
+           ,s.UseRatio
+           ,s.Allowance
+           ,s.AllowanceTubular
+		   )
+when not matched by source and t.Style_ThreadColorCombo_HistoryUkey NOT IN  (SELECt Ukey FROM Production.dbo.Style_ThreadColorCombo_History) then 
+	----刪除沒有表頭的Detail
+	delete
+;
+
+-----------------Style_ThreadColorCombo_History_Operation-------------------
+Merge Production.dbo.Style_ThreadColorCombo_History_Operation as t
+Using (select a.* from Trade_To_Pms.dbo.Style_ThreadColorCombo_History_Operation a ) as s
+on t.Style_ThreadColorCombo_HistoryUkey=s.Style_ThreadColorCombo_HistoryUkey 
+	and t.Seq = s.Seq 
+	and t.OperationID = s.OperationID 
+when matched then 
+   update SET t.ComboType = s.ComboType
+      ,t.Frequency = s.Frequency
+      ,t.AddName = s.AddName
+      ,t.AddDate = s.AddDate
+      ,t.EditName = s.EditName
+      ,t.EditDate = s.EditDate
+when not matched by target then
+	INSERT (Style_ThreadColorCombo_HistoryUkey
+           ,Seq
+           ,OperationID
+           ,ComboType
+           ,Frequency
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate)
+		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
+           ,s.Seq
+           ,s.OperationID
+           ,s.ComboType
+           ,s.Frequency
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate)
+when not matched by source and t.Style_ThreadColorCombo_HistoryUkey NOT IN  (SELECt Ukey FROM Production.dbo.Style_ThreadColorCombo_History) then 
+	----刪除沒有表頭的Operation
+	delete
+;
 
 END
 

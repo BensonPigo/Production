@@ -241,9 +241,42 @@ when not matched by target then
 insert (type,id,name,AddName,AddDate,EditName,EditDate)
 values (s.type,s.id,s.name,s.AddName,s.AddDate,s.EditName,s.EditDate);
 
+
+------Operation_His------
+Merge Production.dbo.Operation_His as t
+Using (select a.* from Trade_To_Pms.dbo.Operation_His a ) as s
+on t.Ukey=s.Ukey 
+when matched then 
+   update SET t.Type = s.Type
+      ,t.TypeName = s.TypeName
+      ,t.OperationID = s.OperationID
+      ,t.OldValue = s.OldValue
+      ,t.NewValue = s.NewValue
+      ,t.Remark = s.Remark
+      ,t.EditDate = s.EditDate
+      ,t.EditName = s.EditName
+when not matched by target then
+	INSERT (Type
+           ,TypeName
+           ,OperationID
+           ,OldValue
+           ,NewValue
+           ,Remark
+           ,EditDate
+           ,EditName)
+		VALUES  (s.Type
+           ,s.TypeName
+           ,s.OperationID
+           ,s.OldValue
+           ,s.NewValue
+           ,s.Remark
+           ,s.EditDate
+           ,s.EditName)
+when not matched by source then 
+	delete;
+
+
 END
-
-
 
 
 
