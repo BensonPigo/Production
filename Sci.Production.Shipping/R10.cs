@@ -2828,7 +2828,7 @@ FOR AccountID IN ({account})) a
 
             if (factoryID == "PHI")
             {
-                reportData.A_61092102 = MyUtility.Convert.GetDecimal(reportData.A_59122102) + MyUtility.Convert.GetDecimal(reportData.A_61052102);
+                reportData.A_61092102 = MyUtility.Convert.GetDecimal(reportData.A_59122102) + MyUtility.Convert.GetDecimal(reportData.A_61092102);
                 reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
                 reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
                 reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
