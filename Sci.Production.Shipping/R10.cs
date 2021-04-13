@@ -612,7 +612,7 @@ select [type]
 	, OnBoardDate
 	, Shipper
 	, Foundry
-	, SisFtyAPID
+	, SisFtyAPID = SisFtyAPID.value
 	, BrandID
 	, [Category] = Category.value
 	, [OQty]=sum(oqs.OQty)
@@ -644,9 +644,21 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) Category
+outer apply(
+	select value = Stuff((
+		select concat(',',SisFtyAPID)
+		from (
+				select 	distinct SisFtyAPID
+				from #temp2 d
+				where d.id = a.ID
+                and d.SisFtyAPID <> ''
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) SisFtyAPID
 group by type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
-,AccountID,Amount, Foundry, SisFtyAPID
+,AccountID,Amount, Foundry, SisFtyAPID.value
 
 select 
 	a.[type]
