@@ -496,6 +496,10 @@ order by bundlegroup,bundleno";
                 }
 
                 this.CurrentMaintain["ID"] = cid;
+                this.Bundle_Detail_Allpart.AcceptChanges();
+                this.Bundle_Detail_Qty.AcceptChanges();
+                this.Bundle_Detail_Art.AcceptChanges();
+                this.Bundle_Detail_CombineSubprocess.AcceptChanges();
                 foreach (DataRow dr in this.Bundle_Detail_Allpart.Rows)
                 {
                     dr["ID"] = cid;
@@ -566,11 +570,6 @@ order by bundlegroup,bundleno";
             string masterID = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
 
             // 以下 先刪除 再重新寫入
-            this.Bundle_Detail_Allpart.AcceptChanges();
-            this.Bundle_Detail_Qty.AcceptChanges();
-            this.Bundle_Detail_Art.AcceptChanges();
-            this.Bundle_Detail_CombineSubprocess.AcceptChanges();
-
             // Bundle_Detail_AllPart
             string cmd = $@"Delete from bundle_Detail_allpart where id ='{masterID}'";
             foreach (DataRow dr in this.Bundle_Detail_Allpart.Rows)
