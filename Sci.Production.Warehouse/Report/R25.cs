@@ -324,7 +324,7 @@ HAVING 1=1
 ";
             if (this.RecLessArv)
             {
-                strSql += $@" AND  Receiving_Detail.ReceiveQty < dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty))  ";
+                strSql += $@" AND  (Receiving_Detail.ReceiveQty is null or (Receiving_Detail.ReceiveQty < dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty))))  ";
             }
 
             strSql += $@"drop table #tmp";
