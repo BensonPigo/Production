@@ -243,7 +243,7 @@ where CuttingSp = '{0}'",
             }
 
             string ukey = MyUtility.GetValue.Lookup("Styleukey", this.CurrentMaintain["ID"].ToString(), "Orders", "ID");
-            string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{this.CurrentMaintain["ID"].ToString()}','','','{ukey}','')s";
+            string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{this.CurrentMaintain["ID"]}','','','{ukey}','')s";
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
             if (patternukey != string.Empty)
             {

@@ -161,7 +161,7 @@ as
 )
 select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User.UserID}' or Deputy = '{Env.User.UserID}'";
 
-                return MyUtility.Check.Seek(sqlCmd) ? true : false;
+                return MyUtility.Check.Seek(sqlCmd);
             }
         }
 
@@ -180,13 +180,12 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
             }
             else
             {
-                // Sci.Env.User.PositionID
-                string positionID = "1";
                 string sql = string.Format("select FKPass0 from Pass1 WITH (NOLOCK) where ID='{0}'", Env.User.UserID);
-                positionID = MyUtility.GetValue.Lookup(sql);
 
-                DataTable dt;
-                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, positionID, formcaption.ToUpper()), out dt);
+                // Sci.Env.User.PositionID
+                string positionID = MyUtility.GetValue.Lookup(sql);
+
+                DualResult result = DBProxy.Current.Select(null, string.Format("select {0} as Result from Pass2 WITH (NOLOCK) where FKPass0 = {1} and UPPER(BarPrompt) = N'{2}'", pass2colname, positionID, formcaption.ToUpper()), out DataTable dt);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString());
@@ -212,7 +211,7 @@ as
 )
 select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User.UserID}' or Deputy = '{Env.User.UserID}'";
 
-                return MyUtility.Check.Seek(sqlCmd) ? true : false;
+                return MyUtility.Check.Seek(sqlCmd);
             }
         }
         #endregion
@@ -234,9 +233,9 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
             string strID = (Type.GetTypeCode(id.GetType()) == TypeCode.String) ? (string)id : id.ToString();
             DateTime dtDateColumn = (dateColumn == null || dateColumn == DBNull.Value) ? DateTime.MinValue : (DateTime)dateColumn;
             string strReturn = string.Empty;
-            string strName = string.Empty;
             string extNo = "   Ext.";
             DataRow seekData = dtPass1.Rows.Find(strID);
+            string strName;
             if (seekData == null)
             {
                 return id.ToString().Trim();
@@ -244,7 +243,7 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
             else
             {
                 strName = seekData["Name"].ToString().Trim();
-                extNo = extNo + seekData["ExtNo"].ToString().Trim();
+                extNo += seekData["ExtNo"].ToString().Trim();
             }
 
             switch (format)
@@ -281,55 +280,122 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
             return strReturn;
         }
 
+        /// <inheritdoc/>
+        public static string GetPatternUkey(string cutref, string poid, string sizes)
+        {
+            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
+            string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{poid}' and SizeCode IN ({sizes})";
+            string sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
+            string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{styleyukey},'{sizeGroup}')s";
+            string patternukey = MyUtility.GetValue.Lookup(patidsql);
+
+            return patternukey;
+        }
+
+        /// <summary>
+        /// 取得篩選 F_Code.CodeA,B...條件
+        /// </summary>
+        /// <param name="cutref">cutref</param>
+        /// <param name="poid">poid</param>
+        /// <param name="articles">article</param>
+        /// <param name="fabricPanelCode">patternpanel</param>
+        /// <param name="sizes">EX:S,M,L</param>
+        /// <param name="sizeCount">sizeCount</param>
+        /// <returns>EX: F_Code ='A' or CodeA = 'A' or ...</returns>
+        public static string WhereArticleGroupColumn(string cutref, string poid, string articles, string fabricPanelCode, string sizes, int sizeCount)
+        {
+            string whereCode = string.Empty;
+            string patternukey = GetPatternUkey(cutref, poid, sizes);
+            string sqlPattern_GL_Article = $@"
+if exists (Select ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in ({articles}) and SizeRange like '%,%')
+Begin	
+	Select distinct ArticleGroup
+	from Pattern_GL_Article WITH (NOLOCK)
+	where PatternUkey = '{patternukey}'
+	and Article in ({articles})
+	and SizeRange  = (
+        select SizeRange
+        from Pattern_GL_Article
+        outer apply(select * from SplitString(SizeRange, ',') s)s
+	    where PatternUkey = '{patternukey}'
+	    and Article in ({articles})
+        and Data in ({sizes})
+        group by SizeRange
+        having COUNT(1) = {sizeCount}
+	)
+End
+";
+            DualResult result = DBProxy.Current.Select(null, sqlPattern_GL_Article, out DataTable articleGroupDT);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return whereCode;
+            }
+
+            if (articleGroupDT.Rows.Count == 0)
+            {
+                sqlPattern_GL_Article = $@"
+if exists (Select * from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in({articles})  and SizeRange in ({sizes}))
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in({articles}) and SizeRange in ({sizes})    
+else if exists (Select 1 from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in ({articles}))
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in ({articles})
+else
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' 
+";
+                result = DBProxy.Current.Select(null, sqlPattern_GL_Article, out articleGroupDT);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox(result.ToString());
+                    return whereCode;
+                }
+            }
+
+            foreach (DataRow dr in articleGroupDT.Rows)
+            {
+                whereCode += $" or {dr[0]} = '{fabricPanelCode}' ";
+            }
+
+            return whereCode;
+        }
+
         /// <summary>
         /// GetGarmentListTable
         /// </summary>
         /// <param name="cutref">cutref</param>
-        /// <param name="orderID">orderID</param>
-        /// <param name="sizeGroup">sizeGroup</param>
+        /// <param name="poid">poid</param>
+        /// <param name="sizes">EX:'S','M','L'</param>
         /// <param name="outTb">outTb</param>
-        public static void GetGarmentListTable(string cutref, string orderID, string sizeGroup, out DataTable outTb)
+        /// <param name="articleGroupDT">articleGroupDT</param>
+        public static void GetGarmentListTable(string cutref, string poid, string sizes, out DataTable outTb, out DataTable articleGroupDT)
         {
-            DataTable garmentListTb;
-            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", orderID, "Orders", "ID");
-
-            #region 撈取Pattern Ukey  找最晚Edit且Status 為Completed
             outTb = null;
-            string patidsql;
+            string patternukey = GetPatternUkey(cutref, poid, sizes);
 
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{orderID}','{cutref}','',{styleyukey},'{sizeGroup}')s";
-
-            string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            #endregion
-            DataTable headertb;
-            #region 找ArticleGroup 當Table Header
-            string headercodesql = string.Format("Select distinct ArticleGroup from Pattern_GL_LectraCode WITH (NOLOCK) where PatternUkey = '{0}' and ArticleGroup !='F_CODE' order by ArticleGroup", patternukey);
-
-            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
+            #region 找 ArticleGroup 當Table Header
+            string headercodesql = $"Select distinct ArticleGroup from Pattern_GL_LectraCode WITH (NOLOCK) where PatternUkey = '{patternukey}' and ArticleGroup !='F_CODE' order by ArticleGroup";
+            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out articleGroupDT);
             if (!headerResult)
             {
                 return;
             }
             #endregion
             #region 建立Table
-            string tablecreatesql = string.Format("Select '{0}' as orderid,a.*,'' as F_CODE", orderID);
-            foreach (DataRow dr in headertb.Rows)
+            string tablecreatesql = $"Select a.*, orderid = '{poid}', nLocation = b.ID + '-' + b.Name, F_CODE = ''";
+            foreach (DataRow dr in articleGroupDT.Rows)
             {
-                tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
+                tablecreatesql += $", {dr["ArticleGroup"]} = ''";
             }
 
-            tablecreatesql = tablecreatesql + string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
-            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out garmentListTb);
+            tablecreatesql += $" from Pattern_GL a WITH (NOLOCK) left join DropDownList b on b.Type='Location' and a.Location = b.ID Where PatternUkey = '{patternukey}'";
+            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out DataTable garmentListTb);
             if (!tablecreateResult)
             {
                 return;
             }
             #endregion
             #region 寫入FCode~CodeA~CodeZ
-            string lecsql = string.Empty;
-            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
-            DataTable drtb;
-            DualResult drre = DBProxy.Current.Select(null, lecsql, out drtb);
+            string lecsql = $"Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{patternukey}'";
+            DualResult drre = DBProxy.Current.Select(null, lecsql, out DataTable drtb);
             if (!drre)
             {
                 return;
@@ -337,13 +403,10 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
 
             foreach (DataRow dr in garmentListTb.Rows)
             {
-                DataRow[] lecdrar = drtb.Select(string.Format("SEQ = '{0}'", dr["SEQ"]));
+                DataRow[] lecdrar = drtb.Select($"SEQ = '{dr["SEQ"]}'");
                 foreach (DataRow lecdr in lecdrar)
                 {
                     string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-
-                    // dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
-                    // Mantis_7045 比照舊系統對應FabricPanelCode
                     dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
                 }
 
