@@ -182,6 +182,7 @@ select
 	ed.suppid,
 	[SuppName] = supp.AbbEN,
 	ed.UnitId,
+	psd.StockUnit,
     psd.SizeSpec,
     [ShipQty]=ed.Qty,
     ed.FOC,
@@ -291,13 +292,17 @@ and ed.PoType = 'G'
 
  select 
 	WK, t.eta, t.FactoryID, Consignee, ShipModeID, CYCFS, Blno, Vessel, [ProdFactory], OrderTypeID, ProjectID, Category ,
-	BrandID, styleid, t.PoID, seq, Refno,	[Color] , [Description], [MtlType], WeaveTypeID, suppid, [SuppName] , UnitId, SizeSpec,
+	BrandID, styleid, t.PoID, seq, Refno,	[Color] , [Description], [MtlType], WeaveTypeID, suppid, [SuppName] 
+	, UnitId
+	, SizeSpec,
     [ShipQty]=SUM(t.ShipQty),
     [FOC]=SUM(FOC),
     [NetKg]=SUM(NetKg),
     [WeightKg]=SUM(WeightKg),
-    [ArriveQty]=SUM(ArriveQty),
+    [ArriveQty]=  SUM(ArriveQty),
+    [ArriveQty_StockUnit]=dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty)),
 	Receiving_Detail.ReceiveQty,
+	StockUnit,
     [ContainerType] ,[ContainerNo] ,PortArrival,t.WhseArrival,KPILETA,
 	[Earliest SCI Delivery],
 	EarlyDays,
@@ -314,12 +319,12 @@ OUTER APPLY(
  GROUP BY 
 	WK,t.eta,t.FactoryID,Consignee,ShipModeID,CYCFS,Blno,Vessel,[ProdFactory],OrderTypeID,ProjectID,Category ,BrandID,styleid,t.PoID,seq,
 	Refno,[Color] ,[Description],[MtlType],WeaveTypeID,suppid,[SuppName] ,UnitId,SizeSpec,[ContainerType] ,[ContainerNo] ,PortArrival,
-	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty
+	t.WhseArrival,KPILETA,[Earliest SCI Delivery],EarlyDays,[MR_Mail],[SMR_Mail],t.EditName,ReceiveQty,StockUnit
 HAVING 1=1
 ";
             if (this.RecLessArv)
             {
-                strSql += $@"AND  Receiving_Detail.ReceiveQty < SUM(ArriveQty) ";
+                strSql += $@" AND  Receiving_Detail.ReceiveQty < dbo.[GetUnitQty](UnitId,StockUnit,SUM(ArriveQty))  ";
             }
 
             strSql += $@"drop table #tmp";
