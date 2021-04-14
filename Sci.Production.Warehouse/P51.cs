@@ -158,6 +158,13 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            // 檢查物料不能有WMS Location
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
+                return false;
+            }
+
             // 取單號
             if (this.IsDetailInserting)
             {
@@ -466,6 +473,13 @@ and stocktype='{this.CurrentDetailData["stocktype"]}' and roll='{e.FormattedValu
             var dr = this.CurrentMaintain;
             if (dr == null)
             {
+                return;
+            }
+
+            // 檢查物料不能有WMS Location
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
                 return;
             }
 

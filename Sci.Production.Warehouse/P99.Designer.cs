@@ -30,12 +30,27 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.TabPage_UpdateCommand = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridUpdate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel2 = new Sci.Win.UI.Panel();
+            this.txtRemark = new Sci.Win.UI.TextBox();
+            this.labRemark = new Sci.Win.UI.Label();
+            this.labReason = new Sci.Win.UI.Label();
+            this.comboReason = new Sci.Win.UI.ComboBox();
+            this.btnUpdateReason = new Sci.Win.UI.Button();
             this.panel6 = new Sci.Win.UI.Panel();
+            this.labCreateDate = new Sci.Win.UI.Label();
+            this.txtSeq2 = new Sci.Win.UI.TextBox();
+            this.txtSeq1 = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtWKNo_update = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtID = new Sci.Win.UI.TextBox();
+            this.labID = new Sci.Win.UI.Label();
             this.labMaterialType2 = new Sci.Win.UI.Label();
             this.comboMaterialType_Sheet1 = new System.Windows.Forms.ComboBox();
             this.labSPNo = new Sci.Win.UI.Label();
@@ -46,11 +61,8 @@
             this.btnUpdate = new Sci.Win.UI.Button();
             this.checkIncludeCompleteItem = new Sci.Win.UI.CheckBox();
             this.comboFunction = new Sci.Win.UI.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtSPNoEnd = new Sci.Win.UI.TextBox();
             this.txtSPNoStart = new Sci.Win.UI.TextBox();
             this.dateCreate = new Sci.Win.UI.DateRange();
-            this.labCreateDate = new Sci.Win.UI.Label();
             this.TabPage_UnLock = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridUnLock = new Sci.Win.UI.Grid();
@@ -69,18 +81,42 @@
             this.panel8 = new Sci.Win.UI.Panel();
             this.btnClose1 = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
+            this.TabPage_ReviseHistory = new System.Windows.Forms.TabPage();
+            this.grid_History = new Sci.Win.UI.Grid();
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel3 = new Sci.Win.UI.Panel();
+            this.labReviseDate = new Sci.Win.UI.Label();
+            this.txtSeq2_History = new Sci.Win.UI.TextBox();
+            this.txtSeq1_History = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtID_History = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.combo_MaterialType_History = new System.Windows.Forms.ComboBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.label9 = new Sci.Win.UI.Label();
+            this.btnQuery_history = new Sci.Win.UI.Button();
+            this.btnClose_History = new Sci.Win.UI.Button();
+            this.combo_Function_history = new Sci.Win.UI.ComboBox();
+            this.txtSPNo_History = new Sci.Win.UI.TextBox();
+            this.dateRangeReviseDate = new Sci.Win.UI.DateRange();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1.SuspendLayout();
             this.TabPage_UpdateCommand.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridUpdate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.panel2.SuspendLayout();
             this.panel6.SuspendLayout();
             this.TabPage_UnLock.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridUnLock)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel8.SuspendLayout();
+            this.TabPage_ReviseHistory.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid_History)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
+            this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,11 +124,12 @@
             // 
             this.tabControl1.Controls.Add(this.TabPage_UpdateCommand);
             this.tabControl1.Controls.Add(this.TabPage_UnLock);
+            this.tabControl1.Controls.Add(this.TabPage_ReviseHistory);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1060, 546);
+            this.tabControl1.Size = new System.Drawing.Size(1060, 558);
             this.tabControl1.TabIndex = 1;
             // 
             // TabPage_UpdateCommand
@@ -102,15 +139,16 @@
             this.TabPage_UpdateCommand.Location = new System.Drawing.Point(4, 25);
             this.TabPage_UpdateCommand.Name = "TabPage_UpdateCommand";
             this.TabPage_UpdateCommand.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage_UpdateCommand.Size = new System.Drawing.Size(1052, 517);
+            this.TabPage_UpdateCommand.Size = new System.Drawing.Size(1052, 529);
             this.TabPage_UpdateCommand.TabIndex = 0;
             this.TabPage_UpdateCommand.Text = "Update Command";
             // 
             // panel7
             // 
             this.panel7.Controls.Add(this.gridUpdate);
+            this.panel7.Controls.Add(this.panel2);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(3, 117);
+            this.panel7.Location = new System.Drawing.Point(3, 129);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(1046, 397);
             this.panel7.TabIndex = 1;
@@ -144,12 +182,82 @@
             this.gridUpdate.RowTemplate.Height = 24;
             this.gridUpdate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridUpdate.ShowCellToolTips = false;
-            this.gridUpdate.Size = new System.Drawing.Size(1046, 397);
-            this.gridUpdate.TabIndex = 0;
+            this.gridUpdate.Size = new System.Drawing.Size(1046, 341);
+            this.gridUpdate.TabIndex = 2;
             this.gridUpdate.TabStop = false;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.txtRemark);
+            this.panel2.Controls.Add(this.labRemark);
+            this.panel2.Controls.Add(this.labReason);
+            this.panel2.Controls.Add(this.comboReason);
+            this.panel2.Controls.Add(this.btnUpdateReason);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 341);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1046, 56);
+            this.panel2.TabIndex = 1;
+            // 
+            // txtRemark
+            // 
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(527, 19);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(244, 23);
+            this.txtRemark.TabIndex = 156;
+            // 
+            // labRemark
+            // 
+            this.labRemark.Location = new System.Drawing.Point(457, 19);
+            this.labRemark.Name = "labRemark";
+            this.labRemark.Size = new System.Drawing.Size(67, 23);
+            this.labRemark.TabIndex = 155;
+            this.labRemark.Text = "Remark";
+            // 
+            // labReason
+            // 
+            this.labReason.Location = new System.Drawing.Point(14, 18);
+            this.labReason.Name = "labReason";
+            this.labReason.Size = new System.Drawing.Size(67, 23);
+            this.labReason.TabIndex = 154;
+            this.labReason.Text = "Reason";
+            // 
+            // comboReason
+            // 
+            this.comboReason.BackColor = System.Drawing.Color.White;
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.IsSupportUnselect = true;
+            this.comboReason.Location = new System.Drawing.Point(84, 18);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.OldText = "";
+            this.comboReason.Size = new System.Drawing.Size(356, 24);
+            this.comboReason.TabIndex = 152;
+            // 
+            // btnUpdateReason
+            // 
+            this.btnUpdateReason.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateReason.Location = new System.Drawing.Point(789, 15);
+            this.btnUpdateReason.Name = "btnUpdateReason";
+            this.btnUpdateReason.Size = new System.Drawing.Size(238, 30);
+            this.btnUpdateReason.TabIndex = 151;
+            this.btnUpdateReason.Text = "Update Reason && Remark";
+            this.btnUpdateReason.UseVisualStyleBackColor = true;
+            this.btnUpdateReason.Click += new System.EventHandler(this.BtnUpdateReason_Click);
             // 
             // panel6
             // 
+            this.panel6.Controls.Add(this.labCreateDate);
+            this.panel6.Controls.Add(this.txtSeq2);
+            this.panel6.Controls.Add(this.txtSeq1);
+            this.panel6.Controls.Add(this.label2);
+            this.panel6.Controls.Add(this.txtWKNo_update);
+            this.panel6.Controls.Add(this.label1);
+            this.panel6.Controls.Add(this.txtID);
+            this.panel6.Controls.Add(this.labID);
             this.panel6.Controls.Add(this.labMaterialType2);
             this.panel6.Controls.Add(this.comboMaterialType_Sheet1);
             this.panel6.Controls.Add(this.labSPNo);
@@ -160,20 +268,85 @@
             this.panel6.Controls.Add(this.btnUpdate);
             this.panel6.Controls.Add(this.checkIncludeCompleteItem);
             this.panel6.Controls.Add(this.comboFunction);
-            this.panel6.Controls.Add(this.label2);
-            this.panel6.Controls.Add(this.txtSPNoEnd);
             this.panel6.Controls.Add(this.txtSPNoStart);
             this.panel6.Controls.Add(this.dateCreate);
-            this.panel6.Controls.Add(this.labCreateDate);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(3, 3);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1046, 114);
+            this.panel6.Size = new System.Drawing.Size(1046, 126);
             this.panel6.TabIndex = 0;
+            // 
+            // labCreateDate
+            // 
+            this.labCreateDate.Location = new System.Drawing.Point(14, 92);
+            this.labCreateDate.Name = "labCreateDate";
+            this.labCreateDate.Size = new System.Drawing.Size(94, 23);
+            this.labCreateDate.TabIndex = 23;
+            this.labCreateDate.Text = "Create Date";
+            // 
+            // txtSeq2
+            // 
+            this.txtSeq2.BackColor = System.Drawing.Color.White;
+            this.txtSeq2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq2.Location = new System.Drawing.Point(377, 63);
+            this.txtSeq2.Name = "txtSeq2";
+            this.txtSeq2.Size = new System.Drawing.Size(52, 23);
+            this.txtSeq2.TabIndex = 22;
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.BackColor = System.Drawing.Color.White;
+            this.txtSeq1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq1.Location = new System.Drawing.Point(301, 63);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.Size = new System.Drawing.Size(70, 23);
+            this.txtSeq1.TabIndex = 21;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(242, 63);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 23);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "SEQ";
+            // 
+            // txtWKNo_update
+            // 
+            this.txtWKNo_update.BackColor = System.Drawing.Color.White;
+            this.txtWKNo_update.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWKNo_update.Location = new System.Drawing.Point(301, 34);
+            this.txtWKNo_update.Name = "txtWKNo_update";
+            this.txtWKNo_update.Size = new System.Drawing.Size(128, 23);
+            this.txtWKNo_update.TabIndex = 19;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(242, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(56, 23);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "WK#";
+            // 
+            // txtID
+            // 
+            this.txtID.BackColor = System.Drawing.Color.White;
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtID.Location = new System.Drawing.Point(111, 34);
+            this.txtID.Name = "txtID";
+            this.txtID.Size = new System.Drawing.Size(128, 23);
+            this.txtID.TabIndex = 17;
+            // 
+            // labID
+            // 
+            this.labID.Location = new System.Drawing.Point(14, 34);
+            this.labID.Name = "labID";
+            this.labID.Size = new System.Drawing.Size(94, 23);
+            this.labID.TabIndex = 16;
+            this.labID.Text = "ID";
             // 
             // labMaterialType2
             // 
-            this.labMaterialType2.Location = new System.Drawing.Point(426, 38);
+            this.labMaterialType2.Location = new System.Drawing.Point(439, 63);
             this.labMaterialType2.Name = "labMaterialType2";
             this.labMaterialType2.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labMaterialType2.RectStyle.BorderWidth = 1F;
@@ -188,7 +361,7 @@
             // comboMaterialType_Sheet1
             // 
             this.comboMaterialType_Sheet1.FormattingEnabled = true;
-            this.comboMaterialType_Sheet1.Location = new System.Drawing.Point(540, 38);
+            this.comboMaterialType_Sheet1.Location = new System.Drawing.Point(553, 63);
             this.comboMaterialType_Sheet1.Name = "comboMaterialType_Sheet1";
             this.comboMaterialType_Sheet1.Size = new System.Drawing.Size(121, 24);
             this.comboMaterialType_Sheet1.TabIndex = 5;
@@ -196,9 +369,9 @@
             // 
             // labSPNo
             // 
-            this.labSPNo.Location = new System.Drawing.Point(14, 71);
+            this.labSPNo.Location = new System.Drawing.Point(14, 63);
             this.labSPNo.Name = "labSPNo";
-            this.labSPNo.Size = new System.Drawing.Size(111, 23);
+            this.labSPNo.Size = new System.Drawing.Size(94, 23);
             this.labSPNo.TabIndex = 14;
             this.labSPNo.Text = "SP#";
             // 
@@ -210,7 +383,7 @@
             this.labFunction.RectStyle.BorderWidth = 1F;
             this.labFunction.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labFunction.RectStyle.ExtBorderWidth = 1F;
-            this.labFunction.Size = new System.Drawing.Size(111, 23);
+            this.labFunction.Size = new System.Drawing.Size(94, 23);
             this.labFunction.TabIndex = 12;
             this.labFunction.Text = "Function";
             this.labFunction.TextStyle.BorderColor = System.Drawing.Color.Black;
@@ -268,7 +441,7 @@
             // 
             this.checkIncludeCompleteItem.AutoSize = true;
             this.checkIncludeCompleteItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeCompleteItem.Location = new System.Drawing.Point(439, 8);
+            this.checkIncludeCompleteItem.Location = new System.Drawing.Point(439, 7);
             this.checkIncludeCompleteItem.Name = "checkIncludeCompleteItem";
             this.checkIncludeCompleteItem.Size = new System.Drawing.Size(202, 21);
             this.checkIncludeCompleteItem.TabIndex = 4;
@@ -282,35 +455,17 @@
             this.comboFunction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFunction.FormattingEnabled = true;
             this.comboFunction.IsSupportUnselect = true;
-            this.comboFunction.Location = new System.Drawing.Point(128, 5);
+            this.comboFunction.Location = new System.Drawing.Point(111, 5);
             this.comboFunction.Name = "comboFunction";
             this.comboFunction.OldText = "";
-            this.comboFunction.Size = new System.Drawing.Size(289, 24);
+            this.comboFunction.Size = new System.Drawing.Size(318, 24);
             this.comboFunction.TabIndex = 0;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(257, 74);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(26, 17);
-            this.label2.TabIndex = 11;
-            this.label2.Text = " ～";
-            // 
-            // txtSPNoEnd
-            // 
-            this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
-            this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(289, 71);
-            this.txtSPNoEnd.Name = "txtSPNoEnd";
-            this.txtSPNoEnd.Size = new System.Drawing.Size(128, 23);
-            this.txtSPNoEnd.TabIndex = 3;
             // 
             // txtSPNoStart
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(128, 71);
+            this.txtSPNoStart.Location = new System.Drawing.Point(111, 63);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(128, 23);
             this.txtSPNoStart.TabIndex = 2;
@@ -331,24 +486,10 @@
             this.dateCreate.DateBox2.Name = "";
             this.dateCreate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateCreate.DateBox2.TabIndex = 1;
-            this.dateCreate.Location = new System.Drawing.Point(128, 38);
+            this.dateCreate.Location = new System.Drawing.Point(111, 92);
             this.dateCreate.Name = "dateCreate";
             this.dateCreate.Size = new System.Drawing.Size(280, 23);
             this.dateCreate.TabIndex = 1;
-            // 
-            // labCreateDate
-            // 
-            this.labCreateDate.Location = new System.Drawing.Point(14, 38);
-            this.labCreateDate.Name = "labCreateDate";
-            this.labCreateDate.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labCreateDate.RectStyle.BorderWidth = 1F;
-            this.labCreateDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labCreateDate.RectStyle.ExtBorderWidth = 1F;
-            this.labCreateDate.Size = new System.Drawing.Size(111, 23);
-            this.labCreateDate.TabIndex = 13;
-            this.labCreateDate.Text = "Create Date";
-            this.labCreateDate.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labCreateDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // TabPage_UnLock
             // 
@@ -357,7 +498,7 @@
             this.TabPage_UnLock.Location = new System.Drawing.Point(4, 25);
             this.TabPage_UnLock.Name = "TabPage_UnLock";
             this.TabPage_UnLock.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage_UnLock.Size = new System.Drawing.Size(1052, 517);
+            this.TabPage_UnLock.Size = new System.Drawing.Size(1052, 529);
             this.TabPage_UnLock.TabIndex = 1;
             this.TabPage_UnLock.Text = "UnLock";
             // 
@@ -368,7 +509,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1046, 458);
+            this.panel9.Size = new System.Drawing.Size(1046, 470);
             this.panel9.TabIndex = 1;
             // 
             // gridUnLock
@@ -392,7 +533,7 @@
             this.gridUnLock.RowTemplate.Height = 24;
             this.gridUnLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridUnLock.ShowCellToolTips = false;
-            this.gridUnLock.Size = new System.Drawing.Size(1046, 384);
+            this.gridUnLock.Size = new System.Drawing.Size(1046, 396);
             this.gridUnLock.TabIndex = 2;
             this.gridUnLock.TabStop = false;
             // 
@@ -535,7 +676,7 @@
             this.panel8.Controls.Add(this.btnClose1);
             this.panel8.Controls.Add(this.btnUnlock);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel8.Location = new System.Drawing.Point(3, 461);
+            this.panel8.Location = new System.Drawing.Point(3, 473);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(1046, 53);
             this.panel8.TabIndex = 0;
@@ -564,9 +705,244 @@
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.BtnUnlock_Click);
             // 
+            // TabPage_ReviseHistory
+            // 
+            this.TabPage_ReviseHistory.Controls.Add(this.grid_History);
+            this.TabPage_ReviseHistory.Controls.Add(this.panel3);
+            this.TabPage_ReviseHistory.Location = new System.Drawing.Point(4, 25);
+            this.TabPage_ReviseHistory.Name = "TabPage_ReviseHistory";
+            this.TabPage_ReviseHistory.Padding = new System.Windows.Forms.Padding(3);
+            this.TabPage_ReviseHistory.Size = new System.Drawing.Size(1052, 529);
+            this.TabPage_ReviseHistory.TabIndex = 2;
+            this.TabPage_ReviseHistory.Text = "P99 Revise History";
+            // 
+            // grid_History
+            // 
+            this.grid_History.AllowUserToAddRows = false;
+            this.grid_History.AllowUserToDeleteRows = false;
+            this.grid_History.AllowUserToResizeRows = false;
+            this.grid_History.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid_History.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid_History.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid_History.DataSource = this.listControlBindingSource3;
+            this.grid_History.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid_History.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid_History.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid_History.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid_History.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid_History.Location = new System.Drawing.Point(3, 107);
+            this.grid_History.Name = "grid_History";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid_History.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.grid_History.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid_History.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid_History.RowTemplate.Height = 24;
+            this.grid_History.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid_History.ShowCellToolTips = false;
+            this.grid_History.Size = new System.Drawing.Size(1046, 419);
+            this.grid_History.TabIndex = 3;
+            this.grid_History.TabStop = false;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.labReviseDate);
+            this.panel3.Controls.Add(this.txtSeq2_History);
+            this.panel3.Controls.Add(this.txtSeq1_History);
+            this.panel3.Controls.Add(this.label4);
+            this.panel3.Controls.Add(this.txtID_History);
+            this.panel3.Controls.Add(this.label6);
+            this.panel3.Controls.Add(this.label7);
+            this.panel3.Controls.Add(this.combo_MaterialType_History);
+            this.panel3.Controls.Add(this.label8);
+            this.panel3.Controls.Add(this.label9);
+            this.panel3.Controls.Add(this.btnQuery_history);
+            this.panel3.Controls.Add(this.btnClose_History);
+            this.panel3.Controls.Add(this.combo_Function_history);
+            this.panel3.Controls.Add(this.txtSPNo_History);
+            this.panel3.Controls.Add(this.dateRangeReviseDate);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel3.Location = new System.Drawing.Point(3, 3);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1046, 104);
+            this.panel3.TabIndex = 1;
+            // 
+            // labReviseDate
+            // 
+            this.labReviseDate.Location = new System.Drawing.Point(14, 40);
+            this.labReviseDate.Name = "labReviseDate";
+            this.labReviseDate.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.labReviseDate.RectStyle.BorderWidth = 1F;
+            this.labReviseDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labReviseDate.RectStyle.ExtBorderWidth = 1F;
+            this.labReviseDate.Size = new System.Drawing.Size(94, 23);
+            this.labReviseDate.TabIndex = 23;
+            this.labReviseDate.Text = "Revise Date";
+            this.labReviseDate.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.labReviseDate.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtSeq2_History
+            // 
+            this.txtSeq2_History.BackColor = System.Drawing.Color.White;
+            this.txtSeq2_History.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq2_History.Location = new System.Drawing.Point(377, 72);
+            this.txtSeq2_History.Name = "txtSeq2_History";
+            this.txtSeq2_History.Size = new System.Drawing.Size(52, 23);
+            this.txtSeq2_History.TabIndex = 22;
+            // 
+            // txtSeq1_History
+            // 
+            this.txtSeq1_History.BackColor = System.Drawing.Color.White;
+            this.txtSeq1_History.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq1_History.Location = new System.Drawing.Point(301, 72);
+            this.txtSeq1_History.Name = "txtSeq1_History";
+            this.txtSeq1_History.Size = new System.Drawing.Size(70, 23);
+            this.txtSeq1_History.TabIndex = 21;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(242, 72);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 23);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "SEQ";
+            // 
+            // txtID_History
+            // 
+            this.txtID_History.BackColor = System.Drawing.Color.White;
+            this.txtID_History.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtID_History.Location = new System.Drawing.Point(439, 40);
+            this.txtID_History.Name = "txtID_History";
+            this.txtID_History.Size = new System.Drawing.Size(128, 23);
+            this.txtID_History.TabIndex = 17;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(397, 40);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(39, 23);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "ID";
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(439, 72);
+            this.label7.Name = "label7";
+            this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.RectStyle.BorderWidth = 1F;
+            this.label7.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label7.RectStyle.ExtBorderWidth = 1F;
+            this.label7.Size = new System.Drawing.Size(111, 23);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Material Type";
+            this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // combo_MaterialType_History
+            // 
+            this.combo_MaterialType_History.FormattingEnabled = true;
+            this.combo_MaterialType_History.Location = new System.Drawing.Point(553, 72);
+            this.combo_MaterialType_History.Name = "combo_MaterialType_History";
+            this.combo_MaterialType_History.Size = new System.Drawing.Size(121, 24);
+            this.combo_MaterialType_History.TabIndex = 5;
+            this.combo_MaterialType_History.SelectedIndexChanged += new System.EventHandler(this.Combo_MaterialType_History_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(14, 72);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(94, 23);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "SP#";
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(14, 8);
+            this.label9.Name = "label9";
+            this.label9.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label9.RectStyle.BorderWidth = 1F;
+            this.label9.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label9.RectStyle.ExtBorderWidth = 1F;
+            this.label9.Size = new System.Drawing.Size(94, 23);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Function";
+            this.label9.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label9.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // btnQuery_history
+            // 
+            this.btnQuery_history.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery_history.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnQuery_history.Location = new System.Drawing.Point(940, 7);
+            this.btnQuery_history.Name = "btnQuery_history";
+            this.btnQuery_history.Size = new System.Drawing.Size(101, 43);
+            this.btnQuery_history.TabIndex = 6;
+            this.btnQuery_history.Text = "Query";
+            this.btnQuery_history.UseVisualStyleBackColor = true;
+            this.btnQuery_history.Click += new System.EventHandler(this.BtnQuery_history_Click);
+            // 
+            // btnClose_History
+            // 
+            this.btnClose_History.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose_History.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnClose_History.Location = new System.Drawing.Point(940, 62);
+            this.btnClose_History.Name = "btnClose_History";
+            this.btnClose_History.Size = new System.Drawing.Size(101, 30);
+            this.btnClose_History.TabIndex = 9;
+            this.btnClose_History.Text = "Close";
+            this.btnClose_History.UseVisualStyleBackColor = true;
+            this.btnClose_History.Click += new System.EventHandler(this.BtnClose_History_Click);
+            // 
+            // combo_Function_history
+            // 
+            this.combo_Function_history.BackColor = System.Drawing.Color.White;
+            this.combo_Function_history.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combo_Function_history.FormattingEnabled = true;
+            this.combo_Function_history.IsSupportUnselect = true;
+            this.combo_Function_history.Location = new System.Drawing.Point(111, 8);
+            this.combo_Function_history.Name = "combo_Function_history";
+            this.combo_Function_history.OldText = "";
+            this.combo_Function_history.Size = new System.Drawing.Size(318, 24);
+            this.combo_Function_history.TabIndex = 0;
+            // 
+            // txtSPNo_History
+            // 
+            this.txtSPNo_History.BackColor = System.Drawing.Color.White;
+            this.txtSPNo_History.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo_History.Location = new System.Drawing.Point(111, 72);
+            this.txtSPNo_History.Name = "txtSPNo_History";
+            this.txtSPNo_History.Size = new System.Drawing.Size(128, 23);
+            this.txtSPNo_History.TabIndex = 2;
+            // 
+            // dateRangeReviseDate
+            // 
+            // 
+            // 
+            // 
+            this.dateRangeReviseDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeReviseDate.DateBox1.Name = "";
+            this.dateRangeReviseDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeReviseDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeReviseDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRangeReviseDate.DateBox2.Name = "";
+            this.dateRangeReviseDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeReviseDate.DateBox2.TabIndex = 1;
+            this.dateRangeReviseDate.Location = new System.Drawing.Point(111, 40);
+            this.dateRangeReviseDate.Name = "dateRangeReviseDate";
+            this.dateRangeReviseDate.Size = new System.Drawing.Size(280, 23);
+            this.dateRangeReviseDate.TabIndex = 1;
+            // 
             // P99
             // 
-            this.ClientSize = new System.Drawing.Size(1060, 546);
+            this.ClientSize = new System.Drawing.Size(1060, 558);
             this.Controls.Add(this.tabControl1);
             this.Name = "P99";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
@@ -577,6 +953,8 @@
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridUpdate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.TabPage_UnLock.ResumeLayout(false);
@@ -585,6 +963,11 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel8.ResumeLayout(false);
+            this.TabPage_ReviseHistory.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.grid_History)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
@@ -595,16 +978,12 @@
         public Win.UI.TabControl tabControl1;
         private System.Windows.Forms.TabPage TabPage_UpdateCommand;
         private Win.UI.Panel panel7;
-        private Win.UI.Grid gridUpdate;
         private Win.UI.Panel panel6;
         public System.Windows.Forms.TabPage TabPage_UnLock;
         private Win.UI.Panel panel9;
         private Win.UI.Panel panel8;
-        private System.Windows.Forms.Label label2;
-        private Win.UI.TextBox txtSPNoEnd;
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.DateRange dateCreate;
-        private Win.UI.Label labCreateDate;
         private Win.UI.ComboBox comboFunction;
         private Win.UI.CheckBox checkIncludeCompleteItem;
         private Win.UI.Button btnQuery;
@@ -632,5 +1011,39 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Label labMaterialType2;
+        private Win.UI.Grid gridUpdate;
+        private Win.UI.Panel panel2;
+        private Win.UI.Label labReason;
+        private Win.UI.ComboBox comboReason;
+        private Win.UI.Button btnUpdateReason;
+        private Win.UI.TextBox txtRemark;
+        private Win.UI.Label labRemark;
+        private Win.UI.Label labCreateDate;
+        private Win.UI.TextBox txtSeq2;
+        private Win.UI.TextBox txtSeq1;
+        private Win.UI.Label label2;
+        private Win.UI.TextBox txtWKNo_update;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtID;
+        private Win.UI.Label labID;
+        private System.Windows.Forms.TabPage TabPage_ReviseHistory;
+        private Win.UI.Grid grid_History;
+        private Win.UI.Panel panel3;
+        private Win.UI.Label labReviseDate;
+        private Win.UI.TextBox txtSeq2_History;
+        private Win.UI.TextBox txtSeq1_History;
+        private Win.UI.Label label4;
+        private Win.UI.TextBox txtID_History;
+        private Win.UI.Label label6;
+        private Win.UI.Label label7;
+        private System.Windows.Forms.ComboBox combo_MaterialType_History;
+        private Win.UI.Label label8;
+        private Win.UI.Label label9;
+        private Win.UI.Button btnQuery_history;
+        private Win.UI.Button btnClose_History;
+        private Win.UI.ComboBox combo_Function_history;
+        private Win.UI.TextBox txtSPNo_History;
+        private Win.UI.DateRange dateRangeReviseDate;
+        private Win.UI.ListControlBindingSource listControlBindingSource3;
     }
 }

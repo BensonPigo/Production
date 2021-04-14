@@ -8,6 +8,10 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Reporting.WinForms;
+using Sci.Production.Automation;
+using System.Linq;
+using System.Threading.Tasks;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -50,6 +54,8 @@ namespace Sci.Production.Warehouse
             this.IsSupportDelete = false;
             this.IsSupportConfirm = false;
             this.IsSupportUnconfirm = false;
+            this.IsSupportCheck = false;
+            this.IsSupportUncheck = false;
             this.gridicon.Append.Enabled = false;
             this.gridicon.Append.Visible = false;
             this.gridicon.Insert.Enabled = false;
@@ -187,6 +193,142 @@ namespace Sci.Production.Warehouse
             this.label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            #region Automation = 1 && Location is WMS then open Check,UnCheck
+
+            bool existsWMS = false;
+            if (this.DetailDatas != null && this.DetailDatas.Count > 0)
+            {
+                var wMS_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(x => x["IsWMS"].EqualDecimal(1)).ToList();
+                if (wMS_List.Any())
+                {
+                    existsWMS = true;
+                }
+            }
+
+            if (UtilityAutomation.IsAutomationEnable && existsWMS)
+            {
+                this.IsSupportUncheck = true;
+                this.IsSupportCheck = true;
+
+                this.CheckChkValue = "New";
+                this.ApvChkValue = "Checked";
+                this.UncheckChkValue = "Checked";
+
+                if (this.EditMode == true && this.CurrentMaintain["Status"].ToString() == "Checked")
+                {
+                    this.dateIssueDate.Enabled = false;
+                    this.comboStockType.Enabled = false;
+                    this.editRemark.Enabled = false;
+                    this.gridicon.Remove.Visible = false;
+                    this.gridicon.Remove.Enabled = false;
+                    this.btngenerate.Enabled = false;
+                }
+            }
+            else
+            {
+                this.IsSupportUncheck = false;
+                this.IsSupportCheck = false;
+                this.ApvChkValue = "New";
+                this.CheckChkValue = string.Empty;
+                this.UnApvChkValue = string.Empty;
+
+                this.dateIssueDate.Enabled = true;
+                this.comboStockType.Enabled = true;
+                this.editRemark.Enabled = true;
+                this.gridicon.Remove.Visible = true;
+                this.gridicon.Remove.Enabled = true;
+                this.btngenerate.Enabled = this.EditMode;
+            }
+
+            this.EnsureToolbarExt();
+            #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickCheck()
+        {
+            base.ClickCheck();
+
+            string sqlcmd = $@"
+update StockTaking
+set Status = 'Checked'
+, editname='{Env.User.UserID}', editdate=GETDATE() 
+where id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                this.ShowErr(sqlcmd, result);
+                return;
+            }
+
+            this.FtyBarcodeData(true);
+
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+
+            // AutoWHACC WebAPI for Vstrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentStocktaking_Detail_New(dtDetail, "New"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentStocktaking_Detail_New(dtDetail, "New"))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            MyUtility.Msg.InfoBox("Successfully");
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUncheck()
+        {
+            base.ClickUncheck();
+
+            #region 先檢查WMS是否傳送成功
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                if (!Vstrong_AutoWHAccessory.SentStocktaking_Detail_delete(dtDetail, "Delete"))
+                {
+                    return;
+                }
+            }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (!Gensong_AutoWHFabric.SentStocktaking_Detail_delete(dtDetail, "Delete"))
+                {
+                    return;
+                }
+            }
+            #endregion
+
+            string sqlcmd = $@"
+update StockTaking
+set Status = 'New'
+, editname='{Env.User.UserID}', editdate=GETDATE() 
+where id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                this.ShowErr(sqlcmd, result);
+                return;
+            }
+
+            this.FtyBarcodeData(false);
+            MyUtility.Msg.InfoBox("Successfully");
         }
 
         // detail 新增時設定預設值
@@ -218,8 +360,8 @@ namespace Sci.Production.Warehouse
             .Text("stockunit", header: "Stock Unit", iseditingreadonly: true) // 10
             .ComboBox("FabricType", header: "Material Type", iseditable: false).Get(out cbb_fabrictype) // 11
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 12
-
             ;
+
             #endregion 欄位設定
             cbb_fabrictype.DataSource = new BindingSource(this.di_fabrictype, null);
             cbb_fabrictype.ValueMember = "Key";
@@ -237,6 +379,14 @@ namespace Sci.Production.Warehouse
             {
                 return;
             }
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P50"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
 
             DualResult result;
             #region store procedure parameters
@@ -265,6 +415,24 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox(ex.Message);
                 return;
             }
+
+            string adjID = MyUtility.GetValue.Lookup($"select id from Adjust where StocktakingID ='{this.CurrentMaintain["ID"].ToString()}'");
+            if (!MyUtility.Check.Empty(adjID))
+            {
+                DataTable dtID = new DataTable();
+                DataRow drID;
+                dtID.Columns.Add("ID", typeof(string));
+                drID = dtID.NewRow();
+                drID["ID"] = adjID;
+                dtID.Rows.Add(drID);
+
+                // AutoWH ACC WebAPI for Vstrong
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_Detail_New(dtID, "New"))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+            }
         }
 
         // 寫明細撈出的sql command
@@ -279,7 +447,8 @@ namespace Sci.Production.Warehouse
 ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
-,dbo.Getlocation(fi.ukey) location
+,[location] = dbo.Getlocation(fi.ukey)
+,[IsWMS] = IIF(WMS.IsWMS = 1, 1, 0)
 ,a.QtyBefore
 ,a.QtyAfter
 ,a.QtyAfter - a.QtyBefore as variance
@@ -295,6 +464,11 @@ from dbo.StockTaking_detail as a WITH (NOLOCK)
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2= fi.seq2
     and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
+outer apply(
+	select top 1 IsWMS from MtlLocation ml
+	inner join SplitString(dbo.Getlocation(fi.ukey),',') sp on sp.Data = ml.ID
+	where ml.IsWMS= 1
+)WMS
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -324,6 +498,110 @@ Where a.id = '{0}'", masterID);
             P50_Print p = new P50_Print(this.CurrentDataRow);
             p.ShowDialog();
             return true;
+        }
+
+        private void FtyBarcodeData(bool isConfirmed)
+        {
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlcmd = $@"
+select
+[Barcode1] = f.Barcode
+,[Barcode2] = fb.Barcode
+,[OriBarcode] = fbOri.Barcode
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+,[NewBarcode] = ''
+,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
+from Production.dbo.Stocktaking_Detail i2
+inner join Production.dbo.Stocktaking i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.POID
+    and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
+    and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+    and f.StockType = i2.StockType
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+)fb
+outer apply(
+	select *
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = '{this.CurrentMaintain["ID"]}'
+)fbOri
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and i2.id = '{this.CurrentMaintain["ID"]}'
+
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
+                if (isConfirmed)
+                {
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                    {
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
+                    }
+                    else
+                    {
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = dr["Barcode1"];
+                    }
+                }
+                else
+                {
+                    // unConfirmed 要用自己的紀錄給補回
+                    dr["NewBarcode"] = dr["OriBarcode"];
+                }
+            }
+
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                    select new
+                                    {
+                                        TransactionID = m.Field<string>("ID"),
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("NewBarcode"),
+                                    }).ToList();
+
+            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+            string upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
+            string upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
+            DataTable resulttb;
+            if (data_Fty_Barcode.Count >= 1)
+            {
+                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
         }
     }
 }

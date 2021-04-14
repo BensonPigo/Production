@@ -20,10 +20,17 @@ namespace Sci.Production.Warehouse
     public partial class P99 : Sci.Win.Tems.QueryForm
     {
         private string strFunction;
+        private string strFunction_Text;
+        private string strFunction_History;
+        private string strFunction_Text_History;
         private string strMaterialType_Sheet1;
+        private string strMaterialType_Sheet_history;
         private string strTransID;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty = new Ict.Win.UI.DataGridViewNumericBoxColumn();
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Remark = new Ict.Win.UI.DataGridViewTextBoxColumn();
+        private Ict.Win.UI.DataGridViewComboBoxColumn col_comboReason = new Ict.Win.UI.DataGridViewComboBoxColumn();
+        private Dictionary<string, string> di_Reason = new Dictionary<string, string>();
 
         /// <inheritdoc/>
         public P99(ToolStripMenuItem menuitem)
@@ -33,6 +40,7 @@ namespace Sci.Production.Warehouse
             this.EditMode = true;
             this.Initl(true);
             this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
+            this.TabPage_ReviseHistory.Parent = this.tabControl1; // 顯示
         }
 
         /// <inheritdoc/>
@@ -45,19 +53,7 @@ namespace Sci.Production.Warehouse
             this.Query();
         }
 
-        private void BtnQuery_Click(object sender, EventArgs e)
-        {
-            // Click 按鈕[Query]需要設定, 不然Query無法判別是哪個function
-            this.strFunction = this.comboFunction.SelectedValue.ToString();
-            if (MyUtility.Check.Empty(this.strFunction) || MyUtility.Check.Empty(this.dateCreate.Value1) || MyUtility.Check.Empty(this.dateCreate.Value2))
-            {
-                MyUtility.Msg.WarningBox("<Function>,<Create Date> cannot be empty!");
-                this.comboFunction.Select();
-                return;
-            }
-
-            this.Query();
-        }
+        #region Sheet [Update Command]
 
         /// <inheritdoc/>
         public void Query()
@@ -87,7 +83,7 @@ select    [Selected] = 0 --0
 				iif(t2.Unoriginal is  null , ttlQty.value, null))) +' '+ t2.PoUnit
         
         , t2.StockQty--12
-        , [Old_StockQty] = t2.StockQty
+        , [Old_Qty] = t2.StockQty
         , [diffQty] = 0.00
         , t2.StockUnit--13
         , t2.StockType--14
@@ -101,6 +97,8 @@ select    [Selected] = 0 --0
         , t2.Ukey
         ,Barcode = isnull(ft.barcode,'')
         ,t1.InvNo,t1.ETA,t1.WhseArrival
+        ,[WHCommandReason] = w.Reason
+		,[WHCommandRemark] = w.Remark
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 INNER JOIN Receiving t1 WITH (NOLOCK) ON t2.id= t1.Id
 left join orders o WITH (NOLOCK) on o.id = t2.PoId
@@ -112,6 +110,8 @@ left join FtyInventory ft on ft.POID = t2.PoId
                             and ft.StockType = t2.StockType 
                             and ft.Roll =t2.Roll 
                             and ft.Dyelot = t2.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
@@ -162,18 +162,22 @@ select    [Selected] = 0 --0
             where b.id= t2.poid and b.seq1 = t2.seq1 and b.seq2 = t2.seq2) --7
         , [Qty] = t2.StockQty--8
         , t2.StockQty
-        , [Old_StockQty] = t2.StockQty
+        , [Old_Qty] = t2.StockQty
         , [diffQty] = 0.00
         , t2.Location--9
         , t2.Remark--10
         , t2.Ukey
         , t2.StockType
         ,t1.InvNo,t1.ETA,t1.WhseArrival
+        ,[WHCommandReason] = w.Reason
+		,[WHCommandRemark] = w.Remark
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 inner join Receiving t1 WITH (NOLOCK) on t2.Id = t1.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -197,7 +201,7 @@ select distinct  [Selected] = 0 --0
 		, t2.Weight--7
 		, [ActualWeight] = isnull(t2.ActualWeight, 0)--8
 		, t2.Qty--9
-        , [Old_StockQty] = t2.Qty
+        , [Old_Qty] = t2.Qty
         , [diffQty] = 0.00
         , StockUnit = dbo.GetStockUnitBySPSeq (t2.poid, t2.seq1, t2.seq2)--10        
         , TtlQty = convert(varchar(20),
@@ -208,13 +212,18 @@ select distinct  [Selected] = 0 --0
 		, t2.Remark--14        
         , po3.Refno--15
 		, [ColorID] = Color.Value--16        
-        , t2.Ukey        
+        , t2.Ukey      
+        , t1.InvNo
+	    ,[WHCommandReason] = w.Reason
+		,[WHCommandRemark] = w.Remark
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t1.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
 LEFT JOIN Fabric f WITH (NOLOCK) ON po3.SCIRefNo=f.SCIRefNo
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 outer apply(
 	select value = sum(Qty)
 	from TransferIn_Detail t WITH (NOLOCK) 
@@ -231,6 +240,159 @@ OUTER APPLY(
 Where 1=1
 and t1.Status = 'Confirmed'
 ";
+                    break;
+                case "P10":
+                    #region P10 sqlcmd
+                    sqlcmd = @"
+;with main as
+(
+	select   distinct  [Selected] = 0 --0
+			, [SentToWMS] = iif(t2.SentToWMS=1,'V','')
+			, [CompleteTime] = t2.CompleteTime
+			, a.Id
+	        , a.Poid
+            , a.SCIRefno
+	        , f.Refno
+	        , [Ttl_Qty] = a.Qty
+			, [Qty] = t2.Qty
+	        , a.Colorid
+	        , [description] = f.DescDetail
+	        , [requestqty] = isnull((select sum(cons) 
+		                             from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
+		                             inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.ID=c.Poid 
+                                                                                      and p.SEQ1 = c.Seq1 
+                                                                                      and p.SEQ2 = c.Seq2
+		                             where  c.id = t1.CutplanID
+                                            and c.poid = a.poid
+                                            and a.SciRefno = p.SciRefno
+                                            and a.ColorID = p.ColorID), 0.00)
+	        , [accu_issue] =isnull ((select  sum(qty) 
+                                    from Issue c WITH (NOLOCK) 
+                                    inner join Issue_Summary b WITH (NOLOCK) on c.Id=b.Id 
+                                    where   a.poid = b.poid 
+                                            and a.SCIRefno = b.SCIRefno 
+                                            and a.Colorid = b.Colorid 
+                                            and c.CutplanID = t1.CutplanID
+                                            and c.status='Confirmed'
+                                            and c.id != t1.Id)
+                                    , 0.00)
+	        , a.Ukey
+            , unit = (select top 1 StockUnit 
+                      from Po_Supp_Detail psd 
+                      where psd.Id = a.Poid
+                            and psd.SciRefno = a.SciRefno)
+            , NetQty = isnull(NetQty.value, 0)
+            , [FinalFIR] = (SELECT Stuff((select concat( '/',isnull(Result,' '))   
+                                from dbo.FIR f with (nolock) 
+                                where f.poid = a.poid and f.SCIRefno = a.SCIRefno and
+                                      exists(select 1 from Issue_Detail with (nolock) where Issue_SummaryUkey = a.Ukey and f.seq1 = seq1 and f.seq2 = seq2)
+                                FOR XML PATH('')),1,1,'') )
+			,t1.CutplanID
+            ,t2.Seq1,t2.Seq2,t2.Roll,t2.Dyelot,t2.StockType
+	from dbo.Issue_Summary a WITH (NOLOCK) 
+	inner join Issue_Detail t2 WITH (NOLOCK) on t2.Id = a.Id and t2.Issue_SummaryUkey = a.Ukey
+	inner join Issue t1 WITH (NOLOCK) on t1.Id = a.Id
+    left join Fabric f on a.SciRefno = f.SciRefno
+    left JOIN PO_Supp_Detail po3 on po3.ID = t2.POID and po3.SEQ1 = t2.Seq1 and po3.SEQ2 = t2.Seq2 
+    outer apply (
+        select top 1 NetQty = isnull (psd.NetQty, 0)
+        from  PO_Supp_Detail psd WITH (NOLOCK) 
+        where psd.NetQty != 0
+              and psd.NetQty is not null
+              and psd.StockPoid = ''
+              and a.Poid = psd.ID
+              and a.SciRefno = psd.SciRefno
+              and a.ColorID = psd.ColorID
+              and psd.FabricType = 'F'
+    ) Normal
+    outer apply (
+        select top 1 NetQty = isnull (psd.NetQty, 0)
+        from  PO_Supp_Detail psd WITH (NOLOCK) 
+        where psd.NetQty != 0
+              and psd.NetQty is not null
+              and psd.StockPoid != ''
+              and a.Poid = psd.ID
+              and a.SciRefno = psd.SciRefno
+              and a.ColorID = psd.ColorID
+              and psd.FabricType = 'F'
+    ) NonNormal
+    outer apply (
+        select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
+    ) NetQty
+	Where 1=1 ";
+                    if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
+                    {
+                        sqlcmd += $@" and t2.Poid = '{this.txtSPNoStart.Text}'" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq1.Text))
+                    {
+                        sqlcmd += $@" and t2.Seq1 = '{this.txtSeq1.Text}'" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                    {
+                        sqlcmd += $@" and t2.Seq2 = '{this.txtSeq2.Text}'" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.strTransID))
+                    {
+                        sqlcmd += $@" and t2.id = '{this.strTransID}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dateCreate.Value1) && !MyUtility.Check.Empty(this.dateCreate.Value2))
+                    {
+                        sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                    }
+
+                    if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
+                    {
+                        sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
+                    }
+
+                    sqlcmd += @"
+)
+select  a.*
+        , tmpQty.arqty 
+        , tmpQty.aiqqty
+        , tmpQty.arqty -tmpQty.aiqqty as [avqty] 
+        , [Old_Qty] = a.Qty
+		, [diffQty] = 0.00
+        , [WHCommandReason] = w.Reason
+		, [WHCommandRemark] = w.Remark
+from main a
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on a.PoId = w.POID
+	and a.Seq1= w.SEQ1 and a.Seq2 = w.SEQ2 and a.Roll = w.Roll and a.Dyelot = w.Dyelot and a.StockType = w.StockType
+outer apply(
+    select arqty = a.requestqty 
+                    + isnull ((select sum(c.Cons) 
+                               from  dbo.Cutplan_Detail_Cons c  WITH (NOLOCK) 
+                               inner join (
+                                    Select   distinct s.Poid
+                                             ,s.seq1
+                                             ,s.seq2
+                                             ,i.CutplanID 
+                                    from Issue_Summary s WITH (NOLOCK) 
+                                    inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!= a.CutplanID and i.status='Confirmed' 
+                                    where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID
+                               ) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID)
+                            , 0.00)
+
+            , aiqqty = isnull ((select a.qty 
+                                from dbo.Issue c WITH (NOLOCK) 
+                                where c.id=a.id and c.status!='Confirmed' ) 
+                               , 0.00)
+                       +isnull ((select sum(s.Qty) 
+                                 from Issue_Summary s WITH (NOLOCK) 
+                                 inner join Issue i WITH (NOLOCK) on s.Id=i.Id 
+                                 where  s.Poid = a.poid 
+                                        and s.SCIRefno = a.SCIRefno 
+                                        and s.Colorid = a.ColorID 
+                                        and i.status = 'Confirmed')
+                                , 0.00)
+) as tmpQty
+";
+                    #endregion
                     break;
                 case "P11":
                     sqlcmd = @"
@@ -280,6 +442,8 @@ and t1.Status = 'Confirmed'
                 and iss.AutoPickQty <> 0
 				for xml path('')
 			),1,1,''))--14
+        ,[WHCommandReason] = w.Reason
+		,[WHCommandRemark] = w.Remark
 from dbo.Issue_Detail t2 WITH (NOLOCK) 
 inner join dbo.issue t1 WITH (NOLOCK)  on t2.Id = t1.Id
 inner join dbo.Issue_Size t3 WITH (NOLOCK) on t2.ukey = t3.Issue_DetailUkey
@@ -292,6 +456,8 @@ left join dbo.FtyInventory FI on    t2.Poid = Fi.Poid
                                     and t2.roll = fi.roll 
                                     and t2.stocktype = fi.stocktype
                                     and t2.Dyelot = fi.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+    and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where  1=1  
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -315,11 +481,15 @@ select [Selected] = 0 --0
 ,[location] = dbo.Getlocation(Fi.ukey) --6
 , t2.Ukey
 , t2.id
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.issue_detail t2 WITH (NOLOCK) 
 inner join dbo.Issue t1 WITH (NOLOCK) on t1.id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2 = FI.Seq2 and FI.Dyelot = t2.Dyelot
     and t2.Roll = FI.Roll and FI.stocktype = 'B'   
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and t1.Type='C'
 and t1.Status = 'Confirmed'
@@ -360,13 +530,17 @@ select  [Selected] = 0 --0
 ,dbo.Getlocation(c.ukey) location--12
 , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty, 0.00) as balance--13
 , t2.Ukey
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.issue_detail as t2 WITH (NOLOCK) 
 inner join issue t1 WITH (NOLOCK) on t2.Id=t1.Id
 left join Orders o on t2.poid = o.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join PO_Supp p WITH (NOLOCK) on p.ID = po3.ID and po3.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = t2.poid and c.seq1 = t2.seq1 and c.seq2  = t2.seq2 
-and c.stocktype = 'B' and c.roll=t2.roll and t2.Dyelot = c.Dyelot
+    and c.stocktype = 'B' and c.roll=t2.roll and t2.Dyelot = c.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 Where 1=1
 and t1.Type='D'
 and t1.Status = 'Confirmed'
@@ -474,12 +648,17 @@ WITH BreakdownByArticle as (
 ";
                     if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
                     {
-                        sqlcmd += $@" and t2.Poid >= '{this.txtSPNoStart.Text}'" + Environment.NewLine;
+                        sqlcmd += $@" and t2.Poid = '{this.txtSPNoStart.Text}'" + Environment.NewLine;
                     }
 
-                    if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                    if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                     {
-                        sqlcmd += $@" and t2.Poid <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
+                        sqlcmd += $@" and t2.Seq1 = '{this.txtSeq1.Text}'" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                    {
+                        sqlcmd += $@" and t2.Seq2 = '{this.txtSeq2.Text}'" + Environment.NewLine;
                     }
 
                     if (!MyUtility.Check.Empty(this.strTransID))
@@ -575,12 +754,16 @@ SELECt [Selected] = 0 --0
 		, [OutputQty]
 		, [Balance(Stock Unit)] = Balance.Qty
 		, [Location]=Location.MtlLocationID
-		, [POID]
+		, t.POID
 		, MDivisionID
-		, ID
-		, Ukey
-		, Seq1,Seq2,Roll,Dyelot,StockType,Type
+		, t.ID
+		, t.Ukey
+		, t.Seq1,t.Seq2,t.Roll,t.Dyelot,t.StockType,t.Type
+		,[WHCommandReason] = w.Reason
+		,[WHCommandRemark] = w.Remark
 FROM final t
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t.PoId = w.POID
+	and t.Seq1= w.SEQ1 and t.Seq2 = w.SEQ2 and t.Roll = w.Roll and t.Dyelot = w.Dyelot and t.StockType = w.StockType
 OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty )) ,0)
 	FROM PO_Supp_Detail psd 
@@ -620,10 +803,15 @@ select [Selected] = 0 --0
 ,t2.ukey
 ,t2.FtyInventoryUkey
 ,t1.Type,t1.FabricType
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
-left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
+left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID 
+    and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and po3.FabricType='A'
 and t1.Status = 'Confirmed'
@@ -652,6 +840,8 @@ select [Selected] = 0 --0
 , t2.ukey
 , t2.FtyInventoryUkey
 , t2.Remark
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
@@ -662,6 +852,8 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.Roll = f.Roll 
 									and t2.Dyelot = f.Dyelot 
 									and t2.StockType = f.StockType
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and po3.FabricType='F'
 and t1.Status = 'Confirmed'
@@ -689,6 +881,8 @@ select [Selected] = 0 --0
 , location = dbo.Getlocation(f.Ukey) 
 , t2.ukey
 , t2.FtyInventoryUkey
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.IssueReturn_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueReturn t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
@@ -699,6 +893,8 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.Roll = f.Roll 
 									and t2.Dyelot = f.Dyelot 
 									and t2.StockType = f.StockType
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -725,11 +921,15 @@ select [Selected] = 0 --0
 ,t2.ToSeq1
 ,t2.ToSeq2
 ,[ToSeq] = t2.ToSeq1 +' ' + t2.ToSeq2
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.TransferOut_Detail t2 WITH (NOLOCK) 
 inner join TransferOut t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2 = FI.Seq2 and t2.Dyelot = FI.Dyelot
     and t2.Roll = FI.Roll and t2.StockType = FI.StockType
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -756,11 +956,15 @@ select [Selected] = 0 --0
 ,t2.ukey
 ,t2.ftyinventoryukey
 ,ColorID =dbo.GetColorMultipleID(po3.BrandId, po3.ColorID)
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.Adjust_Detail t2 WITH (NOLOCK) 
 inner join dbo.Adjust t1 WITH (NOLOCK) on t1.ID = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and t1.Type = 'B'
 and t1.Status = 'Confirmed'
@@ -790,11 +994,15 @@ select [Selected] = 0 --0
     ,[location] = Getlocation.Value 
     ,[ColorID] = ColorID.Value
     ,[Description] = dbo.getmtldesc(po3.id,po3.seq1,po3.seq2,2,0)
+    ,[WHCommandReason] = w.Reason
+    ,[WHCommandRemark] = w.Remark
 from dbo.Adjust_Detail t2 WITH (NOLOCK) 
 inner join dbo.Adjust t1 WITH (NOLOCK)  on t1.ID = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 outer apply (
     select   [Value] = stuff((	select ',' + MtlLocationID
 									from (	
@@ -848,12 +1056,16 @@ t2.ReasonId,
 [reason_nm]=Reason.Name,
 t2.Ukey,
 ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from Adjust_Detail t2
 inner join Adjust t1 on t2.ID = t1.id
 inner join PO_Supp_Detail PO3 on PO3.ID=t2.POID 
 inner join FtyInventory FTI on FTI.POID=t2.POID and FTI.Seq1=t2.Seq1
 	and FTI.Seq2=t2.Seq2 and FTI.Roll=t2.Roll and FTI.StockType='O'
-and PO3.SEQ1=t2.Seq1 and PO3.SEQ2=t2.Seq2 and FTI.Dyelot = t2.Dyelot
+    and PO3.SEQ1=t2.Seq1 and PO3.SEQ2=t2.Seq2 and FTI.Dyelot = t2.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 outer apply (
 	select Description from Fabric where SCIRefno=PO3.SCIRefno
 ) Fa
@@ -889,11 +1101,15 @@ select
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
     ,ColorID =dbo.GetColorMultipleID(po3.BrandId, po3.ColorID)
     ,t2.ukey
+    ,[WHCommandReason] = w.Reason
+    ,[WHCommandRemark] = w.Remark
 from Adjust_detail t2 WITH (NOLOCK) 
 inner join Adjust t1 WITH (NOLOCK) on t1.ID = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.id = t2.POID and po3.SEQ1 = t2.Seq1 and po3.SEQ2 = t2.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = po3.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = t2.POID and fi.Seq1 = t2.Seq1 and fi.Seq2 = t2.Seq2 and fi.Roll = t2.Roll and fi.StockType = t2.StockType and fi.Dyelot = t2.Dyelot
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 where 1=1
 and t1.Type = 'R'
 and t1.Status = 'Confirmed'
@@ -927,11 +1143,16 @@ select [Selected] = 0 --0
 ,t2.ukey
 ,dbo.Getlocation(fi.ukey) location
 ,t1.Type
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.SubTransfer_detail t2 WITH(NOLOCK) 
 inner join SubTransfer t1 WITH(NOLOCK)  on t1.Id = t2.id	
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
 left join FtyInventory FI on t2.fromPoid = fi.poid and t2.fromSeq1 = fi.seq1 and t2.fromSeq2 = fi.seq2 and t2.fromDyelot = fi.Dyelot
     and t2.fromRoll = fi.roll and t2.fromStocktype = fi.stocktype
+left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
+	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
+	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='A'
 and t1.Status = 'Confirmed'
@@ -968,6 +1189,8 @@ select    [Selected] = 0 --0
         , t2.ukey
         , location = dbo.Getlocation (fi.ukey)
         , t1.Type
+        ,[WHCommandReason] = w.Reason
+        ,[WHCommandRemark] = w.Remark
 from dbo.SubTransfer_detail t2 WITH (NOLOCK) 
 inner join dbo.SubTransfer t1 WITH (NOLOCK)  on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId 
@@ -979,6 +1202,9 @@ left join FtyInventory FI on t2.FromPoid = fi.poid
                              and t2.fromRoll = fi.roll 
                              and t2.fromStocktype = fi.stocktype
                              and t2.fromDyelot = fi.Dyelot
+left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
+	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
+	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type = 'B'
 and t1.Status = 'Confirmed'
@@ -1014,10 +1240,15 @@ select [Selected] = 0 --0
     ,t2.ukey
     ,t2.tolocation
     ,t1.Type
+    ,[WHCommandReason] = w.Reason
+    ,[WHCommandRemark] = w.Remark
 from dbo.SubTransfer_Detail t2 WITH (NOLOCK) 
 inner join SubTransfer t1 WITH (NOLOCK)  on t1.Id = t2.id	
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on t2.FromPOID=f.POID and t2.FromSeq1=f.Seq1 and t2.FromSeq2=f.Seq2 and t2.FromRoll=f.Roll and t2.FromDyelot=f.Dyelot and t2.FromStockType=f.StockType
+left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
+	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
+	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type = 'E'
 and t1.Status = 'Confirmed'
@@ -1053,10 +1284,15 @@ select
 ,t2.ToLocation
 ,t2.ukey
 ,t1.Type
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.SubTransfer_Detail t2 WITH (NOLOCK) 
 inner join SubTransfer t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 
 and po3.SEQ2 = t2.FromSeq2
+left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
+	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
+	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='C'
 and t1.Status = 'Confirmed'
@@ -1079,11 +1315,15 @@ select [Selected] = 0 --0
 ,dbo.Getlocation(fi.ukey) location
 ,t2.ukey
 ,t2.FtyInventoryUkey
+,[WHCommandReason] = w.Reason
+,[WHCommandRemark] = w.Remark
 from dbo.ReturnReceipt_Detail t2 WITH (NOLOCK) 
 inner join ReturnReceipt t1 WITH (NOLOCK)  on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot 
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 Where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -1123,11 +1363,16 @@ select  [Selected] = 0 --0
                            for xml path(''))
                           , 1, 1, '') 
         ,t2.ToLocation
+        ,[WHCommandReason] = w.Reason
+        ,[WHCommandRemark] = w.Remark
 from dbo.BorrowBack_detail t2 WITH (NOLOCK) 
 inner join BorrowBack t1 WITH (NOLOCK) on t1.Id = t2.id	
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
 left join FtyInventory FI on t2.FromPoid = Fi.Poid and t2.FromSeq1 = Fi.Seq1 and t2.FromSeq2 = Fi.Seq2 
     and t2.FromRoll = Fi.Roll and t2.FromDyelot = Fi.Dyelot and t2.FromStockType = StockType
+left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
+	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
+	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='A'
 and t1.Status = 'Confirmed'
@@ -1163,11 +1408,16 @@ select  [Selected] = 0 --0
         ,t2.ukey
         ,location = dbo.Getlocation(fi.ukey)
         ,t2.ToLocation
+        ,[WHCommandReason] = w.Reason
+        ,[WHCommandRemark] = w.Remark
 from dbo.BorrowBack_detail t2 WITH (NOLOCK) 
 inner join dbo.BorrowBack t1 WITH (NOLOCK) on t1.Id = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
 left join FtyInventory FI on t2.fromPoid = fi.poid and t2.fromSeq1 = fi.seq1 and t2.fromSeq2 = fi.seq2 and t2.fromDyelot = fi.Dyelot 
     and t2.fromRoll = fi.roll and t2.fromStocktype = fi.stocktype
+left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
+	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
+	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -1211,10 +1461,14 @@ select  [Selected] = 0 --0
 	, arqty = ec.RequestQty + AccuReq.ReqQty
 	, aiqqty = AccuIssue.aiqqty
 	, avqty = (ec.RequestQty + AccuReq.ReqQty) - AccuIssue.aiqqty	
+    ,[WHCommandReason] = w.Reason
+    ,[WHCommandRemark] = w.Remark
 from dbo.Issue_Summary s WITH (NOLOCK) 
 left join Issue_Detail t2 WITH (NOLOCK) on t2.Id = s.Id and t2.Issue_SummaryUkey = s.Ukey
 inner join issue t1 WITH (NOLOCK) on t1.Id = s.Id
 left join Fabric f on s.SciRefno = f.SciRefno
+left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
 outer apply(
 	select top 1 po.FabricType
 	from PO_Supp_Detail po
@@ -1276,7 +1530,7 @@ and t1.Type='I'
                     break;
             }
 
-            if (this.strFunction != "P33")
+            if (this.strFunction != "P33" && this.strFunction != "P10")
             {
                 switch (this.strFunction)
                 {
@@ -1288,24 +1542,34 @@ and t1.Type='I'
                     case "P32":
                         if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
                         {
-                            sqlcmd += $@" and t2.FromPoId >= '{this.txtSPNoStart.Text}'" + Environment.NewLine;
+                            sqlcmd += $@" and (t2.FromPoId = '{this.txtSPNoStart.Text}' or t2.ToPoid = '{this.txtSPNoStart.Text}')" + Environment.NewLine;
                         }
 
-                        if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                        if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                         {
-                            sqlcmd += $@" and t2.FromPoId <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
+                            sqlcmd += $@" and (t2.FromSeq1 = '{this.txtSeq1.Text}' or t2.ToSeq1 = '{this.txtSeq1.Text}')" + Environment.NewLine;
+                        }
+
+                        if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                        {
+                            sqlcmd += $@" and (t2.FromSeq2 = '{this.txtSeq2.Text}' or t2.ToSeq2 = '{this.txtSeq2.Text}')" + Environment.NewLine;
                         }
 
                         break;
                     default:
                         if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
                         {
-                            sqlcmd += $@" and t2.Poid >= '{this.txtSPNoStart.Text}'" + Environment.NewLine;
+                            sqlcmd += $@" and t2.Poid = '{this.txtSPNoStart.Text}'" + Environment.NewLine;
                         }
 
-                        if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                        if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                         {
-                            sqlcmd += $@" and t2.Poid <= '{this.txtSPNoEnd.Text}'" + Environment.NewLine;
+                            sqlcmd += $@" and t2.Seq1 = '{this.txtSeq1.Text}'" + Environment.NewLine;
+                        }
+
+                        if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                        {
+                            sqlcmd += $@" and t2.Seq2 = '{this.txtSeq2.Text}'" + Environment.NewLine;
                         }
 
                         break;
@@ -1324,6 +1588,14 @@ and t1.Type='I'
                 if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
                 {
                     sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
+                }
+            }
+
+            if (this.strFunction == "P07" || this.strFunction == "P18")
+            {
+                if (!MyUtility.Check.Empty(this.txtWKNo_update.Text))
+                {
+                    sqlcmd += $@" and t1.InvNo = '{this.txtWKNo_update.Text}'";
                 }
             }
 
@@ -1388,7 +1660,7 @@ and t1.Type='I'
                                 }
 
                                 // 計算差額, 用來更新庫存
-                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["stockqty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["stockqty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
                                 dr["Selected"] = "1";
                             }
 
@@ -1416,7 +1688,7 @@ and t1.Type='I'
                                 dr["StockQty"] = e.FormattedValue;
 
                                 // 計算差額, 用來更新庫存
-                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
                                 dr["Selected"] = "1";
                             }
 
@@ -1443,7 +1715,7 @@ and t1.Type='I'
                                 dr["Qty"] = e.FormattedValue;
 
                                 // 計算差額, 用來更新庫存
-                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_StockQty"]);
+                                dr["diffQty"] = MyUtility.Convert.GetDecimal(dr["Qty"]) - MyUtility.Convert.GetDecimal(dr["Old_Qty"]);
                                 dr["Selected"] = "1";
                             }
 
@@ -1459,6 +1731,7 @@ and t1.Type='I'
                         }
                     };
                     break;
+                case "P10":
                 case "P11":
                 case "P33":
                 case "P62":
@@ -1683,6 +1956,8 @@ and t1.Type='I'
                    .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true) // 7
                    .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) // 8
                    .Numeric("Qty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty)
+                   .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                   .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                    .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true) // 10
                    .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
                    .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 12
@@ -1713,6 +1988,8 @@ and t1.Type='I'
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)
                     .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("Qty", header: "Receiving Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: false, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true)
                     .EditText("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     ;
@@ -1734,6 +2011,8 @@ and t1.Type='I'
                     .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("Qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: false, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("stockunit", header: "Unit", iseditingreadonly: true)
                     .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
                     .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false)
@@ -1741,6 +2020,35 @@ and t1.Type='I'
                     .Text("Remark", header: "Remark", iseditingreadonly: true)
                     .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                     .Text("ColorID", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    ;
+                    #endregion
+                    break;
+                case "P10":
+                    #region P10
+                    this.gridUpdate.IsEditingReadOnly = false;
+                    this.Helper.Controls.Grid.Generator(this.gridUpdate)
+                    .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                    .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
+                    .Text("SCIRefno", header: "SCIRefno", width: Widths.AnsiChars(23), iseditingreadonly: true) // 1
+                    .Text("Refno", header: "Refno", width: Widths.AnsiChars(17), iseditingreadonly: true) // 1
+                    .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                    .EditText("Description", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true) // 4
+                    .Numeric("requestqty", name: "requestqty", header: "Request", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 5
+                    .Numeric("accu_issue", name: "accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
+                    .Numeric(string.Empty, name: "bal_qty", header: "Bal. Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
+                    .Numeric("Qty", name: "qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: false, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
+                    .Numeric("Ttl_Qty", header: "Ttl Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+                    .Text("FinalFIR", header: "Final FIR", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
+                    .Numeric(string.Empty, name: "var_qty", header: "Var Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 9
+                    .Numeric("arqty", name: "arqty", header: "Accu Req. Qty by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 9
+                    .Numeric("aiqqty", name: "aiqqty", header: "Accu Issue Qty by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 9
+                    .Numeric("avqty", name: "avqty", header: "Accu Var by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 9
+                    .Text("unit", header: "unit", width: Widths.AnsiChars(4), iseditingreadonly: true) // add
+                    .Numeric("netqty", name: "netqty", header: "Net Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 10
                     ;
                     #endregion
                     break;
@@ -1762,6 +2070,8 @@ and t1.Type='I'
                     .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Numeric("Qty", header: "Pick Qty", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 10, iseditingreadonly: false, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("Ttl_Qty", header: "Ttl Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .Text("output", header: "Pick Output", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -1783,6 +2093,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                     .Text("stockunit", header: "Unit", iseditingreadonly: true)
                     .Numeric("Qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true)
                     ;
                     #endregion
@@ -1805,6 +2117,8 @@ and t1.Type='I'
                     .Numeric("NetQty", header: "Used Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                     .Numeric("LossQty", header: "Loss Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10)
                     ;
@@ -1826,6 +2140,8 @@ and t1.Type='I'
                     .Numeric("@Qty", header: "@Qty", width: Widths.AnsiChars(15), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("AccuIssued", header: "Accu. Issued" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .Numeric("Qty", header: "Issue Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: false, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("Ttl_Qty", header: "Ttl Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                     .Numeric("Use Qty By Stock Unit", header: "Use Qty" + Environment.NewLine + "By Stock Unit", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
                     .Text("Stock Unit", header: "Stock Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -1850,6 +2166,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                     .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     ;
                     #endregion
@@ -1868,6 +2186,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                     .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
                     #endregion
@@ -1885,6 +2205,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                     .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Bulk Location", iseditingreadonly: true) // 7
                     ;
                     break;
@@ -1902,6 +2224,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                     .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Out Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), iseditable: false) // 7
                     .Text("Location", header: "Location", iseditingreadonly: true) // 8
                     .Text("ToPOID", header: "To POID", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -1924,6 +2248,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Numeric("qtybefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("qty", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))
                     .Text("Location", header: "Location", iseditingreadonly: true)
@@ -1947,6 +2273,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) // 4
                     .Numeric("qtybefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
                     .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 8
                     .Text("Location", header: "Location", iseditingreadonly: true) // 9
@@ -1970,6 +2298,8 @@ and t1.Type='I'
                     .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Numeric("QtyBefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("Qty", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: 0, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Text("StockUnit", header: "Unit", iseditingreadonly: true)
                     .Text("location", header: "location", iseditingreadonly: true)
@@ -1993,6 +2323,8 @@ and t1.Type='I'
                     .Text("Description", header: "Description", width: Widths.AnsiChars(8), iseditingreadonly: true) // 4
                     .Numeric("QtyBefore", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 4
                     .Numeric("Qty", header: "Current Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, minimum: 0, settings: chk_qty).Get(out this.col_Qty) // 5
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("adjustqty", header: "Remove Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 6
                     .Text("StockUnit", header: "Unit", iseditingreadonly: true) // 7
                     .Text("Location", header: "Location", iseditingreadonly: true) // 7
@@ -2016,6 +2348,8 @@ and t1.Type='I'
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
                     .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 7
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("toLocation", header: "To Location", iseditingreadonly: true, width: Widths.AnsiChars(18)) // 8
                     ;
                     #endregion
@@ -2035,6 +2369,8 @@ and t1.Type='I'
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 5
                     .Text("Location", header: "From" + Environment.NewLine + "Location", iseditingreadonly: true) // 6
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 7
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("topoid", header: "Bulk" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 8
                     .Text("toseq", header: "Bulk" + Environment.NewLine + " Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 9
                     .Text("toLocation", header: "To Location", iseditingreadonly: false, width: Widths.AnsiChars(18)) // 10
@@ -2056,6 +2392,8 @@ and t1.Type='I'
                     .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 5
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 6
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 7
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("FromLocation", header: "From Location", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 8
                     .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(15), iseditingreadonly: true) // 8
                     ;
@@ -2075,6 +2413,8 @@ and t1.Type='I'
                     .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) // 4
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("ToLocation", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(30)) // 7
                     ;
                     #endregion
@@ -2094,6 +2434,8 @@ and t1.Type='I'
                     .Text("stockunit", header: "Unit", iseditingreadonly: true) // 5
                     .Text("StockType", header: "StockType", iseditingreadonly: true) // 5
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true, settings: chk_qty).Get(out this.col_Qty) // 6
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("Location", header: "Location", iseditingreadonly: true) // 7
                     ;
                     #endregion
@@ -2117,6 +2459,8 @@ and t1.Type='I'
                     .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 9
                     .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true) // 10
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 11
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)
                     ;
@@ -2129,7 +2473,7 @@ and t1.Type='I'
                     .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
                     .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .DateTime("CompleteTime", header: "CompleteTime", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                    .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0    
+                    .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
                     .Text("fromseq", header: "From" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
                     .Text("fromroll", header: "From" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                     .Text("fromdyelot", header: "From" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true) // 3
@@ -2141,6 +2485,8 @@ and t1.Type='I'
                     .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 9
                     .Text("todyelot", header: "To" + Environment.NewLine + "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true) // 10
                     .Numeric("qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty) // 11
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5)) // 12
                     .ComboBox("tostocktype", header: "To" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false)
@@ -2164,6 +2510,8 @@ and t1.Type='I'
                     .Numeric("accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric(string.Empty, name: "bal_qty", header: "Bal. Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: chk_qty).Get(out this.col_Qty)
+                    .ComboBox("WHCommandReason", header: "Reason", width: Widths.AnsiChars(25), iseditable: true).Get(out this.col_comboReason)
+                    .Text("WHCommandRemark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: false).Get(out this.col_Remark)
                     .Numeric("Ttl_Qty", header: "Ttl Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                     .Text("FinalFIR", header: "Final FIR", width: Widths.AnsiChars(6), iseditingreadonly: true)
                     .Numeric(string.Empty, name: "var_qty", header: "Var Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
@@ -2178,6 +2526,10 @@ and t1.Type='I'
                 default:
                     break;
             }
+
+            this.col_comboReason.DataSource = new BindingSource(this.di_Reason, null);
+            this.col_comboReason.ValueMember = "Key";
+            this.col_comboReason.DisplayMember = "Value";
 
             this.gridUpdate.Columns[0].Frozen = true;
         }
@@ -2200,11 +2552,13 @@ and t1.Type='I'
             {
                 this.col_chk.IsEditable = false;
                 this.col_Qty.IsEditingReadOnly = true;
+                this.col_Remark.IsEditingReadOnly = true;
             }
             else
             {
                 this.col_chk.IsEditable = true;
                 this.col_Qty.IsEditingReadOnly = false;
+                this.col_Remark.IsEditingReadOnly = false;
             }
         }
 
@@ -2251,6 +2605,45 @@ and t1.Type='I'
             }
         }
 
+        private void BtnQuery_Click(object sender, EventArgs e)
+        {
+            // Click 按鈕[Query]需要設定, 不然Query無法判別是哪個function
+            this.strFunction = this.comboFunction.SelectedValue.ToString();
+            this.strFunction_Text = this.comboFunction.Text;
+            this.strTransID = this.txtID.Text;
+
+            if (MyUtility.Check.Empty(this.strFunction) || MyUtility.Check.Empty(this.comboFunction.SelectedValue))
+            {
+                MyUtility.Msg.WarningBox("<Function>,<MaterialType> cannot be empty!");
+                this.comboFunction.Select();
+                return;
+            }
+
+            switch (this.strFunction)
+            {
+                case "P07":
+                case "P18":
+                    if (MyUtility.Check.Empty(this.txtID.Text) && MyUtility.Check.Empty(this.txtWKNo_update.Text) && MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.dateCreate.Value1) && MyUtility.Check.Empty(this.dateCreate.Value2))
+                    {
+                        MyUtility.Msg.WarningBox("<ID> or <WK#> or <SP#> or <Create Date> cannot be empty!");
+                        return;
+                    }
+
+                    break;
+                default:
+                    if (MyUtility.Check.Empty(this.txtID.Text) && MyUtility.Check.Empty(this.txtSPNoStart.Text) && MyUtility.Check.Empty(this.dateCreate.Value1) && MyUtility.Check.Empty(this.dateCreate.Value2))
+                    {
+                        MyUtility.Msg.WarningBox("<ID> or <SP#> or <Create Date> cannot be empty!");
+                        return;
+                    }
+
+                    break;
+            }
+
+            this.Query();
+            this.txtRemark.Text = string.Empty;
+        }
+
         private void BtnUpdate_Click(object sender, EventArgs e)
         {
             if (!MyUtility.Check.Empty(this.strFunction))
@@ -2268,6 +2661,14 @@ and t1.Type='I'
                 if (zero_list.Any())
                 {
                     MyUtility.Msg.WarningBox("Qty Cannot be Empty!");
+                    return;
+                }
+
+                // Reason, Remark
+                var r2_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && (MyUtility.Check.Empty(x["WHCommandReason"]) || MyUtility.Check.Empty(x["WHCommandRemark"]))).ToList();
+                if (r2_list.Any())
+                {
+                    MyUtility.Msg.WarningBox("Remark or Reason be Empty!");
                     return;
                 }
 
@@ -2444,19 +2845,22 @@ inner join #tmp s on t2.Ukey = s.Ukey
 
                         #endregion
                         break;
+                    case "P10":
                     case "P11":
                     case "P12":
                     case "P13":
                     case "P15":
                     case "P16":
+                    case "P17":
                     case "P19":
                     case "P33":
                     case "P62":
-                        #region Issue_Detail & IssueLack_Detail & TransferOut_Detail & ReturnReceipt_Detail
+                        #region Issue_Detail & IssueLack_Detail & TransferOut_Detail & Issue_Return
 
                         strTable = string.Empty;
                         switch (this.strFunction)
                         {
+                            case "P10":
                             case "P11":
                             case "P12":
                             case "P13":
@@ -2467,6 +2871,9 @@ inner join #tmp s on t2.Ukey = s.Ukey
                             case "P15":
                             case "P16":
                                 strTable = "IssueLack_Detail";
+                                break;
+                            case "P17":
+                                strTable = "IssueReturn_Detail";
                                 break;
                             case "P19":
                                 strTable = "TransferOut_Detail";
@@ -2492,14 +2899,32 @@ inner join #tmp s on t2.Ukey = s.Ukey
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                            switch (strTable)
                             {
-                                return;
-                            }
+                                case "IssueReturn_Detail":
+                                    if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
 
-                            if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
-                            {
-                                return;
+                                    if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                default:
+                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
                             }
                         }
                         #endregion
@@ -2536,6 +2961,7 @@ and t.Issue_DetailUkey = s.ukey
 and t.SizeCode = s.SizeCode
 ";
                                         break;
+                                    case "P10":
                                     case "P33":
                                     case "P62":
                                         sqlcmd = $@" 
@@ -2578,6 +3004,22 @@ from IssueLack t
 inner join #tmp s on t.id = s.id
 ";
                                         break;
+
+                                    case "P17":
+                                        sqlcmd = $@"
+update t
+set t.Qty = s.Qty
+from IssueReturn_Detail t
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from IssueReturn t
+inner join #tmp s on t.id = s.id
+";
+                                        break;
+
                                     case "P19":
                                         sqlcmd = $@" 
 update t
@@ -3083,6 +3525,8 @@ inner join #tmp s on t.Ukey = s.Ukey
                         break;
                 }
 
+                // 將修改的資料存入Log
+                this.WriteInLog("Revise");
                 this.Query();
             }
         }
@@ -3159,7 +3603,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                                               Seq1 = m.First().Field<string>("seq1"),
                                               Seq2 = m.First().Field<string>("seq2"),
                                               Stocktype = m.First().Field<string>("stocktype"),
-                                              Qty = -m.Sum(w => w.Field<decimal>("Old_StockQty")),
+                                              Qty = -m.Sum(w => w.Field<decimal>("Old_Qty")),
                                           }).ToList();
 
                         var data_MD_8F = (from b in upd_list.CopyToDataTable().AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
@@ -3177,7 +3621,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                                               Seq1 = m.First().Field<string>("seq1"),
                                               Seq2 = m.First().Field<string>("seq2"),
                                               Stocktype = m.First().Field<string>("stocktype"),
-                                              Qty = -m.Sum(w => w.Field<decimal>("Old_StockQty")),
+                                              Qty = -m.Sum(w => w.Field<decimal>("Old_Qty")),
                                           }).ToList();
 
                         var data_Fty_2F = (from m in upd_list.CopyToDataTable().AsEnumerable()
@@ -3187,7 +3631,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                                                seq1 = m.Field<string>("seq1"),
                                                seq2 = m.Field<string>("seq2"),
                                                stocktype = m.Field<string>("stocktype"),
-                                               qty = -m.Field<decimal>("Old_StockQty"),
+                                               qty = -m.Field<decimal>("Old_Qty"),
                                                location = m.Field<string>("location"),
                                                roll = m.Field<string>("roll"),
                                                dyelot = m.Field<string>("dyelot"),
@@ -3313,6 +3757,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                         transactionscope = null;
                         #endregion
                         break;
+                    case "P10":
                     case "P11":
                     case "P12":
                     case "P13":
@@ -3327,6 +3772,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                         strMainTable = string.Empty;
                         switch (this.strFunction)
                         {
+                            case "P10":
                             case "P11":
                             case "P12":
                             case "P13":
@@ -3369,14 +3815,32 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #region 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
+                            switch (strTable)
                             {
-                                return;
-                            }
+                                case "IssueReturn_Detail":
+                                    if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                                    {
+                                        return;
+                                    }
 
-                            if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
-                            {
-                                return;
+                                    if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                default:
+                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
+                                    {
+                                        return;
+                                    }
+
+                                    if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
                             }
                         }
                         #endregion
@@ -3473,6 +3937,7 @@ where exists(
 and (sizeQty.qty != 0 or sizeQty.qty is not null)
 ";
                                 break;
+                            case "P10":
                             case "P33":
                             case "P62":
                                 sqlcmd = $@"
@@ -3537,6 +4002,19 @@ set t.editname = '{Env.User.UserID}'
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
 
+";
+                                break;
+                            case "P17":
+                                sqlcmd = $@" 
+delete t
+from IssueReturn_Detail t
+inner join #tmp s on t.Ukey = s.Ukey 
+
+update t
+set t.editname = '{Env.User.UserID}'
+,t.editdate = GETDATE()
+from {strMainTable} t
+inner join #tmp s on t.ID = s.ID
 ";
                                 break;
                             case "P19":
@@ -4808,6 +5286,9 @@ inner join #tmp s on t.ID = s.ID
                         break;
                 }
 
+                // 將刪除的資料存入Log
+                this.WriteInLog("Delete");
+
                 this.Query();
             }
         }
@@ -4816,6 +5297,30 @@ inner join #tmp s on t.ID = s.ID
         {
             this.Close();
         }
+
+        private void BtnUpdateReason_Click(object sender, EventArgs e)
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (!MyUtility.Check.Empty(dr["Selected"]))
+                {
+                    dr["WHCommandReason"] = this.comboReason.SelectedValue.ToString();
+                    dr["WHCommandRemark"] = this.txtRemark.Text;
+                }
+            }
+
+            this.gridUpdate.SuspendLayout();
+            this.gridUpdate.DataSource = null;
+            this.gridUpdate.DataSource = this.listControlBindingSource1;
+            this.gridUpdate.ResumeLayout();
+        }
+        #endregion
 
         #region Sheet 2 [UnLock]
 
@@ -4976,6 +5481,202 @@ and fi.WMSLock = 1
         }
         #endregion
 
+        #region Sheet 3 [P99 Revise History]
+        private void BtnClose_History_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void BtnQuery_history_Click(object sender, EventArgs e)
+        {
+            this.strFunction_History = this.combo_Function_history.SelectedValue.ToString();
+            this.strFunction_Text_History = this.combo_Function_history.Text;
+            string sqlcmd = string.Empty;
+            switch (this.strFunction_History)
+            {
+                case "P22":
+                case "P23":
+                case "P24":
+                case "P36":
+                case "P31":
+                case "P32":
+                case "All borrow/transfer record":
+                    sqlcmd = $@"
+select [SentToWMS] = iif(t.SendToWMS=1,'V',''),* from WHCommandReviseRecord_Transfer t
+LEFT JOIN PO_Supp_Detail po3  WITH (NOLOCK) ON po3.ID = t.FromPOID AND po3.SEQ1 = t.FromSEQ1 AND po3.SEQ2 = t.FromSEQ2
+where 1=1
+
+";
+                    if (!MyUtility.Check.Empty(this.txtSPNo_History.Text))
+                    {
+                        sqlcmd += $@" and (t.FromPoId = '{this.txtSPNo_History.Text}' or t.ToPoid = '{this.txtSPNo_History.Text}')" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq1_History.Text))
+                    {
+                        sqlcmd += $@" and (t.FromSeq1 = '{this.txtSeq1_History.Text}' or t.ToSeq1 = '{this.txtSeq1_History.Text}')" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq2_History.Text))
+                    {
+                        sqlcmd += $@" and (t.FromSeq2 = '{this.txtSeq2_History.Text}' or t.ToSeq2 = '{this.txtSeq2_History.Text}')" + Environment.NewLine;
+                    }
+
+                    break;
+                default:
+                    sqlcmd = $@"
+select [SentToWMS] = iif(t.SendToWMS=1,'V',''),* from WHCommandReviseRecord_InOutAdjRet t
+LEFT JOIN PO_Supp_Detail po3  WITH (NOLOCK) ON po3.ID = t.PoId AND po3.SEQ1 = t.Seq1 AND po3.SEQ2 = t.Seq2
+where 1=1
+";
+                    if (!MyUtility.Check.Empty(this.txtSPNo_History.Text))
+                    {
+                        sqlcmd += $@" and t.Poid = '{this.txtSPNo_History.Text}'" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq1_History.Text))
+                    {
+                        sqlcmd += $@" and t.Seq1 = '{this.txtSeq1_History.Text}'" + Environment.NewLine;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtSeq2_History.Text))
+                    {
+                        sqlcmd += $@" and t.Seq2 = '{this.txtSeq2_History.Text}'" + Environment.NewLine;
+                    }
+
+                    break;
+            }
+
+            if (!(this.strFunction_History == "All receive/issue/return/adjust record" || this.strFunction_History == "All borrow/transfer record"))
+            {
+                sqlcmd += $@" and t.functionName = '{this.strFunction_Text_History}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.strMaterialType_Sheet_history))
+            {
+                sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet_history}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.dateRangeReviseDate.Value1) && !MyUtility.Check.Empty(this.dateRangeReviseDate.Value2))
+            {
+                sqlcmd += $@" and convert(date, t.AddDate) between '{Convert.ToDateTime(this.dateRangeReviseDate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateRangeReviseDate.Value2).ToString("yyyy/MM/dd")}'";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtID_History.Text))
+            {
+                sqlcmd += $@" and t.id = '{this.txtID_History.Text}'";
+            }
+
+            this.ShowWaitMessage("Data Loading....");
+            DualResult result;
+            DataTable dtSource;
+            if (result = DBProxy.Current.Select(null, sqlcmd, out dtSource))
+            {
+                if (dtSource.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+
+                // 重新設定表身欄位
+                if (this.grid_History != null)
+                {
+                    if (this.grid_History.Rows.Count > 0)
+                    {
+                        this.listControlBindingSource3.DataSource = null;
+                    }
+
+                    if (this.grid_History.Columns.Count > 0)
+                    {
+                        this.grid_History.Columns.Clear();
+                    }
+                }
+
+                this.listControlBindingSource3.DataSource = dtSource;
+                this.grid_History.DataSource = this.listControlBindingSource3.DataSource;
+                this.SetGrid_History();
+            }
+            else
+            {
+                this.ShowErr(result);
+            }
+
+            this.HideWaitMessage();
+        }
+
+        private void SetGrid_History()
+        {
+            // 設定Grid 欄位
+            switch (this.strFunction_History)
+            {
+                case "P22":
+                case "P23":
+                case "P24":
+                case "P36":
+                case "P31":
+                case "P32":
+                case "All borrow/transfer record":
+                    #region WHCommandReviseRecord_Transfer
+                    this.grid_History.IsEditingReadOnly = false;
+                    this.Helper.Controls.Grid.Generator(this.grid_History)
+                    .Text("FunctionName", header: "FunctionName", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                    .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("ID", header: "ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                    .Text("frompoid", header: "FromPOID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                    .Text("fromSeq1", header: "FromSeq1", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("fromSeq2", header: "FromSeq2", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("fromroll", header: "FromRoll", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("fromdyelot", header: "FromDyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("FromStockType", header: "FromStockType", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("Topoid", header: "ToPOID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                    .Text("ToSeq1", header: "ToSeq1", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("ToSeq2", header: "ToSeq2", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("Toroll", header: "ToRoll", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("Todyelot", header: "ToDyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("ToStockType", header: "ToStockType", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("Type", header: "Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Numeric("OriginalQty", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
+                    .Numeric("NewQty", header: "New Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
+                    .Text("Reason", header: "Reason", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                    .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                    .Text("AddName", header: "AddName", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .DateTime("AddDate", header: "AddDate", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    ;
+                    #endregion
+
+                    break;
+                default:
+                    this.grid_History.IsEditingReadOnly = false;
+                    this.Helper.Controls.Grid.Generator(this.grid_History)
+                    .Text("FunctionName", header: "FunctionName", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                    .Text("SentToWMS", header: "Send To WMS", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("ID", header: "ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                    .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                    .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                    .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("StockType", header: "StockType", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Text("Type", header: "Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Numeric("OriginalQty", header: "Original Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
+                    .Numeric("NewQty", header: "New Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
+                    .Text("Reason", header: "Reason", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                    .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                    .Text("AddName", header: "AddName", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .DateTime("AddDate", header: "AddDate", width: Widths.AnsiChars(18), iseditingreadonly: true)
+                    ;
+                    break;
+            }
+        }
+
+        private void Combo_MaterialType_History_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.combo_MaterialType_History.SelectedValue != null)
+            {
+                this.strMaterialType_Sheet_history = this.combo_MaterialType_History.SelectedValue.ToString();
+            }
+        }
+        #endregion
+
         #region 共用Function
 
         private bool ChkFty_Lock(DataTable dt, bool isConfirmed = true)
@@ -5097,7 +5798,7 @@ and f.Lock = 1
             {
                 case "P07":
                 case "P08":
-                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -5147,7 +5848,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     break;
 
                 case "P18":
-                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_StockQty)";
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -5195,6 +5896,7 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                     }
 
                     break;
+                case "P10":
                 case "P11":
                 case "P33":
                 case "P62":
@@ -5250,10 +5952,108 @@ and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnu
                 case "P13":
                 case "P15":
                 case "P16":
-                case "P17":
                 case "P19":
                 case "P37":
                     symbol = isConfirmed ? "- (t.diffQty)" : isDetail ? "- (t.diffQty)" : "+ (t.Old_Qty)";
+                    chk_sql = $@"
+
+select    f.poid
+        , f.seq1
+        , f.seq2
+        , f.Roll
+		, f.Dyelot
+        , Qty = convert(decimal(10,2), t.Qty)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0)
+from FtyInventory f WITH (NOLOCK)
+inner join #tmp t on f.POID = t.PoId
+and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
+and t.Roll = f.Roll and t.Dyelot = f.Dyelot
+and t.StockType = f.StockType
+where   1=1
+and (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - isnull(f.ReturnQty, 0) {symbol} < 0)  
+
+";
+                    if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
+                    {
+                        this.ShowErr(chk_sql, result);
+                        return false;
+                    }
+                    else
+                    {
+                        if (datacheck.Rows.Count > 0)
+                        {
+                            string ids = string.Empty;
+                            foreach (DataRow tmp in datacheck.Rows)
+                            {
+                                ids += string.Format(
+                                    "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4}" + Environment.NewLine,
+                                    tmp["poid"],
+                                    tmp["seq1"],
+                                    tmp["seq2"],
+                                    tmp["roll"],
+                                    tmp["balanceqty"],
+                                    tmp["qty"],
+                                    tmp["Dyelot"]);
+                            }
+
+                            MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
+                            return false;
+                        }
+                    }
+
+                    break;
+                case "P17":
+                    // 只有調整數量才需判斷
+                    if (isConfirmed)
+                    {
+                        chk_sql = $@"
+
+select    f.poid
+        , f.seq1
+        , f.seq2
+        , f.Roll
+		, f.Dyelot
+        , Qty = convert(decimal(10,2), t.Qty)
+        , f.OutQty
+from FtyInventory f WITH (NOLOCK)
+inner join #tmp t on f.POID = t.PoId
+and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
+and t.Roll = f.Roll and t.Dyelot = f.Dyelot
+and t.StockType = f.StockType
+where   1=1
+and  isnull (f.OutQty, 0)  <  t.Qty
+
+";
+                        if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
+                        {
+                            this.ShowErr(chk_sql, result);
+                            return false;
+                        }
+                        else
+                        {
+                            if (datacheck.Rows.Count > 0)
+                            {
+                                string ids = string.Empty;
+                                foreach (DataRow tmp in datacheck.Rows)
+                                {
+                                    ids += string.Format(
+                                        "SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6} Outqty is {4}, Return Qty can not higher than {5}" + Environment.NewLine,
+                                        tmp["poid"],
+                                        tmp["seq1"],
+                                        tmp["seq2"],
+                                        tmp["roll"],
+                                        tmp["OutQty"],
+                                        tmp["qty"],
+                                        tmp["Dyelot"]);
+                                }
+
+                                MyUtility.Msg.WarningBox(ids, "Warning");
+                                return false;
+                            }
+                        }
+                    }
+
+                    symbol = isConfirmed ? "+ (t.diffQty)" : isDetail ? "+ (t.diffQty)" : "- (t.Old_Qty)";
                     chk_sql = $@"
 
 select    f.poid
@@ -5603,19 +6403,38 @@ WHERE FTI.StockType='O'
         /// <param name="canEdit">是否能編輯</param>
         public void Initl(bool canEdit)
         {
-            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape");
+            // sheet 1 [Update Command] function name
+            MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P10,P10. Issue Fabric to Cutting Section,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P17,P17. R/Mtl Return,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape");
+
+            // sheet 3 [P99 Revise History] function name
+            MyUtility.Tool.SetupCombox(this.combo_Function_history, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P10,P10. Issue Fabric to Cutting Section,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P17,P17. R/Mtl Return,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape,All receive/issue/return/adjust record,All receive/issue/return/adjust record,All borrow/transfer record,All borrow/transfer record");
 
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"F,Fabric,A,Accessory");
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"F,Fabric,A,Accessory");
+            MyUtility.Tool.SetupCombox(this.combo_MaterialType_History, 2, 1, @"F,Fabric,A,Accessory");
+
+            this.di_Reason.Clear();
+            this.di_Reason.Add("Wrong item/arrival", "Wrong item/arrival");
+            this.di_Reason.Add("Poor/rejected quality", "Poor/rejected quality");
+            this.di_Reason.Add("Short delivery against packing list", "Short delivery against packing list");
+            this.di_Reason.Add("Excess delivery against packing list", "Excess delivery against packing list");
+            this.di_Reason.Add("INSPECTION LENGTH OF DIFFERENT(SHORTAGE)", "INSPECTION LENGTH OF DIFFERENT(SHORTAGE)");
+            this.di_Reason.Add("No need for WMS", "No need for WMS");
+            this.comboReason.DataSource = new BindingSource(this.di_Reason.Values, null);
+
             if (!canEdit)
             {
                 this.TabPage_UnLock.Parent = null; // 隱藏Unlock Tab
+                this.TabPage_ReviseHistory.Parent = null; // 隱藏Revise History
                 this.dateCreate.Value1 = null;
                 this.dateCreate.Value2 = null;
                 this.txtSPNoStart.Text = string.Empty;
-                this.txtSPNoEnd.Text = string.Empty;
+                this.txtWKNo_update.Text = string.Empty;
+                this.txtID.Text = string.Empty;
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
                 this.comboFunction.SelectedIndex = 0;
-                this.comboFunction.SelectedIndex = 0;
+                this.combo_Function_history.SelectedIndex = 0;
                 string strcomboType = string.Empty;
                 switch (this.strFunction)
                 {
@@ -5627,6 +6446,9 @@ WHERE FTI.StockType='O'
                         break;
                     case "P18":
                         strcomboType = "P18. Transfer In";
+                        break;
+                    case "P10":
+                        strcomboType = "P10. Issue Fabric to Cutting Section";
                         break;
                     case "P11":
                         strcomboType = "P11. Issue Sewing Material";
@@ -5642,6 +6464,9 @@ WHERE FTI.StockType='O'
                         break;
                     case "P16":
                         strcomboType = "P16. Issue Fabric Lacking  && Replacement";
+                        break;
+                    case "P17":
+                        strcomboType = "P17. R/Mtl Return";
                         break;
                     case "P19":
                         strcomboType = "P19. Transfer Out";
@@ -5694,7 +6519,11 @@ WHERE FTI.StockType='O'
             else
             {
                 this.TabPage_UnLock.Parent = this.tabControl1; // 顯示
+                this.TabPage_ReviseHistory.Parent = this.tabControl1; // 顯示
                 this.strFunction = this.comboFunction.SelectedValue.ToString();
+                this.strFunction_Text = this.comboFunction.Text;
+                this.strFunction_History = this.combo_Function_history.SelectedValue.ToString();
+                this.strFunction_Text_History = this.combo_Function_history.Text;
                 this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
             }
 
@@ -5703,7 +6532,10 @@ WHERE FTI.StockType='O'
             this.dateCreate.Enabled = canEdit;
             this.comboMaterialType_Sheet1.Enabled = canEdit;
             this.txtSPNoStart.Enabled = canEdit;
-            this.txtSPNoEnd.Enabled = canEdit;
+            this.txtWKNo_update.Enabled = canEdit;
+            this.txtID.Enabled = canEdit;
+            this.txtSeq1.Enabled = canEdit;
+            this.txtSeq2.Enabled = canEdit;
             this.btnQuery.Visible = canEdit;
             this.EditMode = true;
         }
@@ -5724,7 +6556,7 @@ WHERE FTI.StockType='O'
         /// </summary>
         private void ChangeGridColor()
         {
-            // 設定detailGrid Rows 是否可以編輯
+            // 設定detailGrid Rows 變色
             this.gridUpdate.RowEnter += this.Detailgrid_RowEnter;
             for (int index = 0; index < this.gridUpdate.Rows.Count; index++)
             {
@@ -5735,6 +6567,8 @@ WHERE FTI.StockType='O'
                 }
 
                 this.gridUpdate.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+                this.gridUpdate.Columns["WHCommandReason"].DefaultCellStyle.BackColor = Color.Pink;
+                this.gridUpdate.Columns["WHCommandRemark"].DefaultCellStyle.BackColor = Color.Pink;
                 int i = index;
 
                 // 反灰不能勾選
@@ -5886,6 +6720,66 @@ and Seq1 = '{2}' and Seq2 = '{3}' ",
                         return;
                     }
                 }
+            }
+        }
+
+        private void WriteInLog(string status)
+        {
+            var upd_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).ToList();
+            if (upd_list.Count == 0)
+            {
+                return;
+            }
+
+            string sqlcmd = string.Empty;
+            switch (this.strFunction)
+            {
+                case "P22":
+                case "P23":
+                case "P24":
+                case "P36":
+                case "P31":
+                case "P32":
+                    sqlcmd = $@"
+insert into WHCommandReviseRecord_Transfer(
+FunctionName, SendToWMS, ID, FromPOID, FromSeq1, FromSeq2, FromRoll, FromDyelot, FromStockType
+, ToPOID, ToSeq1, ToSeq2, ToRoll, ToDyelot, ToStockType, Type, OriginalQty, NewQty, Reason, Remark, AddName, AddDate)
+select
+[FunctionName] = '{this.strFunction_Text}'
+,SentToWMS = iif(SentToWMS = 'V', 1 , 0),ID,FromPOID,FromSeq1,FromSeq2,FromRoll,FromDyelot,FromStockType
+,ToPOID,ToSeq1,ToSeq2,ToRoll,ToDyelot,ToStockType
+,[Type] = '{status}'
+,[OriginalQty] = Old_Qty
+,[NewQty] = Qty
+,[Reason] = WHCommandReason
+,[Remark] = WHCommandRemark
+,[AddName] = '{Sci.Env.User.UserID}'
+,[AddDate] = GETDATE()
+from #tmp ";
+                    break;
+                default:
+                    sqlcmd = $@"
+insert into WHCommandReviseRecord_InOutAdjRet(FunctionName, SendToWMS, ID, POID, Seq1, Seq2, Roll, Dyelot, StockType
+, Type, OriginalQty, NewQty, Reason, Remark, AddName, AddDate)
+select
+[FunctionName] = '{this.strFunction_Text}'
+,SentToWMS = iif(SentToWMS = 'V', 1 , 0),ID,POID,Seq1,Seq2,Roll,Dyelot,StockType
+,[Type] = '{status}'
+,[OriginalQty] = Old_Qty
+,[NewQty] = Qty
+,[Reason] = WHCommandReason
+,[Remark] = WHCommandRemark
+,[AddName] = '{Sci.Env.User.UserID}'
+,[AddDate] = GETDATE()
+from #tmp ";
+                    break;
+            }
+
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable dt)))
+            {
+                this.ShowErr(result);
+                return;
             }
         }
 

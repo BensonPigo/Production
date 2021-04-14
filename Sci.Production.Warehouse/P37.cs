@@ -454,6 +454,14 @@ where R.id= @ID";
             string upd_MD_8T = string.Empty;
             string upd_Fty_37T = string.Empty;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P37"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
                 @"
@@ -726,6 +734,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             string upd_MD_37F = string.Empty;
             string upd_MD_8F = string.Empty;
             string upd_Fty_37F = string.Empty;
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P37"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(

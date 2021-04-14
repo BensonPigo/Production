@@ -11,8 +11,12 @@
     [QtyBefore]        NUMERIC (11, 2) CONSTRAINT [DF_Stocktaking_Detail_QtyBefore] DEFAULT ((0)) NULL,
     [QtyAfter]         NUMERIC (11, 2) CONSTRAINT [DF_Stocktaking_Detail_QtyAfter] DEFAULT ((0)) NULL,
     [UKey]             BIGINT          IDENTITY (1, 1) NOT NULL,
+    [CompleteTime]     DATETIME        NULL,
+    [SentToWMS]        BIT             DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Stocktaking_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
+
+
 
 
 

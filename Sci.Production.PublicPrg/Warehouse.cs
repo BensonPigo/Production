@@ -1958,6 +1958,14 @@ where    psd.ID = '{material["poid"]}'
             DualResult result, result2;
             DataTable datacheck;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(dr["ID"].ToString(), "P22"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return false;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
 
             bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
@@ -2234,6 +2242,14 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             string sqlupd3, ids = string.Empty;
             DualResult result = new DualResult(true);
             DataTable datacheck;
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(subTransfer_ID, "P23"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return result;
+            }
+            #endregion
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
@@ -2644,6 +2660,13 @@ inner join #tmpD as src on   target.ID = src.ToPoid
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(subTransfer_ID, "P10"))
+            {
+                return new DualResult(false, "Material Location is from WMS system cannot confirmed or unconfirmed.");
+            }
+            #endregion
 
             #region -- 檢查庫存項lock --
             bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
@@ -4386,6 +4409,27 @@ where exists(
 	where s.id = t.Id and s.ukey = t.Ukey
 )";
                     break;
+                case "IssueReturn":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from IssueReturn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
+
+                case "Stocktaking":
+                    sqlcmd = $@"
+update t
+set t.SentToWMS = {toWMS}
+from Stocktaking_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)";
+                    break;
             }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMain, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
@@ -4396,6 +4440,222 @@ where exists(
 
             return true;
         }
+
+        public static bool Chk_WMS_Location(string id, string functionName)
+        {
+            bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+            if (!automation || MyUtility.Check.Empty(id) || MyUtility.Check.Empty(functionName))
+            {
+                return true;
+            }
+
+            string sqlcmd = string.Empty;
+            switch (functionName)
+            {
+                case "P22":
+                case "P23":
+                case "P24":
+                case "P36":
+                case "P31":
+                case "P32":
+                    sqlcmd = $@"
+declare @ID varchar(15) = '{id}'
+
+select distinct IsWMS from(
+
+select ml.IsWMS from SubTransfer_Detail t
+inner join FtyInventory f on t.FromPOID = f.POID
+	and t.FromSeq1= f. Seq1 
+	and t.FromSeq2 = f.Seq2 
+	and t.FromRoll = f.Roll
+	and t.FromDyelot = f.Dyelot 
+	and t.FromStockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+select ml.IsWMS from SubTransfer_Detail t
+inner join FtyInventory f on t.ToPOID = f.POID
+	and t.ToSeq1= f. Seq1 
+	and t.ToSeq2 = f.Seq2 
+	and t.ToRoll = f.Roll
+	and t.ToDyelot = f.Dyelot 
+	and t.ToStockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+select ml.IsWMS from BorrowBack_Detail t
+inner join FtyInventory f on t.FromPOID = f.POID
+	and t.FromSeq1= f. Seq1 
+	and t.FromSeq2 = f.Seq2 
+	and t.FromRoll = f.Roll
+	and t.FromDyelot = f.Dyelot 
+	and t.FromStockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+select ml.IsWMS from BorrowBack_Detail t
+inner join FtyInventory f on t.ToPOID = f.POID
+	and t.ToSeq1= f. Seq1 
+	and t.ToSeq2 = f.Seq2 
+	and t.ToRoll = f.Roll
+	and t.ToDyelot = f.Dyelot 
+	and t.ToStockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+) a
+
+";
+                    break;
+                default:
+                    sqlcmd = $@"
+
+declare @ID varchar(15) = '{id}'
+
+select distinct IsWMS from(
+
+-- Issue_Detail
+select ml.IsWMS from Issue_Detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+-- Adjust_Detail
+select ml.IsWMS from Adjust_Detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all 
+
+-- ReturnReceipt_Detail
+select ml.IsWMS from ReturnReceipt_Detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all 
+
+-- IssueReturn_Detail
+select ml.IsWMS from IssueReturn_Detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+-- Stocktaking_Detail
+select ml.IsWMS from Stocktaking_Detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+-- IssueLack_Detail
+select ml.IsWMS from IssueLack_Detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+union all
+
+--TransferOut_detail
+select ml.IsWMS from TransferOut_detail t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where t.id=@ID
+
+) a
+";
+                    break;
+            }
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+            else
+            {
+                if (dt != null && dt.Rows.Count >= 2)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool Chk_WMS_Location_Adj(DataTable dtDetail)
+        {
+            bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+            if (!automation || MyUtility.Check.Empty(dtDetail) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            string sqlcmd = $@"
+select f.* 
+from #tmp t
+inner join FtyInventory f on t.POID = f.POID
+	and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
+	and t.Dyelot = f.Dyelot and t.StockType = f.StockType
+left join FtyInventory_Detail fd on fd.Ukey = f.Ukey
+left join MtlLocation ml on ml.ID = fd.MtlLocationID
+where 1=1
+and ml.IsWMS = 1
+";
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcmd, out DataTable dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+            else
+            {
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 
     /// <inheritdoc/>

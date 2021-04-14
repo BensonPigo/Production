@@ -677,6 +677,14 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
             string sqlupd2_FIO = string.Empty;
             string sqlupd2_B = string.Empty;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P17"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(
                 @"
@@ -912,15 +920,23 @@ where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             transactionscope.Dispose();
             transactionscope = null;
 
+            this.FtyBarcodeData(true);
+
+            DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+
             // AutoWHACC WebAPI for Vstrong
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssueReturn_Detail_New(dt, "New"))
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentIssueReturn_Detail_New(dtMain, "New"))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
-            // AutoWHFabric WebAPI for Gensong (移除轉出ISP20201856)
-            // this.SentToGensong_AutoWHFabric();
+            // AutoWHFabric WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentIssueReturn_Detail_New(dtMain, "New"))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
         }
 
         /// <inheritdoc/>
@@ -948,6 +964,14 @@ where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
             DualResult result, result2;
             string sqlupd2_FIO = string.Empty;
             string sqlupd2_B = string.Empty;
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P17"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(
@@ -1029,6 +1053,14 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
                     return;
                 }
             }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
+            }
             #endregion
 
             #region 更新表頭狀態資料
@@ -1103,6 +1135,8 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
+
+                    this.FtyBarcodeData(false);
                     MyUtility.Msg.InfoBox("UnConfirmed successful");
                 }
                 catch (Exception ex)
@@ -1121,6 +1155,7 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
         }
 
         // 寫明細撈出的sql command
+
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -1234,6 +1269,110 @@ AND o.Category <> 'A'
             var frm = new P17_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+        }
+
+        private void FtyBarcodeData(bool isConfirmed)
+        {
+            DualResult result;
+            DataTable dt = new DataTable();
+            string sqlcmd = $@"
+select
+[Barcode1] = f.Barcode
+,[Barcode2] = fb.Barcode
+,[OriBarcode] = fbOri.Barcode
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+,[NewBarcode] = ''
+,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
+from Production.dbo.IssueReturn_Detail i2
+inner join Production.dbo.IssueReturn i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.POID
+    and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
+    and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+    and f.StockType = i2.StockType
+outer apply(
+	select Barcode = MAX(Barcode)
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+)fb
+outer apply(
+	select *
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = '{this.CurrentMaintain["ID"]}'
+)fbOri
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and i2.id = '{this.CurrentMaintain["ID"]}'
+
+";
+            DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
+                if (isConfirmed)
+                {
+                    // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                    {
+                        if (strBarcode.Contains("-"))
+                        {
+                            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        }
+                        else
+                        {
+                            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        }
+                    }
+                    else
+                    {
+                        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        dr["NewBarcode"] = dr["Barcode1"];
+                    }
+                }
+                else
+                {
+                    // unConfirmed 要用自己的紀錄給補回
+                    dr["NewBarcode"] = dr["OriBarcode"];
+                }
+            }
+
+            var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                    select new
+                                    {
+                                        TransactionID = m.Field<string>("ID"),
+                                        poid = m.Field<string>("poid"),
+                                        seq1 = m.Field<string>("seq1"),
+                                        seq2 = m.Field<string>("seq2"),
+                                        stocktype = m.Field<string>("stocktype"),
+                                        roll = m.Field<string>("roll"),
+                                        dyelot = m.Field<string>("dyelot"),
+                                        Barcode = m.Field<string>("NewBarcode"),
+                                    }).ToList();
+
+            // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+            string upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
+            string upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
+            DataTable resulttb;
+            if (data_Fty_Barcode.Count >= 1)
+            {
+                // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
         }
     }
 }
