@@ -393,10 +393,10 @@ LEFT JOIN GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
 LEFT JOIN CfaArea ON CfaArea.ID = cd.CFAAreaID
 
 ----找出CFAInspectionRecord_OrderSEQ所對應到的PackingList_Detail
-SELECT DISTINCT pd.*
+SELECT pd.*
 INTO #PackingList_Detail
 FROM PackingList_Detail pd 
-INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ 
+WHERE EXISTS (SELECT 1 FROM #tmp t WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.SEQ) 
 
 SELECT   t.ID
 		,CFAInspectionRecord_Detail_Key
@@ -443,14 +443,14 @@ OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-		AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,','))
+		AND t.Carton like ('%' + pd.CTNStartNo + ',%')
 		AND pd.CTNQty=1
 )InspectedCtn    --計算所有階段的總箱數
 OUTER APPLY(
 	SELECT [Val] = SUM(pd.ShipQty)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-		AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,','))
+		AND t.Carton like ('%' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
 Order by id
 
