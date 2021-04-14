@@ -1789,5 +1789,199 @@ when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo
 	delete
 ;
 
+-----------------Style_QTThreadColorCombo_History_Detail-------------------
+Merge Production.dbo.Style_QTThreadColorCombo_History_Detail as t
+Using (select a.* from Trade_To_Pms.dbo.Style_QTThreadColorCombo_History_Detail a ) as s
+on t.Style_QTThreadColorCombo_HistoryUkey = s.Style_QTThreadColorCombo_HistoryUkey 
+	AND t.Seq = s.Seq 
+	AND t.Article =s.Article 
+when matched then 
+	update set t.SCIRefNo = s.SCIRefNo
+      ,t.SuppId = s.SuppId
+      ,t.ColorID = s.ColorID
+      ,t.SuppColor = s.SuppColor
+      ,t.AddName = s.AddName
+      ,t.AddDate = s.AddDate
+      ,t.EditName = s.EditName
+      ,t.EditDate = s.EditDate
+      ,t.Ratio = s.Ratio
+when not matched by target then
+	insert  (Style_QTThreadColorCombo_HistoryUkey
+           ,Seq
+           ,SCIRefNo
+           ,SuppId
+           ,Article
+           ,ColorID
+           ,SuppColor
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate
+           ,Ratio)
+		values  (s.Style_QTThreadColorCombo_HistoryUkey
+           ,s.Seq
+           ,s.SCIRefNo
+           ,s.SuppId
+           ,s.Article
+           ,s.ColorID
+           ,s.SuppColor
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate
+           ,s.Ratio)
+;
+
+----刪除條件：Trade不存在，且表頭還存在
+DELETE t
+FROM Production.dbo.Style_QTThreadColorCombo_History_Detail t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Trade_To_Pms.dbo.Style_QTThreadColorCombo_History_Detail s
+	WHERE t.Style_QTThreadColorCombo_HistoryUkey = s.Style_QTThreadColorCombo_HistoryUkey AND t.Seq = s.Seq AND t.Article =s.Article 
+)
+AND EXISTS(
+	SELECT 1 
+	FROM Production.dbo.Style_QTThreadColorCombo_History st
+	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
+	WHERE st.Ukey = t.Style_QTThreadColorCombo_HistoryUkey
+)
+
+-----------------Style_QTThreadColorCombo_History-------------------
+Merge Production.dbo.Style_QTThreadColorCombo_History as t
+Using (select a.* from Trade_To_Pms.dbo.Style_QTThreadColorCombo_History a ) as s
+on t.StyleUkey = s.StyleUkey 
+	AND t.Thread_Quilting_SizeUkey = s.Thread_Quilting_SizeUkey 
+	AND t.FabricPanelCode =s.FabricPanelCode 
+	AND t.LockDate =s.LockDate 
+when matched then 
+	update set t.AddName = s.AddName
+		  ,t.AddDate = s.AddDate
+		  ,t.EditName = s.EditName
+		  ,t.EditDate = s.EditDate
+		  ,t.HSize = s.HSize
+		  ,t.VSize = s.VSize
+		  ,t.ASize = s.ASize
+		  ,t.NeedleDistance = s.NeedleDistance
+		  ,t.FabricCode = s.FabricCode
+		  ,t.SCIRefno = s.SCIRefno
+		  ,t.Width = s.Width
+when not matched by target then
+	insert (StyleUkey
+           ,Thread_Quilting_SizeUkey
+           ,FabricPanelCode
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate
+           ,LockDate
+           ,HSize
+           ,VSize
+           ,ASize
+           ,NeedleDistance
+           ,FabricCode
+           ,SCIRefno
+           ,Width)
+		values (s.StyleUkey
+           ,s.Thread_Quilting_SizeUkey
+           ,s.FabricPanelCode
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate
+           ,s.LockDate
+           ,s.HSize
+           ,s.VSize
+           ,s.ASize
+           ,s.NeedleDistance
+           ,s.FabricCode
+           ,s.SCIRefno
+           ,s.Width)
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete
+;
+
+-----------------Style_QTThreadColorCombo_Detail-------------------
+Merge Production.dbo.Style_QTThreadColorCombo_Detail as t
+Using (select a.* from Trade_To_Pms.dbo.Style_QTThreadColorCombo_Detail a ) as s
+on t.Style_QTThreadColorComboUkey = s.Style_QTThreadColorComboUkey AND t.Seq = s.Seq AND t.Article =s.Article 
+when matched then 
+	update set t.SCIRefNo = s.SCIRefNo
+			  ,t.SuppId = s.SuppId
+			  ,t.ColorID = s.ColorID
+			  ,t.SuppColor = s.SuppColor
+			  ,t.AddName = s.AddName
+			  ,t.AddDate = s.AddDate
+			  ,t.EditName = s.EditName
+			  ,t.EditDate = s.EditDate
+when not matched by target then
+	insert  (Style_QTThreadColorComboUkey
+           ,Seq
+           ,SCIRefNo
+           ,SuppId
+           ,Article
+           ,ColorID
+           ,SuppColor
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate)
+		values (s.Style_QTThreadColorComboUkey
+           ,s.Seq
+           ,s.SCIRefNo
+           ,s.SuppId
+           ,s.Article
+           ,s.ColorID
+           ,s.SuppColor
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate)
+;
+----刪除條件：Trade不存在，且表頭還存在
+DELETE t
+FROM Production.dbo.Style_QTThreadColorCombo_Detail t
+WHERE NOT EXISTS(
+	SELECT 1 FROM Trade_To_Pms.dbo.Style_QTThreadColorCombo_Detail s
+	WHERE t.Style_QTThreadColorComboUkey = s.Style_QTThreadColorComboUkey AND t.Seq = s.Seq AND t.Article =s.Article 
+)
+AND EXISTS(
+	SELECT 1 
+	FROM Production.dbo.Style_QTThreadColorCombo st
+	INNER JOIN Trade_To_Pms.dbo.Style s ON st.StyleUkey = s.Ukey
+	WHERE st.Ukey = t.Style_QTThreadColorComboUkey
+)
+
+-----------------Style_QTThreadColorCombo-------------------
+Merge Production.dbo.Style_QTThreadColorCombo as t
+Using (select a.* from Trade_To_Pms.dbo.Style_QTThreadColorCombo a ) as s
+on t.Ukey=s.Ukey
+when matched then 
+	update set	t.Thread_Quilting_SizeUkey	  = s.Thread_Quilting_SizeUkey	,
+				t.FabricPanelCode		  = s.FabricPanelCode		,
+				t.AddName		  = s.AddName		,
+				t.AddDate		  = s.AddDate		,
+				t.EditName		  = s.EditName		,
+				t.EditDate		  = s.EditDate		
+when not matched by target then
+	insert  (StyleUkey
+           ,Thread_Quilting_SizeUkey
+           ,FabricPanelCode
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate
+		   ,Ukey)
+		values  (s.StyleUkey
+			   ,s.Thread_Quilting_SizeUkey
+			   ,s.FabricPanelCode
+			   ,s.AddName
+			   ,s.AddDate
+			   ,s.EditName
+			   ,s.EditDate
+			   ,s.Ukey)
+when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete;
+	
+
 END
 
