@@ -1559,6 +1559,9 @@
     <None Include="XLT\Warehouse_P07_PackingListReveivingReport.xltx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Warehouse_P08.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Warehouse_P10_FabricsRelaxationLogsheet.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
