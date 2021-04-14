@@ -486,6 +486,10 @@ order by bundlegroup,bundleno";
                 return false;
             }
 
+            this.Bundle_Detail_Allpart.AcceptChanges();
+            this.Bundle_Detail_Qty.AcceptChanges();
+            this.Bundle_Detail_Art.AcceptChanges();
+            this.Bundle_Detail_CombineSubprocess.AcceptChanges();
             if (this.IsDetailInserting)
             {
                 string keyword = this.keyword + "BC";
@@ -496,10 +500,6 @@ order by bundlegroup,bundleno";
                 }
 
                 this.CurrentMaintain["ID"] = cid;
-                this.Bundle_Detail_Allpart.AcceptChanges();
-                this.Bundle_Detail_Qty.AcceptChanges();
-                this.Bundle_Detail_Art.AcceptChanges();
-                this.Bundle_Detail_CombineSubprocess.AcceptChanges();
                 foreach (DataRow dr in this.Bundle_Detail_Allpart.Rows)
                 {
                     dr["ID"] = cid;
