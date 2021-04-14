@@ -385,6 +385,13 @@ namespace Sci.Production.Warehouse
 
             if (this.CurrentMaintain["type"].ToString() == "R")
             {
+                #region 檢查物料Location 是否存在WMS
+                if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P15"))
+                {
+                    MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                    return;
+                }
+                #endregion
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(
                     @"
@@ -587,6 +594,14 @@ where dbo.Lack_Detail.id = '{1}' and dbo.Lack_Detail.seq1 = t.Seq1 and dbo.Lack_
 
             if (this.CurrentMaintain["type"].ToString() == "R")
             {
+                #region 檢查物料Location 是否存在WMS
+                if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P15"))
+                {
+                    MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                    return;
+                }
+                #endregion
+
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(
                     @"

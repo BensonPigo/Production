@@ -489,6 +489,14 @@ where a.id= @ID";
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P31"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
                 @"
@@ -849,6 +857,14 @@ where d.Id = '{this.CurrentMaintain["id"]}'";
                 MyUtility.Msg.WarningBox("[Act. Return Date] already has value, can't unconfirm !!", "Warning");
                 return;
             }
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P31"))
+            {
+                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
+                return;
+            }
+            #endregion
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
