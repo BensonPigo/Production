@@ -41,7 +41,7 @@ namespace Sci.Production.PublicForm
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Date("OldSciDelivery", header: "Ori SCI Del.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("NewSciDelivery", header: "New SCI Del.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("LETA", header: "KPI L/ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("LETA", header: "PF ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("PackLETA", header: "Pack L/ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("AddInfo", header: "Create by", width: Widths.AnsiChars(40), iseditingreadonly: true);
