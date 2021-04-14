@@ -193,6 +193,7 @@
     <Compile Include="B08.Designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
     </Compile>
+    <Compile Include="P34_PrintData.cs" />
     <Compile Include="P63_Transaction.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1444,6 +1445,12 @@
     <EmbeddedResource Include="P03_ReturnQty.resx">
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P35.resx">
+      <DependentUpon>P35.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P43.resx">
+      <DependentUpon>P43.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P63_Transaction.resx">
       <DependentUpon>P63_Transaction.cs</DependentUpon>
     </EmbeddedResource>
@@ -1874,16 +1881,8 @@
       <DependentUpon>P34_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="P35.resx">
-      <DependentUpon>P35.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="P35_Import.resx">
       <DependentUpon>P35_Import.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P35.resx">
-      <DependentUpon>P43.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P35_Import.resx">
@@ -2199,6 +2198,7 @@
     <EmbeddedResource Include="P11_PrintKarbanCard.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="P34_Print.rdlc" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\P08_PrintFabircSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
