@@ -579,23 +579,23 @@ where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''");
             string strSqlCmd = $@"
 merge ShareExpense t
 using (
-	select distinct
-[ShippingAPID] = '{this.apData["ID"]}'
-,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
-,[WKNo] = ''
-,[InvNo] = id
-,[Type] = '{this.apData["SubType"]}'
-,[GW] = TotalGW
-,[CBM] = TotalCBM
-,[CurrencyID] = '{this.apData["CurrencyID"]}'
-,[ShipModeID] = ShipModeID
-,[FtyWK] = 0
-,[AccountID] = (
-	select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
-    where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
-    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
-		or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
-,[Junk] = 0
+select distinct
+    [ShippingAPID] = '{this.apData["ID"]}'
+    ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
+    ,[WKNo] = ''
+    ,[InvNo] = id
+    ,[Type] = '{this.apData["SubType"]}'
+    ,[GW] = TotalGW
+    ,[CBM] = TotalCBM
+    ,[CurrencyID] = '{this.apData["CurrencyID"]}'
+    ,[ShipModeID] = ShipModeID
+    ,[FtyWK] = 0
+    ,[AccountID] = (
+	    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+        where sd.ID = '{this.apData["ID"]}' and sd.AccountID != ''
+        and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+		    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+    ,[Junk] = 0
 from GMTBooking g WITH (NOLOCK) 
 where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
 on	t.ShippingAPID = s.ShippingAPID 

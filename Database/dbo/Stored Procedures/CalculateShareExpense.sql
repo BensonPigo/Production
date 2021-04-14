@@ -87,7 +87,7 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.WKNo != '' 
-				and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+				and exists (select 1 from ShippingAP sp WITH (NOLOCK) where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
 			END
 
 
@@ -150,7 +150,13 @@ BEGIN
 				from ShareExpense s
 				where s.ShippingAPID = @ShippingAPID
 				and s.InvNo != '' 
-				and exists (select 1 from ShippingAP sp where sp.ID = s.ShippingAPID and sp.BLNo != s.BLNo)
+				and exists (
+					select 1 
+					from ShippingAP sp WITH (NOLOCK)
+					inner join  GMTBooking g WITH (NOLOCK) on sp.BLNo = g.BLNo or sp.BLNo = g.BL2No
+					where sp.ID = s.ShippingAPID 	
+					and s.BLNo != g.BLNo
+					and s.BLNo != g.BL2No)
 			END
 
 			/*
