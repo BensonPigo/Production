@@ -349,6 +349,10 @@ DROP TABLE #tmp
 
                    // numCBM.Text = MyUtility.Math.Round(i, 4).ToString();
                 }
+
+                this.CurrentMaintain["ctnlength"] = MyUtility.Convert.GetDouble(this.numL.Text);
+                this.CurrentMaintain["ctnwidth"] = MyUtility.Convert.GetDouble(this.numW.Text);
+                this.CurrentMaintain["ctnheight"] = MyUtility.Convert.GetDouble(this.numH.Text);
             }
         }
 
@@ -377,9 +381,9 @@ DROP TABLE #tmp
 
         private void W_H_L_Validated(object sender, EventArgs e)
         {
-            bool l = MyUtility.Convert.GetDouble(this.CurrentMaintain["ctnlength"]) == MyUtility.Convert.GetDouble(this.numL.Text);
-            bool w = MyUtility.Convert.GetDouble(this.CurrentMaintain["ctnwidth"]) == MyUtility.Convert.GetDouble(this.numW.Text);
-            bool h = MyUtility.Convert.GetDouble(this.CurrentMaintain["ctnheight"]) == MyUtility.Convert.GetDouble(this.numH.Text);
+            bool l = MyUtility.Convert.GetDouble(this.numL.OldValue) == MyUtility.Convert.GetDouble(this.numL.Text);
+            bool w = MyUtility.Convert.GetDouble(this.numW.OldValue) == MyUtility.Convert.GetDouble(this.numW.Text);
+            bool h = MyUtility.Convert.GetDouble(this.numH.OldValue) == MyUtility.Convert.GetDouble(this.numH.Text);
             if (l && w && h)
             {
                 return;
