@@ -48,6 +48,7 @@
             this.txtshipmode = new Sci.Production.Class.Txtshipmode();
             this.txtsubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
+            this.radioAirPrepaidExpenseReport = new Sci.Win.UI.RadioButton();
             this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
             this.radioExportFeeReport = new Sci.Win.UI.RadioButton();
@@ -57,22 +58,22 @@
             this.dateVoucherDate = new Sci.Win.UI.DateRange();
             this.lbRateType = new Sci.Win.UI.Label();
             this.comboRateType = new Sci.Win.UI.ComboBox();
-            this.radioAirPrepaidExpenseReport = new Sci.Win.UI.RadioButton();
+            this.radioExportFeeReportMerged = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(436, 12);
+            this.print.Location = new System.Drawing.Point(437, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(436, 48);
+            this.toexcel.Location = new System.Drawing.Point(437, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(436, 84);
+            this.close.Location = new System.Drawing.Point(437, 84);
             // 
             // labelReportContent
             // 
@@ -281,20 +282,33 @@
             // 
             // radioPanel2
             // 
+            this.radioPanel2.Controls.Add(this.radioExportFeeReportMerged);
             this.radioPanel2.Controls.Add(this.radioAirPrepaidExpenseReport);
             this.radioPanel2.Controls.Add(this.radioDetailListBySPNoByFeeType);
             this.radioPanel2.Controls.Add(this.radioDetailListbySPNo);
             this.radioPanel2.Controls.Add(this.radioExportFeeReport);
             this.radioPanel2.Location = new System.Drawing.Point(118, 348);
             this.radioPanel2.Name = "radioPanel2";
-            this.radioPanel2.Size = new System.Drawing.Size(232, 115);
+            this.radioPanel2.Size = new System.Drawing.Size(302, 147);
             this.radioPanel2.TabIndex = 11;
+            // 
+            // radioAirPrepaidExpenseReport
+            // 
+            this.radioAirPrepaidExpenseReport.AutoSize = true;
+            this.radioAirPrepaidExpenseReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioAirPrepaidExpenseReport.Location = new System.Drawing.Point(1, 109);
+            this.radioAirPrepaidExpenseReport.Name = "radioAirPrepaidExpenseReport";
+            this.radioAirPrepaidExpenseReport.Size = new System.Drawing.Size(201, 21);
+            this.radioAirPrepaidExpenseReport.TabIndex = 3;
+            this.radioAirPrepaidExpenseReport.TabStop = true;
+            this.radioAirPrepaidExpenseReport.Text = "Air Prepaid Expense Report";
+            this.radioAirPrepaidExpenseReport.UseVisualStyleBackColor = true;
             // 
             // radioDetailListBySPNoByFeeType
             // 
             this.radioDetailListBySPNoByFeeType.AutoSize = true;
             this.radioDetailListBySPNoByFeeType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetailListBySPNoByFeeType.Location = new System.Drawing.Point(1, 57);
+            this.radioDetailListBySPNoByFeeType.Location = new System.Drawing.Point(1, 82);
             this.radioDetailListBySPNoByFeeType.Name = "radioDetailListBySPNoByFeeType";
             this.radioDetailListBySPNoByFeeType.Size = new System.Drawing.Size(220, 21);
             this.radioDetailListBySPNoByFeeType.TabIndex = 2;
@@ -306,7 +320,7 @@
             // 
             this.radioDetailListbySPNo.AutoSize = true;
             this.radioDetailListbySPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetailListbySPNo.Location = new System.Drawing.Point(1, 29);
+            this.radioDetailListbySPNo.Location = new System.Drawing.Point(1, 54);
             this.radioDetailListbySPNo.Name = "radioDetailListbySPNo";
             this.radioDetailListbySPNo.Size = new System.Drawing.Size(137, 21);
             this.radioDetailListbySPNo.TabIndex = 1;
@@ -406,21 +420,21 @@
             this.comboRateType.Size = new System.Drawing.Size(171, 24);
             this.comboRateType.TabIndex = 10;
             // 
-            // radioAirPrepaidExpenseReport
+            // radioExportFeeReportMerged
             // 
-            this.radioAirPrepaidExpenseReport.AutoSize = true;
-            this.radioAirPrepaidExpenseReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioAirPrepaidExpenseReport.Location = new System.Drawing.Point(1, 84);
-            this.radioAirPrepaidExpenseReport.Name = "radioAirPrepaidExpenseReport";
-            this.radioAirPrepaidExpenseReport.Size = new System.Drawing.Size(201, 21);
-            this.radioAirPrepaidExpenseReport.TabIndex = 3;
-            this.radioAirPrepaidExpenseReport.TabStop = true;
-            this.radioAirPrepaidExpenseReport.Text = "Air Prepaid Expense Report";
-            this.radioAirPrepaidExpenseReport.UseVisualStyleBackColor = true;
+            this.radioExportFeeReportMerged.AutoSize = true;
+            this.radioExportFeeReportMerged.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioExportFeeReportMerged.Location = new System.Drawing.Point(3, 28);
+            this.radioExportFeeReportMerged.Name = "radioExportFeeReportMerged";
+            this.radioExportFeeReportMerged.Size = new System.Drawing.Size(272, 21);
+            this.radioExportFeeReportMerged.TabIndex = 4;
+            this.radioExportFeeReportMerged.TabStop = true;
+            this.radioExportFeeReportMerged.Text = "Export Fee Report(Mergerd Acct Code)";
+            this.radioExportFeeReportMerged.UseVisualStyleBackColor = true;
             // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 517);
+            this.ClientSize = new System.Drawing.Size(525, 546);
             this.Controls.Add(this.comboRateType);
             this.Controls.Add(this.lbRateType);
             this.Controls.Add(this.dateVoucherDate);
@@ -520,5 +534,6 @@
         private Win.UI.Label lbRateType;
         private Win.UI.ComboBox comboRateType;
         private Win.UI.RadioButton radioAirPrepaidExpenseReport;
+        private Win.UI.RadioButton radioExportFeeReportMerged;
     }
 }

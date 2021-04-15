@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Ict;
+using Sci.Data;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -101,7 +103,28 @@ namespace Sci.Production.Shipping
             this.forwarder = this.txtsubconForwarder.TextBox1.Text;
             this.rateType = this.comboRateType.SelectedValue.ToString();
             this.reportContent = this.radioGarment.Checked ? 1 : 2;
-            this.reportType = this.radioExportFeeReport.Checked ? 1 : this.radioDetailListbySPNo.Checked ? 2 : this.radioDetailListBySPNoByFeeType.Checked ? 3 : 4;
+
+            if (this.radioExportFeeReport.Checked)
+            {
+                this.reportType = 1;
+            }
+            else if (this.radioDetailListbySPNo.Checked)
+            {
+                this.reportType = 2;
+            }
+            else if (this.radioDetailListBySPNoByFeeType.Checked)
+            {
+                this.reportType = 3;
+            }
+            else if (this.radioAirPrepaidExpenseReport.Checked)
+            {
+                this.reportType = 4;
+            }
+            else if (this.radioExportFeeReportMerged.Checked)
+            {
+                this.reportType = 5;
+            }
+
             return base.ValidateInput();
         }
 
@@ -111,6 +134,19 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             string queryAccount;
             DualResult result;
+
+            if (this.reportType == 5)
+            {
+                bool b = this.ReportType5();
+                if (!b)
+                {
+                    return new DualResult(false);
+                }
+                else
+                {
+                    return Ict.Result.True;
+                }
+            }
 
             // Garment
             if (this.reportContent == 1)
@@ -1713,7 +1749,16 @@ where s.Type = 'EXPORT'");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
+
+            if (this.reportType == 5)
+            {
+                this.ReportType5ToExcel();
+                this.HideWaitMessage();
+                return true;
+            }
+
             string strXltName = Env.Cfg.XltPathDir + (this.reportType == 1 ? "\\Shipping_R10_ShareExpenseExportFeeReport.xltx" : this.reportType == 2 ? "\\Shipping_R10_ShareExpenseExportBySP.xltx" : this.reportType == 3 ? "\\Shipping_R10_ShareExpenseExportBySPByFee.xltx" : "\\Shipping_R10_AirPrepaidExpense.xltx");
+
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -2177,6 +2222,1018 @@ where s.Type = 'EXPORT'");
             strExcelName.OpenFile();
             #endregion
             return true;
+        }
+
+        /// <summary>
+        /// Report Type = 5 的報表資料
+        /// </summary>
+        private bool ReportType5()
+        {
+            StringBuilder sqlCmd = new StringBuilder();
+            DualResult result;
+
+            try
+            {
+                // Garment
+                if (this.reportContent == 1)
+                {
+                    #region 組SQL
+                    sqlCmd.Append($@"
+with tmpGB 
+as (
+	select distinct [Origin] = (SELECT Region FROM System)
+		, [RgCode] = (SELECT RgCode FROM System)
+		, [Type] = 'GARMENT'
+		, g.ID
+		, [OnBoardDate] = g.ETD 
+		, g.Shipper
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
+		, g.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+							  when o.Category = 'S' then 'Sample'
+							  when o.Category = 'G' then 'Garment'
+							  else '' end
+		, g.CustCDID
+		, g.Dest
+		, g.ShipModeID
+		, p.PulloutDate
+		, [Forwarder] = g.Forwarder+'-'+isnull(ls.Abb,'') 
+		, s.BLNo
+		, se.CurrencyID
+		, p.OrderID
+		, [packingID] = p.ID
+        , se.AccountID
+        , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
+    inner join PackingList p WITH (NOLOCK) on p.INVNo = g.ID
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd	
+	) pd on pd.id = p.id
+    inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    inner join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder 
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
+    where s.Type = 'EXPORT'
+");
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.custcd))
+                    {
+                        sqlCmd.Append(string.Format(" and g.CustCDID = '{0}'", this.custcd));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and g.Forwarder = '{0}'", this.forwarder));
+                    }
+
+                    sqlCmd.Append($@"
+),
+tmpPL as 
+(
+	select distinct [Origin] = (SELECT Region FROM System)
+		, [RgCode] = (SELECT RgCode FROM System)
+		, [Type] = 'GARMENT'
+		, p.ID
+		, [OnBoardDate] = null
+		, [Shipper] = ''  
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
+		, s.SisFtyAPID
+		, o.BrandID
+		, [Category] = case when o.Category = 'B' then 'Bulk'
+							  when o.Category = 'S' then 'Sample'
+							  when o.Category = 'G' then 'Garment'
+							  else '' end
+		, o.CustCDID
+		, o.Dest
+		, p.ShipModeID
+		, p.PulloutDate
+		, [Forwarder] = ''
+		, s.BLNo
+		, se.CurrencyID
+		, p.OrderID
+		, [packingID] = p.ID
+        , se.AccountID
+        , [Amount] = se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
+    inner join (
+		select distinct id,OrderID,OrderShipmodeSeq 
+		from PackingList_Detail	pd WITH (NOLOCK) 
+	) pd on pd.id = p.id
+    inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+    inner join SciFMS_AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
+    where s.Type = 'EXPORT'
+");
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.brand))
+                    {
+                        sqlCmd.Append(string.Format(" and p.BrandID = '{0}'", this.brand));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.custcd))
+                    {
+                        sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", this.custcd));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and o.Dest = '{0}'", this.dest));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and p.ShipModeID = '{0}'", this.shipmode));
+                    }
+
+                    #endregion
+
+                    #region SQL
+                    sqlCmd.Append(@"
+),
+tmpAllData
+as (
+select * from tmpGB
+union all
+select * from tmpPL
+)
+
+select * 
+into #temp1
+from tmpAllData
+
+-----temp2
+select distinct 
+	  Origin
+	, RgCode
+	, [type]
+	, id
+	, OnBoardDate
+	, shipper
+	, Foundry = isnull(f.Foundry,'')
+	, SisFtyAPID
+	, Brandid
+	, category
+	, custcdid
+	, dest
+	, shipmodeid
+	, pulloutdate
+	, forwarder
+	, s.BLNo
+	, currencyid
+	, orderid
+	, packingid
+	, AccountID
+	, Amount
+into #temp2
+from #temp1 as a
+outer apply (
+		select [BLNo]= stuff(
+			(select CONCAT(',',blno)
+		from (
+			select distinct blno 
+			from #temp1 d
+			where d.id=a.id 
+			)s
+			for xml path('')
+		),1,1,'')
+	)s
+outer apply(select top 1 Foundry from #temp1 d where d.id=a.id and Foundry = 'Y')f
+
+select Origin
+	, RgCode
+	, [type]
+	, id
+	, OnBoardDate
+	, Shipper
+	, Foundry
+	, SisFtyAPID
+	, BrandID
+	, [Category] = Category.value
+	, [OQty]=oqs.OQty
+	, CustCDID
+	, Dest
+	, ShipModeID
+	, PulloutDate
+	, [ShipQty]=sum(pt.ShipQty)
+	, [ctnqty]=sum(pt.ctnqty)
+	, [gw]=sum(pt.gw)
+	, [CBM]=sum(pt.CBM)
+	, Forwarder
+	, BLNo
+	, CurrencyID
+	, AccountID
+	, Amount
+into #temp3
+from #temp2 a
+outer apply(
+	select sum(qty) as OQty 
+	from Order_QtyShip  WITH (NOLOCK) 
+	where id IN(
+		select DISTINCT pd.OrderID
+		from PackingList p 
+		inner join PackingList_Detail pd ON p.Id = pd.ID
+		where p.INVNo = a.ID
+	)
+) as oqs
+outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
+outer apply(
+	select value = Stuff((
+		select concat(',',Category)
+		from (
+				select 	distinct Category
+				from #temp2 d
+				where d.id = a.ID
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Category
+group by Origin, RgCode,type,id,OnBoardDate,Shipper,BrandID,Category.value,CustCDID,
+Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
+,AccountID,Amount, Foundry, SisFtyAPID,oqs.OQty
+
+select Origin
+	, RgCode
+	, [type]
+	, a.id
+	, a.OnBoardDate
+	, a.Shipper
+	, a.Foundry
+	, a.SisFtyAPID
+	, a.BrandID
+	, a.[Category]
+	, a.[OQty]
+	, a.CustCDID
+	, a.Dest
+	, a.ShipModeID
+	, a.PulloutDate
+	, a.[ShipQty]
+	, a.[ctnqty]
+	, a.[gw]
+	, a.[CBM]
+	, a.Forwarder
+	, a.BLNo
+	, a.CurrencyID 
+	, [AccountID]='A_'+a.AccountID
+	, a.Amount
+into #temp4
+from #temp3 a
+
+
+");
+
+                    #endregion
+
+                    string account = this.GetAccount();
+                    sqlCmd.Append($@"
+
+select *
+from #temp4
+PIVOT (SUM(Amount)
+FOR AccountID IN (
+    {account}
+)) a
+order by id
+
+drop table #temp1,#temp2,#temp3,#temp4
+");
+                }
+                else
+                {
+                    #region 組SQL
+                    sqlCmd.Append($@"
+with tmpMaterialData
+as (
+	select distinct [Origin] = (SELECT Region FROM System)
+		, [RgCode] = (SELECT RgCode FROM System)
+		, [Type] = 'MATERIAL'
+		, f.ID
+		, [OnBoardDate] = f.OnBoard
+		, f.Shipper
+		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y') 
+		, s.SisFtyAPID
+		, BrandID=''
+		, [Category] = ''
+		, CustCDID=''
+		, Dest = ''
+		, f.ShipModeID
+		, PulloutDate =  f.PortArrival
+		, [Forwarder] = f.Forwarder+'-'+isnull(ls.Abb,'') 
+		, s.BLNo
+		, se.CurrencyID
+		, OrderID=''
+		, [packingID] = ''
+        , se.AccountID
+        , [Amount] = se.Amount * iif('FX' = '', 1, dbo.getRate('FX', s.CurrencyID,'USD', s.CDate))
+    from ShippingAP s WITH (NOLOCK) 
+    inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
+    inner join FtyExport f WITH (NOLOCK) on f.ID = se.InvNo
+    left join LocalSupp ls WITH (NOLOCK) on ls.ID = f.Forwarder
+	outer apply (
+		select top 1 Foundry 
+		from GMTBooking WITH (NOLOCK) 
+		where ISNULL(s.BLNo,'') != '' 
+　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
+　　	  and Foundry = 1
+	)gm
+    where s.Type = 'EXPORT'
+");
+                    #endregion
+
+                    #region 組條件
+                    if (!MyUtility.Check.Empty(this.date1))
+                    {
+                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.date2))
+                    {
+                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.apApvDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.voucherDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.dest))
+                    {
+                        sqlCmd.Append(string.Format(" and f.ImportCountry = '{0}'", this.dest));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.shipmode))
+                    {
+                        sqlCmd.Append(string.Format(" and f.ShipModeID = '{0}'", this.shipmode));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.forwarder))
+                    {
+                        sqlCmd.Append(string.Format(" and f.Forwarder = '{0}'", this.forwarder));
+                    }
+                    #endregion
+
+                    sqlCmd.Append($@"
+) 
+");
+
+                    string account = this.GetAccount();
+                    sqlCmd.Append($@"
+select * from tmpMaterialData
+PIVOT (SUM(Amount)
+FOR AccountID IN ({account})) a
+
+");
+                }
+
+                result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+
+                List<ReportData> tmpDatas = new List<ReportData>();
+                List<ReportData> finalDatas = new List<ReportData>();
+
+                tmpDatas = PublicPrg.DataTableToList.ConvertToClassList<ReportData>(this.printData).ToList();
+
+                foreach (var d in tmpDatas)
+                {
+                    ReportData a = this.GetValueByAccountNo(d.RgCode, d);
+                    finalDatas.Add(a);
+                }
+
+                this.printData.Clear();
+                this.printData = PublicPrg.ListToDataTable.ToDataTable<ReportData>(finalDatas);
+
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                    this.ShowErr(failResult);
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+                return false;
+            }
+
+        }
+
+        private void ReportType5ToExcel()
+        {
+            string strXltName = Env.Cfg.XltPathDir + "\\Shipping_R10_ExportFeeReport(MergerdAcctCode).xltx";
+
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            //excel.Visible = true;
+            if (excel == null)
+            {
+                return;
+            }
+
+            DataTable tb_onBoardDate = new DataTable();
+            DataTable tb_IncludeFoundry = new DataTable();
+            DataTable tb_SisFtyAP = new DataTable();
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+
+            //if (this.rateType == string.Empty)
+            //{
+            //    for (int i = 23; i <= 52; i++)
+            //    {
+            //        if (i != 39 && i != 46)
+            //        {
+            //            worksheet.Cells[1, i] = worksheet.Cells[1, i].Value + "\r\n(USD)";
+            //        }
+            //    }
+            //}
+
+            if (this.reportContent == 2)
+            {
+                worksheet.Cells[1, 4] = "FTY WK#";
+            }
+
+            // 複製儲存格
+            //Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A2:AZ2").EntireRow;
+            //for (int i = 1; i <= this.printData.Rows.Count - 1; i++)
+            //{
+            //    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A2", Type.Missing).EntireRow; // 選擇要被貼上的位置
+            //    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing)); // 貼上
+            //}
+
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R10_ExportFeeReport(MergerdAcctCode).xltx", 1, showExcel: false, excelApp: excel);
+
+            // 刪除不必要的欄位
+            worksheet.get_Range("BA:BQ").EntireColumn.Delete();
+
+            int x = this.printData.Rows.Count + 2;
+
+            // 剩下的底色弄成白色，抓個兩百行不要被User看到就好
+            worksheet.get_Range($"A{x}:AZ{x + 200}").Interior.Color = Color.White;
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("Shipping_R10_ExportFeeReport(MergerdAcctCode)");
+            excel.ActiveWorkbook.SaveAs(strExcelName);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+
+            strExcelName.OpenFile();
+            #endregion
+        }
+
+        /// <summary>
+        /// 取得會計科目 for Report type為Export Fee Report(Mergerd Acct Code)的報表
+        /// </summary>
+        /// <returns>字串</returns>
+        private string GetAccount()
+        {
+            // 所有欄位會用到的會計科目
+            List<string> basic = new List<string>()
+            {
+                "A_61022001", "A_61022002", "A_61022003", "A_61022004", "A_61022005", "A_61022006",
+                "A_61092101", "A_61092102", "A_61092103", "A_61092104", "A_61092105", "A_61092106",
+                "A_6109", "A_6102", "A_61021005",
+                "TotalExportFee", "Blank1",
+                "A_59122101", "A_59122102", "A_59122103", "A_59122104", "A_59122106", "A_59121111",
+                "Blank2",
+                "A_61052101", "A_61052102", "A_61052103", "A_61052104", "A_61052105", "A_61052106",
+
+                "A_61041001", "A_82131001", "A_61051001", "A_61092005", "A_61012001", "A_61012006",
+                "A_59122222", "A_5912", "A_59122001", "A_61052001", "A_6105",
+                "A_61052006", "A_61012003", "A_61092001", "A_61092006", "A_59129999", "A_61050001",
+            };
+
+            string accountList = "[" + basic.JoinToString("],[") + "]";
+            return accountList;
+        }
+
+        /// <summary>
+        /// 傳入Report type為Export Fee Report(Mergerd Acct Code)的報表資料，處理運算每個會計科目的值
+        /// </summary>
+        /// <param name="factoryID">factoryID</param>
+        /// <param name="reportData">reportData</param>
+        /// <returns>ReportData</returns>
+        private ReportData GetValueByAccountNo(string factoryID, ReportData reportData)
+        {
+            /*
+            規則依據：ISP20210275。
+            說明：DB會撈出所有會計科目的資料，根據不同工廠，按照以下步驟，請搭配報表範本看
+            1. 以Total Export Fee欄位為分界，這之前的欄位，逐一重新運算/替換
+            2. 前面欄位全部重新算完之後，才加總Total Export Fee欄位
+            3. 後面繼續運算/替換，所有欄位不需要運算/替換的值，不用管他
+            4. 最後將不需要顯示的值改成NULL
+            5. 注意NULL的運算，NULL + 1 會等於NULL，因此凡是遭遇運算都必須轉型別
+             */
+
+            if (factoryID == "PHI")
+            {
+                reportData.A_61092102 = MyUtility.Convert.GetDecimal(reportData.A_59122102) + MyUtility.Convert.GetDecimal(reportData.A_61092102);
+                reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
+                reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "PH2")
+            {
+                reportData.A_61022003 = MyUtility.Convert.GetDecimal(reportData.A_61022003) + MyUtility.Convert.GetDecimal(reportData.A_61012003);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "ESP")
+            {
+                reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
+                reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_61092006) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "SNP")
+            {
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "SPT")
+            {
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61022001 = MyUtility.Convert.GetDecimal(reportData.A_61022001) + MyUtility.Convert.GetDecimal(reportData.A_61012001);
+                reportData.A_61022006 = MyUtility.Convert.GetDecimal(reportData.A_61022006) + MyUtility.Convert.GetDecimal(reportData.A_61012006);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "SPR")
+            {
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092105 = MyUtility.Convert.GetDecimal(reportData.A_61092105) + MyUtility.Convert.GetDecimal(reportData.A_61052105);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "SPS")
+            {
+                reportData.A_61092101 = MyUtility.Convert.GetDecimal(reportData.A_61092101) + MyUtility.Convert.GetDecimal(reportData.A_61092001) + MyUtility.Convert.GetDecimal(reportData.A_59122101);
+                reportData.A_61092105 = MyUtility.Convert.GetDecimal(reportData.A_61092105) + MyUtility.Convert.GetDecimal(reportData.A_61092005) + MyUtility.Convert.GetDecimal(reportData.A_61052105);
+                reportData.A_61092106 = MyUtility.Convert.GetDecimal(reportData.A_61092106) + MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59121111) + MyUtility.Convert.GetDecimal(reportData.A_61052106);
+            }
+
+            if (factoryID == "HXG")
+            {
+                reportData.A_6102 = MyUtility.Convert.GetDecimal(reportData.A_6102) + MyUtility.Convert.GetDecimal(reportData.A_61041001);
+            }
+
+            if (factoryID == "HZG")
+            {
+                // 無異動
+            }
+
+            // 共通
+            reportData.TotalExportFee = MyUtility.Convert.GetDecimal(reportData.A_61022001)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022002)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022003)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022004)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022005)
+                + MyUtility.Convert.GetDecimal(reportData.A_61022006)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092101)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092102)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092103)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092104)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092105)
+                + MyUtility.Convert.GetDecimal(reportData.A_61092106)
+                + MyUtility.Convert.GetDecimal(reportData.A_6102)
+                + MyUtility.Convert.GetDecimal(reportData.A_61021005);
+
+            // TotalExportFee之後不需要顯示得改成NULL
+            if (factoryID == "PHI")
+            {
+                reportData.A_59122102 = null; // MyUtility.Convert.GetDecimal(reportData.A_59122102) + MyUtility.Convert.GetDecimal(reportData.A_59122222);
+                reportData.A_59122104 = null; // MyUtility.Convert.GetDecimal(reportData.A_59129999);
+                reportData.A_59122106 = null; // MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_5912) + MyUtility.Convert.GetDecimal(reportData.A_59122001);
+                reportData.A_61052101 = null; // MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61052001);
+                reportData.A_61052106 = null; //MyUtility.Convert.GetDecimal(reportData.A_61052106) + MyUtility.Convert.GetDecimal(reportData.A_6105) + MyUtility.Convert.GetDecimal(reportData.A_61052006);
+
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+            }
+
+            if (factoryID == "PH2")
+            {
+                reportData.A_59122106 = null; // MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_59122001);
+                reportData.A_61052101 = null; //MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61052001);
+
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+            }
+
+            if (factoryID == "ESP")
+            {
+                reportData.A_59122102 = null; // MyUtility.Convert.GetDecimal(reportData.A_59122222);
+                reportData.A_59122104 = null; // MyUtility.Convert.GetDecimal(reportData.A_59122104) + MyUtility.Convert.GetDecimal(reportData.A_59129999);
+                reportData.A_61052106 = null; // MyUtility.Convert.GetDecimal(reportData.A_61052106) + MyUtility.Convert.GetDecimal(reportData.A_61050001);
+
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052105 = null;
+            }
+
+            if (factoryID == "SNP")
+            {
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+            }
+
+            if (factoryID == "SPT")
+            {
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+            }
+
+            if (factoryID == "SPR")
+            {
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+            }
+
+            if (factoryID == "SPS")
+            {
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_6109 = null;
+                reportData.A_6102 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+            }
+
+            if (factoryID == "HXG")
+            {
+                reportData.A_61022006 = null;
+                reportData.A_61092101 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_61092106 = null;
+                reportData.A_6109 = null;
+                reportData.A_61021005 = null;
+                reportData.A_59122101 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_59122106 = null;
+                reportData.A_61052101 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+                reportData.A_61052106 = null;
+            }
+
+            if (factoryID == "HZG")
+            {
+                reportData.A_59122106 = null; //MyUtility.Convert.GetDecimal(reportData.A_59122106) + MyUtility.Convert.GetDecimal(reportData.A_82131001);
+                reportData.A_61052101 = null; // MyUtility.Convert.GetDecimal(reportData.A_61052101) + MyUtility.Convert.GetDecimal(reportData.A_61051001);
+
+                reportData.A_61022006 = null;
+                reportData.A_61092101 = null;
+                reportData.A_61092102 = null;
+                reportData.A_61092103 = null;
+                reportData.A_61092104 = null;
+                reportData.A_61092105 = null;
+                reportData.A_61092106 = null;
+                reportData.A_6109 = null;
+                reportData.A_59122101 = null;
+                reportData.A_59122102 = null;
+                reportData.A_59122103 = null;
+                reportData.A_59122104 = null;
+                reportData.A_61052102 = null;
+                reportData.A_61052103 = null;
+                reportData.A_61052104 = null;
+                reportData.A_61052105 = null;
+                reportData.A_61052106 = null;
+            }
+
+            return reportData;
+        }
+
+        /// <summary>
+        /// Report Type = 5 的報表資料
+        /// </summary>
+        private class ReportData
+        {
+            public string Origin { get; set; }
+
+            public string RgCode { get; set; }
+
+            public string Type { get; set; }
+
+            public string ID { get; set; }
+
+            public DateTime? OnBoardDate { get; set; }
+
+            public string Shipper { get; set; }
+
+            public string Foundry { get; set; }
+
+            public string SisFtyAPID { get; set; }
+
+            public string BrandID { get; set; }
+
+            public string Category { get; set; }
+
+            public int OQty { get; set; }
+
+            public string CustCDID { get; set; }
+
+            public string Dest { get; set; }
+
+            public string ShipModeID { get; set; }
+
+            public DateTime? PullOutDate { get; set; }
+
+            public int ShipQty { get; set; }
+
+            public int CtnQty { get; set; }
+
+            public decimal GW { get; set; }
+
+            public decimal CBM { get; set; }
+
+            public string Forwarder { get; set; }
+
+            public string BLNo { get; set; }
+
+            public string CurrencyID { get; set; }
+
+            public decimal? A_61022001 { get; set; }
+
+            public decimal? A_61022002 { get; set; }
+
+            public decimal? A_61022003 { get; set; }
+
+            public decimal? A_61022004 { get; set; }
+
+            public decimal? A_61022005 { get; set; }
+
+            public decimal? A_61022006 { get; set; }
+
+            public decimal? A_61092101 { get; set; }
+
+            public decimal? A_61092102 { get; set; }
+
+            public decimal? A_61092103 { get; set; }
+
+            public decimal? A_61092104 { get; set; }
+
+            public decimal? A_61092105 { get; set; }
+
+            public decimal? A_61092106 { get; set; }
+
+            public decimal? A_6109 { get; set; }
+
+            public decimal? A_6102 { get; set; }
+
+            public decimal? A_61021005 { get; set; }
+
+            public decimal? TotalExportFee { get; set; }
+
+            public string Blank1 { get; set; }
+
+            public decimal? A_59122101 { get; set; }
+
+            public decimal? A_59122102 { get; set; }
+
+            public decimal? A_59122103 { get; set; }
+
+            public decimal? A_59122104 { get; set; }
+
+            public decimal? A_59122106 { get; set; }
+
+            public decimal? A_59121111 { get; set; }
+
+            public string Blank2 { get; set; }
+
+            public decimal? A_61052101 { get; set; }
+
+            public decimal? A_61052102 { get; set; }
+
+            public decimal? A_61052103 { get; set; }
+
+            public decimal? A_61052104 { get; set; }
+
+            public decimal? A_61052105 { get; set; }
+
+            public decimal? A_61052106 { get; set; }
+
+            public decimal? A_61041001 { get; set; }
+
+            public decimal? A_82131001 { get; set; }
+
+            public decimal? A_61051001 { get; set; }
+
+            public decimal? A_61092005 { get; set; }
+
+            public decimal? A_61012001 { get; set; }
+
+            public decimal? A_61012006 { get; set; }
+
+            public decimal? A_59122222 { get; set; }
+
+            public decimal? A_5912 { get; set; }
+
+            public decimal? A_59122001 { get; set; }
+
+            public decimal? A_61052001 { get; set; }
+
+            public decimal? A_6105 { get; set; }
+
+            public decimal? A_61052006 { get; set; }
+
+            public decimal? A_61012003 { get; set; }
+
+            public decimal? A_61092001 { get; set; }
+
+            public decimal? A_61092006 { get; set; }
+
+            public decimal? A_59129999 { get; set; }
+
+            public decimal? A_61050001 { get; set; }
         }
     }
 }
