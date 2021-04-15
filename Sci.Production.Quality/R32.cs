@@ -248,14 +248,14 @@ OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-        AND t.Carton like ('%' + pd.CTNStartNo + ',%')
+        AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 		AND pd.CTNQty=1
 )InspectedCtn    --計算所有階段的總箱數
 OUTER APPLY(
 	SELECT [Val] = SUM(pd.ShipQty)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-        AND t.Carton like ('%' + pd.CTNStartNo + ',%')
+        AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
 
 DROP TABLE #tmp ,#MainData ,#PackingList_Detail,#MainData1
@@ -443,14 +443,14 @@ OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-		AND t.Carton like ('%' + pd.CTNStartNo + ',%')
+		AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 		AND pd.CTNQty=1
 )InspectedCtn    --計算所有階段的總箱數
 OUTER APPLY(
 	SELECT [Val] = SUM(pd.ShipQty)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-		AND t.Carton like ('%' + pd.CTNStartNo + ',%')
+		AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
 )InspectedPoQty   --計算所有階段的總成衣件數
 Order by id
 

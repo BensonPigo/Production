@@ -375,14 +375,14 @@ OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-	AND t.Carton like (''%'' + pd.CTNStartNo + '',%'')
+	AND ('','' + t.Carton + '','') like (''%,'' + pd.CTNStartNo + '',%'')
 	AND pd.CTNQty=1
 )InspectedCtn
 OUTER APPLY(
 	SELECT [Val] = SUM(pd.ShipQty)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-	AND t.Carton like (''%'' + pd.CTNStartNo + '',%'')
+	AND ('','' + t.Carton + '','') like (''%,'' + pd.CTNStartNo + '',%'')
 )InspectedPoQty
 Order by id
 
