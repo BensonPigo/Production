@@ -35,6 +35,8 @@
             this.txtSubProcessID = new Sci.Win.UI.TextBox();
             this.editBoxDescription = new Sci.Win.UI.EditBox();
             this.txtID = new Sci.Win.UI.TextBox();
+            this.editBoxLocalDesc = new Sci.Win.UI.EditBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -45,10 +47,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(818, 258);
+            this.detail.Size = new System.Drawing.Size(818, 348);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editBoxLocalDesc);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.editBoxDescription);
             this.detailcont.Controls.Add(this.txtSubProcessID);
@@ -56,12 +60,12 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.labeDecription);
             this.detailcont.Controls.Add(this.labefactory);
-            this.detailcont.Size = new System.Drawing.Size(818, 220);
+            this.detailcont.Size = new System.Drawing.Size(818, 310);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 220);
+            this.detailbtm.Location = new System.Drawing.Point(0, 310);
             this.detailbtm.Size = new System.Drawing.Size(818, 38);
             // 
             // browse
@@ -70,7 +74,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(826, 287);
+            this.tabs.Size = new System.Drawing.Size(826, 377);
             // 
             // createby
             // 
@@ -163,9 +167,28 @@
             this.txtID.Size = new System.Drawing.Size(255, 23);
             this.txtID.TabIndex = 0;
             // 
+            // editBoxLocalDesc
+            // 
+            this.editBoxLocalDesc.BackColor = System.Drawing.Color.White;
+            this.editBoxLocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDesc", true));
+            this.editBoxLocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBoxLocalDesc.Location = new System.Drawing.Point(138, 179);
+            this.editBoxLocalDesc.Multiline = true;
+            this.editBoxLocalDesc.Name = "editBoxLocalDesc";
+            this.editBoxLocalDesc.Size = new System.Drawing.Size(447, 99);
+            this.editBoxLocalDesc.TabIndex = 23;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 179);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(108, 23);
+            this.label1.TabIndex = 22;
+            this.label1.Text = "Local Desc.";
+            // 
             // B15
             // 
-            this.ClientSize = new System.Drawing.Size(826, 320);
+            this.ClientSize = new System.Drawing.Size(826, 410);
             this.EnableGridJunkColor = true;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -196,5 +219,7 @@
         private Win.UI.EditBox editBoxDescription;
         private Win.UI.TextBox txtSubProcessID;
         private Win.UI.TextBox txtID;
+        private Win.UI.EditBox editBoxLocalDesc;
+        private Win.UI.Label label1;
     }
 }

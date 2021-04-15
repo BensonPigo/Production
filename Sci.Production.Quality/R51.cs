@@ -164,6 +164,7 @@ select
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
+    [Artwork] = Artwork.val,
 	B.OrderID,
 	BD.BundleGroup,
 	O.styleID,
@@ -187,6 +188,10 @@ from SubProInsRecord SR WITH (NOLOCK)
 Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
+outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
+                                    from Bundle_Detail_Art bda with (nolock) 
+                                    where bda.Bundleno = BD.Bundleno
+                                    FOR XML PATH('')),1,1,'') ) Artwork
 {formatJoin}
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
@@ -203,6 +208,7 @@ select
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
+    [Artwork] = Artwork.val,
 	BR.OrderID,
 	BRD.BundleGroup,
 	O.styleID,
@@ -225,6 +231,10 @@ from SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
+outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
+                                    from Bundle_Detail_Art bda with (nolock) 
+                                    where bda.Bundleno = SR.BundleNo
+                                    FOR XML PATH('')),1,1,'') ) Artwork
 {formatJoin}
 outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
 Where 1=1
@@ -281,7 +291,7 @@ drop table #tmp,#tmp2
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
             if (this.CustomColumnDt != null)
             {
-                int col = this.radioSummary.Checked ? 24 : this.radioDetail_DefectType.Checked ? 25 : 27;
+                int col = this.radioSummary.Checked ? 25 : this.radioDetail_DefectType.Checked ? 26 : 28;
                 foreach (DataRow dr in this.CustomColumnDt.Rows)
                 {
                     worksheet.Cells[1, col] = dr["DisplayName"];
