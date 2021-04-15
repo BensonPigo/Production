@@ -963,7 +963,8 @@ with tmpGB as (
 		, f.KPICode
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
-	    , [freeSP] = cast(case when g.ShipModeID in ('A/C','A/P','A/P-C','AIR','E/C','E/P','E/P-C','H/C','TRUCK','CB-TRUCK') then iif(pTotal.GW = 0, 0, pDetail.GW  / pTotal.GW)
+	    , [freeSP] = cast(se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+                     * case when g.ShipModeID in ('A/C','A/P','A/P-C','AIR','E/C','E/P','E/P-C','H/C','TRUCK','CB-TRUCK') then iif(pTotal.GW = 0, 0, pDetail.GW  / pTotal.GW)
 					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
 					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
@@ -1112,7 +1113,8 @@ tmpPL as
 		, f.KPICode
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
-	    , [freeSP] = cast(case when p.ShipModeID in ('A/C','A/P','A/P-C','AIR','E/C','E/P','E/P-C','H/C','TRUCK','CB-TRUCK') then iif(pTotal.GW = 0, 0, pDetail.GW  / pTotal.GW)
+	    , [freeSP] = cast(se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate)) 
+                     * case when p.ShipModeID in ('A/C','A/P','A/P-C','AIR','E/C','E/P','E/P-C','H/C','TRUCK','CB-TRUCK') then iif(pTotal.GW = 0, 0, pDetail.GW  / pTotal.GW)
 					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
 					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
