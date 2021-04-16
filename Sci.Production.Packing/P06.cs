@@ -434,6 +434,17 @@ order by os.Seq",
                 return false;
             }
 
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
             return base.ClickEditBefore();
         }
 
@@ -732,6 +743,17 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             if (this.CurrentMaintain["Status"].ToString() == "Confirmed")
             {
                 MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be deleted!");
+                return false;
+            }
+
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot delete.
+Packing list is locked in the hanger system.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result)
+            {
+                this.ShowErr(result);
                 return false;
             }
 

@@ -197,6 +197,11 @@ Begin
 		Type varchar(15) null
 	)
 
+	Create table #tmpToClogPackingListID
+	(
+		ID varchar(13) null
+	)
+
 	--01. PackingList_Detail / TransferLocation
 	--只撈取 Clog P02、P08 資料
 	Begin
@@ -282,6 +287,8 @@ Begin
 				,pd.TransferDate = CONVERT(date,s.Time)
 				,pd.NewGW = s.GW
 				,pd.ReturnDate = null
+			output	INSERTED.ID
+					into #tmpToClogPackingListID
 			from Production.dbo.PackingList_Detail pd
 			inner join #tmpTransferLocation s on pd.SCICtnNo=s.SCICtnNo
 			where pd.ReceiveDate is null
@@ -318,11 +325,17 @@ Begin
 				,pd.NewGW = s.GW
 				,pd.CFAReturnClogDate = null
 				,pd.CFALocationId = null
+			output	INSERTED.ID
+					into #tmpToClogPackingListID
 			from Production.dbo.PackingList_Detail pd
 			inner join #tmpTransferLocation s on pd.SCICtnNo=s.SCICtnNo
 			where pd.CFAReturnClogDate is not null
 			and s.Type = 'CFAToClog'
 		End
+
+		-- Update PackingList CannotModify by ToClog data
+		update Production.dbo.PackingList set CannotModify = 1
+		where ID in (select ID from #tmpToClogPackingListID)
 	End
 
 	--04. PackingList_Detail.ClogLocationId

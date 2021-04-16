@@ -39,6 +39,7 @@
     [ClogReceiveID]     VARCHAR (13)    NULL,
     [QueryDate]         DATE            NULL,
     [RepackFrom]        VARCHAR (13)    NULL,
+	[CannotModify]      BIT             CONSTRAINT [DF_PackingList_CannotModify] DEFAULT ((0)) not NULL,
     CONSTRAINT [PK_PackingList] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -53,6 +54,9 @@
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Packing List Weight & Summary', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'任一箱曾經出分撿倉 或是 曾經入過成品倉', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList', @level2type = N'COLUMN', @level2name = N'CannotModify';
 
 
 GO

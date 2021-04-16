@@ -863,6 +863,7 @@
     </None>
     <None Include="Sci.Production.Packing.ruleset" />
     <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

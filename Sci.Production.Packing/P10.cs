@@ -548,6 +548,11 @@ where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}' and DisposeFromClog=
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
             }
 
+            foreach (string packingListID in selectedData.Select(s => s["PackingListID"].ToString()).Distinct())
+            {
+                updateCmds.Add($"update PackingList set CannotModify = 1 where ID = '{packingListID}'");
+            }
+
             // Update Orders的資料
             DataTable selectData = null;
             try
