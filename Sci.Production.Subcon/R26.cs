@@ -272,6 +272,7 @@ select DISTINCT c.FactoryID
 	        ,a.FactoryId
 	        ,b.OrderId
 	        ,c.StyleID
+	        ,s.StyleName
             ,c.SciDelivery
             ,c.BuyerDelivery
             ,c.SewInLine
@@ -313,6 +314,7 @@ select DISTINCT c.FactoryID
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
 left join orders c WITH (NOLOCK) on c.ID = b.OrderId
+left join Style s (NOLOCK) on s.Ukey = c.StyleUkey
 left join localsupp d  WITH (NOLOCK) on  d.id =a.LocalSuppID 
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo=b.Refno
