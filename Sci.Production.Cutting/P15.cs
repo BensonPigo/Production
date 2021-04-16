@@ -3112,19 +3112,17 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             this.numNoOfBundle.Value = tmpArticleSizeTb.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["No"]));
             this.numNoOfBundle_Validating = false;
             this.NumNoOfBundle_Validating(null, null);
-            int i = 0;
 
             foreach (DataRow dr in this.qtyTb.Select(filter))
             {
                 tmpArticleSizeTb.Select($"No = {dr["No"]}").ToList().ForEach(f => f["iden"] = dr["iden"]);
 
-                dr["POID"] = tmpArticleSizeTb.Rows[i]["POID"];
-                dr["Article"] = tmpArticleSizeTb.Rows[i]["Article"];
-                dr["SizeCode"] = tmpArticleSizeTb.Rows[i]["SizeCode"];
+                dr["POID"] = tmpArticleSizeTb.Select($"No = {dr["No"]}")[0]["POID"];
+                dr["Article"] = tmpArticleSizeTb.Select($"No = {dr["No"]}")[0]["Article"];
+                dr["SizeCode"] = tmpArticleSizeTb.Select($"No = {dr["No"]}")[0]["SizeCode"];
                 dr["Qty"] = tmpArticleSizeTb.Select($"No = {dr["No"]}").AsEnumerable().Sum(sum => MyUtility.Convert.GetInt(sum["cutoutput"]));
                 dr["ToneChar"] = tmpArticleSizeTb.Select($"No = {dr["No"]}").Select(s => MyUtility.Convert.GetString(s["ToneChar"])).FirstOrDefault();
                 dr["Tone"] = this.LetterToNumber(MyUtility.Convert.GetString(dr["ToneChar"]));
-                i++;
             }
 
             tmpArticleSizeTb.Columns.Remove("ToneChar");
