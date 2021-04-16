@@ -269,7 +269,7 @@ namespace Sci.Production.Automation
         /// <param name="packingListID">packingListID</param>
         /// <param name="cannotModifyMsg">cannotModifyMsg</param>
         /// <returns>DualResult</returns>
-        public DualResult CheckPackingListIsLock(string packingListID, string cannotModifyMsg = "Carton has been output from the hanger system or transferred to clog.")
+        public DualResult CheckPackingListIsLock(string packingListID, string cannotModifyMsg = "Carton has been output from the hanger system or transferred to clog.", string actionType = "")
         {
             if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
             {
@@ -278,7 +278,7 @@ namespace Sci.Production.Automation
 
             bool cannotModify = MyUtility.Check.Seek($"select 1 from PackingList where ID = '{packingListID}' and CannotModify  = 1");
 
-            if (cannotModify)
+            if (cannotModify && actionType != "Delete")
             {
                 return new DualResult(false, cannotModifyMsg);
             }

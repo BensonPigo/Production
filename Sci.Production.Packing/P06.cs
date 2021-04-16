@@ -749,7 +749,7 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
             Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
             string cannotModifyMsg = @"Cannot delete.
 Packing list is locked in the hanger system.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg, "Delete");
 
             if (!result)
             {
