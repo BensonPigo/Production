@@ -25,8 +25,6 @@ namespace Sci.Production.Subcon
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Env.User.Factory;
             this.comboReportType.SelectedIndex = 0;
-            this.comboReportType.ReadOnly = true;
-            this.comboReportType.Enabled = false;
             this.checkShippingMark.Enabled = false;
         }
 
