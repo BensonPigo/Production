@@ -79,7 +79,7 @@ BEGIN
 		left join #tmp2_A c on a.Article=c.Article and a.MDivisionid=c.MDivisionid and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
 
         Select o.poid,a.orderid,a.article,a.sizecode,
-			order_cpu = o.cpu,
+			order_cpu = isnull(ot.Price, 0),
 			cutqty = min(isnull(b.cutqty,0)),
 			cpu = isnull(ot.Price, 0) * min(isnull(b.cutqty,0)),
 			pre_cutqty = min(isnull(b.pre_cutqty,0)),
