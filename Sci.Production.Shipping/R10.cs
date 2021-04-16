@@ -960,8 +960,7 @@ drop table #temp1,#temp2,#temp3,#temp4
                     // Detail List by SP# by Fee Type
                     #region 組SQL
                     sqlCmd.Append($@"
-with tmpGB 
-as (
+with tmpGB as (
 	select distinct [Type] = 'GARMENT'
 		, g.ID
 		, [OnBoardDate] = g.ETD
@@ -1000,6 +999,10 @@ as (
 		, f.KPICode
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
+	    , [freeSP] = cast(se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate))
+                     * case when g.ShipModeID in ('A/C','A/P','A/P-C','AIR','E/C','E/P','E/P-C','H/C','TRUCK','CB-TRUCK') then iif(pTotal.GW = 0, 0, pDetail.GW  / pTotal.GW)
+					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
+					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join GMTBooking g WITH (NOLOCK) on g.ID = se.InvNo
@@ -1020,6 +1023,23 @@ as (
 　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
 　　	  and Foundry = 1
 	)gm
+    outer apply (	
+	    select DISTINCT p2.GW, p2.CBM, pd2.OrderID
+	    from PackingList p2 
+	    inner join PackingList_Detail pd2 on p2.ID = pd2.ID
+	    where p2.INVNo = g.ID 
+	    and pd2.OrderID = pd.OrderID
+    )pDetail
+    outer apply (	
+	    select GW = SUM(GW)
+		    , CBM = SUM(CBM)
+	    from (
+		    select DISTINCT p2.GW, p2.CBM, pd2.OrderID
+		    from PackingList p2 
+		    inner join PackingList_Detail pd2 on p2.ID = pd2.ID
+		    where p2.INVNo = g.ID  
+	    )pTotal
+    )pTotal
     where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
@@ -1129,6 +1149,10 @@ tmpPL as
 		, f.KPICode
 		, [Foundry] = iif(ISNULL(gm.Foundry,'') = '', '' , 'Y')
 		, s.SisFtyAPID
+	    , [freeSP] = cast(se.Amount * iif('{this.rateType}' = '', 1, dbo.getRate('{this.rateType}', s.CurrencyID,'USD', s.CDate)) 
+                     * case when p.ShipModeID in ('A/C','A/P','A/P-C','AIR','E/C','E/P','E/P-C','H/C','TRUCK','CB-TRUCK') then iif(pTotal.GW = 0, 0, pDetail.GW  / pTotal.GW)
+					      else iif(pTotal.CBM = 0, 0, pDetail.CBM  / pTotal.CBM)
+					      end as decimal(18,4))
     from ShippingAP s WITH (NOLOCK) 
     inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID and se.Junk = 0
     inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
@@ -1147,6 +1171,23 @@ tmpPL as
 　　	  and (BLNo = s.BLNo or BL2No = s.BLNo) 
 　　	  and Foundry = 1
 	)gm
+    outer apply (	
+	    select DISTINCT p2.GW, p2.CBM, pd2.OrderID
+	    from PackingList p2 
+	    inner join PackingList_Detail pd2 on p2.ID = pd2.ID
+	    where p2.INVNo = se.InvNo
+	    and pd2.OrderID = pd.OrderID
+    )pDetail
+    outer apply (	
+	    select GW = SUM(GW)
+		    , CBM = SUM(CBM)
+	    from (
+		    select DISTINCT p2.GW, p2.CBM, pd2.OrderID
+		    from PackingList p2 
+		    inner join PackingList_Detail pd2 on p2.ID = pd2.ID
+		    where p2.INVNo = se.InvNo
+	    )pTotal
+    )pTotal
     where s.Type = 'EXPORT'
 ");
                     if (!MyUtility.Check.Empty(this.date1))
@@ -1772,6 +1813,11 @@ where s.Type = 'EXPORT'");
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             if (this.reportContent == 2)
             {
+                if (this.reportType == 3)
+                {
+                    worksheet.get_Range("Z1").EntireColumn.Delete(Missing.Value);
+                }
+
                 if (this.reportType != 1)
                 {
                     worksheet.get_Range("C1", "E1").EntireColumn.Delete(Missing.Value);
@@ -2076,7 +2122,7 @@ where s.Type = 'EXPORT'");
 
                 // 填內容值
                 int intRowsStart = 2;
-                object[,] objArray = new object[1, 32];
+                object[,] objArray = new object[1, 33];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     if (this.reportContent == 1)
@@ -2106,15 +2152,16 @@ where s.Type = 'EXPORT'");
                         objArray[0, 22] = dr["BLNo"];
                         objArray[0, 23] = dr["FeeType"];
                         objArray[0, 24] = dr["Amount"];
-                        objArray[0, 25] = dr["CurrencyID"];
-                        objArray[0, 26] = dr["APID"];
-                        objArray[0, 27] = dr["CDate"];
-                        objArray[0, 28] = dr["ApvDate"];
-                        objArray[0, 29] = dr["VoucherID"];
-                        objArray[0, 30] = dr["VoucherDate"];
-                        objArray[0, 31] = dr["SubType"];
+                        objArray[0, 25] = dr["freeSP"];
+                        objArray[0, 26] = dr["CurrencyID"];
+                        objArray[0, 27] = dr["APID"];
+                        objArray[0, 28] = dr["CDate"];
+                        objArray[0, 29] = dr["ApvDate"];
+                        objArray[0, 30] = dr["VoucherID"];
+                        objArray[0, 31] = dr["VoucherDate"];
+                        objArray[0, 32] = dr["SubType"];
 
-                        worksheet.Range[string.Format("A{0}:AF{0}", intRowsStart)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
                     }
                     else
                     {
