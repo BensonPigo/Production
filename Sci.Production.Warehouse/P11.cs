@@ -1474,6 +1474,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             string id = issue["ID"].ToString();
             string request = issue["cutplanid"].ToString();
             string issuedate = Convert.ToDateTime(issue["issuedate"]).ToString("yyyy/MM/dd");
+            string confirmTime = MyUtility.Convert.GetDate(issue["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
             string remark = issue["remark"].ToString();
             string cutno = this.editCutNo.Text;
             string article = this.editArticle.Text;
@@ -1697,12 +1698,13 @@ where b.id = a.CutplanID
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanid", request));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCutNo", cutno));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cLineNo", lineNo));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", orderID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cellNo));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
 
                 // 取得size欄位名稱
                 for (int i = 6; i < dtseq.Columns.Count; i++)

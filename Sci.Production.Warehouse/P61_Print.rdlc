@@ -401,7 +401,7 @@
           <Top>3.17211cm</Top>
           <Left>2.50298cm</Left>
           <Height>0.6cm</Height>
-          <Width>10.45106cm</Width>
+          <Width>7.0453cm</Width>
           <ZIndex>4</ZIndex>
           <Style>
             <Border>
@@ -420,7 +420,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Issue Date:</Value>
+                  <Value>Issue time:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -430,10 +430,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
-          <Top>2.43072cm</Top>
-          <Left>8.83391cm</Left>
+          <Top>2.53146cm</Top>
+          <Left>9.65411cm</Left>
           <Height>0.56444cm</Height>
-          <Width>2.06375cm</Width>
+          <Width>2.45145cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
@@ -451,7 +451,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!CDate.Value</Value>
+                  <Value>=Parameters!issuetime.Value</Value>
                   <Style>
                     <Format>yyyy/MM/dd</Format>
                   </Style>
@@ -464,9 +464,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
           <Top>2.43072cm</Top>
-          <Left>10.89766cm</Left>
+          <Left>12.10556cm</Left>
           <Height>0.56444cm</Height>
-          <Width>2.61938cm</Width>
+          <Width>3.96876cm</Width>
           <ZIndex>6</ZIndex>
           <Style>
             <Border>
@@ -822,6 +822,71 @@
             <PaddingBottom>2pt</PaddingBottom>
           </Style>
         </Textbox>
+        <Textbox Name="Textbox16">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Confirm time:</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox7</rd:DefaultName>
+          <Top>3.16646cm</Top>
+          <Left>9.65411cm</Left>
+          <Height>0.56444cm</Height>
+          <Width>2.45145cm</Width>
+          <ZIndex>18</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox17">
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!confirmTime.Value</Value>
+                  <Style>
+                    <Format>yyyy/MM/dd</Format>
+                  </Style>
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Left</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox8</rd:DefaultName>
+          <Top>3.17748cm</Top>
+          <Left>12.10556cm</Left>
+          <Height>0.56444cm</Height>
+          <Width>3.96876cm</Width>
+          <ZIndex>19</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
       </ReportItems>
       <Style>
         <Border>
@@ -1088,7 +1153,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="CDate">
+    <ReportParameter Name="issuetime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
@@ -1107,6 +1172,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="MDivision">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="confirmTime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
