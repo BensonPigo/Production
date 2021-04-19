@@ -613,6 +613,25 @@ and Junk = 0",
                 }
             }
 
+            if (this.CurrentMaintain["Type"].EqualString("EXPORT") &&
+                this.checkIsFreightForwarder.Checked)
+            {
+                string strSQLcmd = string.Format(
+                    @"
+select 1
+from GMTBooking gb
+where 1 = 1
+and(BLno = '{0}' or BL2no = '{0}')
+and gb.ShipModeID in ('A/P', 'E/P')",
+                    this.CurrentMaintain["BLNo"]);
+                if (MyUtility.Check.Seek(strSQLcmd) && MyUtility.Check.Empty(this.CurrentMaintain["APPExchageRate"]))
+                {
+                    MyUtility.Msg.WarningBox("Please encode <APP Exchange Rate> if <Is Freight FWD> is selected and the <Invoice No.> shipmode is A/P or E/P which is belong to this <B/L No.>");
+                    this.numericBox1.Focus();
+                    return false;
+                }
+            }
+
             // 清空表身Grid資料
             int countRec = 0; // 計算表身筆數
             decimal detailAmt = 0.0m; // 表身Amount加總值
