@@ -162,7 +162,8 @@ select
 	psd.Refno,
 	psd.ColorID,
 	ctRoll = ct.Roll,
-	ctDyelot = ct2.Dyelot
+	ctDyelot = ct2.Dyelot,
+	std.Ukey
 into #tmp{2}
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
@@ -171,7 +172,7 @@ inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSe
 inner join PO_Supp PS on PSD.ID = PS.ID and PSD.SEQ1 = PS.SEQ1
 inner join Supp S on PS.SuppID = S.ID
 inner join Fabric fa on PSD.SCIRefno = fa.SCIRefno
-left join {0} b on b.PoId = std.FromPOID and b.Seq1 = std.FromSeq1 and b.Seq2 = std.FromSeq2 and b.Roll = std.FromRoll and b.Dyelot = std. FromDyelot
+{5} join {0} b on b.PoId = std.FromPOID and b.Seq1 = std.FromSeq1 and b.Seq2 = std.FromSeq2 and b.Roll = std.FromRoll and b.Dyelot = std. FromDyelot
 left join {1} a on a.Id = b.Id 
 left join FIR F on F.ReceivingID = a.ID and F.POID = b.PoId and F.SEQ1 = b.Seq1 and F.SEQ2 = b.Seq2
 left join pass1 p2 with (nolock) on p2.id = f.Approve
@@ -524,7 +525,7 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
             this.parameters.Clear();
 
             string where1 = string.Empty;
-            string where2 = string.Empty;
+            string where2 = "and not exists(select 1 from #tmpR r where r.Ukey = std.Ukey)" + Environment.NewLine;
 
             if (this.radioPanelTransaction.Value == "1")
             {
@@ -810,10 +811,10 @@ order by POID, Seq, ExportId, ReceivingID
 
                 if (!this.txtWK1.Text.Empty())
                 {
-                    where1 += $"and a.ExportID between @ExportID1 and @ExportID2" + Environment.NewLine;
-                    where2 += $"and 1=0" + Environment.NewLine; // Trandfer In 沒有 WK#
-                    this.parameters.Add(new SqlParameter("@ExportID1", this.txtWK1.Text));
-                    this.parameters.Add(new SqlParameter("@ExportID2", this.txtWK2.Text));
+                    where1 += $"and st.ID between @TID1 and @TID2" + Environment.NewLine;
+                    where2 += $"and st.ID between @TID1 and @TID2" + Environment.NewLine; // Trandfer In 沒有 WK#
+                    this.parameters.Add(new SqlParameter("@TID1", this.txtWK1.Text));
+                    this.parameters.Add(new SqlParameter("@TID2", this.txtWK2.Text));
                 }
 
                 if (this.dateInspectionDate.HasValue)
@@ -823,8 +824,8 @@ order by POID, Seq, ExportId, ReceivingID
                 }
 
                 // 基本資料
-                this.Sqlcmd = string.Format(this.B2A_sqlcmd, "Receiving_Detail", "Receiving", "R", where1, "a.ExportId") +
-                    string.Format(this.B2A_sqlcmd, "TransferIn_Detail", "TransferIn", "T", where2, "''");
+                this.Sqlcmd = string.Format(this.B2A_sqlcmd, "Receiving_Detail", "Receiving", "R", where1, "a.ExportId", "inner") +
+                    string.Format(this.B2A_sqlcmd, "TransferIn_Detail", "TransferIn", "T", where2, "''", "left");
 
                 // 要撈哪些
                 switch (this.comboInspection.Text)
@@ -987,12 +988,14 @@ order by POID, Seq, ExportId, ReceivingID
                 case "1":
                     this.lbDate.Text = "Arrive W/H Date";
                     this.lbSP.Text = "SP#";
+                    this.label3.Text = "WK#";
                     this.label6.RectStyle.Color = Color.SkyBlue;
                     this.label6.TextStyle.Color = Color.Black;
                     break;
                 case "2":
                     this.lbDate.Text = "Issue Date";
                     this.lbSP.Text = "Bulk SP#";
+                    this.label3.Text = "Transfer ID";
                     this.label6.RectStyle.Color = Color.Gray;
                     this.label6.TextStyle.Color = Color.White;
                     break;
