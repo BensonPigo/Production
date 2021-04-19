@@ -3035,7 +3035,7 @@ when not matched by target then
 	s.AddDate,
 	s.EditName,
 	s.EditDate)
-when not matched by source then 
+when not matched by source and t.type <> 'ER' then 
 	delete;	
 
 --------PPICReason---------------
