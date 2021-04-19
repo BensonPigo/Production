@@ -613,6 +613,7 @@ and Junk = 0",
                 }
             }
 
+            // ISP20210501
             if (this.CurrentMaintain["Type"].EqualString("EXPORT") &&
                 this.checkIsFreightForwarder.Checked)
             {
@@ -630,6 +631,16 @@ and gb.ShipModeID in ('A/P', 'E/P')",
                     this.numericBox1.Focus();
                     return false;
                 }
+            }
+
+            // ISP20210513
+            if (!this.CurrentMaintain["SubType"].EqualString("Other") &&
+                this.checkIsFreightForwarder.Checked &&
+                !this.CurrentMaintain["Reason"].EqualString("AP007") &&
+                this.CurrentMaintain["BLNo"].Empty())
+            {
+                MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
+                return false;
             }
 
             // 清空表身Grid資料
