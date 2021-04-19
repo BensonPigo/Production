@@ -2630,6 +2630,7 @@
     <Build Include="dbo\Tables\FtyStyleInnovationCombineSubprocess.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_CombineSubprocess.sql" />
     <Build Include="dbo\Tables\QAWeaveTypeSetting.sql" />
+    <Build Include="dbo\Tables\NewCDCode.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
