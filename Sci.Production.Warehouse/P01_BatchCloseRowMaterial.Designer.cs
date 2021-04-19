@@ -161,20 +161,25 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 5;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtmfactory
             // 
             this.txtmfactory.BackColor = System.Drawing.Color.White;
+            this.txtmfactory.BoolFtyGroupList = true;
+            this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsProduceFty = false;
+            this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(799, 18);
+            this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(66, 23);
             this.txtmfactory.TabIndex = 7;
-            this.txtmfactory.FilteMDivision = true;
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(684, 19);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(112, 23);
@@ -192,7 +197,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(420, 91);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(112, 23);
@@ -201,7 +205,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(420, 54);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(112, 23);
@@ -210,7 +213,6 @@
             // 
             // labelPullOutDate
             // 
-            this.labelPullOutDate.Lines = 0;
             this.labelPullOutDate.Location = new System.Drawing.Point(9, 19);
             this.labelPullOutDate.Name = "labelPullOutDate";
             this.labelPullOutDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -221,6 +223,20 @@
             // 
             // datePullOutDate
             // 
+            // 
+            // 
+            // 
+            this.datePullOutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePullOutDate.DateBox1.Name = "";
+            this.datePullOutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePullOutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePullOutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePullOutDate.DateBox2.Name = "";
+            this.datePullOutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePullOutDate.DateBox2.TabIndex = 1;
             this.datePullOutDate.Location = new System.Drawing.Point(124, 19);
             this.datePullOutDate.Name = "datePullOutDate";
             this.datePullOutDate.Size = new System.Drawing.Size(280, 23);
@@ -228,6 +244,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(124, 54);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
@@ -235,7 +265,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 54);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -246,7 +275,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 90);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.Color = System.Drawing.Color.SkyBlue;
@@ -257,7 +285,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(420, 18);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(112, 23);
@@ -277,6 +304,7 @@
             "Material"});
             this.comboCategory.Location = new System.Drawing.Point(535, 18);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
             this.comboCategory.TabIndex = 4;
             // 
@@ -318,9 +346,11 @@
             this.gridBatchCloseRowMaterial.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchCloseRowMaterial.RowTemplate.Height = 24;
             this.gridBatchCloseRowMaterial.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBatchCloseRowMaterial.ShowCellToolTips = false;
             this.gridBatchCloseRowMaterial.Size = new System.Drawing.Size(1008, 342);
             this.gridBatchCloseRowMaterial.TabIndex = 0;
             this.gridBatchCloseRowMaterial.TabStop = false;
+            this.gridBatchCloseRowMaterial.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridBatchCloseRowMaterial_ColumnHeaderMouseClick);
             // 
             // P01_BatchCloseRowMaterial
             // 
@@ -329,6 +359,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Name = "P01_BatchCloseRowMaterial";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P01. Batch Close Row Material";
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

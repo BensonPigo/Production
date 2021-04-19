@@ -163,7 +163,7 @@ select DISTINCT
 ,a.cDate
 ,c.BrandID
 , c.BuyerDelivery 
-,[Cfa] = isnull((select CONCAT(a.CFA, '':'', Name) from [PMS\pmsdb\SNP].Production.dbo.Pass1  WITH (NOLOCK) where ID = a.CFA),'''')
+,[Cfa] = isnull((select CONCAT(a.CFA, '':'', Name) from ['+@LinkServerName+'].Production.dbo.Pass1  WITH (NOLOCK) where ID = a.CFA),'''')
 ,[Defect Description]= gd.Description
 ,a.DefectQty
 , [Destination]=ct.Alias
@@ -288,7 +288,7 @@ SELECT
 	,Qty = (SELECT Qty FROM ['+@LinkServerName+'].Production.dbo.Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
 	,c.Status
 	,[Carton] = IIF(c.Carton ='''' AND c.Stage = ''3rd party'',''N/A'',c.Carton)
-	,[CfA] = isnull((select CONCAT(c.CFA, '':'', Name) from [PMS\pmsdb\SNP].Production.dbo.Pass1  WITH (NOLOCK) where ID = c.CFA),'''')
+	,[CfA] = isnull((select CONCAT(c.CFA, '':'', Name) from ['+@LinkServerName+'].Production.dbo.Pass1  WITH (NOLOCK) where ID = c.CFA),'''')
 	,c.stage
 	,c.Result
 	,c.InspectQty
@@ -327,7 +327,7 @@ set @SqlCmd5 = '
 SELECT pd.*
 INTO #PackingList_Detail
 FROM ['+@LinkServerName+'].Production.dbo.PackingList_Detail pd
-INNER JOIN #tmp t ON pd.OrderID = t.OrderID ANd pd.OrderShipmodeSeq = t.SEQ 
+WHERE EXISTS (SELECT 1 FROM #tmp t WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.SEQ) 
 
 SELECT  
 Action
@@ -375,14 +375,14 @@ OUTER APPLY(
 	SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-	AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,'',''))
+	AND ('','' + t.Carton + '','') like (''%,'' + pd.CTNStartNo + '',%'')
 	AND pd.CTNQty=1
 )InspectedCtn
 OUTER APPLY(
 	SELECT [Val] = SUM(pd.ShipQty)
 	FROM #PackingList_Detail pd
 	WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-	AND pd.CTNStartNo IN (SELECT Data FROM dbo.SplitString(t.Carton,'',''))
+	AND ('','' + t.Carton + '','') like (''%,'' + pd.CTNStartNo + '',%'')
 )InspectedPoQty
 Order by id
 

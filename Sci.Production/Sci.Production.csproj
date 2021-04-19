@@ -1112,6 +1112,9 @@
     <None Include="XLT\Shipping_R10_AirPrepaidExpense.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Shipping_R10_ExportFeeReport%28MergerdAcctCode%29.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Shipping_R11_NonSharedListGarment_Main.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1558,6 +1561,9 @@
     </None>
     <None Include="XLT\Warehouse_P07_PackingListReveivingReport.xltx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="XLT\Warehouse_P08.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Warehouse_P10_FabricsRelaxationLogsheet.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

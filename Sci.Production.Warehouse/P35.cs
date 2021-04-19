@@ -13,6 +13,9 @@ using System.Windows.Forms;
 using Microsoft.Reporting.WinForms;
 using Sci.Production.Automation;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
+using System.Reflection;
+using Sci.Win;
 
 namespace Sci.Production.Warehouse
 {
@@ -835,6 +838,118 @@ Where a.id = '{0}'
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P35", this);
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            if (this.CurrentMaintain["Status"].ToString().ToUpper() != "CONFIRMED")
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.", "Warning");
+                return false;
+            }
+            #region -- 撈表頭資料 --
+            List<SqlParameter> pars = new List<SqlParameter>
+            {
+                new SqlParameter("@MDivision", this.CurrentMaintain["MDivisionID"]),
+                new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
+            };
+            DualResult result = DBProxy.Current.Select(string.Empty, @"select NameEn from MDivision where id = @MDivision", pars, out DataTable dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dt");
+                return false;
+            }
+
+            string rptTitle = dt.Rows[0]["NameEN"].ToString();
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
+            report.ReportParameters.Add(new ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));
+            report.ReportParameters.Add(new ReportParameter("Remark", this.CurrentMaintain["Remark"].ToString()));
+            report.ReportParameters.Add(new ReportParameter("CDate", ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["IssueDate"])).ToShortDateString()));
+            report.ReportParameters.Add(new ReportParameter("FtyGroup", this.CurrentMaintain["FactoryID"].ToString()));
+
+            #endregion
+            #region -- 撈表身資料 --
+            string sqlcmd = @"
+select ad.POID
+	, [SEQ] = ad.Seq1 + '-' + ad.Seq2
+	, [DESC] =IIF((ad.ID = lag(ad.ID,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll) 
+			    AND(ad.seq1 = lag(ad.seq1,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll))
+			    AND(ad.seq2 = lag(ad.seq2,1,'')over (order by ad.POID, ad.seq1, ad.seq2, ad.Dyelot, ad.Roll))) 
+			    ,''
+                ,dbo.getMtlDesc(ad.poid, ad.seq1, ad.seq2, 2, 0))
+	, [Location] = dbo.Getlocation(fi.ukey)
+	, p.StockUnit
+	, ad.Roll
+	, ad.Dyelot
+	, [QTY] = isnull(ad.QtyAfter,0.00) - isnull(ad.QtyBefore,0.00)
+    , [TotalQTY] = sum(isnull(ad.QtyAfter,0.00) - isnull(ad.QtyBefore,0.00)) OVER (PARTITION BY ad.POID ,ad.seq1, ad.seq2)
+from Adjust_Detail ad WITH (NOLOCK)
+left join PO_Supp_Detail p WITH (NOLOCK) on p.ID = ad.PoId and p.seq1 = ad.SEQ1 and p.SEQ2 = ad.seq2
+left join FtyInventory fi WITH (NOLOCK) on ad.poid = fi.poid and ad.seq1 = fi.seq1 and ad.seq2 = fi.seq2
+						and ad.roll = fi.roll and ad.stocktype = fi.stocktype and ad.Dyelot = fi.Dyelot
+where ad.ID = @ID
+order by ad.POID, SEQ, ad.Dyelot, ad.Roll
+";
+            result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
+            if (!result)
+            {
+                this.ShowErr(sqlcmd, result);
+            }
+
+            if (dtDetail == null || dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtDetail");
+                return false;
+            }
+
+            // 傳 list 資料
+            List<P34_PrintData> data = dtDetail.AsEnumerable()
+                .Select(row1 => new P34_PrintData()
+                {
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    DESC = row1["DESC"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
+                    StockUnit = row1["StockUnit"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    DYELOT = row1["Dyelot"].ToString().Trim(),
+                    QTY = row1["Qty"].ToString().Trim(),
+                    TotalQTY = row1["TotalQTY"].ToString().Trim(),
+                }).ToList();
+
+            report.ReportDataSource = data;
+            #endregion
+
+            // 指定是哪個 RDLC
+            // DualResult result;
+            Type reportResourceNamespace = typeof(P13_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P34_Print.rdlc";
+
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+            {
+                // this.ShowException(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Win.Subs.ReportView(report)
+            {
+                MdiParent = this.MdiParent,
+            };
+            frm.Show();
+
+            return base.ClickPrint();
         }
     }
 }

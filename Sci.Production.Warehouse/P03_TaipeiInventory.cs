@@ -48,6 +48,7 @@ FROM (
             , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, isnull(inv.Qty, 0.00)), 2) inqty
             , 0 Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
+            , po.StockUnit
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , [UseFactory] = inv.TransferFactory
             , case inv.type 
@@ -85,6 +86,7 @@ FROM (
             , 0 inqty
             , Round(dbo.GetUnitQty(inv.UnitID, StockUnit, isnull(inv.Qty, 0.00)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
+            , po.StockUnit
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , [UseFactory] = inv.TransferFactory
             , case inv.type 
@@ -122,6 +124,7 @@ FROM (
             , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty >= 0, inv.Qty, 0)), 2) inqty
             , Round(dbo.GetUnitQty(inv.UnitID, po.StockUnit, iif(inv.Qty < 0, -inv.Qty, 0)), 2) Allocated
             , TPEPASS1.ID+'-'+TPEPASS1.NAME ConfirmHandle
+            , po.StockUnit
             , concat(inv.seq70poid, '-', inv.seq70seq1, '-', inv.seq70seq2) as seq70
             , [UseFactory] = inv.TransferFactory
             , case inv.type 
@@ -145,7 +148,7 @@ FROM (
 			and inv.type in ('4')    
 ) TMP 
 GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, TMP.factoryid, TMP.seq70
-            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory",
+            , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory, Tmp.StockUnit",
                 this.dr["id"].ToString(),
                 this.dr["seq1"].ToString(),
                 this.dr["seq2"].ToString());
@@ -180,6 +183,7 @@ GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, 
                 .Text("typeName", header: "Type", width: Widths.AnsiChars(13))
                 .Date("confirmdate", header: "Date", width: Widths.AnsiChars(10))
                 .Text("confirmhandle", header: "Handle", width: Widths.AnsiChars(20))
+                .Text("StockUnit", header: "StockUnit", width: Widths.AnsiChars(6))
                 .Numeric("inqty", header: "Stock In Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
                 .Numeric("Allocated", header: "Stock Allocated Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)
                 .Numeric("balance", header: "Balance Qty", width: Widths.AnsiChars(6), integer_places: 6, decimal_places: 2)

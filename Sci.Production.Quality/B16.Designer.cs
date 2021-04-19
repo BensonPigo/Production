@@ -34,6 +34,8 @@
             this.txtAssignColumn = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtDisplayName = new Sci.Win.UI.TextBox();
+            this.txtLocalDisplayName = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -50,6 +52,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtLocalDisplayName);
+            this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.txtDisplayName);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.txtAssignColumn);
@@ -64,6 +68,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtAssignColumn, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtDisplayName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtLocalDisplayName, 0);
             // 
             // detailpanel
             // 
@@ -73,7 +79,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(835, 41);
+            this.gridicon.Location = new System.Drawing.Point(832, 41);
             // 
             // refresh
             // 
@@ -180,7 +186,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(376, 41);
+            this.label2.Location = new System.Drawing.Point(287, 41);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(108, 23);
             this.label2.TabIndex = 24;
@@ -191,10 +197,28 @@
             this.txtDisplayName.BackColor = System.Drawing.Color.White;
             this.txtDisplayName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DisplayName", true));
             this.txtDisplayName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDisplayName.Location = new System.Drawing.Point(487, 41);
+            this.txtDisplayName.Location = new System.Drawing.Point(398, 41);
             this.txtDisplayName.Name = "txtDisplayName";
             this.txtDisplayName.Size = new System.Drawing.Size(151, 23);
             this.txtDisplayName.TabIndex = 25;
+            // 
+            // txtLocalDisplayName
+            // 
+            this.txtLocalDisplayName.BackColor = System.Drawing.Color.White;
+            this.txtLocalDisplayName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDisplayName", true));
+            this.txtLocalDisplayName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocalDisplayName.Location = new System.Drawing.Point(686, 41);
+            this.txtLocalDisplayName.Name = "txtLocalDisplayName";
+            this.txtLocalDisplayName.Size = new System.Drawing.Size(126, 23);
+            this.txtLocalDisplayName.TabIndex = 27;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(552, 41);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(131, 23);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "Local Display Name";
             // 
             // B16
             // 
@@ -239,5 +263,7 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtDisplayName;
         private Win.UI.Label label2;
+        private Win.UI.TextBox txtLocalDisplayName;
+        private Win.UI.Label label3;
     }
 }

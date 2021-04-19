@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(22))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25))
+                .Text("LocalDesc", header: "Local Desc.", width: Widths.AnsiChars(25))
                 ;
         }
 

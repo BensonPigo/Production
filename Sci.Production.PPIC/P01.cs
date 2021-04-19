@@ -463,6 +463,19 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 }
             }
 
+            sqlCmd = string.Format(
+                "select cast(iif(dateadd(day, 7, cast('{1}' as date)) <= (select top 1 LETA from Order_PFHis where id = '{0}' order by AddDate desc), 1, 0) as bit)",
+                MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                MyUtility.Convert.GetDate(this.CurrentMaintain["KPILETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentMaintain["KPILETA"]).Value.ToShortDateString() : string.Empty);
+            if (MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlCmd)))
+            {
+                this.dateKPILETA.TextBackColor = Color.Yellow;
+            }
+            else
+            {
+                this.dateKPILETA.TextBackColor = Color.FromArgb(255, 183, 227, 255);
+            }
+
             this.GetIsDevSample();
         }
 
