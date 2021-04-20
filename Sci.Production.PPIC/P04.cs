@@ -366,11 +366,11 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
             #endregion
 
             string sqlcmd = $@"select concat(
-(select ID from NewCDCode where Classifty = 'ApparelType' and TypeName = '{this.CurrentMaintain["ApparelType"]}')
-,(select ID from NewCDCode where Classifty = 'FabricType' and TypeName = '{this.CurrentMaintain["FabricType"]}')
-,(select ID from NewCDCode where Classifty = 'Lining' and TypeName = '{this.CurrentMaintain["Lining"]}')
-,(select ID from NewCDCode where Classifty = 'Construction' and TypeName = '{this.CurrentMaintain["Construction"]}')
-,(select ID from NewCDCode where Classifty = 'Gender' and TypeName = '{this.CurrentMaintain["Gender"]}')
+(select ID from NewCDCode where Classifty = 'ApparelType' and TypeName = '{this.comboProductType1.Text}')
+,(select ID from NewCDCode where Classifty = 'FabricType' and TypeName = '{this.comboFabricType1.Text}')
+,(select ID from NewCDCode where Classifty = 'Lining' and TypeName = '{this.comboLining1.Text}')
+,(select ID from NewCDCode where Classifty = 'Construction' and TypeName = '{this.comboConstruction1.Text}')
+,(select ID from NewCDCode where Classifty = 'Gender' and TypeName = '{this.comboGender1.Text}')
 )";
 
             this.CurrentMaintain["CDCodeNew"] = MyUtility.GetValue.Lookup(sqlcmd);
