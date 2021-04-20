@@ -402,13 +402,20 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
         {
             DataTable dt1 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["masterdt"];
             DataTable dt2 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["detaildt"];
-            foreach (DataRow dr2 in dt2.AsEnumerable().Where(x => x.Field<bool>("selected")))
+            foreach (DataRow dr1 in dt1.Rows)
+            {
+                dr1["TotalTransfer"] = 0;
+            }
+
+            foreach (DataRow dr2 in dt2.Rows)
             {
                 dr2["selected"] = "False";
+                dr2["qty"] = 0;
             }
 
             foreach (DataRow dr1 in dt1.AsEnumerable().Where(x => x.Field<bool>("selected")))
             {
+                decimal totalTransfer = 0;
                 foreach (DataRow dr2 in dt2.AsEnumerable().Where(x => x.Field<string>("ToPOID").EqualString(dr1["POID"]) &&
                                                                     x.Field<string>("Toseq1").EqualString(dr1["Seq1"]) &&
                                                                     x.Field<string>("Toseq2").EqualString(dr1["Seq2"]) &&
@@ -417,8 +424,21 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
                                                                     x.Field<string>("seq2").EqualString(dr1["InventorySEQ2"])))
                 {
                     dr2["selected"] = dr2["FabricType"].EqualString("Accessory");
+                    if (MyUtility.Convert.GetBool(dr2["selected"]))
+                    {
+                        if (dr2["qty"].Empty())
+                        {
+                            dr2["qty"] = dr2["StockBalance"];
+                        }
+
+                        totalTransfer += MyUtility.Convert.GetDecimal(dr2["qty"]);
+                    }
+
                     dr2.EndEdit();
                 }
+
+                dr1["TotalTransfer"] = totalTransfer;
+                dr1.EndEdit();
             }
         }
     }
