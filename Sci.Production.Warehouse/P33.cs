@@ -139,7 +139,12 @@ WHERE o.id = '{orderID}' AND o.sewline != '') t FOR xml path('')
             }
             #endregion
 
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            // System.Automation=1 和confirmed 且 有P99 Use 權限的人才可以看到此按紐
+            if (UtilityAutomation.IsAutomationEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED") &&
+                MyUtility.Check.Seek($@"
+select * from Pass1
+where (FKPass0 in (select distinct FKPass0 from Pass2 where BarPrompt = 'P99. Send to WMS command Status' and Used = 'Y') or IsMIS = 1 or IsAdmin = 1)
+and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = true;
             }
@@ -147,7 +152,6 @@ WHERE o.id = '{orderID}' AND o.sewline != '') t FOR xml path('')
             {
                 this.btnCallP99.Visible = false;
             }
-
         }
 
         private void RefreshOrderField(string orderID)
@@ -2306,7 +2310,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
             {
                 DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P33", "UnConfirmed"))
+                if (!Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(dtDetail, "P33", "UnConfirmed"))
                 {
                     return;
                 }

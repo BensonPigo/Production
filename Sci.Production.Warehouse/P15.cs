@@ -317,7 +317,12 @@ namespace Sci.Production.Warehouse
                 this.txtLocalSupp1.TextBox1.Text = string.Empty;
             }
 
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            // System.Automation=1 和confirmed 且 有P99 Use 權限的人才可以看到此按紐
+            if (UtilityAutomation.IsAutomationEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED") &&
+                MyUtility.Check.Seek($@"
+select * from Pass1
+where (FKPass0 in (select distinct FKPass0 from Pass2 where BarPrompt = 'P99. Send to WMS command Status' and Used = 'Y') or IsMIS = 1 or IsAdmin = 1)
+and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = true;
             }
@@ -684,7 +689,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
                 if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
                 {
                     DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(dtDetail, "P15", "UnConfirmed"))
+                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(dtDetail, "P15", "UnConfirmed"))
                     {
                         return;
                     }

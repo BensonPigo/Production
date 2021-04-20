@@ -97,8 +97,9 @@ namespace Sci.Production.Automation
         /// <param name="formName">type</param>
         /// <param name = "status" > Status </ param >
         /// <param name = "isP99" > is P99 </ param >
+        /// <param name = "isComplexMaterial" > is Complex Material </ param >
         /// <returns>bool</returns>
-        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
+        public static bool SentReceive_Detail_Delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -124,25 +125,55 @@ namespace Sci.Production.Automation
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
             callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", string.Empty);
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                        case "Lock":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -306,8 +337,9 @@ where exists(
         /// <param name="formName">formName</param>
         /// <param name="status">status</param>
         /// <param name = "isP99" > is P99 </ param >
+        /// <param name = "isComplexMaterial" > is Complex Material</ param >
         /// <returns>bool</returns>
-        public static bool SentIssue_Detail_delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false)
+        public static bool SentIssue_Detail_Delete(DataTable dtDetail, string formName = "", string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -333,25 +365,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Issue_Detail");
             callMethod.SetAutoAutomationErrMsg("SentIssue_DetailToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -436,8 +497,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <param name = "isP99" > is P99 </ param >
+        /// <param name = "isComplexMaterial" > is Complex Material </ param >
         /// <returns>bool</returns>
-        public static bool SentRemoveC_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        public static bool SentRemoveC_Detail_Delete(DataTable dtDetail, string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -463,25 +525,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "RemoveC_Detail");
             callMethod.SetAutoAutomationErrMsg("SentRemoveC_DetailToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -542,8 +633,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <param name = "isP99" > is P99 </ param >
+        /// <param name = "isComplexMaterial" > is Complex Material </ param >
         /// <returns>bool</returns>
-        public static bool SentSubTransfer_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        public static bool SentSubTransfer_Detail_Delete(DataTable dtDetail, string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -569,25 +661,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "SubTransfer_Detail");
             callMethod.SetAutoAutomationErrMsg("SentSubTransfer_DetailToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -648,8 +769,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <param name = "isP99" > is P99 </ param >
+        /// <param name = "isComplexMaterial" > is Complex Material </ param >
         /// <returns>bool</returns>
-        public static bool SentReturnReceipt_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        public static bool SentReturnReceipt_Detail_Delete(DataTable dtDetail, string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -675,25 +797,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "ReturnReceipt_Detail");
             callMethod.SetAutoAutomationErrMsg("SentReturnReceiptToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -780,8 +931,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <param name="isP99">isP99</param>
+        /// <param name="isComplexMaterial">is Complex Material</param>
         /// <returns>bool</returns>
-        public static bool SentBorrowBack_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        public static bool SentBorrowBack_Detail_Delete(DataTable dtDetail, string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -807,25 +959,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "BorrowBack_Detail");
             callMethod.SetAutoAutomationErrMsg("SentBorrowBackToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -886,8 +1067,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <param name="isP99">isP99</param>
+        /// <param name="isComplexMaterial">is Complex Material</param>
         /// <returns>bool</returns>
-        public static bool SentAdjust_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        public static bool SentAdjust_Detail_Delete(DataTable dtDetail, string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -913,25 +1095,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Adjust_Detail");
             callMethod.SetAutoAutomationErrMsg("SentAdjust_DetailToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -991,8 +1202,9 @@ where exists(
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
         /// <param name="isP99">isP99</param>
+        /// <param name="isComplexMaterial">is Complex Material</param>
         /// <returns>bool</returns>
-        public static bool SentIssueReturn_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        public static bool SentIssueReturn_Detail_Delete(DataTable dtDetail, string status = "", bool isP99 = false, bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -1017,25 +1229,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "IssueReturn_Detail");
             callMethod.SetAutoAutomationErrMsg("SentIssueReturn_DetailToVstrong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料
@@ -1094,8 +1335,9 @@ where exists(
         /// </summary>
         /// <param name="dtDetail">dtDetail</param>
         /// <param name="status">status</param>
+        /// <param name="isComplexMaterial">is Complex Material</param>
         /// <returns>bool</returns>
-        public static bool SentStocktaking_Detail_delete(DataTable dtDetail, string status = "")
+        public static bool SentStocktaking_Detail_Delete(DataTable dtDetail, string status = "", bool isComplexMaterial = false)
         {
             if (!IsModuleAutomationEnable(VstrongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
             {
@@ -1120,25 +1362,54 @@ where exists(
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Stocktaking_Detail");
             callMethod.SetAutoAutomationErrMsg("SentStocktaking_DetailToGensong");
 
-            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
-            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            // 主副料都有情況, Call API傳送給WMS
+            if (isComplexMaterial)
             {
-                string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
-                        strMsg = "WMS system rejected the delete request, please reference below information：";
-                        break;
-                    case "Revise":
-                        strMsg = "WMS system rejected the revise request, please reference below information：";
-                        break;
+                    case "Lock":
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        {
+                            MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
+                            return false;
+                        }
+
+                        return true;
+
+                    case "UnLock":
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        return true;
+
                     case "UnConfirmed":
-                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true);
+                        break;
+
+                    default:
                         break;
                 }
+            }
+            else
+            {
+                // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+                if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+                {
+                    string strMsg = string.Empty;
+                    switch (status)
+                    {
+                        case "delete":
+                            strMsg = "WMS system rejected the delete request, please reference below information：";
+                            break;
+                        case "Revise":
+                            strMsg = "WMS system rejected the revise request, please reference below information：";
+                            break;
+                        case "UnConfirmed":
+                            strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                            break;
+                    }
 
-                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
-                return false;
+                    MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                    return false;
+                }
             }
 
             // 記錄UnConfirmed後有傳給WMS的資料

@@ -4673,6 +4673,170 @@ and ml.IsWMS = 1
             return true;
         }
 
+        /// <summary>
+        /// check Fabtic,Acc in the same Transaction ID
+        /// </summary>
+        /// <param name="id">Transaction ID</param>
+        /// <param name="functionName">function Name</param>
+        /// <returns>bool</returns>
+        public static bool Chk_Complex_Material(string id, string functionName)
+        {
+            bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
+            if (!automation || MyUtility.Check.Empty(id) || MyUtility.Check.Empty(functionName))
+            {
+                return false;
+            }
+
+            string sqlcmd = string.Empty;
+            DualResult result;
+            DataTable dt;
+            switch (functionName)
+            {
+                case "Receiving_Detail":
+                    sqlcmd = $@"
+select distinct s.FabricType
+from Receiving_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id = '{id}'";
+                    break;
+                case "Issue_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from Issue_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "IssueLack_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from IssueLack_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "IssueReturn_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from IssueReturn_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "TransferIn_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from TransferIn_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "TransferOut_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from TransferOut_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "SubTransfer_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from SubTransfer_Detail t
+left join PO_Supp_Detail s on t.FromPoId = s.ID
+and t.FromSeq1 = s.SEQ1 and t.FromSeq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "BorrowBack_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from BorrowBack_Detail t
+left join PO_Supp_Detail s on t.FromPoId = s.ID
+and t.FromSeq1 = s.SEQ1 and t.FromSeq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+                case "Adjust_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from Adjust_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "ReturnReceipt_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from ReturnReceipt_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+
+                case "Stocktaking_Detail":
+                    sqlcmd = $@"
+select distinct FabricType = isnull(s.FabricType,'') 
+from Stocktaking_Detail t
+left join PO_Supp_Detail s on t.PoId = s.ID
+and t.Seq1 = s.SEQ1 and t.Seq2 = s.SEQ2
+where s.FabricType is not null
+and t.SentToWMS = 1
+and t.Id='{id}'
+";
+                    break;
+            }
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return false;
+            }
+            else
+            {
+                if (dt.Rows.Count >= 2)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     /// <inheritdoc/>

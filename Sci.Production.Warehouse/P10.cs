@@ -675,6 +675,19 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
 
             #endregion Status Label
 
+            // System.Automation=1 和confirmed 且 有P99 Use 權限的人才可以看到此按紐
+            if (UtilityAutomation.IsAutomationEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED") &&
+                MyUtility.Check.Seek($@"
+select * from Pass1
+where (FKPass0 in (select distinct FKPass0 from Pass2 where BarPrompt = 'P99. Send to WMS command Status' and Used = 'Y') or IsMIS = 1 or IsAdmin = 1)
+and ID = '{Sci.Env.User.UserID}'"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -990,9 +1003,38 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             #endregion 檢查負數庫存
 
             #region UnConfirmed 先檢查WMS是否傳送成功
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+
+            DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+
+            bool accLock = true;
+            bool fabricLock = true;
+
+            // 主副料都有情況
+            if (Prgs.Chk_Complex_Material(this.CurrentMaintain["ID"].ToString(), "Issue_Detail"))
             {
-                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P10", "Lock", isComplexMaterial: true))
+                {
+                    fabricLock = false;
+                }
+
+                // 如果WMS連線都成功,則直接unconfirmed刪除
+                if (accLock && fabricLock)
+                {
+                    Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P10", "UnConfirmed", isComplexMaterial: true);
+                }
+                else
+                {
+                    // 個別成功的,傳WMS UnLock狀態並且都不能刪除
+                    if (fabricLock)
+                    {
+                        Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P10", "UnLock", isComplexMaterial: true);
+                    }
+
+                    return;
+                }
+            }
+            else
+            {
                 if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(dtDetail, "P10", "UnConfirmed"))
                 {
                     return;
@@ -1220,6 +1262,11 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
         private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"], "Issue_Detail").ShowDialog();
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P10", this);
         }
     }
 }

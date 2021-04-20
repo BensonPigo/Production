@@ -45,6 +45,7 @@
             this.labelTransfer = new Sci.Win.UI.Label();
             this.txtTransfer = new Sci.Win.UI.TextBox();
             this.btnImport = new Sci.Win.UI.Button();
+            this.btnCallP99 = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -109,7 +110,7 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(893, 0);
+            this.refresh.Location = new System.Drawing.Point(788, 0);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
@@ -118,15 +119,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(998, 515);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(992, 469);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(992, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -138,8 +139,15 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
             this.detailbtm.Size = new System.Drawing.Size(998, 38);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // browse
             // 
@@ -151,16 +159,16 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(326, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(485, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(448, 7);
+            this.editby.Size = new System.Drawing.Size(334, 23);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(437, 13);
+            this.lbleditby.Location = new System.Drawing.Point(400, 13);
             // 
             // labelID
             // 
@@ -328,6 +336,17 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
+            // btnCallP99
+            // 
+            this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCallP99.Location = new System.Drawing.Point(876, 0);
+            this.btnCallP99.Name = "btnCallP99";
+            this.btnCallP99.Size = new System.Drawing.Size(100, 35);
+            this.btnCallP99.TabIndex = 71;
+            this.btnCallP99.Text = "Link To P99";
+            this.btnCallP99.UseVisualStyleBackColor = true;
+            this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
             // P17
             // 
             this.ApvChkValue = "New";
@@ -389,5 +408,6 @@
         private Win.UI.TextBox txtTransfer;
         private Win.UI.Label labelTransfer;
         private Win.UI.Button btnImport;
+        private Win.UI.Button btnCallP99;
     }
 }

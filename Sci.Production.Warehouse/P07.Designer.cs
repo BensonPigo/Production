@@ -91,7 +91,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.comboStockType);
             this.masterpanel.Controls.Add(this.btnUpdateLocation);
             this.masterpanel.Controls.Add(this.txtMtlLocation1);
@@ -176,7 +175,6 @@
             this.masterpanel.Controls.SetChildIndex(this.txtMtlLocation1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -191,7 +189,7 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(913, 0);
+            this.refresh.Location = new System.Drawing.Point(801, 1);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
@@ -220,8 +218,15 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
             this.detailbtm.Size = new System.Drawing.Size(1007, 38);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // browse
             // 
@@ -233,16 +238,17 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(331, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(484, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(457, 7);
+            this.editby.Size = new System.Drawing.Size(338, 23);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(436, 13);
+            this.lbleditby.Location = new System.Drawing.Point(409, 13);
+            this.lbleditby.Size = new System.Drawing.Size(33, 17);
             // 
             // labelID
             // 
@@ -689,11 +695,11 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(461, 121);
+            this.btnCallP99.Location = new System.Drawing.Point(894, 1);
             this.btnCallP99.Name = "btnCallP99";
-            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
+            this.btnCallP99.Size = new System.Drawing.Size(100, 35);
             this.btnCallP99.TabIndex = 70;
-            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 

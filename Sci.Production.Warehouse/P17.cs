@@ -350,6 +350,20 @@ where a.id= @ID";
             this.label25.Text = this.CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            // System.Automation=1 和confirmed 且 有P99 Use 權限的人才可以看到此按紐
+            if (UtilityAutomation.IsAutomationEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED") &&
+                MyUtility.Check.Seek($@"
+select * from Pass1
+where (FKPass0 in (select distinct FKPass0 from Pass2 where BarPrompt = 'P99. Send to WMS command Status' and Used = 'Y') or IsMIS = 1 or IsAdmin = 1)
+and ID = '{Sci.Env.User.UserID}'"))
+            {
+                this.btnCallP99.Visible = true;
+            }
+            else
+            {
+                this.btnCallP99.Visible = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -1045,18 +1059,55 @@ and d.Id = '{0}'", this.CurrentMaintain["id"]);
             #endregion 檢查負數庫存
 
             #region UnConfirmed 先檢查WMS是否傳送成功
+
             DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+
+            bool accLock = true;
+            bool fabricLock = true;
+
+            // 主副料都有情況
+            if (Prgs.Chk_Complex_Material(this.CurrentMaintain["ID"].ToString(), "IssueReturn_Detail"))
             {
-                if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(dtDetail, "UnConfirmed"))
+                if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_Delete(dtDetail, "Lock", isComplexMaterial: true))
                 {
+                    accLock = false;
+                }
+
+                if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_Delete(dtDetail, "Lock", isComplexMaterial: true))
+                {
+                    fabricLock = false;
+                }
+
+                // 如果WMS連線都成功,則直接unconfirmed刪除
+                if (accLock && fabricLock)
+                {
+                    Vstrong_AutoWHAccessory.SentIssueReturn_Detail_Delete(dtDetail, "UnConfirmed", isComplexMaterial: true);
+                    Gensong_AutoWHFabric.SentIssueReturn_Detail_Delete(dtDetail, "UnConfirmed", isComplexMaterial: true);
+                }
+                else
+                {
+                    // 個別成功的,傳WMS UnLock狀態並且都不能刪除
+                    if (accLock)
+                    {
+                        Vstrong_AutoWHAccessory.SentIssueReturn_Detail_Delete(dtDetail, "UnLock", isComplexMaterial: true);
+                    }
+
+                    if (fabricLock)
+                    {
+                        Gensong_AutoWHFabric.SentIssueReturn_Detail_Delete(dtDetail, "UnLock", isComplexMaterial: true);
+                    }
+
                     return;
                 }
             }
-
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            else
             {
-                if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_delete(dtDetail, "UnConfirmed"))
+                if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_Delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
+
+                if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_Delete(dtDetail, "UnConfirmed"))
                 {
                     return;
                 }
@@ -1373,6 +1424,11 @@ and i2.id = '{this.CurrentMaintain["ID"]}'
                     return;
                 }
             }
+        }
+
+        private void BtnCallP99_Click(object sender, EventArgs e)
+        {
+            P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P17", this);
         }
     }
 }

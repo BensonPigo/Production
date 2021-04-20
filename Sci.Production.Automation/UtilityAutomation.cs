@@ -207,31 +207,49 @@ namespace Sci.Production.Automation
         /// <param name="requestUri">requestUri</param>
         /// <param name="jsonBody">jsonBody</param>
         /// <param name="automationErrMsg">automationErrMsg</param>
+        /// <param name="reSented">reSented</param>
         /// <returns>DualResult</returns>
-        public static DualResult WH_Auto_SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg)
+        public static DualResult WH_Auto_SendWebAPI(string baseUrl, string requestUri, string jsonBody, AutomationErrMsg automationErrMsg, bool reSented = false)
         {
             DualResult result = new DualResult(true);
             WebApiBaseResult webApiBaseResult;
-            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
-            bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
-
-            if (!webApiBaseResult.isSuccess)
+            if (reSented)
             {
-                automationErrMsg.errorCode = "99";
-                automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
+                Dictionary<string, string> requestHeaders = GetCustomHeaders();
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 600, requestHeaders);
                 automationErrMsg.json = jsonBody;
-                result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
-                SaveAutomationCheckMsg(automationErrMsg);
+                if (!webApiBaseResult.isSuccess)
+                {
+                    automationErrMsg.errorCode = "99";
+                    automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
+                    automationErrMsg.json = jsonBody;
+                    result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                    SaveAutomationErrMsg(automationErrMsg);
+                }
             }
-            else if (saveAllmsg)
+            else
             {
-                automationErrMsg.json = jsonBody;
-                SaveAutomationCheckMsg(automationErrMsg);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 20);
+                bool saveAllmsg = MyUtility.Convert.GetBool(ConfigurationManager.AppSettings["OpenAll_AutomationCheckMsg"]);
+
+                if (!webApiBaseResult.isSuccess)
+                {
+                    automationErrMsg.errorCode = "99";
+                    automationErrMsg.errorMsg = webApiBaseResult.responseContent.ToString();
+                    automationErrMsg.json = jsonBody;
+                    result = new DualResult(false, new Ict.BaseResult.MessageInfo(automationErrMsg.errorMsg));
+                    SaveAutomationCheckMsg(automationErrMsg);
+                }
+                else if (saveAllmsg)
+                {
+                    automationErrMsg.json = jsonBody;
+                    SaveAutomationCheckMsg(automationErrMsg);
+                }
             }
 
             return result;
 
-            // MyUtility.Msg.InfoBox("Send Web API to VS");
+            // MyUtility.Msg.InfoBox("Send Web API to WMS");
             // return new DualResult(true);
         }
 

@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -212,7 +213,12 @@ where id='{1}'", Env.User.Keyword, this.CurrentMaintain["ID"]);
 
             #endregion Status Label
 
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            // System.Automation=1 和confirmed 且 有P99 Use 權限的人才可以看到此按紐
+            if (UtilityAutomation.IsAutomationEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED") &&
+                MyUtility.Check.Seek($@"
+select * from Pass1
+where (FKPass0 in (select distinct FKPass0 from Pass2 where BarPrompt = 'P99. Send to WMS command Status' and Used = 'Y') or IsMIS = 1 or IsAdmin = 1)
+and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = true;
             }
@@ -608,10 +614,39 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
                 #endregion 檢查負數庫存
 
                 #region UnConfirmed 先檢查WMS是否傳送成功
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+
+                DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+
+                bool accLock = true;
+                bool fabricLock = true;
+
+                // 主副料都有情況
+                if (Prgs.Chk_Complex_Material(this.CurrentMaintain["ID"].ToString(), "Adjust_Detail"))
                 {
-                    DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(dtDetail, "UnConfirmed"))
+                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(dtDetail, "Lock", isComplexMaterial: true))
+                    {
+                        accLock = false;
+                    }
+
+                    // 如果WMS連線都成功,則直接unconfirmed刪除
+                    if (accLock && fabricLock)
+                    {
+                        Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(dtDetail, "UnConfirmed", isComplexMaterial: true);
+                    }
+                    else
+                    {
+                        // 個別成功的,傳WMS UnLock狀態並且都不能刪除
+                        if (accLock)
+                        {
+                            Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(dtDetail, "UnLock", isComplexMaterial: true);
+                        }
+
+                        return;
+                    }
+                }
+                else
+                {
+                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(dtDetail, "UnConfirmed"))
                     {
                         return;
                     }
