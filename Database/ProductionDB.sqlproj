@@ -2630,6 +2630,17 @@
     <Build Include="dbo\Tables\FtyStyleInnovationCombineSubprocess.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_CombineSubprocess.sql" />
     <Build Include="dbo\Tables\QAWeaveTypeSetting.sql" />
+    <Build Include="dbo\Tables\Operation_His.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_History_Operation.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_History.sql" />
+    <Build Include="dbo\Tables\Style_ThreadColorCombo_History_Detail.sql" />
+    <Build Include="dbo\Tables\Thread_Quilting.sql" />
+    <Build Include="dbo\Tables\Thread_Quilting_Size.sql" />
+    <Build Include="dbo\Tables\Thread_Quilting_Size_Location.sql" />
+    <Build Include="dbo\Tables\Style_QTThreadColorCombo.sql" />
+    <Build Include="dbo\Tables\Style_QTThreadColorCombo_Detail.sql" />
+    <Build Include="dbo\Tables\Style_QTThreadColorCombo_History.sql" />
+    <Build Include="dbo\Tables\Style_QTThreadColorCombo_History_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
