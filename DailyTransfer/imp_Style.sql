@@ -1638,6 +1638,7 @@ when matched then
       ,t.EditName = s.EditName
       ,t.EditDate = s.EditDate	  
       ,t.UseRatio = s.UseRatio
+      ,t.Ukey = s.Ukey
       ,t.Allowance = s.Allowance
       ,t.AllowanceTubular = s.AllowanceTubular
 when not matched by target then
@@ -1653,6 +1654,7 @@ when not matched by target then
            ,EditName
            ,EditDate
            ,UseRatio
+		   ,Ukey
            ,Allowance
            ,AllowanceTubular)
 		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
@@ -1667,6 +1669,7 @@ when not matched by target then
            ,s.EditName
            ,s.EditDate
            ,s.UseRatio
+		   ,s.Ukey
            ,s.Allowance
            ,s.AllowanceTubular
 		   )
@@ -1701,6 +1704,7 @@ when matched then
       ,t.AddDate = s.AddDate
       ,t.EditName = s.EditName
       ,t.EditDate = s.EditDate
+      ,t.Ukey = s.Ukey
 when not matched by target then
 	INSERT (Style_ThreadColorCombo_HistoryUkey
            ,Seq
@@ -1710,7 +1714,8 @@ when not matched by target then
            ,AddName
            ,AddDate
            ,EditName
-           ,EditDate)
+           ,EditDate
+		   ,Ukey)
 		VALUES  (s.Style_ThreadColorCombo_HistoryUkey
            ,s.Seq
            ,s.OperationID
@@ -1719,7 +1724,8 @@ when not matched by target then
            ,s.AddName
            ,s.AddDate
            ,s.EditName
-           ,s.EditDate)
+           ,s.EditDate
+		   ,s.Ukey)
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
@@ -1746,12 +1752,13 @@ on t.StyleUkey=s.StyleUkey
 	and t.LockDate = s.LockDate
 when matched then 
    update SET t.SeamLength = s.SeamLength
-      ,t.ConsPC = s.ConsPCs
+      ,t.ConsPC = s.ConsPC
       ,t.AddName = s.AddName
       ,t.AddDate = s.AddDate
       ,t.EditName = s.EditName
       ,t.EditDate = s.EditDate
       ,t.Category = s.Category
+      ,t.Ukey = s.Ukey
       ,t.TPDate = s.TPDate
       ,t.IETMSID_Thread = s.IETMSID_Thread
       ,t.IETMSVersion_Thread = s.IETMSVersion_Thread
@@ -1765,6 +1772,7 @@ when not matched by target then
            ,AddDate
            ,EditName
            ,EditDate
+           ,Ukey
            ,LockDate
            ,Category
            ,TPDate
@@ -1780,6 +1788,7 @@ when not matched by target then
            ,s.AddDate
            ,s.EditName
            ,s.EditDate
+           ,s.Ukey
            ,s.LockDate
            ,s.Category
            ,s.TPDate
@@ -1805,6 +1814,7 @@ when matched then
       ,t.EditName = s.EditName
       ,t.EditDate = s.EditDate
       ,t.Ratio = s.Ratio
+      ,t.Ukey = s.Ukey
 when not matched by target then
 	insert  (Style_QTThreadColorCombo_HistoryUkey
            ,Seq
@@ -1817,7 +1827,8 @@ when not matched by target then
            ,AddDate
            ,EditName
            ,EditDate
-           ,Ratio)
+           ,Ratio
+           ,Ukey)
 		values  (s.Style_QTThreadColorCombo_HistoryUkey
            ,s.Seq
            ,s.SCIRefNo
@@ -1829,7 +1840,8 @@ when not matched by target then
            ,s.AddDate
            ,s.EditName
            ,s.EditDate
-           ,s.Ratio)
+           ,s.Ratio
+           ,s.Ukey)
 ;
 
 ----刪除條件：Trade不存在，且表頭還存在
@@ -1865,6 +1877,7 @@ when matched then
 		  ,t.FabricCode = s.FabricCode
 		  ,t.SCIRefno = s.SCIRefno
 		  ,t.Width = s.Width
+		  ,t.Ukey = s.Ukey
 when not matched by target then
 	insert (StyleUkey
            ,Thread_Quilting_SizeUkey
@@ -1880,7 +1893,8 @@ when not matched by target then
            ,NeedleDistance
            ,FabricCode
            ,SCIRefno
-           ,Width)
+           ,Width
+           ,Ukey)
 		values (s.StyleUkey
            ,s.Thread_Quilting_SizeUkey
            ,s.FabricPanelCode
@@ -1895,7 +1909,8 @@ when not matched by target then
            ,s.NeedleDistance
            ,s.FabricCode
            ,s.SCIRefno
-           ,s.Width)
+           ,s.Width
+           ,s.Ukey)
 when not matched by source AND t.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
 	delete
 ;
@@ -1913,6 +1928,7 @@ when matched then
 			  ,t.AddDate = s.AddDate
 			  ,t.EditName = s.EditName
 			  ,t.EditDate = s.EditDate
+			  ,t.Ukey = s.Ukey
 when not matched by target then
 	insert  (Style_QTThreadColorComboUkey
            ,Seq
@@ -1924,7 +1940,8 @@ when not matched by target then
            ,AddName
            ,AddDate
            ,EditName
-           ,EditDate)
+           ,EditDate
+           ,Ukey)
 		values (s.Style_QTThreadColorComboUkey
            ,s.Seq
            ,s.SCIRefNo
@@ -1935,7 +1952,8 @@ when not matched by target then
            ,s.AddName
            ,s.AddDate
            ,s.EditName
-           ,s.EditDate)
+           ,s.EditDate
+           ,s.Ukey)
 ;
 ----刪除條件：Trade不存在，且表頭還存在
 DELETE t
