@@ -179,17 +179,25 @@ left join pass1 p2 with (nolock) on p2.id = f.Approve
 outer apply(
     select Roll = count(1)
     from(
-        select distinct b.Roll, b.Dyelot
-        from {0} b with (nolock)
-        where b.id = a.id and b.PoId = std.ToPOID and b.Seq1 = std.ToSeq1 and b.Seq2 = std.ToSeq2 and b.Roll = std.FromRoll and b.Dyelot = std. FromDyelot
+        select distinct std2.FromRoll, std2.FromDyelot
+        from SubTransfer_Detail std2 with (nolock)
+		inner join {0} b2 on b2.PoId = std2.FromPOID and b2.Seq1 = std2.FromSeq1 and b2.Seq2 = std2.FromSeq2
+            and b2.Roll = std2.FromRoll and b2.Dyelot = std2. FromDyelot
+        where std2.id = st.id and std2.ToPOID = std2.ToPOID and std2.ToSeq1 = std2.ToSeq1 and std2.ToSeq2 = std2.ToSeq2
+		and std2.FromPOID = std2.FromPOID and std2.FromSeq1 = std2.FromSeq1 and std2.FromSeq2 = std2.FromSeq2 
+		and b2.id = a.id
     )x
 )ct
 outer apply(
     select Dyelot = count(1)
     from(
-        select distinct b.Dyelot
-        from {0} b with (nolock)
-        where b.id = a.id and b.PoId = std.ToPOID and b.Seq1 = std.ToSeq1 and b.Seq2 = std.ToSeq2 and b.Roll = std.FromRoll and b.Dyelot = std. FromDyelot
+        select distinct std2.FromDyelot
+        from SubTransfer_Detail std2 with (nolock)
+		inner join {0} b2 on b2.PoId = std2.FromPOID and b2.Seq1 = std2.FromSeq1 and b2.Seq2 = std2.FromSeq2
+            and b2.Roll = std2.FromRoll and b2.Dyelot = std2. FromDyelot
+        where std2.id = st.id and std2.ToPOID = std2.ToPOID and std2.ToSeq1 = std2.ToSeq1 and std2.ToSeq2 = std2.ToSeq2
+		and std2.FromPOID = std2.FromPOID and std2.FromSeq1 = std2.FromSeq1 and std2.FromSeq2 = std2.FromSeq2 
+		and b2.id = a.id
     )x
 )ct2
 Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
@@ -378,10 +386,12 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
 outer apply(
     select Dyelot = count(1)
     from(
-        select distinct b.Dyelot
-        from {0}_Detail b with (nolock)
-		inner join FIR_Physical i with (nolock) on i.ID = f.FirID and i.Roll = b.Roll and i.Dyelot = b.Dyelot and i.Result <> ''
-        where b.id = f.ReceivingID and b.PoId = f.ToPOID and b.Seq1 = f.ToSeq1 and b.Seq2 = f.ToSeq2 and b.Roll = f.FromRoll and b.Dyelot = f. FromDyelot
+        select distinct std.FromDyelot
+        from SubTransfer_Detail	std
+		inner join FIR_Physical i with (nolock) on i.Roll = std.FromRoll and i.Dyelot = std.FromDyelot and i.Result <> ''
+        where i.ID = f.FirID and std.id = f.TransferID
+		and std.ToPOID = f.ToPOID and std.ToSeq1 = f.ToSeq1 and std.ToSeq2 = f.ToSeq2
+		and std.FromPOID = f.FromPOID and std.FromSeq1 = f.FromSeq1 and std.FromSeq2 = f.FromSeq2 
     )x
 )ct3
 ";
@@ -525,7 +535,7 @@ left join pass1 p3 with (nolock) on p3.id = i.Inspector
             this.parameters.Clear();
 
             string where1 = string.Empty;
-            string where2 = "and not exists(select 1 from #tmpR r where r.Ukey = std.Ukey)" + Environment.NewLine;
+            string where2 = string.Empty;
 
             if (this.radioPanelTransaction.Value == "1")
             {
@@ -793,6 +803,7 @@ order by POID, Seq, ExportId, ReceivingID
             // B2A
             else
             {
+                where2 = "and not exists(select 1 from #tmpR r where r.Ukey = std.Ukey)" + Environment.NewLine;
                 if (!this.dateArriveWHDate.Value1.Empty())
                 {
                     where1 += $"and st.IssueDate between @Date1 and @Date2" + Environment.NewLine;

@@ -612,10 +612,12 @@ SELECT
 
 	[WK] = R.ExportId,
 	Rate = (select RateValue from dbo.View_Unitrate v where v.FROM_U = RD.PoUnit and v.TO_U= RD.StockUnit),
+	RD.StockQty,
 	RD.ShipQty,
 	RD.Dyelot,
 	RD.Roll,
-	Composition
+	Composition,
+	std.Ukey
 INTO #tmpR
 from SubTransfer st
 inner join SubTransfer_Detail std on std.id = st.id
@@ -697,6 +699,7 @@ outer apply(
 	),1,1,'')
 )Composition
 Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
+and not exists(select 1 from #tmpR r where r.Ukey = std.Ukey)
 {where1}
 ");
 
@@ -753,9 +756,9 @@ select
 	t.ConstructionID,
 	ShippedQty = SUM(t.ShipQty * isnull(t.Rate,1)),
     t.FactoryID,
-	RFT = iif(SUM(t.TransferQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.TransferQty)),
+	RFT = iif(SUM(t.StockQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.StockQty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	Inspection = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.TransferQty)),
+	Inspection = iif(SUM(StockQty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
 	t.Physical
 from #tmp1 t
 Group by Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,IssueDate,
@@ -788,7 +791,7 @@ select
     t.FactoryID,
 	RFT = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.Qty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
+	Inspection  = iif(SUM(Qty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
 	t.Physical
 from #tmp2 t
 Group by Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,IssueDate,
@@ -963,13 +966,13 @@ from #tmp2 t
 where t.InspDate is not null
 
 ----Defect Summary Report 分頁
-SELECT ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,TransferQty = sum(TransferQty)
+SELECT ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,TransferQty = sum(TransferQty),StockQty=sum(StockQty)
 INTO #tmp3
 from #tmpR
 group by ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID
 
 union all
-SELECT ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,TransferQty = sum(TransferQty)
+SELECT ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,TransferQty = sum(TransferQty),StockQty=sum(Qty)
 from #tmpT
 group by ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID
 
@@ -998,31 +1001,34 @@ INTO #DefectSummary
 from #tmp3 t
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
-		select  distinct Roll,Dyelot
-		from Receiving_Detail rd
-		where rd.Id = t.ReceivingID AND rd.PoId = t.Inventory_SP AND rd.Seq1 = t.FromSeq1 AND rd.Seq2 = t.FromSeq2
+		select  distinct std.FromRoll,std.FromDyelot
+		from SubTransfer_Detail std
+		where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
 	)x
 )ArriveRoll
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
-		select  distinct Dyelot
-		from Receiving_Detail rd
-		where rd.Id = t.ReceivingID AND rd.PoId = t.Inventory_SP AND rd.Seq1 = t.FromSeq1 AND rd.Seq2 = t.FromSeq2
+		select distinct std.FromDyelot
+		from SubTransfer_Detail std
+		where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
 	)x
 )HowManyDyelotArrived
 OUTER APPLY(
 	select Val=COUNT(distinct fp.Dyelot)
-	from Receiving_Detail rd
+	from SubTransfer_Detail std
+	left join Receiving_Detail rd on rd.PoId = std.FromPOID and rd.Seq1 = std.FromSeq1 and rd.Seq2 = std.FromSeq2 and rd.Roll = std.FromRoll and rd.Dyelot = std. FromDyelot
 	Left join FIR_Physical fp on t.ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
-	where rd.Id = t.ReceivingID AND rd.PoId = t.Inventory_SP AND rd.Seq1 = t.FromSeq1 AND rd.Seq2 = t.FromSeq2
-	AND fp.Result != '' AND fp.Result IS NOT NULL
+	where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
+	AND fp.Result <> ''
 )AlreadyInspecetedDyelot
 OUTER APPLY(
-	select Val = SUM(fp.TicketYds) / t.TransferQty
-	from Receiving_Detail rd
+	select Val = iif(t.StockQty = 0, 0, SUM(fp.TicketYds) / t.StockQty)
+	from SubTransfer_Detail std
+	left join Receiving_Detail rd on rd.PoId = std.FromPOID and rd.Seq1 = std.FromSeq1 and rd.Seq2 = std.FromSeq2 and rd.Roll = std.FromRoll and rd.Dyelot = std. FromDyelot
 	Left join FIR_Physical fp on t.ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
-	where rd.Id = t.ReceivingID AND rd.PoId = t.Inventory_SP AND rd.Seq1 = t.FromSeq1 AND rd.Seq2 = t.FromSeq2
-	AND fp.Result != '' AND fp.Result IS NOT NULL
+	where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
+	and rd.Id = t.ReceivingID
+	AND fp.Result <> ''
 )InspectionPercentage
 OUTER APPLY(
 		select DefectRecord, point
@@ -1097,7 +1103,15 @@ drop table #tmp1,#tmp2,#tmp3,#Sheet2,#DefectSummary,#tmpR,#tmpT
             if (this.PrintData[1].Rows.Count > 1)
             {
                 MyUtility.Excel.CopyToXls(this.PrintData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]);
+            }
+
+            if (this.PrintData[2].Rows.Count > 1)
+            {
                 MyUtility.Excel.CopyToXls(this.PrintData[2], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[3]);
+            }
+
+            if (this.PrintData[3].Rows.Count > 1)
+            {
                 MyUtility.Excel.CopyToXls(this.PrintData[3], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[4]);
             }
 
