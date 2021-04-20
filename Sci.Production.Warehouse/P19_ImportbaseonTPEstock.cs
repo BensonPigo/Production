@@ -27,12 +27,21 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.master = master;
             this.detail = detail;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
             this.GridSetup();
         }
 
         private void GridSetup()
         {
+            DataGridViewGeneratorCheckBoxColumnSettings selected = new DataGridViewGeneratorCheckBoxColumnSettings();
+            this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
+                .CheckBox("selected", header: "Auto Pick", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: selected)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4))
                 .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3))
@@ -46,6 +55,18 @@ namespace Sci.Production.Warehouse
                 .Numeric("TaipeiOutput", header: "Taipei" + Environment.NewLine + "Output", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Numeric("TotalTransfer", header: "Total Transfer", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))
                ;
+
+            selected.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (!dr["FabricType"].EqualString("Accessory"))
+                {
+                    return;
+                }
+
+                dr["selected"] = e.FormattedValue;
+                dr.EndEdit();
+            };
 
             DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
@@ -71,7 +92,7 @@ namespace Sci.Production.Warehouse
             selectedSetting.CellValidating += (s, e) =>
             {
                 DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
-                dr["Selected"] = e.FormattedValue;
+                dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
 
                 this.CaculateTotalTransfer();
@@ -209,7 +230,7 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
 where fi.Lock = 0
 Order by GroupQty desc, Dyelot, StockBalance desc
 
-select  selected = IIF(FabricType = 'A' and TaipeiOutput > 0,cast(1 as bit) ,cast(0 as bit)  )   ----輔料才自動勾選
+select  selected = cast(0 as bit)
 		, WK
 		, MDivisionID 
         , id
@@ -252,7 +273,8 @@ into    #tmpDetail
 from    #tmpDetailResult
 where   StockBalance > 0
 
-select  [POID] = ToPOID
+select  selected
+        , [POID] = ToPOID
 		, [Seq1] = ToSeq1
 		, [Seq2] = ToSeq2
 		, ToFactory
@@ -265,8 +287,8 @@ select  [POID] = ToPOID
         , TaipeiOutput
         , [TotalTransfer] = sum (Qty)
 from    #tmpDetail
-group by ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
-        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput        
+group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
+        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput               
 order by ToPOID, ToSeq1, ToSeq2;
 
 select  *
@@ -308,6 +330,8 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
             this.listControlBindingSource1.DataMember = "masterdt";
             this.listControlBindingSource2.DataMember = "rel1";
             this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
+
+            this.Grid1Select_ReadOnly();
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -363,6 +387,39 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Grid1Select_ReadOnly()
+        {
+            foreach (DataGridViewRow row in this.grid1.Rows)
+            {
+                string fabricType = row.Cells["FabricType"].Value.ToString();
+                row.Cells["selected"].ReadOnly = !fabricType.EqualString("Accessory");
+            }
+        }
+
+        private void BtnAutoPick_Click(object sender, EventArgs e)
+        {
+            DataTable dt1 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["masterdt"];
+            DataTable dt2 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["detaildt"];
+            foreach (DataRow dr2 in dt2.AsEnumerable().Where(x => x.Field<bool>("selected")))
+            {
+                dr2["selected"] = "False";
+            }
+
+            foreach (DataRow dr1 in dt1.AsEnumerable().Where(x => x.Field<bool>("selected")))
+            {
+                foreach (DataRow dr2 in dt2.AsEnumerable().Where(x => x.Field<string>("ToPOID").EqualString(dr1["POID"]) &&
+                                                                    x.Field<string>("Toseq1").EqualString(dr1["Seq1"]) &&
+                                                                    x.Field<string>("Toseq2").EqualString(dr1["Seq2"]) &&
+                                                                    x.Field<string>("POID").EqualString(dr1["InventoryPOID"]) &&
+                                                                    x.Field<string>("seq1").EqualString(dr1["Inventoryseq1"]) &&
+                                                                    x.Field<string>("seq2").EqualString(dr1["InventorySEQ2"])))
+                {
+                    dr2["selected"] = dr2["FabricType"].EqualString("Accessory");
+                    dr2.EndEdit();
+                }
+            }
         }
     }
 }
