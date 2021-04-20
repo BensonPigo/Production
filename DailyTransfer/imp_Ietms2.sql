@@ -241,9 +241,123 @@ when not matched by target then
 insert (type,id,name,AddName,AddDate,EditName,EditDate)
 values (s.type,s.id,s.name,s.AddName,s.AddDate,s.EditName,s.EditDate);
 
+
+------Operation_His------
+Merge Production.dbo.Operation_His as t
+Using (select a.* from Trade_To_Pms.dbo.Operation_His a ) as s
+on t.Ukey=s.Ukey 
+when matched then 
+   update SET t.Type = s.Type
+      ,t.TypeName = s.TypeName
+      ,t.OperationID = s.OperationID
+      ,t.OldValue = s.OldValue
+      ,t.NewValue = s.NewValue
+      ,t.Remark = s.Remark
+      ,t.EditDate = s.EditDate
+      ,t.EditName = s.EditName
+when not matched by target then
+	INSERT (Type
+           ,TypeName
+           ,OperationID
+           ,OldValue
+           ,NewValue
+           ,Remark
+           ,EditDate
+           ,EditName
+		   ,Ukey)
+		VALUES  (s.Type
+           ,s.TypeName
+           ,s.OperationID
+           ,s.OldValue
+           ,s.NewValue
+           ,s.Remark
+           ,s.EditDate
+           ,s.EditName
+		   ,s.Ukey)
+when not matched by source then 
+	delete;
+	
+------Thread_Quilting------
+Merge Production.dbo.Thread_Quilting as t
+Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting a ) as s
+on t.Shape=s.Shape 
+when matched then 
+   update SET  t.Picture1 = s.Picture1
+			  ,t.Picture2 = s.Picture2
+			  ,t.Junk = s.Junk
+			  ,t.AddName = s.AddName
+			  ,t.AddDate = s.AddDate
+			  ,t.EditName = s.EditName
+			  ,t.EditDate = s.EditDate
+when not matched by target then
+	INSERT (Shape
+           ,Picture1
+           ,Picture2
+           ,Junk
+           ,AddName
+           ,AddDate
+           ,EditName
+           ,EditDate)
+		VALUES  (s.Shape
+           ,s.Picture1
+           ,s.Picture2
+           ,s.Junk
+           ,s.AddName
+           ,s.AddDate
+           ,s.EditName
+           ,s.EditDate)
+when not matched by source then 
+	delete;
+
+------Thread_Quilting_Size------
+Merge Production.dbo.Thread_Quilting_Size as t
+Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting_Size a ) as s
+on t.Ukey=s.Ukey 
+when matched then 
+   update SET  t.Shape = s.Shape
+			  ,t.HSize = s.HSize
+			  ,t.VSize = s.VSize
+			  ,t.ASize = s.ASize
+			  ,t.NeedleDistance = s.NeedleDistance
+when not matched by target then
+	INSERT (Shape
+           ,HSize
+           ,VSize
+           ,ASize
+           ,NeedleDistance
+		   ,Ukey)
+		VALUES  (s.Shape
+           ,s.HSize
+           ,s.VSize
+           ,s.ASize
+           ,s.NeedleDistance
+		   ,s.Ukey)
+when not matched by source then 
+	delete;
+
+------Thread_Quilting_Size_Location------
+Merge Production.dbo.Thread_Quilting_Size_Location as t
+Using (select a.* from Trade_To_Pms.dbo.Thread_Quilting_Size_Location a ) as s
+on t.Thread_Quilting_SizeUkey=s.Thread_Quilting_SizeUkey AND t.Seq=s.Seq 
+when matched then 
+   update SET  t.Shape = s.Shape
+			  ,t.Location = s.Location
+			  ,t.Ratio = s.Ratio
+when not matched by target then
+	INSERT (Shape
+           ,Thread_Quilting_SizeUkey
+           ,Seq
+           ,Location
+           ,Ratio)
+		VALUES  (s.Shape
+           ,s.Thread_Quilting_SizeUkey
+           ,s.Seq
+           ,s.Location
+           ,s.Ratio)
+when not matched by source then 
+	delete;
+
 END
-
-
 
 
 
