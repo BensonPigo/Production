@@ -307,19 +307,19 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
             string whereCode = string.Empty;
             string patternukey = GetPatternUkey(cutref, poid, sizes);
             string sqlPattern_GL_Article = $@"
-if exists (Select ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in ({articles}) and SizeRange like '%,%')
+if exists (Select ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles}) and SizeRange like '%,%')
 Begin	
 	Select distinct ArticleGroup
 	from Pattern_GL_Article WITH (NOLOCK)
 	where PatternUkey = '{patternukey}'
-	and Article in ({articles})
+	and rtrim(ltrim(Article)) in ({articles})
 	and SizeRange  = (
         select SizeRange
         from Pattern_GL_Article
         outer apply(select * from SplitString(SizeRange, ',') s)s
 	    where PatternUkey = '{patternukey}'
-	    and Article in ({articles})
-        and Data in ({sizes})
+	    and rtrim(ltrim(Article)) in ({articles})
+        and rtrim(ltrim(Data)) in ({sizes})
         group by SizeRange
         having COUNT(1) = {sizeCount}
 	)
@@ -335,10 +335,10 @@ End
             if (articleGroupDT.Rows.Count == 0)
             {
                 sqlPattern_GL_Article = $@"
-if exists (Select * from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in({articles})  and SizeRange in ({sizes}))
-	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in({articles}) and SizeRange in ({sizes})    
-else if exists (Select 1 from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in ({articles}))
-	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and Article in ({articles})
+if exists (Select * from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in({articles})  and rtrim(ltrim(SizeRange)) in ({sizes}))
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in({articles}) and rtrim(ltrim(SizeRange)) in ({sizes})    
+else if exists (Select 1 from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles}))
+	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' and rtrim(ltrim(Article)) in ({articles})
 else
 	Select distinct ArticleGroup from Pattern_GL_Article WITH (NOLOCK) where PatternUkey = '{patternukey}' 
 ";

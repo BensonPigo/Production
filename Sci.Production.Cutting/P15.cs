@@ -1344,9 +1344,9 @@ and wd.orderid = 'EXCESS'
 
             // 取得 GarmentTb
             var sizelist = this.ArticleSizeTb.Select($"Ukey = '{ukey}' and Fabriccombo = '{row["Fabriccombo"]}'").AsEnumerable()
-                .Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                .Select(s => MyUtility.Convert.GetString(s["SizeCode"]).Trim()).Distinct().ToList();
             var articlelist = this.ArticleSizeTb.Select($"Ukey = '{ukey}' and Fabriccombo = '{row["Fabriccombo"]}'").AsEnumerable()
-                .Select(s => MyUtility.Convert.GetString(s["Article"])).Distinct().ToList();
+                .Select(s => MyUtility.Convert.GetString(s["Article"]).Trim()).Distinct().ToList();
             string sizes = "'" + string.Join("','", sizelist) + "'";
             string articles = "'" + string.Join("','", articlelist) + "'";
             Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);

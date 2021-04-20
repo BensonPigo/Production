@@ -93,12 +93,12 @@ namespace Sci.Production.Cutting
             string sizes = "''";
             if (this.qtyTb != null)
             {
-                var sizeList = this.qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                var sizeList = this.qtyTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"]).Trim()).Distinct().ToList();
                 sizes = "'" + string.Join("','", sizeList) + "'";
             }
 
             string poid = MyUtility.Convert.GetString(maindr["poid"]);
-            string articles = $"'{maindr["Article"]}'";
+            string articles = $"'{MyUtility.Convert.GetString(maindr["Article"]).Trim()}'";
             string fabricPanelCode = MyUtility.Convert.GetString(maindr["FabricPanelCode"]);
             Prgs.GetGarmentListTable(string.Empty, this.maindatarow["poid"].ToString(), sizes, out this.GarmentTb, out this.articleGroupDT);
             this.w = $"1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} ";

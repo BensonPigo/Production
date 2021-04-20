@@ -156,12 +156,12 @@ group by sizeCode
             string sizes = "''";
             if (this.bundle_Detail_Qty_T != null)
             {
-                var sizeList = this.bundle_Detail_Qty_T.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+                var sizeList = this.bundle_Detail_Qty_T.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"]).Trim()).Distinct().ToList();
                 sizes = "'" + string.Join("','", sizeList) + "'";
             }
 
             string poid = MyUtility.Convert.GetString(maindr["poid"]);
-            string articles = $"'{maindr["Article"]}'";
+            string articles = $"'{MyUtility.Convert.GetString(maindr["Article"]).Trim()}'";
             string fabricPanelCode = MyUtility.Convert.GetString(maindr["FabricPanelCode"]);
             Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
             this.w = $"1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} ";

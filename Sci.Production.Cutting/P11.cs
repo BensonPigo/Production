@@ -1136,8 +1136,8 @@ and o.mDivisionid = '{this.keyWord}'
         private void CreatePattern(DataRow row)
         {
             string poid = row["POID"].ToString();
-            string article = row["Article"].ToString();
-            string sizeCode = row["SizeCode"].ToString();
+            string article = row["Article"].ToString().Trim();
+            string sizeCode = row["SizeCode"].ToString().Trim();
             string fabricPanelCode = row["FabricPanelCode"].ToString();
             string cutref = row["Cutref"].ToString();
             int iden = MyUtility.Convert.GetInt(row["iden"]);
