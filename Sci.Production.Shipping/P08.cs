@@ -642,6 +642,41 @@ and gb.ShipModeID in ('A/P', 'E/P')",
                 MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
                 return false;
             }
+            else
+            {
+                string strSQLcmd;
+                if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
+                {
+                    strSQLcmd = string.Format(
+                        @"
+select  1
+from Export with (nolock) where BLno = '{0}'
+union all
+select  1
+from FtyExport with (nolock) where BLno = '{0}' and Type <> 3 ",
+                        this.CurrentMaintain["BLNo"]);
+
+                    if (!MyUtility.Check.Seek(strSQLcmd))
+                    {
+                        MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
+                        this.numericBox1.Focus();
+                        return false;
+                    }
+                }
+                else
+                {
+                    strSQLcmd = string.Format(
+                        "select  1 from GMTBooking with (nolock) where BLno = '{0}' or BL2no = '{0}'",
+                        this.CurrentMaintain["BLNo"]);
+
+                    if (!MyUtility.Check.Seek(strSQLcmd))
+                    {
+                        MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
+                        this.numericBox1.Focus();
+                        return false;
+                    }
+                }
+            }
 
             // 清空表身Grid資料
             int countRec = 0; // 計算表身筆數
@@ -845,7 +880,68 @@ If the application is for Air - Prepaid Invoice, please ensure that all item cod
 
             if (this.checkIsFreightForwarder.Checked && !this.CurrentMaintain["Reason"].EqualString("AP007"))
             {
-                string strSqlCmd = $@"
+                string strSqlCmd;
+                if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
+                {
+                    strSqlCmd = $@"
+merge ShareExpense t
+using (
+    select top 1 *
+    from (
+	    select distinct
+		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+		    ,[BLNo] = BLNo
+		    ,[WKNo] = id
+		    ,[InvNo] = ''
+		    ,[Type] = '{this.CurrentMaintain["SubType"]}'
+		    ,[GW] = WeightKg
+		    ,[CBM] = CBM
+		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+		    ,[ShipModeID] = ShipModeID
+		    ,[FtyWK] = 0
+		    ,[AccountID] = (
+			    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+			    where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+			    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+				    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+		    ,[Junk] = 0
+	    from Export e WITH (NOLOCK) 
+	    where BLNo = '{this.CurrentMaintain["BLNO"]}'
+	    union 
+	    select distinct
+		    [ShippingAPID] = '{this.CurrentMaintain["ID"]}'
+		    ,[BLNo] = BLNo
+		    ,[WKNo] = id
+		    ,[InvNo] = ''
+		    ,[Type] = '{this.CurrentMaintain["SubType"]}'
+		    ,[GW] = WeightKg
+		    ,[CBM] = CBM
+		    ,[CurrencyID] = '{this.CurrentMaintain["CurrencyID"]}'
+		    ,[ShipModeID] = ShipModeID
+		    ,[FtyWK] = 0
+		    ,[AccountID] = (
+			    select top 1 sd.AccountID from ShippingAP_Detail sd WITH(NOLOCK)
+			    where sd.ID = '{this.CurrentMaintain["ID"]}' and sd.AccountID != ''
+			    and not (dbo.GetAccountNoExpressType(sd.AccountID,'Vat') = 1 
+				    or dbo.GetAccountNoExpressType(sd.AccountID,'SisFty') = 1))
+		    ,[Junk] = 0
+	    from FtyExport f WITH (NOLOCK) 
+	    where BLNo = '{this.CurrentMaintain["BLNO"]}'
+	    and Type <> 3
+    )a
+) as s 
+on	t.ShippingAPID = s.ShippingAPID 
+	and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+when matched AND t.junk=1 then
+	update set
+	t.junk=0
+when not matched by target then 
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
+                }
+                else
+                {
+                    strSqlCmd = $@"
 merge ShareExpense t
 using (
 select distinct
@@ -875,6 +971,7 @@ when matched AND t.junk=1 then
 when not matched by target then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
 	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
+                }
 
                 result = DBProxy.Current.Execute(string.Empty, strSqlCmd);
 
@@ -1320,7 +1417,8 @@ if  not exists (select  1
                 from Export with (nolock) where BLno = @BLno
                 union all
                 select  1
-                from FtyExport with (nolock) where BLno = @BLno )
+                from FtyExport with (nolock) where BLno = @BLno and Type <> 3
+)
 begin
     select  [Code] = 'P05.',
             [Manual] = 'P05. Garment Booking',
