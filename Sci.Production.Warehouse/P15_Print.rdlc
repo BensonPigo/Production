@@ -624,7 +624,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>ISSUE DATE:</Value>
+                  <Value>ISSUE TIME:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -633,9 +633,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox10</rd:DefaultName>
           <Top>2.8105cm</Top>
-          <Left>8.71044cm</Left>
+          <Left>7.49299cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.40771cm</Width>
+          <Width>2.2666cm</Width>
           <ZIndex>6</ZIndex>
           <Style>
             <Border>
@@ -774,7 +774,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!issuedate.Value</Value>
+                  <Value>=Parameters!issuetime.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -783,9 +783,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
           <Top>2.8105cm</Top>
-          <Left>11.11815cm</Left>
+          <Left>9.9007cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.11967cm</Width>
+          <Width>3.90736cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -1489,7 +1489,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="issuedate">
+    <ReportParameter Name="issuetime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

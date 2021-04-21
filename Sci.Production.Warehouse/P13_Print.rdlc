@@ -640,7 +640,7 @@
           <Top>1.87509cm</Top>
           <Left>2.16076cm</Left>
           <Height>0.56444cm</Height>
-          <Width>5.10959cm</Width>
+          <Width>3.22223cm</Width>
           <ZIndex>3</ZIndex>
           <Style>
             <Border>
@@ -721,7 +721,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Issue Date:</Value>
+                  <Value>Issue time:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -730,9 +730,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
           <Top>1.87509cm</Top>
-          <Left>14.35959cm</Left>
+          <Left>15.10042cm</Left>
           <Height>0.56444cm</Height>
-          <Width>2.86572cm</Width>
+          <Width>2.12489cm</Width>
           <ZIndex>6</ZIndex>
           <Style>
             <Border>
@@ -751,7 +751,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!CDate.Value</Value>
+                  <Value>=Parameters!issuetime.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -790,9 +790,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox9</rd:DefaultName>
           <Top>2.6162cm</Top>
-          <Left>14.35959cm</Left>
+          <Left>15.10042cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.86572cm</Width>
+          <Width>2.12489cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -1050,8 +1050,8 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox7</rd:DefaultName>
-          <Top>1.86389cm</Top>
-          <Left>7.27035cm</Left>
+          <Top>1.87537cm</Top>
+          <Left>5.41826cm</Left>
           <Height>0.56444cm</Height>
           <Width>1.51634cm</Width>
           <ZIndex>17</ZIndex>
@@ -1081,9 +1081,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox8</rd:DefaultName>
           <Top>1.86389cm</Top>
-          <Left>8.82197cm</Left>
+          <Left>6.96988cm</Left>
           <Height>0.56444cm</Height>
-          <Width>5.43179cm</Width>
+          <Width>1.94399cm</Width>
           <ZIndex>18</ZIndex>
           <Style>
             <Border>
@@ -1246,6 +1246,66 @@
           <Style>
             <Border />
             <VerticalAlign>Middle</VerticalAlign>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox36">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Confirm time:</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox7</rd:DefaultName>
+          <Top>1.86389cm</Top>
+          <Left>9.09026cm</Left>
+          <Height>0.56444cm</Height>
+          <Width>2.4865cm</Width>
+          <ZIndex>24</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox37">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!confirmTime.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox8</rd:DefaultName>
+          <Top>1.86389cm</Top>
+          <Left>11.64731cm</Left>
+          <Height>0.56444cm</Height>
+          <Width>3.45312cm</Width>
+          <ZIndex>25</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
             <PaddingLeft>2pt</PaddingLeft>
             <PaddingRight>2pt</PaddingRight>
             <PaddingTop>2pt</PaddingTop>
@@ -1551,7 +1611,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="CDate">
+    <ReportParameter Name="issuetime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
@@ -1564,6 +1624,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="FtyGroup">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="confirmTime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

@@ -610,12 +610,15 @@ where LID.ID = @ID";
 select NameEN
 from factory
 where id = '{0}'", Env.User.Keyword));
+            string confirmTime = this.CurrentMaintain["Status"].EqualString("CONFIRMED") ? MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
+
             #region Set RDLC_Title Data
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivision", mDivisonName));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", this.CurrentMaintain["FactoryID"].ToString()));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", string.Format("{0:yyyy-MM-dd}", this.CurrentMaintain["IssueDate"])));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", this.CurrentMaintain["Remark"].ToString()));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
             #endregion
             #region Set RDLC_Detail Data
             List<P61_PrintData> data = this.detailgrid.GetTable().AsEnumerable()

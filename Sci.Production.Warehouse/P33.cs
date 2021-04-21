@@ -2406,6 +2406,7 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             // 上方欄位
             string iD = issue["ID"].ToString();
             string issueDate = Convert.ToDateTime(issue["IssueDate"]).ToString("yyyy/MM/dd");
+            string confirmTime = MyUtility.Convert.GetDate(issue["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
             string orderID = this.txtOrderID.Text;
             string line = this.displayLineNo.Text;
             string remark = issue["Remark"].ToString();
@@ -2550,11 +2551,12 @@ DROP TABLE #tmp
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", iD));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("IssueDate", issueDate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", orderID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Style", style));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Line", line));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
 
             // report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("poID", poID));
             List<P33_PrintData> printDatas = dtBody.AsEnumerable().Select(o => new P33_PrintData()

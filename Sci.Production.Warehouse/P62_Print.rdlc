@@ -992,7 +992,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox10</rd:DefaultName>
-          <Top>4.39068cm</Top>
+          <Top>5.07006cm</Top>
           <Left>0.36787cm</Left>
           <Height>0.58208cm</Height>
           <Width>3.44307cm</Width>
@@ -1025,9 +1025,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox12</rd:DefaultName>
           <Top>5.01714cm</Top>
-          <Left>16.94782cm</Left>
+          <Left>15.66902cm</Left>
           <Height>0.635cm</Height>
-          <Width>2.79897cm</Width>
+          <Width>4.07777cm</Width>
           <ZIndex>5</ZIndex>
           <Style>
             <Border>
@@ -1057,7 +1057,7 @@
           <Top>3.79095cm</Top>
           <Left>3.81094cm</Left>
           <Height>0.59973cm</Height>
-          <Width>9.49378cm</Width>
+          <Width>8.14441cm</Width>
           <ZIndex>6</ZIndex>
           <Style>
             <Border>
@@ -1084,10 +1084,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox14</rd:DefaultName>
-          <Top>4.39068cm</Top>
+          <Top>5.07006cm</Top>
           <Left>3.81094cm</Left>
           <Height>0.58208cm</Height>
-          <Width>9.49378cm</Width>
+          <Width>8.14441cm</Width>
           <ZIndex>7</ZIndex>
           <Style>
             <Border>
@@ -1114,10 +1114,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox16</rd:DefaultName>
-          <Top>3.79095cm</Top>
-          <Left>13.30473cm</Left>
+          <Top>4.42596cm</Top>
+          <Left>0.36787cm</Left>
           <Height>0.59973cm</Height>
-          <Width>3.64312cm</Width>
+          <Width>3.44307cm</Width>
           <ZIndex>8</ZIndex>
           <Style>
             <Border>
@@ -1144,9 +1144,9 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox19</rd:DefaultName>
-          <Top>4.39068cm</Top>
-          <Left>13.30472cm</Left>
-          <Height>0.62646cm</Height>
+          <Top>4.41741cm</Top>
+          <Left>11.99062cm</Left>
+          <Height>0.56445cm</Height>
           <Width>3.64312cm</Width>
           <ZIndex>9</ZIndex>
           <Style>
@@ -1175,7 +1175,7 @@
           </Paragraphs>
           <rd:DefaultName>Textbox20</rd:DefaultName>
           <Top>5.01714cm</Top>
-          <Left>13.30474cm</Left>
+          <Left>11.99062cm</Left>
           <Height>0.635cm</Height>
           <Width>3.64312cm</Width>
           <ZIndex>10</ZIndex>
@@ -1204,10 +1204,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox21</rd:DefaultName>
-          <Top>3.79095cm</Top>
-          <Left>16.94782cm</Left>
+          <Top>4.42596cm</Top>
+          <Left>3.81094cm</Left>
           <Height>0.59973cm</Height>
-          <Width>3.23994cm</Width>
+          <Width>8.14441cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -1226,7 +1226,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!issuedate.Value</Value>
+                  <Value>=Parameters!issuetime.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1235,9 +1235,9 @@
           </Paragraphs>
           <rd:DefaultName>Textbox24</rd:DefaultName>
           <Top>4.39068cm</Top>
-          <Left>16.94782cm</Left>
+          <Left>15.66902cm</Left>
           <Height>0.62646cm</Height>
-          <Width>2.79897cm</Width>
+          <Width>4.07777cm</Width>
           <ZIndex>12</ZIndex>
           <Style>
             <Border>
@@ -1310,6 +1310,66 @@
           <Style>
             <Border />
             <VerticalAlign>Middle</VerticalAlign>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox22">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value EvaluationMode="Constant">CONFIRM TIME:</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox19</rd:DefaultName>
+          <Top>3.79095cm</Top>
+          <Left>11.99062cm</Left>
+          <Height>0.62646cm</Height>
+          <Width>3.64312cm</Width>
+          <ZIndex>15</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox26">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!confirmTime.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox24</rd:DefaultName>
+          <Top>3.79095cm</Top>
+          <Left>15.66902cm</Left>
+          <Height>0.62646cm</Height>
+          <Width>4.07775cm</Width>
+          <ZIndex>16</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
             <PaddingLeft>2pt</PaddingLeft>
             <PaddingRight>2pt</PaddingRight>
             <PaddingTop>2pt</PaddingTop>
@@ -1587,7 +1647,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="issuedate">
+    <ReportParameter Name="issuetime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
@@ -1667,6 +1727,12 @@
     </ReportParameter>
     <ReportParameter Name="Factory">
       <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="confirmTime">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>

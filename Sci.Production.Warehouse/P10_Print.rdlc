@@ -1255,7 +1255,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>ISSUE DATE:</Value>
+                  <Value>Confirm time:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1405,7 +1405,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!issuedate.Value</Value>
+                  <Value>=Parameters!confirmTime.Value</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
@@ -1416,7 +1416,7 @@
           <Top>5.55484cm</Top>
           <Left>16.57746cm</Left>
           <Height>0.62646cm</Height>
-          <Width>3.16933cm</Width>
+          <Width>3.6103cm</Width>
           <ZIndex>18</ZIndex>
           <Style>
             <Border>
@@ -1826,7 +1826,7 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
-    <ReportParameter Name="issuedate">
+    <ReportParameter Name="confirmTime">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
