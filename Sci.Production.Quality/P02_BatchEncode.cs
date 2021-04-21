@@ -221,7 +221,7 @@ from QAMtlTypeSetting q
 where type = 'A'
 and id = '{dr["MtlTypeID"]}'
 ";
-                    return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+                    return MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlcmd)));
             }
 
             return inspQty;
