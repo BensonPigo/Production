@@ -285,7 +285,7 @@ namespace Sci.Production.Automation
 
             WebApiBaseResult webApiBaseResult;
             string baseUrl = UtilityAutomation.GetSupplierUrl(sunriseSuppID, moduleName);
-            string requestUri = "OtherAPI/post/snperp/ChkPackingListStatus";
+            string requestUri = "OtherAPI/api/packliststatus";
 
             var structureID = new object[] { new { PackingListID = packingListID } };
 
