@@ -85,7 +85,6 @@
             this.grid_History = new Sci.Win.UI.Grid();
             this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
-            this.labReviseDate = new Sci.Win.UI.Label();
             this.txtSeq2_History = new Sci.Win.UI.TextBox();
             this.txtSeq1_History = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
@@ -101,6 +100,7 @@
             this.txtSPNo_History = new Sci.Win.UI.TextBox();
             this.dateRangeReviseDate = new Sci.Win.UI.DateRange();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.labReviseDate = new Sci.Win.UI.Label();
             this.tabControl1.SuspendLayout();
             this.TabPage_UpdateCommand.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -772,20 +772,6 @@
             this.panel3.Size = new System.Drawing.Size(1046, 104);
             this.panel3.TabIndex = 1;
             // 
-            // labReviseDate
-            // 
-            this.labReviseDate.Location = new System.Drawing.Point(14, 40);
-            this.labReviseDate.Name = "labReviseDate";
-            this.labReviseDate.RectStyle.BorderColor = System.Drawing.Color.Black;
-            this.labReviseDate.RectStyle.BorderWidth = 1F;
-            this.labReviseDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.labReviseDate.RectStyle.ExtBorderWidth = 1F;
-            this.labReviseDate.Size = new System.Drawing.Size(94, 23);
-            this.labReviseDate.TabIndex = 23;
-            this.labReviseDate.Text = "Revise Date";
-            this.labReviseDate.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.labReviseDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
             // txtSeq2_History
             // 
             this.txtSeq2_History.BackColor = System.Drawing.Color.White;
@@ -940,6 +926,14 @@
             this.dateRangeReviseDate.Size = new System.Drawing.Size(280, 23);
             this.dateRangeReviseDate.TabIndex = 1;
             // 
+            // labReviseDate
+            // 
+            this.labReviseDate.Location = new System.Drawing.Point(14, 40);
+            this.labReviseDate.Name = "labReviseDate";
+            this.labReviseDate.Size = new System.Drawing.Size(94, 23);
+            this.labReviseDate.TabIndex = 24;
+            this.labReviseDate.Text = "Revise Date";
+            // 
             // P99
             // 
             this.ClientSize = new System.Drawing.Size(1060, 558);
@@ -1029,7 +1023,6 @@
         private System.Windows.Forms.TabPage TabPage_ReviseHistory;
         private Win.UI.Grid grid_History;
         private Win.UI.Panel panel3;
-        private Win.UI.Label labReviseDate;
         private Win.UI.TextBox txtSeq2_History;
         private Win.UI.TextBox txtSeq1_History;
         private Win.UI.Label label4;
@@ -1045,5 +1038,6 @@
         private Win.UI.TextBox txtSPNo_History;
         private Win.UI.DateRange dateRangeReviseDate;
         private Win.UI.ListControlBindingSource listControlBindingSource3;
+        private Win.UI.Label labReviseDate;
     }
 }

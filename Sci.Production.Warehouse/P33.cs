@@ -2287,14 +2287,6 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
             string sqlupd2_FIO = string.Empty;
             StringBuilder sqlupd2_B = new StringBuilder();
 
-            #region 檢查物料Location 是否存在WMS
-            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P33"))
-            {
-                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
-                return;
-            }
-            #endregion
-
             #region 檢查資料有任一筆WMS已完成, 就不能unConfirmed
             if (!Prgs.ChkWMSCompleteTime(dt, "Issue_Detail"))
             {

@@ -563,14 +563,6 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
 
             if (datacheck.Rows.Count > 0)
             {
-                #region 檢查物料Location 是否存在WMS
-                if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P43"))
-                {
-                    MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
-                    return;
-                }
-                #endregion
-
                 #region 檢查負數庫存
                 foreach (DataRow tmp in datacheck.Rows)
                 {

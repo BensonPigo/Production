@@ -602,14 +602,6 @@ where (isnull(f.InQty,0) -isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.
             string upd_Fty_4F = string.Empty;
             string upd_Fty_2F = string.Empty;
 
-            #region 檢查物料Location 是否存在WMS
-            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P36"))
-            {
-                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
-                return;
-            }
-            #endregion
-
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
                 @"

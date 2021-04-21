@@ -39,8 +39,6 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            string sqlcmd = string.Empty;
-
             // 取得資料
             DataTable dtMaster = this.GetReceiveData(dtDetail, formName, "New");
 
@@ -81,7 +79,7 @@ namespace Sci.Production.Automation
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "New");
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Receiving_Detail");
@@ -106,7 +104,6 @@ namespace Sci.Production.Automation
             }
 
             DualResult result;
-            string sqlcmd = string.Empty;
 
             // 呼叫同個Class裡的Method,需要先new物件才行
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
@@ -197,14 +194,12 @@ namespace Sci.Production.Automation
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", string.Empty);
+            callMethod.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "SCI");
 
             // 使用可以Resent的AutomationErrMsg
             SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
-
             // 記錄delete後有傳給WMS的資料
-            string sqlcmd = string.Empty;
-            sqlcmd = $@"
+            string sqlcmd = $@"
 update t
 set t.SentToWMS = 0
 from Receiving_Detail t
@@ -226,13 +221,6 @@ where exists(
             {
                 MyUtility.Msg.WarningBox(result.Messages.ToString());
             }
-
-            // UnConfirm後要解鎖物料
-            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, false), out DataTable dt, "#TmpSource")))
-            {
-                MyUtility.Msg.WarningBox(result.Messages.ToString());
-                return;
-            }
         }
         #endregion
 
@@ -251,7 +239,6 @@ where exists(
                 return;
             }
 
-            string sqlcmd = string.Empty;
             DataTable dtMaster = this.GetIssueData(dtDetail, formName, status);
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
@@ -290,7 +277,7 @@ where exists(
             #endregion
 
             string apiThread = "SentIssue_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Issue_Detail");
@@ -315,7 +302,6 @@ where exists(
             }
 
             DualResult result;
-            string sqlcmd = string.Empty;
 
             // 呼叫同個Class裡的Method,需要先new物件才行
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
@@ -405,7 +391,6 @@ where exists(
                 return;
             }
 
-            string sqlcmd = string.Empty;
             DataTable dtMaster = this.GetRemoveC_Detail(dtDetail, status);
             if (dtMaster == null || dtMaster.Rows.Count <= 0)
             {
@@ -421,7 +406,7 @@ where exists(
             #endregion
 
             string apiThread = "SentRemoveC_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "RemoveC_Detail");
@@ -445,7 +430,6 @@ where exists(
             }
 
             DualResult result;
-            string sqlcmd = string.Empty;
 
             // 呼叫同個Class裡的Method,需要先new物件才行
             Vstrong_AutoWHAccessory callMethod = new Vstrong_AutoWHAccessory();
@@ -527,7 +511,7 @@ where exists(
             #endregion
 
             string apiThread = "SentSubTransfer_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "SubTransfer_Detail");
@@ -633,7 +617,7 @@ where exists(
             #endregion
 
             string apiThread = "SentReturnReceiptToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "ReturnReceipt_Detail");
@@ -765,7 +749,7 @@ where exists(
             #endregion
 
             string apiThread = "SentBorrowBackToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "BorrowBack_Detail");
@@ -871,7 +855,7 @@ where exists(
             #endregion
 
             string apiThread = "SentAdjust_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Adjust_Detail");
@@ -976,7 +960,7 @@ where exists(
             #endregion
 
             string apiThread = "SentIssueReturn_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "IssueReturn_Detail");
@@ -1080,7 +1064,7 @@ where exists(
             #endregion
 
             string apiThread = "SentStocktaking_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Stocktaking_Detail");
@@ -1118,7 +1102,7 @@ where exists(
 
             // DataTable轉化為JSON
             string jsonBody = callMethod.GetJsonBody(dtMaster, "Stocktaking_Detail");
-            callMethod.SetAutoAutomationErrMsg("SentStocktaking_DetailToGensong");
+            callMethod.SetAutoAutomationErrMsg("SentStocktaking_DetailToVstrong");
 
             // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
             if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
@@ -1235,7 +1219,7 @@ and exists(
             #endregion
 
             string apiThread = "SentLocationTrans_DetailToVstrong";
-            this.SetAutoAutomationErrMsg(apiThread, "New");
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dt, "LocationTrans_Detail");
@@ -1559,7 +1543,8 @@ and exists(
             {
                 case "P07":
                 case "P08":
-                    sqlcmd = $@"SELECT 
+                    sqlcmd = $@"
+SELECT 
  [ID] = rd.id
 ,[InvNo] = iif('{formName}' = 'P07', r.InvNo, '')
 ,[PoId] = rd.Poid
@@ -1674,33 +1659,30 @@ and exists(
         private DataTable GetReceive_TranferIn_Data(DataTable dtDetail)
         {
             DualResult result;
-            string sqlcmd = string.Empty;
             DataTable dtMaster = new DataTable();
             #region 取得資料
 
-            sqlcmd = $@"
-SELECT [ID] = rd.id
+            string sqlcmd = $@"
+SELECT 
+[ID] = rd.id
 ,[InvNo] = r.InvNo
 ,[PoId] = rd.Poid
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[Color] = Color.Value
-,[Roll] = rd.Roll
-,[Dyelot] = rd.Dyelot
 ,[StockUnit] = rd.StockUnit
 ,[StockQty] = rd.StockQty
 ,[PoUnit] = rd.PoUnit
 ,[ShipQty] = rd.ShipQty
+,[Color] = Color.Value
+,[SizeCode] = po3.SizeSpec
 ,[Weight] = rd.Weight
 ,[StockType] = rd.StockType
+,[MtlType] = Fabric.MtlTypeID
 ,[Ukey] = rd.Ukey
-,[IsInspection] = convert(bit, 0)
 ,[ETA] = r.ETA
 ,[WhseArrival] = r.WhseArrival
 ,[Status] = 'Delete'
-,[Barcode] = Barcode.value
-,rd.SentToWMS,rd.CompleteTime
 FROM Production.dbo.Receiving_Detail rd
 inner join Production.dbo.Receiving r on rd.id = r.id
 inner join #tmp s on s.POID = rd.PoId
@@ -1720,11 +1702,6 @@ OUTER APPLY(
             ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
 	 END
 )Color
-outer apply(
-	select value = min(fb.Barcode)
-	from FtyInventory_Barcode fb 
-	where fb.Ukey = f.Ukey
-)Barcode
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1735,44 +1712,44 @@ and rd.SentToWMS =1 and rd.CompleteTime is null
 
 union all
 
-SELECT [ID] = rd.id
-,[InvNo] = isnull(r.InvNo,'')
+SELECT 
+ [ID] = rd.id
+,[InvNo] = r.InvNo
 ,[PoId] = rd.Poid
 ,[Seq1] = rd.Seq1
 ,[Seq2] = rd.Seq2
 ,[Refno] = po3.Refno
-,[Color] = po3.ColorID
-,[Roll] = rd.Roll
-,[Dyelot] = rd.Dyelot
 ,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
 ,[StockQty] = rd.Qty
-,[PoUnit] = po3.PoUnit
-,[ShipQty] = rd.Qty
+,[PoUnit] = ''
+,[ShipQty] = 0.00
+,[Color] =  Color.Value
+,[SizeCode] = po3.SizeSpec
 ,[Weight] = rd.Weight
 ,[StockType] = rd.StockType
+,[MtlType] = Fabric.MtlTypeID
 ,[Ukey] = rd.Ukey
-,[IsInspection] = convert(bit, 0)
 ,[ETA] = null
 ,[WhseArrival] = r.IssueDate
 ,[Status] = 'Delete'
-,[Barcode] = Barcode.value
-,rd.SentToWMS,rd.CompleteTime
 FROM Production.dbo.TransferIn_Detail rd
-inner join Production.dbo.TransferIn r on rd.id = r.id
+inner join TransferIn r on rd.ID=r.Id
 inner join #tmp s on s.POID = rd.PoId
     and s.Seq1 = rd.Seq1 and s.Seq2 = rd.Seq2 and s.Roll = rd.Roll and s.Dyelot = rd.Dyelot
     and s.StockType = rd.StockType
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
-outer apply(
-	select value = min(fb.Barcode)
-	from FtyInventory_Barcode fb 
-	inner join FtyInventory f on f.Ukey = fb.Ukey
-	where f.POID = rd.POID
-	and f.Seq1 = rd.Seq1 and f.Seq2= rd.Seq2
-	and f.Roll = rd.Roll and f.Dyelot = rd.Dyelot
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
 	and f.StockType = rd.StockType
-)Barcode
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF( isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID),po3.SuppColor)
+		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -2448,7 +2425,7 @@ and exists(
         private void SetAutoAutomationErrMsg(string apiThread, string type = "")
         {
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = type == "New" ? SCIAPIThread : suppAPIThread;
+            this.automationErrMsg.suppAPIThread = type == "SCI" ? SCIAPIThread : suppAPIThread;
             this.automationErrMsg.moduleName = moduleName;
             this.automationErrMsg.suppID = VstrongSuppID;
         }

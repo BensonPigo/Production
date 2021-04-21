@@ -2614,7 +2614,7 @@ and t1.Type='I'
 
             if (MyUtility.Check.Empty(this.strFunction) || MyUtility.Check.Empty(this.comboFunction.SelectedValue))
             {
-                MyUtility.Msg.WarningBox("<Function>,<MaterialType> cannot be empty!");
+                MyUtility.Msg.WarningBox("<Function>, <MaterialType> cannot be empty!");
                 this.comboFunction.Select();
                 return;
             }
@@ -2668,7 +2668,7 @@ and t1.Type='I'
                 var r2_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && (MyUtility.Check.Empty(x["WHCommandReason"]) || MyUtility.Check.Empty(x["WHCommandRemark"]))).ToList();
                 if (r2_list.Any())
                 {
-                    MyUtility.Msg.WarningBox("Remark or Reason be Empty!");
+                    MyUtility.Msg.WarningBox("Remark or Reason cannot be Empty!");
                     return;
                 }
 
@@ -3538,6 +3538,14 @@ inner join #tmp s on t.Ukey = s.Ukey
                 var upd_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1)).ToList();
                 if (upd_list.Count == 0)
                 {
+                    return;
+                }
+
+                // Reason, Remark
+                var r2_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["Selected"].EqualDecimal(1) && (MyUtility.Check.Empty(x["WHCommandReason"]) || MyUtility.Check.Empty(x["WHCommandRemark"]))).ToList();
+                if (r2_list.Any())
+                {
+                    MyUtility.Msg.WarningBox("Remark or Reason cannot be Empty!");
                     return;
                 }
 
@@ -5459,6 +5467,27 @@ and fi.WMSLock = 1
         {
             this.strFunction_History = this.combo_Function_history.SelectedValue.ToString();
             this.strFunction_Text_History = this.combo_Function_history.Text;
+
+            #region 限制篩選條件
+
+            // 必輸入
+            if (MyUtility.Check.Empty(this.strFunction_History) || MyUtility.Check.Empty(this.combo_MaterialType_History.SelectedValue.ToString()))
+            {
+                MyUtility.Msg.WarningBox("<Function>, <MaterialType> cannot be empty!");
+                this.combo_Function_history.Select();
+                return;
+            }
+
+            // 若是P07,P18 擇一必輸入
+            if (MyUtility.Check.Empty(this.dateRangeReviseDate.Value1) && MyUtility.Check.Empty(this.txtID_History.Text) && MyUtility.Check.Empty(this.txtSPNo_History.Text))
+            {
+                MyUtility.Msg.WarningBox("<Revise Date>, <ID>, <SP#> must be fill one!");
+                this.combo_Function_history.Select();
+                return;
+            }
+
+            #endregion
+
             string sqlcmd = string.Empty;
             switch (this.strFunction_History)
             {
@@ -5470,7 +5499,11 @@ and fi.WMSLock = 1
                 case "P32":
                 case "All borrow/transfer record":
                     sqlcmd = $@"
-select [SentToWMS] = iif(t.SendToWMS=1,'V',''),* from WHCommandReviseRecord_Transfer t
+select [SentToWMS] = iif(t.SendToWMS=1,'V','')
+,[FromStockType] = case when t.FromStockType = 'B' then 'Bulk' when t.FromStockType = 'I' then 'Inventory' when t.FromStockType = 'O' then 'Scrap' end
+,[ToStockType] = case when t.ToStockType = 'B' then 'Bulk' when t.ToStockType = 'I' then 'Inventory' when t.ToStockType = 'O' then 'Scrap' end
+,* 
+from WHCommandReviseRecord_Transfer t
 LEFT JOIN PO_Supp_Detail po3  WITH (NOLOCK) ON po3.ID = t.FromPOID AND po3.SEQ1 = t.FromSEQ1 AND po3.SEQ2 = t.FromSEQ2
 where 1=1
 
@@ -5493,7 +5526,10 @@ where 1=1
                     break;
                 default:
                     sqlcmd = $@"
-select [SentToWMS] = iif(t.SendToWMS=1,'V',''),* from WHCommandReviseRecord_InOutAdjRet t
+select [SentToWMS] = iif(t.SendToWMS=1,'V','')
+,[StockType] = case when t.StockType = 'B' then 'Bulk' when t.StockType = 'I' then 'Inventory' when t.StockType = 'O' then 'Scrap' end
+,* 
+from WHCommandReviseRecord_InOutAdjRet t
 LEFT JOIN PO_Supp_Detail po3  WITH (NOLOCK) ON po3.ID = t.PoId AND po3.SEQ1 = t.Seq1 AND po3.SEQ2 = t.Seq2
 where 1=1
 ";
@@ -5989,7 +6025,7 @@ and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2
 and t.Roll = f.Roll and t.Dyelot = f.Dyelot
 and t.StockType = f.StockType
 where   1=1
-and  isnull (f.OutQty, 0)  <  t.Qty
+and  isnull (f.OutQty, 0) < t.diffQty
 
 ";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, chk_sql, out datacheck)))
@@ -6375,7 +6411,7 @@ WHERE FTI.StockType='O'
             MyUtility.Tool.SetupCombox(this.comboFunction, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P10,P10. Issue Fabric to Cutting Section,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P17,P17. R/Mtl Return,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape");
 
             // sheet 3 [P99 Revise History] function name
-            MyUtility.Tool.SetupCombox(this.combo_Function_history, 2, 1, @"P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P10,P10. Issue Fabric to Cutting Section,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P17,P17. R/Mtl Return,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape,All receive/issue/return/adjust record,All receive/issue/return/adjust record,All borrow/transfer record,All borrow/transfer record");
+            MyUtility.Tool.SetupCombox(this.combo_Function_history, 2, 1, @"All receive/issue/return/adjust record,All receive/issue/return/adjust record,All borrow/transfer record,All borrow/transfer record,P07,P07. Material Receiving,P08,P08. Receiving from factory Supply,P18,P18. Transfer In,P10,P10. Issue Fabric to Cutting Section,P11,P11. Issue Sewing Material,P12,P12. Issue Packing Material,P13,P13. Issue R/Mtl By Item,P15,P15. Issue Accessory Lacking  && Replacement,P16,P16. Issue Fabric Lacking  && Replacement,P17,P17. R/Mtl Return,P19,P19. Transfer Out,P33,P33. Issue Thread,P45,P45. Remove from Scrap Whse,P22,P22. Transfer Bulk to Inventory (A2B),P23,P23. Transfer Inventory to Bulk (B2A),P24,P24. Transfer Inventory To Scrap (B2C),P36,P36. Transfer Scrap to Inventory (C2B),P37,P37. Return Receiving Material,P31,P31. Material Borrow,P32,P32. Return Borrowing,P34,P34. Adjust Inventory Qty,P35,P35. Adjust Bulk Qty,P43,P43. Adjust Scrap Qty,P62,P62. Issue Fabric for Cutting Tape");
 
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet2, 2, 1, @"F,Fabric,A,Accessory");
             MyUtility.Tool.SetupCombox(this.comboMaterialType_Sheet1, 2, 1, @"F,Fabric,A,Accessory");
@@ -6699,6 +6735,9 @@ and Seq1 = '{2}' and Seq2 = '{3}' ",
                 return;
             }
 
+            string strNewQty1 = (status == "Revise") ? @",[NewQty] = Qty" : string.Empty;
+            string strNewQty2 = (status == "Revise") ? @", NewQty" : string.Empty;
+
             string sqlcmd = string.Empty;
             switch (this.strFunction)
             {
@@ -6711,14 +6750,14 @@ and Seq1 = '{2}' and Seq2 = '{3}' ",
                     sqlcmd = $@"
 insert into WHCommandReviseRecord_Transfer(
 FunctionName, SendToWMS, ID, FromPOID, FromSeq1, FromSeq2, FromRoll, FromDyelot, FromStockType
-, ToPOID, ToSeq1, ToSeq2, ToRoll, ToDyelot, ToStockType, Type, OriginalQty, NewQty, Reason, Remark, AddName, AddDate)
+, ToPOID, ToSeq1, ToSeq2, ToRoll, ToDyelot, ToStockType, Type, OriginalQty {strNewQty2}, Reason, Remark, AddName, AddDate)
 select
 [FunctionName] = '{this.strFunction_Text}'
 ,SentToWMS = iif(SentToWMS = 'V', 1 , 0),ID,FromPOID,FromSeq1,FromSeq2,FromRoll,FromDyelot,FromStockType
 ,ToPOID,ToSeq1,ToSeq2,ToRoll,ToDyelot,ToStockType
 ,[Type] = '{status}'
 ,[OriginalQty] = Old_Qty
-,[NewQty] = Qty
+{strNewQty1}
 ,[Reason] = WHCommandReason
 ,[Remark] = WHCommandRemark
 ,[AddName] = '{Sci.Env.User.UserID}'
@@ -6728,13 +6767,13 @@ from #tmp ";
                 default:
                     sqlcmd = $@"
 insert into WHCommandReviseRecord_InOutAdjRet(FunctionName, SendToWMS, ID, POID, Seq1, Seq2, Roll, Dyelot, StockType
-, Type, OriginalQty, NewQty, Reason, Remark, AddName, AddDate)
+, Type, OriginalQty {strNewQty2}, Reason, Remark, AddName, AddDate)
 select
 [FunctionName] = '{this.strFunction_Text}'
 ,SentToWMS = iif(SentToWMS = 'V', 1 , 0),ID,POID,Seq1,Seq2,Roll,Dyelot,StockType
 ,[Type] = '{status}'
 ,[OriginalQty] = Old_Qty
-,[NewQty] = Qty
+{strNewQty1}
 ,[Reason] = WHCommandReason
 ,[Remark] = WHCommandRemark
 ,[AddName] = '{Sci.Env.User.UserID}'
