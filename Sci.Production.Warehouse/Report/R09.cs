@@ -253,11 +253,11 @@ select poid
 /*
 	TPE Current Stock
 */
-select	FactoryID
-		, POID
-		, Seq1
-		, Seq2 
-		, Qty = Sum (Qty)
+select	TPEInQty.FactoryID
+		, TPEInQty.POID
+		, TPEInQty.Seq1
+		, TPEInQty.Seq2 
+		, Qty = Sum(round(TPEInQty.Qty * v.RateValue, 2))
 into #TPEIn
 from (
 	-- Type 1, 4 --
@@ -290,13 +290,19 @@ from (
 	where	inv.Type = 3
 			and f.IsProduceFty = 1
 ) TPEInQty
-group by FactoryID, POID, Seq1, Seq2 
+left join PO_Supp_Detail psd on TPEInQty.POID = psd.ID
+								and TPEInQty.Seq1 = psd.SEQ1
+								and TPEInQty.Seq2 = psd.SEQ2
+outer apply (
+	select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
+) v
+group by TPEInQty.FactoryID, TPEInQty.POID, TPEInQty.Seq1, TPEInQty.Seq2 
 
-select	FactoryID
-		, POID
-		, Seq1
-		, Seq2 
-		, Qty = Sum (Qty)
+select	TPEAllocatedQty.FactoryID
+		, TPEAllocatedQty.POID
+		, TPEAllocatedQty.Seq1
+		, TPEAllocatedQty.Seq2 
+		, Qty = Sum (round(TPEAllocatedQty.Qty * v.RateValue,1))
 into #TPEAllocated
 from (
 	-- Type 2, 3, 5 --
@@ -329,7 +335,13 @@ from (
 			)
 			and f.IsProduceFty = 1
 ) TPEAllocatedQty
-group by FactoryID, POID, Seq1, Seq2 
+left join PO_Supp_Detail psd on TPEAllocatedQty.POID = psd.ID
+								and TPEAllocatedQty.Seq1 = psd.SEQ1
+								and TPEAllocatedQty.Seq2 = psd.SEQ2
+outer apply (
+	select RateValue = dbo.GetUnitRate(psd.POUnit, psd.StockUnit)
+) v
+group by TPEAllocatedQty.FactoryID, TPEAllocatedQty.POID, TPEAllocatedQty.Seq1, TPEAllocatedQty.Seq2 
 
 select FactoryID = iif (ti.FactoryID is not null, ti.FactoryID, ta.FactoryID)
 		, POID = iif (ti.FactoryID is not null, ti.POID, ta.POID)
@@ -409,9 +421,9 @@ select	FactoryID = sl.FactoryID
 		, ReleaseQty = isnull (mpd.OutQty, 0)
 		, AdjustQty = isnull (mpd.AdjustQty, 0)
 		, ReturnQty = isnull (mpd.ReturnQty, 0)
-		, StockInQty = sl.TPEInQty * v.RateValue
-		, StockAllocatedQty = sl.TPEAllocatedQty * v.RateValue
-		, StockBalance = sl.TPEBalance * v.RateValue
+		, StockInQty = sl.TPEInQty 
+		, StockAllocatedQty = sl.TPEAllocatedQty 
+		, StockBalance = sl.TPEBalance 
 		, InQty = sl.FtyInQty
 		, OutQty = sl.FtyOutQty
 		, AdjustQty = sl.FtyAdjustQty
