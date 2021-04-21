@@ -57,7 +57,7 @@ left join DropDownList d on d.ID = a.InspectionLevels and d.Type = 'PMS_QA_AQL'
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            this.Dispose();
+            this.Close();
         }
     }
 }
