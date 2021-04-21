@@ -4184,4 +4184,34 @@ WHERE b.EffectiveDate is null
 and exists(select 1 from Production.dbo.MDivision where ID = a.MDivisionID)
 
 
+
+-------MtlType   2   QAMtlTypeSetting
+
+DELETE Production.dbo.[QAMtlTypeSetting]
+FROM Production.dbo.[QAMtlTypeSetting] a
+LEFT JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
+WHERE b.id is null
+
+UPDATE a
+SET
+	a.[FullName]	= b.[FullName]
+	,a.[Type]		= b.[Type]
+	,a.[Junk]		= b.[Junk]
+FROM Production.dbo.[QAMtlTypeSetting] a
+INNER JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
+
+INSERT INTO [dbo].[QAMtlTypeSetting]
+           ([ID]
+           ,[FullName]
+           ,[Type]
+           ,[Junk])
+select
+		 a.[ID]
+		,a.[FullName]
+		,a.[Type]
+		,a.[Junk]
+FROM Trade_To_Pms.dbo.MtlType a
+LEFT JOIN Production.dbo.[QAMtlTypeSetting] b ON a.id = b.id
+where b.id is null
+
 END

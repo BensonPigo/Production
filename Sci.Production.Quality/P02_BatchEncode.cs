@@ -70,15 +70,12 @@ namespace Sci.Production.Quality
 
         private void QueryData()
         {
-            DataTable encodeData;
-
             string sqlCmd = $@"
-Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.exportid,
+Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,a.Refno,a.SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,a.ReplacementReportID,
                 a.Status,ReplacementReportID,(seq1+seq2) as seq,
-                (
-                    Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno
-                ) as weavetypeid,
+                f.WeaveTypeID,
+				f.MtlTypeID,
                 c.whseArrival,
                 (
                     dbo.GetColorMultipleID((select top 1 o.BrandID from orders o where o.POID =a.poid) ,(Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2))
@@ -94,14 +91,13 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
                 ) as SuppEn,InspQty,Inspdate,(
 				    select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
 				) AS Inspector2,Inspector,Result
-	                From AIR a WITH (NOLOCK) 
-                    Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-                Where a.poid='{this.masterID}' --and a.Status <> 'Confirmed' 
-                order by seq1,seq2
+From AIR a WITH (NOLOCK) 
+Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+left join fabric f on f.SCIRefno = a.SCIRefno
+Where a.poid='{this.masterID}' --and a.Status <> 'Confirmed' 
+order by a.seq1,a.seq2
 ";
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out encodeData);
-
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable encodeData);
             if (!result)
             {
                 this.ShowErr(result);
@@ -131,7 +127,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
         private void BtnSave_Click(object sender, EventArgs e)
         {
             #region 檢查必輸欄位
-            if (MyUtility.Check.Empty(this.numInspectRate.Value))
+            if (this.radioPanelInspected.Value == "1" && MyUtility.Check.Empty(this.numInspectRate.Value))
             {
                 MyUtility.Msg.WarningBox("<Inspected %> can not be empty or 0");
                 return;
@@ -167,7 +163,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
             string updSQL = string.Empty;
             foreach (var item in selectedData)
             {
-                int inspQty = (int)Math.Ceiling(((decimal)item["ArriveQty"]) * this.numInspectRate.Value / 100);
+                int inspQty = this.CalInspectedQty(item);
                 string inspdate = this.dateInspectDt.Text;
                 string inspector = this.txtInspector.TextBox1.Text;
                 string result = this.comboResult.Text;
@@ -176,31 +172,59 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,a.ReceivingID,Refno,SCIRefno,Suppid,C.
             }
 
             DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            using (TransactionScope transactionscope = new TransactionScope())
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSQL)))
-                    {
-                        transactionscope.Dispose();
-                        MyUtility.Msg.WarningBox("Update Fail!!");
-                        return;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Successfully");
-                }
-                catch (Exception ex)
+                if (!(upResult = DBProxy.Current.Execute(null, updSQL)))
                 {
                     transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    MyUtility.Msg.WarningBox("Update Fail!!");
                     return;
                 }
+
+                transactionscope.Complete();
             }
 
+            MyUtility.Msg.InfoBox("Successfully");
             this.QueryData();
+        }
+
+        private int CalInspectedQty(DataRow dr)
+        {
+            int inspQty = 0;
+            decimal arriveQty = MyUtility.Convert.GetDecimal(dr["ArriveQty"]);
+            string sqlcmd;
+            switch (this.radioPanelInspected.Value)
+            {
+                case "1":
+                    return MyUtility.Convert.GetInt(Math.Ceiling(arriveQty * this.numInspectRate.Value / 100));
+                case "2":
+                    sqlcmd = $@"
+select SampleSize
+from AcceptableQualityLevels
+where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End
+";
+                    return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+                case "3":
+                    sqlcmd = $@"
+select
+	case AOS_InspQtyOption
+	when 0 then 0
+	when 1 then round({arriveQty} * q.InspectedPercentage / 100, 0)
+	when 2 then 
+        (select SampleSize
+        from AcceptableQualityLevels
+        where InspectionLevels = q.AQL_InspectionLevels
+        and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End)
+	end
+from QAMtlTypeSetting q
+where type = 'A'
+and id = '{dr["MtlTypeID"]}'
+";
+                    return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
+            }
+
+            return inspQty;
         }
 
         private void BtnEncode_Click(object sender, EventArgs e)
@@ -365,11 +389,6 @@ where dbo.GetAirQaRecord(t.orderid) ='PASS'
             }
 
             this.QueryData();
-        }
-
-        private void NumInspectRate_ValueChanged(object sender, EventArgs e)
-        {
-            this.numInspectRate.Text = this.numInspectRate.Value.ToString() + "%";
         }
     }
 }
