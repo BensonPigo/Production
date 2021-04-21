@@ -245,12 +245,7 @@ select  selected = cast(0 as bit)
 		, StockUnit
         , StockBalance 
         , Description 
-        , Qty =  -- TransferQty 庫存數大於 0 且庫存數量足夠 : 根據 Taipei Out 數量直接帶出 ; 庫存數大於 0 但庫存不足 : 挑選至庫存上限
-				CASE 
-                    WHEN  FabricType = 'A'AND StockBalance >= TaipeiOutput THEN TaipeiOutput
-					WHEN  FabricType = 'A'AND StockBalance < TaipeiOutput THEN StockBalance
-					ELSE 0.0
-				END
+        , Qty = 0
         , [Location]
         , ToPOID 
         , ToSeq1 
@@ -285,7 +280,7 @@ select  selected
 		, StockUnit
         , TaipeiLastOutput
         , TaipeiOutput
-        , [TotalTransfer] = sum (Qty)
+        , [TotalTransfer] = 0
 from    #tmpDetail
 group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
         , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput               
@@ -402,17 +397,6 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
         {
             DataTable dt1 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["masterdt"];
             DataTable dt2 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["detaildt"];
-            foreach (DataRow dr1 in dt1.Rows)
-            {
-                dr1["TotalTransfer"] = 0;
-            }
-
-            foreach (DataRow dr2 in dt2.Rows)
-            {
-                dr2["selected"] = "False";
-                dr2["qty"] = 0;
-            }
-
             foreach (DataRow dr1 in dt1.AsEnumerable().Where(x => x.Field<bool>("selected")))
             {
                 decimal totalTransfer = 0;
@@ -426,12 +410,15 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
                     dr2["selected"] = dr2["FabricType"].EqualString("Accessory");
                     if (MyUtility.Convert.GetBool(dr2["selected"]))
                     {
+
+                        decimal taipeiOutput = MyUtility.Convert.GetDecimal(dr1["TaipeiOutput"]);
+                        decimal stockBalance = MyUtility.Convert.GetDecimal(dr2["StockBalance"]);
+                        totalTransfer = taipeiOutput <= (totalTransfer + stockBalance) ? taipeiOutput : totalTransfer + stockBalance;
+
                         if (dr2["qty"].Empty())
                         {
-                            dr2["qty"] = dr2["StockBalance"];
+                            dr2["qty"] = taipeiOutput <= stockBalance ? taipeiOutput : stockBalance;
                         }
-
-                        totalTransfer += MyUtility.Convert.GetDecimal(dr2["qty"]);
                     }
 
                     dr2.EndEdit();
