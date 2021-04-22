@@ -204,6 +204,12 @@
     <Compile Include="B10_UploadFromMercury.Designer.cs">
       <DependentUpon>B10_UploadFromMercury.cs</DependentUpon>
     </Compile>
+    <Compile Include="B11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B11.Designer.cs">
+      <DependentUpon>B11.cs</DependentUpon>
+    </Compile>
     <Compile Include="DualDisposableResult.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="P01.cs">
@@ -795,6 +801,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B10_UploadFromMercury.resx">
       <DependentUpon>B10_UploadFromMercury.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B11.resx">
+      <DependentUpon>B11.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>

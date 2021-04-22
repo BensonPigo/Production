@@ -258,8 +258,6 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 this.checkRainwearTestRequest.ReadOnly = true;
                 this.checkJnuk.ReadOnly = true;
                 this.comboSizeUnit.ReadOnly = true;
-                this.comboGender.ReadOnly = true;
-                this.txtcdcodenew.ReadOnly = true;
                 this.comboProductType1.ReadOnly = true;
                 this.comboFabricType1.ReadOnly = true;
                 this.comboLining1.ReadOnly = true;
@@ -327,8 +325,53 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                     this.numCPU.Focus();
                     return false;
                 }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["ApparelType"]))
+                {
+                    MyUtility.Msg.WarningBox("Product Type can't empty");
+                    this.numCPU.Focus();
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["FabricType"]))
+                {
+                    MyUtility.Msg.WarningBox("Fabric Type can't empty");
+                    this.numCPU.Focus();
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["Lining"]))
+                {
+                    MyUtility.Msg.WarningBox("Lining can't empty");
+                    this.numCPU.Focus();
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["Construction"]))
+                {
+                    MyUtility.Msg.WarningBox("Construction can't empty");
+                    this.numCPU.Focus();
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.CurrentMaintain["Gender"]))
+                {
+                    MyUtility.Msg.WarningBox("Gender can't empty");
+                    this.numCPU.Focus();
+                    return false;
+                }
             }
             #endregion
+
+            string sqlcmd = $@"select concat(
+(select ID from NewCDCode where Classifty = 'ApparelType' and TypeName = '{this.comboProductType1.Text}')
+,(select ID from NewCDCode where Classifty = 'FabricType' and TypeName = '{this.comboFabricType1.Text}')
+,(select ID from NewCDCode where Classifty = 'Lining' and TypeName = '{this.comboLining1.Text}')
+,(select ID from NewCDCode where Classifty = 'Construction' and TypeName = '{this.comboConstruction1.Text}')
+,(select ID from NewCDCode where Classifty = 'Gender' and TypeName = '{this.comboGender1.Text}')
+)";
+
+            this.CurrentMaintain["CDCodeNew"] = MyUtility.GetValue.Lookup(sqlcmd);
             if (this.IsDetailInserting)
             {
                 // 檢查Style+Brand+Season是否已存在
