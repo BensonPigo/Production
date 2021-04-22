@@ -49,7 +49,6 @@
             this.labelGarmentLT = new Sci.Win.UI.Label();
             this.labelSizeUnit = new Sci.Win.UI.Label();
             this.labelCPU = new Sci.Win.UI.Label();
-            this.labelGender = new Sci.Win.UI.Label();
             this.labelQtyperCtn = new Sci.Win.UI.Label();
             this.labelPPMeeting = new Sci.Win.UI.Label();
             this.labelStyleApprove = new Sci.Win.UI.Label();
@@ -126,13 +125,12 @@
             this.comboLining1 = new Sci.Production.Class.ComboLining(this.components);
             this.comboProductType1 = new Sci.Production.Class.ComboProductType(this.components);
             this.comboConstruction1 = new Sci.Production.Class.ComboConstruction(this.components);
-            this.txtcdcodenew = new Sci.Production.Class.Txtcdcode();
             this.txtbrand1 = new Sci.Production.Class.Txtbrand();
-            this.comboGender = new Sci.Production.Class.Txtdropdownlist();
             this.txtuserLocalMR = new Sci.Production.Class.Txtuser();
             this.txttpeuserHandle = new Sci.Production.Class.Txttpeuser();
             this.txttpeuserSMR = new Sci.Production.Class.Txttpeuser();
             this.txtcdcode = new Sci.Production.Class.Txtcdcode();
+            this.txtcdcodenew = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -150,6 +148,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtcdcodenew);
             this.detailcont.Controls.Add(this.comboGender1);
             this.detailcont.Controls.Add(this.comboFabricType1);
             this.detailcont.Controls.Add(this.comboLining1);
@@ -160,7 +159,6 @@
             this.detailcont.Controls.Add(this.lbLining);
             this.detailcont.Controls.Add(this.lbFabricType);
             this.detailcont.Controls.Add(this.lbProductType);
-            this.detailcont.Controls.Add(this.txtcdcodenew);
             this.detailcont.Controls.Add(this.lbCDCodeNew);
             this.detailcont.Controls.Add(this.txtbrand1);
             this.detailcont.Controls.Add(this.comboPressing1);
@@ -172,7 +170,6 @@
             this.detailcont.Controls.Add(this.displayFabricType);
             this.detailcont.Controls.Add(this.labelFabricType);
             this.detailcont.Controls.Add(this.displayStyleApprove2);
-            this.detailcont.Controls.Add(this.comboGender);
             this.detailcont.Controls.Add(this.btnComboType);
             this.detailcont.Controls.Add(this.displayUnit);
             this.detailcont.Controls.Add(this.labelUnit);
@@ -227,7 +224,6 @@
             this.detailcont.Controls.Add(this.labelStyleApprove);
             this.detailcont.Controls.Add(this.labelPPMeeting);
             this.detailcont.Controls.Add(this.labelQtyperCtn);
-            this.detailcont.Controls.Add(this.labelGender);
             this.detailcont.Controls.Add(this.labelCPU);
             this.detailcont.Controls.Add(this.labelSizeUnit);
             this.detailcont.Controls.Add(this.labelGarmentLT);
@@ -474,14 +470,6 @@
             this.labelCPU.Size = new System.Drawing.Size(99, 23);
             this.labelCPU.TabIndex = 8;
             this.labelCPU.Text = "CPU";
-            // 
-            // labelGender
-            // 
-            this.labelGender.Location = new System.Drawing.Point(4, 277);
-            this.labelGender.Name = "labelGender";
-            this.labelGender.Size = new System.Drawing.Size(100, 23);
-            this.labelGender.TabIndex = 9;
-            this.labelGender.Text = "Gender";
             // 
             // labelQtyperCtn
             // 
@@ -1301,16 +1289,6 @@
             this.comboConstruction1.StyleGender = "";
             this.comboConstruction1.TabIndex = 89;
             // 
-            // txtcdcodenew
-            // 
-            this.txtcdcodenew.BackColor = System.Drawing.Color.White;
-            this.txtcdcodenew.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CDCodeNew", true));
-            this.txtcdcodenew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcdcodenew.Location = new System.Drawing.Point(269, 142);
-            this.txtcdcodenew.Name = "txtcdcodenew";
-            this.txtcdcodenew.Size = new System.Drawing.Size(81, 23);
-            this.txtcdcodenew.TabIndex = 83;
-            // 
             // txtbrand1
             // 
             this.txtbrand1.BackColor = System.Drawing.Color.White;
@@ -1321,20 +1299,6 @@
             this.txtbrand1.Size = new System.Drawing.Size(66, 23);
             this.txtbrand1.TabIndex = 81;
             this.txtbrand1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBrand_Validating);
-            // 
-            // comboGender
-            // 
-            this.comboGender.BackColor = System.Drawing.Color.White;
-            this.comboGender.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "Gender", true));
-            this.comboGender.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboGender.FormattingEnabled = true;
-            this.comboGender.IsSupportUnselect = true;
-            this.comboGender.Location = new System.Drawing.Point(108, 277);
-            this.comboGender.Name = "comboGender";
-            this.comboGender.OldText = "";
-            this.comboGender.Size = new System.Drawing.Size(121, 24);
-            this.comboGender.TabIndex = 23;
-            this.comboGender.Type = "Gender";
             // 
             // txtuserLocalMR
             // 
@@ -1374,6 +1338,18 @@
             this.txtcdcode.Size = new System.Drawing.Size(54, 23);
             this.txtcdcode.TabIndex = 9;
             this.txtcdcode.Validated += new System.EventHandler(this.Txtcdcode_Validated);
+            // 
+            // txtcdcodenew
+            // 
+            this.txtcdcodenew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtcdcodenew.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CDCodeNew", true));
+            this.txtcdcodenew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtcdcodenew.IsSupportEditMode = false;
+            this.txtcdcodenew.Location = new System.Drawing.Point(269, 142);
+            this.txtcdcodenew.Name = "txtcdcodenew";
+            this.txtcdcodenew.ReadOnly = true;
+            this.txtcdcodenew.Size = new System.Drawing.Size(86, 23);
+            this.txtcdcodenew.TabIndex = 94;
             // 
             // P04
             // 
@@ -1461,7 +1437,6 @@
         private Win.UI.Label labelStyleApprove;
         private Win.UI.Label labelPPMeeting;
         private Win.UI.Label labelQtyperCtn;
-        private Win.UI.Label labelGender;
         private Win.UI.Label labelCPU;
         private Win.UI.Label labelSizeUnit;
         private Win.UI.Label labelGarmentLT;
@@ -1486,7 +1461,6 @@
         private Win.UI.DisplayBox displayUnit;
         private Win.UI.Label labelUnit;
         private Win.UI.Button btnComboType;
-        private Class.Txtdropdownlist comboGender;
         private Win.UI.DisplayBox displayStyleApprove2;
         private Win.UI.Label label3;
         private Win.UI.Label label1;
@@ -1499,7 +1473,6 @@
         private Win.UI.DisplayBox displayFabricType;
         private Win.UI.Label labelFabricType;
         private Class.Txtbrand txtbrand1;
-        private Class.Txtcdcode txtcdcodenew;
         private Win.UI.Label lbCDCodeNew;
         private Class.ComboGender comboGender1;
         private Class.ComboFabricType comboFabricType1;
@@ -1511,5 +1484,6 @@
         private Win.UI.Label lbLining;
         private Win.UI.Label lbFabricType;
         private Win.UI.Label lbProductType;
+        private Win.UI.TextBox txtcdcodenew;
     }
 }
