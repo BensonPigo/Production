@@ -489,7 +489,7 @@ WITH BreakdownByArticle as (
 
                     if (!MyUtility.Check.Empty(this.dateCreate.Value1) && !MyUtility.Check.Empty(this.dateCreate.Value2))
                     {
-                        sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                        sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{this.dateCreate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss")}'";
                     }
 
                     if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
@@ -1282,7 +1282,7 @@ and t1.Type='I'
 
                 if (!MyUtility.Check.Empty(this.dateCreate.Value1) && !MyUtility.Check.Empty(this.dateCreate.Value2))
                 {
-                    sqlcmd += $@" and convert(date, t1.AddDate) between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(this.dateCreate.Value2).ToString("yyyy/MM/dd")}'";
+                    sqlcmd += $@" and convert(date, t1.AddDate) between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{this.dateCreate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss")}'";
                 }
 
                 if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
