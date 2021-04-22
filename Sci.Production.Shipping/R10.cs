@@ -2626,6 +2626,65 @@ into #temp4
 from #temp3 a
 
 
+
+select a.Origin
+	, a.RgCode
+	, a.Type
+	, a.id
+	, a.OnBoardDate
+	, a.Shipper
+	, a.Foundry
+	, [SisFtyAPID]=t.Val
+	, a.BrandID
+	, a.Category
+	, a.OQty
+	, a.CustCDID
+	, a.Dest
+	, a.ShipModeID
+	, a.PulloutDate
+	, a.ShipQty
+	, a.ctnqty
+	, a.gw
+	, a.CBM
+	, a.Forwarder
+	, a.BLNo
+	, a.CurrencyID 
+	, a.AccountID
+	, [Amount]=SUM(a.Amount)
+INTO #temp5
+from #temp4 a
+OUTER APPLY(
+	SELECT Val =  STUFF((
+		select DISTINCT ',' + b.SisFtyAPID
+		from #temp4 b
+		WHERE a.Origin = b.Origin
+			AND b.RgCode = a.RgCode
+			AND b.Type = a.Type
+			AND b.id = a.id
+			AND b.OnBoardDate = a.OnBoardDate
+			AND b.Shipper = a.Shipper
+			AND b.Foundry = a.Foundry
+			AND b.BrandID = a.BrandID
+			AND b.Category = a.Category
+			AND b.OQty = a.OQty
+			AND b.CustCDID = a.CustCDID
+			AND b.Dest = a.Dest
+			AND b.ShipModeID = a.ShipModeID
+			AND b.PulloutDate = a.PulloutDate
+			AND b.ShipQty = a.ShipQty
+			AND b.ctnqty = a.ctnqty
+			AND b.GW = a.GW
+			AND b.CBM = a.CBM
+			AND b.Forwarder = a.Forwarder
+			AND b.BLNo = a.BLNo
+			AND b.CurrencyID = a.CurrencyID 
+			--AND b.AccountID = a.AccountID
+			AND b.SisFtyAPID != ''
+		FOR XML PATH('')
+	),1,1,'')
+)t
+GROUP BY a.Origin, a.RgCode, a.Type, a.id, a.OnBoardDate, a.Shipper, a.Foundry, t.Val, a.BrandID, a.Category, a.OQty, a.CustCDID
+	, a.Dest, a.ShipModeID, a.PulloutDate, a.ShipQty, a.ctnqty, a.gw, a.CBM, a.Forwarder, a.BLNo, a.CurrencyID , a.AccountID  
 ");
 
                     #endregion
@@ -2634,14 +2693,14 @@ from #temp3 a
                     sqlCmd.Append($@"
 
 select *
-from #temp4
+from #temp5
 PIVOT (SUM(Amount)
 FOR AccountID IN (
     {account}
 )) a
 order by id
 
-drop table #temp1,#temp2,#temp3,#temp4
+drop table #temp1,#temp2,#temp3,#temp4,#temp5
 ");
                 }
                 else
