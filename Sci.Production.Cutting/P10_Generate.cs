@@ -380,11 +380,6 @@ into #tmp2
 from #tmp where BundleGroup='{bundleGroup}'
 group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 
-union all
-select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq=min(tmpSeq)
-from #tmp where BundleGroup='{bundleGroup}' and isPair = 1
-group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
-
 select *,isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint) 
 from #tmp2
 order by tmpSeq,iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
@@ -1123,9 +1118,9 @@ drop table #tmp,#tmp2";
         /// </summary>
         private void CalculateParts()
         {
-            string filter_ALLPARTS = $"CombineSubprocessGroup = 0";
+            string filter_ALLPARTS = $"(CombineSubprocessGroup = 0 or CombineSubprocessGroup is null)";
             DataRow[] allpartdr = this.patternTb.Select($"PatternCode='ALLPARTS' and {filter_ALLPARTS}");
-            int allpart = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", filter_ALLPARTS));
+            decimal allpart = MyUtility.Convert.GetDecimal(this.allpartTb.Compute("Sum(Parts)", filter_ALLPARTS));
             if (allpartdr.Length > 0)
             {
                 allpartdr[0]["Parts"] = allpart;
@@ -1136,7 +1131,7 @@ drop table #tmp,#tmp2";
                 foreach (DataRow dr in this.patternTb.Rows)
                 {
                     string fg = $"CombineSubprocessGroup = {dr["CombineSubprocessGroup"]}";
-                    dr["Parts"] = MyUtility.Convert.GetInt(this.allpartTb.Compute("Sum(Parts)", fg));
+                    dr["Parts"] = MyUtility.Convert.GetDecimal(this.allpartTb.Compute("Sum(Parts)", fg));
                 }
             }
 
@@ -1150,7 +1145,7 @@ drop table #tmp,#tmp2";
                 this.patternTb.Rows.Add(drAll);
             }
 
-            this.numTotalParts.Value = MyUtility.Convert.GetInt(this.patternTb.Compute("Sum(Parts)", string.Empty));
+            this.numTotalParts.Value = MyUtility.Convert.GetDecimal(this.patternTb.Compute("Sum(Parts)", string.Empty));
         }
 
         private void SynchronizeMain(int type, string columnName)
