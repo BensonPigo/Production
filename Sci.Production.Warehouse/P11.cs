@@ -1475,6 +1475,7 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             string request = issue["cutplanid"].ToString();
             string issuedate = Convert.ToDateTime(issue["issuedate"]).ToString("yyyy/MM/dd");
             string confirmTime = MyUtility.Convert.GetDate(issue["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
+            string preparedBy = this.editby.Text;
             string remark = issue["remark"].ToString();
             string cutno = this.editCutNo.Text;
             string article = this.editArticle.Text;
@@ -1705,6 +1706,7 @@ where b.id = a.CutplanID
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("OrderID", orderID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cCellNo", cellNo));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("preparedBy", preparedBy));
 
                 // 取得size欄位名稱
                 for (int i = 6; i < dtseq.Columns.Count; i++)
