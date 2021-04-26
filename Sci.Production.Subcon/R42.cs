@@ -92,8 +92,7 @@ Select
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-    [SP#] = b.Orderid,
-	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
+    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -230,8 +229,7 @@ Select
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-    [SP#] = b.Orderid,
-	sps = (select concat('/',IIF(LEN(OrderID) <= 10, OrderID , substring(OrderID,11,6))) from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID offset 1 rows for xml path('')),
+    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -357,7 +355,7 @@ where 1=1
 
             this.sqlCmd.Append(@"
 select [Bundle#],[RFIDProcessLocationID],[FabricKind],[Cut Ref#],
-	[SP#] = concat([SP#],sps),
+	[SP#],
 	[Master SP#],[M],[Factory],[Style],[Season],[Brand],[Comb],[Cutno],[Article],[Color],[Line],SewingLineID,
 	[Cell],[Pattern],[PtnDesc],[Group],[Size],[Qty],[RFID Reader],[Sub-process],[Post Sewing SubProcess],
 	[No Bundle Card After Subprocess],[Type],[TagId],[TransferDate],[TransferTime],LocationID,item,PanelNo,CutCellID
