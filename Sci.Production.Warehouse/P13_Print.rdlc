@@ -1334,6 +1334,10 @@
                   <Value>Prepared by:</Value>
                   <Style />
                 </TextRun>
+                <TextRun>
+                  <Value>=Parameters!preparedBy.Value</Value>
+                  <Style />
+                </TextRun>
               </TextRuns>
               <Style />
             </Paragraph>
@@ -1630,6 +1634,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="confirmTime">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="preparedBy">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>

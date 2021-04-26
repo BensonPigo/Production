@@ -133,6 +133,7 @@ WHERE Issue_DetailUkey IN ({ukeys})
             string remark = row["Remark"].ToString();
             string cDate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string confirmTime = MyUtility.Convert.GetDate(row["EditDate"]).HasValue ? MyUtility.Convert.GetDate(row["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
+            string preparedBy = this.editby.Text;
             #region -- 撈表頭資料 --
             List<SqlParameter> pars = new List<SqlParameter>
             {
@@ -168,6 +169,7 @@ WHERE Issue_DetailUkey IN ({ukeys})
             report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("FtyGroup", ftyGroup));
             report.ReportParameters.Add(new ReportParameter("confirmTime", confirmTime));
+            report.ReportParameters.Add(new ReportParameter("preparedBy", preparedBy));
             #endregion
             #region -- 撈表身資料 --
             pars = new List<SqlParameter>
