@@ -96,7 +96,7 @@
             this.dateArriveWHDate.Location = new System.Drawing.Point(126, 71);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
-            this.dateArriveWHDate.TabIndex = 0;
+            this.dateArriveWHDate.TabIndex = 1;
             // 
             // label10
             // 
@@ -143,7 +143,7 @@
             this.txtSP1.Location = new System.Drawing.Point(126, 100);
             this.txtSP1.Name = "txtSP1";
             this.txtSP1.Size = new System.Drawing.Size(132, 23);
-            this.txtSP1.TabIndex = 138;
+            this.txtSP1.TabIndex = 2;
             // 
             // txtSP2
             // 
@@ -152,7 +152,7 @@
             this.txtSP2.Location = new System.Drawing.Point(286, 100);
             this.txtSP2.Name = "txtSP2";
             this.txtSP2.Size = new System.Drawing.Size(132, 23);
-            this.txtSP2.TabIndex = 139;
+            this.txtSP2.TabIndex = 3;
             // 
             // label1
             // 
@@ -170,7 +170,7 @@
             this.txtBrand.Location = new System.Drawing.Point(126, 129);
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(100, 23);
-            this.txtBrand.TabIndex = 141;
+            this.txtBrand.TabIndex = 4;
             // 
             // labelRefno
             // 
@@ -196,7 +196,7 @@
             this.txtRefno1.Location = new System.Drawing.Point(126, 158);
             this.txtRefno1.Name = "txtRefno1";
             this.txtRefno1.Size = new System.Drawing.Size(100, 23);
-            this.txtRefno1.TabIndex = 144;
+            this.txtRefno1.TabIndex = 5;
             // 
             // txtRefno2
             // 
@@ -205,7 +205,7 @@
             this.txtRefno2.Location = new System.Drawing.Point(254, 158);
             this.txtRefno2.Name = "txtRefno2";
             this.txtRefno2.Size = new System.Drawing.Size(100, 23);
-            this.txtRefno2.TabIndex = 145;
+            this.txtRefno2.TabIndex = 6;
             // 
             // label3
             // 
@@ -224,7 +224,7 @@
             this.radioPanelTransaction.Location = new System.Drawing.Point(126, 9);
             this.radioPanelTransaction.Name = "radioPanelTransaction";
             this.radioPanelTransaction.Size = new System.Drawing.Size(280, 56);
-            this.radioPanelTransaction.TabIndex = 148;
+            this.radioPanelTransaction.TabIndex = 0;
             this.radioPanelTransaction.Value = "1";
             this.radioPanelTransaction.ValueChanged += new System.EventHandler(this.RadioPanelTransaction_ValueChanged);
             // 

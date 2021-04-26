@@ -103,7 +103,7 @@
             this.dateArriveWHDate.Location = new System.Drawing.Point(125, 64);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
-            this.dateArriveWHDate.TabIndex = 0;
+            this.dateArriveWHDate.TabIndex = 2;
             // 
             // label10
             // 
@@ -150,7 +150,7 @@
             this.txtSP1.Location = new System.Drawing.Point(125, 93);
             this.txtSP1.Name = "txtSP1";
             this.txtSP1.Size = new System.Drawing.Size(132, 23);
-            this.txtSP1.TabIndex = 138;
+            this.txtSP1.TabIndex = 3;
             // 
             // txtSP2
             // 
@@ -159,7 +159,7 @@
             this.txtSP2.Location = new System.Drawing.Point(285, 93);
             this.txtSP2.Name = "txtSP2";
             this.txtSP2.Size = new System.Drawing.Size(132, 23);
-            this.txtSP2.TabIndex = 139;
+            this.txtSP2.TabIndex = 4;
             // 
             // label1
             // 
@@ -186,7 +186,7 @@
             this.txtWK1.Location = new System.Drawing.Point(125, 122);
             this.txtWK1.Name = "txtWK1";
             this.txtWK1.Size = new System.Drawing.Size(132, 23);
-            this.txtWK1.TabIndex = 144;
+            this.txtWK1.TabIndex = 5;
             // 
             // txtWK2
             // 
@@ -195,7 +195,7 @@
             this.txtWK2.Location = new System.Drawing.Point(285, 122);
             this.txtWK2.Name = "txtWK2";
             this.txtWK2.Size = new System.Drawing.Size(132, 23);
-            this.txtWK2.TabIndex = 145;
+            this.txtWK2.TabIndex = 6;
             // 
             // label3
             // 
@@ -236,7 +236,7 @@
             this.dateInspectionDate.Location = new System.Drawing.Point(125, 151);
             this.dateInspectionDate.Name = "dateInspectionDate";
             this.dateInspectionDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInspectionDate.TabIndex = 147;
+            this.dateInspectionDate.TabIndex = 7;
             // 
             // label7
             // 
@@ -264,7 +264,7 @@
             this.comboInspection.Name = "comboInspection";
             this.comboInspection.OldText = "";
             this.comboInspection.Size = new System.Drawing.Size(121, 24);
-            this.comboInspection.TabIndex = 150;
+            this.comboInspection.TabIndex = 8;
             // 
             // comboInspectionResult
             // 
@@ -282,7 +282,7 @@
             this.comboInspectionResult.Name = "comboInspectionResult";
             this.comboInspectionResult.OldText = "";
             this.comboInspectionResult.Size = new System.Drawing.Size(121, 24);
-            this.comboInspectionResult.TabIndex = 151;
+            this.comboInspectionResult.TabIndex = 9;
             // 
             // radioWKSeq
             // 
@@ -292,7 +292,7 @@
             this.radioWKSeq.Location = new System.Drawing.Point(125, 240);
             this.radioWKSeq.Name = "radioWKSeq";
             this.radioWKSeq.Size = new System.Drawing.Size(109, 21);
-            this.radioWKSeq.TabIndex = 152;
+            this.radioWKSeq.TabIndex = 10;
             this.radioWKSeq.TabStop = true;
             this.radioWKSeq.Text = "By WK#, Seq";
             this.radioWKSeq.UseVisualStyleBackColor = true;
@@ -304,7 +304,7 @@
             this.radioRollDyelot.Location = new System.Drawing.Point(125, 267);
             this.radioRollDyelot.Name = "radioRollDyelot";
             this.radioRollDyelot.Size = new System.Drawing.Size(118, 21);
-            this.radioRollDyelot.TabIndex = 153;
+            this.radioRollDyelot.TabIndex = 11;
             this.radioRollDyelot.Text = "By Roll, Dyelot";
             this.radioRollDyelot.UseVisualStyleBackColor = true;
             // 
@@ -324,7 +324,7 @@
             this.radioPanelTransaction.Location = new System.Drawing.Point(125, 5);
             this.radioPanelTransaction.Name = "radioPanelTransaction";
             this.radioPanelTransaction.Size = new System.Drawing.Size(280, 56);
-            this.radioPanelTransaction.TabIndex = 156;
+            this.radioPanelTransaction.TabIndex = 0;
             this.radioPanelTransaction.Value = "1";
             this.radioPanelTransaction.ValueChanged += new System.EventHandler(this.RadioPanelTransaction_ValueChanged);
             // 

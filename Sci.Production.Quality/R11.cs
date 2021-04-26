@@ -1100,17 +1100,17 @@ drop table #tmp1,#tmp2,#tmp3,#Sheet2,#DefectSummary,#tmpR,#tmpT
 
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.PrintData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
-            if (this.PrintData[1].Rows.Count > 1)
+            if (this.PrintData[1].Rows.Count > 0)
             {
                 MyUtility.Excel.CopyToXls(this.PrintData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]);
             }
 
-            if (this.PrintData[2].Rows.Count > 1)
+            if (this.PrintData[2].Rows.Count > 0)
             {
                 MyUtility.Excel.CopyToXls(this.PrintData[2], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[3]);
             }
 
-            if (this.PrintData[3].Rows.Count > 1)
+            if (this.PrintData[3].Rows.Count > 0)
             {
                 MyUtility.Excel.CopyToXls(this.PrintData[3], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[4]);
             }

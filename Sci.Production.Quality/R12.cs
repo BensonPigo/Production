@@ -181,11 +181,19 @@ outer apply(
     from(
         select distinct std2.FromRoll, std2.FromDyelot
         from SubTransfer_Detail std2 with (nolock)
-		inner join {0} b2 on b2.PoId = std2.FromPOID and b2.Seq1 = std2.FromSeq1 and b2.Seq2 = std2.FromSeq2
-            and b2.Roll = std2.FromRoll and b2.Dyelot = std2. FromDyelot
-        where std2.id = st.id and std2.ToPOID = std2.ToPOID and std2.ToSeq1 = std2.ToSeq1 and std2.ToSeq2 = std2.ToSeq2
-		and std2.FromPOID = std2.FromPOID and std2.FromSeq1 = std2.FromSeq1 and std2.FromSeq2 = std2.FromSeq2 
-		and b2.id = a.id
+		inner join {0} b2 on b2.PoId = std2.FromPOID 
+                             and b2.Seq1 = std2.FromSeq1 
+                             and b2.Seq2 = std2.FromSeq2
+                             and b2.Roll = std2.FromRoll 
+                             and b2.Dyelot = std2. FromDyelot
+        where std2.id = st.id 
+                and std.ToPOID = std2.ToPOID 
+                and std.ToSeq1 = std2.ToSeq1 
+                and std.ToSeq2 = std2.ToSeq2
+		        and std.FromPOID = std2.FromPOID 
+                and std.FromSeq1 = std2.FromSeq1 
+                and std.FromSeq2 = std2.FromSeq2 
+		        and b2.id = a.id
     )x
 )ct
 outer apply(
@@ -193,11 +201,19 @@ outer apply(
     from(
         select distinct std2.FromDyelot
         from SubTransfer_Detail std2 with (nolock)
-		inner join {0} b2 on b2.PoId = std2.FromPOID and b2.Seq1 = std2.FromSeq1 and b2.Seq2 = std2.FromSeq2
-            and b2.Roll = std2.FromRoll and b2.Dyelot = std2. FromDyelot
-        where std2.id = st.id and std2.ToPOID = std2.ToPOID and std2.ToSeq1 = std2.ToSeq1 and std2.ToSeq2 = std2.ToSeq2
-		and std2.FromPOID = std2.FromPOID and std2.FromSeq1 = std2.FromSeq1 and std2.FromSeq2 = std2.FromSeq2 
-		and b2.id = a.id
+		inner join {0} b2 on b2.PoId = std2.FromPOID 
+                             and b2.Seq1 = std2.FromSeq1 
+                             and b2.Seq2 = std2.FromSeq2
+                             and b2.Roll = std2.FromRoll 
+                             and b2.Dyelot = std2. FromDyelot
+        where std2.id = st.id 
+                and std.ToPOID = std2.ToPOID 
+                and std.ToSeq1 = std2.ToSeq1 
+                and std.ToSeq2 = std2.ToSeq2
+                and std.FromPOID = std2.FromPOID 
+                and std.FromSeq1 = std2.FromSeq1 
+                and std.FromSeq2 = std2.FromSeq2 
+                and b2.id = a.id
     )x
 )ct2
 Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
