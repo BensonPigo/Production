@@ -379,6 +379,33 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
+            // 若location 不是自動倉,要發給WMS做撤回(Delete) WebAPI for Gensong
+            DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr2 in this.DetailDatas)
+            {
+                string sqlchk = $@"
+select * from MtlLocation m
+inner join SplitString('{dr2["ToLocation"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    dtToWMS.ImportRow(dr2);
+                }
+            }
+
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            // AutoWH ACC WebAPI for VStrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
+
             MyUtility.Msg.InfoBox("Confirmed successful");
         }
 

@@ -310,6 +310,13 @@ WHERE   StockType='{0}'
             string upd_Fty_4T = string.Empty;
             string upd_Fty_2T = string.Empty;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P36"))
+            {
+                return;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
             bool mtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
             if (!mtlAutoLock)

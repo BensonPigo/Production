@@ -283,6 +283,13 @@ namespace Sci.Production.Warehouse
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P19"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(
                 @"

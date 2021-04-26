@@ -2061,6 +2061,13 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             string sqlupd2_FIO = string.Empty;
             StringBuilder sqlupd2_B = new StringBuilder();
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P33"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = $@"
 
