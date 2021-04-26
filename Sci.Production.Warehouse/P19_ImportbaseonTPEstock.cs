@@ -410,15 +410,11 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
                     dr2["selected"] = dr2["FabricType"].EqualString("Accessory");
                     if (MyUtility.Convert.GetBool(dr2["selected"]))
                     {
-
                         decimal taipeiOutput = MyUtility.Convert.GetDecimal(dr1["TaipeiOutput"]);
                         decimal stockBalance = MyUtility.Convert.GetDecimal(dr2["StockBalance"]);
                         totalTransfer = taipeiOutput <= (totalTransfer + stockBalance) ? taipeiOutput : totalTransfer + stockBalance;
 
-                        if (dr2["qty"].Empty())
-                        {
-                            dr2["qty"] = taipeiOutput <= stockBalance ? taipeiOutput : stockBalance;
-                        }
+                        dr2["qty"] = taipeiOutput <= stockBalance ? taipeiOutput : stockBalance;
                     }
 
                     dr2.EndEdit();
