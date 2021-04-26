@@ -418,6 +418,40 @@ where o.ID = @orderid";
             this.comboPackingMethod.SelectedValue = string.Empty;
         }
 
+        /// <inheritdoc/>
+        protected override bool ClickDeleteBefore()
+        {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot delete.
+Packing list is locked in the hanger system.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg, "Delete");
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickEditBefore()
+        {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            return base.ClickEditBefore();
+        }
+
         /// <summary>
         /// ClickEditAfter
         /// </summary>
@@ -2900,6 +2934,17 @@ ELSE
         // Switch to Packing list
         private void BtnSwitchToPackingList_Click(object sender, EventArgs e)
         {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot switch to packing list.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             // 檢查OrderID+Seq不可以重複建立
             if (MyUtility.Check.Seek(string.Format("select ID from PackingList WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.CurrentMaintain["ID"].ToString())))
             {
@@ -3001,7 +3046,6 @@ select [PKQty] = @PKQty,[shipQty] = @shipQty
             #endregion
             string insertCmd = this.GetSwitchToPackingListSQL(((Button)sender).Name);
 
-            DualResult result;
             using (TransactionScope transaction = new TransactionScope())
             {
                 result = DBProxy.Current.Execute(null, insertCmd);
