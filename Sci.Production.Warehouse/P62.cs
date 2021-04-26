@@ -585,7 +585,6 @@ where id = '{0}'", this.CurrentMaintain["ID"]);
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P62"))
             {
-                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
                 return;
             }
             #endregion

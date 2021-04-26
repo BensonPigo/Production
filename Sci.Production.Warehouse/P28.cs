@@ -846,6 +846,13 @@ from #tmp";
             // Create後Btn失效，需重新Qurey才能再使用。
             foreach (DataRow item in dtMaster.Rows)
             {
+                #region 檢查物料Location 是否存在WMS
+                if (!PublicPrg.Prgs.Chk_WMS_Location(item["id"].ToString(), "P22"))
+                {
+                    return;
+                }
+                #endregion
+
                 DataTable dtd = dtDetail.Select($" id ='{item["id"]}'").CopyToDataTable();
                 if (!Prgs.P22confirm(item, dtd))
                 {

@@ -85,6 +85,7 @@
             this.grid_History = new Sci.Win.UI.Grid();
             this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3 = new Sci.Win.UI.Panel();
+            this.labReviseDate = new Sci.Win.UI.Label();
             this.txtSeq2_History = new Sci.Win.UI.TextBox();
             this.txtSeq1_History = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
@@ -100,7 +101,6 @@
             this.txtSPNo_History = new Sci.Win.UI.TextBox();
             this.dateRangeReviseDate = new Sci.Win.UI.DateRange();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labReviseDate = new Sci.Win.UI.Label();
             this.tabControl1.SuspendLayout();
             this.TabPage_UpdateCommand.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -772,6 +772,14 @@
             this.panel3.Size = new System.Drawing.Size(1046, 104);
             this.panel3.TabIndex = 1;
             // 
+            // labReviseDate
+            // 
+            this.labReviseDate.Location = new System.Drawing.Point(14, 40);
+            this.labReviseDate.Name = "labReviseDate";
+            this.labReviseDate.Size = new System.Drawing.Size(94, 23);
+            this.labReviseDate.TabIndex = 24;
+            this.labReviseDate.Text = "Revise Date";
+            // 
             // txtSeq2_History
             // 
             this.txtSeq2_History.BackColor = System.Drawing.Color.White;
@@ -925,14 +933,6 @@
             this.dateRangeReviseDate.Name = "dateRangeReviseDate";
             this.dateRangeReviseDate.Size = new System.Drawing.Size(280, 23);
             this.dateRangeReviseDate.TabIndex = 1;
-            // 
-            // labReviseDate
-            // 
-            this.labReviseDate.Location = new System.Drawing.Point(14, 40);
-            this.labReviseDate.Name = "labReviseDate";
-            this.labReviseDate.Size = new System.Drawing.Size(94, 23);
-            this.labReviseDate.TabIndex = 24;
-            this.labReviseDate.Text = "Revise Date";
             // 
             // P99
             // 

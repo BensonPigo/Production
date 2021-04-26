@@ -3527,7 +3527,9 @@ inner join #tmp s on t.Ukey = s.Ukey
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
+                int pos = this.listControlBindingSource1.Position;     // 記錄目前指標位置
                 this.Query();
+                this.listControlBindingSource1.Position = pos;
             }
         }
 
@@ -5276,11 +5278,15 @@ inner join #tmp s on t.ID = s.ID
 
         private void BtnUpdateReason_Click(object sender, EventArgs e)
         {
+            this.gridUpdate.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
                 return;
             }
+
+            int pos = this.gridUpdate.GetSelectedRowIndex();    // 記錄目前指標位置
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -5288,12 +5294,15 @@ inner join #tmp s on t.ID = s.ID
                 {
                     dr["WHCommandReason"] = this.comboReason.SelectedValue.ToString();
                     dr["WHCommandRemark"] = this.txtRemark.Text;
+                    dr.EndEdit();
                 }
             }
 
             this.gridUpdate.SuspendLayout();
+            this.listControlBindingSource1.Position = pos;
             this.gridUpdate.DataSource = null;
             this.gridUpdate.DataSource = this.listControlBindingSource1;
+            this.listControlBindingSource1.Position = pos;
             this.gridUpdate.ResumeLayout();
         }
         #endregion

@@ -136,7 +136,7 @@ namespace Sci.Production.Automation
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -366,7 +366,7 @@ where exists(
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -536,7 +536,7 @@ where exists(
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -822,7 +822,7 @@ select distinct
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -940,7 +940,7 @@ select distinct
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -1152,7 +1152,7 @@ and exists(
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -1256,7 +1256,7 @@ and exists(
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -1359,7 +1359,7 @@ and exists(
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":

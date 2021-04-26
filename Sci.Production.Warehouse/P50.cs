@@ -383,7 +383,6 @@ where id = '{this.CurrentMaintain["ID"]}'
             #region 檢查物料Location 是否存在WMS
             if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P50"))
             {
-                MyUtility.Msg.WarningBox("Material Location is from WMS system cannot confirmed or unconfirmed. ", "Warning");
                 return;
             }
             #endregion
@@ -431,6 +430,13 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_Detail_New(dtID, "New"))
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
+
+                // AutoWHFabric WebAPI for Gensong
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    Task.Run(() => new Gensong_AutoWHFabric().SentAdjust_Detail_New(dtID))
+                   .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
         }
