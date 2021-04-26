@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Ict;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
+using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.Automation.UtilityAutomation;
 
 namespace Sci.Production.Automation
@@ -40,7 +43,7 @@ namespace Sci.Production.Automation
 
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
 
-            var structureID = listID.Split(',').Where( s => !MyUtility.Check.Empty(s));
+            var structureID = listID.Split(',').Where(s => !MyUtility.Check.Empty(s));
 
             int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(structureID.Count() / 10.0));
             List<AutomationCreateRecord> listSendData = new List<AutomationCreateRecord>();
@@ -178,7 +181,8 @@ namespace Sci.Production.Automation
 
             Dictionary<string, object> dataTable = new Dictionary<string, object>();
 
-            var structureID = styleKey.Split(',').Select(s => {
+            var structureID = styleKey.Split(',').Select(s =>
+            {
                 string[] keyValues = s.Split('`');
                 return new
                 {
@@ -204,7 +208,7 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            string apiThread = "SentLocalItemToFinishingProcesses";
+            string apiThread = "SentFinishingProcess";
             string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -229,7 +233,7 @@ namespace Sci.Production.Automation
                 return;
             }
 
-            string apiThread = "SentLocalItemToFinishingProcesses";
+            string apiThread = "SentSewingOutputTransfer";
             string suppAPIThread = "api/SunriseFinishingProcesses/SentDataByApiTag";
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
@@ -257,6 +261,68 @@ namespace Sci.Production.Automation
             resultObj.Add("DataTable", dataStructure);
 
             return resultObj;
+        }
+
+        /// <summary>
+        /// CheckPackingListIsLock
+        /// </summary>
+        /// <param name="packingListID">packingListID</param>
+        /// <param name="cannotModifyMsg">cannotModifyMsg</param>
+        /// <returns>DualResult</returns>
+        public DualResult CheckPackingListIsLock(string packingListID, string cannotModifyMsg = "Carton has been output from the hanger system or transferred to clog.", string actionType = "")
+        {
+            if (!IsModuleAutomationEnable(sunriseSuppID, moduleName))
+            {
+                return new DualResult(true);
+            }
+
+            bool cannotModify = MyUtility.Check.Seek($"select 1 from PackingList where ID = '{packingListID}' and CannotModify  = 1");
+
+            if (cannotModify && actionType != "Delete")
+            {
+                return new DualResult(false, cannotModifyMsg);
+            }
+
+            WebApiBaseResult webApiBaseResult;
+            string baseUrl = UtilityAutomation.GetSupplierUrl(sunriseSuppID, moduleName);
+            string requestUri = "OtherAPI/api/packliststatus";
+
+            var structureID = new object[] { new { PackingListID = packingListID } };
+
+            string jsonBody = JsonConvert.SerializeObject(this.CreateSunriseStructure("ChkPackingListStatus", structureID));
+
+            webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(baseUrl, requestUri, jsonBody, 60, null);
+
+            switch (webApiBaseResult.webApiResponseStatus)
+            {
+                case WebApiResponseStatus.Success:
+                    JObject resultJObject = JsonConvert.DeserializeObject<JObject>(webApiBaseResult.responseContent);
+                    bool packIsLoock = resultJObject.SelectToken("DataTable").Value<JArray>("ChkPackingListStatus")
+                        .Any(s => s.Value<bool>("IsLock"));
+                    if (!packIsLoock)
+                    {
+                        return new DualResult(true);
+                    }
+
+                    DualResult result = DBProxy.Current.Execute(null, $"update PackingList set CannotModify = 1 where ID = '{packingListID}'");
+
+                    if (!result)
+                    {
+                        return result;
+                    }
+
+                    return new DualResult(false, cannotModifyMsg);
+                case WebApiResponseStatus.WebApiReturnFail:
+                    return new DualResult(false, webApiBaseResult.responseContent);
+                case WebApiResponseStatus.OtherException:
+                    return new DualResult(false, webApiBaseResult.exception);
+                case WebApiResponseStatus.ApiTimeout:
+                    return new DualResult(false, "Call CheckPackingListIsLock Time out");
+                default:
+                    break;
+            }
+
+            return new DualResult(true);
         }
     }
 }

@@ -1026,6 +1026,17 @@ order by os.Seq",
                 return false;
             }
 
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
             return base.ClickEditBefore();
         }
 
@@ -1264,6 +1275,17 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
             if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
             {
                 MyUtility.Msg.WarningBox("This record had booking no. Can't be deleted!");
+                return false;
+            }
+
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot delete.
+Packing list is locked in the hanger system.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg, "Delete");
+
+            if (!result)
+            {
+                this.ShowErr(result);
                 return false;
             }
 
