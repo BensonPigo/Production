@@ -1002,6 +1002,7 @@ order by POID, Seq, ExportId, ReceivingID
                     this.label3.Text = "WK#";
                     this.label6.RectStyle.Color = Color.SkyBlue;
                     this.label6.TextStyle.Color = Color.Black;
+                    this.radioWKSeq.Text = "By WK#, Seq";
                     break;
                 case "2":
                     this.lbDate.Text = "Issue Date";
@@ -1009,6 +1010,7 @@ order by POID, Seq, ExportId, ReceivingID
                     this.label3.Text = "Transfer ID";
                     this.label6.RectStyle.Color = Color.Gray;
                     this.label6.TextStyle.Color = Color.White;
+                    this.radioWKSeq.Text = "By Transfer ID, Seq";
                     break;
             }
         }
