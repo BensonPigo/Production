@@ -1051,7 +1051,7 @@ where id='{this.txtRequestNo.Text}' and fabrictype='F' and mdivisionid='{Env.Use
             report.ReportParameters.Add(new ReportParameter("ID", id));
             report.ReportParameters.Add(new ReportParameter("Request", requestno));
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
-            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("Dept", this.displayDept.Text));
 
             string sqlcmd = @"

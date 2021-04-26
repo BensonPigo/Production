@@ -4184,4 +4184,57 @@ WHERE b.EffectiveDate is null
 and exists(select 1 from Production.dbo.MDivision where ID = a.MDivisionID)
 
 
+---NewCDCode 
+
+DELETE Production.dbo.NewCDCode 
+FROM Production.dbo.NewCDCode  a
+LEFT JOIN Trade_To_Pms.dbo.NewCDCode  b ON a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID]
+WHERE b.[Classifty] is null
+
+UPDATE a
+SET
+	 [TypeName]		= b.[TypeName]
+	,[Placket]		= b.[Placket]
+	,[Definition]	= b.[Definition]
+	,[CPU]			= b.[CPU]
+	,[ComboPcs]		= b.[ComboPcs]
+	,[Remark]		= b.[Remark]
+	,[Junk]			= b.[Junk]
+	,[AddName]		= b.[AddName]
+	,[AddDate]		= b.[AddDate]
+	,[EditName]		= b.[EditName]
+	,[EditDate]		= b.[EditDate]
+from Production.dbo.NewCDCode as a inner join Trade_To_Pms.dbo.NewCDCode as b ON a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID]
+-------------------------- INSERT INTO §ì
+INSERT INTO Production.dbo.NewCDCode
+           ([Classifty]
+           ,[TypeName]
+           ,[ID]
+           ,[Placket]
+           ,[Definition]
+           ,[CPU]
+           ,[ComboPcs]
+           ,[Remark]
+           ,[Junk]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate])
+SELECT [Classifty]
+           ,[TypeName]
+           ,[ID]
+           ,[Placket]
+           ,[Definition]
+           ,[CPU]
+           ,[ComboPcs]
+           ,[Remark]
+           ,[Junk]
+           ,[AddName]
+           ,[AddDate]
+           ,[EditName]
+           ,[EditDate]
+from Trade_To_Pms.dbo.NewCDCode as b WITH (NOLOCK)
+where not exists(select id from Production.dbo.NewCDCode as a WITH (NOLOCK) where a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID])
+
+
 END

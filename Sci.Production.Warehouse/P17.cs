@@ -126,6 +126,7 @@ namespace Sci.Production.Warehouse
             string id = row["ID"].ToString();
             string remark = row["Remark"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string confirmTime = MyUtility.Convert.GetDate(row["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -153,7 +154,8 @@ where id = @MDivision";
             report.ReportParameters.Add(new ReportParameter("RptTitle", rptTitle));
             report.ReportParameters.Add(new ReportParameter("ID", id));
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
-            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+            report.ReportParameters.Add(new ReportParameter("confirmTime", confirmTime));
             #endregion
 
             #region  抓表身資料

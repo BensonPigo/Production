@@ -170,7 +170,7 @@ order by psd.Refno,isd.POID,isd.Roll
                 string id = this.drPrint["ID"].ToString();
                 string remark = this.drPrint["Remark"].ToString();
                 string cutplanID = this.drPrint["cutplanID"].ToString();
-                string issuedate = ((DateTime)MyUtility.Convert.GetDate(this.drPrint["issuedate"])).ToShortDateString();
+                string confirmTime = MyUtility.Convert.GetDate(this.drPrint["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss");
                 string cutno = this.strCutNo;
                 string factoryID = this.drPrint["FactoryID"].ToString();
 
@@ -196,7 +196,7 @@ where id = @MDivision";
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + factoryID));
                 pars = new List<SqlParameter>

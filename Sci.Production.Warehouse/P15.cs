@@ -983,7 +983,7 @@ where id = @MDivision";
             report.ReportParameters.Add(new ReportParameter("ID", id));
             report.ReportParameters.Add(new ReportParameter("Remark", remark));
             report.ReportParameters.Add(new ReportParameter("Requestid", requestid));
-            report.ReportParameters.Add(new ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
             report.ReportParameters.Add(new ReportParameter("appvdate", appvdate));
             report.ReportParameters.Add(new ReportParameter("ConfirmDate", confirmDate));
             #endregion

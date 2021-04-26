@@ -66,6 +66,7 @@ namespace Sci.Production.Warehouse
                 string cutplanID = this.drPrint["cutplanID"].ToString();
                 string issuedate = ((DateTime)MyUtility.Convert.GetDate(this.drPrint["issuedate"])).ToShortDateString();
                 string factoryID = this.drPrint["FactoryID"].ToString();
+                string confirmTime = this.drPrint["Status"].EqualString("CONFIRMED") ? MyUtility.Convert.GetDate(this.drPrint["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
 
                 #region  抓表頭資料
                 List<SqlParameter> pars = new List<SqlParameter>
@@ -84,7 +85,8 @@ namespace Sci.Production.Warehouse
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + factoryID));
                 #endregion
 
