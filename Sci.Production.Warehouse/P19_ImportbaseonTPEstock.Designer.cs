@@ -43,6 +43,7 @@
             this.grid2 = new Sci.Win.UI.Grid();
             this.btnImport = new Sci.Win.UI.Button();
             this.btnCancel = new Sci.Win.UI.Button();
+            this.btnAutoPick = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -202,9 +203,20 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // btnAutoPick
+            // 
+            this.btnAutoPick.Location = new System.Drawing.Point(316, 2);
+            this.btnAutoPick.Name = "btnAutoPick";
+            this.btnAutoPick.Size = new System.Drawing.Size(95, 30);
+            this.btnAutoPick.TabIndex = 6;
+            this.btnAutoPick.Text = "Auto Pick";
+            this.btnAutoPick.UseVisualStyleBackColor = true;
+            this.btnAutoPick.Click += new System.EventHandler(this.BtnAutoPick_Click);
+            // 
             // P19_ImportbaseonTPEstock
             // 
             this.ClientSize = new System.Drawing.Size(1008, 552);
+            this.Controls.Add(this.btnAutoPick);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnFindNow);
@@ -238,5 +250,6 @@
         private Win.UI.Button btnFindNow;
         private Win.UI.Button btnImport;
         private Win.UI.Button btnCancel;
+        private Win.UI.Button btnAutoPick;
     }
 }
