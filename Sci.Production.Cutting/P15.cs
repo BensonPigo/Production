@@ -1337,86 +1337,24 @@ and wd.orderid = 'EXCESS'
         {
             // 依據 Ukey, Fabriccombo 整理出 Pattern 資料
             string poid = row["POID"].ToString();
-            string patternpanel = row["FabricPanelCode"].ToString();
+            string fabricPanelCode = row["FabricPanelCode"].ToString();
             string cutref = row["Cutref"].ToString();
             string ukey = row["ukey"].ToString();
-
             int npart = 0; // allpart 數量
 
-            #region 輸出 GarmentTb
-            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
-            var sizelist = this.ArticleSizeTb.Select($"Ukey = '{row["Ukey"]}' and Fabriccombo = '{row["Fabriccombo"]}'").AsEnumerable()
-                .Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
+            // 取得 GarmentTb
+            var sizelist = this.ArticleSizeTb.Select($"Ukey = '{ukey}' and Fabriccombo = '{row["Fabriccombo"]}'").AsEnumerable()
+                .Select(s => MyUtility.Convert.GetString(s["SizeCode"]).Trim()).Distinct().ToList();
+            var articlelist = this.ArticleSizeTb.Select($"Ukey = '{ukey}' and Fabriccombo = '{row["Fabriccombo"]}'").AsEnumerable()
+                .Select(s => MyUtility.Convert.GetString(s["Article"]).Trim()).Distinct().ToList();
             string sizes = "'" + string.Join("','", sizelist) + "'";
-            string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{poid}' and SizeCode IN ({sizes})";
-            string sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
-
-            string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{styleyukey},'{sizeGroup}')s";
-            string patternukey = MyUtility.GetValue.Lookup(patidsql);
-
-            string headercodesql = $@"
-Select distinct ArticleGroup 
-from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{patternukey}' 
-order by ArticleGroup";
-            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out DataTable headertb);
-            if (!headerResult)
-            {
-                return;
-            }
-
-            string tablecreatesql = $@"Select '{poid}' as orderid,a.*,'' as F_CODE";
-            foreach (DataRow dr in headertb.Rows)
-            {
-                tablecreatesql += $" ,'' as {dr["ArticleGroup"]}";
-            }
-
-            tablecreatesql += $" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{patternukey}'";
-            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out DataTable garmentListTb);
-            if (!tablecreateResult)
-            {
-                return;
-            }
-
-            string lecsql = string.Empty;
-            lecsql = $"Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{patternukey}'";
-            DualResult drre = DBProxy.Current.Select(null, lecsql, out DataTable drtb);
-            if (!drre)
-            {
-                return;
-            }
-
-            foreach (DataRow dr in garmentListTb.Rows)
-            {
-                DataRow[] lecdrar = drtb.Select($"SEQ = '{dr["SEQ"]}'");
-                foreach (DataRow lecdr in lecdrar)
-                {
-                    string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-                    dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
-                }
-
-                if (dr["SEQ"].ToString() == "0001")
-                {
-                    dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
-                }
-            }
-
-            this.GarmentTb = garmentListTb;
-            #endregion
-
-            // 找出相同 PatternPanel 的 subprocessid
-            StringBuilder w = new StringBuilder();
-            w.Append($"orderid = '{poid}' and (1=0");
-            foreach (DataRow dr in headertb.Rows)
-            {
-                w.Append($" or {dr[0]} = '{patternpanel}' ");
-            }
-
-            w.Append(")");
+            string articles = "'" + string.Join("','", articlelist) + "'";
+            Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
+            string w = $"orderid = '{poid}' and (1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, sizelist.Count)} )";
 
             this.GarmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
             this.GarmentTb.Columns.Add("IsMain", typeof(bool));
-            DataRow[] garmentar = this.GarmentTb.Select(w.ToString());
+            DataRow[] garmentar = this.GarmentTb.Select(w);
             Prgs.SetCombineSubprocessGroup_IsMain(garmentar);
 
             foreach (DataRow dr in garmentar)

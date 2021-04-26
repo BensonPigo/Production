@@ -1136,91 +1136,23 @@ and o.mDivisionid = '{this.keyWord}'
         private void CreatePattern(DataRow row)
         {
             string poid = row["POID"].ToString();
-            string patternpanel = row["FabricPanelCode"].ToString();
+            string article = row["Article"].ToString().Trim();
+            string sizeCode = row["SizeCode"].ToString().Trim();
+            string fabricPanelCode = row["FabricPanelCode"].ToString();
             string cutref = row["Cutref"].ToString();
             int iden = MyUtility.Convert.GetInt(row["iden"]);
 
             // 找出相同PatternPanel 的subprocessid
             int npart = 0; // allpart 數量
-            string patidsql;
-            #region 輸出GarmentTb
-            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
 
-            var sizelist = this.ArticleSizeTb_View.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["SizeCode"])).Distinct().ToList();
-            string sizes = "'" + string.Join("','", sizelist) + "'";
-            string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{poid}' and SizeCode IN ({sizes})";
-            string sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
-            patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{styleyukey},'{sizeGroup}')s";
-
-            string patternukey = MyUtility.GetValue.Lookup(patidsql);
-            string headercodesql = $@"
-Select distinct ArticleGroup 
-from Pattern_GL_LectraCode WITH (NOLOCK) 
-where PatternUkey = '{patternukey}' 
-order by ArticleGroup";
-
-            DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out this.headertb);
-            if (!headerResult)
-            {
-                return;
-            }
-            #region 建立Table
-            string tablecreatesql = string.Format(@"Select '{0}' as orderid,a.*,'' as F_CODE", poid);
-            foreach (DataRow dr in this.headertb.Rows)
-            {
-                tablecreatesql += string.Format(" ,'' as {0}", dr["ArticleGroup"]);
-            }
-
-            tablecreatesql += string.Format(" from Pattern_GL a WITH (NOLOCK) Where PatternUkey = '{0}'", patternukey);
-            DualResult tablecreateResult = DBProxy.Current.Select(null, tablecreatesql, out DataTable garmentListTb);
-            if (!tablecreateResult)
-            {
-                return;
-            }
-            #endregion
-
-            #region 寫入FCode~CodeA~CodeZ
-            string lecsql = string.Empty;
-            lecsql = string.Format("Select * from Pattern_GL_LectraCode a WITH (NOLOCK) where a.PatternUkey = '{0}'", patternukey);
-            DualResult drre = DBProxy.Current.Select(null, lecsql, out DataTable drtb);
-            if (!drre)
-            {
-                return;
-            }
-
-            foreach (DataRow dr in garmentListTb.Rows)
-            {
-                DataRow[] lecdrar = drtb.Select(string.Format("SEQ = '{0}'", dr["SEQ"]));
-                foreach (DataRow lecdr in lecdrar)
-                {
-                    string artgroup = lecdr["ArticleGroup"].ToString().Trim();
-
-                    // dr[artgroup] = lecdr["PatternPanel"].ToString().Trim();
-                    // Mantis_7045 比照舊系統對應FabricPanelCode
-                    dr[artgroup] = lecdr["FabricPanelCode"].ToString().Trim();
-                }
-
-                if (dr["SEQ"].ToString() == "0001")
-                {
-                    dr["PatternCode"] = dr["PatternCode"].ToString().Substring(10);
-                }
-            }
-            #endregion
-            this.GarmentTb = garmentListTb;
-            #endregion
-
-            StringBuilder w = new StringBuilder();
-            w.Append(string.Format("orderid = '{0}' and (1=0", poid));
-            foreach (DataRow dr in this.headertb.Rows)
-            {
-                w.Append(string.Format(" or {0} = '{1}' ", dr[0], patternpanel));
-            }
-
-            w.Append(")");
-
+            // 取得 GarmentTb
+            string sizes = $"'{sizeCode}'"; // P11 此處單一 sizeCode
+            string articles = $"'{article}'"; // P11 此處單一 Article
+            Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
+            string w = $"orderid = '{poid}' and (1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} )";
             this.GarmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
             this.GarmentTb.Columns.Add("IsMain", typeof(bool));
-            DataRow[] garmentar = this.GarmentTb.Select(w.ToString());
+            DataRow[] garmentar = this.GarmentTb.Select(w);
             Prgs.SetCombineSubprocessGroup_IsMain(garmentar);
 
             foreach (DataRow dr in garmentar)

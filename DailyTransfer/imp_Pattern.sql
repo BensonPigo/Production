@@ -235,7 +235,7 @@ SET
       ,a.AddDate	      =b.AddDate		
       ,a.EditName	      =b.EditName		
       ,a.EditDate	      =b.EditDate		
-
+	  ,a.App			=b.App
 from Production.dbo.Pattern_GL_Article as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 inner join Trade_To_Pms.dbo.Pattern_GL_Article as b ON a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article
@@ -253,7 +253,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,App
 )
 select 
        b.ID
@@ -268,7 +268,7 @@ select
       ,b.AddDate
       ,b.EditName
       ,b.EditDate
-
+	  ,b.App
 from Trade_To_Pms.dbo.Pattern_GL_Article as b WITH (NOLOCK)
 inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
 where not exists(select id from Production.dbo.Pattern_GL_Article as a WITH (NOLOCK) where a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article)

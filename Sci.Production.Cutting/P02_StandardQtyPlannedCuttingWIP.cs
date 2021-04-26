@@ -532,7 +532,7 @@ drop table #OrderList
                 string orderID = dr["OrderID"].ToString();
                 string mDivisionID = dr["MDivisionID"].ToString();
                 string factoryID = dr["FactoryID"].ToString();
-                GetGarmentListTable(string.Empty, pOID, string.Empty, out DataTable garmentTb);
+                GetGarmentListTable(string.Empty, pOID, "''", out DataTable garmentTb, out DataTable articleGroupDT);
                 List<string> annotationList = garmentTb.AsEnumerable().Where(o => !MyUtility.Check.Empty(o["Annotation"].ToString())).Select(o => o["Annotation"].ToString()).Distinct().ToList();
                 List<string> annotationList_Final = new List<string>();
 
