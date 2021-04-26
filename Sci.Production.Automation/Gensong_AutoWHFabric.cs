@@ -76,7 +76,7 @@ namespace Sci.Production.Automation
             }
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentReceiving_DetailToVstrong", "New");
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Receiving_Detail");
@@ -136,7 +136,7 @@ namespace Sci.Production.Automation
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -184,6 +184,70 @@ namespace Sci.Production.Automation
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Sent Receive_Location_Update
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        public void SentReceive_Location_Update(DataTable dtDetail)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Gensong_AutoWHFabric callMethod = new Gensong_AutoWHFabric();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.GetReceive_TranferIn_Data(dtDetail);
+            DualResult result;
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Receiving_Detail");
+            this.SetAutoAutomationErrMsg("SentReceiving_DetailToGensong", "SCI");
+
+            // 使用可以Resent的AutomationErrMsg
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
+
+            // 記錄delete後有傳給WMS的資料
+            string sqlcmd = string.Empty;
+            sqlcmd = $@"
+update t
+set t.SentToWMS = 0
+from Receiving_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)
+
+update t
+set t.SentToWMS = 0
+from TransferIn_Detail t
+where exists(
+	select 1 from #tmp s
+	where s.id = t.Id and s.ukey = t.Ukey
+)
+";
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, sqlcmd, out DataTable resulttb, "#tmp")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+            }
+
+            // UnConfirm後要解鎖物料
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(dtMaster, string.Empty, Prgs.UpdateFtyInventory_IO(99, null, false), out DataTable dt, "#TmpSource")))
+            {
+                MyUtility.Msg.WarningBox(result.Messages.ToString());
+                return;
+            }
         }
         #endregion
 
@@ -240,7 +304,7 @@ namespace Sci.Production.Automation
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentIssue_DetailToGensong", "New");
+            this.SetAutoAutomationErrMsg("SentIssue_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Issue_Detail");
@@ -302,7 +366,7 @@ namespace Sci.Production.Automation
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -411,7 +475,7 @@ namespace Sci.Production.Automation
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentSubTransfer_DetailToGensong", "New");
+            this.SetAutoAutomationErrMsg("SentSubTransfer_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "SubTransfer_Detail");
@@ -472,7 +536,7 @@ namespace Sci.Production.Automation
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -656,7 +720,7 @@ select distinct
                     Seq2 = s["Seq2"].ToString(),
                     Refno = s["Refno"].ToString(),
                     Article = s["Article"].ToString(),
-                    ColorID = s["Color"].ToString(),
+                    Color = s["Color"].ToString(),
                     SizeCode = s["SizeCode"].ToString(),
                     WorkorderUkey = (long)s["WorkorderUkey"],
                     Status = s["Status"].ToString(),
@@ -698,7 +762,7 @@ select distinct
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong", "New");
+            this.SetAutoAutomationErrMsg("SentBorrowBack_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "BorrowBack_Detail");
@@ -758,7 +822,7 @@ select distinct
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -816,7 +880,7 @@ select distinct
             }
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong", "New");
+            this.SetAutoAutomationErrMsg("SentReturnReceipt_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "ReturnReceipt_Detail");
@@ -876,7 +940,7 @@ select distinct
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -933,6 +997,7 @@ select lt2.Id
 ,[Barcode] = Barcode.value
 ,lt2.Ukey
 ,lt2.StockType
+,[Description] = dbo.getMtlDesc(po3.ID,po3.Seq1,po3.Seq2,2,0)
 ,[Qty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,[CmdTime] = GETDATE()
@@ -988,7 +1053,7 @@ and exists(
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentLocationTrans_DetailToGensong", "New");
+            this.SetAutoAutomationErrMsg("SentLocationTrans_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dt, "LocationTrans_Detail");
@@ -1027,7 +1092,7 @@ and exists(
 
             #endregion
 
-            this.SetAutoAutomationErrMsg("SentAdjust_DetailToGensong", "New");
+            this.SetAutoAutomationErrMsg("SentAdjust_DetailToGensong", "SCI");
 
             // 將DataTable 轉成Json格式
             string jsonBody = this.GetJsonBody(dtMaster, "Adjust_Detail");
@@ -1087,7 +1152,7 @@ and exists(
                 string strMsg = string.Empty;
                 switch (status)
                 {
-                    case "delete":
+                    case "Delete":
                         strMsg = "WMS system rejected the delete request, please reference below information：";
                         break;
                     case "Revise":
@@ -1106,6 +1171,213 @@ and exists(
             if (string.Compare(status, "UnConfirmed", true) == 0)
             {
                 if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Adjust"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
+        #region IssueReturn
+
+        /// <summary>
+        /// IssueReturn_Detail New
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="status">status</param>
+        public void SentIssueReturn_Detail_New(DataTable dtDetail, string status = "")
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            DataTable dtMaster = this.GetIssueReturn_Detail(dtDetail, status);
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "IssueReturn"))
+            {
+                return;
+            }
+
+            #endregion
+
+            string apiThread = "SentIssueReturn_DetailToGensong";
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+
+            // 將DataTable 轉成Json格式
+            string jsonBody = this.GetJsonBody(dtMaster, "IssueReturn_Detail");
+
+            // Call API傳送給WMS
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// IssueReturn_Detail delete
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="status">status</param>
+        /// <param name="isP99">isP99</param>
+        /// <returns>bool</returns>
+        public static bool SentIssueReturn_Detail_delete(DataTable dtDetail, string status = "", bool isP99 = false)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Gensong_AutoWHFabric callMethod = new Gensong_AutoWHFabric();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.GetIssueReturn_Detail(dtDetail, status, isP99);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "IssueReturn_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentIssueReturn_DetailToGensong");
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "Delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "IssueReturn"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
+        #region Stocktaking_Detail
+
+        /// <summary>
+        /// Stocktaking_Detail New
+        /// </summary>
+        /// <param name="dtDetail">Detail DataSource</param>
+        /// <param name="status">status</param>
+        public void SentStocktaking_Detail_New(DataTable dtDetail, string status = "")
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            DataTable dtMaster = this.GetStocktaking_Detail(dtDetail, status);
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            #region Confirmed 後記錄那些資料有傳給WMS
+            if (!PublicPrg.Prgs.SentToWMS(dtMaster, true, "Stocktaking"))
+            {
+                return;
+            }
+
+            #endregion
+
+            string apiThread = "SentStocktaking_DetailToGensong";
+            this.SetAutoAutomationErrMsg(apiThread, "SCI");
+
+            // 將DataTable 轉成Json格式
+            string jsonBody = this.GetJsonBody(dtMaster, "Stocktaking_Detail");
+
+            // Call API傳送給WMS
+            SendWebAPI(GetSciUrl(), this.automationErrMsg.suppAPIThread, jsonBody, this.automationErrMsg);
+        }
+
+        /// <summary>
+        /// Stocktaking_Detail delete
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <param name="status">status</param>
+        /// <returns>bool</returns>
+        public static bool SentStocktaking_Detail_delete(DataTable dtDetail, string status = "")
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName) || dtDetail.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            DualResult result;
+
+            // 呼叫同個Class裡的Method,需要先new物件才行
+            Gensong_AutoWHFabric callMethod = new Gensong_AutoWHFabric();
+
+            // 取得資料
+            DataTable dtMaster = callMethod.GetStocktaking_Detail(dtDetail, status);
+
+            // 如果沒資料,代表不須傳給WMS還是可以unConfirmed, 所以不須回傳false
+            if (dtMaster == null || dtMaster.Rows.Count <= 0)
+            {
+                return true;
+            }
+
+            // DataTable轉化為JSON
+            string jsonBody = callMethod.GetJsonBody(dtMaster, "Stocktaking_Detail");
+            callMethod.SetAutoAutomationErrMsg("SentStocktaking_DetailToGensong");
+
+            // Call API傳送給WMS, 若回傳失敗就跳訊息並不能UnConfirmed
+            if (!(result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg)))
+            {
+                string strMsg = string.Empty;
+                switch (status)
+                {
+                    case "Delete":
+                        strMsg = "WMS system rejected the delete request, please reference below information：";
+                        break;
+                    case "Revise":
+                        strMsg = "WMS system rejected the revise request, please reference below information：";
+                        break;
+                    case "UnConfirmed":
+                        strMsg = "WMS system rejected the unconfirm request, please reference below information：";
+                        break;
+                }
+
+                MyUtility.Msg.WarningBox(strMsg + Environment.NewLine + result.Messages.ToString());
+                return false;
+            }
+
+            // 記錄UnConfirmed後有傳給WMS的資料
+            if (string.Compare(status, "UnConfirmed", true) == 0)
+            {
+                if (!PublicPrg.Prgs.SentToWMS(dtMaster, false, "Stocktaking"))
                 {
                     return false;
                 }
@@ -1170,6 +1442,7 @@ and exists(
                        Dyelot = dr["Dyelot"].ToString(),
                        Barcode = dr["Barcode"].ToString(),
                        NewBarcode = dr["NewBarcode"].ToString(),
+                       Description = dr["Description"].ToString(),
                        Qty = (decimal)dr["Qty"],
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
@@ -1213,6 +1486,7 @@ and exists(
                         ToRoll = dr["ToRoll"].ToString(),
                         ToDyelot = dr["ToDyelot"].ToString(),
                         ToStockType = dr["ToStockType"].ToString(),
+                        Description = dr["Description"].ToString(),
                         ToBarcode = dr["ToBarcode"].ToString(),
                         ToLocation = dr["ToLocation"].ToString(),
                         Refno = dr["Refno"].ToString(),
@@ -1233,6 +1507,7 @@ and exists(
                        Seq2 = dr["Seq2"].ToString(),
                        Roll = dr["Roll"].ToString(),
                        Dyelot = dr["Dyelot"].ToString(),
+                       Description = dr["Description"].ToString(),
                        Qty = (decimal)dr["Qty"],
                        StockType = dr["StockType"].ToString(),
                        Ukey = (long)dr["Ukey"],
@@ -1251,6 +1526,8 @@ and exists(
                        FromSeq2 = dr["FromSeq2"].ToString(),
                        FromRoll = dr["FromRoll"].ToString(),
                        FromDyelot = dr["FromDyelot"].ToString(),
+                       Refno = dr["Refno"].ToString(),
+                       Color = dr["Color"].ToString(),
                        FromStockType = dr["FromStockType"].ToString(),
                        FromBarcode = dr["FromBarcode"].ToString(),
                        FromLocation = dr["FromLocation"].ToString(),
@@ -1262,8 +1539,7 @@ and exists(
                        ToStockType = dr["ToStockType"].ToString(),
                        ToBarcode = dr["ToBarcode"].ToString(),
                        ToLocation = dr["ToLocation"].ToString(),
-                       Refno = dr["Refno"].ToString(),
-                       Color = dr["Color"].ToString(),
+                       Description = dr["Description"].ToString(),
                        Qty = (decimal)dr["Qty"],
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
@@ -1280,16 +1556,60 @@ and exists(
                        Seq2 = s["Seq2"].ToString(),
                        Roll = s["Roll"].ToString(),
                        Dyelot = s["Dyelot"].ToString(),
-                       FromLocation = s["FromLocation"].ToString(),
-                       ToLocation = s["ToLocation"].ToString(),
                        Refno = s["Refno"].ToString(),
                        Color = s["Color"].ToString(),
-                       Qty = (decimal)s["Qty"],
+                       FromLocation = s["FromLocation"].ToString(),
+                       ToLocation = s["ToLocation"].ToString(),
                        Barcode = s["Barcode"].ToString(),
                        Ukey = (long)s["Ukey"],
                        StockType = s["StockType"].ToString(),
+                       Description = s["Description"].ToString(),
+                       Qty = (decimal)s["Qty"],
                        Status = s["Status"].ToString(),
                        CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                   });
+                    break;
+
+                case "IssueReturn_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(s => new
+                   {
+                       ID = s["ID"].ToString(),
+                       POID = s["POID"].ToString(),
+                       Seq1 = s["Seq1"].ToString(),
+                       Seq2 = s["Seq2"].ToString(),
+                       StockType = s["StockType"].ToString(),
+                       Ukey = (long)s["Ukey"],
+                       Refno = s["Refno"].ToString(),
+                       StockUnit = s["StockUnit"].ToString(),
+                       Color = s["Color"].ToString(),
+                       Roll = s["Roll"].ToString(),
+                       Dyelot = s["Dyelot"].ToString(),
+                       Barcode = s["Barcode"].ToString(),
+                       Description = s["Description"].ToString(),
+                       Qty = (decimal)s["Qty"],
+                       Status = s["Status"].ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
+                   });
+                    break;
+
+                case "Stocktaking_Detail":
+                    bodyObject = dtDetail.AsEnumerable()
+                   .Select(s => new
+                   {
+                       ID = s["ID"].ToString(),
+                       POID = s["POID"].ToString(),
+                       Seq1 = s["Seq1"].ToString(),
+                       Seq2 = s["Seq2"].ToString(),
+                       Roll = s["Roll"].ToString(),
+                       Dyelot = s["Dyelot"].ToString(),
+                       StockType = s["StockType"].ToString(),
+                       Ukey = (long)s["Ukey"],
+                       Barcode = s["Barcode"].ToString(),
+                       Description = s["Description"].ToString(),
+                       QtyBefore = (decimal)s["QtyBefore"],
+                       Status = s["Status"].ToString(),
+                       CmdTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss"),
                    });
                     break;
             }
@@ -1429,6 +1749,130 @@ and exists(
             return dtMaster;
         }
 
+        private DataTable GetReceive_TranferIn_Data(DataTable dtDetail)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster = new DataTable();
+            #region 取得資料
+
+            sqlcmd = $@"
+SELECT [ID] = rd.id
+,[InvNo] = r.InvNo
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[Color] = Color.Value
+,[Roll] = rd.Roll
+,[Dyelot] = rd.Dyelot
+,[StockUnit] = rd.StockUnit
+,[StockQty] = rd.StockQty
+,[PoUnit] = rd.PoUnit
+,[ShipQty] = rd.ShipQty
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[Ukey] = rd.Ukey
+,[IsInspection] = convert(bit, 0)
+,[ETA] = r.ETA
+,[WhseArrival] = r.WhseArrival
+,[Status] = 'Delete'
+,[Barcode] = Barcode.value
+,rd.SentToWMS,rd.CompleteTime
+FROM Production.dbo.Receiving_Detail rd
+inner join Production.dbo.Receiving r on rd.id = r.id
+inner join #tmp s on s.POID = rd.PoId
+    and s.Seq1 = rd.Seq1 and s.Seq2 = rd.Seq2 and s.Roll = rd.Roll and s.Dyelot = rd.Dyelot
+    and s.StockType = rd.StockType
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+left join Production.dbo.FtyInventory f on f.POID = rd.PoId
+	and f.Seq1=rd.Seq1 and f.Seq2=rd.Seq2 
+	and f.Dyelot = rd.Dyelot and f.Roll = rd.Roll
+	and f.StockType = rd.StockType
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+OUTER APPLY(
+ SELECT [Value]=
+	 CASE WHEN Fabric.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') 
+            THEN IIF(po3.SuppColor = '',dbo.GetColorMultipleID(po3.BrandID,po3.ColorID), po3.SuppColor)
+            ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
+	 END
+)Color
+outer apply(
+	select value = min(fb.Barcode)
+	from FtyInventory_Barcode fb 
+	where fb.Ukey = f.Ukey
+)Barcode
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='F'
+)
+and rd.SentToWMS =1 and rd.CompleteTime is null
+
+union all
+
+SELECT [ID] = rd.id
+,[InvNo] = isnull(r.InvNo,'')
+,[PoId] = rd.Poid
+,[Seq1] = rd.Seq1
+,[Seq2] = rd.Seq2
+,[Refno] = po3.Refno
+,[Color] = po3.ColorID
+,[Roll] = rd.Roll
+,[Dyelot] = rd.Dyelot
+,[StockUnit] = dbo.GetStockUnitBySPSeq(rd.POID,rd.Seq1,rd.Seq2)
+,[StockQty] = rd.Qty
+,[PoUnit] = po3.PoUnit
+,[ShipQty] = rd.Qty
+,[Weight] = rd.Weight
+,[StockType] = rd.StockType
+,[Ukey] = rd.Ukey
+,[IsInspection] = convert(bit, 0)
+,[ETA] = null
+,[WhseArrival] = r.IssueDate
+,[Status] = 'Delete'
+,[Barcode] = Barcode.value
+,rd.SentToWMS,rd.CompleteTime
+FROM Production.dbo.TransferIn_Detail rd
+inner join Production.dbo.TransferIn r on rd.id = r.id
+inner join #tmp s on s.POID = rd.PoId
+    and s.Seq1 = rd.Seq1 and s.Seq2 = rd.Seq2 and s.Roll = rd.Roll and s.Dyelot = rd.Dyelot
+    and s.StockType = rd.StockType
+inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
+	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
+outer apply(
+	select value = min(fb.Barcode)
+	from FtyInventory_Barcode fb 
+	inner join FtyInventory f on f.Ukey = fb.Ukey
+	where f.POID = rd.POID
+	and f.Seq1 = rd.Seq1 and f.Seq2= rd.Seq2
+	and f.Roll = rd.Roll and f.Dyelot = rd.Dyelot
+	and f.StockType = rd.StockType
+)Barcode
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = rd.Poid and seq1=rd.seq1 and seq2=rd.seq2 
+	and FabricType='F'
+)
+and rd.SentToWMS =1 and rd.CompleteTime is null
+
+";
+            if (!MyUtility.Check.Empty(sqlcmd))
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
         private DataTable GetIssueData(DataTable dtDetail, string formName, string status, bool isP99 = false)
         {
             DualResult result;
@@ -1458,6 +1902,7 @@ select distinct
 ,[Dyelot] = i2.Dyelot
 ,[Barcode] = Barcode.value
 ,[NewBarcode] = NewBarcode.value
+,[Description] = dbo.getMtlDesc(i2.POID,i2.Seq1,i2.Seq2,2,0)
 ,[Ukey] = i2.ukey
 ,CmdTime = GetDate()
 ,[Qty] = {strQty}
@@ -1503,6 +1948,7 @@ select distinct
 ,[Dyelot] = i2.Dyelot
 ,[Barcode] = Barcode.value
 ,[NewBarcode] = NewBarcode.value
+,[Description] = dbo.getMtlDesc(i2.POID,i2.Seq1,i2.Seq2,2,0)
 ,[Ukey] = i2.Ukey
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
@@ -1547,6 +1993,7 @@ select distinct
 ,[Dyelot] = i2.Dyelot
 ,[Barcode] = Barcode.value
 ,[NewBarcode] = NewBarcode.value
+,[Description] = dbo.getMtlDesc(i2.POID,i2.Seq1,i2.Seq2,2,0)
 ,[Ukey] = i2.ukey
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
@@ -1630,6 +2077,7 @@ select distinct
 ,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
                  ,IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
                  ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,[Description] = dbo.getMtlDesc(po3.ID,po3.Seq1,po3.Seq2,2,0)
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
 ,CmdTime = GetDate()
@@ -1727,6 +2175,7 @@ select rrd.Id
 ,rrd.Seq2
 ,rrd.Roll
 ,rrd.Dyelot
+,[Description] = dbo.getMtlDesc(rrd.POID,rrd.Seq1,rrd.Seq2,2,0)
 ,rrd.StockType
 ,rrd.Ukey
 ,[Barcode] = Barcode.value
@@ -1796,6 +2245,7 @@ select distinct
 ,bb2.ToPOID,bb2.ToSeq1,bb2.ToSeq2,bb2.ToRoll,bb2.ToDyelot,bb2.ToStockType
 ,[ToBarcode] = ToBarcode.value
 ,[ToLocation] = bb2.ToLocation
+,[Description] = dbo.getMtlDesc(po3.ID,po3.Seq1,po3.Seq2,2,0)
 ,[Qty] = {strQty}
 ,po3.Refno
 ,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
@@ -1951,12 +2401,162 @@ and exists(
             return dtMaster;
         }
 
+        private DataTable GetIssueReturn_Detail(DataTable dtDetail, string status, bool isP99 = false)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster = new DataTable();
+            string strBody = isP99 ? "inner join #tmp s on ir2.ukey = s.ukey " : "inner join #tmp s on ir2.ID = s.Id ";
+            string strQty = isP99 ? "s.Qty" : "ir2.Qty";
+
+            #region 取得資料
+
+            sqlcmd = $@"
+select distinct ir2.Id
+,ir2.POID
+,ir2.Seq1
+,ir2.Seq2
+,po3.Refno
+,[StockUnit] = dbo.GetStockUnitBySpSeq (f.POID, f.seq1, f.seq2)
+,[Color] = isnull(IIF(Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+    ,IIF(Isnull(po3.SuppColor,'')='',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
+    ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
+,ir2.Roll
+,ir2.Dyelot
+,[Barcode] = Barcode.value
+,[Description] = dbo.getMtlDesc(ir2.POID,ir2.Seq1,ir2.Seq2,2,0)
+,ir2.Ukey
+,ir2.StockType
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
+,[Qty] = {strQty}
+,[CmdTime] = GETDATE()
+from IssueReturn_Detail ir2
+inner join Production.dbo.IssueReturn i on ir2.id = i.id
+{strBody}
+left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
+left join PO_Supp_Detail po3 on po3.ID = ir2.POID and po3.SEQ1 = ir2.Seq1
+and po3.SEQ2 = ir2.Seq2
+LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
+LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+where 1=1
+and exists(
+    select 1
+    from PO_Supp_Detail psd
+    where psd.ID= ir2.POID and psd.SEQ1 = ir2.Seq1
+    and psd.SEQ2 = ir2.Seq2 and psd.FabricType='F'
+)
+";
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and ir2.SentToWMS = 1";
+            }
+
+            if (!MyUtility.Check.Empty(sqlcmd))
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
+        private DataTable GetStocktaking_Detail(DataTable dtDetail, string status)
+        {
+            DualResult result;
+            string sqlcmd = string.Empty;
+            DataTable dtMaster = new DataTable();
+
+            #region 取得資料
+            sqlcmd = $@"
+select 
+ ir2.Id
+,ir2.POID
+,ir2.Seq1
+,ir2.Seq2
+,ir2.Roll
+,ir2.Dyelot
+,ir2.StockType
+,ir2.Ukey
+,[Barcode] = Barcode.value
+,[Description] = dbo.getMtlDesc(ir2.POID,ir2.Seq1,ir2.Seq2,2,0)
+,[QtyBefore] = ir2.QtyBefore
+,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
+,[CmdTime] = GETDATE()
+from Stocktaking_Detail ir2
+inner join Production.dbo.Stocktaking i on ir2.id = i.id
+inner join #tmp s on ir2.ID = s.Id
+left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
+where 1=1
+and exists(
+    select 1
+    from PO_Supp_Detail psd
+    where psd.ID= ir2.POID and psd.SEQ1 = ir2.Seq1
+    and psd.SEQ2 = ir2.Seq2 and psd.FabricType='F'
+)
+
+";
+
+            if (string.Compare(status, "New", true) == 0)
+            {
+                sqlcmd += Environment.NewLine + @"
+and exists(
+	select 1
+	from FtyInventory_Detail fd 
+	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
+	where f.Ukey = fd.Ukey
+	and ml.IsWMS = 1
+)";
+            }
+            else
+            {
+                sqlcmd += Environment.NewLine + @" and ir2.SentToWMS = 1";
+            }
+
+            if (!MyUtility.Check.Empty(sqlcmd))
+            {
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtDetail, null, sqlcmd, out dtMaster)))
+                {
+                    MyUtility.Msg.WarningBox(result.Messages.ToString());
+                }
+            }
+
+            #endregion
+
+            return dtMaster;
+        }
+
         #endregion
 
         private void SetAutoAutomationErrMsg(string apiThread, string type = "")
         {
             this.automationErrMsg.apiThread = apiThread;
-            this.automationErrMsg.suppAPIThread = type == "New" ? SCIAPIThread : suppAPIThread;
+            this.automationErrMsg.suppAPIThread = type == "SCI" ? SCIAPIThread : suppAPIThread;
             this.automationErrMsg.moduleName = moduleName;
             this.automationErrMsg.suppID = GensongSuppID;
         }

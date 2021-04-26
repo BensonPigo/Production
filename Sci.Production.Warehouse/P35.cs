@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_reason = new Ict.Win.UI.DataGridViewTextBoxColumn();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P35"/> class.
@@ -166,6 +167,13 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
+            // 檢查物料不能有WMS Location
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) || !MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
+                return false;
+            }
+
             // 取單號
             if (this.IsDetailInserting)
             {
@@ -206,6 +214,28 @@ namespace Sci.Production.Warehouse
             {
                 this.btnCallP99.Visible = false;
             }
+
+            if (this.EditMode)
+            {
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+                {
+                    this.editRemark.ReadOnly = true;
+                    this.gridicon.Remove.Visible = false;
+                    this.gridicon.Remove.Enabled = false;
+                    this.btnImport.Enabled = false;
+                    this.col_reason.IsEditingReadOnly = true;
+                    this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    this.editRemark.ReadOnly = false;
+                    this.gridicon.Remove.Visible = true;
+                    this.gridicon.Remove.Enabled = true;
+                    this.btnImport.Enabled = true;
+                    this.col_reason.IsEditingReadOnly = false;
+                    this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -235,7 +265,7 @@ namespace Sci.Production.Warehouse
             DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode && e.Button == MouseButtons.Right)
+                if (this.EditMode && e.Button == MouseButtons.Right && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
                 {
                     string sqlcmd = string.Empty;
                     IList<DataRow> x;
@@ -317,7 +347,7 @@ namespace Sci.Production.Warehouse
             .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true) // 7
             .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4)) // 8
             .Text("Location", header: "Location", iseditingreadonly: true) // 9
-            .Text("reasonid", header: "Reason ID", settings: ts) // 10
+            .Text("reasonid", header: "Reason ID", settings: ts).Get(out this.col_reason) // 10
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(15)) // 11
             ;
             #endregion 欄位設定
@@ -342,6 +372,14 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlupd2 = new StringBuilder();
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
+
+            #region 檢查物料不能有WMS Location
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) || !MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
+                return;
+            }
+            #endregion
 
             #region 檢查庫存項lock
             sqlcmd = string.Format(

@@ -413,6 +413,13 @@ namespace Sci.Production.Warehouse
             StringBuilder sqlupd2_B = new StringBuilder();
             string sqlupd2_FIO = string.Empty;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P12"))
+            {
+                return;
+            }
+            #endregion
+
             #region 檢查庫存項lock
             sqlcmd = string.Format(
                 @"

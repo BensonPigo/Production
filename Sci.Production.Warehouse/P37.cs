@@ -459,6 +459,13 @@ where R.id= @ID";
             string upd_MD_37T = string.Empty;
             string upd_Fty_37T = string.Empty;
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P37"))
+            {
+                return;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
                 @"

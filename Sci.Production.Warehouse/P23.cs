@@ -311,7 +311,10 @@ WHERE   StockType='{0}'
             DualResult result = Prgs.P23confirm(this.CurrentMaintain["ID"].ToString());
             if (!result)
             {
-                this.ShowErr(result);
+                if (!MyUtility.Check.Empty(result.ToString()))
+                {
+                    this.ShowErr(result);
+                }
             }
             else
             {

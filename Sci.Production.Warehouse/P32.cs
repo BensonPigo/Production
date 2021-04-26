@@ -478,6 +478,13 @@ where t.id= @ID";
                 return;
             }
 
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P32"))
+            {
+                return;
+            }
+            #endregion
+
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(
                 @"

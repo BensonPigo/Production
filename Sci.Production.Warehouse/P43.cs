@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -19,6 +20,8 @@ namespace Sci.Production.Warehouse
     /// <inheritdoc/>
     public partial class P43 : Win.Tems.Input6
     {
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_reason = new Ict.Win.UI.DataGridViewTextBoxColumn();
+
         /// <inheritdoc/>
         public P43(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -137,6 +140,13 @@ Original Qty and Current Qty can't be equal!!",
                 return false;
             }
 
+            // 檢查物料不能有WMS Location
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) || !MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
+                return false;
+            }
+
             // 取單號
             if (this.IsDetailInserting)
             {
@@ -209,6 +219,30 @@ where id='{1}'", Env.User.Keyword, this.CurrentMaintain["ID"]);
             else
             {
                 this.btnCallP99.Visible = false;
+            }
+
+            if (this.EditMode)
+            {
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+                {
+                    this.dateIssueDate.ReadOnly = true;
+                    this.editRemark.ReadOnly = true;
+                    this.gridicon.Remove.Visible = false;
+                    this.gridicon.Remove.Enabled = false;
+                    this.btnImport.Enabled = false;
+                    this.col_reason.IsEditingReadOnly = true;
+                    this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    this.dateIssueDate.ReadOnly = false;
+                    this.editRemark.ReadOnly = false;
+                    this.gridicon.Remove.Visible = true;
+                    this.gridicon.Remove.Enabled = true;
+                    this.btnImport.Enabled = true;
+                    this.col_reason.IsEditingReadOnly = false;
+                    this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
+                }
             }
         }
 
@@ -285,7 +319,7 @@ where AD2.Id='{0}' ", masterID);
             DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode && e.Button == MouseButtons.Right)
+                if (this.EditMode && e.Button == MouseButtons.Right && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
                 {
                     DataTable poitems;
                     string sqlcmd = string.Empty;
@@ -367,7 +401,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Text("StockUnit", header: "Unit", iseditingreadonly: true)
             .Text("location", header: "location", iseditingreadonly: true)
-            .Text("reasonid", header: "Reason ID", settings: ts)
+            .Text("reasonid", header: "Reason ID", settings: ts).Get(out this.col_reason)
             .Text("reason_nm", header: "Reason Name", iseditingreadonly: true, width: Widths.AnsiChars(20));
             #endregion 欄位設定
             this.detailgrid.Columns["QtyAfter"].DefaultCellStyle.BackColor = Color.Pink;
@@ -390,6 +424,14 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             string ids = string.Empty, sqlcmd = string.Empty;
             DualResult result, result2;
             DataTable datacheck;
+
+            #region 檢查物料不能有WMS Location
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            {
+                MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
+                return;
+            }
+            #endregion
 
             #region 檢查負數庫存
 
@@ -467,6 +509,14 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ", this.CurrentMaintain["id"]);
                     this.UpdMDivisionPoDetail();
 
                     MyUtility.Msg.InfoBox("Confirmed successful");
+
+                    // AutoWH ACC WebAPI for Vstrong
+                    DataTable dtMain = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
+                    if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                    {
+                        Task.Run(() => new Vstrong_AutoWHAccessory().SentAdjust_Detail_New(dtMain, "New"))
+                        .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                    }
                 }
             }
             #endregion 檢查負數庫存

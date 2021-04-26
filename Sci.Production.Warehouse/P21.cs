@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -179,6 +181,11 @@ namespace Sci.Production.Warehouse
 
         private void GridLocationCellPop(int rowIndex)
         {
+            if (rowIndex == -1)
+            {
+                return;
+            }
+
             DataRow curDr = this.gridReceiving.GetDataRow(rowIndex);
             SelectItem2 selectItem2 = Prgs.SelectLocation(curDr["StockType"].ToString());
             selectItem2.ShowDialog();
@@ -357,6 +364,7 @@ from
         ,rd.Fabric2LabTime
         ,rd.Fabric2LabBy
         ,[ReceivingTransferInUkey] = rd.Ukey
+        ,rd.Ukey
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -438,6 +446,7 @@ from
         ,td.Fabric2LabTime
         ,td.Fabric2LabBy
         ,[ReceivingTransferInUkey] = td.Ukey
+        ,td.Ukey
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN Orders o with (nolock) ON o.ID = td.POID
@@ -806,6 +815,20 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
                 return;
             }
 
+            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
+            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
+            foreach (DataRow dr in dtcopy.Rows)
+            {
+                string sqlchk = $@"
+select * from MtlLocation m
+inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    dtToWMS.ImportRow(dr);
+                }
+            }
+
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
             int currentColumnIndexInt = this.gridReceiving.CurrentCell.ColumnIndex;
@@ -813,6 +836,20 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
             this.gridReceiving.CurrentCell = this.gridReceiving[currentColumnIndexInt, currentRowIndexInt];
             this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
             MyUtility.Msg.InfoBox("Complete");
+
+            // 若location 不是自動倉,要發給WMS做撤回(Delete) WebAPI for Gensong
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            // AutoWH ACC WebAPI for VStrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            }
         }
 
         /// <summary>

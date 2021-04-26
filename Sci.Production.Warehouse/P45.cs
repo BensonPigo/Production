@@ -163,6 +163,14 @@ Reason can’t be empty!!",
             }
 
             string id = this.CurrentMaintain["ID"].ToString();
+
+            #region 檢查物料Location 是否存在WMS
+            if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P45"))
+            {
+                return;
+            }
+            #endregion
+
             List<SqlParameter> para = new List<SqlParameter>
             {
                 new SqlParameter("@ID", id),

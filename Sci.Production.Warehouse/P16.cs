@@ -363,6 +363,12 @@ namespace Sci.Production.Warehouse
 
             if (this.CurrentMaintain["type"].ToString() == "R")
             {
+                #region 檢查物料Location 是否存在WMS
+                if (!PublicPrg.Prgs.Chk_WMS_Location(this.CurrentMaintain["ID"].ToString(), "P16"))
+                {
+                    return;
+                }
+                #endregion
                 #region -- 檢查庫存項lock --
                 sqlcmd = string.Format(
                     @"
