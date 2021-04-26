@@ -89,7 +89,7 @@ BEGIN
 							OdorDate = GetDate()
 							,OdorEncode=1
 							,Odor = IIF(EXISTS(SELECT 1 FROM DBO.FIR_Odor WITH (NOLOCK) WHERE ID = @FirID and result = 'Fail'),'Fail','Pass')
-							,OdorInspector = GetDate()
+							,OdorInspector = @Login
 
 							,EditName=@Login
 							,EditDate = GetDate()
