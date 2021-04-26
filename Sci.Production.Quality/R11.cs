@@ -16,6 +16,7 @@ namespace Sci.Production.Quality
     {
         private readonly List<SqlParameter> parameters = new List<SqlParameter>();
         private readonly StringBuilder Sqlcmd = new StringBuilder();
+        private string type;
         private DataTable[] PrintData;
 
         /// <inheritdoc/>
@@ -39,81 +40,85 @@ namespace Sci.Production.Quality
 
             string where1 = string.Empty;
             string where2 = string.Empty;
-            if (!this.dateArriveWHDate.Value1.Empty())
+            this.type = this.radioPanelTransaction.Value;
+            if (this.type == "1")
             {
-                where1 += $"and R.WhseArrival between @Date1 and @Date2" + Environment.NewLine;
-                where2 += $"and T.IssueDate between @Date1 and @Date2" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@wDate1", this.dateArriveWHDate.Value1));
-                this.parameters.Add(new SqlParameter("@wDate2", this.dateArriveWHDate.Value2));
-                this.Sqlcmd.Append($@"
+                if (!this.dateArriveWHDate.Value1.Empty())
+                {
+                    where1 += $"and R.WhseArrival between @Date1 and @Date2" + Environment.NewLine;
+                    where2 += $"and T.IssueDate between @Date1 and @Date2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@wDate1", this.dateArriveWHDate.Value1));
+                    this.parameters.Add(new SqlParameter("@wDate2", this.dateArriveWHDate.Value2));
+                    this.Sqlcmd.Append($@"
 declare @Date1 date = @wDate1
 declare @Date2 date = @wDate2
 ");
-            }
+                }
 
-            if (!this.txtSP1.Text.Empty())
-            {
-                where1 += $"and F.POID between @SP1 and @SP2" + Environment.NewLine;
-                where2 += $"and F.POID between @SP1 and @SP2" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@SP1", this.txtSP1.Text));
-                this.parameters.Add(new SqlParameter("@SP2", this.txtSP2.Text));
-            }
+                if (!this.txtSP1.Text.Empty())
+                {
+                    where1 += $"and F.POID between @SP1 and @SP2" + Environment.NewLine;
+                    where2 += $"and F.POID between @SP1 and @SP2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@SP1", this.txtSP1.Text));
+                    this.parameters.Add(new SqlParameter("@SP2", this.txtSP2.Text));
+                }
 
-            if (!this.txtBrand.Text.Empty())
-            {
-                where1 += $"and O.BrandID = @BrandID" + Environment.NewLine;
-                where2 += $"and O.BrandID = @BrandID" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@BrandID", this.txtBrand.Text));
-            }
+                if (!this.txtBrand.Text.Empty())
+                {
+                    where1 += $"and O.BrandID = @BrandID" + Environment.NewLine;
+                    where2 += $"and O.BrandID = @BrandID" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@BrandID", this.txtBrand.Text));
+                }
 
-            if (!this.txtRefno1.Text.Empty())
-            {
-                where1 += $"and PSD.Refno >= @Refno1" + Environment.NewLine;
-                where2 += $"and PSD.Refno >= @Refno1" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@Refno1", this.txtRefno1.Text));
-            }
+                if (!this.txtRefno1.Text.Empty())
+                {
+                    where1 += $"and PSD.Refno >= @Refno1" + Environment.NewLine;
+                    where2 += $"and PSD.Refno >= @Refno1" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@Refno1", this.txtRefno1.Text));
+                }
 
-            if (!this.txtRefno2.Text.Empty())
-            {
-                where1 += $"and PSD.Refno <= @Refno2" + Environment.NewLine;
-                where2 += $"and PSD.Refno <= @Refno2" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@Refno2", this.txtRefno2.Text));
-            }
+                if (!this.txtRefno2.Text.Empty())
+                {
+                    where1 += $"and PSD.Refno <= @Refno2" + Environment.NewLine;
+                    where2 += $"and PSD.Refno <= @Refno2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@Refno2", this.txtRefno2.Text));
+                }
 
-            #region SQL
-            this.Sqlcmd.Append($@"
+                #region SQL
 
-select
+                // 基本資料
+                this.Sqlcmd.Append($@"
+--Receiving
+SELECT
+	f.ID,
+	f.ReceivingID,
+	F.POID,
+	F.SEQ1,F.SEQ2,
+	SEQ = CONCAT(F.SEQ1, '-' + F.SEQ2),
+	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
+	F.Physical,
+	f.NonPhysical,	
+    o.FactoryID,
+	o.StyleID,
+	o.BrandID,
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
 	PSD.ColorID,
+	psd.SCIRefno,
 	Fabric.WeaveTypeID,
-	Composition.Composition,
 	Fabric.width,
 	Weight = Fabric.WeightM2,
 	Fabric.ConstructionID,
-	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
+	c.Name,
+
+	[WK] = R.ExportId,
+	ArriveWHDate = R.whseArrival,
+	ArriveQty = RD.StockQty,
 	RD.ShipQty,
 	Rate = (select RateValue from dbo.View_Unitrate v where v.FROM_U = RD.PoUnit and v.TO_U= RD.StockUnit),
-	RD.StockQty,
-	F.POID,
-	R.ExportId,
 	RD.Dyelot,
-	F.Physical,
-	SEQ = CONCAT(F.SEQ1, '-' + F.SEQ2),
-	FP.Roll,
-	FP.InspDate,
-	FP.Result,
-	FP.Grade,
-	O.BrandID,
-	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
-	FP.TicketYds,
-	RD.ID,
-	FP.DetailUkey,
-	FP.ActualYds,
-    o.FactoryID
-	,f.ReceivingID
-into #tmp1
+	RD.Roll
+INTO #tmpR
 from FIR F
 Inner join Receiving R on F.ReceivingID=R.Id
 Inner join Receiving_Detail RD on R.Id=RD.Id and F.POID=RD.PoId and F.SEQ1=RD.Seq1 and F.SEQ2=RD.Seq2
@@ -122,137 +127,178 @@ Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
 Inner join Supp S on PS.SuppID=S.ID
 Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
 Inner join Orders O on F.POID=O.ID
-Left join FIR_Physical FP on F.ID=FP.ID and FP.Roll=RD.Roll and FP.Dyelot=RD.Dyelot
-outer apply(
-	select Composition = STUFF((
-		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
-		from Fabric_Content fc
-		where fc.SCIRefno = Fabric.SCIRefno
-		for xml path('')
-	),1,1,'')
-)Composition
-
+LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
 Where 1=1
 {where1}
 
-select
+--TransferIn
+SELECT
+	f.ID,
+	f.ReceivingID,
+	F.POID,
+	F.SEQ1,F.SEQ2,
+	SEQ = CONCAT(F.SEQ1, '-' + F.SEQ2),
+	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
+	F.Physical,
+	f.NonPhysical,	
+    o.FactoryID,
+	o.StyleID,
+	o.BrandID,
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
 	PSD.Refno,
 	PSD.ColorID,
+	psd.SCIRefno,
 	Fabric.WeaveTypeID,
-	Composition.Composition,
 	Fabric.width,
 	Weight = Fabric.WeightM2,
 	Fabric.ConstructionID,
-	Description = dbo.getmtldesc(F.POID, F.SEQ1, f.SEQ2, 2, 0),
+	c.Name,
+
+	[WK] = '',
+	ArriveWHDate = T.IssueDate,
 	TD.Qty,
-	F.POID,
 	TD.Dyelot,
-	F.Physical,
-	SEQ = CONCAT(F.SEQ1, '-' + F.SEQ2),
-	FP.Roll,
-	FP.InspDate,
-	FP.Result,
-	FP.Grade,
-	O.BrandID,
-	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
-	FP.TicketYds,
-	TD.ID,
-	FP.DetailUkey,
-	FP.ActualYds,
-    o.FactoryID
-	,f.ReceivingID
-into #tmp2
+	TD.Roll
+INTO #tmpT
 from FIR F
-Inner join TransferIn T on F.ReceivingID=T.Id
-Inner join TransferIn_Detail TD on T.Id=TD.Id and F.POID=TD.PoId and F.SEQ1=TD.Seq1 and F.SEQ2=TD.Seq2
+Inner join TransferIn t on F.ReceivingID=t.Id
+Inner join TransferIn_Detail TD on t.Id=TD.Id and F.POID=TD.PoId and F.SEQ1=TD.Seq1 and F.SEQ2=TD.Seq2
 Inner join PO_Supp_Detail PSD on PSD.ID=TD.PoId and PSD.SEQ1=TD.Seq1 and PSD.SEQ2=TD.Seq2
 Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
 Inner join Supp S on PS.SuppID=S.ID
 Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
 Inner join Orders O on F.POID=O.ID
-Left join FIR_Physical FP on F.ID=FP.ID and FP.Roll=TD.Roll and FP.Dyelot=TD.Dyelot
+LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+Where 1=1
+{where2}
+");
+
+                // 各sheet
+                this.Sqlcmd.Append(@"
+select
+	t.*,
+	FP.InspDate,
+	FP.Result,
+	FP.Grade,
+	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
+	FP.TicketYds,
+	FP.DetailUkey,
+	FP.ActualYds,
+	Composition
+into #tmp1
+from #tmpR t
+Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
 outer apply(
 	select Composition = STUFF((
 		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
 		from Fabric_Content fc
-		where fc.SCIRefno = Fabric.SCIRefno
+		where fc.SCIRefno = t.SCIRefno
 		for xml path('')
 	),1,1,'')
 )Composition
-Where 1=1
-{where2}
+
+select
+	t.*,
+	FP.InspDate,
+	FP.Result,
+	FP.Grade,
+	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
+	FP.TicketYds,
+	FP.DetailUkey,
+	FP.ActualYds,
+	Composition
+into #tmp2
+from #tmpT t
+Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+outer apply(
+	select Composition = STUFF((
+		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
+		from Fabric_Content fc
+		where fc.SCIRefno = t.SCIRefno
+		for xml path('')
+	),1,1,'')
+)Composition
 
 --Summary分頁
 select
+	t.POID,
+    t.SEQ,
+	t.WK,
+	t.ReceivingID,
+	t.StyleID,
     t.Brandid,
 	t.Supplier,
 	t.Refno,
 	t.ColorID,
+	t.ArriveWHDate,
+	ArriveQty = SUM(t.ArriveQty),
 	t.WeaveTypeID,
-	t.Composition,
+	t.Dyelot,
 	t.Width,
 	t.Weight,
-	t.ConstructionID,
+	t.Composition,
 	t.Description,
+	t.ConstructionID,
 	ShippedQty = SUM(t.ShipQty * isnull(t.Rate,1)),
-	ArrivedQty = SUM(t.StockQty),
     t.FactoryID,
-	t.POID,
-	WK = t.ExportId,
-    t.SEQ,
-	t.Dyelot,
+	RFT = iif(SUM(t.ArriveQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.ArriveQty)),
 	TotalDefectyds = Sum(TotalDefectyds),
-	RFT = iif(SUM(t.StockQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.StockQty)),
-	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
+	Inspection = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.ArriveQty)),
 	t.Physical
 from #tmp1 t
-Group by t.Brandid,t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight,
-t.ConstructionID,t.Description,t.FactoryID,t.POID,t.ExportId,t.SEQ,t.Dyelot,t.Physical,ID
+Group by t.POID,t.SEQ,t.WK,t.ReceivingID,t.StyleID,t.Brandid,t.Supplier,t.Refno,t.ColorID,t.ArriveWHDate,t.WeaveTypeID,
+	t.Dyelot,t.Width,t.Weight,t.Composition,t.Description,t.ConstructionID,t.FactoryID,t.Physical
 
 union all
 select
+	t.POID,
+    t.SEQ,
+    WK,
+	t.ReceivingID,
+	t.StyleID,
     t.Brandid,
 	t.Supplier,
 	t.Refno,
 	t.ColorID,
+	t.ArriveWHDate,
+	ArrivedQty = SUM(t.Qty),
 	t.WeaveTypeID,
-	t.Composition,
+	t.Dyelot,
 	t.Width,
 	t.Weight,
-	t.ConstructionID,
+	t.Composition,
 	t.Description,
+	t.ConstructionID,
 	ShippedQty = SUM(t.Qty),
-	ArrivedQty = SUM(t.Qty),
     t.FactoryID,
-	t.POID,
-    WK = '',
-    t.SEQ,
-	t.Dyelot,
-	TotalDefectyds = Sum(TotalDefectyds),
 	RFT = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.Qty)),
+	TotalDefectyds = Sum(TotalDefectyds),
 	Inspection  = iif(SUM(TicketYds) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
 	t.Physical
 from #tmp2 t
-Group by t.Brandid,t.Supplier,t.Refno,t.ColorID,t.WeaveTypeID,t.Composition,t.Width,t.Weight,
-t.ConstructionID,t.Description,t.FactoryID,t.POID,t.SEQ,t.Dyelot,t.Physical,ID
+Group by t.POID,t.SEQ,t.WK,t.ReceivingID,t.StyleID,t.Brandid,t.Supplier,t.Refno,t.ColorID,t.ArriveWHDate,t.WeaveTypeID,
+	t.Dyelot,t.Width,t.Weight,t.Composition,t.Description,t.ConstructionID,t.FactoryID,t.Physical
 
 --Defect_detail 分頁
 select
+	t.POID,
+	t.seq,
+	WK,
+	t.ReceivingID,
+	t.StyleID,
     t.Brandid,
 	t.Supplier,
 	t.Refno,
 	t.ColorID,
+	t.ArriveWHDate,
+	t.ArriveQty,
 	t.WeaveTypeID,
-	t.Composition,
-	t.Width,
-	Weight = t.Weight,
-	t.ConstructionID,
-	t.Description,
-	t.POID,
-	t.seq,
-	WK = t.ExportId,
 	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	t.Description,
+	t.ConstructionID,
 	t.Roll,
 	t.InspDate,
 	t.Result,
@@ -266,7 +312,6 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds
 		end
-	,t.ReceivingID
 INTO #Sheet2
 from #tmp1 t
 outer apply(
@@ -284,20 +329,24 @@ where Defect.DefectRecord is not null or fd.Type is not null
 
 union all
 select
+	t.POID,
+	t.seq,
+	WK = '',
+	t.ReceivingID,
+	t.StyleID,
     t.Brandid,
 	t.Supplier,
 	t.Refno,
 	t.ColorID,
+	t.ArriveWHDate,
+	t.Qty,
 	t.WeaveTypeID,
-	t.Composition,
-	t.Width,
-	Weight = t.Weight,
-	t.ConstructionID,
-	t.Description,
-	t.POID,
-	t.seq,
-	WK = '',
 	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	t.Description,
+	t.ConstructionID,
 	t.Roll,
 	t.InspDate,
 	t.Result,
@@ -311,7 +360,6 @@ select
 		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
 		else isnull(Defect.point,  0) / t.TicketYds 
 		end
-	,t.ReceivingID
 from #tmp2 t
 outer apply(
     select 
@@ -326,143 +374,100 @@ left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
 SELECT 
-    Brandid,Supplier,Refno,ColorID,WeaveTypeID,Composition,Width,
-	Weight,ConstructionID,Description,POID,seq,WK,Dyelot,Roll,InspDate,
-	Result,Grade,DefectRecord,Type,DescriptionEN,
-    point,	Defectrate 
+	POID,seq,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,
+	ArriveWHDate,ArriveQty,WeaveTypeID,Dyelot,Width,Weight,Composition,
+	Description,ConstructionID,Roll,InspDate,Result,Grade,DefectRecord,
+	Type,DescriptionEN,point,Defectrate
 FROM #Sheet2
-
 
 --Lacking yard分頁
 select
+	t.POID,
+	t.SEQ,
+	WK,
+	t.ReceivingID,
+	t.StyleID,
     t.Brandid,
 	t.Supplier,
 	t.Refno,
 	t.ColorID,
+	t.ArriveWHDate,
+	t.ArriveQty,
 	t.WeaveTypeID,
-	t.Composition,
-	t.Width,
-	Weight = t.Weight,
-	ShippedQty = t.ShipQty * isnull(t.Rate,1),
-	ArrivedQty = t.StockQty,
-	t.POID,
-	WK = t.ExportId,
 	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	ShippedQty = t.ShipQty * isnull(t.Rate,1),
 	t.Roll,
 	t.TicketYds,
 	t.ActualYds,
-	isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
+	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
 	t.InspDate
 from #tmp1 t
 where t.InspDate is not null
 
-
 union all
 select
+	t.POID,
+	t.SEQ,
+	WK = '',
+	t.ReceivingID,
+	t.StyleID,
     t.Brandid,
 	t.Supplier,
 	t.Refno,
 	t.ColorID,
-	t.WeaveTypeID,
-	t.Composition,
-	t.Width,
-	Weight = t.Weight,
-	ShippedQty = t.Qty,
+	t.ArriveWHDate,
 	ArrivedQty = t.qty,
-	t.POID,
-	WK = '',
+	t.WeaveTypeID,
 	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	ShippedQty = t.Qty,
 	t.Roll,
 	t.TicketYds,
 	t.ActualYds,
-	isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
+	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
 	t.InspDate
 from #tmp2 t
 where t.InspDate is not null
 
 ----Defect Summary Report 分頁
-
-/*1. 準備基礎資料*/
-SELECT DISTINCT 
-[FIR_ID]=f.ID
-,f.ReceivingID
-,[WKno]=r.ExportID
-,f.POID
-,f.Seq1
-,f.Seq2
-,r.WhseArrival
-,psd.Refno
-,psd.SCIRefno
-,psd.ColorID
-,c.Name
-,f.SuppID
-,f.ArriveQty
-,Fabric.WeaveTypeID
-,f.NonPhysical
+SELECT ID,ReceivingID,WK,POID,SEQ1,SEQ2,Seq,ArriveWHDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,ArriveQty = sum(ArriveQty)
 INTO #tmp3
-from FIR F
-Inner join Receiving R on F.ReceivingID=R.Id
-Inner join Receiving_Detail RD on R.Id=RD.Id and F.POID=RD.PoId and F.SEQ1=RD.Seq1 and F.SEQ2=RD.Seq2
-Inner join PO_Supp_Detail PSD on PSD.ID=RD.PoId and PSD.SEQ1=RD.Seq1 and PSD.SEQ2=RD.Seq2
-Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
-Inner join Supp S on PS.SuppID=S.ID
-Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
-LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
-Where 1=1
-{where1}
+from #tmpR
+group by ID,ReceivingID,WK,POID,SEQ1,SEQ2,Seq,ArriveWHDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID
 
+union all
+SELECT ID,ReceivingID,WK,POID,SEQ1,SEQ2,Seq,ArriveWHDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,ArriveQty = sum(Qty)
+from #tmpT
+group by ID,ReceivingID,WK,POID,SEQ1,SEQ2,Seq,ArriveWHDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID
 
-SELECT DISTINCT 
-[FIR_ID]=f.ID
-,f.ReceivingID
-,[WKno]=''
-,f.POID
-,f.Seq1
-,f.Seq2
-,t.IssueDate
-,psd.Refno
-,psd.SCIRefno
-,psd.ColorID
-,c.Name
-,f.SuppID
-,f.ArriveQty
-,Fabric.WeaveTypeID
-,f.NonPhysical
-INTO #tmp4
-from FIR F
-Inner join TransferIn t on F.ReceivingID=t.Id
-Inner join TransferIn_Detail RD on t.Id=RD.Id and F.POID=RD.PoId and F.SEQ1=RD.Seq1 and F.SEQ2=RD.Seq2
-Inner join PO_Supp_Detail PSD on PSD.ID=RD.PoId and PSD.SEQ1=RD.Seq1 and PSD.SEQ2=RD.Seq2
-Inner join PO_Supp PS on PSD.ID=PS.ID and PSD.SEQ1=PS.SEQ1
-Inner join Supp S on PS.SuppID=S.ID
-Inner join Fabric on PSD.SCIRefno=Fabric.SCIRefno
-LEFT JOIN Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
-Where 1=1
-{where2}
-
-select * 
+Select
+	POID,
+	SEQ,
+	WK,
+	ReceivingID,
+	StyleID,
+	BrandID,
+	Supplier,
+	Refno,
+	ColorID,
+	ArriveWHDate,
+	ArriveQty,
+	WeaveTypeID,
+	SCIRefno,
+	Name,
+	[ArriveRoll]=ArriveRoll.Val,
+	NonPhysical,
+	[HowManyDyelotArrived] = HowManyDyelotArrived.Val,
+	[AlreadyInspecetedDyelot] = AlreadyInspecetedDyelot.Val,
+	[InspectionPercentage] = InspectionPercentage.Val,
+	[DefectCode] = DefectCode.DefectRecord,
+	[TotalPoints] = DefectCode.point
 INTO #DefectSummary
-from (
-Select ReceivingID
-	,WKno
-	,POID
-	,Seq1
-	,Seq2
-	,[IssueDate]=WhseArrival
-	,Refno
-	,SCIRefno
-	,ColorID
-	,Name
-	,SuppID
-	,ArriveQty
-	,[ArriveRoll]=ArriveRoll.Val
-	,WeaveTypeID
-	,NonPhysical
-	,[HowManyDyelotArrived]=HowManyDyelotArrived.Val
-	,[AlreadyInspecetedDyelot]=AlreadyInspecetedDyelot.Val
-	,[InspectionPercentage]=InspectionPercentage.Val
-	,[DefectCode]=DefectCode.DefectRecord
-	,[TotalPoints]= DefectCode.point
 from #tmp3 t
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
@@ -481,116 +486,591 @@ OUTER APPLY(
 OUTER APPLY(
 	select Val=COUNT(distinct fp.Dyelot)
 	from Receiving_Detail rd
-	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	Left join FIR_Physical fp on t.ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
 	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
 	AND fp.Result != '' AND fp.Result IS NOT NULL
 )AlreadyInspecetedDyelot
 OUTER APPLY(
 	select Val = SUM(fp.TicketYds) / t.ArriveQty
 	from Receiving_Detail rd
-	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	Left join FIR_Physical fp on t.ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
 	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
 	AND fp.Result != '' AND fp.Result IS NOT NULL
 )InspectionPercentage
 OUTER APPLY(
-		select DefectRecord , point
+		select DefectRecord, point
 		from #Sheet2 s
 		WHERE s.ReceivingID=t.ReceivingID
 		AND s.POID=t.POID
-		AND s.Seq=t.Seq1+'-'+t.Seq2
+		AND s.SEQ=t.SEQ
 )DefectCode
 
-UNION ALL
-Select ReceivingID
-	,WKno
-	,POID
-	,Seq1
-	,Seq2
-	,IssueDate
-	,Refno
-	,SCIRefno
-	,ColorID
-	,Name
-	,SuppID
-	,ArriveQty
-	,[ArriveRoll]=ArriveRoll.Val
-	,WeaveTypeID
-	,NonPhysical
-	,[HowManyDyelotArrived]=HowManyDyelotArrived.Val
-	,[AlreadyInspecetedDyelot]=AlreadyInspecetedDyelot.Val
-	,[InspectionPercentage]=InspectionPercentage.Val
-	,[DefectCode]=DefectCode.DefectRecord
-	,[TotalPoints]= DefectCode.point
-from #tmp4 t
+SELECT
+	POID,
+	SEQ,
+	WK,
+	ReceivingID,
+	StyleID,
+	BrandID,
+	Supplier,
+	Refno,
+	ColorID,
+	ArriveWHDate,
+	ArriveQty,
+	WeaveTypeID,
+	SCIRefno,
+	Name,
+	ArriveRoll,
+	NonPhysical = IIF(NonPhysical = 1,'Y',''),
+	HowManyDyelotArrived,
+	AlreadyInspecetedDyelot,
+	InspectionPercentage,
+	DefectCode,
+	TotalPoints = SUM(TotalPoints)
+FROM #DefectSummary
+GROUP BY POID,SEQ,WK,ReceivingID,StyleID,BrandID,Supplier,Refno,ColorID,ArriveWHDate,ArriveQty,WeaveTypeID,
+	SCIRefno,Name,ArriveRoll,NonPhysical,HowManyDyelotArrived,AlreadyInspecetedDyelot,InspectionPercentage,DefectCode
+ORDER BY ReceivingID,WK,POID,SEQ,TotalPoints
+
+drop table #tmp1,#tmp2,#tmp3,#Sheet2,#DefectSummary,#tmpR,#tmpT
+");
+                #endregion
+            }
+            else
+            {
+                if (!this.dateArriveWHDate.Value1.Empty())
+                {
+                    where1 += $"and st.IssueDate between @Date1 and @Date2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@wDate1", this.dateArriveWHDate.Value1));
+                    this.parameters.Add(new SqlParameter("@wDate2", this.dateArriveWHDate.Value2));
+                    this.Sqlcmd.Append($@"
+declare @Date1 date = @wDate1
+declare @Date2 date = @wDate2
+");
+                }
+
+                if (!this.txtSP1.Text.Empty())
+                {
+                    where1 += $"and std.ToPOID between @SP1 and @SP2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@SP1", this.txtSP1.Text));
+                    this.parameters.Add(new SqlParameter("@SP2", this.txtSP2.Text));
+                }
+
+                if (!this.txtBrand.Text.Empty())
+                {
+                    where1 += $"and O.BrandID = @BrandID" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@BrandID", this.txtBrand.Text));
+                }
+
+                if (!this.txtRefno1.Text.Empty())
+                {
+                    where1 += $"and PSD.Refno >= @Refno1" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@Refno1", this.txtRefno1.Text));
+                }
+
+                if (!this.txtRefno2.Text.Empty())
+                {
+                    where1 += $"and PSD.Refno <= @Refno2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@Refno2", this.txtRefno2.Text));
+                }
+
+                #region SQL
+
+                // 基本資料
+                this.Sqlcmd.Append($@"
+--Receiving
+SELECT
+	TransferID = st.Id,
+	st.IssueDate,
+	Inventory_SP = std.FromPOID,
+	Inventory_SEQ = CONCAT(std.FromSeq1, '-' + std.FromSeq2),
+	Bulk_SP = std.ToPOID,
+	Bulk_SEQ = CONCAT(std.ToSeq1, '-' + std.ToSeq2),
+	std.FromSeq1,
+	std.FromSeq2,
+	std.ToSeq1,
+	std.ToSeq2,
+	TransferQty = std.Qty,
+	Description = dbo.getmtldesc(std.FromPOID, std.FromSeq1, std.FromSeq2, 2, 0),
+	
+    o.FactoryID,
+	o.StyleID,
+	o.BrandID,	
+	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
+	PSD.Refno,
+	PSD.ColorID,
+	PSD.SCIRefno,
+	c.Name,
+	F.ID,
+	F.ReceivingID,
+	F.Physical,
+	f.NonPhysical,	
+	Fabric.WeaveTypeID,
+	Fabric.width,
+	Weight = Fabric.WeightM2,
+	Fabric.ConstructionID,
+
+	[WK] = R.ExportId,
+	Rate = (select RateValue from dbo.View_Unitrate v where v.FROM_U = RD.PoUnit and v.TO_U= RD.StockUnit),
+	RD.StockQty,
+	RD.ShipQty,
+	RD.Dyelot,
+	RD.Roll,
+	Composition,
+	std.Ukey
+INTO #tmpR
+from SubTransfer st
+inner join SubTransfer_Detail std on std.id = st.id
+inner join Orders O on O.ID = std.FromPOID
+inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
+inner join PO_Supp PS on PSD.ID = PS.ID and PSD.SEQ1 = PS.SEQ1
+inner join Supp S on PS.SuppID = S.ID
+inner join Fabric on PSD.SCIRefno = Fabric.SCIRefno
+left join Receiving_Detail RD on RD.PoId = std.FromPOID and RD.Seq1 = std.FromSeq1 and RD.Seq2 = std.FromSeq2 and RD.Roll = std.FromRoll and RD.Dyelot = std. FromDyelot
+left join Receiving R on R.Id = RD.Id 
+left join FIR F on F.ReceivingID = R.ID and F.POID = RD.PoId and F.SEQ1 = RD.Seq1 and F.SEQ2 = RD.Seq2
+left join Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+outer apply(
+	select Composition = STUFF((
+		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
+		from Fabric_Content fc
+		where fc.SCIRefno = PSD.SCIRefno
+		for xml path('')
+	),1,1,'')
+)Composition
+Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
+{where1}
+
+--TransferIn
+SELECT
+	TransferID = st.Id,
+	st.IssueDate,
+	Inventory_SP = std.FromPOID,
+	Inventory_SEQ = CONCAT(std.FromSeq1, '-' + std.FromSeq2),
+	Bulk_SP = std.ToPOID,
+	Bulk_SEQ = CONCAT(std.ToSeq1, '-' + std.ToSeq2),
+	std.FromSeq1,
+	std.FromSeq2,
+	std.ToSeq1,
+	std.ToSeq2,
+	TransferQty = std.Qty,
+	Description = dbo.getmtldesc(std.FromPOID, std.FromSeq1, std.FromSeq2, 2, 0),
+	
+    o.FactoryID,
+	o.StyleID,
+	o.BrandID,	
+	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
+	PSD.Refno,
+	PSD.ColorID,
+	PSD.SCIRefno,
+	c.Name,
+	F.ID,
+	F.ReceivingID,
+	F.Physical,
+	f.NonPhysical,	
+	Fabric.WeaveTypeID,
+	Fabric.width,
+	Weight = Fabric.WeightM2,
+	Fabric.ConstructionID,
+	
+	[WK] = '',
+	RD.Qty,
+	RD.Dyelot,
+	RD.Roll,
+	Composition
+INTO #tmpT
+from SubTransfer st
+inner join SubTransfer_Detail std on std.id = st.id
+inner join Orders O on O.ID = std.FromPOID
+inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
+inner join PO_Supp PS on PSD.ID = PS.ID and PSD.SEQ1 = PS.SEQ1
+inner join Supp S on PS.SuppID = S.ID
+inner join Fabric on PSD.SCIRefno = Fabric.SCIRefno
+left join TransferIn_Detail RD on RD.PoId = std.FromPOID and RD.Seq1 = std.FromSeq1 and RD.Seq2 = std.FromSeq2 and RD.Roll = std.FromRoll and RD.Dyelot = std. FromDyelot
+left join TransferIn R on R.Id = RD.Id 
+left join FIR F on F.ReceivingID = R.ID and F.POID = RD.PoId and F.SEQ1 = RD.Seq1 and F.SEQ2 = RD.Seq2
+left join Color c ON psd.BrandId = c.BrandId AND PSD.ColorID = c.ID
+outer apply(
+	select Composition = STUFF((
+		select CONCAT('+', FLOOR(fc.percentage), '%', fc.MtltypeId)
+		from Fabric_Content fc
+		where fc.SCIRefno = PSD.SCIRefno
+		for xml path('')
+	),1,1,'')
+)Composition
+Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
+and not exists(select 1 from #tmpR r where r.Ukey = std.Ukey)
+{where1}
+");
+
+                // 各sheet
+                this.Sqlcmd.Append(@"
+select
+	t.*,
+	FP.InspDate,
+	FP.Result,
+	FP.Grade,
+	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
+	FP.TicketYds,
+	FP.DetailUkey,
+	FP.ActualYds
+into #tmp1
+from #tmpR t
+Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+
+select
+	t.*,
+	FP.InspDate,
+	FP.Result,
+	FP.Grade,
+	TotalDefectyds = isnull((select SUM(Point) from FIR_Physical_Defect fpd where FPD.FIR_PhysicalDetailUKey = FP.DetailUkey), 0) * 0.25,
+	FP.TicketYds,
+	FP.DetailUkey,
+	FP.ActualYds
+into #tmp2
+from #tmpT t
+Left join FIR_Physical FP on FP.ID = t.ID and FP.Roll = t.Roll and FP.Dyelot = t.Dyelot
+
+--Summary分頁
+select
+	t.Bulk_SP,
+    t.Bulk_SEQ,
+	t.TransferID,
+	t.Inventory_SP,
+	t.Inventory_SEQ,
+	t.WK,
+	t.ReceivingID,
+	t.StyleID,
+    t.Brandid,
+	t.Supplier,
+	t.Refno,
+	t.ColorID,
+	t.IssueDate,
+	TransferQty = SUM(t.TransferQty),
+	t.WeaveTypeID,
+	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	t.Description,
+	t.ConstructionID,
+	ShippedQty = SUM(t.ShipQty * isnull(t.Rate,1)),
+    t.FactoryID,
+	RFT = iif(SUM(t.StockQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.StockQty)),
+	TotalDefectyds = Sum(TotalDefectyds),
+	Inspection = iif(SUM(StockQty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.StockQty)),
+	t.Physical
+from #tmp1 t
+Group by Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,IssueDate,
+	WeaveTypeID,Dyelot,Width,Weight,Composition,Description,ConstructionID,FactoryID,Physical
+
+union all
+select
+	t.Bulk_SP,
+    t.Bulk_SEQ,
+	t.TransferID,
+	t.Inventory_SP,
+	t.Inventory_SEQ,
+    WK,
+	t.ReceivingID,
+	t.StyleID,
+    t.Brandid,
+	t.Supplier,
+	t.Refno,
+	t.ColorID,
+	t.IssueDate,
+	TransferQty = SUM(t.TransferQty),
+	t.WeaveTypeID,
+	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	t.Description,
+	t.ConstructionID,
+	ShippedQty = SUM(t.Qty),
+    t.FactoryID,
+	RFT = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.Qty)),
+	TotalDefectyds = Sum(TotalDefectyds),
+	Inspection  = iif(SUM(Qty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
+	t.Physical
+from #tmp2 t
+Group by Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,IssueDate,
+	WeaveTypeID,Dyelot,Width,Weight,Composition,Description,ConstructionID,FactoryID,Physical
+
+--Defect_detail 分頁
+select
+	t.Bulk_SP,
+    t.Bulk_SEQ,
+	t.TransferID,
+	t.Inventory_SP,
+	t.Inventory_SEQ,
+	WK,
+	t.ReceivingID,
+	t.StyleID,
+    t.Brandid,
+	t.Supplier,
+	t.Refno,
+	t.ColorID,
+	t.IssueDate,
+	t.TransferQty,
+	t.WeaveTypeID,
+	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	t.Description,
+	t.ConstructionID,
+	t.Roll,
+	t.InspDate,
+	t.Result,
+	t.Grade,
+	Defect.DefectRecord,
+	fd.Type,
+	fd.DescriptionEN,
+    point = isnull(Defect.point,  0),
+	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
+		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
+		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
+		else isnull(Defect.point,  0) / t.TicketYds
+		end
+INTO #Sheet2
+from #tmp1 t
+outer apply(
+    select
+	    DefectRecord = dbo.SplitDefectNum(x.Data,0),	
+        point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
+    from FIR_Physical_Defect
+    outer apply(select  * from SplitString(DefectRecord,'/'))x
+    where FIR_PhysicalDetailUKey = t.DetailUkey
+    group by dbo.SplitDefectNum(x.Data,0)
+)Defect
+
+left join FabricDefect fd on fd.ID = Defect.DefectRecord
+where Defect.DefectRecord is not null or fd.Type is not null
+
+union all
+select
+	t.Bulk_SP,
+    t.Bulk_SEQ,
+	t.TransferID,
+	t.Inventory_SP,
+	t.Inventory_SEQ,
+	WK = '',
+	t.ReceivingID,
+	t.StyleID,
+    t.Brandid,
+	t.Supplier,
+	t.Refno,
+	t.ColorID,
+	t.IssueDate,
+	t.TransferQty,
+	t.WeaveTypeID,
+	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	t.Description,
+	t.ConstructionID,
+	t.Roll,
+	t.InspDate,
+	t.Result,
+	t.Grade,
+	Defect.DefectRecord,
+	fd.Type,
+	fd.DescriptionEN,
+    point = isnull(Defect.point,  0),
+	Defectrate = case when isnull(t.TicketYds, 0) = 0 then 0
+		when t.BrandID = 'LLL' and ISNULL(t.width, 0) = 0 then 0
+		when t.BrandID = 'LLL' then isnull(Defect.point, 0) * 3600 / (t.width * t.TicketYds)
+		else isnull(Defect.point,  0) / t.TicketYds 
+		end
+from #tmp2 t
+outer apply(
+    select 
+	    DefectRecord = dbo.SplitDefectNum(x.Data,0),
+        point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
+    from FIR_Physical_Defect
+    outer apply(select  * from SplitString(DefectRecord,'/'))x
+    where FIR_PhysicalDetailUKey = t.DetailUkey
+    group by dbo.SplitDefectNum(x.Data,0)
+)Defect
+left join FabricDefect fd on fd.ID = Defect.DefectRecord
+where Defect.DefectRecord is not null or fd.Type is not null
+
+SELECT 
+	Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,
+	Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,	
+	IssueDate,	TransferQty,WeaveTypeID,Dyelot,Width,Weight,Composition,
+	Description,ConstructionID,Roll,InspDate,Result,Grade,DefectRecord,
+	Type,DescriptionEN,point,Defectrate
+FROM #Sheet2
+
+--Lacking yard分頁
+select
+	t.Bulk_SP,
+    t.Bulk_SEQ,
+	t.TransferID,
+	t.Inventory_SP,
+	t.Inventory_SEQ,
+	WK,
+	t.ReceivingID,
+	t.StyleID,
+    t.Brandid,
+	t.Supplier,
+	t.Refno,
+	t.ColorID,
+	t.IssueDate,
+	t.TransferQty,
+	t.WeaveTypeID,
+	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	ShippedQty = t.ShipQty * isnull(t.Rate,1),
+	t.Roll,
+	t.TicketYds,
+	t.ActualYds,
+	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
+	t.InspDate
+from #tmp1 t
+where t.InspDate is not null
+
+union all
+select
+	t.Bulk_SP,
+    t.Bulk_SEQ,
+	t.TransferID,
+	t.Inventory_SP,
+	t.Inventory_SEQ,
+	WK = '',
+	t.ReceivingID,
+	t.StyleID,
+    t.Brandid,
+	t.Supplier,
+	t.Refno,
+	t.ColorID,
+	t.IssueDate,
+	t.TransferQty,
+	t.WeaveTypeID,
+	t.Dyelot,
+	t.Width,
+	t.Weight,
+	t.Composition,
+	ShippedQty = t.Qty,
+	t.Roll,
+	t.TicketYds,
+	t.ActualYds,
+	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
+	t.InspDate
+from #tmp2 t
+where t.InspDate is not null
+
+----Defect Summary Report 分頁
+SELECT ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,TransferQty = sum(TransferQty),StockQty=sum(StockQty)
+INTO #tmp3
+from #tmpR
+group by ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID
+
+union all
+SELECT ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID,TransferQty = sum(TransferQty),StockQty=sum(Qty)
+from #tmpT
+group by ID,ReceivingID,WK,Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,FromSeq1,FromSeq2,IssueDate,Refno,SCIRefno,ColorID,Name,Supplier,WeaveTypeID,NonPhysical,StyleID,BrandID
+
+Select
+	Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,
+	WK,
+	ReceivingID,
+	StyleID,
+	BrandID,
+	Supplier,
+	Refno,
+	ColorID,
+	IssueDate,
+	TransferQty,
+	WeaveTypeID,
+	SCIRefno,
+	Name,
+	[ctRoll]=ArriveRoll.Val,
+	NonPhysical,
+	[HowManyDyelot] = HowManyDyelotArrived.Val,
+	[AlreadyInspecetedDyelot] = AlreadyInspecetedDyelot.Val,
+	[InspectionPercentage] = InspectionPercentage.Val,
+	[DefectCode] = DefectCode.DefectRecord,
+	[TotalPoints] = DefectCode.point
+INTO #DefectSummary
+from #tmp3 t
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
-		select  distinct Roll,Dyelot
-		from TransferIn_Detail rd
-		where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+		select  distinct std.FromRoll,std.FromDyelot
+		from SubTransfer_Detail std
+		where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
 	)x
 )ArriveRoll
 OUTER APPLY(
 	SELECT Val=COUNT(1) FROM (
-		select  distinct Dyelot
-		from TransferIn_Detail rd
-		where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
+		select distinct std.FromDyelot
+		from SubTransfer_Detail std
+		where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
 	)x
 )HowManyDyelotArrived
 OUTER APPLY(
 	select Val=COUNT(distinct fp.Dyelot)
-	from TransferIn_Detail rd
-	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
-	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
-	AND fp.Result != '' AND fp.Result IS NOT NULL
+	from SubTransfer_Detail std
+	left join Receiving_Detail rd on rd.PoId = std.FromPOID and rd.Seq1 = std.FromSeq1 and rd.Seq2 = std.FromSeq2 and rd.Roll = std.FromRoll and rd.Dyelot = std. FromDyelot
+	Left join FIR_Physical fp on t.ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
+	AND fp.Result <> ''
 )AlreadyInspecetedDyelot
 OUTER APPLY(
-	select Val = SUM(fp.TicketYds) / t.ArriveQty
-	from TransferIn_Detail rd
-	Left join FIR_Physical fp on t.FIR_ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
-	where rd.Id = t.ReceivingID AND rd.PoId = t.POID AND rd.Seq1 = t.SEQ1 AND rd.Seq2 = t.SEQ2 
-	AND fp.Result != '' AND fp.Result IS NOT NULL
+	select Val = iif(t.StockQty = 0, 0, SUM(fp.TicketYds) / t.StockQty)
+	from SubTransfer_Detail std
+	left join Receiving_Detail rd on rd.PoId = std.FromPOID and rd.Seq1 = std.FromSeq1 and rd.Seq2 = std.FromSeq2 and rd.Roll = std.FromRoll and rd.Dyelot = std. FromDyelot
+	Left join FIR_Physical fp on t.ID=fp.ID and fp.Roll=rd.Roll and fp.Dyelot=rd.Dyelot
+	where std.id =t.TransferID and std.FromPOID = t.Inventory_SP and std.FromSeq1 = t.FromSeq1 and std.FromSeq2 =  t.FromSeq2
+	and rd.Id = t.ReceivingID
+	AND fp.Result <> ''
 )InspectionPercentage
 OUTER APPLY(
-		select DefectRecord , point
+		select DefectRecord, point
 		from #Sheet2 s
 		WHERE s.ReceivingID=t.ReceivingID
-		AND s.POID=t.POID
-		AND s.Seq=t.Seq1+'-'+t.Seq2
+		AND s.Inventory_SP = t.Inventory_SP
+		AND s.Inventory_SEQ = t.Inventory_SEQ
 )DefectCode
 
-)Q
-
-SELECT ReceivingID
-	,WKno
-	,POID
-	,Seq1
-	,Seq2
-	,IssueDate
-	,Refno
-	,SCIRefno
-	,ColorID
-	,Name
-	,SuppID
-	,ArriveQty
-	,ArriveRoll
-	,WeaveTypeID
-	,NonPhysical = IIF(NonPhysical = 1,'Y','')
-	,HowManyDyelotArrived
-	,AlreadyInspecetedDyelot
-	,InspectionPercentage
-	,DefectCode
-	,TotalPoints = SUM(TotalPoints)
+SELECT
+	Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,
+	WK,
+	ReceivingID,
+	StyleID,
+	BrandID,
+	Supplier,
+	Refno,
+	ColorID,
+	IssueDate,
+	TransferQty,
+	WeaveTypeID,
+	SCIRefno,
+	Name,
+	ctRoll,
+	NonPhysical = IIF(NonPhysical = 1,'Y',''),
+	[HowManyDyelot],
+	AlreadyInspecetedDyelot,
+	InspectionPercentage,
+	DefectCode,
+	TotalPoints = SUM(TotalPoints)
 FROM #DefectSummary
-GROUP BY ReceivingID ,WKno ,POID ,Seq1 ,Seq2 ,IssueDate ,Refno ,SCIRefno
-	,ColorID ,Name ,SuppID ,ArriveQty ,ArriveRoll ,WeaveTypeID ,NonPhysical
-	,HowManyDyelotArrived ,AlreadyInspecetedDyelot ,InspectionPercentage ,DefectCode
+GROUP BY Bulk_SP,Bulk_SEQ,TransferID,Inventory_SP,Inventory_SEQ,WK,ReceivingID,StyleID,BrandID,Supplier,Refno,
+	ColorID,IssueDate,TransferQty,WeaveTypeID,SCIRefno,Name,ctRoll,NonPhysical,[HowManyDyelot],AlreadyInspecetedDyelot,
+	InspectionPercentage,DefectCode
+ORDER BY ReceivingID,WK,Bulk_SP,Bulk_SEQ,TotalPoints
 
-ORDER BY ReceivingID,WKno,POID,Seq1,Seq2,TotalPoints
+drop table #tmp1,#tmp2,#tmp3,#Sheet2,#DefectSummary,#tmpR,#tmpT
 
-
-drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2,#DefectSummary
 ");
-            #endregion
+                #endregion
+            }
+
             return base.ValidateInput();
         }
 
@@ -598,7 +1078,7 @@ drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2,#DefectSummary
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             return DBProxy.Current.Select(null, this.Sqlcmd.ToString(), this.parameters, out this.PrintData);
-         }
+        }
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
@@ -613,12 +1093,25 @@ drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2,#DefectSummary
             }
 
             string excelName = "Quality_R11";
+            if (this.type == "2")
+            {
+                excelName = "Quality_R11_B2A";
+            }
+
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             MyUtility.Excel.CopyToXls(this.PrintData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
-            if (this.PrintData[1].Rows.Count > 1)
+            if (this.PrintData[1].Rows.Count > 0)
             {
                 MyUtility.Excel.CopyToXls(this.PrintData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]);
+            }
+
+            if (this.PrintData[2].Rows.Count > 0)
+            {
                 MyUtility.Excel.CopyToXls(this.PrintData[2], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[3]);
+            }
+
+            if (this.PrintData[3].Rows.Count > 0)
+            {
                 MyUtility.Excel.CopyToXls(this.PrintData[3], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[4]);
             }
 
@@ -630,6 +1123,21 @@ drop table #tmp1,#tmp2,#tmp3,#tmp4,#Sheet2,#DefectSummary
             Marshal.FinalReleaseComObject(excelApp);
 
             return true;
+        }
+
+        private void RadioPanelTransaction_ValueChanged(object sender, EventArgs e)
+        {
+            switch (this.radioPanelTransaction.Value)
+            {
+                case "1":
+                    this.lbDate.Text = "Arrive W/H Date";
+                    this.lbSP.Text = "SP#";
+                    break;
+                case "2":
+                    this.lbDate.Text = "Issue Date";
+                    this.lbSP.Text = "Bulk SP#";
+                    break;
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,7 +18,9 @@ namespace Sci.Production.Quality
     {
         private readonly List<SqlParameter> parameters = new List<SqlParameter>();
         private string Sqlcmd;
+
         private DataTable[] PrintData;
+
         private string baseReceivingSql = @"
 select	f.POID,
 		[Seq] = CONCAT(f.SEQ1, ' ', f.SEQ2),
@@ -104,6 +107,165 @@ where 1 = 1
 {2}
 ";
 
+        private string B2A_sqlcmd = @"
+select
+	TransferID = st.Id,
+	st.IssueDate,
+	std.FromPOID,
+	FromSeq = CONCAT(std.FromSeq1, '-' + std.FromSeq2),
+	std.ToPOID,
+	ToSeq = CONCAT(std.ToSeq1, '-' + std.ToSeq2),
+	std.FromSeq1,
+	std.FromSeq2,
+	std.ToSeq1,
+	std.ToSeq2,
+	std.FromRoll,
+	std.FromDyelot,
+	TransferQty = std.Qty,	
+	fa.WeaveTypeID,	
+	fa.Width,
+	WK = {4},
+	f.ReceivingID,
+	f.Suppid,
+	Approve = Concat (f.Approve, '-', p2.Name),
+	f.ApproveDate,
+	f.TotalInspYds,
+	FirID = f.ID,
+
+	F.NonPhysical,
+	f.Physical,
+	f.PhysicalInspector,
+	f.PhysicalDate,
+		
+	F.nonWeight,
+	f.Weight,
+	f.WeightInspector,
+	f.WeightDate,
+	
+	F.nonShadebond,
+	f.ShadeBond,
+	ShadeBondInspector = f.ShadeboneInspector,
+	f.ShadeBondDate,
+	
+	F.nonContinuity,
+	f.Continuity,
+	f.ContinuityInspector,
+	f.ContinuityDate,
+	
+	F.nonOdor,
+	f.Odor,
+	f.OdorInspector,
+	f.OdorDate,
+
+	o.StyleID,
+	o.BrandID,
+	psd.Refno,
+	psd.ColorID,
+	ctRoll = ct.Roll,
+	ctDyelot = ct2.Dyelot,
+	std.Ukey
+into #tmp{2}
+from SubTransfer st
+inner join SubTransfer_Detail std on std.id = st.id
+inner join Orders O on O.ID = std.FromPOID
+inner join PO_Supp_Detail PSD on PSD.ID = std.FromPOID and PSD.SEQ1 = std.FromSeq1 and PSD.SEQ2 = std.FromSeq2
+inner join PO_Supp PS on PSD.ID = PS.ID and PSD.SEQ1 = PS.SEQ1
+inner join Supp S on PS.SuppID = S.ID
+inner join Fabric fa on PSD.SCIRefno = fa.SCIRefno
+{5} join {0} b on b.PoId = std.FromPOID and b.Seq1 = std.FromSeq1 and b.Seq2 = std.FromSeq2 and b.Roll = std.FromRoll and b.Dyelot = std. FromDyelot
+left join {1} a on a.Id = b.Id 
+left join FIR F on F.ReceivingID = a.ID and F.POID = b.PoId and F.SEQ1 = b.Seq1 and F.SEQ2 = b.Seq2
+left join pass1 p2 with (nolock) on p2.id = f.Approve
+outer apply(
+    select Roll = count(1)
+    from(
+        select distinct std2.FromRoll, std2.FromDyelot
+        from SubTransfer_Detail std2 with (nolock)
+		inner join {0} b2 on b2.PoId = std2.FromPOID 
+                             and b2.Seq1 = std2.FromSeq1 
+                             and b2.Seq2 = std2.FromSeq2
+                             and b2.Roll = std2.FromRoll 
+                             and b2.Dyelot = std2. FromDyelot
+        where std2.id = st.id 
+                and std.ToPOID = std2.ToPOID 
+                and std.ToSeq1 = std2.ToSeq1 
+                and std.ToSeq2 = std2.ToSeq2
+		        and std.FromPOID = std2.FromPOID 
+                and std.FromSeq1 = std2.FromSeq1 
+                and std.FromSeq2 = std2.FromSeq2 
+		        and b2.id = a.id
+    )x
+)ct
+outer apply(
+    select Dyelot = count(1)
+    from(
+        select distinct std2.FromDyelot
+        from SubTransfer_Detail std2 with (nolock)
+		inner join {0} b2 on b2.PoId = std2.FromPOID 
+                             and b2.Seq1 = std2.FromSeq1 
+                             and b2.Seq2 = std2.FromSeq2
+                             and b2.Roll = std2.FromRoll 
+                             and b2.Dyelot = std2. FromDyelot
+        where std2.id = st.id 
+                and std.ToPOID = std2.ToPOID 
+                and std.ToSeq1 = std2.ToSeq1 
+                and std.ToSeq2 = std2.ToSeq2
+                and std.FromPOID = std2.FromPOID 
+                and std.FromSeq1 = std2.FromSeq1 
+                and std.FromSeq2 = std2.FromSeq2 
+                and b2.id = a.id
+    )x
+)ct2
+Where st.type = 'B' and st.Status = 'Confirmed' and PSD.FabricType = 'F'
+{3}
+";
+
+        private string B2A_select = @"
+select
+	f.ToPOID,
+	f.ToSeq,
+	f.TransferID,
+	f.FromPOID,
+	f.FromSeq,
+	f.WK,
+	f.ReceivingID,
+	f.StyleID,
+	f.BrandID,
+	f.Suppid,
+	f.Refno,
+	f.ColorID,
+	f.IssueDate,
+	TransferQty = sum(f.TransferQty),
+	f.WeaveTypeID,
+	f.ctRoll,
+	f.ctDyelot,
+
+	{3}
+
+	Non{1} = IIF(f.Non{1} = 1,'Y','') ,
+	f.{1},
+
+	{4}
+
+	{1}Inspector = Concat (f.{1}Inspector, '-', p1.Name),
+
+	{5}f.{1}Date,
+
+	f.Approve,
+	f.ApproveDate
+
+    {6}
+from #tmp{0} f
+left join pass1 p1 with (nolock) on p1.id = f.{1}Inspector
+{2}
+where 1=1
+{8}
+group by f.ToPOID,f.ToSeq,f.TransferID,f.FromPOID,f.FromSeq,f.WK,f.ReceivingID,f.StyleID,f.BrandID,f.Suppid,
+	f.Refno,f.ColorID,f.IssueDate,f.WeaveTypeID,f.ctRoll,f.ctDyelot,f.Approve,f.ApproveDate,p1.Name,
+	f.Non{1},f.{1},f.{1}Inspector,f.{1}Date
+	{7}
+";
+
         /// <inheritdoc/>
         public R12(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -169,12 +331,14 @@ where 1 = 1
             return returnResult;
         }
 
-        private string AddJoinByReportType(string fromType, string inspectionTypeTable)
+        private string AddJoinByReportType(string fromType, string inspectionTypeTable, string inspectionType = "")
         {
             string joinString = string.Empty;
-            if (fromType == "TransferIn")
+            if (inspectionType == "Physical")
             {
-                joinString = $@"
+                if (fromType == "TransferIn")
+                {
+                    joinString = $@"
 outer apply(
     select Dyelot = count(1)
     from(
@@ -185,10 +349,10 @@ outer apply(
     )x
 )ct3
 ";
-            }
-            else
-            {
-                joinString = $@"
+                }
+                else
+                {
+                    joinString = $@"
 outer apply(
     select Dyelot = count(1)
     from(
@@ -199,6 +363,7 @@ outer apply(
     )x
 )ct3
 ";
+                }
             }
 
             if (this.radioWKSeq.Checked)
@@ -222,16 +387,164 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
             return joinString;
         }
 
+        private string B2A_Select(string inspectionType)
+        {
+            string columnSource = string.Empty;
+            string column1 = string.Empty;
+            string column2 = string.Empty;
+            string column3 = string.Empty;
+            string column4 = string.Empty;
+            string groupColumn = string.Empty;
+            string where = this.AddInspectionWhere(string.Empty, inspectionType);
+            if (inspectionType == "Physical")
+            {
+                columnSource = @"
+outer apply(
+    select Dyelot = count(1)
+    from(
+        select distinct std.FromDyelot
+        from SubTransfer_Detail	std
+		inner join FIR_Physical i with (nolock) on i.Roll = std.FromRoll and i.Dyelot = std.FromDyelot and i.Result <> ''
+        where i.ID = f.FirID and std.id = f.TransferID
+		and std.ToPOID = f.ToPOID and std.ToSeq1 = f.ToSeq1 and std.ToSeq2 = f.ToSeq2
+		and std.FromPOID = f.FromPOID and std.FromSeq1 = f.FromSeq1 and std.FromSeq2 = f.FromSeq2 
+    )x
+)ct3
+";
+                column1 = "ct3.Dyelot,";
+                groupColumn = ",ct3.Dyelot";
+            }
+
+            if (this.radioWKSeq.Checked)
+            {
+                if (inspectionType == "Physical")
+                {
+                    column2 = "f.TotalInspYds,";
+                    groupColumn += ",f.TotalInspYds";
+                }
+            }
+            else
+            {
+                string firtable = inspectionType == "ShadeBond" ? "ShadeBone" : inspectionType;
+                columnSource += $@"
+left join FIR_{firtable} i with (nolock) on i.ID = f.FirID and i.Roll = f.FromRoll and i.Dyelot = f.FromDyelot
+left join pass1 p3 with (nolock) on p3.id = i.Inspector
+";
+                column3 = "--"; // -- f.{1}Date
+                column4 = @"
+	,f.FromRoll,f.FromDyelot,
+";
+                groupColumn += @"
+	,f.FromRoll,f.FromDyelot
+";
+                switch (inspectionType)
+                {
+                    case "Physical":
+                        column4 += @"
+	i.TicketYds,
+	i.ActualYds,
+	[DiffLth] = i.ActualYds - i.TicketYds,
+	i.TransactionID,
+	f.Width,
+	i.FullWidth,
+	i.ActualWidth,
+	i.TotalPoint,
+	i.PointRate,
+	i.Result,
+	i.Grade,
+	[Moisture] = iif(i.Moisture = 1, 'Y', ''),
+	i.Remark,
+	i.InspDate,
+	Inspector = Concat(i.Inspector, '-', p3.Name)
+";
+                        groupColumn += @"
+	,i.TicketYds,i.ActualYds,i.TransactionID,f.Width,
+	i.FullWidth,i.ActualWidth,i.TotalPoint,i.PointRate,i.Result,i.Grade,i.Moisture,i.Remark,i.InspDate,i.Inspector,p3.Name
+";
+                        break;
+                    case "Weight":
+                        column4 += @"
+    i.WeightM2,
+    i.AverageWeightM2,
+    i.Difference,
+    i.Result,
+    i.InspDate,
+	Inspector = Concat(i.Inspector, '-', p3.Name),
+    i.Remark
+";
+                        groupColumn += @"
+   ,i.WeightM2,i.AverageWeightM2,i.Difference,i.Result,i.InspDate,i.Inspector,p3.Name,i.Remark
+";
+                        break;
+                    case "ShadeBond":
+                        column4 += @"
+    i.TicketYds,
+    i.Scale,
+    i.Result,
+    i.Tone,
+    i.InspDate,
+	Inspector = Concat(i.Inspector, '-', p3.Name),
+    i.Remark
+";
+                        groupColumn += @"
+   ,i.TicketYds,i.Scale,i.Result,i.Tone,i.InspDate,i.Inspector,p3.Name,i.Remark
+";
+                        break;
+                    case "Continuity":
+                        column4 += @"
+    i.TicketYds,
+    i.Scale,
+    i.Result,
+    i.InspDate,
+	Inspector = Concat(i.Inspector, '-', p3.Name),
+    i.Remark
+";
+                        groupColumn += @"
+    ,i.TicketYds,i.Scale,i.Result,i.InspDate,i.Inspector,p3.Name,i.Remark
+";
+                        break;
+                    case "Odor":
+                        column4 += @"
+    i.Result,
+    i.InspDate,
+	Inspector = Concat(i.Inspector, '-', p3.Name),
+    i.Remark
+";
+                        groupColumn += @"
+   ,i.Result,i.InspDate,i.Inspector,p3.Name,i.Remark
+";
+                        break;
+                }
+            }
+
+            return string.Format(this.B2A_select, "R", inspectionType, string.Format(columnSource, "Receiving"), column1, column2, column3, column4, groupColumn, where) +
+                "\r\nunion all\r\n" +
+                string.Format(this.B2A_select, "T", inspectionType, string.Format(columnSource, "TransferIn"), column1, column2, column3, column4, groupColumn, where);
+        }
+
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (this.dateArriveWHDate.Value1.Empty() &&
-                this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
-                this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() &&
-                !this.dateInspectionDate.HasValue)
+            if (this.radioPanelTransaction.Value == "1")
             {
-                MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# and Inspection Date can't all empty!");
-                return false;
+                if (this.dateArriveWHDate.Value1.Empty() &&
+                    this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
+                    this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty() &&
+                    !this.dateInspectionDate.HasValue)
+                {
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# and Inspection Date can't all empty!");
+                    return false;
+                }
+            }
+            else
+            {
+                if (this.dateArriveWHDate.Value1.Empty() &&
+                    this.txtSP1.Text.Empty() && this.txtSP2.Text.Empty() &&
+                    this.txtWK1.Text.Empty() && this.txtWK2.Text.Empty())
+                {
+                    MyUtility.Msg.WarningBox("Arrive W/H Date, SP#, WK# can't all empty!");
+                    return false;
+                }
             }
 
             this.Sqlcmd = string.Empty;
@@ -240,51 +553,53 @@ left join {inspectionTypeTable} i with (nolock) on i.ID = f.ID and i.Roll = b.Ro
             string where1 = string.Empty;
             string where2 = string.Empty;
 
-            if (!this.dateArriveWHDate.Value1.Empty())
+            if (this.radioPanelTransaction.Value == "1")
             {
-                where1 += $"and a.WhseArrival between @Date1 and @Date2" + Environment.NewLine;
-                where2 += $"and a.IssueDate between @Date1 and @Date2" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@Date1", this.dateArriveWHDate.Value1));
-                this.parameters.Add(new SqlParameter("@Date2", this.dateArriveWHDate.Value2));
-            }
+                if (!this.dateArriveWHDate.Value1.Empty())
+                {
+                    where1 += $"and a.WhseArrival between @Date1 and @Date2" + Environment.NewLine;
+                    where2 += $"and a.IssueDate between @Date1 and @Date2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@Date1", this.dateArriveWHDate.Value1));
+                    this.parameters.Add(new SqlParameter("@Date2", this.dateArriveWHDate.Value2));
+                }
 
-            if (!this.txtSP1.Text.Empty())
-            {
-                where1 += $"and f.POID between @SP1 and @SP2" + Environment.NewLine;
-                where2 += $"and f.POID between @SP1 and @SP2" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@SP1", this.txtSP1.Text));
-                this.parameters.Add(new SqlParameter("@SP2", this.txtSP2.Text));
-            }
+                if (!this.txtSP1.Text.Empty())
+                {
+                    where1 += $"and f.POID between @SP1 and @SP2" + Environment.NewLine;
+                    where2 += $"and f.POID between @SP1 and @SP2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@SP1", this.txtSP1.Text));
+                    this.parameters.Add(new SqlParameter("@SP2", this.txtSP2.Text));
+                }
 
-            if (!this.txtWK1.Text.Empty())
-            {
-                where1 += $"and a.ExportID between @ExportID1 and @ExportID2" + Environment.NewLine;
+                if (!this.txtWK1.Text.Empty())
+                {
+                    where1 += $"and a.ExportID between @ExportID1 and @ExportID2" + Environment.NewLine;
 
-                // Trandfer In 沒有 WK#
-                where2 += $"and 1=0" + Environment.NewLine;
-                this.parameters.Add(new SqlParameter("@ExportID1", this.txtWK1.Text));
-                this.parameters.Add(new SqlParameter("@ExportID2", this.txtWK2.Text));
-            }
+                    // Trandfer In 沒有 WK#
+                    where2 += $"and 1=0" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@ExportID1", this.txtWK1.Text));
+                    this.parameters.Add(new SqlParameter("@ExportID2", this.txtWK2.Text));
+                }
 
-            if (this.dateInspectionDate.HasValue)
-            {
-                this.parameters.Add(new SqlParameter("@InsDate1", this.dateInspectionDate.Value1));
-                this.parameters.Add(new SqlParameter("@InsDate2", this.dateInspectionDate.Value2));
-            }
+                if (this.dateInspectionDate.HasValue)
+                {
+                    this.parameters.Add(new SqlParameter("@InsDate1", this.dateInspectionDate.Value1));
+                    this.parameters.Add(new SqlParameter("@InsDate2", this.dateInspectionDate.Value2));
+                }
 
-            #region Physical
-            if (this.comboInspection.Text == "Physical" || this.comboInspection.Text == "All")
-            {
-                string joinPhysical = @"
+                #region Physical
+                if (this.comboInspection.Text == "Physical" || this.comboInspection.Text == "All")
+                {
+                    string joinPhysical = @"
 left join pass1 p1 with (nolock) on p1.id = f.PhysicalInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 
 ";
 
-                string colPhysicalWKSeqOnly = this.radioWKSeq.Checked ? "f.TotalInspYds," : string.Empty;
-                string colPhysicalDateWKSeqOnly = this.radioWKSeq.Checked ? "f.PhysicalDate," : string.Empty;
+                    string colPhysicalWKSeqOnly = this.radioWKSeq.Checked ? "f.TotalInspYds," : string.Empty;
+                    string colPhysicalDateWKSeqOnly = this.radioWKSeq.Checked ? "f.PhysicalDate," : string.Empty;
 
-                string colPhysical = $@"
+                    string colPhysical = $@"
 Dyelot2=ct3.Dyelot,
 [NonPhysical] = iif(f.NonPhysical = 1, 'Y', ''),
 f.Physical,
@@ -293,12 +608,12 @@ f.Physical,
 {colPhysicalDateWKSeqOnly}
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate";
-                if (this.radioRollDyelot.Checked)
-                {
-                    joinPhysical += @"
+                    if (this.radioRollDyelot.Checked)
+                    {
+                        joinPhysical += @"
 left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
-                    colPhysical += @",
+                        colPhysical += @",
 b.Roll,
 b.Dyelot,
 i.TicketYds,
@@ -317,27 +632,27 @@ i.Remark,
 i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name)
 ";
-                }
+                    }
 
-                this.Sqlcmd += $@"
-{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical)}
+                    this.Sqlcmd += $@"
+{string.Format(this.baseReceivingSql, colPhysical, this.AddJoinByReportType("Receiving", "FIR_Physical", "Physical"), this.AddInspectionWhere(where1, "Physical"), joinPhysical)}
 union all
-{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical)}
+{string.Format(this.baseTransferInSql, colPhysical, this.AddJoinByReportType("TransferIn", "FIR_Physical", "Physical"), this.AddInspectionWhere(where2, "Physical"), joinPhysical)}
 order by POID, Seq, ExportId, ReceivingID
 ";
-            }
-            #endregion
+                }
+                #endregion
 
-            #region Weight
-            if (this.comboInspection.Text == "Weight" || this.comboInspection.Text == "All")
-            {
-                string joinWeight = @"
+                #region Weight
+                if (this.comboInspection.Text == "Weight" || this.comboInspection.Text == "All")
+                {
+                    string joinWeight = @"
 left join pass1 p1 with (nolock) on p1.id = f.WeightInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
-                string colWeightDateWKSeqOnly = this.radioWKSeq.Checked ? "f.WeightDate," : string.Empty;
+                    string colWeightDateWKSeqOnly = this.radioWKSeq.Checked ? "f.WeightDate," : string.Empty;
 
-                string colWeight = $@"
+                    string colWeight = $@"
 [NonWeight] = iif(f.NonWeight = 1, 'Y', ''),
 f.Weight,
 [WeightInspector] = Concat(p1.ID, '-', p1.Name),
@@ -345,12 +660,12 @@ f.Weight,
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
-                if (this.radioRollDyelot.Checked)
-                {
-                    joinWeight += @"
+                    if (this.radioRollDyelot.Checked)
+                    {
+                        joinWeight += @"
 left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
-                    colWeight += @",
+                        colWeight += @",
 b.Roll,
 b.Dyelot,
 i.WeightM2,
@@ -361,27 +676,27 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
-                }
+                    }
 
-                this.Sqlcmd += $@"
+                    this.Sqlcmd += $@"
 {string.Format(this.baseReceivingSql, colWeight, this.AddJoinByReportType("Receiving", "FIR_Weight"), this.AddInspectionWhere(where1, "Weight"), joinWeight)}
 union all
 {string.Format(this.baseTransferInSql, colWeight, this.AddJoinByReportType("TransferIn", "FIR_Weight"), this.AddInspectionWhere(where2, "Weight"), joinWeight)}
 order by POID, Seq, ExportId, ReceivingID
 ";
-            }
-            #endregion
+                }
+                #endregion
 
-            #region Shade Band
-            if (this.comboInspection.Text == "Shade Band" || this.comboInspection.Text == "All")
-            {
-                string joinShadeBond = @"
+                #region Shade Band
+                if (this.comboInspection.Text == "Shade Band" || this.comboInspection.Text == "All")
+                {
+                    string joinShadeBond = @"
 left join pass1 p1 with (nolock) on p1.id = f.ShadeboneInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
-                string colShadeBondDateWKSeqOnly = this.radioWKSeq.Checked ? "f.ShadebondDate," : string.Empty;
+                    string colShadeBondDateWKSeqOnly = this.radioWKSeq.Checked ? "f.ShadebondDate," : string.Empty;
 
-                string colShadeBond = $@"
+                    string colShadeBond = $@"
 [NonShadeBond] = iif(f.NonShadeBond = 1, 'Y', ''),
 f.Shadebond,
 [ShadeboneInspector] = Concat(p1.ID, '-', p1.Name),
@@ -389,12 +704,12 @@ f.Shadebond,
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
-                if (this.radioRollDyelot.Checked)
-                {
-                    joinShadeBond += @"
+                    if (this.radioRollDyelot.Checked)
+                    {
+                        joinShadeBond += @"
 left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
-                    colShadeBond += @",
+                        colShadeBond += @",
 b.Roll,
 b.Dyelot,
 i.TicketYds,
@@ -405,27 +720,27 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
-                }
+                    }
 
-                this.Sqlcmd += $@"
+                    this.Sqlcmd += $@"
 {string.Format(this.baseReceivingSql, colShadeBond, this.AddJoinByReportType("Receiving", "FIR_Shadebone"), this.AddInspectionWhere(where1, "ShadeBond"), joinShadeBond)}
 union all
 {string.Format(this.baseTransferInSql, colShadeBond, this.AddJoinByReportType("TransferIn", "FIR_Shadebone"), this.AddInspectionWhere(where2, "ShadeBond"), joinShadeBond)}
 order by POID, Seq, ExportId, ReceivingID
 ";
-            }
-            #endregion
+                }
+                #endregion
 
-            #region Continuity
-            if (this.comboInspection.Text == "Continuity" || this.comboInspection.Text == "All")
-            {
-                string joinContinuity = @"
+                #region Continuity
+                if (this.comboInspection.Text == "Continuity" || this.comboInspection.Text == "All")
+                {
+                    string joinContinuity = @"
 left join pass1 p1 with (nolock) on p1.id = f.ContinuityInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
-                string colContinuityDateWKSeqOnly = this.radioWKSeq.Checked ? "f.ContinuityDate," : string.Empty;
+                    string colContinuityDateWKSeqOnly = this.radioWKSeq.Checked ? "f.ContinuityDate," : string.Empty;
 
-                string colContinuity = $@"
+                    string colContinuity = $@"
 [NonContinuity] = iif(f.NonContinuity = 1, 'Y', ''),
 f.Continuity,
 [ContinuityInspector] = Concat(p1.ID, '-', p1.Name),
@@ -433,12 +748,12 @@ f.Continuity,
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
-                if (this.radioRollDyelot.Checked)
-                {
-                    joinContinuity += @"
+                    if (this.radioRollDyelot.Checked)
+                    {
+                        joinContinuity += @"
 left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
-                    colContinuity += @",
+                        colContinuity += @",
 b.Roll,
 b.Dyelot,
 i.TicketYds,
@@ -448,27 +763,27 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
-                }
+                    }
 
-                this.Sqlcmd += $@"
+                    this.Sqlcmd += $@"
 {string.Format(this.baseReceivingSql, colContinuity, this.AddJoinByReportType("Receiving", "FIR_Continuity"), this.AddInspectionWhere(where1, "Continuity"), joinContinuity)}
 union all
 {string.Format(this.baseTransferInSql, colContinuity, this.AddJoinByReportType("TransferIn", "FIR_Continuity"), this.AddInspectionWhere(where2, "Continuity"), joinContinuity)}
 order by POID, Seq, ExportId, ReceivingID
 ";
-            }
-            #endregion
+                }
+                #endregion
 
-            #region Odor
-            if (this.comboInspection.Text == "Odor" || this.comboInspection.Text == "All")
-            {
-                string joinOdor = @"
+                #region Odor
+                if (this.comboInspection.Text == "Odor" || this.comboInspection.Text == "All")
+                {
+                    string joinOdor = @"
 left join pass1 p1 with (nolock) on p1.id = f.OdorInspector
 left join pass1 p2 with (nolock) on p2.id = f.Approve
 ";
-                string colOdorDateWKSeqOnly = this.radioWKSeq.Checked ? "f.OdorDate," : string.Empty;
+                    string colOdorDateWKSeqOnly = this.radioWKSeq.Checked ? "f.OdorDate," : string.Empty;
 
-                string colOdor = $@"
+                    string colOdor = $@"
 [NonOdor] = iif(f.NonOdor = 1, 'Y', ''),
 f.Odor,
 [OdorInspector] = Concat(p1.ID, '-', p1.Name),
@@ -476,12 +791,12 @@ f.Odor,
 [Approver] = Concat(p2.ID, '-', p2.Name),
 f.ApproveDate
 ";
-                if (this.radioRollDyelot.Checked)
-                {
-                    joinOdor += @"
+                    if (this.radioRollDyelot.Checked)
+                    {
+                        joinOdor += @"
 left join pass1 p3 with (nolock) on p3.id = i.Inspector
 ";
-                    colOdor += @",
+                        colOdor += @",
 b.Roll,
 b.Dyelot,
 i.Result,
@@ -489,16 +804,79 @@ i.InspDate,
 Inspector = Concat(p3.ID, '-', p3.Name),
 i.Remark
 ";
-                }
+                    }
 
-                this.Sqlcmd += $@"
+                    this.Sqlcmd += $@"
 {string.Format(this.baseReceivingSql, colOdor, this.AddJoinByReportType("Receiving", "FIR_Odor"), this.AddInspectionWhere(where1, "Odor"), joinOdor)}
 union all
 {string.Format(this.baseTransferInSql, colOdor, this.AddJoinByReportType("TransferIn", "FIR_Odor"), this.AddInspectionWhere(where2, "Odor"), joinOdor)}
 order by POID, Seq, ExportId, ReceivingID
 ";
+                }
+                #endregion
             }
-            #endregion
+
+            // B2A
+            else
+            {
+                where2 = "and not exists(select 1 from #tmpR r where r.Ukey = std.Ukey)" + Environment.NewLine;
+                if (!this.dateArriveWHDate.Value1.Empty())
+                {
+                    where1 += $"and st.IssueDate between @Date1 and @Date2" + Environment.NewLine;
+                    where2 += $"and st.IssueDate between @Date1 and @Date2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@Date1", this.dateArriveWHDate.Value1));
+                    this.parameters.Add(new SqlParameter("@Date2", this.dateArriveWHDate.Value2));
+                }
+
+                if (!this.txtSP1.Text.Empty())
+                {
+                    where1 += $"and std.ToPOID between @SP1 and @SP2" + Environment.NewLine;
+                    where2 += $"and std.ToPOID between @SP1 and @SP2" + Environment.NewLine;
+                    this.parameters.Add(new SqlParameter("@SP1", this.txtSP1.Text));
+                    this.parameters.Add(new SqlParameter("@SP2", this.txtSP2.Text));
+                }
+
+                if (!this.txtWK1.Text.Empty())
+                {
+                    where1 += $"and st.ID between @TID1 and @TID2" + Environment.NewLine;
+                    where2 += $"and st.ID between @TID1 and @TID2" + Environment.NewLine; // Trandfer In 沒有 WK#
+                    this.parameters.Add(new SqlParameter("@TID1", this.txtWK1.Text));
+                    this.parameters.Add(new SqlParameter("@TID2", this.txtWK2.Text));
+                }
+
+                if (this.dateInspectionDate.HasValue)
+                {
+                    this.parameters.Add(new SqlParameter("@InsDate1", this.dateInspectionDate.Value1));
+                    this.parameters.Add(new SqlParameter("@InsDate2", this.dateInspectionDate.Value2));
+                }
+
+                // 基本資料
+                this.Sqlcmd = string.Format(this.B2A_sqlcmd, "Receiving_Detail", "Receiving", "R", where1, "a.ExportId", "inner") +
+                    string.Format(this.B2A_sqlcmd, "TransferIn_Detail", "TransferIn", "T", where2, "''", "left");
+
+                // 要撈哪些
+                switch (this.comboInspection.Text)
+                {
+                    case "Physical":
+                        this.Sqlcmd += this.B2A_Select("Physical");
+                        break;
+                    case "Weight":
+                        this.Sqlcmd += this.B2A_Select("Weight");
+                        break;
+                    case "Shade Band":
+                        this.Sqlcmd += this.B2A_Select("ShadeBond");
+                        break;
+                    case "Continuity":
+                        this.Sqlcmd += this.B2A_Select("Continuity");
+                        break;
+                    case "Odor":
+                        this.Sqlcmd += this.B2A_Select("Odor");
+                        break;
+                    default:
+                        this.Sqlcmd += this.B2A_Select("Physical") + this.B2A_Select("Weight") + this.B2A_Select("ShadeBond") + this.B2A_Select("Continuity") + this.B2A_Select("Odor");
+                        break;
+                }
+            }
 
             return base.ValidateInput();
         }
@@ -528,11 +906,10 @@ order by POID, Seq, ExportId, ReceivingID
 
                 for (int i = 0; i < sheetCnt; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Worksheet worksheetA = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
-                    Microsoft.Office.Interop.Excel.Worksheet worksheetB = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 2];
+                    Excel.Worksheet worksheetA = (Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1];
+                    Excel.Worksheet worksheetB = (Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 2];
                     worksheetA.Copy(worksheetB);
-                    ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[i + 1]).Select();
-                    int sheetMaxRow = (i + 1) * excelMaxRow;
+                    ((Excel.Worksheet)excel.Sheets[i + 1]).Select();
 
                     for (int j = 0; j < loadTimes; j++)
                     {
@@ -548,8 +925,8 @@ order by POID, Seq, ExportId, ReceivingID
                     }
                 }
 
-                ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[sheetCnt + 1]).Delete();
-                ((Microsoft.Office.Interop.Excel.Worksheet)excel.Sheets[1]).Select();
+                ((Excel.Worksheet)excel.Sheets[sheetCnt + 1]).Delete();
+                ((Excel.Worksheet)excel.Sheets[1]).Select();
                 this.SaveExcelwithName(excel, excelTitle);
             }
             else
@@ -562,7 +939,6 @@ order by POID, Seq, ExportId, ReceivingID
                 };
 
                 comDetail.WriteTable(dt, 2);
-                Excel.Worksheet worksheetScrapDetail = excelDetail.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 this.SaveExcelwithName(excelDetail, excelTitle);
             }
         }
@@ -592,36 +968,36 @@ order by POID, Seq, ExportId, ReceivingID
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-
+            string transaction = this.radioPanelTransaction.Value == "1" ? string.Empty : "B2A_";
             string reportType = this.radioWKSeq.Checked ? "WKSeq" : "RollDyelot";
             string reportTitle = this.radioWKSeq.Checked ? " By WK, Seq" : " By Roll, Dyelot";
 
             if (this.comboInspection.Text == "All")
             {
-                this.CreateExcel($"Quality_R12_Physical{reportType}.xltx", $"R12 Fabric Physical Inspection List{reportTitle}", this.PrintData[0]);
-                this.CreateExcel($"Quality_R12_Weight{reportType}.xltx", $"R12 Fabric Weight Test List{reportTitle}", this.PrintData[1]);
-                this.CreateExcel($"Quality_R12_ShadeBond{reportType}.xltx", $"R12 Fabric Shade Band Test List{reportTitle}", this.PrintData[2]);
-                this.CreateExcel($"Quality_R12_Continuity{reportType}.xltx", $"R12 Fabric Continuilty Test List{reportTitle}", this.PrintData[3]);
-                this.CreateExcel($"Quality_R12_Odor{reportType}.xltx", $"R12 Fabric Odor Test List{reportTitle}", this.PrintData[4]);
+                this.CreateExcel($"Quality_R12_{transaction}Physical{reportType}.xltx", $"R12 Fabric Physical Inspection List{reportTitle}", this.PrintData[0]);
+                this.CreateExcel($"Quality_R12_{transaction}Weight{reportType}.xltx", $"R12 Fabric Weight Test List{reportTitle}", this.PrintData[1]);
+                this.CreateExcel($"Quality_R12_{transaction}ShadeBond{reportType}.xltx", $"R12 Fabric Shade Band Test List{reportTitle}", this.PrintData[2]);
+                this.CreateExcel($"Quality_R12_{transaction}Continuity{reportType}.xltx", $"R12 Fabric Continuilty Test List{reportTitle}", this.PrintData[3]);
+                this.CreateExcel($"Quality_R12_{transaction}Odor{reportType}.xltx", $"R12 Fabric Odor Test List{reportTitle}", this.PrintData[4]);
             }
             else
             {
                 switch (this.comboInspection.Text)
                 {
                     case "Physical":
-                        this.CreateExcel($"Quality_R12_Physical{reportType}.xltx", $"R12 Fabric Physical Inspection List{reportTitle}", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_{transaction}Physical{reportType}.xltx", $"R12 Fabric Physical Inspection List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Weight":
-                        this.CreateExcel($"Quality_R12_Weight{reportType}.xltx", $"R12 Fabric Weight Test List{reportTitle}", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_{transaction}Weight{reportType}.xltx", $"R12 Fabric Weight Test List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Shade Band":
-                        this.CreateExcel($"Quality_R12_ShadeBond{reportType}.xltx", $"R12 Fabric Shade Band Test List{reportTitle}", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_{transaction}ShadeBond{reportType}.xltx", $"R12 Fabric Shade Band Test List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Continuity":
-                        this.CreateExcel($"Quality_R12_Continuity{reportType}.xltx", $"R12 Fabric Continuilty Test List{reportTitle}", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_{transaction}Continuity{reportType}.xltx", $"R12 Fabric Continuilty Test List{reportTitle}", this.PrintData[0]);
                         break;
                     case "Odor":
-                        this.CreateExcel($"Quality_R12_Odor{reportType}.xltx", $"R12 Fabric Odor Test List{reportTitle}", this.PrintData[0]);
+                        this.CreateExcel($"Quality_R12_{transaction}Odor{reportType}.xltx", $"R12 Fabric Odor Test List{reportTitle}", this.PrintData[0]);
                         break;
                     default:
                         break;
@@ -630,6 +1006,29 @@ order by POID, Seq, ExportId, ReceivingID
 
             this.HideWaitMessage();
             return true;
+        }
+
+        private void RadioPanelTransaction_ValueChanged(object sender, EventArgs e)
+        {
+            switch (this.radioPanelTransaction.Value)
+            {
+                case "1":
+                    this.lbDate.Text = "Arrive W/H Date";
+                    this.lbSP.Text = "SP#";
+                    this.label3.Text = "WK#";
+                    this.label6.RectStyle.Color = Color.SkyBlue;
+                    this.label6.TextStyle.Color = Color.Black;
+                    this.radioWKSeq.Text = "By WK#, Seq";
+                    break;
+                case "2":
+                    this.lbDate.Text = "Issue Date";
+                    this.lbSP.Text = "Bulk SP#";
+                    this.label3.Text = "Transfer ID";
+                    this.label6.RectStyle.Color = Color.Gray;
+                    this.label6.TextStyle.Color = Color.White;
+                    this.radioWKSeq.Text = "By Transfer ID, Seq";
+                    break;
+            }
         }
     }
 }
