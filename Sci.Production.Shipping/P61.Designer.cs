@@ -56,6 +56,7 @@
             this.labDecDate = new Sci.Win.UI.Label();
             this.dateCDate = new Sci.Win.UI.DateBox();
             this.displayPortofDischarge = new Sci.Win.UI.DisplayBox();
+            this.btnSharebyCDC = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -72,6 +73,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnSharebyCDC);
             this.masterpanel.Controls.Add(this.displayPortofDischarge);
             this.masterpanel.Controls.Add(this.labDecDate);
             this.masterpanel.Controls.Add(this.label1);
@@ -130,6 +132,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labDecDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPortofDischarge, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSharebyCDC, 0);
             // 
             // detailpanel
             // 
@@ -526,6 +529,17 @@
             this.displayPortofDischarge.Size = new System.Drawing.Size(32, 23);
             this.displayPortofDischarge.TabIndex = 65;
             // 
+            // btnSharebyCDC
+            // 
+            this.btnSharebyCDC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnSharebyCDC.Location = new System.Drawing.Point(642, 90);
+            this.btnSharebyCDC.Name = "btnSharebyCDC";
+            this.btnSharebyCDC.Size = new System.Drawing.Size(164, 30);
+            this.btnSharebyCDC.TabIndex = 66;
+            this.btnSharebyCDC.Text = "Share By CDC Item";
+            this.btnSharebyCDC.UseVisualStyleBackColor = true;
+            this.btnSharebyCDC.Click += new System.EventHandler(this.BtnSharebyCDC_Click);
+            // 
             // P61
             // 
             this.ApvChkValue = "New";
@@ -596,5 +610,6 @@
         private Win.UI.Label labDecDate;
         private Win.UI.DateBox dateCDate;
         private Win.UI.DisplayBox displayPortofDischarge;
+        private Win.UI.Button btnSharebyCDC;
     }
 }

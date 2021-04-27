@@ -2642,6 +2642,7 @@
     <Build Include="dbo\Tables\Style_QTThreadColorCombo_History.sql" />
     <Build Include="dbo\Tables\Style_QTThreadColorCombo_History_Detail.sql" />
     <Build Include="dbo\Tables\NewCDCode.sql" />
+    <Build Include="dbo\Tables\KHImportDeclaration_ShareCDCExpense.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

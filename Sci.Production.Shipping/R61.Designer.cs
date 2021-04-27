@@ -40,6 +40,8 @@
             this.labETA = new Sci.Win.UI.Label();
             this.labArrivWHDate = new Sci.Win.UI.Label();
             this.labDecDate = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.cbmReporttype = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -236,9 +238,34 @@
             this.labDecDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labDecDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 166);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(124, 23);
+            this.label2.TabIndex = 102;
+            this.label2.Text = "Report Type";
+            // 
+            // cbmReporttype
+            // 
+            this.cbmReporttype.BackColor = System.Drawing.Color.White;
+            this.cbmReporttype.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbmReporttype.FormattingEnabled = true;
+            this.cbmReporttype.IsSupportUnselect = true;
+            this.cbmReporttype.Items.AddRange(new object[] {
+            "Detail",
+            "Summary By Customs Description"});
+            this.cbmReporttype.Location = new System.Drawing.Point(136, 165);
+            this.cbmReporttype.Name = "cbmReporttype";
+            this.cbmReporttype.OldText = "";
+            this.cbmReporttype.Size = new System.Drawing.Size(121, 24);
+            this.cbmReporttype.TabIndex = 103;
+            // 
             // R61
             // 
-            this.ClientSize = new System.Drawing.Size(581, 193);
+            this.ClientSize = new System.Drawing.Size(581, 235);
+            this.Controls.Add(this.cbmReporttype);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.labDecDate);
             this.Controls.Add(this.labArrivWHDate);
             this.Controls.Add(this.labETA);
@@ -272,6 +299,8 @@
             this.Controls.SetChildIndex(this.labETA, 0);
             this.Controls.SetChildIndex(this.labArrivWHDate, 0);
             this.Controls.SetChildIndex(this.labDecDate, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.cbmReporttype, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -291,5 +320,7 @@
         private Win.UI.Label labETA;
         private Win.UI.Label labArrivWHDate;
         private Win.UI.Label labDecDate;
+        private Win.UI.Label label2;
+        private Win.UI.ComboBox cbmReporttype;
     }
 }

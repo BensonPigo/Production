@@ -1,20 +1,20 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tems;
-using System;
-using System.Collections.Generic;
+using Sci.Production.Prg;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Sci.Production.Shipping
 {
     /// <inheritdoc/>
-    public partial class P61 : Sci.Win.Tems.Input6
+    public partial class P61 : Win.Tems.Input6
     {
+        private readonly List<string> customsTypelist = new List<string>() { "Fabric", "Accessory", "Machine" };
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Fty;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ShipMode;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Vessel;
@@ -26,6 +26,12 @@ namespace Sci.Production.Shipping
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_NW;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_GW;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActNetKg;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActWeightKg;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActAmount;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_ActHSCode;
+        /// <inheritdoc/>
+        public static DataTable ShareDt { get; set; }
 
         /// <inheritdoc/>
         public P61(ToolStripMenuItem menuitem)
@@ -57,6 +63,7 @@ select id2.*
 ,[NWDiff] = id2.ActNetKg - id2.NetKg
 ,[HSCode] = kcd.HSCode
 ,kd.CDCCode
+,rn = row_number()over(order by id2.ukey)
 from KHImportDeclaration_Detail id2
 inner join KHImportDeclaration i on i.ID = id2.ID
 left join KHCustomsItem kc on kc.RefNo=id2.Refno
@@ -74,7 +81,7 @@ where id2.id = '{masterID}'
         protected override void OnDetailGridSetup()
         {
             #region Setting
-            Ict.Win.DataGridViewGeneratorTextColumnSettings fty_setting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings fty_setting = new DataGridViewGeneratorTextColumnSettings();
             fty_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
@@ -119,7 +126,7 @@ where id2.id = '{masterID}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings shipMode_setting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings shipMode_setting = new DataGridViewGeneratorTextColumnSettings();
             shipMode_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
@@ -164,7 +171,7 @@ where id2.id = '{masterID}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings port_setting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings port_setting = new DataGridViewGeneratorTextColumnSettings();
             port_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
@@ -209,7 +216,7 @@ where id2.id = '{masterID}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorTextColumnSettings refno_setting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings refno_setting = new DataGridViewGeneratorTextColumnSettings();
             refno_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null || MyUtility.Check.Empty(e.FormattedValue))
@@ -292,7 +299,7 @@ where vk.Refno = '{e.FormattedValue}'
                 }
             };
 
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings qty_setting = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings qty_setting = new DataGridViewGeneratorNumericColumnSettings();
             qty_setting.CellValidating += (s, e) =>
             {
                 if (!this.EditMode || this.CurrentDetailData == null)
@@ -334,6 +341,34 @@ where vk.Refno = '{dr["Refno"]}'
                 dr["Qty"] = e.FormattedValue;
                 dr.EndEdit();
             };
+
+            DataGridViewGeneratorNumericColumnSettings actnum = new DataGridViewGeneratorNumericColumnSettings();
+            actnum.CellPainting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                e.CellStyle.BackColor = this.customsTypelist.Contains(MyUtility.Convert.GetString(dr["CustomsType"])) ? Color.White : Color.Pink;
+                e.CellStyle.ForeColor = !this.EditMode ? Color.Black :
+                                        this.customsTypelist.Contains(MyUtility.Convert.GetString(dr["CustomsType"])) ? Color.Black : Color.Red;
+            };
+
+            DataGridViewGeneratorTextColumnSettings actHSCode = new DataGridViewGeneratorTextColumnSettings();
+            actHSCode.CellPainting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                e.CellStyle.BackColor = this.customsTypelist.Contains(MyUtility.Convert.GetString(dr["CustomsType"])) ? Color.White : Color.Pink;
+                e.CellStyle.ForeColor = !this.EditMode ? Color.Black :
+                                        this.customsTypelist.Contains(MyUtility.Convert.GetString(dr["CustomsType"])) ? Color.Black : Color.Red;
+            };
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
@@ -359,12 +394,12 @@ where vk.Refno = '{dr["Refno"]}'
            .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(25), iseditingreadonly: true)
            .Numeric("CDCUnitPrice", header: "CDC Unit Price", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Numeric("CDCAmount", header: "CDC Amount", width: Widths.AnsiChars(11), decimal_places: 4, integer_places: 9, iseditingreadonly: true)
-           .Numeric("ActNetKg", header: "Act. N.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: false)
-           .Numeric("ActWeightKg", header: "Act. G.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: false)
-           .Numeric("ActAmount", header: "Act. Amount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: false)
+           .Numeric("ActNetKg", header: "Act. N.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, settings: actnum).Get(out this.col_ActNetKg)
+           .Numeric("ActWeightKg", header: "Act. G.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, settings: actnum).Get(out this.col_ActWeightKg)
+           .Numeric("ActAmount", header: "Act. Amount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, settings: actnum).Get(out this.col_ActAmount)
            .Numeric("NWDiff", header: "N.W. Diff", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
            .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(14), iseditingreadonly: true)
-           .Text("ActHSCode", header: "Act.  HS Code", width: Widths.AnsiChars(14), iseditingreadonly: false)
+           .Text("ActHSCode", header: "Act. HS Code", width: Widths.AnsiChars(14), settings: actHSCode).Get(out this.col_ActHSCode)
            ;
 
             // 變色
@@ -380,10 +415,6 @@ where vk.Refno = '{dr["Refno"]}'
             this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["NetKg"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["WeightKg"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["ActNetKg"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["ActWeightKg"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["ActAmount"].DefaultCellStyle.BackColor = Color.Pink;
-            this.detailgrid.Columns["ActHSCode"].DefaultCellStyle.BackColor = Color.Pink;
 
             // 設定是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
@@ -422,8 +453,8 @@ declare @BLNo varchar(30) = '{blNo}'
 	and fe.Blno = @BLNo
 	group by fe.Consignee,f2.SCIRefno,fed.UnitId,fe.ID
 ) 
-select *
-  from (
+select *,rn = row_number()over(order by ExportID)
+from (
 select distinct [ExportID] = e.ID
              , [BlNo] = e.Blno
              , [Consignee] = e.Consignee 
@@ -443,7 +474,7 @@ select distinct [ExportID] = e.ID
              , [CustomsType] = kd.CustomsType  
              , kd.CDCCode
              , [CustomsDescription] = kd.CDCName
-             , [CDCQty] = s.Qty*kdd.Ratio 
+             , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
              , [CDCAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
@@ -483,7 +514,7 @@ select [ExportID] = FE.ID
              , [CustomsType] = kd.CustomsType  
              , kd.CDCCode
              , [CustomsDescription] = kd.CDCName  
-             , [CDCQty] = s.Qty*kdd.Ratio  
+             , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
              , [CDCAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
@@ -587,6 +618,50 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickSave()
+        {
+            this.InitReadOnly(true);
+            return base.ClickSave();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            DataTable dt = this.GetSumbyCustomsTypeDescription();
+            string sqlcmd = $@"
+DELETE KHImportDeclaration_ShareCDCExpense where id = '{this.CurrentMaintain["ID"]}'
+INSERT INTO [dbo].[KHImportDeclaration_ShareCDCExpense]
+           ([ID]
+           ,[KHCustomsDescriptionCDCName]
+           ,[OriTtlNetKg]
+           ,[OriTtlWeightKg]
+           ,[OriTtlCDCAmount]
+           ,[ActTtlNetKg]
+           ,[ActTtlWeightKg]
+           ,[ActTtlAmount]
+           ,[ActHSCode])
+select 
+            [ID] = '{this.CurrentMaintain["ID"]}'
+           ,[CustomsDescription]
+           ,[OriTtlNetKg]
+           ,[OriTtlWeightKg]
+           ,[OriTtlCDCAmount]
+           ,[ActTtlNetKg]
+           ,[ActTtlWeightKg]
+           ,[ActTtlAmount]
+           ,[ActHSCode]
+from #tmp
+";
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out DataTable odt);
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -664,13 +739,6 @@ where id = '{this.CurrentMaintain["ID"]}'
             base.ClickUndo();
         }
 
-        /// <inheritdoc/>
-        protected override DualResult ClickSave()
-        {
-            this.InitReadOnly(true);
-            return base.ClickSave();
-        }
-
         /// <summary>
         /// 設定是否可以編輯
         /// </summary>
@@ -720,6 +788,10 @@ where id = '{this.CurrentMaintain["ID"]}'
                 this.col_Qty.IsEditingReadOnly = false;
                 this.col_NW.IsEditingReadOnly = false;
                 this.col_GW.IsEditingReadOnly = false;
+                this.col_ActNetKg.IsEditingReadOnly = false;
+                this.col_ActWeightKg.IsEditingReadOnly = false;
+                this.col_ActAmount.IsEditingReadOnly = false;
+                this.col_ActHSCode.IsEditingReadOnly = false;
             }
             else
             {
@@ -734,6 +806,10 @@ where id = '{this.CurrentMaintain["ID"]}'
                 this.col_Qty.IsEditingReadOnly = true;
                 this.col_NW.IsEditingReadOnly = true;
                 this.col_GW.IsEditingReadOnly = true;
+                this.col_ActNetKg.IsEditingReadOnly = true;
+                this.col_ActWeightKg.IsEditingReadOnly = true;
+                this.col_ActAmount.IsEditingReadOnly = true;
+                this.col_ActHSCode.IsEditingReadOnly = true;
             }
         }
 
@@ -781,19 +857,16 @@ where id = '{this.CurrentMaintain["ID"]}'
             {
                 if (this.txtBLNo.Text != this.txtBLNo.OldValue && !MyUtility.Check.Empty(this.txtBLNo.OldValue))
                 {
-                    DialogResult questionResult = MyUtility.Msg.QuestionBox($@" It will clear detail records if change <B/L No.>.", caption: "Question", buttons: MessageBoxButtons.YesNo);
-
                     // Yes 清空 No 保留
+                    DialogResult questionResult = MyUtility.Msg.QuestionBox($@" It will clear detail records if change <B/L No.>.");
                     if (questionResult == DialogResult.No)
                     {
                         return;
                     }
-                    else
+
+                    foreach (var item in this.DetailDatas)
                     {
-                        foreach (var item in this.DetailDatas)
-                        {
-                            item.Delete();
-                        }
+                        item.Delete();
                     }
                 }
 
@@ -802,9 +875,8 @@ where id = '{this.CurrentMaintain["ID"]}'
                     return;
                 }
 
-                DataRow dr;
                 string sqlcmd = $@"select id from KHImportDeclaration where Blno = '{this.txtBLNo.Text}'";
-                if (MyUtility.Check.Seek(sqlcmd, out dr))
+                if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                 {
                     MyUtility.Msg.WarningBox($"<B/L No> has already in ID: {dr["id"]}");
                     this.txtBLNo.Select();
@@ -812,23 +884,115 @@ where id = '{this.CurrentMaintain["ID"]}'
                     return;
                 }
 
-                sqlcmd = this.GetDetailData();
-                DataTable dt;
-                DualResult result;
-                if (result = DBProxy.Current.Select(null, sqlcmd, out dt))
-                {
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        item.SetAdded();
-                        ((DataTable)this.detailgridbs.DataSource).ImportRow(item);
-                    }
-                }
-                else
+                DualResult result = DBProxy.Current.Select(null, this.GetDetailData(), out DataTable dt);
+                if (!result)
                 {
                     this.ShowErr(result);
                     return;
                 }
+
+                dt.AsEnumerable().ToList().ForEach(row => ((DataTable)this.detailgridbs.DataSource).ImportRowAdded(row));
             }
+        }
+
+        private void BtnSharebyCDC_Click(object sender, System.EventArgs e)
+        {
+            ShareDt = null;
+            var chkList = this.DetailDatas.Where(w => this.customsTypelist.Contains(MyUtility.Convert.GetString(w["CustomsType"])));
+            if (!chkList.Any())
+            {
+                MyUtility.Msg.WarningBox("There is no <Customs Type>: Fabric/ Accessory/ Machine data.");
+                return;
+            }
+
+            var emptyList = chkList.Where(w => MyUtility.Check.Empty(w["CDCUnitPrice"]));
+            if (emptyList.Any())
+            {
+                var refnolist = emptyList.Select(s => "<RefNo>: " + MyUtility.Convert.GetString(s["Refno"])).ToList();
+                string msg = "Below <RefNo> has no <CDC Unit Price>, please maintain on Shipping B62\r\n" + refnolist.JoinToString("\r\n");
+                MyUtility.Msg.WarningBox(msg);
+                return;
+            }
+
+            var frm = new P61_ShareByCDCItem(this.GetSumbyCustomsTypeDescription(), this.GetRatebyCustomsTypeDescription());
+            frm.ShowDialog();
+            if (ShareDt != null)
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    dr["ActNetKg"] = MyUtility.Convert.GetDecimal(ShareDt.Select($"rn = {dr["rn"]}")[0]["ActNetKg"]);
+                    dr["ActWeightKg"] = MyUtility.Convert.GetDecimal(ShareDt.Select($"rn = {dr["rn"]}")[0]["ActWeightKg"]);
+                    dr["ActAmount"] = MyUtility.Convert.GetDecimal(ShareDt.Select($"rn = {dr["rn"]}")[0]["ActAmount"]);
+                    dr["ActHSCode"] = MyUtility.Convert.GetString(ShareDt.Select($"rn = {dr["rn"]}")[0]["ActHSCode"]);
+                }
+            }
+        }
+
+        private DataTable GetSumbyCustomsTypeDescription()
+        {
+            var xlist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted)
+                .Select(s => new
+                {
+                    CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
+                    CDCCode = MyUtility.Convert.GetString(s["CDCCode"]),
+                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    CDCUnit = MyUtility.Convert.GetString(s["CDCUnit"]),
+                    NetKg = MyUtility.Convert.GetDecimal(s["NetKg"]),
+                    WeightKg = MyUtility.Convert.GetDecimal(s["WeightKg"]),
+                    CDCAmount = MyUtility.Convert.GetDecimal(s["CDCAmount"]),
+                    ActNetKg = MyUtility.Convert.GetDecimal(s["ActNetKg"]),
+                    ActWeightKg = MyUtility.Convert.GetDecimal(s["ActWeightKg"]),
+                    ActAmount = MyUtility.Convert.GetDecimal(s["ActAmount"]),
+                    ActHSCode = MyUtility.Convert.GetString(s["ActHSCode"]),
+                })
+                .Where(w => this.customsTypelist.Contains(w.CustomsType))
+                .ToList();
+            var sumlist = xlist
+                .GroupBy(g => new { g.CustomsType, g.CDCCode, g.CustomsDescription, g.CDCUnit, g.ActHSCode })
+                .Select(s => new
+                {
+                    s.Key.CustomsType,
+                    s.Key.CDCCode,
+                    s.Key.CustomsDescription,
+                    s.Key.CDCUnit,
+                    s.Key.ActHSCode,
+                    OriTtlNetKg = s.Sum(su => su.NetKg),
+                    OriTtlWeightKg = s.Sum(su => su.WeightKg),
+                    OriTtlCDCAmount = s.Sum(su => su.CDCAmount),
+                    ActTtlNetKg = s.Sum(su => su.ActNetKg),
+                    ActTtlWeightKg = s.Sum(su => su.ActWeightKg),
+                    ActTtlAmount = s.Sum(su => su.ActAmount),
+                }).ToList();
+            return PublicPrg.ListToDataTable.ToDataTable(sumlist);
+        }
+
+        private DataTable GetRatebyCustomsTypeDescription()
+        {
+            DataTable sumDt = this.GetSumbyCustomsTypeDescription();
+            string filter = "CustomsType = '{0}' and CustomsDescription = '{1}'";
+            var ratelist = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(w => w.RowState != DataRowState.Deleted)
+                .Select(s => new
+                {
+                    rn = MyUtility.Convert.GetLong(s["rn"]),
+                    CustomsType = MyUtility.Convert.GetString(s["CustomsType"]),
+                    CustomsDescription = MyUtility.Convert.GetString(s["CustomsDescription"]),
+                    NetKg = MyUtility.Convert.GetDecimal(s["ActNetKg"]),
+                    WeightKg = MyUtility.Convert.GetDecimal(s["ActWeightKg"]),
+                    CDCAmount = MyUtility.Convert.GetDecimal(s["CDCAmount"]),
+                })
+                .Where(w => this.customsTypelist.Contains(w.CustomsType))
+                .Select(s => new
+                {
+                    s.rn,
+                    s.CustomsType,
+                    s.CustomsDescription,
+                    RateNetKg = MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"]) == 0 ? 0 : s.NetKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlNetKg"]),
+                    RateWeightKg = MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"]) == 0 ? 0 : s.WeightKg / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlWeightKg"]),
+                    RateCDCAmount = MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"]) == 0 ? 0 : s.CDCAmount / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CustomsDescription))[0]["OriTtlCDCAmount"]),
+                }).ToList();
+            return PublicPrg.ListToDataTable.ToDataTable(ratelist);
         }
     }
 }

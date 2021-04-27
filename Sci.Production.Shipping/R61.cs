@@ -27,6 +27,7 @@ namespace Sci.Production.Shipping
         private string strDecNo1;
         private string strDecNo2;
         private string strShipMode;
+        private string reporttype;
 
         /// <inheritdoc/>
         public R61(ToolStripMenuItem menuitem)
@@ -34,6 +35,7 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             this.EditMode = true;
+            this.cbmReporttype.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -48,6 +50,7 @@ namespace Sci.Production.Shipping
             this.strDecNo1 = this.txtDecNo1.Text;
             this.strDecNo2 = this.txtDecNo2.Text;
             this.strShipMode = this.comboshipmode.Text;
+            this.reporttype = this.cbmReporttype.Text;
 
             if (MyUtility.Check.Empty(this.dateDecDate1) && MyUtility.Check.Empty(this.dateDecDate2) &&
                 MyUtility.Check.Empty(this.dateETA1) && MyUtility.Check.Empty(this.dateETA2) &&
@@ -63,7 +66,10 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            string sqlcmd = $@"
+            string sqlcmd;
+            if (this.reporttype == "Detail")
+            {
+                sqlcmd = $@"
 select [WK#] = kid.ExportID
      , [Declaration Date] = ki.cdate
      , [Declaration#] = ki.DeclareNo
@@ -108,40 +114,95 @@ select [WK#] = kid.ExportID
  )CDCAmount
  where 1=1
 ";
-            #region where
-            if (!MyUtility.Check.Empty(this.dateDecDate1) && !MyUtility.Check.Empty(this.dateDecDate2))
-            {
-                sqlcmd += $@" and ki.cdate between '{((DateTime)this.dateDecDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateDecDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+
+                #region where
+                if (!MyUtility.Check.Empty(this.dateDecDate1) && !MyUtility.Check.Empty(this.dateDecDate2))
+                {
+                    sqlcmd += $@" and ki.cdate between '{((DateTime)this.dateDecDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateDecDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.dateETA1) && !MyUtility.Check.Empty(this.dateETA2))
+                {
+                    sqlcmd += $@" and kid.eta between '{((DateTime)this.dateETA1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETA2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.ArrWHDate1) && !MyUtility.Check.Empty(this.ArrWHDate2))
+                {
+                    sqlcmd += $@" and kid.WhseArrival between '{((DateTime)this.ArrWHDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.ArrWHDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.strShipMode))
+                {
+                    sqlcmd += $@" and kid.ShipmodeID = '{this.strShipMode}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.strDecNo1))
+                {
+                    sqlcmd += $@" and ki.DeclareNo >= '{this.strDecNo1}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.strDecNo2))
+                {
+                    sqlcmd += $@" and ki.DeclareNo <= '{this.strDecNo2}'" + Environment.NewLine;
+                }
+
+                sqlcmd += @" order by ki.cdate, ki.DeclareNo, kid.ExportID";
+                #endregion
             }
-
-            if (!MyUtility.Check.Empty(this.dateETA1) && !MyUtility.Check.Empty(this.dateETA2))
+            else
             {
-                sqlcmd += $@" and kid.eta between '{((DateTime)this.dateETA1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETA2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+                sqlcmd = $@"
+select kc.CustomsType as [Customs Type]
+	, kc.CDCName as [Customs Description]
+	, kc.CDCCode as [CDC Code]
+	, kc.CDCUnit as [CDC Unit]
+	, ks.OriTtlNetKg as [Ori Ttl N.W.]
+	, ks.OriTtlWeightKg as [Ori Ttl G.W.]
+	, ks.OriTtlCDCAmount as [Ori Ttl CDC Amount]
+	, ks.ActTtlNetKg as [Act. Ttl N.W.]
+	, ks.ActTtlWeightKg as [Act. Ttl G.W.]
+	, ks.ActTtlAmount as [Act. Ttl Amount]
+from KHImportDeclaration_ShareCDCExpense ks
+inner join KHImportDeclaration ki on ki.id = ks.id
+inner join KHCustomsDescription kc on ks.KHCustomsDescriptionCDCName=kc.CDCName
+where 1=1
+and kc.CustomsType in ('Fabric','Accessory','Machine')
+";
+
+                #region where
+                if (!MyUtility.Check.Empty(this.dateDecDate1) && !MyUtility.Check.Empty(this.dateDecDate2))
+                {
+                    sqlcmd += $@" and ki.cdate between '{((DateTime)this.dateDecDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateDecDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.dateETA1) && !MyUtility.Check.Empty(this.dateETA2))
+                {
+                    sqlcmd += $@" and exists(select 1 from KHImportDeclaration_Detail kid where ki.id=kid.id and kid.eta between '{((DateTime)this.dateETA1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.dateETA2).ToString("yyyy/MM/dd")}' )" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.ArrWHDate1) && !MyUtility.Check.Empty(this.ArrWHDate2))
+                {
+                    sqlcmd += $@" and exists(select 1 from KHImportDeclaration_Detail kid where ki.id=kid.id and kid.WhseArrival between '{((DateTime)this.ArrWHDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.ArrWHDate2).ToString("yyyy/MM/dd")}')" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.strShipMode))
+                {
+                    sqlcmd += $@" and exists(select 1 from KHImportDeclaration_Detail kid where ki.id=kid.id and kid.ShipmodeID = '{this.strShipMode}')" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.strDecNo1))
+                {
+                    sqlcmd += $@" and ki.DeclareNo >= '{this.strDecNo1}'" + Environment.NewLine;
+                }
+
+                if (!MyUtility.Check.Empty(this.strDecNo2))
+                {
+                    sqlcmd += $@" and ki.DeclareNo <= '{this.strDecNo2}'" + Environment.NewLine;
+                }
+
+                sqlcmd += @" order by ki.cdate, ki.DeclareNo";
+                #endregion
             }
-
-            if (!MyUtility.Check.Empty(this.ArrWHDate1) && !MyUtility.Check.Empty(this.ArrWHDate2))
-            {
-                sqlcmd += $@" and kid.WhseArrival between '{((DateTime)this.ArrWHDate1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.ArrWHDate2).ToString("yyyy/MM/dd")}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strShipMode))
-            {
-                sqlcmd += $@" and kid.ShipmodeID = '{this.strShipMode}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strDecNo1))
-            {
-                sqlcmd += $@" and ki.DeclareNo >= '{this.strDecNo1}'" + Environment.NewLine;
-            }
-
-            if (!MyUtility.Check.Empty(this.strDecNo2))
-            {
-                sqlcmd += $@" and ki.DeclareNo <= '{this.strDecNo2}'" + Environment.NewLine;
-            }
-
-            sqlcmd += @" order by ki.cdate, ki.DeclareNo, kid.ExportID";
-
-            #endregion
 
             if (!(this.result = DBProxy.Current.Select(null, sqlcmd, out this.printData)))
             {
@@ -164,6 +225,11 @@ select [WK#] = kid.ExportID
             this.SetCount(this.printData.Rows.Count);
             this.ShowWaitMessage("Starting EXCEL...");
             string reportName = "Shipping_R61.xltx";
+            if (this.reporttype != "Detail")
+            {
+                reportName = "Shipping_R61_SummaryByCustomsDescription.xltx";
+            }
+
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{reportName}");
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportName, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
             string strExcelName = Class.MicrosoftFile.GetName("Shipping_R61");
