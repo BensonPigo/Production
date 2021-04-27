@@ -36,7 +36,7 @@ namespace Sci.Production.PublicPrg
         /// *   8.  更新LInvQty
         /// *   16. 更新LObQty
         /// *   32. 更新AdQty
-        /// *   37. 更新ReturnQty 
+        /// *   37. 更新ReturnQty
         /// </summary>
         /// <param name="type">type</param>
         /// <param name="datas">datas</param>
@@ -793,6 +793,11 @@ where exists(
             return sqlcmd;
         }
 
+        /// <summary>
+        /// update Ftyinventory by P99
+        /// </summary>
+        /// <param name="type">type</param>
+        /// <returns>sqlcmd</returns>
         public static string UpdateFtyInventory_IO_P99(int type)
         {
             string sqlcmd = string.Empty;
@@ -915,10 +920,10 @@ drop table #TmpSource;";
         /// <summary>
         /// for update P99 only
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="encoded"></param>
-        /// <param name="sqlConn"></param>
-        /// <returns></returns>
+        /// <param name="type">type</param>
+        /// <param name="encoded">encoded</param>
+        /// <param name="sqlConn">sqlConn</param>
+        /// <returns>string sqlcmd</returns>
         public static string UpdateMPoDetail_P99(int type, bool encoded)
         {
             string sqlcmd = string.Empty;
@@ -4456,6 +4461,12 @@ where exists(
             return true;
         }
 
+        /// <summary>
+        /// check WMS, non-WMS location in the same material
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <param name="functionName">functionName</param>
+        /// <returns>bool</returns>
         public static bool Chk_WMS_Location(string id, string functionName)
         {
             // 先關閉,待使用者確認後再上線
@@ -4850,6 +4861,11 @@ where rowCnt =2
             return true;
         }
 
+        /// <summary>
+        /// check WMS, non-WMS location in the same material by Adjust
+        /// </summary>
+        /// <param name="dtDetail">dtDetail</param>
+        /// <returns>bool</returns>
         public static bool Chk_WMS_Location_Adj(DataTable dtDetail)
         {
             bool automation = MyUtility.Check.Seek("select 1 from dbo.System where Automation = 1", "Production");
@@ -4885,7 +4901,6 @@ and ml.IsWMS = 1
 
             return true;
         }
-
     }
 
     /// <inheritdoc/>
