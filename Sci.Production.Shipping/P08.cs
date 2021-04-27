@@ -636,44 +636,46 @@ and gb.ShipModeID in ('A/P', 'E/P')",
             // ISP20210513
             if (!this.CurrentMaintain["SubType"].EqualString("Other") &&
                 this.checkIsFreightForwarder.Checked &&
-                !this.CurrentMaintain["Reason"].EqualString("AP007") &&
-                this.CurrentMaintain["BLNo"].Empty())
+                !this.CurrentMaintain["Reason"].EqualString("AP007"))
             {
-                MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
-                return false;
-            }
-            else
-            {
-                string strSQLcmd;
-                if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
+                if (this.CurrentMaintain["BLNo"].Empty())
                 {
-                    strSQLcmd = string.Format(
-                        @"
+                    MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
+                    return false;
+                }
+                else
+                {
+                    string strSQLcmd;
+                    if (this.CurrentMaintain["Type"].EqualString("IMPORT"))
+                    {
+                        strSQLcmd = string.Format(
+                            @"
 select  1
 from Export with (nolock) where BLno = '{0}'
 union all
 select  1
 from FtyExport with (nolock) where BLno = '{0}' and Type <> 3 ",
-                        this.CurrentMaintain["BLNo"]);
+                            this.CurrentMaintain["BLNo"]);
 
-                    if (!MyUtility.Check.Seek(strSQLcmd))
-                    {
-                        MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
-                        this.numericBox1.Focus();
-                        return false;
+                        if (!MyUtility.Check.Seek(strSQLcmd))
+                        {
+                            MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
+                            this.numericBox1.Focus();
+                            return false;
+                        }
                     }
-                }
-                else
-                {
-                    strSQLcmd = string.Format(
-                        "select  1 from GMTBooking with (nolock) where BLno = '{0}' or BL2no = '{0}'",
-                        this.CurrentMaintain["BLNo"]);
-
-                    if (!MyUtility.Check.Seek(strSQLcmd))
+                    else
                     {
-                        MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
-                        this.numericBox1.Focus();
-                        return false;
+                        strSQLcmd = string.Format(
+                            "select  1 from GMTBooking with (nolock) where BLno = '{0}' or BL2no = '{0}'",
+                            this.CurrentMaintain["BLNo"]);
+
+                        if (!MyUtility.Check.Seek(strSQLcmd))
+                        {
+                            MyUtility.Msg.WarningBox("No share expense data, cannot be save!");
+                            this.numericBox1.Focus();
+                            return false;
+                        }
                     }
                 }
             }
