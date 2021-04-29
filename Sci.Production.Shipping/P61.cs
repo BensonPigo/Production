@@ -477,10 +477,10 @@ select distinct [ExportID] = e.ID
              , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
-             , [CDCAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [CDCAmount] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
              , [ActNetKg] = s.NW  
              , [ActWeightKg] = s.GW  
-             , [ActAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [ActAmount] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
              , [NWDiff] = (s.NW-s.nw)  
              , [HSCode] = kcd.HSCode  
              , [ActHSCode] = kcd.HSCode     
@@ -517,10 +517,10 @@ select [ExportID] = FE.ID
              , [CDCQty] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)
              , [CDCUnit] = kd.CDCUnit  
              , [CDCUnitPrice] = kc.CDCUnitPrice  
-             , [CDCAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [CDCAmount] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
              , [ActNetKg] = s.NW  
              , [ActWeightKg] = s.GW  
-             , [ActAmount] = (s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
+             , [ActAmount] = iif(kd.IsDeclareByNetKg = 1, s.NW, s.Qty*kdd.Ratio)*kc.CDCUnitPrice  
              , [NWDiff] = (s.NW-s.NW)  
              , [HSCode] = kcd.HSCode  
              , [ActHSCode] = kcd.HSCode  
@@ -888,6 +888,12 @@ where id = '{this.CurrentMaintain["ID"]}'
                 if (!result)
                 {
                     this.ShowErr(result);
+                    return;
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("No data found!");
                     return;
                 }
 
