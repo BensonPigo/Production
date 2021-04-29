@@ -8,6 +8,19 @@ BEGIN
 INTO #Trade_To_Pms_PO --先下條件把PO成為工廠別
  FROM  Trade_To_Pms.dbo.PO b WITH (NOLOCK) inner join Production.dbo.Factory c WITH (NOLOCK) on b.FactoryID = c.ID
 
+ --建立Trade_To_Pms.dbo.Po_Supp_Detail的index(ID, Seq1, Seq2) 避免下面執行join in 語法時卡住
+ if not exists(SELECT 1 
+				FROM [Trade_To_Pms].sys.indexes 
+				WHERE name='IDX_Trade_To_PMS_PO_Supp_Detail' AND object_id = OBJECT_ID('Trade_To_Pms.dbo.PO_Supp_Detail'))
+ begin
+	CREATE CLUSTERED INDEX [IDX_Trade_To_PMS_PO_Supp_Detail] ON [Trade_To_Pms].[dbo].[PO_Supp_Detail]
+	(
+		[ID] ASC,
+		[Seq1] ASC,
+		[Seq2] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+ end
+
  -----Trade 的區間資料 new Eeit----	
 ------------------------------------------------------------------------------------------------------
 --***資料交換的條件限制***
