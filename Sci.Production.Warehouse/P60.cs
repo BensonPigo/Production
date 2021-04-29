@@ -680,11 +680,14 @@ update dbo.LocalPO_Detail
                           where c.Status = 'Confirmed' and d.LocalPo_detailukey = LocalPO_Detail.Ukey 
                               and d.LocalPoId = LocalPO_Detail.Id)
                         , 0)
-from LocalPO_Detail 
-join (select LocalPoId,LocalPo_detailukey 
+from LocalPO_Detail
+where exists (
+	  select 1
       from dbo.LocalReceiving a 
-      inner join dbo.LocalReceiving_Detail b on b.id = a.id where a.id='{0}'
-) s on LocalPO_Detail.id = s.LocalPoId and LocalPO_Detail.ukey = s.LocalPo_detailukey", this.CurrentMaintain["id"]);
+      inner join dbo.LocalReceiving_Detail b on b.id = a.id 
+	  where a.id = '{0}'
+	  and  LocalPO_Detail.id = LocalPoId and LocalPO_Detail.ukey = LocalPo_detailukey )",
+                this.CurrentMaintain["id"]);
 
             return sqlcmd;
         }
