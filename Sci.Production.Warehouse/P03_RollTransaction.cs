@@ -204,12 +204,14 @@ union all
 		, b.dyelot
 		, issuedate
 		, a.id
-		,[name] = case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
-						when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
-						when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
-						when 'D' then 'P13. Issue Material by Item'
-						when 'E' then 'P33. Issue Thread'
-				 end
+        , name = case type 
+                	when 'A' then 'P10. Issue Fabric to Cutting Section' 
+                	when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
+                	when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
+                	when 'D' then 'P13. Issue Material by Item'
+                	when 'E' then 'P33. Issue Thread'
+                	when 'I' then 'P62. Issue Fabric for Cutting Tape'
+                end 
 		, [inqty] = 0
 		, [released] = sum(Qty)
 		, [adjust] = 0
