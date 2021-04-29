@@ -35,17 +35,17 @@ namespace Sci.Production.Shipping
         {
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
-                .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true, name: this.nPink)
+                .Text("CustomsType", header: "Customs Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CDCCode", header: "CDC Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CustomsDescription", header: "Customs Description", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("CDCUnit", header: "CDC Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OriTtlNetKg", header: "Ori Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Numeric("OriTtlWeightKg", header: "Ori Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
                 .Numeric("OriTtlCDCAmount", header: "Ori Ttl CDC\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, iseditingreadonly: true)
-                .Numeric("ActTtlNetKg", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty + this.nPink)
-                .Numeric("ActTtlWeightKg", header: "Act. Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty + this.nPink)
-                .Numeric("ActTtlAmount", header: "Act. Ttl\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty + this.nPink)
-                .Text("ActHSCode", header: "Act.\r\nHS Code", width: Widths.AnsiChars(14), iseditingreadonly: false, name: this.nNoEmpty + this.nPink)
+                .Numeric("ActTtlNetKg", header: "Act. Ttl\r\nN.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
+                .Numeric("ActTtlWeightKg", header: "Act. Ttl\r\nG.W.", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
+                .Numeric("ActTtlAmount", header: "Act. Ttl\r\nAmount", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 9, name: this.nNoEmpty)
+                .Text("ActHSCode", header: "Act.\r\nHS Code", width: Widths.AnsiChars(14), iseditingreadonly: false, name: this.nNoEmpty)
                 ;
 
             this.grid1.Columns[7].DefaultCellStyle.BackColor = Color.Pink;
