@@ -2408,7 +2408,6 @@ and exists(
             DataTable dtMaster = new DataTable();
             string strBody = isP99 ? "inner join #tmp s on ir2.ukey = s.ukey " : "inner join #tmp s on ir2.ID = s.Id ";
             string strQty = isP99 ? "s.Qty" : "ir2.Qty";
-            string strBarcode = status == "New" ? "f.barcode" : $"iif(f.InQty-f.OutQty+f.AdjustQty-f.ReturnQty - {strQty} = 0 , '' , f.barcode)";
 
             #region 取得資料
 
@@ -2424,7 +2423,7 @@ select distinct ir2.Id
     ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,ir2.Roll
 ,ir2.Dyelot
-,[Barcode] = {strBarcode}
+,[Barcode] = f.barcode
 ,[Description] = dbo.getMtlDesc(ir2.POID,ir2.Seq1,ir2.Seq2,2,0)
 ,ir2.Ukey
 ,ir2.StockType
