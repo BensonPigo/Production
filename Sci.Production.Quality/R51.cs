@@ -126,8 +126,8 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
             {
                 sqlwhere1.Append("\r\nand SR.SubProcessID= @SubProcessID");
                 sqlwhere2.Append("\r\nand SR.SubProcessID= @SubProcessID");
-                this.Parameters.Add(new SqlParameter("@SubProcessIDp", SqlDbType.VarChar, 10) { Value = this.comboSubprocess.Text });
-                declare.Append("\r\ndeclare @SubProcessID varchar(10) = @SubProcessIDp");
+                this.Parameters.Add(new SqlParameter("@SubProcessIDp", SqlDbType.VarChar, 15) { Value = this.comboSubprocess.Text });
+                declare.Append("\r\ndeclare @SubProcessID varchar(15) = @SubProcessIDp");
             }
 
             if (!this.comboMDivision1.Text.Empty())

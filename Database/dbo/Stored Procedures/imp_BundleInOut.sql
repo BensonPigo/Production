@@ -3,7 +3,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	Declare @insert Table ([BundleNo] [varchar](10) ,[SubProcessId] [varchar](10));
+	Declare @insert Table ([BundleNo] [varchar](10) ,[SubProcessId] [varchar](15));
 	insert into Production.dbo.BundleInOut
 		(BundleNo,SubProcessID,InComing,OutGoing,AddDate,SewingLineID,LocationID,RFIDProcessLocationID,PanelNo,CutCellID)
 	OUTPUT Inserted.BundleNo,Inserted.SubProcessID INTO @insert

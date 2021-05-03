@@ -145,7 +145,7 @@
             this.txtSubProcessID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSubProcessID.IsSupportEditMode = false;
             this.txtSubProcessID.Location = new System.Drawing.Point(128, 34);
-            this.txtSubProcessID.MaxLength = 10;
+            this.txtSubProcessID.MaxLength = 15;
             this.txtSubProcessID.Name = "txtSubProcessID";
             this.txtSubProcessID.ReadOnly = true;
             this.txtSubProcessID.Size = new System.Drawing.Size(292, 24);

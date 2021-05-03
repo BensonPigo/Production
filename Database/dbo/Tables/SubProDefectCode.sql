@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[SubProDefectCode] (
-    [SubProcessID] VARCHAR (10)   NOT NULL,
+    [SubProcessID] VARCHAR (15)   NOT NULL,
     [DefectCode]   VARCHAR (50)   NOT NULL,
     [Junk]         BIT            CONSTRAINT [DF_SubProDefectCode_Junk] DEFAULT ((0)) NOT NULL,
     [Description]  NVARCHAR (500) NULL,

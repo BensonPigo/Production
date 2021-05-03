@@ -147,7 +147,7 @@
             this.txtSubProcess.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubProcessID", true));
             this.txtSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSubProcess.Location = new System.Drawing.Point(128, 33);
-            this.txtSubProcess.MaxLength = 10;
+            this.txtSubProcess.MaxLength = 15;
             this.txtSubProcess.Name = "txtSubProcess";
             this.txtSubProcess.Size = new System.Drawing.Size(292, 23);
             this.txtSubProcess.TabIndex = 9;
