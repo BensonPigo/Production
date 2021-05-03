@@ -199,10 +199,19 @@ order by a.seq1,a.seq2
                     return MyUtility.Convert.GetInt(Math.Ceiling(arriveQty * this.numInspectRate.Value / 100));
                 case "2":
                     sqlcmd = $@"
-select SampleSize
-from AcceptableQualityLevels
-where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
-and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End
+select         iif ((select SampleSize
+                from AcceptableQualityLevels
+                where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+                and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End) is not null
+              , (select SampleSize
+                from AcceptableQualityLevels
+                where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+                and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End)
+              , (select SampleSize
+                from AcceptableQualityLevels
+                where InspectionLevels = '{this.comboDropDownList1.SelectedValue}'
+                      and {MyUtility.Math.Round(arriveQty)} >= LotSize_Start
+                      and LotSize_End = -1))
 ";
                     return MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlcmd));
                 case "3":
@@ -212,10 +221,19 @@ select
 	when 0 then 0
 	when 1 then round({arriveQty} * q.InspectedPercentage / 100, 0)
 	when 2 then 
-        (select SampleSize
-        from AcceptableQualityLevels
-        where InspectionLevels = q.AQL_InspectionLevels
-        and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End)
+        iif ((select SampleSize
+                from AcceptableQualityLevels
+                where InspectionLevels = q.AQL_InspectionLevels
+                and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End) is not null
+              , (select SampleSize
+                from AcceptableQualityLevels
+                where InspectionLevels = q.AQL_InspectionLevels
+                and {MyUtility.Math.Round(arriveQty)} between LotSize_Start and LotSize_End)
+              , (select SampleSize
+                from AcceptableQualityLevels
+                where InspectionLevels = q.AQL_InspectionLevels
+                      and {MyUtility.Math.Round(arriveQty)} >= LotSize_Start
+                      and LotSize_End = -1))
 	end
 from QAMtlTypeSetting q
 where type = 'A'

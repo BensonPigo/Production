@@ -4187,7 +4187,8 @@ and exists(select 1 from Production.dbo.MDivision where ID = a.MDivisionID)
 
 -------MtlType   2   QAMtlTypeSetting
 
-DELETE Production.dbo.[QAMtlTypeSetting]
+update a
+set junk = 1
 FROM Production.dbo.[QAMtlTypeSetting] a
 LEFT JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
 WHERE b.id is null

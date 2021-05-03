@@ -40,7 +40,7 @@ namespace Sci.Production.Quality
 select 
 	a.InspectionLevels,
 	d.Name,
-	LotSize = Concat (Format(LotSize_Start, '#,0'), ' to ', Format(LotSize_End, '#,0')),
+	LotSize = Concat (Format(LotSize_Start, '#,0'), ' to ', iif (LotSize_End < 0, '', Format(LotSize_End, '#,0'))),
 	a.SampleSize
 from AcceptableQualityLevels a
 left join DropDownList d on d.ID = a.InspectionLevels and d.Type = 'PMS_QA_AQL'
