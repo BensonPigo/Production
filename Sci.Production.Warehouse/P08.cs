@@ -986,8 +986,10 @@ select
 		select Round(sum(dbo.GetUnitQty(b.POUnit, StockUnit, b.Qty)), 2)
 		from po_supp_detail b WITH (NOLOCK) 
 		where b.id= r.poid and b.seq1 = r.seq1 and b.seq2 = r.seq2),
-	r.StockQty
+	r.StockQty,
+    o.FactoryID
 from Receiving_Detail r WITH (NOLOCK) 
+left join Orders o with (nolock) on r.POID = o.ID
 Where r.id = '{this.CurrentMaintain["ID"]}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -1007,15 +1009,20 @@ Where r.id = '{this.CurrentMaintain["ID"]}'
             Excel.Worksheet worksheet = excelApp.Sheets[1];
             for (int i = 0; i < dt.Rows.Count - 1; i++)
             {
-                Excel.Range r = worksheet.get_Range("A5", "A5").EntireRow;
+                Excel.Range r = worksheet.get_Range("A6", "A6").EntireRow;
                 r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); // 新增Row
             }
 
-            worksheet.Cells[2, 1] = $"ID : {this.CurrentMaintain["ID"]}";
-            worksheet.Cells[2, 4] = $"Remarks : {this.CurrentMaintain["Remark"]}";
+            string factoryID = dt.AsEnumerable().Select(s => s["FactoryID"].ToString()).Distinct().JoinToString(",");
 
-            MyUtility.Excel.CopyToXls(dt, string.Empty, "Warehouse_P08.xltx", 3, showExcel: false, showSaveMsg: false, excelApp: excelApp);
-            worksheet.get_Range((Excel.Range)worksheet.Cells[4, 1], (Excel.Range)worksheet.Cells[dt.Rows.Count + 3, 9]).Borders.Weight = 2; // 設定全框線
+            dt.Columns.Remove("FactoryID");
+
+            worksheet.Cells[3, 1] = $"ID : {this.CurrentMaintain["ID"]}";
+            worksheet.Cells[3, 4] = $"Remarks : {this.CurrentMaintain["Remark"]}";
+            worksheet.Cells[2, 1] = factoryID;
+
+            MyUtility.Excel.CopyToXls(dt, string.Empty, "Warehouse_P08.xltx", 4, showExcel: false, showSaveMsg: false, excelApp: excelApp);
+            worksheet.get_Range((Excel.Range)worksheet.Cells[5, 1], (Excel.Range)worksheet.Cells[dt.Rows.Count + 4, 9]).Borders.Weight = 2; // 設定全框線
             worksheet.Columns[1].ColumnWidth = 18;
             worksheet.Columns[2].ColumnWidth = 8;
             worksheet.Columns[3].ColumnWidth = 8;
