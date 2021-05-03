@@ -2423,7 +2423,7 @@ select distinct ir2.Id
     ,dbo.GetColorMultipleID(o.BrandID,po3.ColorID)),'') 
 ,ir2.Roll
 ,ir2.Dyelot
-,[Barcode] = f.barcode
+,[Barcode] = Barcode.value
 ,[Description] = dbo.getMtlDesc(ir2.POID,ir2.Seq1,ir2.Seq2,2,0)
 ,ir2.Ukey
 ,ir2.StockType
@@ -2438,6 +2438,11 @@ left join PO_Supp_Detail po3 on po3.ID = ir2.POID and po3.SEQ1 = ir2.Seq1
 and po3.SEQ2 = ir2.Seq2
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
+outer apply(
+	select value = min(fb.Barcode)
+	from Production.dbo.FtyInventory_Barcode fb
+	where fb.Ukey = f.Ukey
+)Barcode
 where 1=1
 and exists(
     select 1
