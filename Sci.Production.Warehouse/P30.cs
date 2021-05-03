@@ -785,13 +785,6 @@ from #tmp
             List<string> fail_list = new List<string>();
             foreach (DataRow dr in dtMaster.Rows)
             {
-                #region 檢查物料Location 是否存在WMS
-                if (!PublicPrg.Prgs.Chk_WMS_Location(dr["ID"].ToString(), "P24"))
-                {
-                    return;
-                }
-                #endregion
-
                 if (Prgs.P24confirm(dr["ID"].ToString()))
                 {
                     success_list.Add(dr["ID"].ToString());
