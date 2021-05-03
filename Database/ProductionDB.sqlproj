@@ -2642,6 +2642,8 @@
     <Build Include="dbo\Tables\Style_QTThreadColorCombo_History.sql" />
     <Build Include="dbo\Tables\Style_QTThreadColorCombo_History_Detail.sql" />
     <Build Include="dbo\Tables\NewCDCode.sql" />
+    <Build Include="dbo\Tables\QAMtlTypeSetting.sql" />
+    <Build Include="dbo\Tables\AcceptableQualityLevels.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

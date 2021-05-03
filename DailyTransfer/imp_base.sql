@@ -4183,7 +4183,6 @@ LEFT JOIN Production.dbo.ChgOverTarget b ON a.EffectiveDate = b.EffectiveDate an
 WHERE b.EffectiveDate is null
 and exists(select 1 from Production.dbo.MDivision where ID = a.MDivisionID)
 
-
 ---NewCDCode 
 
 DELETE Production.dbo.NewCDCode 
@@ -4236,5 +4235,34 @@ SELECT [Classifty]
 from Trade_To_Pms.dbo.NewCDCode as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.NewCDCode as a WITH (NOLOCK) where a.[Classifty] = b.[Classifty] and a.[ID] = b.[ID])
 
+-------MtlType   2   QAMtlTypeSetting
+
+update a
+set junk = 1
+FROM Production.dbo.[QAMtlTypeSetting] a
+LEFT JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
+WHERE b.id is null
+
+UPDATE a
+SET
+	a.[FullName]	= b.[FullName]
+	,a.[Type]		= b.[Type]
+	,a.[Junk]		= b.[Junk]
+FROM Production.dbo.[QAMtlTypeSetting] a
+INNER JOIN Trade_To_Pms.dbo.MtlType b ON a.id = b.id
+
+INSERT INTO [dbo].[QAMtlTypeSetting]
+           ([ID]
+           ,[FullName]
+           ,[Type]
+           ,[Junk])
+select
+		 a.[ID]
+		,a.[FullName]
+		,a.[Type]
+		,a.[Junk]
+FROM Trade_To_Pms.dbo.MtlType a
+LEFT JOIN Production.dbo.[QAMtlTypeSetting] b ON a.id = b.id
+where b.id is null
 
 END
