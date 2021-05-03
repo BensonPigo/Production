@@ -2315,18 +2315,7 @@ and exists(
 )
 ";
 
-            if (string.Compare(status, "New", true) == 0)
-            {
-                sqlcmd += Environment.NewLine + @"
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)";
-            }
-            else
+            if (string.Compare(status, "New", true) != 0)
             {
                 sqlcmd += Environment.NewLine + @" and ir2.SentToWMS = 1";
             }

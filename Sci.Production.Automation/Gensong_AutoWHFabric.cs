@@ -1009,9 +1009,10 @@ left join PO_Supp_Detail po3 on po3.ID = lt2.POID and po3.SEQ1 = lt2.Seq1
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo = Fabric.SCIRefNo
 LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = lt2.Id
 )Barcode
 where 1=1
 and exists(
@@ -1670,9 +1671,10 @@ OUTER APPLY(
 	 END
 )Color
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from FtyInventory_Barcode fb 
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = rd.Id
 )Barcode
 where 1=1
 and exists(
@@ -1713,13 +1715,14 @@ inner join Production.dbo.TransferIn r on rd.id = r.id
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from FtyInventory_Barcode fb 
 	inner join FtyInventory f on f.Ukey = fb.Ukey
 	where f.POID = rd.POID
 	and f.Seq1 = rd.Seq1 and f.Seq2= rd.Seq2
 	and f.Roll = rd.Roll and f.Dyelot = rd.Dyelot
 	and f.StockType = rd.StockType
+    and fb.TransactionID = rd.Id
 )Barcode
 where 1=1
 and exists(
@@ -1799,9 +1802,10 @@ OUTER APPLY(
 	 END
 )Color
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from FtyInventory_Barcode fb 
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = rd.Id
 )Barcode
 where 1=1
 and exists(
@@ -1843,13 +1847,14 @@ inner join #tmp s on s.POID = rd.PoId
 inner join Production.dbo.PO_Supp_Detail po3 on po3.ID= rd.PoId 
 	and po3.SEQ1=rd.Seq1 and po3.SEQ2=rd.Seq2
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from FtyInventory_Barcode fb 
 	inner join FtyInventory f on f.Ukey = fb.Ukey
 	where f.POID = rd.POID
 	and f.Seq1 = rd.Seq1 and f.Seq2= rd.Seq2
 	and f.Roll = rd.Roll and f.Dyelot = rd.Dyelot
 	and f.StockType = rd.StockType
+    and fb.TransactionID = rd.Id
 )Barcode
 where 1=1
 and exists(
@@ -2112,13 +2117,14 @@ outer apply(
 	where fb.Ukey = fi.Ukey
 )FromBarcode
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	inner join FtyInventory toFi on toFi.Ukey = fb.Ukey
 	where toFi.POID = sd.ToPOID
 	and tofi.Seq1= sd.ToSeq1 and toFi.Seq2 = sd.ToSeq2
 	and toFi.Roll = sd.ToRoll and toFi.Dyelot = sd.ToDyelot
 	and toFi.StockType = sd.ToStockType
+    and fb.TransactionID = sd.Id
 )ToBarcode
 where 1=1
 and exists(
@@ -2188,9 +2194,10 @@ inner join Production.dbo.ReturnReceipt rr on rr.id = rrd.id
 {strBody}
 left join FtyInventory f on rrd.FtyInventoryUkey = f.ukey
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = rrd.Id
 )Barcode
 where 1=1
 and exists(
@@ -2282,13 +2289,14 @@ outer apply(
 	where fb.Ukey = fi.Ukey
 )FromBarcode
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	inner join FtyInventory toFi on toFi.Ukey = fb.Ukey
 	where toFi.POID = bb2.ToPOID
 	and tofi.Seq1= bb2.ToSeq1 and toFi.Seq2 = bb2.ToSeq2
 	and toFi.Roll = bb2.ToRoll and toFi.Dyelot = bb2.ToDyelot
 	and toFi.StockType = bb2.ToStockType
+    and fb.TransactionID = bb2.Id
 )ToBarcode
 where 1=1
 and exists(
@@ -2363,9 +2371,10 @@ left join Production.dbo.FtyInventory f on f.POID = i2.POID and f.Seq1=i2.Seq1
 left join PO_Supp_Detail po3 on po3.ID = i2.POID
 	and po3.SEQ1 = i2.Seq1 and po3.SEQ2 = i2.Seq2
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = i2.Id
 )Barcode
 where 1=1 
 and exists(
@@ -2439,9 +2448,10 @@ and po3.SEQ2 = ir2.Seq2
 LEFT JOIN Fabric WITH (NOLOCK) ON po3.SCIRefNo=Fabric.SCIRefNo
 LEFT JOIN Orders o WITH (NOLOCK) ON o.ID = po3.ID
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = ir2.Id
 )Barcode
 where 1=1
 and exists(
@@ -2452,18 +2462,7 @@ and exists(
 )
 ";
 
-            if (string.Compare(status, "New", true) == 0)
-            {
-                sqlcmd += Environment.NewLine + @"
-and exists(
-	select 1
-	from FtyInventory_Detail fd 
-	inner join MtlLocation ml on ml.ID = fd.MtlLocationID
-	where f.Ukey = fd.Ukey
-	and ml.IsWMS = 1
-)";
-            }
-            else
+            if (string.Compare(status, "New", true) != 0)
             {
                 sqlcmd += Environment.NewLine + @" and ir2.SentToWMS = 1";
             }
@@ -2508,9 +2507,10 @@ inner join Production.dbo.Stocktaking i on ir2.id = i.id
 inner join #tmp s on ir2.ID = s.Id
 left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
 outer apply(
-	select value = min(fb.Barcode)
+	select value = fb.Barcode
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey
+    and fb.TransactionID = ir2.Id
 )Barcode
 where 1=1
 and exists(
