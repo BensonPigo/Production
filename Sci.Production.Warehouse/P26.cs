@@ -327,7 +327,7 @@ WHERE   StockType='{0}'
 
             #region 排除Location 包含WMS & 非WMS資料
 
-            DataTable dtToWMS = (DataTable)this.detailgridbs.DataSource;
+            DataTable dtToWMSChk = (DataTable)this.detailgridbs.DataSource;
 
             string sqlcmd = @"
 select * from
@@ -352,7 +352,7 @@ drop table #tmp
             DataTable dtCheck;
             string errmsg = string.Empty;
 
-            if (!(result1 = MyUtility.Tool.ProcessWithDatatable(dtToWMS, string.Empty, sqlcmd, out dtCheck)))
+            if (!(result1 = MyUtility.Tool.ProcessWithDatatable(dtToWMSChk, string.Empty, sqlcmd, out dtCheck)))
             {
                 MyUtility.Msg.WarningBox(result1.Messages.ToString());
                 return;
@@ -426,23 +426,31 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
-            // 只要Location 改變就撤回
-            DataRow[] drArrydiffLocation = this.DetailDatas.AsEnumerable().Where(x => x.Field<string>("ToLocation").EqualString(x.Field<string>("OldLocation"))).ToArray();
-
-            if (drArrydiffLocation.Length > 0)
+            // 若location 不是自動倉,且Location 有變更, 要發給WMS做撤回(Delete)
+            DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
+            foreach (DataRow dr2 in this.DetailDatas)
             {
-                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                string sqlchk = $@"
+select * from MtlLocation m
+inner join SplitString('{dr2["ToLocation"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk))
                 {
-                    Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(drArrydiffLocation.CopyToDataTable()))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                    dtToWMS.ImportRow(dr2);
                 }
+            }
 
-                // AutoWH ACC WebAPI for VStrong
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                {
-                    Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(drArrydiffLocation.CopyToDataTable()))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                }
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            {
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            // AutoWH ACC WebAPI for VStrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             MyUtility.Msg.InfoBox("Confirmed successful");
@@ -470,7 +478,6 @@ select a.id
 	,a.stocktype
 	,a.FromLocation
 	,a.ToLocation
-    ,[OldLocation] =  a.ToLocation
 	,a.ftyinventoryukey
 	,a.ukey
 	,p1.Refno

@@ -860,9 +860,20 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
                 return;
             }
 
-            // 只要Location 改變就撤回
-            DataRow[] drArrydiffLocation = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
-                                                                         && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
+            // 若location 不是自動倉,且Location 有變更, 要發給WMS做撤回(Delete)
+            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
+            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
+            foreach (DataRow dr in dtcopy.Rows)
+            {
+                string sqlchk = $@"
+select * from MtlLocation m
+inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
+where m.IsWMS = 0";
+                if (MyUtility.Check.Seek(sqlchk) && string.Compare(dr["Location"].ToString(), dr["OldLocation"].ToString()) != 0)
+                {
+                    dtToWMS.ImportRow(dr);
+                }
+            }
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
@@ -872,21 +883,17 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
             this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
             MyUtility.Msg.InfoBox("Complete");
 
-            if (drArrydiffLocation.Length > 0)
+            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
             {
-                // 若location 不是自動倉,要發給WMS做撤回(Delete) WebAPI for Gensong
-                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
-                {
-                    Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(drArrydiffLocation.CopyToDataTable()))
-               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-                }
+                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
+           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
 
-                // AutoWH ACC WebAPI for VStrong
-                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-                {
-                    Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(drArrydiffLocation.CopyToDataTable()))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                }
+            // AutoWH ACC WebAPI for VStrong
+            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+            {
+                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
+                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
 
