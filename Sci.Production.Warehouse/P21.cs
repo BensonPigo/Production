@@ -546,6 +546,51 @@ DROP TABLE #tmpStockType
                 return;
             }
 
+            #region 排除Location 包含WMS & 非WMS資料
+
+            string sqlcmd = @"
+select * from
+(
+select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
+	from (
+		select distinct t.POID,t.Seq1,t.Seq2,t.Roll,t.Dyelot,IsWMS = isnull( ml.IsWMS,0),t.Location
+		from #tmp t
+		outer apply(
+			select ml.IsWMS
+			from MtlLocation ml
+			inner join dbo.SplitString(t.Location,',') sp on sp.Data = ml.ID
+		)ml
+	) a
+) final
+where rowCnt = 2
+
+drop table #tmp
+";
+            DualResult result1;
+            DataTable dt;
+            string errmsg = string.Empty;
+
+            if (!(result1 = MyUtility.Tool.ProcessWithDatatable(selectedReceiving.CopyToDataTable(), string.Empty, sqlcmd, out dt)))
+            {
+                MyUtility.Msg.WarningBox(result1.Messages.ToString());
+                return;
+            }
+            else
+            {
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in dt.Rows)
+                    {
+                        errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} Location: {tmp["Location"]}" + Environment.NewLine;
+                    }
+
+                    MyUtility.Msg.WarningBox("These material exists in WMS Location and non-WMS location in same time , please revise below detail location column data." + Environment.NewLine + errmsg, "Warning");
+                    return;
+                }
+            }
+            #endregion
+
             // 排除Location沒有修改的資料
             DataRow[] drArryExistRemark = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
                                                                              && !MyUtility.Check.Empty(x.Field<string>("Remark"))
@@ -815,19 +860,9 @@ AND fs.Dyelot = '{updateItem["Dyelot"]}'
                 return;
             }
 
-            DataTable dtToWMS = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable().Clone();
-            DataTable dtcopy = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1).CopyToDataTable();
-            foreach (DataRow dr in dtcopy.Rows)
-            {
-                string sqlchk = $@"
-select * from MtlLocation m
-inner join SplitString('{dr["Location"]}',',') sp on m.ID = sp.Data
-where m.IsWMS = 0";
-                if (MyUtility.Check.Seek(sqlchk))
-                {
-                    dtToWMS.ImportRow(dr);
-                }
-            }
+            // 只要Location 改變就撤回
+            DataRow[] drArrydiffLocation = this.dtReceiving.AsEnumerable().Where(x => x.Field<int>("select") == 1
+                                                                         && !x.Field<string>("Location").EqualString(x.Field<string>("OldLocation"))).ToArray();
 
             // 將當前所選位置記錄起來後, 待資料重整後定位回去!
             int currentRowIndexInt = this.gridReceiving.CurrentRow.Index;
@@ -837,18 +872,21 @@ where m.IsWMS = 0";
             this.gridReceiving.FirstDisplayedScrollingRowIndex = currentRowIndexInt;
             MyUtility.Msg.InfoBox("Complete");
 
-            // 若location 不是自動倉,要發給WMS做撤回(Delete) WebAPI for Gensong
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            if (drArrydiffLocation.Length > 0)
             {
-                Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(dtToWMS))
-           .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+                // 若location 不是自動倉,要發給WMS做撤回(Delete) WebAPI for Gensong
+                if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+                {
+                    Task.Run(() => new Gensong_AutoWHFabric().SentReceive_Location_Update(drArrydiffLocation.CopyToDataTable()))
+               .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                }
 
-            // AutoWH ACC WebAPI for VStrong
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
-            {
-                Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(dtToWMS))
-                .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                // AutoWH ACC WebAPI for VStrong
+                if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+                {
+                    Task.Run(() => new Vstrong_AutoWHAccessory().SentReceive_Location_Update(drArrydiffLocation.CopyToDataTable()))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                }
             }
         }
 
