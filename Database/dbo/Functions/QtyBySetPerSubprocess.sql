@@ -67,7 +67,7 @@ RETURNS
 	InQtyByPcs int,
 	OutQtyByPcs int,
 	FinishedQtyBySet int,
-	SubprocessId varchar(10)
+	SubprocessId varchar(15)
 )
 AS
 BEGIN
@@ -82,7 +82,7 @@ BEGIN
 		InQtyByPcs int,
 		OutQtyByPcs int,
 		FinishQty int,
-		SubprocessId varchar(10)
+		SubprocessId varchar(15)
 	)
 
 	if (@IsNeedCombinBundleGroup = 1)
