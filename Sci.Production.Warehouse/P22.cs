@@ -277,6 +277,7 @@ WHERE   StockType='{0}'
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
@@ -829,7 +830,9 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"select a.id,a.FromPoId,a.FromSeq1,a.FromSeq2
+                @"
+select [Selected] = 0 
+,a.id,a.FromPoId,a.FromSeq1,a.FromSeq2
 ,concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2) as Fromseq
 ,p1.FabricType
 ,p1.stockunit
@@ -843,6 +846,7 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
 ,a.ToDyelot
 ,a.ToStocktype
 ,a.ToLocation
+,Fromlocation = Fromlocation.listValue
 ,a.fromftyinventoryukey
 ,a.ukey
 ,dbo.Getlocation(fi.ukey) location
@@ -850,6 +854,21 @@ from dbo.SubTransfer_detail a WITH (NOLOCK)
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = a.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1029,5 +1048,20 @@ where a.id= @ID";
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P22", this);
         }
+
+        private void BtnUpdateLocation_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            List<DataRow> dataRows = this.DetailDatas.Where(x => x["Selected"].EqualDecimal(1)).ToList();
+            foreach (DataRow dr in dataRows)
+            {
+                dr["ToLocation"] = dr["Fromlocation"];
+                dr.EndEdit();
+            }
+        }
     }
-}
+};

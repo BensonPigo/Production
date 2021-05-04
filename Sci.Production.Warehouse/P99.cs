@@ -3682,6 +3682,15 @@ inner join #tmp s on t.ID = s.ID
 delete t
 from {strTable} t
 inner join #tmp s on t.Ukey = s.Ukey 
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable result_upd_qty)))
                         {
@@ -3945,6 +3954,15 @@ where exists(
 	where t.ukey = s.ukey
 )
 and (sizeQty.qty != 0 or sizeQty.qty is not null)
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             case "P10":
@@ -3997,6 +4015,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join Issue_Summary rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             case "P15":
@@ -4012,6 +4039,15 @@ set t.editname = '{Env.User.UserID}'
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
 
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
+
 ";
                                 break;
                             case "P17":
@@ -4025,6 +4061,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             case "P19":
@@ -4038,6 +4083,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             default:
@@ -4051,6 +4105,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join Issue_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                         }
@@ -4196,6 +4259,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from Adjust t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4358,6 +4430,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from Adjust t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4450,6 +4531,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from Adjust t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, upcmd, out result_upd_qty)))
                         {
@@ -4542,6 +4632,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from ReturnReceipt t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from ReturnReceipt r
+left join ReturnReceipt_Detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4750,6 +4849,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from BorrowBack t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from BorrowBack r
+left join BorrowBack_Detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -5068,6 +5176,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from SubTransfer t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from SubTransfer r
+left join SubTransfer_Detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
