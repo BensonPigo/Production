@@ -325,6 +325,53 @@ WHERE   StockType='{0}'
                 return;
             }
 
+            #region 排除Location 包含WMS & 非WMS資料
+
+            DataTable dtToWMSChk = (DataTable)this.detailgridbs.DataSource;
+
+            string sqlcmd = @"
+select * from
+(
+select * 
+	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,ToLocation order by IsWMS)
+	from (
+		select distinct t.POID,t.Seq1,t.Seq2,t.Roll,t.Dyelot,IsWMS = isnull( ml.IsWMS,0),t.ToLocation
+		from #tmp t
+		outer apply(
+			select ml.IsWMS
+			from MtlLocation ml
+			inner join dbo.SplitString(t.ToLocation,',') sp on sp.Data = ml.ID
+		)ml
+	) a
+) final
+where rowCnt = 2
+
+drop table #tmp
+";
+            DualResult result1;
+            DataTable dtCheck;
+            string errmsg = string.Empty;
+
+            if (!(result1 = MyUtility.Tool.ProcessWithDatatable(dtToWMSChk, string.Empty, sqlcmd, out dtCheck)))
+            {
+                MyUtility.Msg.WarningBox(result1.Messages.ToString());
+                return;
+            }
+            else
+            {
+                if (dtCheck != null && dtCheck.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in dtCheck.Rows)
+                    {
+                        errmsg += $@"SP#: {tmp["poid"]} Seq#: {tmp["seq1"]}-{tmp["seq2"]} Roll#: {tmp["roll"]} Dyelot: {tmp["Dyelot"]} ToLocation: {tmp["ToLocation"]}" + Environment.NewLine;
+                    }
+
+                    MyUtility.Msg.WarningBox("These material exists in WMS Location and non-WMS location in same time , please revise below detail location column data." + Environment.NewLine + errmsg, "Warning");
+                    return;
+                }
+            }
+            #endregion
+
             string sqlComfirmUpdate = string.Empty;
             sqlComfirmUpdate = string.Format(
                 @"
@@ -379,7 +426,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
             }
 
-            // 若location 不是自動倉,要發給WMS做撤回(Delete) WebAPI for Gensong
+            // 若location 不是自動倉,且Location 有變更, 要發給WMS做撤回(Delete)
             DataTable dtToWMS = ((DataTable)this.detailgridbs.DataSource).Clone();
             foreach (DataRow dr2 in this.DetailDatas)
             {
