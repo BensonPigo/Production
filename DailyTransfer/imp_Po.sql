@@ -330,8 +330,6 @@ SET
 from Production.dbo.PO_Supp_Detail as a 
 inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
 inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
-WHERE a.StockUnit = '' OR a.StockUnit IS NULL
-
 
 
 -------------------------- INSERT INTO §ì
@@ -487,7 +485,6 @@ QTY = 0
 from Production.dbo.PO_Supp_Detail as a inner join #Trade_To_Pms_PO as b ON a.id=b.id
 where not exists(select id from Trade_To_Pms.dbo.PO_Supp_Detail as c where a.id = c.id)
 and InputQty <> 0
-AND a.StockUnit = '' OR a.StockUnit IS NULL
 
 
 ----------------------§ó·s StockUnit
