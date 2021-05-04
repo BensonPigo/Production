@@ -332,7 +332,6 @@ inner join Trade_To_Pms.dbo.PO_Supp_Detail as b ON a.id=b.id and a.SEQ1=b.Seq1 a
 inner join  #Trade_To_Pms_PO c ON b.ID = c.ID 
 
 
-
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.PO_Supp_Detail(
 ID
@@ -495,6 +494,7 @@ and InputQty <> 0
 update po
 set po.StockUnit = Production.dbo.GetStockUnitBySPSeq(po.ID, po.SEQ1, po.SEQ2)
 from Production.dbo.PO_Supp_Detail po With(NoLock)
+WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ------------------------------------------------------------------PO3 END
 
 ------Delete Po from Trade PO_Delete function
