@@ -137,7 +137,7 @@ namespace Sci.Production.Automation
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -397,7 +397,7 @@ where exists(
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -597,7 +597,7 @@ where exists(
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -913,7 +913,7 @@ select distinct
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -1061,7 +1061,7 @@ select distinct
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -1303,7 +1303,7 @@ and exists(
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -1437,7 +1437,7 @@ and exists(
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
@@ -1570,7 +1570,7 @@ and exists(
                 switch (status)
                 {
                     case "Lock":
-                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: true)) == false)
+                        if ((result = WH_Auto_SendWebAPI(URL, callMethod.automationErrMsg.suppAPIThread, jsonBody, callMethod.automationErrMsg, reSented: false)) == false)
                         {
                             MyUtility.Msg.WarningBox("WMS system rejected the unconfirm request, please reference below information：" + Environment.NewLine + result.Messages.ToString());
                             return false;
