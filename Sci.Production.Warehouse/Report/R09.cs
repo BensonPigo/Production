@@ -302,7 +302,7 @@ select	TPEAllocatedQty.FactoryID
 		, TPEAllocatedQty.POID
 		, TPEAllocatedQty.Seq1
 		, TPEAllocatedQty.Seq2 
-		, Qty = Sum (round(TPEAllocatedQty.Qty * v.RateValue,1))
+		, Qty = Sum (round(TPEAllocatedQty.Qty * v.RateValue, 2))
 into #TPEAllocated
 from (
 	-- Type 2, 3, 5 --
