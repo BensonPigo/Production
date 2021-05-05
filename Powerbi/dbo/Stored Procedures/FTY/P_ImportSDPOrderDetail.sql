@@ -194,18 +194,18 @@ BEGIN
 	INTO #tmp FROM 
 	( 
 		SELECT
-				 Country = t.CountryID
-				,KPIGroup=t.KPICode
-				,Factory=t.FactoryID
+				 Country = isnull(t.CountryID,'')
+				,KPIGroup = isnull(t.KPICode,'')
+				,Factory = isnull(t.FactoryID,'')
 				,SPNO=t.OrderID 
 				,t.StyleID
-				,t.seq
-				,Brand=t.BrandID
+				,seq = isnull(t.seq,'')
+				,Brand = isnull(t.BrandID,'')
 				,BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)--G
 				,FactoryKPI= convert(varchar(10),t.FtyKPI,111)
 				,Extension = iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI))
-				,DeliveryByShipmode = t.ShipmodeID
-				,t.OrderQty 
+				,DeliveryByShipmode = isnull(t.ShipmodeID,'')
+				,OrderQty = isnull(t.OrderQty ,0)
 				,OnTimeQty = CASE WHEN t.OnsiteSample = 1 THEN IIF(GetOnsiteSampleFail.isFail = 1 or sew.SewLastDate is null, 0, Cast(t.OrderQty as int))
 									WHEN t.GMTComplete = 'S' and p.PulloutDate is null THEN Cast(0 as int) --[IST20190675] 若為短交且PullOutDate是空的,不算OnTime也不算Fail,直接給0
 									Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(t.OrderQty as int)), Cast(isnull(pd.Qty,0) as int)) 
@@ -215,28 +215,28 @@ BEGIN
 									Else iif(isnull(t.isDevSample,0) = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(t.OrderQty as int), 0), Cast(isnull(pd.FailQty,t.OrderQty) as int)) 
 						End
 				,PullOutDate = iif(isnull(t.isDevSample,0) = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 111))
-				,Shipmode = t.ShipmodeID
-				,P = (select count(1)from(select distinct ID,OrderID,OrderShipmodeSeq from Production.dbo.Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.ShipQty > 0)x )  --未出貨,出貨次數=0 --不論這OrderID的OrderShipmodeSeq有沒有被撈出來, 都要計算
-				,GarmentComplete=t.GMTComplete 
+				,Shipmode = isnull(t.ShipmodeID,'')
+				,P = (select count(1) from(select distinct ID,OrderID,OrderShipmodeSeq from Production.dbo.Pullout_Detail p2 where p2.OrderID = t.OrderID and p2.ShipQty > 0)x )  --未出貨,出貨次數=0 --不論這OrderID的OrderShipmodeSeq有沒有被撈出來, 都要計算
+				,GarmentComplete = isnull(t.GMTComplete,'') 
 				,[ReasonID] = ISNULL(t.ReasonID ,'')
 				,[OrderReason] = ISNULL(t.ReasonName ,'')
 				,LastSewingOutputDate = convert(varchar(10),sew.SewLastDate,111) 
 				,LastCartonReceivedDate=ctnr.CTNLastReceiveDate  
-				,Handle = Production.dbo.getTPEPass1_ExtNo(t.MRHandle)
-				,SMR = Production.dbo.getTPEPass1_ExtNo(t.SMR)
+				,Handle = isnull(Production.dbo.getTPEPass1_ExtNo(t.MRHandle),'')
+				,SMR = isnull(Production.dbo.getTPEPass1_ExtNo(t.SMR),'')
 				,POHandle = ISNULL(Production.dbo.getTPEPass1_ExtNo(t.POHandle),'')
 				,POSMR = ISNULL(Production.dbo.getTPEPass1_ExtNo(t.POSMR),'')
-				,OrderType = t.OrderTypeID
+				,OrderType = isnull(t.OrderTypeID,'')
 				,DevSample = iif(t.isDevSample = 1, 'Y', '')
 				,SewingQty=ISNULL(sew.SewouptQty,0)
 				, FOCQty = getQtyBySeq.FOC
 				,PartialShipment=iif(ps.ct>1,'Y','')
 				,[OutstandingReason]=ISNULL(t.OutstandingReason,'')
 				-----以下為PMS程式有，但沒有要寫入的
-				,t.Alias 				
+				,Alias = isnull(t.Alias,'') 				
 				,[OutstandingRemark]=ISNULL(t.OutstandingRemark,'')
 				,[OSTClogCarton]=ISNULL(OSTClogCarton.Val,0)
-				,t.ReasonRemark
+				,[ReasonRemark] = isnull(t.ReasonRemark,'')
 		from #tmp_main t
 		--出貨次數--
 		left join #tmp_Pullout_Detail op on op.OrderID = t.OrderID and op.OrderShipmodeSeq = t.Seq 
@@ -282,43 +282,43 @@ BEGIN
 		--部分未出貨Fail的自成一行,且ShipQty給0,避免在Excel整欄加總重覆計算
 		UNION ALL ----------------------------------------------------
 		SELECT 
-			Country = t.CountryID
-			,KPIGroup = t.KPICode
-			,Factory = t.FactoryID
+			Country = isnull(t.CountryID,'')
+			,KPIGroup = isnull(t.KPICode,'')
+			,Factory = isnull(t.FactoryID,'')
 			,SPNO=t.OrderID  
 			,t.StyleID
-			,t.Seq 
-			,Brand=t.BrandID  
+			,Seq = isnull(t.Seq ,'')
+			,Brand = isnull(t.BrandID,'') 
 			, BuyerDelivery = convert(varchar(10),t.BuyerDelivery,111)
 			, FactoryKPI = convert(varchar(10),t.FtyKPI,111)
 			, Extension = iif(t.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), t.FtyKPI, DATEADD(day, isnull(t.OTDExtension,0), t.FtyKPI))
-			, DeliveryByShipmode = t.ShipmodeID
+			, DeliveryByShipmode = isnull(t.ShipmodeID,'')
 			, OrderQty = 0
 			, OnTimeQty =  0
 			, FailQty = Cast(isnull(t.OrderQty - (pd.Qty + pd.FailQty),0) as int) --未出貨Qty
 			, pullOutDate = null
-			, Shipmode = t.ShipModeID
+			, Shipmode = isnull(t.ShipModeID,'')
 			,P =0 --未出貨,出貨次數=0
-			,GarmentComplete=t.GMTComplete 
+			,GarmentComplete = isnull(t.GMTComplete ,'')
 			,[ReasonID] = ISNULL(t.ReasonID ,'')
 			,[OrderReason] = ISNULL(t.ReasonName ,'')
 			, LastSewingOutputDate = convert(varchar(10),sew.SewLastDate,111)
 			,LastCartonReceivedDate=ctnr.CTNLastReceiveDate
-			,Handle = Production.dbo.getTPEPass1_ExtNo(t.MRHandle)
-			,SMR = Production.dbo.getTPEPass1_ExtNo(t.SMR)
+			,Handle = isnull(Production.dbo.getTPEPass1_ExtNo(t.MRHandle),'')
+			,SMR = isnull(Production.dbo.getTPEPass1_ExtNo(t.SMR),'')
 			,POHandle = ISNULL(Production.dbo.getTPEPass1_ExtNo(t.POHandle),'')
 			,POSMR = ISNULL( Production.dbo.getTPEPass1_ExtNo(t.POSMR),'')
-			,OrderType=t.OrderTypeID  
+			,OrderType = isnull(t.OrderTypeID,'')  
 			,DevSample = iif(t.isDevSample = 1, 'Y', '')
-			,SewingQty=ISNULL(sew.SewouptQty,0)
+			,SewingQty = ISNULL(sew.SewouptQty,0)
 			, FOCQty = getQtyBySeq.FOC
 			,PartialShipment=iif(ps.ct>1,'Y','')
 			,[OutstandingReason]=ISNULL(t.OutstandingReason,'')
 			-----以下為PMS程式有，但沒有要寫入的
-			,t.Alias
+			,Alias = isnull(t.Alias,'')
 			,[OutstandingRemark]=ISNULL(t.OutstandingRemark,'')
 			,[OSTClogCarton]=ISNULL(OSTClogCarton.Val,0)
-			,t.ReasonRemark
+			,ReasonRemark = isnull(t.ReasonRemark,'')
 		From #tmp_main t 
 		--是否有分批出貨
 		outer apply (
