@@ -281,9 +281,9 @@ select * from allpass1 where ID = '{Env.User.UserID}' or Supervisor = '{Env.User
         }
 
         /// <inheritdoc/>
-        public static string GetPatternUkey(string cutref, string poid, string sizes)
+        public static string GetPatternUkey(string cutref, string poid, string sizes, string srcStyleUkey = "")
         {
-            string styleyukey = MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID");
+            string styleyukey = MyUtility.Check.Empty(srcStyleUkey) ? MyUtility.GetValue.Lookup("Styleukey", poid, "Orders", "ID") : srcStyleUkey;
             string sqlSizeGroup = $@"SELECT TOP 1 IIF(ISNULL(SizeGroup,'')='','N',SizeGroup) FROM Order_SizeCode WHERE ID ='{poid}' and SizeCode IN ({sizes})";
             string sizeGroup = MyUtility.GetValue.Lookup(sqlSizeGroup);
             string patidsql = $@"select s.PatternUkey from dbo.GetPatternUkey('{poid}','{cutref}','',{styleyukey},'{sizeGroup}')s";
@@ -366,10 +366,10 @@ else
         /// <param name="sizes">EX:'S','M','L'</param>
         /// <param name="outTb">outTb</param>
         /// <param name="articleGroupDT">articleGroupDT</param>
-        public static void GetGarmentListTable(string cutref, string poid, string sizes, out DataTable outTb, out DataTable articleGroupDT)
+        public static void GetGarmentListTable(string cutref, string poid, string sizes, out DataTable outTb, out DataTable articleGroupDT, string styleUkey = "")
         {
             outTb = null;
-            string patternukey = GetPatternUkey(cutref, poid, sizes);
+            string patternukey = GetPatternUkey(cutref, poid, sizes, styleUkey);
 
             #region 找 ArticleGroup 當Table Header
             string headercodesql = $"Select distinct ArticleGroup from Pattern_GL_LectraCode WITH (NOLOCK) where PatternUkey = '{patternukey}' and ArticleGroup !='F_CODE' order by ArticleGroup";
