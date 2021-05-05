@@ -442,6 +442,7 @@ where a.id= @ID";
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("frompoid", header: "From SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("fromseq", header: "From" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("fromroll", header: "From" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
@@ -1362,7 +1363,8 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select  a.id
+select  [Selected] = 0 
+        ,a.id
         ,a.FromPoId
         ,a.FromSeq1
         ,a.FromSeq2
@@ -1390,10 +1392,26 @@ select  a.id
                            for xml path(''))
                           , 1, 1, '') 
         ,a.ToLocation
+        ,Fromlocation = Fromlocation.listValue
 from dbo.BorrowBack_detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory FI on a.FromPoid = Fi.Poid and a.FromSeq1 = Fi.Seq1 and a.FromSeq2 = Fi.Seq2 
     and a.FromRoll = Fi.Roll and a.FromDyelot = Fi.Dyelot and a.FromStockType = StockType
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = a.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1496,6 +1514,21 @@ The Deylot of
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P31", this);
+        }
+
+        private void BtnUpdateLocation_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            List<DataRow> dataRows = this.DetailDatas.Where(x => x["Selected"].EqualDecimal(1)).ToList();
+            foreach (DataRow dr in dataRows)
+            {
+                dr["ToLocation"] = dr["Fromlocation"];
+                dr.EndEdit();
+            }
         }
     }
 }

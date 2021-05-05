@@ -269,6 +269,7 @@ WHERE   StockType='{0}'
             #endregion
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
@@ -660,8 +661,8 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select 
-    a.id
+select [Selected] = 0 
+    ,a.id
     ,a.FromFtyinventoryUkey
     ,a.FromPoId
     ,a.FromSeq1
@@ -683,9 +684,25 @@ select
     ,dbo.Getlocation(f.Ukey)  as Fromlocation
     ,a.ukey
     ,a.tolocation
+    ,Fromlocation2 = Fromlocation2.listValue
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
 left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = f.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = a.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation2
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1054,6 +1071,21 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P24", this);
+        }
+
+        private void BtnUpdateLocation_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            List<DataRow> dataRows = this.DetailDatas.Where(x => x["Selected"].EqualDecimal(1)).ToList();
+            foreach (DataRow dr in dataRows)
+            {
+                dr["ToLocation"] = dr["Fromlocation2"];
+                dr.EndEdit();
+            }
         }
     }
 }

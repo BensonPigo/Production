@@ -44,6 +44,7 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.btnUpdateLocation = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnUpdateLocation);
             this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -75,7 +77,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(995, 161);
+            this.masterpanel.Size = new System.Drawing.Size(995, 183);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -92,16 +94,17 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 161);
-            this.detailpanel.Size = new System.Drawing.Size(995, 316);
+            this.detailpanel.Location = new System.Drawing.Point(0, 183);
+            this.detailpanel.Size = new System.Drawing.Size(995, 294);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(879, 125);
+            this.gridicon.Location = new System.Drawing.Point(879, 144);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -111,7 +114,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(995, 316);
+            this.detailgridcont.Size = new System.Drawing.Size(995, 294);
             // 
             // detail2
             // 
@@ -225,7 +228,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(995, 161);
+            this.shapeContainer1.Size = new System.Drawing.Size(995, 183);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -311,13 +314,24 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(509, 125);
+            this.btnCallP99.Location = new System.Drawing.Point(667, 125);
             this.btnCallP99.Name = "btnCallP99";
             this.btnCallP99.Size = new System.Drawing.Size(149, 30);
             this.btnCallP99.TabIndex = 66;
             this.btnCallP99.Text = "Revise Detail data";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
+            // 
+            // btnUpdateLocation
+            // 
+            this.btnUpdateLocation.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUpdateLocation.Location = new System.Drawing.Point(509, 125);
+            this.btnUpdateLocation.Name = "btnUpdateLocation";
+            this.btnUpdateLocation.Size = new System.Drawing.Size(152, 48);
+            this.btnUpdateLocation.TabIndex = 68;
+            this.btnUpdateLocation.Text = "Copy FromLocation to ToLocation";
+            this.btnUpdateLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateLocation.Click += new System.EventHandler(this.BtnUpdateLocation_Click);
             // 
             // P36
             // 
@@ -379,5 +393,6 @@
         private Win.UI.Label labelRemark;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Button btnUpdateLocation;
     }
 }

@@ -279,6 +279,7 @@ WHERE   StockType='{0}'
             #endregion
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("frompoid", header: "Inventory" + Environment.NewLine + "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("fromseq", header: "Inventory" + Environment.NewLine + "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
@@ -996,7 +997,8 @@ and i2.id ='{this.CurrentMaintain["ID"]}'
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select  a.id    
+select  [Selected] = 0 
+        , a.id    
         , a.FromPoId
         , a.FromSeq1
         , a.FromSeq2
@@ -1016,6 +1018,7 @@ select  a.id
         , a.ToDyelot
         , a.ToStocktype
         , a.ToLocation
+        , Fromlocation = Fromlocation.listValue
         , a.fromftyinventoryukey
         , a.ukey
         , location = dbo.Getlocation (fi.ukey)
@@ -1029,6 +1032,21 @@ left join FtyInventory FI on a.FromPoid = fi.poid
                              and a.fromRoll = fi.roll 
                              and a.fromStocktype = fi.stocktype
                              and a.fromDyelot = fi.Dyelot
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = a.ToStockType
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -1217,6 +1235,21 @@ order by t.frompoid,SEQ,BULKLOCATION,t.fromroll,t.FromDyelot
         private void BtnCallP99_Click(object sender, EventArgs e)
         {
             P99_CallForm.CallForm(this.CurrentMaintain["ID"].ToString(), "P23", this);
+        }
+
+        private void BtnUpdateLocation_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            List<DataRow> dataRows = this.DetailDatas.Where(x => x["Selected"].EqualDecimal(1)).ToList();
+            foreach (DataRow dr in dataRows)
+            {
+                dr["ToLocation"] = dr["Fromlocation"];
+                dr.EndEdit();
+            }
         }
     }
 }

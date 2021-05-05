@@ -79,7 +79,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(978, 208);
+            this.masterpanel.Size = new System.Drawing.Size(978, 202);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -101,13 +101,13 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 208);
-            this.detailpanel.Size = new System.Drawing.Size(978, 293);
+            this.detailpanel.Location = new System.Drawing.Point(0, 202);
+            this.detailpanel.Size = new System.Drawing.Size(978, 299);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(855, 144);
+            this.gridicon.Location = new System.Drawing.Point(855, 164);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -117,7 +117,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(978, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(978, 299);
             // 
             // detail2
             // 
@@ -229,7 +229,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(978, 208);
+            this.shapeContainer1.Size = new System.Drawing.Size(978, 202);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -327,7 +327,7 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(521, 144);
+            this.btnCallP99.Location = new System.Drawing.Point(667, 145);
             this.btnCallP99.Name = "btnCallP99";
             this.btnCallP99.Size = new System.Drawing.Size(149, 30);
             this.btnCallP99.TabIndex = 66;
@@ -337,11 +337,10 @@
             // 
             // btnUpdateLocation
             // 
-            this.btnUpdateLocation.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnUpdateLocation.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnUpdateLocation.Location = new System.Drawing.Point(676, 144);
+            this.btnUpdateLocation.Location = new System.Drawing.Point(509, 144);
             this.btnUpdateLocation.Name = "btnUpdateLocation";
-            this.btnUpdateLocation.Size = new System.Drawing.Size(152, 52);
+            this.btnUpdateLocation.Size = new System.Drawing.Size(152, 48);
             this.btnUpdateLocation.TabIndex = 67;
             this.btnUpdateLocation.Text = "Copy FromLocation to ToLocation";
             this.btnUpdateLocation.UseVisualStyleBackColor = true;

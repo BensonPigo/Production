@@ -1443,6 +1443,7 @@ and exists(
                        Barcode = dr["Barcode"].ToString(),
                        NewBarcode = dr["NewBarcode"].ToString(),
                        Description = dr["Description"].ToString(),
+                       Tone = dr["Tone"].ToString(),
                        Qty = (decimal)dr["Qty"],
                        Ukey = (long)dr["Ukey"],
                        Status = dr["Status"].ToString(),
@@ -1903,6 +1904,7 @@ select distinct
 ,[Barcode] = Barcode.value
 ,[NewBarcode] = NewBarcode.value
 ,[Description] = dbo.getMtlDesc(i2.POID,i2.Seq1,i2.Seq2,2,0)
+,[Tone] = ShadeboneTone.Tone
 ,[Ukey] = i2.ukey
 ,CmdTime = GetDate()
 ,[Qty] = {strQty}
@@ -1925,6 +1927,12 @@ outer apply(
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
 )NewBarcode
+outer apply (
+	select [Tone] = isnull(MAX(fs.Tone),'')
+	from FIR with (nolock) 
+	Left join FIR_Shadebone fs with (nolock) on FIR.ID = fs.ID and fs.Roll = f.Roll and fs.Dyelot = f.Dyelot
+	where FIR.poid = f.poid and FIR.seq1 = f.seq1 and FIR.seq2 = f.seq2
+) ShadeboneTone
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1949,6 +1957,7 @@ select distinct
 ,[Barcode] = Barcode.value
 ,[NewBarcode] = NewBarcode.value
 ,[Description] = dbo.getMtlDesc(i2.POID,i2.Seq1,i2.Seq2,2,0)
+,[Tone] = ShadeboneTone.Tone
 ,[Ukey] = i2.Ukey
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
@@ -1970,6 +1979,12 @@ outer apply(
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
 )NewBarcode
+outer apply (
+	select [Tone] = isnull(MAX(fs.Tone),'')
+	from FIR with (nolock) 
+	Left join FIR_Shadebone fs with (nolock) on FIR.ID = fs.ID and fs.Roll = f.Roll and fs.Dyelot = f.Dyelot
+	where FIR.poid = f.poid and FIR.seq1 = f.seq1 and FIR.seq2 = f.seq2
+) ShadeboneTone
 where 1=1
 and exists(
 	select 1 from Production.dbo.PO_Supp_Detail 
@@ -1994,6 +2009,7 @@ select distinct
 ,[Barcode] = Barcode.value
 ,[NewBarcode] = NewBarcode.value
 ,[Description] = dbo.getMtlDesc(i2.POID,i2.Seq1,i2.Seq2,2,0)
+,[Tone] = ShadeboneTone.Tone
 ,[Ukey] = i2.ukey
 ,[Qty] = {strQty}
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
@@ -2015,6 +2031,12 @@ outer apply(
 	from Production.dbo.FtyInventory_Barcode fb
 	where fb.Ukey = f.Ukey and fb.TransactionID = i2.Id
 )NewBarcode
+outer apply (
+	select [Tone] = isnull(MAX(fs.Tone),'')
+	from FIR with (nolock) 
+	Left join FIR_Shadebone fs with (nolock) on FIR.ID = fs.ID and fs.Roll = f.Roll and fs.Dyelot = f.Dyelot
+	where FIR.poid = f.poid and FIR.seq1 = f.seq1 and FIR.seq2 = f.seq2
+) ShadeboneTone
 where 1=1
 and exists(
 		select 1 from Production.dbo.PO_Supp_Detail 
