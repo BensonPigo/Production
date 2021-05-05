@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -179,7 +180,8 @@ namespace Sci.Production.Automation
         {
             Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
             StackTrace stackTrace = new StackTrace();
-            MethodBase methodBase = stackTrace.GetFrame(7).GetMethod();
+            var sciStackTrace = stackTrace.GetFrames().Where(s => s.GetMethod().DeclaringType.FullName.Contains("Sci.Production"));
+            MethodBase methodBase = sciStackTrace.Any() ? sciStackTrace.Last().GetMethod() : stackTrace.GetFrame(7).GetMethod();
 
             string callFrom = methodBase.DeclaringType.FullName;
             if (callFrom.Contains("+"))

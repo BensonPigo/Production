@@ -4503,7 +4503,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from SubTransfer_Detail t
 		inner join FtyInventory f on t.FromPOID = f.POID
 			and t.FromSeq1= f. Seq1 
@@ -4534,7 +4534,7 @@ union all
 select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from SubTransfer_Detail t
 		inner join FtyInventory f on t.FromPOID = f.POID
 			and t.FromSeq1= f. Seq1 
@@ -4569,7 +4569,7 @@ from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct POID = t.ToPOID,Seq1 = t.ToSeq1,Seq2 = t.ToSeq2,Roll = t.ToRoll,Dyelot = t.ToDyelot,IsWMS = ml.IsWMS,Location = t.ToLocation
+		select distinct POID = t.ToPOID,Seq1 = t.ToSeq1,Seq2 = t.ToSeq2,Roll = t.ToRoll,Dyelot = t.ToDyelot,IsWMS = isnull( ml.IsWMS,0),Location = t.ToLocation
 		from SubTransfer_Detail t
 		outer apply(
 			select ml.IsWMS
@@ -4585,7 +4585,7 @@ union all
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct POID = t.ToPOID,Seq1 = t.ToSeq1,Seq2 = t.ToSeq2,Roll = t.ToRoll,Dyelot = t.ToDyelot,IsWMS = ml.IsWMS,Location = t.ToLocation
+		select distinct POID = t.ToPOID,Seq1 = t.ToSeq1,Seq2 = t.ToSeq2,Roll = t.ToRoll,Dyelot = t.ToDyelot,IsWMS = isnull( ml.IsWMS,0),Location = t.ToLocation
 		from BorrowBack_Detail t
 		outer apply(
 			select ml.IsWMS
@@ -4641,7 +4641,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from Issue_Detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
@@ -4669,7 +4669,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from Adjust_Detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
@@ -4698,7 +4698,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from ReturnReceipt_Detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
@@ -4726,7 +4726,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from IssueReturn_Detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
@@ -4754,7 +4754,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from Stocktaking_Detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
@@ -4782,7 +4782,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from IssueLack_Detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
@@ -4810,7 +4810,7 @@ select * from(
 	select * 
 	, rowCnt = ROW_NUMBER() over(Partition by POID,Seq1,Seq2,Roll,Dyelot,Location order by IsWMS)
 	from (
-		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,ml.IsWMS,s.Location
+		select distinct f.POID,f.Seq1,f.Seq2,f.Roll,f.Dyelot,IsWMS = isnull( ml.IsWMS,0),s.Location
 		from TransferOut_detail t
 		inner join FtyInventory f on t.POID = f.POID
 			and t.Seq1= f. Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll
