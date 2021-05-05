@@ -33,8 +33,8 @@ namespace Sci.Production.PublicForm
                 sizes = "'" + string.Join("','", sizeList) + "'";
             }
 
-            this.patternukey = Prgs.GetPatternUkey(cutref, cid, sizes);
-            Prgs.GetGarmentListTable(cutref, cid, sizes, out DataTable garmentTb, out this.articleGroupDT);
+            this.patternukey = Prgs.GetPatternUkey(cutref, cid, sizes, ukey);
+            Prgs.GetGarmentListTable(cutref, cid, sizes, out DataTable garmentTb, out this.articleGroupDT, ukey);
             this.gridGarment.DataSource = garmentTb;
             this.GridSetup();
             this.gridGarment.AutoResizeColumns();
