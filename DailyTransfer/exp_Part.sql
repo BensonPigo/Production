@@ -328,7 +328,6 @@ into MachinePending
 from Production.dbo.SciMachine_MachinePending
 where SciMachine_MachinePending.Status='Confirmed'
 and SciMachine_MachinePending.CyApvDate between @DateStart and @DateEnd
-and SciMachine_MachinePending.SendToTPE is null
 and SciMachine_MachinePending.TPEComplete=0
 
 ----MachinePending_Detail----
