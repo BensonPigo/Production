@@ -67,7 +67,7 @@ namespace Sci.Production.Cutting
             string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,Parts,'' as cutref,'' as poid, ukey = cast(0 as bigint),ispair ,Location,isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint) from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out this.allpartTb);
 
-            string pattern_cmd = "Select PatternCode,PatternDesc,Parts,'' as art, '' as cutref,'' as poid, ukey = cast(0 as bigint), ispair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='',isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint) from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
+            string pattern_cmd = "Select PatternCode,PatternDesc,Parts,'' as art, '' as cutref,'' as poid, ukey = cast(0 as bigint), ispair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='',isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint), RFIDScan = cast(0 as bit) from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out this.patternTb);
 
             string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
@@ -592,6 +592,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
                 .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
                 .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: postSewingSubProcess_String)
                 .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: noBundleCardAfterSubprocess_String)
+                .CheckBox("RFIDScan", header: "RFID Scan", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 ;
             this.gridPattern.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridPattern.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -600,6 +601,7 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             this.gridPattern.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
             this.gridPattern.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridPattern.Columns["IsPair"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["RFIDScan"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             #region 右下 gridAllPart 事件
@@ -914,6 +916,7 @@ Select
 	, w.MDivisionId
     , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
     , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
+    , [IsShowRFIDScan] = dbo.IsShowRFIDScan(o.poid, w.Fabriccombo)
 from  workorder w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
@@ -1155,7 +1158,16 @@ and o.mDivisionid = '{this.keyWord}'
 
             this.patternTbOri = this.patternTb.Clone();
             this.allpartTbOri = this.allpartTb.Clone();
-            this.CutRefTb.AsEnumerable().ToList().ForEach(dr => this.CreatePattern(dr)); // 先依據左上資料建立下方兩個資料表
+            this.CutRefTb.AsEnumerable().ToList().ForEach(dr =>
+            {
+                DualResult createPatternResult = this.CreatePattern(dr);
+                if (!createPatternResult)
+                {
+                    this.ShowErr(createPatternResult);
+                    return;
+                }
+            }
+            ); // 先依據左上資料建立下方兩個資料表
 
             // 中上每一筆下塞入一組由(iden)對應的下方資料
             this.qtyTb = this.GetNoofBundle(); // 依據右上撈出資料彙整出中上
@@ -1277,7 +1289,10 @@ and o.mDivisionid = '{this.keyWord}'
                 .GroupBy(s => new { Ukey = (long)s["Ukey"], No = (long)s["No"], POID = s["POID"].ToString(), Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString(), StyleUkey = (long)s["StyleUkey"] })
                 .Select((g, i) => new
                 {
-                    g.Key.Ukey, iden = ++i, g.Key.No, Tone = this.tone,
+                    g.Key.Ukey,
+                    iden = ++i,
+                    g.Key.No,
+                    Tone = this.tone,
                     ToneChar = this.tone == "1" ? "A" : string.Empty,
                     g.Key.POID,
                     g.Key.Article,
@@ -1333,7 +1348,7 @@ and wd.orderid = 'EXCESS'
             }
         }
 
-        private void CreatePattern(DataRow row)
+        private DualResult CreatePattern(DataRow row)
         {
             // 依據 Ukey, Fabriccombo 整理出 Pattern 資料
             string poid = row["POID"].ToString();
@@ -1481,8 +1496,14 @@ and wd.orderid = 'EXCESS'
             pdr["ukey"] = ukey;
             pdr["CombineSubprocessGroup"] = 0;
             this.patternTbOri.Rows.Add(pdr);
+            DualResult result = Prgs.InitialRFIDScan(this.patternTbOri, ukey: ukey);
+            if (!result)
+            {
+                return result;
+            }
 
             DBProxy.Current.DefaultTimeout = 0;
+            return new DualResult(true);
         }
         #endregion
 
@@ -1531,6 +1552,8 @@ and wd.orderid = 'EXCESS'
             {
                 filter += $" and CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}";
             }
+
+            this.gridPattern.Columns["RFIDScan"].Visible = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsShowRFIDScan"]);
 
             this.allpartTb.DefaultView.RowFilter = filter;
         }
@@ -2270,6 +2293,7 @@ and wd.orderid = 'EXCESS'
                 PostSewingSubProcess_String = MyUtility.Convert.GetString(s["PostSewingSubProcess_String"]),
                 IsMain = MyUtility.Convert.GetBool(s["IsMain"]),
                 CombineSubprocessGroup = MyUtility.Convert.GetInt(s["CombineSubprocessGroup"]),
+                RFIDScan = MyUtility.Convert.GetBool(s["RFIDScan"]),
             }).ToList();
             var allPartList = this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).Select(s => new Pattern
             {
@@ -2536,7 +2560,7 @@ Insert into Bundle_Detail_qty(ID,SizeCode,Qty) Values('{bundleID}', '{selitem.Si
                         var selDTAPList = seldupList.Where(w => w.Tone == selitem.Tone && w.Tone > 0 && pattern.PatternCode.Equals("ALLPARTS")).ToList();
                         int bdQty = pattern.PatternCode.Equals("ALLPARTS") && selitem.Tone > 0 ? selDTAPList.Sum(s => s.Qty) : selitem.Qty;
                         insertSql.Append($@"
-Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone, PrintGroup)
+Insert into Bundle_Detail (ID, Bundleno, BundleGroup, PatternCode, PatternDesc, SizeCode, Qty, Parts, Farmin, Farmout, isPair, Location, Tone, PrintGroup, RFIDScan)
 Values
     ('{bundleID}'
     ,'{bundleNo}'
@@ -2550,7 +2574,8 @@ Values
     ,'{pattern.Ispair}'
     ,'{pattern.Location}'
     ,'{selitem.ToneChar}'
-    ,{printGroup_x});
+    ,{printGroup_x}
+    ,'{pattern.RFIDScan}');
 ");
 
                         // Bundle_Detail_Art 將 Art 以+號拆開寫入, 且ALLPARTS 不寫入

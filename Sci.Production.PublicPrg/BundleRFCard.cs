@@ -8,6 +8,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using static Sci.Production.PublicPrg.Prgs;
+using Sci.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Prg
 {
@@ -562,6 +564,17 @@ from
                             throw new Exception(result.Messages.ToString());
                         }
 
+                        // P48 Set image
+                        if (data[nowIndex].RFIDScan)
+                        {
+                            result = CardSetRfidScanImage(bundleRFCard);
+                            if (!result)
+                            {
+                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Set RfidScan Image Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                                throw new Exception(result.Messages.ToString());
+                            }
+                        }
+
                         // P37 Barcode
                         result = CardSettingBarcodeSram(bundleRFCard, data[nowIndex].Barcode);
                         if (!result)
@@ -592,6 +605,17 @@ from
                         {
                             result = BundleRFCardPrintErrorMsg(bundleRFCard, "Write To DB Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
+                        }
+
+                        // write SunriseExch
+                        if (data[nowIndex].RFIDScan)
+                        {
+                            result = UpdateSunriseExch(data[nowIndex].BundleNo.ToString(), cardUID);
+                            if (!result)
+                            {
+                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Write SunriseExch Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                                throw new Exception(result.Messages.ToString());
+                            }
                         }
 
                         nowIndex++;
@@ -1309,6 +1333,56 @@ from
         }
 
         /// <summary>
+        /// P48 Set RFID Image
+        /// </summary>
+        /// <returns>DualResult</returns>
+        private static DualResult CardSetRfidScanImage(BundleRFCardUSB bundleRFCard)
+        {
+            DualResult result = new DualResult(false);
+            byte[] gbacmd = new byte[3];
+            byte[] tDat = new byte[1000], rDat = new byte[1000];
+            byte[] dataSendBufY = new byte[150000];
+            int tLen = 0, res = 0;
+            ushort[] rLen = new ushort[2];
+            string errcode;
+            string result_data = string.Empty;
+            bool ret;
+            string fileName = "rfidscan.png";
+            ret = MakeDll.Func.ResetBitmap();
+
+            MakeDll.Func.ImageDataStruct ii = new MakeDll.Func.ImageDataStruct
+            {
+                xaxis = "320",
+                yaxis = "365",
+                width = "120",
+                height = "120",
+                threshold = "250",
+                datapath = "data\\" + fileName,
+                filename = fileName,
+                rotation = "90",
+                property = "IMAGE",
+            };
+
+            ret = MakeDll.Func.S_ImageToDithering(ii);
+
+            tLen = MakeDll.Func.S_MakeDataForComSendYLen("P48");
+            dataSendBufY = MakeDll.Func.S_MakeDataForComSendY("P48");
+
+            res = bundleRFCard.ImageExeCmd(dataSendBufY, tLen, rDat, rLen, 15000);
+            errcode = string.Format("0x{0:x4}", res);
+            if (res != 0x0000)
+            {
+                result = new DualResult(false, errcode);
+            }
+            else
+            {
+                result = new DualResult(true);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// P41 Print
         /// </summary>
         /// <returns>DualResult</returns>
@@ -1850,11 +1924,111 @@ from
         /// <param name="bundleNO">BundleNo</param>
         /// <param name="rfUID">RFUID</param>
         /// <returns>DualResult</returns>
-        private static DualResult UpdateBundleDetailRFUID(string id, string bundleNO, string rfUID)
+        public static DualResult UpdateBundleDetailRFUID(string id, string bundleNO, string rfUID)
         {
             string sqlCmd = $"update Bundle_Detail set RFUID = '{rfUID}', RFPrintDate = Getdate() where ID = '{id}' and BundleNo = '{bundleNO}'";
             DualResult result = Data.DBProxy.Current.Execute(string.Empty, sqlCmd);
             return result;
+        }
+
+        /// <summary>
+        /// 回寫SunriseExch tCutbundcard
+        /// </summary>
+        /// <param name="bundleNO">BundleNo</param>
+        /// <param name="rfUID">RFUID</param>
+        /// <returns>DualResult</returns>
+        public static DualResult UpdateSunriseExch(string bundleNO, string rfUID)
+        {
+            string sqlCmd = $@"
+select	bdo.OrderID
+        , [MONO] = bdo.OrderID+'-'+ iif(bd.Patterncode = 'AllParts', AllPartsLocation.val, bd.Location)
+		, bd.Patterncode
+        , b.Cutno
+        , b.Colorid
+        , bd.SizeCode
+        , bdo.Qty
+        , b.Article
+		, [CardNo] = Cast('{rfUID}' as int) 
+		, [ComboType] = iif(bd.Patterncode = 'AllParts', AllPartsLocation.val, bd.Location)
+		, [Seq] = ROW_NUMBER() OVER (ORDER BY o.SCIDelivery , o.Qty, o.ID)
+from Bundle_Detail bd with (nolock)
+inner join Bundle_Detail_Order bdo with (nolock) on bd.BundleNo = bdo.BundleNo
+inner join Bundle b with(nolock) on b.id = bd.id
+inner join orders o with(nolock) on o.id = bdo.Orderid and o.MDivisionID  = b.MDivisionID 
+outer apply (select top 1 [val] = bda.Location from Bundle_Detail_Allpart bda with (nolock) where bda.ID = bd.Id
+				order by bda.Patterncode) AllPartsLocation
+where bd.BundleNo = '{bundleNO}'
+
+";
+
+            DataTable dtBundleInfoPMS;
+
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlCmd, out dtBundleInfoPMS);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            string sqlUpdateSunriseExch = $@"
+alter table #tmp ALTER COLUMN MONO varchar(15)
+alter table #tmp ALTER COLUMN OrderID varchar(13)
+alter table #tmp ALTER COLUMN Cutno numeric(6,0)
+alter table #tmp ALTER COLUMN Article varchar(8)
+alter table #tmp ALTER COLUMN SizeCode varchar(100)
+
+--update
+update  t set   t.[BillDate]    = getdate(),
+	            t.[MONO]		= tmp.MONO ,
+	            t.[PONO]		= tmp.OrderID ,
+	            t.[CutLotNo]	= tmp.Cutno ,
+	            t.[BundNo]		= tmp.CardNo,
+	            t.[CardNo]		= tmp.CardNo,
+	            t.[ColorName]   = tmp.Article ,
+	            t.[CordColor]	= tmp.Article ,
+	            t.[SizeName]	= tmp.SizeCode ,
+	            t.[Qty]			= tmp.Qty ,
+	            t.[BarCode]	    = tmp.CardNo,
+                t.[CmdType]     = 'Update',
+	            t.[CmdTime]	    =  getdate(),
+	            t.[InterfaceTime]   = null
+from [dbo].[tCutbundcard] t
+inner join #tmp tmp on t.CardNo = tmp.CardNo and t.Seq = tmp.Seq and
+                       (
+                       	t.[MONO]		<> tmp.MONO or
+                       	t.[PONO]		<> tmp.OrderID or
+                       	t.[CutLotNo]	<> tmp.Cutno or
+                       	t.[ColorName]   <> tmp.Article or
+                       	t.[CordColor]	<> tmp.Article or
+                       	t.[SizeName]	<> tmp.SizeCode or
+                       	t.[Qty]			<> tmp.Qty
+                       )
+
+--insert
+    insert into [dbo].[tCutbundcard]
+	(BillDate       , MONO				    , PONO       , CutLotNo     , BundNo
+     , CardNo       , CardType              , ColorName  , CordColor    , SizeName
+     , QTY          , Vatno                 , BarCode    , CmdType      , CmdTime
+     , InterfaceTime, Seq)
+    select  getdate()      , tmp.MONO    , tmp.OrderID        , tmp.Cutno       ,tmp.CardNo
+            , tmp.CardNo      , 2                     , tmp.Article   , tmp.Article     , tmp.SizeCode
+            , tmp.Qty         , null                  , tmp.CardNo    , 'Insert'     , getdate()
+            ,null          , tmp.Seq
+    from    #tmp tmp
+    where   not exists (select 1 from [dbo].[tCutbundcard] t where t.CardNo = tmp.CardNo and t.Seq = tmp.Seq)
+
+--Delete
+update t  set t.[CmdType]     = 'Delete'
+from [dbo].[tCutbundcard] t
+where t.CardNo in (select CardNo from #tmp) and not exists(select 1 from #tmp tmp where t.CardNo = tmp.CardNo and t.Seq = tmp.Seq)
+
+";
+            DataTable dtEmpty;
+            SqlConnection sunriseExchConn;
+            DBProxy.Current.OpenConnection("SUNRISEEXCH", out sunriseExchConn);
+            DualResult resultUpdateSunriseExch = MyUtility.Tool.ProcessWithDatatable(dtBundleInfoPMS, string.Empty, sqlUpdateSunriseExch, out dtEmpty, conn: sunriseExchConn);
+
+            return resultUpdateSunriseExch;
         }
 
         /// <summary>

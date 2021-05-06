@@ -943,9 +943,9 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
-{
-    return null;
-}
+                {
+                    return null;
+                }
 
                 bw.ReportProgress((int)processInt);
             } // 10%
@@ -955,9 +955,9 @@ order by WOD.OrderID,EstCutDate.EstCutDate
             if (bw != null)
             {
                 if (bw.CancellationPending == true)
-{
-    return null;
-}
+                {
+                    return null;
+                }
 
                 bw.ReportProgress((int)processInt);
             } // 15%
@@ -2769,8 +2769,71 @@ DROP TABLE #beforeTmp
 
             /// <inheritdoc/>
             public string BundleNo { get; set; }
+
+            /// <inheritdoc/>
+            public bool RFIDScan { get; set; }
         }
         #endregion
         #endregion
+
+        /// <summary>
+        /// InitialRFIDScan(ISP20210568)
+        /// </summary>
+        /// <param name="dtPattern">dtPattern</param>
+        /// <param name="iden">iden</param>
+        /// <returns>DualResult</returns>
+        public static DualResult InitialRFIDScan(DataTable dtPattern, int iden = -1, string ukey = "")
+        {
+            try
+            {
+                EnumerableRowCollection<DataRow> initialTargetRow;
+
+                if (iden > -1)
+                {
+                    initialTargetRow = dtPattern.AsEnumerable().Where(s => MyUtility.Convert.GetInt(s["iden"]) == iden);
+                }
+                else if (!MyUtility.Check.Empty(ukey))
+                {
+                    initialTargetRow = dtPattern.AsEnumerable().Where(s => s["ukey"].ToString() == ukey);
+                }
+                else
+                {
+                    initialTargetRow = dtPattern.AsEnumerable();
+                }
+
+                // 如果 該 Bundle Group , 有All Part , 那就只有 All Part 那筆 Bundle_Detail 的 RFID Scan=1 , 其餘 = 0
+                var existsAllPartsRow = initialTargetRow.Where(s => s["PatternCode"].ToString() == "ALLPARTS" && MyUtility.Convert.GetInt(s["parts"]) > 0);
+                if (existsAllPartsRow.Any())
+                {
+                    existsAllPartsRow.First()["RFIDScan"] = 1;
+                    return new DualResult(true);
+                }
+
+                DataRow firstRow = initialTargetRow.Where(s => s["PatternCode"].ToString() != "ALLPARTS").First();
+
+                var needRFIDScan = initialTargetRow.Where(s => s["PatternCode"].ToString() == firstRow["PatternCode"].ToString());
+
+                int rowNum = 1;
+
+                foreach (DataRow item in needRFIDScan)
+                {
+                    // 如果是isPair 只需預設勾選奇數筆
+                    if (rowNum % 2 == 0 && MyUtility.Convert.GetBool(item["isPair"]))
+                    {
+                        rowNum++;
+                        continue;
+                    }
+
+                    item["RFIDScan"] = 1;
+                    rowNum++;
+                }
+
+                return new DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
+        }
     }
 }

@@ -57,7 +57,7 @@ namespace Sci.Production.Cutting
             string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, 0 as iden,IsPair ,Location,isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint)  from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out this.allpartTb);
 
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts, '' as cutref,'' as poid, 0 as iden,IsPair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='',isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint)  from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
+            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts, '' as cutref,'' as poid, 0 as iden,IsPair ,Location,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='',isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint), RFIDScan = cast(0 as bit)  from Bundle_Detail WITH (NOLOCK) Where 1=0"; // 左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out this.patternTb);
 
             string cmd_art = "Select PatternCode,subprocessid,NoBundleCardAfterSubprocess_String='',PostSewingSubProcess_String='' from Bundle_detail_art WITH (NOLOCK) where 1=0";
@@ -691,6 +691,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: isPair)
                 .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: postSewingSubProcess_String)
                 .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: noBundleCardAfterSubprocess_String)
+                .CheckBox("RFIDScan", header: "RFID Scan", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 ;
             this.gridPattern.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.gridPattern.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
@@ -699,6 +700,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             this.gridPattern.Columns["art"].DefaultCellStyle.BackColor = Color.SkyBlue;
             this.gridPattern.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridPattern.Columns["IsPair"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridPattern.Columns["RFIDScan"].DefaultCellStyle.BackColor = Color.Pink;
 
             #endregion
 
@@ -911,6 +913,7 @@ Select
     , FabricKind = FabricKind.FabricKind
     , o.StyleUkey
 	, w.MDivisionId
+    , [IsShowRFIDScan] = dbo.IsShowRFIDScan(o.poid, w.Fabriccombo)
 from  workorder w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
@@ -1063,7 +1066,13 @@ and o.mDivisionid = '{this.keyWord}'
                 #endregion
 
                 this.ArticleSizeTb_View = this.ArticleSizeTb.Select($"Ukey ='{dr["Ukey"]}' and Fabriccombo = '{dr["Fabriccombo"]}'").CopyToDataTable();
-                this.CreatePattern(dr);
+                DualResult createPatternResult = this.CreatePattern(dr);
+                if (!createPatternResult)
+                {
+                    this.ShowErr(createPatternResult);
+                    return;
+                }
+
                 int totalpart = MyUtility.Convert.GetInt(this.patternTb.Compute("sum(Parts)", $"iden ={iden}"));
                 dr["TotalParts"] = totalpart;
                 iden++;
@@ -1133,7 +1142,7 @@ and o.mDivisionid = '{this.keyWord}'
             r["TotalParts"] = MyUtility.Convert.GetInt(this.patternTb.Compute("Sum(Parts)", $"iden = {r["iden"]}"));
         }
 
-        private void CreatePattern(DataRow row)
+        private DualResult CreatePattern(DataRow row)
         {
             string poid = row["POID"].ToString();
             string article = row["Article"].ToString().Trim();
@@ -1278,8 +1287,14 @@ and o.mDivisionid = '{this.keyWord}'
             pdr["iden"] = iden;
             pdr["CombineSubprocessGroup"] = 0;
             this.patternTbOri.Rows.Add(pdr);
+            DualResult result = Prgs.InitialRFIDScan(this.patternTbOri, iden);
+            if (!result)
+            {
+                return result;
+            }
 
             DBProxy.Current.DefaultTimeout = 0;
+            return new DualResult(true);
         }
 
         private void ShowExcessDatas(string where)
@@ -1394,6 +1409,8 @@ and wd.orderid = 'EXCESS'
             {
                 filter += $" and CombineSubprocessGroup = {this.gridPattern.CurrentDataRow["CombineSubprocessGroup"]}";
             }
+
+            this.gridPattern.Columns["RFIDScan"].Visible = MyUtility.Convert.GetBool(this.gridCutRef.CurrentDataRow["IsShowRFIDScan"]);
 
             this.allpartTb.DefaultView.RowFilter = filter;
         }
@@ -2379,6 +2396,7 @@ values
                         bundleDetail_pre["Farmin"] = 0;
                         bundleDetail_pre["Farmout"] = 0;
                         bundleDetail_pre["IsPair"] = rowPat["IsPair"];
+                        bundleDetail_pre["RFIDScan"] = rowPat["RFIDScan"];
                         bundleDetail_pre["Location"] = location;
                         bundleDetail_pre["Ukey1"] = bundlenocount;
                         bundleDetail_pre["IsCombineSubProcess"] = artar["IsCombineSubProcess"];
@@ -2642,9 +2660,9 @@ values
                     nBundleDetail_dr["Insert"] = string.Format(
                         @"Insert into Bundle_Detail
                             (ID,Bundleno,BundleGroup,PatternCode,
-                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,IsPair ,Location,Tone,PrintGroup) Values
+                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,IsPair ,Location,Tone,PrintGroup, RFIDScan) Values
                             ('{0}','{1}',{2},'{3}',
-                            '{4}','{5}',{6},{7},0,0,'{8}','{9}','{10}','{11}')",
+                            '{4}','{5}',{6},{7},0,0,'{8}','{9}','{10}','{11}', {12})",
                         item["ID"],
                         item["Bundleno"],
                         item["BundleGroup"],
@@ -2656,7 +2674,8 @@ values
                         MyUtility.Convert.GetBool(item["IsPair"]) ? 1 : 0,
                         item["Location"],
                         item["Tone"],
-                        item["PrintGroup"]);
+                        item["PrintGroup"],
+                        MyUtility.Convert.GetBool(item["RFIDScan"]) ? 1 : 0);
                     insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
 
                     DataRow drBundleNo = insert_BundleNo.NewRow();

@@ -47,14 +47,15 @@ namespace Sci.Production.Cutting
         private bool ByToneGenerate;
         private bool isShell;
         private string w;
+        private bool isShowRFIDScan;
 
         /// <inheritdoc/>
-        public P10_Generate(DataRow maindr, DataTable bundle_Detail, DataTable bundle_Detail_allpart, DataTable bundle_Detail_Qty, DataTable bundle_Detail_Art, DataTable bundle_Detail_CombineSubprocess, bool isShell)
+        public P10_Generate(DataRow maindr, DataTable bundle_Detail, DataTable bundle_Detail_allpart, DataTable bundle_Detail_Qty, DataTable bundle_Detail_Art, DataTable bundle_Detail_CombineSubprocess, bool isShell, bool isShowRFIDScan)
         {
             this.InitializeComponent();
             this.ByToneGenerate = MyUtility.Convert.GetBool(maindr["ByToneGenerate"]);
             this.isShell = isShell;
-
+            this.isShowRFIDScan = isShowRFIDScan;
             #region 準備要處理的table 和原本的table
             this.maindatarow = maindr;
 
@@ -72,7 +73,7 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 取tabel的結構
-            string pattern_cmd = "Select top 0 PatternCode, PatternDesc ,Location , Parts,art = '', parts = 0, isPair, NoBundleCardAfterSubprocess_String='', PostSewingSubProcess_String='', isMain = cast(0 as bit), CombineSubprocessGroup = cast(0 as tinyint) from Bundle_Detail WITH (NOLOCK)"; // 左下的Table
+            string pattern_cmd = "Select top 0 PatternCode, PatternDesc ,Location , Parts,art = '', parts = 0, isPair, NoBundleCardAfterSubprocess_String='', PostSewingSubProcess_String='', isMain = cast(0 as bit), CombineSubprocessGroup = cast(0 as tinyint), RFIDScan  = cast(0 as bit) from Bundle_Detail WITH (NOLOCK)"; // 左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out this.patternTb);
             this.patternTbOri = this.patternTb.Clone();
 
@@ -324,6 +325,7 @@ group by sizeCode
             pdr["parts"] = npart;
             pdr["CombineSubprocessGroup"] = 0;
             this.patternTbOri.Rows.Add(pdr);
+            Prgs.InitialRFIDScan(this.patternTbOri);
         }
 
         /// <summary>
@@ -342,17 +344,16 @@ group by sizeCode
 
             // 將Bundle_Detial_Art distinct PatternCode,
             string sqlCmd = $@"
-Select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq=min(tmpSeq)
+Select PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq,RFIDScan
 into #tmp2
 from #tmp where BundleGroup='{bundleGroup}'
-group by PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair ,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String
 
 select *,isMain = cast(0 as bit),CombineSubprocessGroup = cast(0 as tinyint) 
 from #tmp2
 order by tmpSeq,iif(PatternCode='AllParts','ZZZZZZZ',PatternCode)
 
 drop table #tmp,#tmp2";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.bundle_Detail_T, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq", sqlCmd, out DataTable tmp);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.bundle_Detail_T, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair,Location,NoBundleCardAfterSubprocess_String,PostSewingSubProcess_String,tmpSeq,RFIDScan", sqlCmd, out DataTable tmp);
             if (!result)
             {
                 this.ShowErr(result);
@@ -375,6 +376,7 @@ drop table #tmp,#tmp2";
                 ndr["Location"] = dr["Location"];
                 ndr["Parts"] = dr["Parts"];
                 ndr["isPair"] = dr["isPair"];
+                ndr["RFIDScan"] = dr["RFIDScan"];
                 ndr["art"] = dr["SubProcessid"].ToString();
                 ndr["NoBundleCardAfterSubprocess_String"] = dr["NoBundleCardAfterSubprocess_String"];
                 ndr["PostSewingSubProcess_String"] = dr["PostSewingSubProcess_String"];
@@ -832,6 +834,14 @@ drop table #tmp,#tmp2";
             .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: postSewingSubProcess_String)
             .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: noBundleCardAfterSubprocess_String)
             ;
+
+            if (this.isShowRFIDScan)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridPattern)
+                    .CheckBox("RFIDScan", header: "RFID Scan", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
+                this.gridPattern.Columns["RFIDScan"].DefaultCellStyle.BackColor = Color.Pink;
+            }
+
             this.gridPattern.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridPattern.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridPattern.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
@@ -1430,6 +1440,7 @@ drop table #tmp,#tmp2";
                         nDetail["CombineSubprocessGroup"] = dr2["CombineSubprocessGroup"];
                         nDetail["ukey1"] = ukey;
                         nDetail["isPair"] = dr2["isPair"];
+                        nDetail["RFIDScan"] = dr2["RFIDScan"];
 
                         if (dr2["PatternCode"].ToString() != "ALLPARTS")
                         {
@@ -1490,6 +1501,7 @@ drop table #tmp,#tmp2";
                     dr["SizeCode"] = tmpdr["SizeCode"];
                     dr["ukey1"] = tmpdr["ukey1"];
                     dr["isPair"] = tmpdr["isPair"];
+                    dr["RFIDScan"] = tmpdr["RFIDScan"];
                     dr["CombineSubprocessGroup"] = tmpdr["CombineSubprocessGroup"];
 
                     j++;
@@ -1624,6 +1636,7 @@ drop table #tmp,#tmp2";
                     ndr["SizeCode"] = tmpdr["SizeCode"];
                     ndr["ukey1"] = tmpdr["ukey1"];
                     ndr["isPair"] = tmpdr["isPair"];
+                    ndr["RFIDScan"] = tmpdr["RFIDScan"];
                     ndr["CombineSubprocessGroup"] = tmpdr["CombineSubprocessGroup"];
 
                     this.bundle_Detail_T.Rows.Add(ndr);

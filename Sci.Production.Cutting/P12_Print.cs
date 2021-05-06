@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,36 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
+            #if DEBUG
+            // write DB
+            int cardUID = 1;
+            foreach (P10_PrintData item in this.p10_PrintDatas)
+            {
+                DualResult resultTest = BundleRFCard.UpdateBundleDetailRFUID(item.BundleID.ToString(), item.BundleNo.ToString(), cardUID.ToString());
+                if (!resultTest)
+                {
+                    this.ShowErr(resultTest);
+                    return false;
+                }
+
+                // write SunriseExch
+                if (item.RFIDScan)
+                {
+                    resultTest = BundleRFCard.UpdateSunriseExch(item.BundleNo.ToString(), cardUID.ToString());
+                    if (!resultTest)
+                    {
+                        this.ShowErr(resultTest);
+                        return false;
+                    }
+                }
+
+                cardUID++;
+            }
+
+            MyUtility.Msg.InfoBox("test update complete");
+            return true;
+            #endif
+
             if (this.radioBundleCardRF.Checked)
             {
                 // 是否有資料
