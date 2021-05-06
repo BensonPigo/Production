@@ -58,7 +58,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtLocateForSP);
             this.masterpanel.Controls.Add(this.labelLocateForSP);
@@ -85,7 +84,6 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocateForSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -123,7 +121,14 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Size = new System.Drawing.Size(954, 38);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // browse
             // 
@@ -262,11 +267,11 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(400, 142);
+            this.btnCallP99.Location = new System.Drawing.Point(774, 1);
             this.btnCallP99.Name = "btnCallP99";
-            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
-            this.btnCallP99.TabIndex = 79;
-            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.Size = new System.Drawing.Size(100, 35);
+            this.btnCallP99.TabIndex = 71;
+            this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 

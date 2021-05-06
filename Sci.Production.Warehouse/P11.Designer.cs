@@ -80,7 +80,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.displayCustCD);
             this.masterpanel.Controls.Add(this.lbCustCD);
             this.masterpanel.Controls.Add(this.checkByCombo);
@@ -139,7 +138,6 @@
             this.masterpanel.Controls.SetChildIndex(this.checkByCombo, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbCustCD, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCustCD, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -149,12 +147,12 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(2589, 128);
+            this.gridicon.Location = new System.Drawing.Point(2731, 128);
             // 
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.refresh.Location = new System.Drawing.Point(911, 138);
+            this.refresh.Location = new System.Drawing.Point(825, 132);
             this.refresh.Size = new System.Drawing.Size(80, 36);
             // 
             // detailgridcont
@@ -171,6 +169,7 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Controls.Add(this.gridIssueBreakDown);
             this.detailbtm.Location = new System.Drawing.Point(0, 356);
             this.detailbtm.Size = new System.Drawing.Size(1035, 174);
@@ -180,6 +179,7 @@
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.gridIssueBreakDown, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // browse
             // 
@@ -514,11 +514,11 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(673, 128);
+            this.btnCallP99.Location = new System.Drawing.Point(912, 133);
             this.btnCallP99.Name = "btnCallP99";
-            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
-            this.btnCallP99.TabIndex = 66;
-            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.Size = new System.Drawing.Size(104, 35);
+            this.btnCallP99.TabIndex = 71;
+            this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
