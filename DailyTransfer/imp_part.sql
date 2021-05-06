@@ -897,5 +897,6 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 	SendToTPE=getdate()
 	from dbo.MachinePending s
 	inner join SciPms_To_Trade_MachinePending b on b.id = s.ID
+	WHERE s.SendToTPE IS NULL
 
 	END
