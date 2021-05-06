@@ -63,7 +63,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.labelReason);
@@ -81,7 +80,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(953, 184);
+            this.masterpanel.Size = new System.Drawing.Size(977, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -100,27 +99,26 @@
             this.masterpanel.Controls.SetChildIndex(this.labelReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(953, 293);
+            this.detailpanel.Size = new System.Drawing.Size(977, 293);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(828, 147);
+            this.gridicon.Location = new System.Drawing.Point(854, 147);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(867, 3);
+            this.refresh.Location = new System.Drawing.Point(787, 3);
             this.refresh.TabIndex = 0;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(953, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(977, 293);
             // 
             // detail2
             // 
@@ -136,16 +134,23 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(953, 515);
+            this.detail.Size = new System.Drawing.Size(977, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(953, 477);
+            this.detailcont.Size = new System.Drawing.Size(977, 477);
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(953, 38);
+            this.detailbtm.Size = new System.Drawing.Size(977, 38);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // browse
             // 
@@ -153,20 +158,20 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(961, 544);
+            this.tabs.Size = new System.Drawing.Size(985, 544);
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(327, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(450, 7);
+            this.editby.Size = new System.Drawing.Size(331, 23);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(423, 13);
+            this.lbleditby.Location = new System.Drawing.Point(402, 13);
             // 
             // labelID
             // 
@@ -188,7 +193,7 @@
             // 
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(793, 8);
+            this.labelNotApprove.Location = new System.Drawing.Point(824, 8);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 43;
@@ -217,7 +222,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(828, 35);
+            this.btnImport.Location = new System.Drawing.Point(859, 35);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
@@ -232,7 +237,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(953, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(977, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -240,7 +245,7 @@
             // 
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
-            this.lineShape1.X2 = 929;
+            this.lineShape1.X2 = 961;
             this.lineShape1.Y1 = 140;
             this.lineShape1.Y2 = 140;
             // 
@@ -315,7 +320,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(779, 71);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(810, 71);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
@@ -327,7 +332,7 @@
             // 
             this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPrintFabricSticker.Location = new System.Drawing.Point(761, 106);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(792, 106);
             this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
             this.btnPrintFabricSticker.Size = new System.Drawing.Size(165, 31);
             this.btnPrintFabricSticker.TabIndex = 64;
@@ -352,18 +357,18 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(519, 146);
+            this.btnCallP99.Location = new System.Drawing.Point(869, 3);
             this.btnCallP99.Name = "btnCallP99";
-            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
-            this.btnCallP99.TabIndex = 66;
-            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.Size = new System.Drawing.Size(104, 35);
+            this.btnCallP99.TabIndex = 71;
+            this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
             // P13
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(961, 577);
+            this.ClientSize = new System.Drawing.Size(985, 577);
             this.DefaultControl = "txtwhseReason";
             this.DefaultControlForEdit = "txtwhseReason";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";

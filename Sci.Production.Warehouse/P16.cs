@@ -302,7 +302,12 @@ namespace Sci.Production.Warehouse
                 this.txtLocalSupp1.TextBox1.Text = string.Empty;
             }
 
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED"))
+            // System.Automation=1 和confirmed 且 有P99 Use 權限的人才可以看到此按紐
+            if (UtilityAutomation.IsAutomationEnable && (this.CurrentMaintain["Status"].ToString().ToUpper() == "CONFIRMED") &&
+                MyUtility.Check.Seek($@"
+select * from Pass1
+where (FKPass0 in (select distinct FKPass0 from Pass2 where BarPrompt = 'P99. Send to WMS command Status' and Used = 'Y') or IsMIS = 1 or IsAdmin = 1)
+and ID = '{Sci.Env.User.UserID}'"))
             {
                 this.btnCallP99.Visible = true;
             }

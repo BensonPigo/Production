@@ -70,7 +70,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.btnCallP99);
             this.masterpanel.Controls.Add(this.displayStyle);
             this.masterpanel.Controls.Add(this.lblStyle);
             this.masterpanel.Controls.Add(this.labelConfirmed);
@@ -109,7 +108,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // detailpanel
             // 
@@ -119,12 +117,12 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3281, 111);
+            this.gridicon.Location = new System.Drawing.Point(3388, 111);
             // 
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.refresh.Location = new System.Drawing.Point(911, 138);
+            this.refresh.Location = new System.Drawing.Point(787, 136);
             this.refresh.Size = new System.Drawing.Size(80, 36);
             this.refresh.TabIndex = 10;
             // 
@@ -142,6 +140,7 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Controls.Add(this.gridIssueBreakDown);
             this.detailbtm.Location = new System.Drawing.Point(0, 379);
             this.detailbtm.Size = new System.Drawing.Size(999, 174);
@@ -151,6 +150,7 @@
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.gridIssueBreakDown, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCallP99, 0);
             // 
             // browse
             // 
@@ -163,12 +163,12 @@
             // createby
             // 
             this.createby.Location = new System.Drawing.Point(70, 143);
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(322, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(469, 143);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(445, 143);
+            this.editby.Size = new System.Drawing.Size(336, 23);
             // 
             // lblcreateby
             // 
@@ -176,7 +176,7 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(421, 149);
+            this.lbleditby.Location = new System.Drawing.Point(397, 149);
             // 
             // labelID
             // 
@@ -382,11 +382,11 @@
             // btnCallP99
             // 
             this.btnCallP99.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCallP99.Location = new System.Drawing.Point(657, 92);
+            this.btnCallP99.Location = new System.Drawing.Point(876, 136);
             this.btnCallP99.Name = "btnCallP99";
-            this.btnCallP99.Size = new System.Drawing.Size(149, 30);
-            this.btnCallP99.TabIndex = 66;
-            this.btnCallP99.Text = "Revise Detail data";
+            this.btnCallP99.Size = new System.Drawing.Size(100, 35);
+            this.btnCallP99.TabIndex = 71;
+            this.btnCallP99.Text = "Link To P99";
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 

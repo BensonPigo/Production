@@ -295,19 +295,56 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             base.ClickUncheck();
 
-            #region 先檢查WMS是否傳送成功
+            #region UnConfirmed 先檢查WMS是否傳送成功
+
             DataTable dtDetail = this.CurrentMaintain.Table.AsEnumerable().Where(s => s["ID"] == this.CurrentMaintain["ID"]).CopyToDataTable();
-            if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable)
+
+            bool accLock = true;
+            bool fabricLock = true;
+
+            // 主副料都有情況
+            if (Prgs.Chk_Complex_Material(this.CurrentMaintain["ID"].ToString(), "Stocktaking_Detail"))
             {
-                if (!Vstrong_AutoWHAccessory.SentStocktaking_Detail_delete(dtDetail, "Delete"))
+                if (!Vstrong_AutoWHAccessory.SentStocktaking_Detail_Delete(dtDetail, "Lock", isComplexMaterial: true))
                 {
+                    accLock = false;
+                }
+
+                if (!Gensong_AutoWHFabric.SentStocktaking_Detail_Delete(dtDetail, "Lock", isComplexMaterial: true))
+                {
+                    fabricLock = false;
+                }
+
+                // 如果WMS連線都成功,則直接unconfirmed刪除
+                if (accLock && fabricLock)
+                {
+                    Vstrong_AutoWHAccessory.SentStocktaking_Detail_Delete(dtDetail, "UnConfirmed", isComplexMaterial: true);
+                    Gensong_AutoWHFabric.SentStocktaking_Detail_Delete(dtDetail, "UnConfirmed", isComplexMaterial: true);
+                }
+                else
+                {
+                    // 個別成功的,傳WMS UnLock狀態並且都不能刪除
+                    if (accLock)
+                    {
+                        Vstrong_AutoWHAccessory.SentStocktaking_Detail_Delete(dtDetail, "UnLock", isComplexMaterial: true);
+                    }
+
+                    if (fabricLock)
+                    {
+                        Gensong_AutoWHFabric.SentStocktaking_Detail_Delete(dtDetail, "UnLock", isComplexMaterial: true);
+                    }
+
                     return;
                 }
             }
-
-            if (Gensong_AutoWHFabric.IsGensong_AutoWHFabricEnable)
+            else
             {
-                if (!Gensong_AutoWHFabric.SentStocktaking_Detail_delete(dtDetail, "Delete"))
+                if (!Vstrong_AutoWHAccessory.SentStocktaking_Detail_Delete(dtDetail, "UnConfirmed"))
+                {
+                    return;
+                }
+
+                if (!Gensong_AutoWHFabric.SentStocktaking_Detail_Delete(dtDetail, "UnConfirmed"))
                 {
                     return;
                 }
