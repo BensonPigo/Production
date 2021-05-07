@@ -8,6 +8,9 @@ using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using Ict.Win;
+using Microsoft.Reporting.WinForms;
 
 namespace Sci.Production.Quality
 {
@@ -18,6 +21,7 @@ namespace Sci.Production.Quality
         private string receivingID;
         private string arrDate;
         private string report_Type;
+        private DataTable printData;
 
         /// <inheritdoc/>
         public R13(ToolStripMenuItem menuitem)
@@ -57,122 +61,64 @@ namespace Sci.Production.Quality
             DualResult r = new DualResult(true);
             string cmd = string.Empty;
 
-            DataTable head;
-
-            cmd = $@"
+            if (this.report_Type == "4Slot")
+            {
+                cmd = $@"
 SELECT 
-    a.id,
+    [Invo]=c.ExportID,
+    a.ReceivingID,
     a.poid,
-    a.SEQ1,
-    a.SEQ2,
-    Receivingid,
-    a.Refno,
-    a.SCIRefno,
-    Suppid,
-    ArriveQty,
-    InspDeadline,
-    Result,
-    PhysicalEncode,
-    WeightEncode,
-    ShadeBondEncode,
-    ContinuityEncode,
-    NonPhysical,
-    Physical,
-    TotalInspYds,
-    PhysicalDate,
-    Physical,
-    NonWeight, 
-    Weight,
-    WeightDate,
-    Weight,
-    NonShadebond,
-    Shadebond,
-    ShadebondDate,
-    shadebond,
-    NonContinuity,
-    Continuity,
-    ContinuityDate,
-    Continuity,
-    a.Status,
-    ReplacementReportID,
-    (a.seq1+a.seq2) as seq,
-    (Select weavetypeid from Fabric b WITH (NOLOCK) where b.SCIRefno =a.SCIrefno) as weavetypeid,
-    c.Exportid,
-    [whseArrival] = isnull(c.whseArrival, ti.IssueDate),
-    dbo.getPass1(a.Approve) as approve1,
-    approveDate,
-    approve,
-    d.ColorID,
-    (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
-    c.ExportID as Wkno
-    ,cn.name
-    ,a.nonOdor
-    ,a.Odor
-    ,a.OdorEncode
-    ,a.OdorDate
-    ,a.nonMoisture
-    ,a.Moisture
-    ,a.MoistureDate
-    ,[PhysicalInspector] = (select name from pass1 where id = a.PhysicalInspector)
-    ,[WeightInspector] = (select name from pass1 where id = a.WeightInspector)
-    ,[ShadeboneInspector] = (select name from pass1 where id = a.ShadeboneInspector)
-    ,[ContinuityInspector] = (select name from pass1 where id = a.ContinuityInspector)
-    ,[OdorInspector] = (select name from pass1 where id = a.OdorInspector)
-	,Moisture,
-	MoistureDate ,
-	MaterialCompositionGrp,
-	MaterialCompositionItem,
-	MoistureStandardDesc,
-	MoistureStandard1,
-	MoistureStandard2,
-	MoistureStandard1_Comparison,
-	MoistureStandard2_Comparison
+    [seq]= (a.seq1+'-'+a.seq2) ,
+	o.BrandID
+	,[Style]=o.StyleID
+	,a.Refno
+	,[Title] = ( select NameEN from Factory WITH (NOLOCK) where id='{Sci.Env.User.Factory}' )
+	,ep.Eta
+	,[FactoryID]='{Sci.Env.User.Factory}'
+	,[Color]=cl.Name
+	,[Supp] = a.Suppid + ' '+Supp.AbbEN
+	,[Packages]=(	
+		 select top 1 Packages
+		 from
+		 (
+			 select e.Packages
+			 from Receiving rr with (nolock) 
+			 outer apply (
+				select [Packages] = sum(ee.Packages)
+				from Export ee with (nolock) 
+					where ee.Blno in (
+					select distinct e2.BLNO
+					from Export e2 with (nolock) 
+					where e2.ID = rr.ExportId
+				 )
+			 )e
+			 where id = a.ReceivingID
+			 union
+			 select tt.Packages
+			 from TransferIn tt with (nolock) 
+			 where id = a.ReceivingID
+		 )a
+	)
 FROM FIR a WITH (NOLOCK) 
 Left join Receiving c WITH (NOLOCK) on c.ID = a.ReceivingID
 Left join TransferIn ti WITH (NOLOCK) on ti.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
-outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
+LEFT JOIN Supp ON Supp.ID = a.SuppID
+LEFT JOIN Orders o ON o.ID = a.POID
+LEFT JOIN PO_Supp p ON p.ID = a.POID AND p.SEQ1 = a.SEQ1
+LEFT JOIN Export ep ON ep.ID = c.ExportId
+LEFT JOIN Color cl ON d.ColorID = cl.ID AND cl.BrandId = o.BrandID
 WHERE c.ExportID='{this.wkNO}'
 AND c.WhseArrival='{this.arrDate}'
 AND a.ReceivingID='{this.receivingID}'
 ";
 
-            r = DBProxy.Current.Select(string.Empty, cmd, out head);
-            if (!r)
-            {
-                this.ShowErr(r);
-                return r;
-            }
-
-            foreach (DataRow mainDr in head.Rows)
-            {
-                string txtsupplier = string.Empty;
-                string displayRefno = string.Empty;
-
-
-            }
-
-            if (this.report_Type == "4Slot")
-            {
-
-                DualResult result = DBProxy.Current.Select(string.Empty, cmd, out DataTable dt_title);
-
-                // 抓Invo,ETA 資料
-                cmd = $"select id,Eta from Export where id='{this.wkNO}' ";
-                result = DBProxy.Current.Select(string.Empty, cmd, out DataTable dt_Exp);
-                if (!result)
+                r = DBProxy.Current.Select(string.Empty, cmd, out this.printData);
+                if (!r)
                 {
-                    this.ShowErr(result);
-                    return result;
+                    this.ShowErr(r);
+                    return r;
                 }
-
-
-                // 變數區
-                string title = dt_title.Rows.Count == 0 ? string.Empty : dt_title.Rows[0]["NameEN"].ToString();
-                string suppid = this.txtsupplier.TextBox1.Text + " - " + this.txtsupplier.DisplayBox1.Text;
-                string invno = dt_Exp.Rows.Count == 0 ? string.Empty : dt_Exp.Rows[0]["ID"].ToString();
-                string brandID = MyUtility.GetValue.Lookup($"SELECT BrandID FROM Orders WHERE ID = '{this.displaySP.Text}'");
-
             }
 
             if (this.report_Type == "8Slot")
@@ -180,7 +126,74 @@ AND a.ReceivingID='{this.receivingID}'
 
             }
 
-            return r;
+            return Ict.Result.True;
+        }
+
+        /// <inheritdoc/>
+        protected override bool OnToPrint(ReportDefinition report)
+        {
+            if (this.printData.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found");
+                return false;
+            }
+
+            report = new ReportDefinition();
+
+            if (this.report_Type == "4Slot")
+            {
+
+                #region -- 表頭資料 --
+
+                string title = MyUtility.Convert.GetString(this.printData.Rows[0]["Title"]);
+                report.ReportParameters.Add(new ReportParameter("Title", title));
+
+                #endregion
+
+                #region -- 表身資料 --
+                List<R13_ShadeBond4_Data> data = this.printData.AsEnumerable()
+                    .Select(row1 => new R13_ShadeBond4_Data()
+                    {
+                        POID = row1["Poid"].ToString().Trim(),
+                        FactoryID = row1["FactoryID"].ToString().Trim(),
+                        Style = row1["Style"].ToString().Trim(),
+                        Color = row1["Color"].ToString().Trim(),
+                        BrandID = row1["BrandID"].ToString().Trim(),
+                        Supp = row1["Supp"].ToString().Trim(),
+                        Invo = row1["Invo"].ToString().Trim(),
+                        ETA = row1["ETA"].ToString() == string.Empty ? string.Empty : DateTime.Parse(row1["ETA"].ToString()).ToString("yyyy-MM-dd").ToString().Trim(),
+                        Refno = row1["Refno"].ToString().Trim(),
+                        Packages = row1["Packages"].ToString().Trim(),
+                        Seq = row1["Seq"].ToString().Trim(),
+                        ReceivingID = row1["ReceivingID"].ToString().Trim(),
+                    }).ToList();
+
+                report.ReportDataSource = data;
+                #endregion
+
+                Type reportResourceNamespace = typeof(R13_ShadeBond4_Data);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+
+                string reportResourceName = "R13_ShadeBond_Print.rdlc";
+
+                DualResult result;
+                IReportResource reportresource;
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+                {
+                    //return result;
+                }
+
+                report.ReportResource = reportresource;
+
+                // 開啟 report view
+                var frm = new Win.Subs.ReportView(report);
+                frm.MdiParent = this.MdiParent;
+                frm.TopMost = true;
+                frm.Show();
+
+            }
+
+            return true;
         }
     }
 }
