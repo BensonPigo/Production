@@ -45,6 +45,7 @@
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             this.btnCallP99 = new Sci.Win.UI.Button();
+            this.btnUpdateLocation = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,6 +62,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnUpdateLocation);
             this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.editRemark);
@@ -76,7 +78,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(978, 184);
+            this.masterpanel.Size = new System.Drawing.Size(978, 202);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -93,16 +95,17 @@
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(978, 317);
+            this.detailpanel.Location = new System.Drawing.Point(0, 202);
+            this.detailpanel.Size = new System.Drawing.Size(978, 299);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(855, 144);
+            this.gridicon.Location = new System.Drawing.Point(855, 164);
             this.gridicon.TabIndex = 15;
             // 
             // refresh
@@ -112,7 +115,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(978, 317);
+            this.detailgridcont.Size = new System.Drawing.Size(978, 299);
             // 
             // detail2
             // 
@@ -231,7 +234,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(978, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(978, 202);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -337,6 +340,18 @@
             this.btnCallP99.UseVisualStyleBackColor = true;
             this.btnCallP99.Click += new System.EventHandler(this.BtnCallP99_Click);
             // 
+            // btnUpdateLocation
+            // 
+            this.btnUpdateLocation.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnUpdateLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateLocation.Location = new System.Drawing.Point(509, 144);
+            this.btnUpdateLocation.Name = "btnUpdateLocation";
+            this.btnUpdateLocation.Size = new System.Drawing.Size(149, 52);
+            this.btnUpdateLocation.TabIndex = 65;
+            this.btnUpdateLocation.Text = "Copy FromLocation to ToLocation";
+            this.btnUpdateLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateLocation.Click += new System.EventHandler(this.BtnUpdateLocation_Click);
+            // 
             // P22
             // 
             this.ApvChkValue = "New";
@@ -398,5 +413,6 @@
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.Button btnPrintFabricSticker;
         private Win.UI.Button btnCallP99;
+        private Win.UI.Button btnUpdateLocation;
     }
 }

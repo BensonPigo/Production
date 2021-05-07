@@ -149,6 +149,7 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID
 ,stuff((select ',' + t1.MtlLocationID from (select MtlLocationid from dbo.FtyInventory_Detail f WITH (NOLOCK)  inner join MtlLocation m WITH (NOLOCK) on f.MtlLocationID=m.ID  where f.Ukey = fi.Ukey and m.StockType='I' and m.Junk !='1')t1 for xml path('')), 1, 1, '') as [ToLocation]
 ,GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over(partition by cte.ToFactoryID,fi.POID,fi.seq1,fi.seq2,fi.dyelot)
 ,dbo.getMtlDesc(fi.poid, fi.seq1, fi.seq2, 2, 0) as [description]
+, Fromlocation = Fromlocation.listValue
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on 
                                                 fi.POID = cte.poid 
@@ -156,6 +157,21 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on
                                                 and fi.seq2 = cte.SEQ2 
                                                 and fi.StockType = 'B'
 left join dbo.orders o WITH (NOLOCK) on fi.poid=o.id 
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = 'I'
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 {2}
 Order by GroupQty desc,fromdyelot,balanceQty desc
 drop table #tmp", Env.User.Keyword, this.dr_master["id"], where));
