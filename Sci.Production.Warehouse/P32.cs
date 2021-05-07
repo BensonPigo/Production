@@ -780,13 +780,6 @@ else
                         }
                     }
 
-                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, string.Empty, upd_Fty_26F, out resulttb, "#TmpSource")))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
-                    }
-
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfio, string.Empty, sqlupd2_FIO, out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
@@ -795,6 +788,13 @@ else
                     }
 
                     if (!(result = MyUtility.Tool.ProcessWithObject(bsfioto, string.Empty, sqlupd2_FIO2, out resulttb, "#TmpSource")))
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_26F, string.Empty, upd_Fty_26F, out resulttb, "#TmpSource")))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);
