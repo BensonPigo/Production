@@ -712,6 +712,13 @@ where s.ID = '{this.CurrentMaintain["StyleID"]}'
                 }
             }
 
+            string sqlcmd = $@"select * from TypeSelection where seq = 1";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable typeSelectiondt);
+            if (!result)
+            {
+                return result;
+            }
+
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Deleted)
@@ -723,6 +730,7 @@ Delete GarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", Data
 Delete GarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete GarmentTest_Detail_FGWT where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete GarmentTest_Detail_FGPT where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete Garment_Detail_Spirality where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 ";
                     DBProxy.Current.Execute(null, delete3sub);
                 }
@@ -847,6 +855,44 @@ values (@ID,@NO,'Appearance of garment after wash',8)
                         DBProxy.Current.Execute(null, insertShrinkage, spam);
                     }
 
+                    #region 建立 Garment_Detail_Spirality
+                    if (dr.RowState == DataRowState.Added)
+                    {
+                        sqlcmd = $@"
+select sl.Location
+from Style s
+inner join Style_Location sl on sl.StyleUkey = s.Ukey
+where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}'
+";
+                        result = DBProxy.Current.Select(null, sqlcmd, out DataTable locationdt);
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        sqlcmd = string.Empty;
+
+                        if (dr.RowState == DataRowState.Added)
+                        {
+                            if (locationdt.Select("Location = 'T'").Any())
+                            {
+                                sqlcmd += $@"INSERT INTO[dbo].[Garment_Detail_Spirality]([ID],[No],[Location])VALUES('{dr["ID"]}','{dr["NO"]}','T');";
+                            }
+
+                            if (locationdt.Select("Location = 'B'").Any())
+                            {
+                                sqlcmd += $@"INSERT INTO[dbo].[Garment_Detail_Spirality]([ID],[No],[Location])VALUES('{dr["ID"]}','{dr["NO"]}','B');";
+                            }
+
+                            result = DBProxy.Current.Execute(null, sqlcmd);
+                            if (!result)
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                    #endregion
+
                     #region 寫入GarmentTest_Detail_FGPT
 
                     // 取Location
@@ -872,20 +918,24 @@ SELECT STUFF(
                     List<FGPT> fGPTs = new List<FGPT>();
 
                     bool isRugbyFootBall = MyUtility.Check.Seek($@"select 1 from Style s where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}' AND s.ProgramID like '%FootBall%'");
-                    bool isLining = MyUtility.Check.Seek($@"select 1 from Style s where s.id='{this.CurrentMaintain["StyleID"]}' AND s.BrandID='{this.CurrentMaintain["BrandID"]}' AND s.SeasonID='{this.CurrentMaintain["SeasonID"]}' AND s.Description  like '%with lining%' ");
 
                     // 若只有B則寫入Bottom的項目+ALL的項目，若只有T則寫入TOP的項目+ALL的項目，若有B和T則寫入Top+ Bottom的項目+ALL的項目
                     if (containsT && containsB)
                     {
-                        fGPTs = GetDefaultFGPT(false, false, true, isRugbyFootBall, isLining, "S");
+                        fGPTs = GetDefaultFGPT(false, false, true, isRugbyFootBall, "S");
                     }
                     else if (containsT)
                     {
-                        fGPTs = GetDefaultFGPT(containsT, false, false, isRugbyFootBall, isLining, "T");
+                        fGPTs = GetDefaultFGPT(containsT, false, false, isRugbyFootBall, "T");
                     }
                     else
                     {
-                        fGPTs = GetDefaultFGPT(false, containsB, false, isRugbyFootBall, isLining, "B");
+                        fGPTs = GetDefaultFGPT(false, containsB, false, isRugbyFootBall, "B");
+                    }
+
+                    if (MyUtility.Convert.GetString(dr["MtlTypeID"]) == "KNIT")
+                    {
+                        fGPTs = fGPTs.Where(w => w.TestName == "PHX-AP0450" || w.TestName == "PHX-AP0451").ToList();
                     }
 
                     int idx = 0;
@@ -913,7 +963,7 @@ SELECT STUFF(
                         insertCmd.Append($@"
 
 INSERT INTO GarmentTest_Detail_FGPT
-           (ID,No,Location,Type,TestDetail,TestUnit,Criteria,TestName)
+           (ID,No,Location,Type,TestDetail,TestUnit,Criteria,TestName,Seq,TypeSelection_VersionID,TypeSelection_Seq)
      VALUES
            ( {garmentTest_Detail_ID}
            , {garmentTest_Detail_No}
@@ -922,8 +972,10 @@ INSERT INTO GarmentTest_Detail_FGPT
            , @TestDetail{idx}
            , @TestUnit{idx}
            , @Criteria{idx}  
-           , @TestName{idx})
-
+           , @TestName{idx}
+           , {fGPT.Seq}
+           , {fGPT.TypeSelectionVersionID}
+           , {fGPT.TypeSelection_Seq})
 ");
                         parameters.Add(new SqlParameter($"@Location{idx}", location));
                         parameters.Add(new SqlParameter($"@Type{idx}", fGPT.Type));
@@ -940,7 +992,7 @@ INSERT INTO GarmentTest_Detail_FGPT
                         DualResult r = DBProxy.Current.Execute(null, insertCmd.ToString(), parameters);
                         if (!r)
                         {
-                            this.ShowErr(r);
+                            return r;
                         }
                     }
                     #endregion
