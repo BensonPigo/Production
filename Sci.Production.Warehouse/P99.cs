@@ -214,6 +214,7 @@ select distinct  [Selected] = 0 --0
         , t1.InvNo
 	    ,[WHCommandReason] = w.Reason
 		,[WHCommandRemark] = w.Remark
+        ,[Barcode] = isnull(Barcode.value,'')
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t1.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -235,6 +236,16 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
 	 END
 )Color
+outer apply(
+	select value = ft.barcode
+	from FtyInventory ft
+	where ft.POID = t2.PoId
+	and ft.Seq1 = t2.Seq1 
+    and ft.Seq2 = t2.Seq2
+	and ft.StockType = t2.StockType 
+	and ft.Roll = t2.Roll 
+    and ft.Dyelot = t2.Dyelot
+)Barcode
 Where 1=1
 and t1.Status = 'Confirmed'
 ";
