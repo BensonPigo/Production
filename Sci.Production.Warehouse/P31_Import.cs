@@ -116,11 +116,27 @@ select  selected = 0
         ,a.fabrictype
         ,c.Lock
         ,ToLocation = ''
+        ,Fromlocation = Fromlocation.listValue
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
 left join dbo.po_supp_detail b WITH (NOLOCK) on b.Refno = a.Refno and b.SizeSpec = a.SizeSpec and b.ColorID = a.ColorID and b.BrandId = a.BrandId
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = c.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = 'B'
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{this.txtSeq.Seq1}' 
 and b.seq2='{this.txtSeq.Seq2}' and Factory.MDivisionID = '{Env.User.Keyword}'
 and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 and  c.StockType='B'

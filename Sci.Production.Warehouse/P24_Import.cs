@@ -85,6 +85,7 @@ select 	selected = 0
         , toFactoryID = orders.FactoryID
 		, toStocktype = 'O' 
 		, Fromlocation = dbo.Getlocation(c.ukey)
+        , Fromlocation2 = Fromlocation2.listValue
         , ToLocation = stuff((select distinct isnull(CONCAT(',' , s.Data), '')
 			                 from (	
 				                select s.Data
@@ -99,6 +100,21 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = orders.id
 inner join Factory on orders.FactoryID = factory.id
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = c.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = 'O'
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation2
 outer apply(select  Deadline = max(i.Deadline) from Inventory  i where i.POID = a.id and i.seq1 = a.seq1 and i.seq2 = a.seq2)i
 Where   1=1
 {1}

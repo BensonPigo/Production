@@ -83,10 +83,26 @@ select  selected = 0
         , toFactoryID = Orders.FactoryID
         , toStocktype = 'I' 
         , tolocation = dbo.[Getlocation_Intersection] (c.ukey,'I')
+        , Fromlocation = Fromlocation.listValue
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join dbo.Orders on c.Poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.ID
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = c.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = 'I'
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 Where  1=1
 {1}
         and c.InQty - c.OutQty + c.AdjustQty - c.ReturnQty > 0 

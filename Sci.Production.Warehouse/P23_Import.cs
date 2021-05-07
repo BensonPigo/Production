@@ -172,6 +172,7 @@ select  0 AS selected
         , fi.dyelot ToDyelot
         , 'B' as [ToStockType]
         , dbo.Getlocation(fi.ukey) as [ToLocation]
+        , Fromlocation = Fromlocation.listValue
         , GroupQty = Sum(fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty) over (partition by #tmp.ToFactoryID, #tmp.poid, #tmp.seq1, #tmp.seq2, fi.dyelot)
 from #tmp  
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
@@ -179,6 +180,21 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = fi.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = 'B'
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 where fi.Lock = 0
 Order by GroupQty desc, fromdyelot, balanceQty desc
 drop table #tmp", Env.User.Keyword, this.dr_master["id"]));
