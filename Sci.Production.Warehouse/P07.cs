@@ -1739,35 +1739,16 @@ where id = '{1}'", Env.User.UserID, this.CurrentMaintain["id"]);
 
             List<string> barcodeList = new List<string>();
             DataTable dtCnt = (DataTable)this.detailgridbs.DataSource;
-
-            // distinct CombineBarcode,並排除CombineBarcode = null
-            DataRow[] distCnt1 = dtCnt.DefaultView.ToTable(true, "CombineBarcode", "FabricType").Select("FabricType = 'F' and CombineBarcode is not null");
-            DataRow[] count2 = dtCnt.Select("FabricType = 'F' and CombineBarcode is null");
-            if (distCnt1.Length + count2.Length > 0)
+            DataRow[] count = dtCnt.Select("FabricType = 'F' and Barcode = ''");
+            if (count.Length > 0)
             {
-                barcodeList = Prgs.GetBarcodeNo("FtyInventory_Barcode", "F", distCnt1.Length + count2.Length);
+                barcodeList = Prgs.GetBarcodeNo("FtyInventory_Barcode", "F", count.Length);
                 int cnt = 0;
-                ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "CombineBarcode";
                 foreach (DataRow drDis in this.DetailDatas)
                 {
                     if (string.Compare(drDis["FabricType"].ToString(), "F") == 0 && MyUtility.Check.Empty(drDis["Barcode"]))
                     {
-                        if (MyUtility.Check.Empty(drDis["CombineBarcode"]))
-                        {
-                            drDis["Barcode"] = barcodeList[cnt];
-                        }
-                        else
-                        {
-                            // 相同CombinBarcode, 則Barcode要寫入一樣的!
-                            foreach (var item in this.DetailDatas)
-                            {
-                                if (string.Compare(drDis["CombineBarcode"].ToString(), item["CombineBarcode"].ToString()) == 0)
-                                {
-                                    item["Barcode"] = barcodeList[cnt];
-                                }
-                            }
-                        }
-
+                        drDis["Barcode"] = barcodeList[cnt];
                         cnt++;
                     }
                 }
