@@ -353,7 +353,9 @@ HAVING 1=1
                 this.ShowWaitMessage("Excel Processing...");
 
                 Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx"); // 預先開啟excel app
-                MyUtility.Excel.CopyToXls(this.dataTable, null, "Warehouse_R25.xltx", 1, showExcel: false, showSaveMsg: false, excelApp: objApp);
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Warehouse_R25.xltx", objApp);
+                com.WriteTable(this.dataTable, 2);
+
                 Excel.Worksheet worksheet = objApp.Sheets[1];
 
                 #region Save & Show Excel
