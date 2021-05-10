@@ -379,7 +379,7 @@ where   1=1");
 
             if (!MyUtility.Check.Empty(sqlPar.Category))
             {
-                sqlCmd.Append(string.Format(" and o.Category = '{0}'", sqlPar.Category == "Bulk" ? "B" : "S"));
+                sqlCmd.Append(string.Format(" and o.Category = '{0}'", sqlPar.Category));
             }
 
             if (!MyUtility.Check.Empty(sqlPar.BrandID))

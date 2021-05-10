@@ -37,7 +37,7 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk,Sample");
+            MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "B,Bulk,S,Sample,G,Garment");
             this.comboCategory.SelectedIndex = -1;
             DataTable gridData;
             DBProxy.Current.Select(null, "select 0 as Selected,'' as CurrentCustomSP,'' as Article,'' as SizeCode,'' as Consumption,* from VNConsumption WITH (NOLOCK) where 1 = 0", out gridData);
@@ -161,7 +161,7 @@ and IsSubconIn = 0
                 DateBuyerDeliveryFrom = this.dateBuyerDelivery.Value1,
                 DateBuyerDeliveryTo = this.dateBuyerDelivery.Value2,
                 Style = this.txtstyle.Text,
-                Category = this.comboCategory.Text,
+                Category = this.comboCategory.SelectedValue.ToString(),
                 BrandID = this.txtbrand.Text,
                 ContractID = string.Empty,
             };
