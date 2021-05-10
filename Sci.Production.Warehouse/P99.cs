@@ -112,6 +112,7 @@ left join FtyInventory ft on ft.POID = t2.PoId
                             and ft.Dyelot = t2.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
@@ -177,7 +178,8 @@ left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType 
+    and w.ID = t2.Id
 where 1=1
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -224,6 +226,7 @@ left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
 LEFT JOIN Fabric f WITH (NOLOCK) ON po3.SCIRefNo=f.SCIRefNo
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 outer apply(
 	select value = sum(Qty)
 	from TransferIn_Detail t WITH (NOLOCK) 
@@ -363,6 +366,7 @@ select  a.*
 from main a
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on a.PoId = w.POID
 	and a.Seq1= w.SEQ1 and a.Seq2 = w.SEQ2 and a.Roll = w.Roll and a.Dyelot = w.Dyelot and a.StockType = w.StockType
+    and w.ID = a.Id
 outer apply(
     select arqty = a.requestqty 
                     + isnull ((select sum(c.Cons) 
@@ -458,6 +462,7 @@ left join dbo.FtyInventory FI on    t2.Poid = Fi.Poid
                                     and t2.Dyelot = fi.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
     and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where  1=1  
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -490,6 +495,7 @@ left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2
     and t2.Roll = FI.Roll and FI.stocktype = 'B'   
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and t1.Type='C'
 and t1.Status = 'Confirmed'
@@ -541,6 +547,7 @@ left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = t2.poid and c.seq1 = t2.s
     and c.stocktype = 'B' and c.roll=t2.roll and t2.Dyelot = c.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 Where 1=1
 and t1.Type='D'
 and t1.Status = 'Confirmed'
@@ -764,6 +771,7 @@ SELECt [Selected] = 0 --0
 FROM final t
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t.PoId = w.POID
 	and t.Seq1= w.SEQ1 and t.Seq2 = w.SEQ2 and t.Roll = w.Roll and t.Dyelot = w.Dyelot and t.StockType = w.StockType
+    and w.ID = t.Id
 OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty )) ,0)
 	FROM PO_Supp_Detail psd 
@@ -812,6 +820,7 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID
     and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and po3.FabricType='A'
 and t1.Status = 'Confirmed'
@@ -854,6 +863,7 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.StockType = f.StockType
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and po3.FabricType='F'
 and t1.Status = 'Confirmed'
@@ -895,6 +905,7 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.StockType = f.StockType
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -930,6 +941,7 @@ left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2
     and t2.Roll = FI.Roll and t2.StockType = FI.StockType
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -965,6 +977,7 @@ left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and t1.Type = 'B'
 and t1.Status = 'Confirmed'
@@ -1003,6 +1016,7 @@ left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 outer apply (
     select   [Value] = stuff((	select ',' + MtlLocationID
 									from (	
@@ -1066,6 +1080,7 @@ inner join FtyInventory FTI on FTI.POID=t2.POID and FTI.Seq1=t2.Seq1
     and PO3.SEQ1=t2.Seq1 and PO3.SEQ2=t2.Seq2 and FTI.Dyelot = t2.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 outer apply (
 	select Description from Fabric where SCIRefno=PO3.SCIRefno
 ) Fa
@@ -1110,6 +1125,7 @@ left join Fabric f WITH (NOLOCK) on f.SCIRefno = po3.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = t2.POID and fi.Seq1 = t2.Seq1 and fi.Seq2 = t2.Seq2 and fi.Roll = t2.Roll and fi.StockType = t2.StockType and fi.Dyelot = t2.Dyelot
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 where 1=1
 and t1.Type = 'R'
 and t1.Status = 'Confirmed'
@@ -1324,6 +1340,7 @@ left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot 
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 Where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -1469,6 +1486,7 @@ inner join issue t1 WITH (NOLOCK) on t1.Id = s.Id
 left join Fabric f on s.SciRefno = f.SciRefno
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+    and w.ID = t2.Id
 outer apply(
 	select top 1 po.FabricType
 	from PO_Supp_Detail po
@@ -2706,14 +2724,27 @@ and t1.Type='I'
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                            switch (this.strFunction)
                             {
-                                return;
-                            }
+                                case "P08":
+                                    if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
 
-                            if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
-                            {
-                                return;
+                                    break;
+                                default:
+                                    if (!Vstrong_AutoWHAccessory.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    if (!Gensong_AutoWHFabric.SentReceive_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
                             }
                         }
                         #endregion
@@ -2899,9 +2930,9 @@ inner join #tmp s on t2.Ukey = s.Ukey
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            switch (strTable)
+                            switch (this.strFunction)
                             {
-                                case "IssueReturn_Detail":
+                                case "P17":
                                     if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                                     {
                                         return;
@@ -2913,6 +2944,25 @@ inner join #tmp s on t2.Ukey = s.Ukey
                                     }
 
                                     break;
+
+                                case "P10":
+                                case "P16":
+                                case "P62":
+                                    if (!Gensong_AutoWHFabric.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+                                case "P15":
+                                case "P33":
+                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    {
+                                        return;
+                                    }
+
+                                    break;
+
                                 default:
                                     if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                                     {
