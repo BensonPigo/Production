@@ -959,13 +959,7 @@ ex: 150.423");
                 }
 
                 DataRow dr = this.gridFGPT.GetDataRow(eve.RowIndex);
-                if (!this.EditMode || MyUtility.Convert.GetInt(dr["TypeSelection_VersionID"]) == 0)
-                {
-                    eve.CellStyle.BackColor = Color.White;
-                    return;
-                }
-
-                eve.CellStyle.BackColor = Color.Yellow;
+                eve.CellStyle.BackColor = MyUtility.Convert.GetInt(dr["TypeSelection_VersionID"]) == 0 ? Color.White : Color.Yellow;
             };
 
             type.EditingMouseDown += (s, eve) =>
