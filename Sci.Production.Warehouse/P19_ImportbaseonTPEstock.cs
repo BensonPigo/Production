@@ -395,6 +395,11 @@ drop table #tmp, #tmpDetailResult, #tmpDetail
 
         private void BtnAutoPick_Click(object sender, EventArgs e)
         {
+            if (this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
+
             DataTable dt1 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["masterdt"];
             DataTable dt2 = ((DataSet)this.listControlBindingSource1.DataSource).Tables["detaildt"];
             foreach (DataRow dr1 in dt1.AsEnumerable().Where(x => x.Field<bool>("selected")))
