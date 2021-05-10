@@ -612,6 +612,7 @@ select	ob.Id		  ,
 			   ,[MarkerNo]
 			   ,[MarkerVersion]
 			   ,[MarkerDownLoadId]
+			   ,[MarkerLength]
 			   ,[EachconsMarkerNo]
 			   ,[EachconsMarkerDownloadID]
 			   ,[EachconsMarkerVersion]
@@ -650,6 +651,7 @@ select	ob.Id		  ,
 		,w.[MarkerNo]
 		,w.[MarkerVersion]
 		,w.[MarkerDownLoadId]
+		,w.[MarkerLength]
 		,[EachconsMarkerNo] = oe.MarkerNo
 		,[EachconsMarkerDownloadID] = oe.[MarkerVersion]
 		,[EachconsMarkerVersion]  = oe.[MarkerVersion]
