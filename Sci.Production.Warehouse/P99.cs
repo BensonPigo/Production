@@ -360,9 +360,11 @@ select  a.*
 		, [diffQty] = 0.00
         , [WHCommandReason] = w.Reason
 		, [WHCommandRemark] = w.Remark
+        , [ori_Balance] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 from main a
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on a.PoId = w.POID
 	and a.Seq1= w.SEQ1 and a.Seq2 = w.SEQ2 and a.Roll = w.Roll and a.Dyelot = w.Dyelot and a.StockType = w.StockType
+left join FtyInventory f on f.POID = a.Poid and f.Seq1 = a.Seq1 and f.Seq2 = a.Seq2 and f.Roll = a.Roll and f.Dyelot = a.Dyelot and f.StockType = a.StockType
 outer apply(
     select arqty = a.requestqty 
                     + isnull ((select sum(c.Cons) 
@@ -526,6 +528,7 @@ select  [Selected] = 0 --0
 , t2.Qty--11, 
 , [Old_Qty] = t2.Qty
 , [diffQty] = 0.00
+, [ori_Balance] = c.InQty-c.OutQty+c.AdjustQty-c.ReturnQty
 ,t2.id
 ,dbo.Getlocation(c.ukey) location--12
 , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty, 0.00) as balance--13
@@ -835,13 +838,13 @@ select [Selected] = 0 --0
 , t2.Qty
 , [Old_Qty] = t2.Qty
 , [diffQty] = 0.00
-, t2.StockType
 , location = dbo.Getlocation(f.Ukey) 
 , t2.ukey
 , t2.FtyInventoryUkey
 , t2.Remark
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+, [ori_Balance] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
@@ -923,6 +926,7 @@ select [Selected] = 0 --0
 ,[ToSeq] = t2.ToSeq1 +' ' + t2.ToSeq2
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+, [ori_Balance] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 from dbo.TransferOut_Detail t2 WITH (NOLOCK) 
 inner join TransferOut t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
@@ -1463,12 +1467,15 @@ select  [Selected] = 0 --0
 	, avqty = (ec.RequestQty + AccuReq.ReqQty) - AccuIssue.aiqqty	
     ,[WHCommandReason] = w.Reason
     ,[WHCommandRemark] = w.Remark
+    , [ori_Balance] = ft.InQty - ft.OutQty + ft.AdjustQty - ft.ReturnQty
 from dbo.Issue_Summary s WITH (NOLOCK) 
 left join Issue_Detail t2 WITH (NOLOCK) on t2.Id = s.Id and t2.Issue_SummaryUkey = s.Ukey
 inner join issue t1 WITH (NOLOCK) on t1.Id = s.Id
 left join Fabric f on s.SciRefno = f.SciRefno
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
 	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
+left join FtyInventory ft WITH (NOLOCK) on ft.POID = t2.POID and ft.Seq1=t2.Seq1 and ft.Seq2 = t2.Seq2
+	and ft.Roll = t2.Roll and ft.Dyelot = t2.Dyelot and ft.StockType = t2.StockType
 outer apply(
 	select top 1 po.FabricType
 	from PO_Supp_Detail po
@@ -3065,6 +3072,18 @@ inner join #tmp s on t.id = s.id
                                     transactionscope.Dispose();
                                     this.ShowErr(result);
                                     return;
+                                }
+                                switch (this.strFunction)
+                                {
+                                    case "P10":
+                                    case "P13":
+                                    case "P16":
+                                    case "P19":
+                                    case "P62":
+                                        this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
+                                        break;
+                                    default:
+                                        break;
                                 }
 
                                 transactionscope.Complete();
@@ -7031,6 +7050,12 @@ select
 ,[OriBarcode] = fbOri.Barcode
 ,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 ,[NewBarcode] = ''
+,[BarcodeStatus] =  case 
+	when t.diffQty !=0 and (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) = 0 and t.ori_Balance !=0 then 'ALL'
+	when  t.diffQty !=0 and (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) != 0 and t.ori_Balance = 0 then 'Part'
+	else '' end
+,t.ori_Balance
+,t.diffQty
 ,t.Id,f.POID,f.Seq1,f.Seq2,f.StockType,f.Roll,f.Dyelot
 from FtyInventory f
 inner join #tmp t on f.POID = t.POID
@@ -7064,11 +7089,23 @@ and exists(
                     foreach (DataRow dr in dt.Rows)
                     {
                         string strBarcode = MyUtility.Check.Empty(dr["Barcode2"]) ? dr["Barcode1"].ToString() : dr["Barcode2"].ToString();
+
+                        // isConfirmed = true,代表Revise
                         if (isConfirmed)
                         {
-                            // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                            if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                            string BarcodeStatus = dr["BarcodeStatus"].ToString();
+
+                            // ALL = 從部分轉變為全轉
+                            if (BarcodeStatus == "ALL")
                             {
+                                // 整卷發出就使用原本Barcode
+                                dr["NewBarcode"] = dr["Barcode1"];
+                            }
+
+                            // Part = 從全轉出變為部份出
+                            else if (BarcodeStatus == "Part")
+                            {
+                                // 要用自己的紀錄給補回
                                 if (strBarcode.Contains("-"))
                                 {
                                     dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
@@ -7078,17 +7115,36 @@ and exists(
                                     dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
                                 }
                             }
-                            else
-                            {
-                                // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                                dr["NewBarcode"] = dr["Barcode1"];
-                            }
                         }
                         else
                         {
                             // unConfirmed 要用自己的紀錄給補回
                             dr["NewBarcode"] = dr["OriBarcode"];
                         }
+
+                        //    // Balance Qty != 0 代表非整卷, 要在Barcode後+上-01,-02....
+                        //    if (!MyUtility.Check.Empty(dr["balanceQty"]) && !MyUtility.Check.Empty(strBarcode))
+                        //    {
+                        //        if (strBarcode.Contains("-"))
+                        //        {
+                        //            dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
+                        //        }
+                        //        else
+                        //        {
+                        //            dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
+                        //        dr["NewBarcode"] = dr["Barcode1"];
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    // unConfirmed 要用自己的紀錄給補回
+                        //    dr["NewBarcode"] = dr["OriBarcode"];
+
                     }
 
                     var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
