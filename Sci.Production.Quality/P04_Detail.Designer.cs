@@ -29,12 +29,18 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabDetail = new System.Windows.Forms.TabPage();
+            this.panel9 = new Sci.Win.UI.Panel();
+            this.label8 = new Sci.Win.UI.Label();
+            this.label12 = new Sci.Win.UI.Label();
+            this.label13 = new Sci.Win.UI.Label();
+            this.rdbtnLine = new System.Windows.Forms.RadioButton();
+            this.rdbtnTumble = new System.Windows.Forms.RadioButton();
+            this.rdbtnHand = new System.Windows.Forms.RadioButton();
+            this.panel8 = new Sci.Win.UI.Panel();
+            this.radioSyntheticFibres = new Sci.Win.UI.RadioButton();
+            this.radioNaturalFibres = new Sci.Win.UI.RadioButton();
             this.btnGenerateFGWT = new Sci.Win.UI.Button();
             this.txtLotoFactory = new Sci.Win.UI.TextBox();
             this.label40 = new Sci.Win.UI.Label();
@@ -71,47 +77,39 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridActualShrinkage = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label19 = new System.Windows.Forms.Label();
+            this.tabSpirality = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel1 = new Sci.Win.UI.FlowLayoutPanel();
-            this.panel1 = new Sci.Win.UI.Panel();
+            this.panelTop = new Sci.Win.UI.Panel();
+            this.numTopCM = new Sci.Win.UI.NumericBox();
+            this.numTOPMehtodB = new Sci.Win.UI.NumericBox();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
-            this.numTwisTingTop = new Sci.Win.UI.NumericBox();
-            this.numTopS1 = new Sci.Win.UI.NumericBox();
-            this.numTopS2 = new Sci.Win.UI.NumericBox();
-            this.numTopL = new Sci.Win.UI.NumericBox();
-            this.panel2 = new Sci.Win.UI.Panel();
-            this.label33 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.numTwisTingInner = new Sci.Win.UI.NumericBox();
-            this.numInnerS1 = new Sci.Win.UI.NumericBox();
-            this.numInnerS2 = new Sci.Win.UI.NumericBox();
-            this.numInnerL = new Sci.Win.UI.NumericBox();
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.label38 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
-            this.numOuterL = new Sci.Win.UI.NumericBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.label36 = new System.Windows.Forms.Label();
-            this.numOuterS2 = new Sci.Win.UI.NumericBox();
-            this.label35 = new System.Windows.Forms.Label();
-            this.numOuterS1 = new Sci.Win.UI.NumericBox();
-            this.label34 = new System.Windows.Forms.Label();
-            this.numTwisTingOuter = new Sci.Win.UI.NumericBox();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.label21 = new System.Windows.Forms.Label();
+            this.numTOPMehtodA = new Sci.Win.UI.NumericBox();
+            this.numTopAAp = new Sci.Win.UI.NumericBox();
+            this.numTopApB = new Sci.Win.UI.NumericBox();
+            this.numTopAB = new Sci.Win.UI.NumericBox();
+            this.panelBottom = new System.Windows.Forms.Panel();
+            this.numBottomCM = new Sci.Win.UI.NumericBox();
+            this.numBottomMethodB = new Sci.Win.UI.NumericBox();
             this.label23 = new System.Windows.Forms.Label();
-            this.numBottomL = new Sci.Win.UI.NumericBox();
             this.label25 = new System.Windows.Forms.Label();
-            this.numBottomS1 = new Sci.Win.UI.NumericBox();
             this.label27 = new System.Windows.Forms.Label();
-            this.numTwisTingBottom = new Sci.Win.UI.NumericBox();
-            this.label19 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
+            this.numBottomMethodA = new Sci.Win.UI.NumericBox();
+            this.numBottomAAp = new Sci.Win.UI.NumericBox();
+            this.numBottomApB = new Sci.Win.UI.NumericBox();
+            this.numBottomAB = new Sci.Win.UI.NumericBox();
+            this.label21 = new System.Windows.Forms.Label();
             this.tabAppearance = new System.Windows.Forms.TabPage();
             this.gridAppearance = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -127,27 +125,18 @@
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnToReport = new Sci.Win.UI.Button();
             this.btnDelete = new Sci.Win.UI.Button();
-            this.panel8 = new Sci.Win.UI.Panel();
-            this.radioSyntheticFibres = new Sci.Win.UI.RadioButton();
-            this.radioNaturalFibres = new Sci.Win.UI.RadioButton();
-            this.panel9 = new Sci.Win.UI.Panel();
-            this.label8 = new Sci.Win.UI.Label();
-            this.label12 = new Sci.Win.UI.Label();
-            this.label13 = new Sci.Win.UI.Label();
-            this.rdbtnLine = new System.Windows.Forms.RadioButton();
-            this.rdbtnTumble = new System.Windows.Forms.RadioButton();
-            this.rdbtnHand = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
+            this.panel9.SuspendLayout();
+            this.panel8.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridActualShrinkage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.tabSpirality.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel3.SuspendLayout();
-            this.panel4.SuspendLayout();
+            this.panelTop.SuspendLayout();
+            this.panelBottom.SuspendLayout();
             this.tabAppearance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
@@ -157,8 +146,6 @@
             this.tabFGPT.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).BeginInit();
-            this.panel8.SuspendLayout();
-            this.panel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -168,6 +155,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabDetail);
             this.tabControl1.Controls.Add(this.tabShrinkage);
+            this.tabControl1.Controls.Add(this.tabSpirality);
             this.tabControl1.Controls.Add(this.tabAppearance);
             this.tabControl1.Controls.Add(this.tabFGWT);
             this.tabControl1.Controls.Add(this.tabFGPT);
@@ -220,6 +208,105 @@
             this.tabDetail.Size = new System.Drawing.Size(1051, 480);
             this.tabDetail.TabIndex = 0;
             this.tabDetail.Text = "Detail";
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.label8);
+            this.panel9.Controls.Add(this.label12);
+            this.panel9.Controls.Add(this.label13);
+            this.panel9.Controls.Add(this.rdbtnLine);
+            this.panel9.Controls.Add(this.rdbtnTumble);
+            this.panel9.Controls.Add(this.rdbtnHand);
+            this.panel9.Location = new System.Drawing.Point(7, 162);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(649, 33);
+            this.panel9.TabIndex = 48;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(3, 4);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(119, 23);
+            this.label8.TabIndex = 38;
+            this.label8.Text = "Line Dry";
+            // 
+            // label12
+            // 
+            this.label12.Location = new System.Drawing.Point(255, 4);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(119, 23);
+            this.label12.TabIndex = 39;
+            this.label12.Text = "Tumble Dry";
+            // 
+            // label13
+            // 
+            this.label13.Location = new System.Drawing.Point(496, 4);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(84, 23);
+            this.label13.TabIndex = 40;
+            this.label13.Text = "Hand Wash";
+            // 
+            // rdbtnLine
+            // 
+            this.rdbtnLine.AutoSize = true;
+            this.rdbtnLine.Checked = true;
+            this.rdbtnLine.Location = new System.Drawing.Point(150, 7);
+            this.rdbtnLine.Name = "rdbtnLine";
+            this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnLine.TabIndex = 41;
+            this.rdbtnLine.TabStop = true;
+            this.rdbtnLine.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnTumble
+            // 
+            this.rdbtnTumble.AutoSize = true;
+            this.rdbtnTumble.Location = new System.Drawing.Point(402, 7);
+            this.rdbtnTumble.Name = "rdbtnTumble";
+            this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnTumble.TabIndex = 42;
+            this.rdbtnTumble.UseVisualStyleBackColor = true;
+            // 
+            // rdbtnHand
+            // 
+            this.rdbtnHand.AutoSize = true;
+            this.rdbtnHand.Location = new System.Drawing.Point(601, 7);
+            this.rdbtnHand.Name = "rdbtnHand";
+            this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
+            this.rdbtnHand.TabIndex = 43;
+            this.rdbtnHand.UseVisualStyleBackColor = true;
+            // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.radioSyntheticFibres);
+            this.panel8.Controls.Add(this.radioNaturalFibres);
+            this.panel8.Location = new System.Drawing.Point(381, 223);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(381, 60);
+            this.panel8.TabIndex = 47;
+            // 
+            // radioSyntheticFibres
+            // 
+            this.radioSyntheticFibres.AutoSize = true;
+            this.radioSyntheticFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSyntheticFibres.Location = new System.Drawing.Point(4, 30);
+            this.radioSyntheticFibres.Name = "radioSyntheticFibres";
+            this.radioSyntheticFibres.Size = new System.Drawing.Size(365, 21);
+            this.radioSyntheticFibres.TabIndex = 50;
+            this.radioSyntheticFibres.TabStop = true;
+            this.radioSyntheticFibres.Text = "All basic Fabrics ≥ 50% synthetic fibres (ex. polyester)";
+            this.radioSyntheticFibres.UseVisualStyleBackColor = true;
+            // 
+            // radioNaturalFibres
+            // 
+            this.radioNaturalFibres.AutoSize = true;
+            this.radioNaturalFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioNaturalFibres.Location = new System.Drawing.Point(4, 9);
+            this.radioNaturalFibres.Name = "radioNaturalFibres";
+            this.radioNaturalFibres.Size = new System.Drawing.Size(259, 21);
+            this.radioNaturalFibres.TabIndex = 49;
+            this.radioNaturalFibres.TabStop = true;
+            this.radioNaturalFibres.Text = "All basic Fabrics ≥ 50% natural fibres";
+            this.radioNaturalFibres.UseVisualStyleBackColor = true;
             // 
             // btnGenerateFGWT
             // 
@@ -558,7 +645,6 @@
             // tabShrinkage
             // 
             this.tabShrinkage.Controls.Add(this.panel5);
-            this.tabShrinkage.Controls.Add(this.flowLayoutPanel1);
             this.tabShrinkage.Controls.Add(this.label19);
             this.tabShrinkage.Location = new System.Drawing.Point(4, 25);
             this.tabShrinkage.Name = "tabShrinkage";
@@ -573,7 +659,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(3, 3);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1045, 329);
+            this.panel5.Size = new System.Drawing.Size(1045, 474);
             this.panel5.TabIndex = 55;
             // 
             // gridActualShrinkage
@@ -593,604 +679,13 @@
             this.gridActualShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridActualShrinkage.Name = "gridActualShrinkage";
             this.gridActualShrinkage.ReadOnly = true;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridActualShrinkage.RowTemplate.Height = 24;
             this.gridActualShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridActualShrinkage.ShowCellToolTips = false;
-            this.gridActualShrinkage.Size = new System.Drawing.Size(1045, 329);
+            this.gridActualShrinkage.Size = new System.Drawing.Size(1045, 474);
             this.gridActualShrinkage.TabIndex = 17;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Controls.Add(this.panel1);
-            this.flowLayoutPanel1.Controls.Add(this.panel2);
-            this.flowLayoutPanel1.Controls.Add(this.panel3);
-            this.flowLayoutPanel1.Controls.Add(this.panel4);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 332);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1045, 145);
-            this.flowLayoutPanel1.TabIndex = 54;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label20);
-            this.panel1.Controls.Add(this.label22);
-            this.panel1.Controls.Add(this.label24);
-            this.panel1.Controls.Add(this.label26);
-            this.panel1.Controls.Add(this.label28);
-            this.panel1.Controls.Add(this.numTwisTingTop);
-            this.panel1.Controls.Add(this.numTopS1);
-            this.panel1.Controls.Add(this.numTopS2);
-            this.panel1.Controls.Add(this.numTopL);
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1042, 32);
-            this.panel1.TabIndex = 53;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label20.Location = new System.Drawing.Point(3, 5);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(145, 17);
-            this.label20.TabIndex = 18;
-            this.label20.Text = "TWISTING (TOP)%";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label22.Location = new System.Drawing.Point(378, 5);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(82, 17);
-            this.label22.TabIndex = 20;
-            this.label22.Text = "FOR TOP:";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label24.Location = new System.Drawing.Point(515, 5);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(25, 17);
-            this.label24.TabIndex = 22;
-            this.label24.Text = "S1";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label26.Location = new System.Drawing.Point(671, 5);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(25, 17);
-            this.label26.TabIndex = 24;
-            this.label26.Text = "S2";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label28.Location = new System.Drawing.Point(823, 5);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(16, 17);
-            this.label28.TabIndex = 26;
-            this.label28.Text = "L";
-            // 
-            // numTwisTingTop
-            // 
-            this.numTwisTingTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingTop.DecimalPlaces = 2;
-            this.numTwisTingTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingTop.IsSupportEditMode = false;
-            this.numTwisTingTop.Location = new System.Drawing.Point(196, 5);
-            this.numTwisTingTop.Name = "numTwisTingTop";
-            this.numTwisTingTop.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingTop.ReadOnly = true;
-            this.numTwisTingTop.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingTop.TabIndex = 28;
-            this.numTwisTingTop.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTopS1
-            // 
-            this.numTopS1.BackColor = System.Drawing.Color.White;
-            this.numTopS1.DecimalPlaces = 2;
-            this.numTopS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopS1.Location = new System.Drawing.Point(542, 5);
-            this.numTopS1.Name = "numTopS1";
-            this.numTopS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTopS1.Size = new System.Drawing.Size(73, 23);
-            this.numTopS1.TabIndex = 30;
-            this.numTopS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTopS2
-            // 
-            this.numTopS2.BackColor = System.Drawing.Color.White;
-            this.numTopS2.DecimalPlaces = 2;
-            this.numTopS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopS2.Location = new System.Drawing.Point(702, 5);
-            this.numTopS2.Name = "numTopS2";
-            this.numTopS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTopS2.Size = new System.Drawing.Size(73, 23);
-            this.numTopS2.TabIndex = 32;
-            this.numTopS2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTopL
-            // 
-            this.numTopL.BackColor = System.Drawing.Color.White;
-            this.numTopL.DecimalPlaces = 2;
-            this.numTopL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopL.Location = new System.Drawing.Point(845, 5);
-            this.numTopL.Name = "numTopL";
-            this.numTopL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTopL.Size = new System.Drawing.Size(73, 23);
-            this.numTopL.TabIndex = 34;
-            this.numTopL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.label33);
-            this.panel2.Controls.Add(this.label32);
-            this.panel2.Controls.Add(this.label31);
-            this.panel2.Controls.Add(this.label30);
-            this.panel2.Controls.Add(this.label29);
-            this.panel2.Controls.Add(this.numTwisTingInner);
-            this.panel2.Controls.Add(this.numInnerS1);
-            this.panel2.Controls.Add(this.numInnerS2);
-            this.panel2.Controls.Add(this.numInnerL);
-            this.panel2.Location = new System.Drawing.Point(3, 41);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1042, 30);
-            this.panel2.TabIndex = 54;
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label33.Location = new System.Drawing.Point(3, 3);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(160, 17);
-            this.label33.TabIndex = 35;
-            this.label33.Text = "TWISTING (INNER)%";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label32.Location = new System.Drawing.Point(378, 3);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(97, 17);
-            this.label32.TabIndex = 36;
-            this.label32.Text = "FOR INNER:";
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label31.Location = new System.Drawing.Point(515, 3);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(25, 17);
-            this.label31.TabIndex = 37;
-            this.label31.Text = "S1";
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label30.Location = new System.Drawing.Point(671, 3);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(25, 17);
-            this.label30.TabIndex = 38;
-            this.label30.Text = "S2";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label29.Location = new System.Drawing.Point(823, 3);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(16, 17);
-            this.label29.TabIndex = 39;
-            this.label29.Text = "L";
-            // 
-            // numTwisTingInner
-            // 
-            this.numTwisTingInner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingInner.DecimalPlaces = 2;
-            this.numTwisTingInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingInner.IsSupportEditMode = false;
-            this.numTwisTingInner.Location = new System.Drawing.Point(196, 3);
-            this.numTwisTingInner.Name = "numTwisTingInner";
-            this.numTwisTingInner.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingInner.ReadOnly = true;
-            this.numTwisTingInner.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingInner.TabIndex = 40;
-            this.numTwisTingInner.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numInnerS1
-            // 
-            this.numInnerS1.BackColor = System.Drawing.Color.White;
-            this.numInnerS1.DecimalPlaces = 2;
-            this.numInnerS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerS1.Location = new System.Drawing.Point(542, 3);
-            this.numInnerS1.Name = "numInnerS1";
-            this.numInnerS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerS1.Size = new System.Drawing.Size(73, 23);
-            this.numInnerS1.TabIndex = 41;
-            this.numInnerS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numInnerS2
-            // 
-            this.numInnerS2.BackColor = System.Drawing.Color.White;
-            this.numInnerS2.DecimalPlaces = 2;
-            this.numInnerS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerS2.Location = new System.Drawing.Point(702, 3);
-            this.numInnerS2.Name = "numInnerS2";
-            this.numInnerS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerS2.Size = new System.Drawing.Size(73, 23);
-            this.numInnerS2.TabIndex = 42;
-            this.numInnerS2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numInnerL
-            // 
-            this.numInnerL.BackColor = System.Drawing.Color.White;
-            this.numInnerL.DecimalPlaces = 2;
-            this.numInnerL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerL.Location = new System.Drawing.Point(845, 3);
-            this.numInnerL.Name = "numInnerL";
-            this.numInnerL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerL.Size = new System.Drawing.Size(73, 23);
-            this.numInnerL.TabIndex = 43;
-            this.numInnerL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this.label38);
-            this.panel3.Controls.Add(this.label37);
-            this.panel3.Controls.Add(this.numOuterL);
-            this.panel3.Controls.Add(this.label39);
-            this.panel3.Controls.Add(this.label36);
-            this.panel3.Controls.Add(this.numOuterS2);
-            this.panel3.Controls.Add(this.label35);
-            this.panel3.Controls.Add(this.numOuterS1);
-            this.panel3.Controls.Add(this.label34);
-            this.panel3.Controls.Add(this.numTwisTingOuter);
-            this.panel3.Location = new System.Drawing.Point(3, 77);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1042, 30);
-            this.panel3.TabIndex = 55;
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label38.Location = new System.Drawing.Point(3, 3);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(167, 17);
-            this.label38.TabIndex = 44;
-            this.label38.Text = "TWISTING (OUTER)%";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label37.Location = new System.Drawing.Point(378, 3);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(104, 17);
-            this.label37.TabIndex = 45;
-            this.label37.Text = "FOR OUTER:";
-            // 
-            // numOuterL
-            // 
-            this.numOuterL.BackColor = System.Drawing.Color.White;
-            this.numOuterL.DecimalPlaces = 2;
-            this.numOuterL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numOuterL.Location = new System.Drawing.Point(845, 3);
-            this.numOuterL.Name = "numOuterL";
-            this.numOuterL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numOuterL.Size = new System.Drawing.Size(73, 23);
-            this.numOuterL.TabIndex = 52;
-            this.numOuterL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label39.Location = new System.Drawing.Point(670, -56);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(25, 17);
-            this.label39.TabIndex = 24;
-            this.label39.Text = "S2";
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label36.Location = new System.Drawing.Point(515, 3);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(25, 17);
-            this.label36.TabIndex = 46;
-            this.label36.Text = "S1";
-            // 
-            // numOuterS2
-            // 
-            this.numOuterS2.BackColor = System.Drawing.Color.White;
-            this.numOuterS2.DecimalPlaces = 2;
-            this.numOuterS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numOuterS2.Location = new System.Drawing.Point(702, 3);
-            this.numOuterS2.Name = "numOuterS2";
-            this.numOuterS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numOuterS2.Size = new System.Drawing.Size(73, 23);
-            this.numOuterS2.TabIndex = 51;
-            this.numOuterS2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label35.Location = new System.Drawing.Point(671, 3);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(25, 17);
-            this.label35.TabIndex = 47;
-            this.label35.Text = "S2";
-            // 
-            // numOuterS1
-            // 
-            this.numOuterS1.BackColor = System.Drawing.Color.White;
-            this.numOuterS1.DecimalPlaces = 2;
-            this.numOuterS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numOuterS1.Location = new System.Drawing.Point(542, 3);
-            this.numOuterS1.Name = "numOuterS1";
-            this.numOuterS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numOuterS1.Size = new System.Drawing.Size(73, 23);
-            this.numOuterS1.TabIndex = 50;
-            this.numOuterS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label34.Location = new System.Drawing.Point(823, 3);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(16, 17);
-            this.label34.TabIndex = 48;
-            this.label34.Text = "L";
-            // 
-            // numTwisTingOuter
-            // 
-            this.numTwisTingOuter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingOuter.DecimalPlaces = 2;
-            this.numTwisTingOuter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingOuter.IsSupportEditMode = false;
-            this.numTwisTingOuter.Location = new System.Drawing.Point(196, 3);
-            this.numTwisTingOuter.Name = "numTwisTingOuter";
-            this.numTwisTingOuter.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingOuter.ReadOnly = true;
-            this.numTwisTingOuter.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingOuter.TabIndex = 49;
-            this.numTwisTingOuter.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // panel4
-            // 
-            this.panel4.Controls.Add(this.label21);
-            this.panel4.Controls.Add(this.label23);
-            this.panel4.Controls.Add(this.numBottomL);
-            this.panel4.Controls.Add(this.label25);
-            this.panel4.Controls.Add(this.numBottomS1);
-            this.panel4.Controls.Add(this.label27);
-            this.panel4.Controls.Add(this.numTwisTingBottom);
-            this.panel4.Location = new System.Drawing.Point(3, 113);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1042, 26);
-            this.panel4.TabIndex = 56;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label21.Location = new System.Drawing.Point(3, 5);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(179, 17);
-            this.label21.TabIndex = 19;
-            this.label21.Text = "TWISTING (BOTTOM)%";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label23.Location = new System.Drawing.Point(378, 5);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(116, 17);
-            this.label23.TabIndex = 21;
-            this.label23.Text = "FOR BOTTOM:";
-            // 
-            // numBottomL
-            // 
-            this.numBottomL.BackColor = System.Drawing.Color.White;
-            this.numBottomL.DecimalPlaces = 2;
-            this.numBottomL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomL.Location = new System.Drawing.Point(702, 2);
-            this.numBottomL.Name = "numBottomL";
-            this.numBottomL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBottomL.Size = new System.Drawing.Size(73, 23);
-            this.numBottomL.TabIndex = 33;
-            this.numBottomL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label25.Location = new System.Drawing.Point(515, 5);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(17, 17);
-            this.label25.TabIndex = 23;
-            this.label25.Text = "S";
-            // 
-            // numBottomS1
-            // 
-            this.numBottomS1.BackColor = System.Drawing.Color.White;
-            this.numBottomS1.DecimalPlaces = 2;
-            this.numBottomS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomS1.Location = new System.Drawing.Point(542, 2);
-            this.numBottomS1.Name = "numBottomS1";
-            this.numBottomS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBottomS1.Size = new System.Drawing.Size(73, 23);
-            this.numBottomS1.TabIndex = 31;
-            this.numBottomS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label27.Location = new System.Drawing.Point(671, 5);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(16, 17);
-            this.label27.TabIndex = 25;
-            this.label27.Text = "L";
-            // 
-            // numTwisTingBottom
-            // 
-            this.numTwisTingBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingBottom.DecimalPlaces = 2;
-            this.numTwisTingBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingBottom.IsSupportEditMode = false;
-            this.numTwisTingBottom.Location = new System.Drawing.Point(196, 5);
-            this.numTwisTingBottom.Name = "numTwisTingBottom";
-            this.numTwisTingBottom.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingBottom.ReadOnly = true;
-            this.numTwisTingBottom.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingBottom.TabIndex = 29;
-            this.numTwisTingBottom.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
             // 
             // label19
             // 
@@ -1201,6 +696,483 @@
             this.label19.Size = new System.Drawing.Size(144, 17);
             this.label19.TabIndex = 16;
             this.label19.Text = "Actual Shrinkage%";
+            // 
+            // tabSpirality
+            // 
+            this.tabSpirality.Controls.Add(this.flowLayoutPanel1);
+            this.tabSpirality.Location = new System.Drawing.Point(4, 25);
+            this.tabSpirality.Name = "tabSpirality";
+            this.tabSpirality.Size = new System.Drawing.Size(1051, 480);
+            this.tabSpirality.TabIndex = 4;
+            this.tabSpirality.Text = "Spirality";
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.panelTop);
+            this.flowLayoutPanel1.Controls.Add(this.panelBottom);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1051, 480);
+            this.flowLayoutPanel1.TabIndex = 61;
+            // 
+            // panelTop
+            // 
+            this.panelTop.Controls.Add(this.numTopCM);
+            this.panelTop.Controls.Add(this.numTOPMehtodB);
+            this.panelTop.Controls.Add(this.label31);
+            this.panelTop.Controls.Add(this.label30);
+            this.panelTop.Controls.Add(this.label29);
+            this.panelTop.Controls.Add(this.label20);
+            this.panelTop.Controls.Add(this.label22);
+            this.panelTop.Controls.Add(this.label24);
+            this.panelTop.Controls.Add(this.label26);
+            this.panelTop.Controls.Add(this.label28);
+            this.panelTop.Controls.Add(this.numTOPMehtodA);
+            this.panelTop.Controls.Add(this.numTopAAp);
+            this.panelTop.Controls.Add(this.numTopApB);
+            this.panelTop.Controls.Add(this.numTopAB);
+            this.panelTop.Location = new System.Drawing.Point(3, 3);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(1042, 89);
+            this.panelTop.TabIndex = 57;
+            this.panelTop.Visible = false;
+            // 
+            // numTopCM
+            // 
+            this.numTopCM.BackColor = System.Drawing.Color.White;
+            this.numTopCM.DecimalPlaces = 2;
+            this.numTopCM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopCM.Location = new System.Drawing.Point(447, 60);
+            this.numTopCM.Name = "numTopCM";
+            this.numTopCM.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopCM.Size = new System.Drawing.Size(73, 23);
+            this.numTopCM.TabIndex = 39;
+            this.numTopCM.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTOPMehtodB
+            // 
+            this.numTOPMehtodB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTOPMehtodB.DecimalPlaces = 2;
+            this.numTOPMehtodB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTOPMehtodB.IsSupportEditMode = false;
+            this.numTOPMehtodB.Location = new System.Drawing.Point(272, 34);
+            this.numTOPMehtodB.Name = "numTOPMehtodB";
+            this.numTOPMehtodB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTOPMehtodB.ReadOnly = true;
+            this.numTOPMehtodB.Size = new System.Drawing.Size(100, 23);
+            this.numTOPMehtodB.TabIndex = 38;
+            this.numTOPMehtodB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label31.Location = new System.Drawing.Point(138, 60);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(303, 17);
+            this.label31.TabIndex = 37;
+            this.label31.Text = "6.\tMovement of side seam/outseam in CM";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label30.Location = new System.Drawing.Point(138, 37);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(76, 17);
+            this.label30.TabIndex = 36;
+            this.label30.Text = "Method B";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label29.Location = new System.Drawing.Point(138, 5);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(76, 17);
+            this.label29.TabIndex = 35;
+            this.label29.Text = "Method A";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label20.Location = new System.Drawing.Point(3, 5);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(129, 17);
+            this.label20.TabIndex = 18;
+            this.label20.Text = "Spirality (TOP)%";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label22.Location = new System.Drawing.Point(444, 5);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(82, 17);
+            this.label22.TabIndex = 20;
+            this.label22.Text = "FOR TOP:";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label24.Location = new System.Drawing.Point(532, 5);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(29, 17);
+            this.label24.TabIndex = 22;
+            this.label24.Text = "AA\'";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label26.Location = new System.Drawing.Point(671, 5);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(29, 17);
+            this.label26.TabIndex = 24;
+            this.label26.Text = "A\'B";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label28.Location = new System.Drawing.Point(823, 5);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(26, 17);
+            this.label28.TabIndex = 26;
+            this.label28.Text = "AB";
+            // 
+            // numTOPMehtodA
+            // 
+            this.numTOPMehtodA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTOPMehtodA.DecimalPlaces = 2;
+            this.numTOPMehtodA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTOPMehtodA.IsSupportEditMode = false;
+            this.numTOPMehtodA.Location = new System.Drawing.Point(272, 5);
+            this.numTOPMehtodA.Name = "numTOPMehtodA";
+            this.numTOPMehtodA.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTOPMehtodA.ReadOnly = true;
+            this.numTOPMehtodA.Size = new System.Drawing.Size(100, 23);
+            this.numTOPMehtodA.TabIndex = 28;
+            this.numTOPMehtodA.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTopAAp
+            // 
+            this.numTopAAp.BackColor = System.Drawing.Color.White;
+            this.numTopAAp.DecimalPlaces = 2;
+            this.numTopAAp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopAAp.Location = new System.Drawing.Point(567, 5);
+            this.numTopAAp.Name = "numTopAAp";
+            this.numTopAAp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopAAp.Size = new System.Drawing.Size(73, 23);
+            this.numTopAAp.TabIndex = 30;
+            this.numTopAAp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopAAp.Validated += new System.EventHandler(this.NumTop_Validated);
+            // 
+            // numTopApB
+            // 
+            this.numTopApB.BackColor = System.Drawing.Color.White;
+            this.numTopApB.DecimalPlaces = 2;
+            this.numTopApB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopApB.Location = new System.Drawing.Point(706, 5);
+            this.numTopApB.Name = "numTopApB";
+            this.numTopApB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopApB.Size = new System.Drawing.Size(73, 23);
+            this.numTopApB.TabIndex = 32;
+            this.numTopApB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopApB.Validated += new System.EventHandler(this.NumTop_Validated);
+            // 
+            // numTopAB
+            // 
+            this.numTopAB.BackColor = System.Drawing.Color.White;
+            this.numTopAB.DecimalPlaces = 2;
+            this.numTopAB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopAB.Location = new System.Drawing.Point(855, 5);
+            this.numTopAB.Name = "numTopAB";
+            this.numTopAB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopAB.Size = new System.Drawing.Size(73, 23);
+            this.numTopAB.TabIndex = 34;
+            this.numTopAB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopAB.Validated += new System.EventHandler(this.NumTop_Validated);
+            // 
+            // panelBottom
+            // 
+            this.panelBottom.Controls.Add(this.numBottomCM);
+            this.panelBottom.Controls.Add(this.numBottomMethodB);
+            this.panelBottom.Controls.Add(this.label23);
+            this.panelBottom.Controls.Add(this.label25);
+            this.panelBottom.Controls.Add(this.label27);
+            this.panelBottom.Controls.Add(this.label32);
+            this.panelBottom.Controls.Add(this.label33);
+            this.panelBottom.Controls.Add(this.label34);
+            this.panelBottom.Controls.Add(this.label35);
+            this.panelBottom.Controls.Add(this.numBottomMethodA);
+            this.panelBottom.Controls.Add(this.numBottomAAp);
+            this.panelBottom.Controls.Add(this.numBottomApB);
+            this.panelBottom.Controls.Add(this.numBottomAB);
+            this.panelBottom.Controls.Add(this.label21);
+            this.panelBottom.Location = new System.Drawing.Point(3, 98);
+            this.panelBottom.Name = "panelBottom";
+            this.panelBottom.Size = new System.Drawing.Size(1042, 93);
+            this.panelBottom.TabIndex = 60;
+            this.panelBottom.Visible = false;
+            // 
+            // numBottomCM
+            // 
+            this.numBottomCM.BackColor = System.Drawing.Color.White;
+            this.numBottomCM.DecimalPlaces = 2;
+            this.numBottomCM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomCM.Location = new System.Drawing.Point(481, 60);
+            this.numBottomCM.Name = "numBottomCM";
+            this.numBottomCM.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomCM.Size = new System.Drawing.Size(73, 23);
+            this.numBottomCM.TabIndex = 52;
+            this.numBottomCM.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numBottomMethodB
+            // 
+            this.numBottomMethodB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBottomMethodB.DecimalPlaces = 2;
+            this.numBottomMethodB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBottomMethodB.IsSupportEditMode = false;
+            this.numBottomMethodB.Location = new System.Drawing.Point(306, 34);
+            this.numBottomMethodB.Name = "numBottomMethodB";
+            this.numBottomMethodB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomMethodB.ReadOnly = true;
+            this.numBottomMethodB.Size = new System.Drawing.Size(100, 23);
+            this.numBottomMethodB.TabIndex = 51;
+            this.numBottomMethodB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label23.Location = new System.Drawing.Point(172, 60);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(303, 17);
+            this.label23.TabIndex = 50;
+            this.label23.Text = "6.\tMovement of side seam/outseam in CM";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label25.Location = new System.Drawing.Point(172, 37);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(76, 17);
+            this.label25.TabIndex = 49;
+            this.label25.Text = "Method B";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label27.Location = new System.Drawing.Point(172, 5);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(76, 17);
+            this.label27.TabIndex = 48;
+            this.label27.Text = "Method A";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label32.Location = new System.Drawing.Point(478, 5);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(82, 17);
+            this.label32.TabIndex = 40;
+            this.label32.Text = "FOR TOP:";
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label33.Location = new System.Drawing.Point(566, 5);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(29, 17);
+            this.label33.TabIndex = 41;
+            this.label33.Text = "AA\'";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label34.Location = new System.Drawing.Point(705, 5);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(29, 17);
+            this.label34.TabIndex = 42;
+            this.label34.Text = "A\'B";
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label35.Location = new System.Drawing.Point(857, 5);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(26, 17);
+            this.label35.TabIndex = 43;
+            this.label35.Text = "AB";
+            // 
+            // numBottomMethodA
+            // 
+            this.numBottomMethodA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBottomMethodA.DecimalPlaces = 2;
+            this.numBottomMethodA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBottomMethodA.IsSupportEditMode = false;
+            this.numBottomMethodA.Location = new System.Drawing.Point(306, 5);
+            this.numBottomMethodA.Name = "numBottomMethodA";
+            this.numBottomMethodA.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomMethodA.ReadOnly = true;
+            this.numBottomMethodA.Size = new System.Drawing.Size(100, 23);
+            this.numBottomMethodA.TabIndex = 44;
+            this.numBottomMethodA.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numBottomAAp
+            // 
+            this.numBottomAAp.BackColor = System.Drawing.Color.White;
+            this.numBottomAAp.DecimalPlaces = 2;
+            this.numBottomAAp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomAAp.Location = new System.Drawing.Point(601, 5);
+            this.numBottomAAp.Name = "numBottomAAp";
+            this.numBottomAAp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomAAp.Size = new System.Drawing.Size(73, 23);
+            this.numBottomAAp.TabIndex = 45;
+            this.numBottomAAp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomAAp.Validated += new System.EventHandler(this.NumBottom_Validated);
+            // 
+            // numBottomApB
+            // 
+            this.numBottomApB.BackColor = System.Drawing.Color.White;
+            this.numBottomApB.DecimalPlaces = 2;
+            this.numBottomApB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomApB.Location = new System.Drawing.Point(740, 5);
+            this.numBottomApB.Name = "numBottomApB";
+            this.numBottomApB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomApB.Size = new System.Drawing.Size(73, 23);
+            this.numBottomApB.TabIndex = 46;
+            this.numBottomApB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomApB.Validated += new System.EventHandler(this.NumBottom_Validated);
+            // 
+            // numBottomAB
+            // 
+            this.numBottomAB.BackColor = System.Drawing.Color.White;
+            this.numBottomAB.DecimalPlaces = 2;
+            this.numBottomAB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomAB.Location = new System.Drawing.Point(889, 5);
+            this.numBottomAB.Name = "numBottomAB";
+            this.numBottomAB.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomAB.Size = new System.Drawing.Size(73, 23);
+            this.numBottomAB.TabIndex = 47;
+            this.numBottomAB.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomAB.Validated += new System.EventHandler(this.NumBottom_Validated);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label21.Location = new System.Drawing.Point(3, 5);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(163, 17);
+            this.label21.TabIndex = 19;
+            this.label21.Text = "Spirality (BOTTOM)%";
             // 
             // tabAppearance
             // 
@@ -1231,14 +1203,6 @@
             this.gridAppearance.Location = new System.Drawing.Point(6, 21);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
@@ -1282,14 +1246,6 @@
             this.gridFGWT.Location = new System.Drawing.Point(0, 0);
             this.gridFGWT.Name = "gridFGWT";
             this.gridFGWT.ReadOnly = true;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGWT.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGWT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGWT.RowTemplate.Height = 24;
@@ -1333,14 +1289,6 @@
             this.gridFGPT.Location = new System.Drawing.Point(0, 0);
             this.gridFGPT.Name = "gridFGPT";
             this.gridFGPT.ReadOnly = true;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridFGPT.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridFGPT.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFGPT.RowTemplate.Height = 24;
@@ -1416,105 +1364,6 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
-            // panel8
-            // 
-            this.panel8.Controls.Add(this.radioSyntheticFibres);
-            this.panel8.Controls.Add(this.radioNaturalFibres);
-            this.panel8.Location = new System.Drawing.Point(381, 223);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(381, 60);
-            this.panel8.TabIndex = 47;
-            // 
-            // radioSyntheticFibres
-            // 
-            this.radioSyntheticFibres.AutoSize = true;
-            this.radioSyntheticFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSyntheticFibres.Location = new System.Drawing.Point(4, 30);
-            this.radioSyntheticFibres.Name = "radioSyntheticFibres";
-            this.radioSyntheticFibres.Size = new System.Drawing.Size(365, 21);
-            this.radioSyntheticFibres.TabIndex = 50;
-            this.radioSyntheticFibres.TabStop = true;
-            this.radioSyntheticFibres.Text = "All basic Fabrics ≥ 50% synthetic fibres (ex. polyester)";
-            this.radioSyntheticFibres.UseVisualStyleBackColor = true;
-            // 
-            // radioNaturalFibres
-            // 
-            this.radioNaturalFibres.AutoSize = true;
-            this.radioNaturalFibres.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioNaturalFibres.Location = new System.Drawing.Point(4, 9);
-            this.radioNaturalFibres.Name = "radioNaturalFibres";
-            this.radioNaturalFibres.Size = new System.Drawing.Size(259, 21);
-            this.radioNaturalFibres.TabIndex = 49;
-            this.radioNaturalFibres.TabStop = true;
-            this.radioNaturalFibres.Text = "All basic Fabrics ≥ 50% natural fibres";
-            this.radioNaturalFibres.UseVisualStyleBackColor = true;
-            // 
-            // panel9
-            // 
-            this.panel9.Controls.Add(this.label8);
-            this.panel9.Controls.Add(this.label12);
-            this.panel9.Controls.Add(this.label13);
-            this.panel9.Controls.Add(this.rdbtnLine);
-            this.panel9.Controls.Add(this.rdbtnTumble);
-            this.panel9.Controls.Add(this.rdbtnHand);
-            this.panel9.Location = new System.Drawing.Point(7, 162);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(649, 33);
-            this.panel9.TabIndex = 48;
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(3, 4);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(119, 23);
-            this.label8.TabIndex = 38;
-            this.label8.Text = "Line Dry";
-            // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(255, 4);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(119, 23);
-            this.label12.TabIndex = 39;
-            this.label12.Text = "Tumble Dry";
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(496, 4);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(84, 23);
-            this.label13.TabIndex = 40;
-            this.label13.Text = "Hand Wash";
-            // 
-            // rdbtnLine
-            // 
-            this.rdbtnLine.AutoSize = true;
-            this.rdbtnLine.Checked = true;
-            this.rdbtnLine.Location = new System.Drawing.Point(150, 7);
-            this.rdbtnLine.Name = "rdbtnLine";
-            this.rdbtnLine.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnLine.TabIndex = 41;
-            this.rdbtnLine.TabStop = true;
-            this.rdbtnLine.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnTumble
-            // 
-            this.rdbtnTumble.AutoSize = true;
-            this.rdbtnTumble.Location = new System.Drawing.Point(402, 7);
-            this.rdbtnTumble.Name = "rdbtnTumble";
-            this.rdbtnTumble.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnTumble.TabIndex = 42;
-            this.rdbtnTumble.UseVisualStyleBackColor = true;
-            // 
-            // rdbtnHand
-            // 
-            this.rdbtnHand.AutoSize = true;
-            this.rdbtnHand.Location = new System.Drawing.Point(601, 7);
-            this.rdbtnHand.Name = "rdbtnHand";
-            this.rdbtnHand.Size = new System.Drawing.Size(14, 13);
-            this.rdbtnHand.TabIndex = 43;
-            this.rdbtnHand.UseVisualStyleBackColor = true;
-            // 
             // P04_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1059, 572);
@@ -1532,20 +1381,21 @@
             this.tabControl1.ResumeLayout(false);
             this.tabDetail.ResumeLayout(false);
             this.tabDetail.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
             this.tabShrinkage.ResumeLayout(false);
             this.tabShrinkage.PerformLayout();
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridActualShrinkage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.tabSpirality.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
-            this.panel4.ResumeLayout(false);
-            this.panel4.PerformLayout();
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
+            this.panelBottom.ResumeLayout(false);
+            this.panelBottom.PerformLayout();
             this.tabAppearance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
@@ -1555,10 +1405,6 @@
             this.tabFGPT.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridFGPT)).EndInit();
-            this.panel8.ResumeLayout(false);
-            this.panel8.PerformLayout();
-            this.panel9.ResumeLayout(false);
-            this.panel9.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1602,52 +1448,12 @@
         private Win.UI.Label label1;
         private Win.UI.ComboBox comboNeck;
         private Win.UI.ComboBox comboMachineModel;
-        private Win.UI.NumericBox numTopL;
-        private Win.UI.NumericBox numBottomL;
-        private Win.UI.NumericBox numTopS2;
-        private Win.UI.NumericBox numBottomS1;
-        private Win.UI.NumericBox numTopS1;
-        private Win.UI.NumericBox numTwisTingBottom;
-        private Win.UI.NumericBox numTwisTingTop;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label20;
         private Win.UI.Grid gridActualShrinkage;
         private System.Windows.Forms.Label label19;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.NumericBox numOuterL;
-        private Win.UI.NumericBox numOuterS2;
-        private Win.UI.NumericBox numOuterS1;
-        private Win.UI.NumericBox numTwisTingOuter;
-        private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.Label label36;
-        private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.Label label38;
-        private Win.UI.NumericBox numInnerL;
-        private Win.UI.NumericBox numInnerS2;
-        private Win.UI.NumericBox numInnerS1;
-        private Win.UI.NumericBox numTwisTingInner;
-        private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.Label label33;
         private Win.UI.Grid gridAppearance;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Panel panel5;
-        private Win.UI.FlowLayoutPanel flowLayoutPanel1;
-        private Win.UI.Panel panel1;
-        private Win.UI.Panel panel2;
-        private Win.UI.Panel panel3;
-        private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Label label39;
         private Win.UI.ComboBox comboResult;
         private Win.UI.TextBox txtLotoFactory;
         private Win.UI.Label label40;
@@ -1669,5 +1475,37 @@
         private System.Windows.Forms.RadioButton rdbtnLine;
         private System.Windows.Forms.RadioButton rdbtnTumble;
         private System.Windows.Forms.RadioButton rdbtnHand;
+        private System.Windows.Forms.TabPage tabSpirality;
+        private Win.UI.Panel panelTop;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.Label label28;
+        private Win.UI.NumericBox numTOPMehtodA;
+        private Win.UI.NumericBox numTopAAp;
+        private Win.UI.NumericBox numTopApB;
+        private Win.UI.NumericBox numTopAB;
+        private System.Windows.Forms.Panel panelBottom;
+        private System.Windows.Forms.Label label21;
+        private Win.UI.FlowLayoutPanel flowLayoutPanel1;
+        private Win.UI.NumericBox numTopCM;
+        private Win.UI.NumericBox numTOPMehtodB;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label29;
+        private Win.UI.NumericBox numBottomCM;
+        private Win.UI.NumericBox numBottomMethodB;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label label35;
+        private Win.UI.NumericBox numBottomMethodA;
+        private Win.UI.NumericBox numBottomAAp;
+        private Win.UI.NumericBox numBottomApB;
+        private Win.UI.NumericBox numBottomAB;
     }
 }
