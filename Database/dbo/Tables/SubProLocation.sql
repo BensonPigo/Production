@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[SubProLocation] (
     [ID]                      VARCHAR (20)  NOT NULL,
-    [SubProcessID] VARCHAR(10)  NOT NULL,
+    [SubProcessID] VARCHAR(15)  NOT NULL,
     [Junk] BIT NULL CONSTRAINT [DF_SubProLocation_Junk] DEFAULT (0), 
     [Description] NVARCHAR(500) NULL, 
     [AddDate] DATETIME NULL, 

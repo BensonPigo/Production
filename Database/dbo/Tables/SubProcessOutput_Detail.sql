@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[SubProcessOutput_Detail] (
     [Ukey]             BIGINT         IDENTITY (1, 1) NOT NULL,
     [ID]               VARCHAR (15)   NULL,
-    [SubprocessLineID] VARCHAR (10)   NULL,
+    [SubprocessLineID] VARCHAR (15)   NULL,
     [OrderId]          VARCHAR (13)   NULL,
     [Article]          VARCHAR (8)    NULL,
     [Color]            VARCHAR (6)    NULL,

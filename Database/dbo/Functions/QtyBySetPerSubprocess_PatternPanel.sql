@@ -81,7 +81,7 @@ RETURNS
 	InQtyByPcs int,
 	OutQtyByPcs int,
 	FinishedQtyBySet int,
-	SubprocessId varchar(10)
+	SubprocessId varchar(15)
 )
 AS
 BEGIN
@@ -97,7 +97,7 @@ BEGIN
 
 	declare @QtyBySetPerCutpart Table(
 		OrderID varchar(13),
-		SubprocessId varchar(10),
+		SubprocessId varchar(15),
 		POID varchar(13),
 		PatternPanel varchar(2),
 		FabricPanelCode varchar(2),
@@ -110,7 +110,7 @@ BEGIN
 
 	declare @CutpartBySet Table(
 		OrderID varchar(13),
-		SubprocessId varchar(10),
+		SubprocessId varchar(15),
 		Article varchar(8),
 		SizeCode varchar(100),
 		PatternPanel varchar(2),
@@ -120,7 +120,7 @@ BEGIN
 
 	declare @BundleInOutDetail Table(
 		OrderID varchar(13),
-		SubprocessId varchar(10),
+		SubprocessId varchar(15),
 		InOutRule tinyint,
 		BundleGroup int,
 		Size varchar(100),
@@ -137,7 +137,7 @@ BEGIN
 
 	declare @BundleInOutQty Table(
 		OrderID varchar(13),
-		SubprocessId varchar(10),
+		SubprocessId varchar(15),
 		BundleGroup int,
 		Size varchar(100),
 		Article varchar(8),
@@ -157,7 +157,7 @@ BEGIN
 	
 	declare @FinalQtyBySet Table(
 		OrderID varchar(13),
-		SubprocessId varchar(10),
+		SubprocessId varchar(15),
 		Article varchar(8),
 		SizeCode varchar(100),
 		PatternPanel varchar(2),
@@ -166,7 +166,7 @@ BEGIN
 		FinishQty int
 	)
 	declare @SubProcess Table(
-		SubprocessId varchar(10),
+		SubprocessId varchar(15),
 		IsRFIDDefault bit,
 		InOutRule tinyint
 	)

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[BundleInOut] (
     [BundleNo]              VARCHAR (10) CONSTRAINT [DF_BundleInOut_BundleNo] DEFAULT ('') NOT NULL,
-    [SubProcessId]          VARCHAR (10) CONSTRAINT [DF_BundleInOut_SubProcessId] DEFAULT ('') NOT NULL,
+    [SubProcessId]          VARCHAR (15) CONSTRAINT [DF_BundleInOut_SubProcessId] DEFAULT ('') NOT NULL,
     [InComing]              DATETIME     NULL,
     [OutGoing]              DATETIME     NULL,
     [AddDate]               DATETIME     NOT NULL,

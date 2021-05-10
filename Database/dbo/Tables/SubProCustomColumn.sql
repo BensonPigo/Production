@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[SubProCustomColumn] (
-    [SubProcessID] VARCHAR (10) NOT NULL,
+    [SubProcessID] VARCHAR (15) NOT NULL,
     [AssignColumn] VARCHAR (13) NOT NULL,
     [DisplayName]  VARCHAR (20) NOT NULL,
     [AddDate]      DATETIME     NULL,

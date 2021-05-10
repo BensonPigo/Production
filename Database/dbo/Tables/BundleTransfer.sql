@@ -2,7 +2,7 @@
     [Sid]                   BIGINT        CONSTRAINT [DF_BundleTransfer_Sid] DEFAULT ((0)) NULL,
     [RFIDReaderId]          VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_RFIDReaderId] DEFAULT ('') NULL,
     [Type]                  VARCHAR (1)   CONSTRAINT [DF_BundleTransfer_Type] DEFAULT ('') NULL,
-    [SubProcessId]          VARCHAR (10)  CONSTRAINT [DF_BundleTransfer_SubProcessId] DEFAULT ('') NULL,
+    [SubProcessId]          VARCHAR (15)  CONSTRAINT [DF_BundleTransfer_SubProcessId] DEFAULT ('') NULL,
     [TagId]                 VARCHAR (24)  CONSTRAINT [DF_BundleTransfer_TagId] DEFAULT ('') NULL,
     [BundleNo]              NVARCHAR (43) CONSTRAINT [DF_BundleTransfer_BundleNo] DEFAULT ('') NULL,
     [TransferDate]          DATETIME      NULL,

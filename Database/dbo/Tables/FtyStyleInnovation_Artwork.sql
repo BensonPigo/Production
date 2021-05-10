@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FtyStyleInnovation_Artwork] (
     [FtyStyleInnovationUkey]      BIGINT       CONSTRAINT [DF_FtyStyleInnovation_Artwork_FtyStyleInnovationUkey] DEFAULT ((0)) NOT NULL,
     [Ukey]                        BIGINT       IDENTITY (1, 1) NOT NULL,
-    [SubprocessId]                VARCHAR (10) CONSTRAINT [DF_FtyStyleInnovation_Artwork_SubprocessId] DEFAULT ('') NULL,
+    [SubprocessId]                VARCHAR (15) CONSTRAINT [DF_FtyStyleInnovation_Artwork_SubprocessId] DEFAULT ('') NULL,
     [PostSewingSubProcess]        BIT          CONSTRAINT [DF_FtyStyleInnovation_Artwork_PostSewingSubProcess] DEFAULT ((0)) NOT NULL,
     [NoBundleCardAfterSubprocess] BIT          CONSTRAINT [DF_FtyStyleInnovation_Artwork_NoBundleCardAfterSubprocess] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_FtyStyleInnovation_Artwork] PRIMARY KEY CLUSTERED ([Ukey] ASC)

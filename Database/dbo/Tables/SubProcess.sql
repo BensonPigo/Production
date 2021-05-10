@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[SubProcess] (
-    [Id]                      VARCHAR (10) CONSTRAINT [DF_SubProcess_Id] DEFAULT ('') NOT NULL,
+    [Id]                      VARCHAR (15) CONSTRAINT [DF_SubProcess_Id] DEFAULT ('') NOT NULL,
     [ArtworkTypeId]           VARCHAR (20) CONSTRAINT [DF_SubProcess_ArtworkTypeId] DEFAULT ('') NOT NULL,
     [IsSelection]             BIT          CONSTRAINT [DF_SubProcess_IsSelection] DEFAULT ((0)) NULL,
     [IsRFIDProcess]           BIT          CONSTRAINT [DF_SubProcess_IsProcess] DEFAULT ((0)) NULL,

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[SubProInsRecord] (
     [Ukey]             BIGINT         IDENTITY (1, 1) NOT NULL,
-    [SubProcessID]     VARCHAR (10)   CONSTRAINT [DF_SubProInsRecord_ArtworkTypeID] DEFAULT ('') NOT NULL,
+    [SubProcessID]     VARCHAR (15)   CONSTRAINT [DF_SubProInsRecord_ArtworkTypeID] DEFAULT ('') NOT NULL,
     [BundleNo]         VARCHAR (10)   NULL,
     [RejectQty]        INT            NULL,
     [Machine]          VARCHAR (50)   NULL,

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
-    class P99_CallForm
+    internal class P99_CallForm
     {
         /// <inheritdoc/>
         public static bool CallForm(string transID, string formName, Form thisForm)

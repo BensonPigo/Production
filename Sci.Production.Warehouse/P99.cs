@@ -192,9 +192,7 @@ select distinct  [Selected] = 0 --0
         , t2.PoId--1        
         , seq = concat(Ltrim(Rtrim(t2.seq1)), ' ', t2.Seq2)--2
         , t2.seq1,t2.seq2
-		, [FabricType] = case when po3.FabricType = 'F' then 'Fabric' 
-                             when po3.FabricType = 'A' then 'Accessory'
-                        else '' end--3
+		, [FabricType] = po3.FabricType 
         , t2.Roll--4
         , t2.Dyelot--5
         , [Description] = dbo.getMtlDesc(t2.poid,t2.seq1,t2.seq2,2,0)--6
@@ -216,6 +214,7 @@ select distinct  [Selected] = 0 --0
         , t1.InvNo
 	    ,[WHCommandReason] = w.Reason
 		,[WHCommandRemark] = w.Remark
+        ,[Barcode] = isnull(Barcode.value,'')
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t1.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
@@ -237,6 +236,16 @@ OUTER APPLY(
 		 ELSE dbo.GetColorMultipleID(po3.BrandID,po3.ColorID)
 	 END
 )Color
+outer apply(
+	select value = ft.barcode
+	from FtyInventory ft
+	where ft.POID = t2.PoId
+	and ft.Seq1 = t2.Seq1 
+    and ft.Seq2 = t2.Seq2
+	and ft.StockType = t2.StockType 
+	and ft.Roll = t2.Roll 
+    and ft.Dyelot = t2.Dyelot
+)Barcode
 Where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -289,6 +298,7 @@ and t1.Status = 'Confirmed'
                                 FOR XML PATH('')),1,1,'') )
 			,t1.CutplanID
             ,t2.Seq1,t2.Seq2,t2.Roll,t2.Dyelot,t2.StockType
+            ,po3.FabricType
 	from dbo.Issue_Summary a WITH (NOLOCK) 
 	inner join Issue_Detail t2 WITH (NOLOCK) on t2.Id = a.Id and t2.Issue_SummaryUkey = a.Ukey
 	inner join Issue t1 WITH (NOLOCK) on t1.Id = a.Id
@@ -444,6 +454,7 @@ outer apply(
 			),1,1,''))--14
         ,[WHCommandReason] = w.Reason
 		,[WHCommandRemark] = w.Remark
+        ,po3.FabricType
 from dbo.Issue_Detail t2 WITH (NOLOCK) 
 inner join dbo.issue t1 WITH (NOLOCK)  on t2.Id = t1.Id
 inner join dbo.Issue_Size t3 WITH (NOLOCK) on t2.ukey = t3.Issue_DetailUkey
@@ -483,6 +494,7 @@ select [Selected] = 0 --0
 , t2.id
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+,po3.FabricType
 from dbo.issue_detail t2 WITH (NOLOCK) 
 inner join dbo.Issue t1 WITH (NOLOCK) on t1.id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
@@ -532,6 +544,7 @@ select  [Selected] = 0 --0
 , t2.Ukey
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+,po3.FabricType
 from dbo.issue_detail as t2 WITH (NOLOCK) 
 inner join issue t1 WITH (NOLOCK) on t2.Id=t1.Id
 left join Orders o on t2.poid = o.id
@@ -584,6 +597,7 @@ WITH BreakdownByArticle as (
             , iis.Ukey
 			, [Qty] = t2.Qty			
 			, t2.Seq1,t2.Seq2,t2.Roll,t2.Dyelot,t2.StockType, t1.Type
+            , po3.FabricType
     FROM Issue t1
     INNER JOIN Issue_Summary iis ON t1.ID= iis.Id
     LEFT JOIN Issue_Detail t2 ON t2.Issue_SummaryUkey=iis.Ukey
@@ -671,11 +685,6 @@ WITH BreakdownByArticle as (
                         sqlcmd += $@" and t1.AddDate between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{this.dateCreate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss")}'";
                     }
 
-                    if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
-                    {
-                        sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
-                    }
-
                     sqlcmd +=
                    @")
 
@@ -707,6 +716,7 @@ WITH BreakdownByArticle as (
 		, ID
 		, Ukey
 		, Seq1,Seq2,Roll,Dyelot,StockType,Type
+        , t.FabricType
 	FROM BreakdownByArticle t
 	GROUP BY SCIRefno
 		, Refno
@@ -724,11 +734,12 @@ WITH BreakdownByArticle as (
 		, MDivisionID
 		, ID
 		, Ukey
-		,[Selected]
+		, [Selected]
 		, [SentToWMS]
 		, [CompleteTime]
 		, Seq1,Seq2,Roll,Dyelot,StockType,Type
-		,Ttl_Qty
+		, Ttl_Qty
+        , t.FabricType
 
 )
 
@@ -761,6 +772,7 @@ SELECt [Selected] = 0 --0
 		, t.Seq1,t.Seq2,t.Roll,t.Dyelot,t.StockType,t.Type
 		,[WHCommandReason] = w.Reason
 		,[WHCommandRemark] = w.Remark
+        , t.FabricType
 FROM final t
 left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t.PoId = w.POID
 	and t.Seq1= w.SEQ1 and t.Seq2 = w.SEQ2 and t.Roll = w.Roll and t.Dyelot = w.Dyelot and t.StockType = w.StockType
@@ -802,7 +814,7 @@ select [Selected] = 0 --0
 ,dbo.Getlocation(f.Ukey)  as location
 ,t2.ukey
 ,t2.FtyInventoryUkey
-,t1.Type,t1.FabricType
+,t1.Type,po3.FabricType
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
@@ -842,6 +854,7 @@ select [Selected] = 0 --0
 , t2.Remark
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+,po3.FabricType
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
@@ -881,6 +894,7 @@ select [Selected] = 0 --0
 , location = dbo.Getlocation(f.Ukey) 
 , t2.ukey
 , t2.FtyInventoryUkey
+, po3.FabricType
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
 from dbo.IssueReturn_Detail t2 WITH (NOLOCK) 
@@ -923,6 +937,7 @@ select [Selected] = 0 --0
 ,[ToSeq] = t2.ToSeq1 +' ' + t2.ToSeq2
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+,po3.FabricType
 from dbo.TransferOut_Detail t2 WITH (NOLOCK) 
 inner join TransferOut t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
@@ -1058,6 +1073,7 @@ t2.Ukey,
 ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+,po3.FabricType
 from Adjust_Detail t2
 inner join Adjust t1 on t2.ID = t1.id
 inner join PO_Supp_Detail PO3 on PO3.ID=t2.POID 
@@ -1103,6 +1119,7 @@ select
     ,t2.ukey
     ,[WHCommandReason] = w.Reason
     ,[WHCommandRemark] = w.Remark
+    ,po3.FabricType
 from Adjust_detail t2 WITH (NOLOCK) 
 inner join Adjust t1 WITH (NOLOCK) on t1.ID = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.id = t2.POID and po3.SEQ1 = t2.Seq1 and po3.SEQ2 = t2.Seq2
@@ -1221,7 +1238,7 @@ select [Selected] = 0 --0
     ,t2.FromSeq1
     ,t2.FromSeq2
     ,FromSeq = concat(Ltrim(Rtrim(t2.FromSeq1)), ' ', t2.FromSeq2)
-    ,FabricType = Case po3.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
+    ,FabricType = po3.FabricType
     ,po3.stockunit
     ,description = dbo.getmtldesc(t2.FromPoId,t2.FromSeq1,t2.FromSeq2,2,0)
     ,t2.FromRoll
@@ -1317,6 +1334,7 @@ select [Selected] = 0 --0
 ,t2.FtyInventoryUkey
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+,po3.FabricType
 from dbo.ReturnReceipt_Detail t2 WITH (NOLOCK) 
 inner join ReturnReceipt t1 WITH (NOLOCK)  on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
@@ -1426,8 +1444,8 @@ and t1.Status = 'Confirmed'
                 case "P62":
                     sqlcmd = @"
 select  [Selected] = 0 --0
-		, [SentToWMS] = iif(t2.SentToWMS=1,'V','')
-		, [CompleteTime] = t2.CompleteTime
+	,[SentToWMS] = iif(t2.SentToWMS=1,'V','')
+	,[CompleteTime] = t2.CompleteTime
 	,[FabricType] = isnull(po3.FabricType,'')
 	,[GridPoID] = s.Poid
 	,[GridSeq1] = s.seq1
@@ -1584,11 +1602,6 @@ and t1.Type='I'
                 {
                     sqlcmd += $@" and convert(date, t1.AddDate) between '{Convert.ToDateTime(this.dateCreate.Value1).ToString("yyyy/MM/dd")}' and '{this.dateCreate.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss")}'";
                 }
-
-                if (!MyUtility.Check.Empty(this.strMaterialType_Sheet1))
-                {
-                    sqlcmd += $@" and po3.FabricType = '{this.strMaterialType_Sheet1}'";
-                }
             }
 
             if (this.strFunction == "P07" || this.strFunction == "P18")
@@ -1625,6 +1638,14 @@ and t1.Type='I'
 
                 this.listControlBindingSource1.DataSource = dtSource;
                 this.gridUpdate.DataSource = this.listControlBindingSource1.DataSource;
+
+                // check fabric
+                var r2_list = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(x => x["FabricType"].EqualString("F")).ToList();
+                if (!r2_list.Any())
+                {
+                    this.comboMaterialType_Sheet1.SelectedIndex = 1;
+                }
+
                 this.SetGrid();
                 this.Grid_Filter();
                 this.ChangeGridColor();
@@ -2565,7 +2586,7 @@ and t1.Type='I'
         private void Grid_Filter()
         {
             string filter = string.Empty;
-            if (this.gridUpdate.RowCount > 0)
+            if (this.listControlBindingSource1.Count > 0)
             {
                 switch (this.checkIncludeCompleteItem.Checked)
                 {
@@ -2575,7 +2596,7 @@ and t1.Type='I'
                             break;
                         }
 
-                        filter = " CompleteTime is null";
+                        filter = $" CompleteTime is null and FabricType = '{this.strMaterialType_Sheet1}'";
                         break;
                     case true:
                         if (MyUtility.Check.Empty(this.gridUpdate))
@@ -2583,11 +2604,14 @@ and t1.Type='I'
                             break;
                         }
 
-                        filter = string.Empty;
+                        filter = $" FabricType = '{this.strMaterialType_Sheet1}'";
                         break;
                 }
+            }
 
-                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = $" FabricType = '{this.strMaterialType_Sheet1}'";
             }
         }
 
@@ -2603,6 +2627,9 @@ and t1.Type='I'
             {
                 this.strMaterialType_Sheet1 = this.comboMaterialType_Sheet1.SelectedValue.ToString();
             }
+
+            this.Grid_Filter();
+            this.ChangeGridColor();
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -2902,19 +2929,19 @@ inner join #tmp s on t2.Ukey = s.Ukey
                             switch (strTable)
                             {
                                 case "IssueReturn_Detail":
-                                    if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                                     {
                                         return;
                                     }
 
-                                    if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                                     {
                                         return;
                                     }
 
                                     break;
                                 default:
-                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
+                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Revise", true))
                                     {
                                         return;
                                     }
@@ -3104,7 +3131,7 @@ inner join #tmp s on t.id = s.id
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -3192,7 +3219,7 @@ inner join #tmp s on t.id = s.id
                             switch (this.strFunction)
                             {
                                 case "P43":
-                                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                                     {
                                         return;
                                     }
@@ -3204,7 +3231,7 @@ inner join #tmp s on t.id = s.id
 
                                     break;
                                 case "P45":
-                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                                    if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                                     {
                                         return;
                                     }
@@ -3287,7 +3314,7 @@ inner join #tmp s on t.id = s.id
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -3372,7 +3399,7 @@ inner join #tmp s on t.id = s.id
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -3459,7 +3486,7 @@ inner join #tmp s on t.id = s.id
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
+                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Revise", true))
                             {
                                 return;
                             }
@@ -3682,6 +3709,15 @@ inner join #tmp s on t.ID = s.ID
 delete t
 from {strTable} t
 inner join #tmp s on t.Ukey = s.Ukey 
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out DataTable result_upd_qty)))
                         {
@@ -3828,19 +3864,19 @@ inner join #tmp s on t.Ukey = s.Ukey
                             switch (strTable)
                             {
                                 case "IssueReturn_Detail":
-                                    if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                                    if (!Vstrong_AutoWHAccessory.SentIssueReturn_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                                     {
                                         return;
                                     }
 
-                                    if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                                    if (!Gensong_AutoWHFabric.SentIssueReturn_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                                     {
                                         return;
                                     }
 
                                     break;
                                 default:
-                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
+                                    if (!Vstrong_AutoWHAccessory.SentIssue_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), this.strFunction, "Delete", true))
                                     {
                                         return;
                                     }
@@ -3945,6 +3981,15 @@ where exists(
 	where t.ukey = s.ukey
 )
 and (sizeQty.qty != 0 or sizeQty.qty is not null)
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             case "P10":
@@ -3997,6 +4042,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join Issue_Summary rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             case "P15":
@@ -4012,6 +4066,15 @@ set t.editname = '{Env.User.UserID}'
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
 
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
+
 ";
                                 break;
                             case "P17":
@@ -4025,6 +4088,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             case "P19":
@@ -4038,6 +4110,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join {strTable} rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                             default:
@@ -4051,6 +4132,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from {strMainTable} t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from {strMainTable} r
+left join Issue_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                                 break;
                         }
@@ -4121,7 +4211,7 @@ inner join #tmp s on t.ID = s.ID
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                             {
                                 return;
                             }
@@ -4197,6 +4287,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from Adjust t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4336,7 +4435,7 @@ WHERE FTI.StockType='O' and AD2.ID = '{0}' ";
                         #region 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentAdjust_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                             {
                                 return;
                             }
@@ -4359,6 +4458,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from Adjust t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4392,7 +4500,7 @@ inner join #tmp s on t.ID = s.ID
                         #region 先檢查WMS是否傳送成功
                         if (Vstrong_AutoWHAccessory.IsVstrong_AutoWHAccessoryEnable && upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentRemoveC_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                             {
                                 return;
                             }
@@ -4451,6 +4559,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from Adjust t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from Adjust r
+left join Adjust_detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, upcmd, out result_upd_qty)))
                         {
@@ -4484,7 +4601,7 @@ inner join #tmp s on t.ID = s.ID
                         #region update 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentReturnReceipt_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                             {
                                 return;
                             }
@@ -4528,7 +4645,7 @@ inner join #tmp s on t.ID = s.ID
                                                  Seq1 = m.First().Field<string>("seq1"),
                                                  Seq2 = m.First().Field<string>("seq2"),
                                                  Stocktype = m.First().Field<string>("stocktype"),
-                                                 Qty = - m.Sum(w => w.Field<decimal>("Old_Qty")),
+                                                 Qty = -m.Sum(w => w.Field<decimal>("Old_Qty")),
                                              }).ToList();
                         #endregion
 
@@ -4543,6 +4660,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from ReturnReceipt t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from ReturnReceipt r
+left join ReturnReceipt_Detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4585,7 +4711,6 @@ inner join #tmp s on t.ID = s.ID
                                     }
                                 }
 
-
                                 #endregion
 
                                 this.UpdateBarcode(this.strFunction, false, upd_list.CopyToDataTable());
@@ -4626,7 +4751,7 @@ inner join #tmp s on t.ID = s.ID
                         #region 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentBorrowBack_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                             {
                                 return;
                             }
@@ -4752,6 +4877,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from BorrowBack t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from BorrowBack r
+left join BorrowBack_Detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -4914,7 +5048,7 @@ inner join #tmp s on t.ID = s.ID
                         #region 先檢查WMS是否傳送成功
                         if (upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).ToList().Count > 0)
                         {
-                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
+                            if (!Vstrong_AutoWHAccessory.SentSubTransfer_Detail_Delete(upd_list.CopyToDataTable().AsEnumerable().Where(x => !MyUtility.Check.Empty(x["SentToWMS"])).CopyToDataTable(), "Delete", true))
                             {
                                 return;
                             }
@@ -5071,6 +5205,15 @@ set t.editname = '{Env.User.UserID}'
 ,t.editdate = GETDATE()
 from SubTransfer t
 inner join #tmp s on t.ID = s.ID
+
+delete r 
+from SubTransfer r
+left join SubTransfer_Detail rd on r.Id = rd.Id
+where rd.Id is null
+and exists(
+	select * from #tmp s
+	where s.Id = r.Id
+)
 ";
 
                         if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmd, out result_upd_qty)))
@@ -6545,9 +6688,7 @@ WHERE FTI.StockType='O'
             }
 
             this.comboFunction.Enabled = canEdit;
-            this.checkIncludeCompleteItem.Enabled = canEdit;
             this.dateCreate.Enabled = canEdit;
-            this.comboMaterialType_Sheet1.Enabled = canEdit;
             this.txtSPNoStart.Enabled = canEdit;
             this.txtWKNo_update.Enabled = canEdit;
             this.txtID.Enabled = canEdit;

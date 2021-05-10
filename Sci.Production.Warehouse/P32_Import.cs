@@ -276,6 +276,7 @@ select  distinct selected = 0
         , ToFactoryID = #tmp.FromFactoryID
         , toseq = concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) 
         , location = dbo.Getlocation(c.ukey)
+        , Fromlocation = Fromlocation.listValue
         , [description] = dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) 
         , p.StockUnit
         , p.FabricType
@@ -296,6 +297,21 @@ OUTER apply(
 			and Roll = c.Roll
             and Dyelot = c.Dyelot
 ) toSP
+outer apply(
+	select listValue = Stuff((
+			select concat(',',MtlLocationID)
+			from (
+					select 	distinct
+						fd.MtlLocationID
+					from FtyInventory_Detail fd
+					left join MtlLocation ml on ml.ID = fd.MtlLocationID
+					where fd.Ukey = c.Ukey
+					and ml.Junk = 0 
+					and ml.StockType = bd.FromStocktype
+				) s
+			for xml path ('')
+		) , 1, 1, '')
+)Fromlocation
 where bd.id='{0}' and c.lock = 0 and c.inqty - c.OutQty + c.AdjustQty - c.ReturnQty> 0 and factory.MDivisionID = '{1}' and orders.Category <> 'A'
       and  c.StockType='B'
 drop table #tmp,#tmp2
