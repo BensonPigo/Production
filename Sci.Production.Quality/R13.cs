@@ -138,7 +138,7 @@ AND a.ReceivingID='{this.receivingID}'
                 return false;
             }
 
-            report = new ReportDefinition();
+            //report = new ReportDefinition();
 
             if (this.report_Type == "4Slot")
             {
@@ -174,7 +174,7 @@ AND a.ReceivingID='{this.receivingID}'
                 Type reportResourceNamespace = typeof(R13_ShadeBond4_Data);
                 Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
 
-                string reportResourceName = "R13_ShadeBond_Print.rdlc";
+                string reportResourceName = "R13_ShadeBond4.rdlc";
 
                 DualResult result;
                 IReportResource reportresource;

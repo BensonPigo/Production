@@ -302,6 +302,7 @@
     <Compile Include="P01_PhysicalInspection_PointRecord.Designer.cs">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="R13_ShadeBond4_Data.cs" />
     <Compile Include="P01_ShadeBond_Data.cs" />
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
@@ -874,7 +875,10 @@
     <EmbeddedResource Include="P01_ShadeBond_Print_8.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_ShadeBond_Print.rdlc" />
+    <EmbeddedResource Include="P01_ShadeBond_Print.rdlc">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_Weight.resx">
       <DependentUpon>P01_Weight.cs</DependentUpon>
     </EmbeddedResource>
@@ -1043,6 +1047,9 @@
     <EmbeddedResource Include="R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R13_ShadeBond4.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="R33.resx">
       <DependentUpon>R33.cs</DependentUpon>
     </EmbeddedResource>
@@ -1140,9 +1147,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="R13_ShadeBond_Print.rdlc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Sci.Production.Quality.ruleset" />
   </ItemGroup>
   <ItemGroup>
