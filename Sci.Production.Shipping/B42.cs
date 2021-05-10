@@ -28,7 +28,7 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "B,Bulk,S,Sample");
+            MyUtility.Tool.SetupCombox(this.comboCategory, 2, 1, "B,Bulk,S,Sample,G,Garment");
 
             // 取VNConsumption_Article, VNConsumption_SizeCode結構，存檔時使用
             DBProxy.Current.Select(null, "select * from VNConsumption_Article WITH (NOLOCK) where 1 = 0", out this.tmpConsumptionArticle);
