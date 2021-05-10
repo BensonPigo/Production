@@ -240,6 +240,7 @@ and ((select MAX(AddDate) from ClogReceive c where c.PackingListID = p.id and c.
             this.ShowWaitMessage("Starting EXCEL...");
             string strXltName = Env.Cfg.XltPathDir + "\\Logistic_R04.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            excel.DisplayAlerts = false;
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R04.xltx", 4, false, null, excel);
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
