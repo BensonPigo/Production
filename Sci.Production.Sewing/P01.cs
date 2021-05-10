@@ -2812,8 +2812,9 @@ Remark : {callReason.ReturnRemark}
                 {
                     this.btnRequestUnlock.Enabled = false;
                     string sqlcmd = $@"insert into SewingOutput_DailyUnlock(SewingOutputID,ReasonID,Remark,RequestDate,RequestName)
-values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.ReturnRemark}',getdate(),'{Env.User.UserID}')";
-                    DualResult rs = DBProxy.Current.Execute("Production", sqlcmd);
+values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}',@Remark,getdate(),'{Env.User.UserID}')";
+                    List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@Remark", callReason.ReturnRemark) };
+                    DualResult rs = DBProxy.Current.Execute("Production", sqlcmd, listPar);
                     if (!rs)
                     {
                         this.ShowErr(rs);
