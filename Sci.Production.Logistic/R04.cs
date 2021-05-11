@@ -27,6 +27,7 @@ namespace Sci.Production.Logistic
         {
             this.InitializeComponent();
             this.comboM.SetDefalutIndex(true);
+            this.dateGenerate.Value = DateTime.Today;
         }
 
         /// <inheritdoc/>

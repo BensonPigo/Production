@@ -195,7 +195,7 @@
             this.txtbrand.Location = new System.Drawing.Point(109, 125);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(100, 23);
-            this.txtbrand.TabIndex = 9;
+            this.txtbrand.TabIndex = 6;
             // 
             // labelM
             // 
