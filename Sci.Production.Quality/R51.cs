@@ -166,7 +166,9 @@ select
 	SR.BundleNo,
     [Artwork] = Artwork.val,
 	B.OrderID,
+    Country.Alias,
 	BD.BundleGroup,
+    o.SeasonID,
 	O.styleID,
 	B.Colorid,
 	BD.SizeCode,
@@ -188,6 +190,7 @@ from SubProInsRecord SR WITH (NOLOCK)
 Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
+left join Country on Country.ID = o.Dest
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = BD.Bundleno
@@ -210,7 +213,9 @@ select
 	SR.BundleNo,
     [Artwork] = Artwork.val,
 	BR.OrderID,
+    Country.Alias,
 	BRD.BundleGroup,
+    o.SeasonID,
 	O.styleID,
 	BR.Colorid,
 	BRD.SizeCode,
@@ -231,6 +236,7 @@ from SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
+left join Country on Country.ID = o.Dest
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = SR.BundleNo
