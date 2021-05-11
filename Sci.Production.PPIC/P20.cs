@@ -68,7 +68,6 @@ namespace Sci.Production.PPIC
 
             this.Helper.Controls.Grid.Generator(this.gridQtyBreakDownByShipmode)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(2))
-            .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
             .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10))
             .Date("FtyKPI", header: "Fty KPI Date", width: Widths.AnsiChars(10))
             .Numeric("NowQty", header: "Total Q'ty", width: Widths.AnsiChars(6))
@@ -80,7 +79,6 @@ namespace Sci.Production.PPIC
             ;
             this.Helper.Controls.Grid.Generator(this.gridQtyBrkApplyByShipmode)
             .Text("Seq", header: "Seq", width: Widths.AnsiChars(2))
-            .Text("ShipmodeID", header: "Ship Mode", width: Widths.AnsiChars(10))
             .Date("BuyerDelivery", header: "Delivery", width: Widths.AnsiChars(10))
             .Date("FtyKPI", header: "Fty KPI Date", width: Widths.AnsiChars(10))
             .Numeric("Qty", header: "Total Q'ty", width: Widths.AnsiChars(6))
