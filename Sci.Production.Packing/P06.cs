@@ -434,17 +434,6 @@ order by os.Seq",
                 return false;
             }
 
-            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
-            string cannotModifyMsg = @"Cannot edit.
-Carton has been output from the hanger system or transferred to clog.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -460,6 +449,26 @@ Carton has been output from the hanger system or transferred to clog.";
             if (detailData.Length != 0)
             {
                 this.txtSP.ReadOnly = true;
+            }
+
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit packing list detail.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result && result.Description == cannotModifyMsg)
+            {
+                MyUtility.Msg.InfoBox(cannotModifyMsg);
+                this.gridicon.SetReadOnly(true);
+                this.DetailGridEditing(false);
+            }
+            else if (!result)
+            {
+                this.ShowErr(result);
+            }
+            else
+            {
+                this.DetailGridEditing(true);
             }
         }
 
@@ -1124,6 +1133,39 @@ and p.ID = pl.PulloutID",
                     {
                         this.detailgrid.Rows[index].Cells[7].Style.BackColor = Color.Red;
                     }
+                }
+            }
+        }
+
+        // 控制表身Grid欄位是否可被編輯
+        private void DetailGridEditing(bool isEditing)
+        {
+            if (isEditing)
+            {
+                this.col_ctnno.IsEditingReadOnly = false;
+                this.col_refno.IsEditingReadOnly = false;
+                this.col_article.IsEditingReadOnly = false;
+                this.col_size.IsEditingReadOnly = false;
+                this.col_shipqty.IsEditingReadOnly = false;
+
+                for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+                {
+                    if (i == 0 || i == 2 || i == 4 || i == 5 || i == 6)
+                    {
+                        this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Red;
+                    }
+                }
+            }
+            else
+            {
+                this.col_ctnno.IsEditingReadOnly = true;
+                this.col_refno.IsEditingReadOnly = true;
+                this.col_article.IsEditingReadOnly = true;
+                this.col_size.IsEditingReadOnly = true;
+                this.col_shipqty.IsEditingReadOnly = true;
+                for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+                {
+                    this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
                 }
             }
         }
