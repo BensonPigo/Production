@@ -937,7 +937,7 @@ select [Selected] = 0 --0
 ,[ToSeq] = t2.ToSeq1 +' ' + t2.ToSeq2
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
-, [ori_Balance] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+, [ori_Balance] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
 from dbo.TransferOut_Detail t2 WITH (NOLOCK) 
 inner join TransferOut t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
@@ -1165,11 +1165,23 @@ select [Selected] = 0 --0
 ,t1.Type
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+, [ori_Balance_From] = FI.InQty - FI.OutQty + FI.AdjustQty - FI.ReturnQty
+, [ori_Balance_To] = F_To.InQty - F_To.OutQty + F_To.AdjustQty - F_To.ReturnQty
 from dbo.SubTransfer_detail t2 WITH(NOLOCK) 
 inner join SubTransfer t1 WITH(NOLOCK)  on t1.Id = t2.id	
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
-left join FtyInventory FI on t2.fromPoid = fi.poid and t2.fromSeq1 = fi.seq1 and t2.fromSeq2 = fi.seq2 and t2.fromDyelot = fi.Dyelot
-    and t2.fromRoll = fi.roll and t2.fromStocktype = fi.stocktype
+left join FtyInventory FI on t2.fromPoid = fi.poid 
+                            and t2.fromSeq1 = fi.seq1 
+                            and t2.fromSeq2 = fi.seq2 
+                            and t2.fromDyelot = fi.Dyelot
+                            and t2.fromRoll = fi.roll 
+                            and t2.fromStocktype = fi.stocktype
+left join FtyInventory F_To on t2.ToPoid = F_To.poid 
+                            and t2.ToSeq1 = F_To.seq1 
+                            and t2.ToSeq2 = F_To.seq2 
+                            and t2.ToDyelot = F_To.Dyelot
+                            and t2.ToRoll = F_To.roll 
+                            and t2.ToStockType = F_To.stocktype
 left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
 	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
 	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
@@ -1211,6 +1223,8 @@ select    [Selected] = 0 --0
         , t1.Type
         ,[WHCommandReason] = w.Reason
         ,[WHCommandRemark] = w.Remark
+        , [ori_Balance_From] = FI.InQty - FI.OutQty + FI.AdjustQty - FI.ReturnQty
+        , [ori_Balance_To] = FI_To.InQty - FI_To.OutQty + FI_To.AdjustQty - FI_To.ReturnQty
 from dbo.SubTransfer_detail t2 WITH (NOLOCK) 
 inner join dbo.SubTransfer t1 WITH (NOLOCK)  on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId 
@@ -1222,6 +1236,12 @@ left join FtyInventory FI on t2.FromPoid = fi.poid
                              and t2.fromRoll = fi.roll 
                              and t2.fromStocktype = fi.stocktype
                              and t2.fromDyelot = fi.Dyelot
+left join FtyInventory FI_To on  t2.ToPoid = FI_To.poid 
+                             and t2.ToSeq1 = FI_To.seq1 
+                             and t2.ToSeq2 = FI_To.seq2
+                             and t2.ToRoll = FI_To.roll 
+                             and t2.ToStocktype = FI_To.stocktype
+                             and t2.ToDyelot = FI_To.Dyelot
 left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
 	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
 	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
@@ -1262,10 +1282,23 @@ select [Selected] = 0 --0
     ,t1.Type
     ,[WHCommandReason] = w.Reason
     ,[WHCommandRemark] = w.Remark
+	, [ori_Balance_From] = F.InQty - F.OutQty + F.AdjustQty - F.ReturnQty
+	, [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.SubTransfer_Detail t2 WITH (NOLOCK) 
 inner join SubTransfer t1 WITH (NOLOCK)  on t1.Id = t2.id	
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
-left join FtyInventory f WITH (NOLOCK) on t2.FromPOID=f.POID and t2.FromSeq1=f.Seq1 and t2.FromSeq2=f.Seq2 and t2.FromRoll=f.Roll and t2.FromDyelot=f.Dyelot and t2.FromStockType=f.StockType
+left join FtyInventory f WITH (NOLOCK) on t2.FromPOID=f.POID 
+									  and t2.FromSeq1=f.Seq1 
+									  and t2.FromSeq2=f.Seq2 
+									  and t2.FromRoll=f.Roll 
+									  and t2.FromDyelot=f.Dyelot 
+									  and t2.FromStockType=f.StockType
+left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID 
+										 and t2.ToSeq1=f_to.Seq1 
+										 and t2.ToSeq2=f_to.Seq2 
+										 and t2.ToRoll=f_to.Roll 
+										 and t2.ToDyelot=f_to.Dyelot 
+										 and t2.ToStockType=f_to.StockType
 left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
 	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
 	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
@@ -1306,6 +1339,8 @@ select
 ,t1.Type
 ,[WHCommandReason] = w.Reason
 ,[WHCommandRemark] = w.Remark
+, [ori_Balance_From] = F.InQty - F.OutQty + F.AdjustQty - F.ReturnQty
+, [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.SubTransfer_Detail t2 WITH (NOLOCK) 
 inner join SubTransfer t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 
@@ -1313,6 +1348,18 @@ and po3.SEQ2 = t2.FromSeq2
 left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
 	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
 	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
+left join FtyInventory f WITH (NOLOCK) on t2.FromPOID=f.POID 
+									  and t2.FromSeq1=f.Seq1 
+									  and t2.FromSeq2=f.Seq2 
+									  and t2.FromRoll=f.Roll 
+									  and t2.FromDyelot=f.Dyelot 
+									  and t2.FromStockType=f.StockType
+left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID 
+										 and t2.ToSeq1=f_to.Seq1 
+										 and t2.ToSeq2=f_to.Seq2 
+										 and t2.ToRoll=f_to.Roll 
+										 and t2.ToDyelot=f_to.Dyelot 
+										 and t2.ToStockType=f_to.StockType
 Where 1=1
 and t1.Type='C'
 and t1.Status = 'Confirmed'
@@ -1386,11 +1433,23 @@ select  [Selected] = 0 --0
         ,t2.ToLocation
         ,[WHCommandReason] = w.Reason
         ,[WHCommandRemark] = w.Remark
+        , [ori_Balance_From] = Fi.InQty - Fi.OutQty + Fi.AdjustQty - Fi.ReturnQty
+        , [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.BorrowBack_detail t2 WITH (NOLOCK) 
 inner join BorrowBack t1 WITH (NOLOCK) on t1.Id = t2.id	
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
-left join FtyInventory FI on t2.FromPoid = Fi.Poid and t2.FromSeq1 = Fi.Seq1 and t2.FromSeq2 = Fi.Seq2 
-    and t2.FromRoll = Fi.Roll and t2.FromDyelot = Fi.Dyelot and t2.FromStockType = StockType
+left join FtyInventory FI on t2.FromPoid = Fi.Poid 
+					   	and t2.FromSeq1 = Fi.Seq1 
+					   	and t2.FromSeq2 = Fi.Seq2 
+					   	and t2.FromRoll = Fi.Roll 
+					   	and t2.FromDyelot = Fi.Dyelot 
+					   	and t2.FromStockType = StockType
+left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID 
+			        	and t2.ToSeq1=f_to.Seq1 
+			        	and t2.ToSeq2=f_to.Seq2 
+			        	and t2.ToRoll=f_to.Roll 
+			        	and t2.ToDyelot=f_to.Dyelot 
+			        	and t2.ToStockType=f_to.StockType
 left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
 	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
 	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
@@ -1431,11 +1490,23 @@ select  [Selected] = 0 --0
         ,t2.ToLocation
         ,[WHCommandReason] = w.Reason
         ,[WHCommandRemark] = w.Remark
+        , [ori_Balance_From] = Fi.InQty - Fi.OutQty + Fi.AdjustQty - Fi.ReturnQty
+        , [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.BorrowBack_detail t2 WITH (NOLOCK) 
 inner join dbo.BorrowBack t1 WITH (NOLOCK) on t1.Id = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 and po3.SEQ2 = t2.FromSeq2
-left join FtyInventory FI on t2.fromPoid = fi.poid and t2.fromSeq1 = fi.seq1 and t2.fromSeq2 = fi.seq2 and t2.fromDyelot = fi.Dyelot 
-    and t2.fromRoll = fi.roll and t2.fromStocktype = fi.stocktype
+left join FtyInventory FI on t2.FromPoid = Fi.Poid 
+					   	and t2.FromSeq1 = Fi.Seq1 
+					   	and t2.FromSeq2 = Fi.Seq2 
+					   	and t2.FromRoll = Fi.Roll 
+					   	and t2.FromDyelot = Fi.Dyelot 
+					   	and t2.FromStockType = StockType
+left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID 
+			        	and t2.ToSeq1=f_to.Seq1 
+			        	and t2.ToSeq2=f_to.Seq2 
+			        	and t2.ToRoll=f_to.Roll 
+			        	and t2.ToDyelot=f_to.Dyelot 
+			        	and t2.ToStockType=f_to.StockType
 left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
 	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
 	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
@@ -3123,6 +3194,7 @@ inner join #tmp s on t.id = s.id
                                     this.ShowErr(result);
                                     return;
                                 }
+
                                 switch (this.strFunction)
                                 {
                                     case "P10":
@@ -3489,6 +3561,7 @@ inner join #tmp s on t.id = s.id
                                     return;
                                 }
 
+                                this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
                                 MyUtility.Msg.InfoBox("Revise successful");
@@ -3593,6 +3666,8 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
                         break;
                 }
+
+                this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
@@ -4653,7 +4728,6 @@ inner join #tmp s on t.ID = s.ID
                                         return;
                                     }
                                 }
-
 
                                 #endregion
 
@@ -6881,6 +6955,7 @@ from #tmp ";
         private void UpdateBarcode(string functionName, bool isConfirmed, DataTable dtDetail)
         {
             DualResult result;
+            DataTable resulttb;
             DataTable dt = new DataTable();
             string sqlcmd = string.Empty;
             string upd_Fty_Barcode_V1 = string.Empty;
@@ -6908,6 +6983,11 @@ select t.ID
 ,[Roll] = t.FromRoll
 ,[Dyelot] = t.FromDyelot
 ,[StockType] = t.FromStockType
+,[BarcodeStatus] =  case 
+	when t.diffQty !=0 and (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) = 0 and t.ori_Balance_From !=0 then 'ALL'
+	when  t.diffQty !=0 and (f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty) != 0 and t.ori_Balance_From = 0 then 'Part'
+	else '' end
+,t.ori_Balance_From
 from FtyInventory f
 inner join #tmp t on f.POID = t.FromPOID
     and f.Seq1 = t.FromSeq1 and f.Seq2 = t.FromSeq2
@@ -6932,38 +7012,103 @@ and exists(
                         return;
                     }
 
-                    var data_From_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
-                                                select new
-                                                {
-                                                    TransactionID = m.Field<string>("ID"),
-                                                    poid = m.Field<string>("poid"),
-                                                    seq1 = m.Field<string>("seq1"),
-                                                    seq2 = m.Field<string>("seq2"),
-                                                    stocktype = m.Field<string>("stocktype"),
-                                                    roll = m.Field<string>("roll"),
-                                                    dyelot = m.Field<string>("dyelot"),
-                                                    Barcode = m.Field<string>("NewBarcode"),
-                                                }).ToList();
+                    var data_Fty_Barcode_Part_conf_from = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty && s["BarcodeStatus"].ToString() == "ALL")
+                                                      select new
+                                                      {
+                                                          TransactionID = m.Field<string>("ID"),
+                                                          poid = m.Field<string>("poid"),
+                                                          seq1 = m.Field<string>("seq1"),
+                                                          seq2 = m.Field<string>("seq2"),
+                                                          stocktype = m.Field<string>("stocktype"),
+                                                          roll = m.Field<string>("roll"),
+                                                          dyelot = m.Field<string>("dyelot"),
+                                                          Barcode = m.Field<string>("NewBarcode"),
+                                                      }).ToList();
 
-                    // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
-                    upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
-                    upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
-                    DataTable resultFrom;
-                    if (data_From_FtyBarcode.Count >= 1)
+                    var data_Fty_Barcode_Part_Unconf_from = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty && s["BarcodeStatus"].ToString() == "Part")
+                                                        select new
+                                                        {
+                                                            TransactionID = m.Field<string>("ID"),
+                                                            poid = m.Field<string>("poid"),
+                                                            seq1 = m.Field<string>("seq1"),
+                                                            seq2 = m.Field<string>("seq2"),
+                                                            stocktype = m.Field<string>("stocktype"),
+                                                            roll = m.Field<string>("roll"),
+                                                            dyelot = m.Field<string>("dyelot"),
+                                                            Barcode = m.Field<string>("NewBarcode"),
+                                                        }).ToList();
+
+                    var data_Fty_Barcode_from = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                            select new
+                                            {
+                                                TransactionID = m.Field<string>("ID"),
+                                                poid = m.Field<string>("poid"),
+                                                seq1 = m.Field<string>("seq1"),
+                                                seq2 = m.Field<string>("seq2"),
+                                                stocktype = m.Field<string>("stocktype"),
+                                                roll = m.Field<string>("roll"),
+                                                dyelot = m.Field<string>("dyelot"),
+                                                Barcode = m.Field<string>("NewBarcode"),
+                                            }).ToList();
+
+                    if (data_Fty_Barcode_Part_conf_from.Count >= 1 && isConfirmed)
                     {
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
+
                         // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultFrom, "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_conf_from, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
                         {
                             this.ShowErr(result);
                             return;
                         }
 
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_From_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultFrom, "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_conf_from, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
                         {
                             this.ShowErr(result);
                             return;
                         }
                     }
+
+                    if (data_Fty_Barcode_Part_Unconf_from.Count >= 1 && isConfirmed)
+                    {
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
+                        // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf_from, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf_from, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    if (data_Fty_Barcode_from.Count >= 1 && !isConfirmed)
+                    {
+                        // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
+                        // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_from, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_from, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
                     #endregion
 
                     #region To
@@ -6984,6 +7129,11 @@ select f.Ukey
 ,[Roll] = t.ToRoll
 ,[Dyelot] = t.ToDyelot
 ,[StockType] = t.ToStockType
+,[BarcodeStatus] =  case 
+	when t.diffQty !=0 and isnull(fromBarcode.BalanceQty,0) = 0 and t.ori_Balance_From !=0 then 'ALL'
+	when  t.diffQty !=0 and isnull(fromBarcode.BalanceQty,0) != 0 and t.ori_Balance_From = 0 then 'Part'
+	else '' end
+,t.ori_Balance_From
 from FtyInventory f
 inner join #tmp t on f.POID = t.ToPOID
     and f.Seq1 = t.ToSeq1 and f.Seq2 = t.ToSeq2
@@ -7024,66 +7174,124 @@ and exists(
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        string strBarcode = string.Empty;
+                        // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
+                        string strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
 
-                        // 目標有自己的Barcode, 則Ftyinventory跟記錄都是用自己的
-                        if (!MyUtility.Check.Empty(dr["ToBarcode"]) || !MyUtility.Check.Empty(dr["ToBarcode2"]))
+                        string barcodeStatus = dr["BarcodeStatus"].ToString();
+
+                        // ALL = 從部分轉變為全轉
+                        if (barcodeStatus == "ALL")
                         {
-                            strBarcode = MyUtility.Check.Empty(dr["ToBarcode2"]) ? dr["ToBarcode"].ToString() : dr["ToBarcode2"].ToString();
+                            // 整卷發出就使用原本Barcode
                             dr["NewBarcode"] = strBarcode;
                         }
-                        else
-                        {
-                            // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
-                            strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
 
-                            // InQty-Out+Adj != 0 代表非整卷, 要在Barcode後+上-01,-02....
-                            if (!MyUtility.Check.Empty(dr["FromBalanceQty"]))
+                        // Part = 從全轉出變為部份出
+                        else if (barcodeStatus == "Part")
+                        {
+                            // 要用自己的紀錄給補回
+                            if (strBarcode.Contains("-"))
                             {
-                                if (strBarcode.Contains("-"))
-                                {
-                                    dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
-                                }
-                                else
-                                {
-                                    dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
-                                }
+                                dr["NewBarcode"] = strBarcode.Substring(0, 13) + "-" + Prgs.GetNextValue(strBarcode.Substring(14, 2), 1);
                             }
                             else
                             {
-                                // 如果InQty-Out+Adj = 0 代表整卷發出就使用原本Barcode
-                                dr["NewBarcode"] = strBarcode;
+                                dr["NewBarcode"] = MyUtility.Check.Empty(strBarcode) ? string.Empty : strBarcode + "-01";
                             }
                         }
                     }
 
-                    var data_To_FtyBarcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
-                                              select new
-                                              {
-                                                  TransactionID = m.Field<string>("ID"),
-                                                  poid = m.Field<string>("poid"),
-                                                  seq1 = m.Field<string>("seq1"),
-                                                  seq2 = m.Field<string>("seq2"),
-                                                  stocktype = m.Field<string>("stocktype"),
-                                                  roll = m.Field<string>("roll"),
-                                                  dyelot = m.Field<string>("dyelot"),
-                                                  Barcode = m.Field<string>("NewBarcode"),
-                                              }).ToList();
+                    var data_Fty_Barcode_Part_conf_to = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty && s["BarcodeStatus"].ToString() == "ALL")
+                                                      select new
+                                                      {
+                                                          TransactionID = m.Field<string>("ID"),
+                                                          poid = m.Field<string>("poid"),
+                                                          seq1 = m.Field<string>("seq1"),
+                                                          seq2 = m.Field<string>("seq2"),
+                                                          stocktype = m.Field<string>("stocktype"),
+                                                          roll = m.Field<string>("roll"),
+                                                          dyelot = m.Field<string>("dyelot"),
+                                                          Barcode = m.Field<string>("NewBarcode"),
+                                                      }).ToList();
 
-                    // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
-                    upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, isConfirmed);
-                    upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
-                    DataTable resultTo;
-                    if (data_To_FtyBarcode.Count >= 1)
+                    var data_Fty_Barcode_Part_Unconf_to = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty && s["BarcodeStatus"].ToString() == "Part")
+                                                        select new
+                                                        {
+                                                            TransactionID = m.Field<string>("ID"),
+                                                            poid = m.Field<string>("poid"),
+                                                            seq1 = m.Field<string>("seq1"),
+                                                            seq2 = m.Field<string>("seq2"),
+                                                            stocktype = m.Field<string>("stocktype"),
+                                                            roll = m.Field<string>("roll"),
+                                                            dyelot = m.Field<string>("dyelot"),
+                                                            Barcode = m.Field<string>("NewBarcode"),
+                                                        }).ToList();
+
+                    var data_Fty_Barcode_to = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                            select new
+                                            {
+                                                TransactionID = m.Field<string>("ID"),
+                                                poid = m.Field<string>("poid"),
+                                                seq1 = m.Field<string>("seq1"),
+                                                seq2 = m.Field<string>("seq2"),
+                                                stocktype = m.Field<string>("stocktype"),
+                                                roll = m.Field<string>("roll"),
+                                                dyelot = m.Field<string>("dyelot"),
+                                                Barcode = m.Field<string>("NewBarcode"),
+                                            }).ToList();
+
+                    if (data_Fty_Barcode_Part_conf_to.Count >= 1 && isConfirmed)
                     {
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
+
                         // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V1, out resultTo, "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_conf_to, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
                         {
                             this.ShowErr(result);
                             return;
                         }
 
-                        if (!(result = MyUtility.Tool.ProcessWithObject(data_To_FtyBarcode, string.Empty, upd_Fty_Barcode_V2, out resultTo, "#TmpSource")))
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_conf_to, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    if (data_Fty_Barcode_Part_Unconf_to.Count >= 1 && isConfirmed)
+                    {
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
+
+                        // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf_to, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf_to, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    if (data_Fty_Barcode_to.Count >= 1 && !isConfirmed)
+                    {
+                        // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
+                        // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_to, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_to, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
                         {
                             this.ShowErr(result);
                             return;
@@ -7143,17 +7351,17 @@ and exists(
                         // isConfirmed = true,代表Revise
                         if (isConfirmed)
                         {
-                            string BarcodeStatus = dr["BarcodeStatus"].ToString();
+                            string barcodeStatus = dr["BarcodeStatus"].ToString();
 
                             // ALL = 從部分轉變為全轉
-                            if (BarcodeStatus == "ALL")
+                            if (barcodeStatus == "ALL")
                             {
                                 // 整卷發出就使用原本Barcode
                                 dr["NewBarcode"] = dr["Barcode1"];
                             }
 
                             // Part = 從全轉出變為部份出
-                            else if (BarcodeStatus == "Part")
+                            else if (barcodeStatus == "Part")
                             {
                                 // 要用自己的紀錄給補回
                                 if (strBarcode.Contains("-"))
@@ -7173,6 +7381,32 @@ and exists(
                         }
                     }
 
+                    var data_Fty_Barcode_Part_conf = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty && s["BarcodeStatus"].ToString() == "ALL")
+                                            select new
+                                            {
+                                                TransactionID = m.Field<string>("ID"),
+                                                poid = m.Field<string>("poid"),
+                                                seq1 = m.Field<string>("seq1"),
+                                                seq2 = m.Field<string>("seq2"),
+                                                stocktype = m.Field<string>("stocktype"),
+                                                roll = m.Field<string>("roll"),
+                                                dyelot = m.Field<string>("dyelot"),
+                                                Barcode = m.Field<string>("NewBarcode"),
+                                            }).ToList();
+
+                    var data_Fty_Barcode_Part_Unconf = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty && s["BarcodeStatus"].ToString() == "Part")
+                                                      select new
+                                                      {
+                                                          TransactionID = m.Field<string>("ID"),
+                                                          poid = m.Field<string>("poid"),
+                                                          seq1 = m.Field<string>("seq1"),
+                                                          seq2 = m.Field<string>("seq2"),
+                                                          stocktype = m.Field<string>("stocktype"),
+                                                          roll = m.Field<string>("roll"),
+                                                          dyelot = m.Field<string>("dyelot"),
+                                                          Barcode = m.Field<string>("NewBarcode"),
+                                                      }).ToList();
+
                     var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
                                             select new
                                             {
@@ -7186,12 +7420,50 @@ and exists(
                                                 Barcode = m.Field<string>("NewBarcode"),
                                             }).ToList();
 
-                    // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
-                    upd_Fty_Barcode_V1 = isConfirmed ? Prgs.UpdateFtyInventory_IO(70, null, !isConfirmed) : Prgs.UpdateFtyInventory_IO(72, null, true);
-                    upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, isConfirmed);
-                    DataTable resulttb;
-                    if (data_Fty_Barcode.Count >= 1)
+                    if (data_Fty_Barcode_Part_conf.Count >= 1 && isConfirmed)
                     {
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
+
+                        // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_conf, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_conf, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    if (data_Fty_Barcode_Part_Unconf.Count >= 1 && isConfirmed)
+                    {
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
+                        // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                    }
+
+                    if (data_Fty_Barcode.Count >= 1 && !isConfirmed)
+                    {
+                        // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+
                         // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
                         {
