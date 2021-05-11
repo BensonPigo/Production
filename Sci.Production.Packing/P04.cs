@@ -556,6 +556,23 @@ order by os.Seq", dr["OrderID"].ToString(),
                 return false;
             }
 
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit packing list detail.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            this.detailgrid.ReadOnly = false;
+            if (!result && result.Description == cannotModifyMsg)
+            {
+                MyUtility.Msg.InfoBox(cannotModifyMsg);
+                this.gridicon.SetReadOnly(true);
+                this.detailgrid.ReadOnly = true;
+            }
+            else if (!result)
+            {
+                this.ShowErr(result);
+            }
+
             return base.ClickEditBefore();
         }
 
@@ -584,23 +601,7 @@ order by os.Seq", dr["OrderID"].ToString(),
                 this.gridicon.Insert.Enabled = true;
                 this.gridicon.Remove.Enabled = true;
             }
-
-            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
-            string cannotModifyMsg = @"Cannot edit packing list detail.
-Carton has been output from the hanger system or transferred to clog.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
-
-            if (!result && result.Description == cannotModifyMsg)
-            {
-                MyUtility.Msg.InfoBox(cannotModifyMsg);
-                this.gridicon.SetReadOnly(true);
-                this.DetailGridEditing(false);
-            }
-            else if (!result)
-            {
-                this.ShowErr(result);
-            }
-
+            
             if (!MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]))
             {
                 this.dateCartonEstBooking.ReadOnly = true;
