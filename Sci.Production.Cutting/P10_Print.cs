@@ -116,6 +116,7 @@ from (
 		    select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId)
 		    from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 		    where e1.id=b.id and e1.PatternCode= pc.PatternCode and e1.Bundleno=a.BundleNo
+            order by Ukey
 		    for xml path('')
 	    ),1,1,'')
     )as Artwork
@@ -264,6 +265,7 @@ from (
 	outer apply ( select Artwork = (select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
 															from dbo.Bundle_Detail_Art e1 WITH (NOLOCK) 
 															where e1.Bundleno=a.BundleNo
+                                                            order by Ukey
 															for xml path('')))as Artwork
 	where a.ID= @ID and a.Patterncode != 'ALLPARTS'
 
