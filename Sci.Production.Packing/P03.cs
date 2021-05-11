@@ -1026,23 +1026,6 @@ order by os.Seq",
                 return false;
             }
 
-            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
-            string cannotModifyMsg = @"Cannot edit packing list detail.
-Carton has been output from the hanger system or transferred to clog.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
-
-            this.detailgrid.ReadOnly = false;
-            if (!result && result.Description == cannotModifyMsg)
-            {
-                MyUtility.Msg.InfoBox(cannotModifyMsg);
-                this.gridicon.SetReadOnly(true);
-                this.detailgrid.ReadOnly = true;
-            }
-            else if (!result)
-            {
-                this.ShowErr(result);
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -1051,6 +1034,22 @@ Carton has been output from the hanger system or transferred to clog.";
         /// </summary>
         protected override void ClickEditAfter()
         {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit packing list detail.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result && result.Description == cannotModifyMsg)
+            {
+                MyUtility.Msg.InfoBox(cannotModifyMsg);
+                this.gridicon.SetReadOnly(true);
+                this.detailgrid.IsEditingReadOnly = true;
+            }
+            else if (!result)
+            {
+                this.ShowErr(result);
+            }
+
             base.ClickEditAfter();
             this.comboSortby.Text = string.Empty;
             if (this.CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
