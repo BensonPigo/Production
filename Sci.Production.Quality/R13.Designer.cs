@@ -107,7 +107,6 @@
             this.txtWK.Name = "txtWK";
             this.txtWK.Size = new System.Drawing.Size(132, 23);
             this.txtWK.TabIndex = 159;
-            this.txtWK.Text = "WK20210303215";
             // 
             // txtReceivingID
             // 
@@ -117,7 +116,6 @@
             this.txtReceivingID.Name = "txtReceivingID";
             this.txtReceivingID.Size = new System.Drawing.Size(132, 23);
             this.txtReceivingID.TabIndex = 160;
-            this.txtReceivingID.Text = "PM1PR21040080";
             // 
             // dateArrWH
             // 
@@ -125,7 +123,6 @@
             this.dateArrWH.Name = "dateArrWH";
             this.dateArrWH.Size = new System.Drawing.Size(130, 23);
             this.dateArrWH.TabIndex = 161;
-            this.dateArrWH.Value = new System.DateTime(2021, 4, 10, 0, 0, 0, 0);
             // 
             // radio8Slot
             // 

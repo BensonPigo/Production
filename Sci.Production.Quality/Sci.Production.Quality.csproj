@@ -302,6 +302,7 @@
     <Compile Include="P01_PhysicalInspection_PointRecord.Designer.cs">
       <DependentUpon>P01_PhysicalInspection_PointRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="R13_ShadeBond8_Data.cs" />
     <Compile Include="R13_ShadeBond4_Data.cs" />
     <Compile Include="P01_ShadeBond_Data.cs" />
     <Compile Include="P02.cs">
@@ -1049,6 +1050,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R13_ShadeBond4.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R13_ShadeBond8.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="R33.resx">
       <DependentUpon>R33.cs</DependentUpon>
@@ -1144,10 +1150,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Sci.Production.Quality.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
