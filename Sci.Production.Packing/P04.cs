@@ -574,10 +574,16 @@ Carton has been output from the hanger system or transferred to clog.";
                 MyUtility.Msg.InfoBox(cannotModifyMsg);
                 this.gridicon.SetReadOnly(true);
                 this.detailgrid.IsEditingReadOnly = true;
+                this.detailgrid.IsEditable = false;
             }
             else if (!result)
             {
                 this.ShowErr(result);
+            }
+            else
+            {
+                this.detailgrid.IsEditable = true;
+                this.detailgrid.IsEditingReadOnly = false;
             }
 
             base.ClickEditAfter();
