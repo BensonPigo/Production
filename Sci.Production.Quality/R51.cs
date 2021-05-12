@@ -99,8 +99,8 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
             StringBuilder declare = new StringBuilder();
             if (!this.dateInspectionDate.Value1.Empty())
             {
-                sqlwhere1.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
-                sqlwhere2.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
+                sqlwhere1.Append("\r\nand Cast(SR.InspectionDate as Date) between @InspectionDate1 and @InspectionDate2");
+                sqlwhere2.Append("\r\nand Cast(SR.InspectionDate as Date) between @InspectionDate1 and @InspectionDate2");
                 this.Parameters.Add(new SqlParameter("@InspectionDate1p", SqlDbType.Date) { Value = this.dateInspectionDate.Value1 });
                 this.Parameters.Add(new SqlParameter("@InspectionDate2p", SqlDbType.Date) { Value = this.dateInspectionDate.Value2 });
                 declare.Append("\r\ndeclare @InspectionDate1 Date = @InspectionDate1p\r\ndeclare @InspectionDate2 Date = @InspectionDate2p");
@@ -159,7 +159,7 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
 select
     SR.FactoryID,
     SR.SubProLocationID,
-	Convert(date,SR.AddDate) as AddDate,
+	Convert(date,SR.InspectionDate) as InspectionDate,
     SR.Shift,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
 	SR.SubProcessID,
@@ -206,7 +206,7 @@ UNION
 select
     SR.FactoryID,
     SR.SubProLocationID,
-	Convert(date,SR.AddDate) as AddDate,
+	Convert(date,SR.InspectionDate) as InspectionDate,
     SR.Shift,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
 	SR.SubProcessID,
