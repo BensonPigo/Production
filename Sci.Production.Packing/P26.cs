@@ -1080,7 +1080,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         // 新套件
                         PDFDocument pdfDoc = new PDFDocument();
                         pdfDoc.LoadPDF(barcodeObj.FullFileName);
-                        pdfDoc.DPI = 230;
+                        pdfDoc.DPI = 300;
                         Bitmap pic = pdfDoc.ToImage(0);
 
                         // 準備要寫入DB的資料
