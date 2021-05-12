@@ -1,6 +1,7 @@
 ﻿using Bytescout.BarCodeReader;
 using Ict;
 using Ict.Win;
+using PQScan.PDFToImage;
 using Sci.Data;
 using Sci.Production.Automation;
 using Spire.Pdf;
@@ -1055,6 +1056,7 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                     {
                         byte[] pDFImage = null;
 
+                        /*
                         // 原套件
                         PdfDocument doc = new PdfDocument();
                         doc.LoadFromFile(barcodeObj.FullFileName);
@@ -1073,12 +1075,12 @@ ORDER BY  a.PackingListID , b.SCICtnNo
                         doc.Dispose();
                         bmp.Dispose();
                         pic.Dispose();
+                        */
 
-                        /*
                         // 新套件
                         PDFDocument pdfDoc = new PDFDocument();
                         pdfDoc.LoadPDF(barcodeObj.FullFileName);
-                        pdfDoc.DPI = 230;
+                        pdfDoc.DPI = 300;
                         Bitmap pic = pdfDoc.ToImage(0);
 
                         // 準備要寫入DB的資料
@@ -1090,7 +1092,6 @@ ORDER BY  a.PackingListID , b.SCICtnNo
 
                         pic.Dispose();
                         pdfDoc.Dispose();
-                        */
 
                         string cmd = this.InsertImageToDatabase_List(counter.ToString(), pDFImage, packID, sCICtnNo, rank.ToString());
                         filenames.Add(barcode);
