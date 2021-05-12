@@ -2124,6 +2124,23 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             }
             #endregion
 
+            #region Pattern ScanRFID 判斷不能全勾 , 只有一個 Cutpart 名稱能打勾
+            var isMutiCutPartChecked = this.patternTb.AsEnumerable()
+                                        .Where(s => MyUtility.Convert.GetBool(s["RFIDScan"]))
+                                        .GroupBy(s => new
+                                        {
+                                            iden = s["iden"],
+                                            PatternCode = s["PatternCode"].ToString(),
+                                        })
+                                        .GroupBy(s => s.Key.iden)
+                                        .Any(s => s.Count() > 1);
+            if (isMutiCutPartChecked)
+            {
+                MyUtility.Msg.WarningBox("RFID Scan Only one CutPart can be checked");
+                return;
+            }
+            #endregion
+
             #region Insert Table
             DataTable insert_Bundle = new DataTable();
             insert_Bundle.Columns.Add("Insert", typeof(string));

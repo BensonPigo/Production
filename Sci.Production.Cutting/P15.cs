@@ -2786,6 +2786,23 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
                 return false;
             }
 
+            #region Pattern ScanRFID 判斷不能全勾 , 只有一個 Cutpart 名稱能打勾
+            var isMutiCutPartChecked = selpatternList
+                                        .Where(s => s.RFIDScan)
+                                        .GroupBy(s => new
+                                        {
+                                            Ukey = s.Ukey,
+                                            PatternCode = s.PatternCode,
+                                        })
+                                        .GroupBy(s => s.Key.Ukey)
+                                        .Any(s => s.Count() > 1);
+            if (isMutiCutPartChecked)
+            {
+                MyUtility.Msg.WarningBox("RFID Scan Only one CutPart can be checked");
+                return false;
+            }
+            #endregion
+
             // item 自動帶入有可能超過20碼
             if (cutrefAy.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["item"]).Length > 20).Any())
             {
