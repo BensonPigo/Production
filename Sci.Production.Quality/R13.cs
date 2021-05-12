@@ -33,15 +33,15 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.txtWK.Text) || MyUtility.Check.Empty(this.txtReceivingID.Text) || MyUtility.Check.Empty(this.dateArrWH.Text))
-            {
-                MyUtility.Msg.InfoBox("WK# , Receiving ID, Arrive W/H Date can't be empty!!");
-                return false;
-            }
-
             this.wkNO = this.txtWK.Text;
             this.receivingID = this.txtReceivingID.Text;
-            this.arrDate = this.dateArrWH.Text;
+            this.arrDate = MyUtility.Convert.GetString(this.dateArrWH.Value);
+
+            if (MyUtility.Check.Empty(this.wkNO) && MyUtility.Check.Empty(this.receivingID) && MyUtility.Check.Empty(this.arrDate))
+            {
+                MyUtility.Msg.InfoBox("WK# , Receiving ID, Arrive W/H Date can't be all empty!!");
+                return false;
+            }
 
             if (this.radio4Slot.Checked)
             {
@@ -108,10 +108,22 @@ LEFT JOIN Orders o ON o.ID = a.POID
 LEFT JOIN PO_Supp p ON p.ID = a.POID AND p.SEQ1 = a.SEQ1
 LEFT JOIN Export ep ON ep.ID = c.ExportId
 LEFT JOIN Color cl ON d.ColorID = cl.ID AND cl.BrandId = o.BrandID
-WHERE c.ExportID='{this.wkNO}'
-AND c.WhseArrival='{this.arrDate}'
-AND a.ReceivingID='{this.receivingID}'
+WHERE 1=1
 ";
+                if (!MyUtility.Check.Empty(this.wkNO))
+                {
+                    cmd += $@"AND c.ExportID='{this.wkNO}'";
+                }
+
+                if (!MyUtility.Check.Empty(this.arrDate))
+                {
+                    cmd += $@"AND (c.WhseArrival = '{this.arrDate}' OR ti.IssueDate = '{this.arrDate}')";
+                }
+
+                if (!MyUtility.Check.Empty(this.receivingID))
+                {
+                    cmd += $@"AND a.ReceivingID='{this.receivingID}'";
+                }
 
                 r = DBProxy.Current.Select(string.Empty, cmd, out this.printData);
                 if (!r)
@@ -170,10 +182,25 @@ LEFT JOIN Orders o ON o.ID = a.POID
 LEFT JOIN PO_Supp p ON p.ID = a.POID AND p.SEQ1 = a.SEQ1
 LEFT JOIN Export ep ON ep.ID = c.ExportId
 LEFT JOIN Color cl ON d.ColorID = cl.ID AND cl.BrandId = o.BrandID
-WHERE c.ExportID='{this.wkNO}'
-AND c.WhseArrival='{this.arrDate}'
-AND a.ReceivingID='{this.receivingID}'
+WHERE 1=1
+";
 
+                if (!MyUtility.Check.Empty(this.wkNO))
+                {
+                    cmd += $@"AND c.ExportID='{this.wkNO}'";
+                }
+
+                if (!MyUtility.Check.Empty(this.arrDate))
+                {
+                    cmd += $@"AND (c.WhseArrival = '{this.arrDate}' OR ti.IssueDate = '{this.arrDate}')";
+                }
+
+                if (!MyUtility.Check.Empty(this.receivingID))
+                {
+                    cmd += $@"AND a.ReceivingID='{this.receivingID}'";
+                }
+
+                cmd += @"
 SELECT t.*
 	,f.Dyelot 
 	,f.Roll

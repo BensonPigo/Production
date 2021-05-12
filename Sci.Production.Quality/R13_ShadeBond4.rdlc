@@ -6,10 +6,10 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>3.92898cm</Width>
+              <Width>2.65898cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>5.56135cm</Width>
+              <Width>6.82311cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>3.87901cm</Width>
@@ -1133,7 +1133,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5.4cm</Height>
+              <Height>5.2cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1192,7 +1192,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5.4cm</Height>
+              <Height>5.2cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1251,7 +1251,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5.4cm</Height>
+              <Height>5.3cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1310,7 +1310,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>5.4cm</Height>
+              <Height>5.3cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1361,6 +1361,7 @@
                       </Style>
                     </Textbox>
                     <ColSpan>4</ColSpan>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -1381,18 +1382,35 @@
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember>
-              <Group Name="詳細資料1" />
+              <Group Name="Group">
+                <GroupExpressions>
+                  <GroupExpression>=Fields!Group.Value</GroupExpression>
+                </GroupExpressions>
+                <PageBreak>
+                  <BreakLocation>Between</BreakLocation>
+                </PageBreak>
+              </Group>
+              <SortExpressions>
+                <SortExpression>
+                  <Value>=Fields!Group.Value</Value>
+                </SortExpression>
+              </SortExpressions>
               <TablixMembers>
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Group Name="詳細資料1" />
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
@@ -1402,8 +1420,8 @@
         <DataSetName>DataSet1</DataSetName>
         <Top>0.01cm</Top>
         <Left>0.16085cm</Left>
-        <Height>25.08888cm</Height>
-        <Width>19.60595cm</Width>
+        <Height>24.48888cm</Height>
+        <Width>19.59771cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1414,7 +1432,7 @@
     <Height>25.15075cm</Height>
     <Style />
   </Body>
-  <Width>7.87963in</Width>
+  <Width>7.89146in</Width>
   <Page>
     <PageHeader>
       <Height>1.64606cm</Height>
@@ -1815,6 +1833,10 @@
         </Field>
         <Field Name="ReceivingID">
           <DataField>ReceivingID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Group">
+          <DataField>Group</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

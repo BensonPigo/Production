@@ -25,5 +25,10 @@
         public string Packages { get; set; }
 
         public string Seq { get; set; }
+
+        public string Group
+        {
+            get { return this.ReceivingID + this.POID + this.Seq; }
+        }
     }
 }
