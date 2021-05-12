@@ -35,7 +35,7 @@ namespace Sci.Production.Quality
         {
             this.wkNO = this.txtWK.Text;
             this.receivingID = this.txtReceivingID.Text;
-            this.arrDate = MyUtility.Convert.GetString(this.dateArrWH.Value);
+            this.arrDate = this.dateArrWH.Value.HasValue ? this.dateArrWH.Value.Value.ToString("yyyy/MM/dd") : string.Empty;
 
             if (MyUtility.Check.Empty(this.wkNO) && MyUtility.Check.Empty(this.receivingID) && MyUtility.Check.Empty(this.arrDate))
             {
