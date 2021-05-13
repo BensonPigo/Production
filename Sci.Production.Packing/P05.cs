@@ -571,9 +571,6 @@ where InvA.OrderID = '{0}'
         {
             base.ClickSaveAfter();
 
-            this.detailgrid.IsEditable = true;
-            this.detailgrid.IsEditingReadOnly = false;
-
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("Qty"))
             {
@@ -607,11 +604,20 @@ where InvA.OrderID = '{0}'
         }
 
         /// <inheritdoc/>
-        protected override void ClickUndo()
+        protected override DualResult ClickSavePost()
         {
-            base.ClickUndo();
             this.detailgrid.IsEditable = true;
             this.detailgrid.IsEditingReadOnly = false;
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>

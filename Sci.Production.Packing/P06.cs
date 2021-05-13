@@ -675,11 +675,19 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            this.detailgrid.IsEditable = true;
-            this.detailgrid.IsEditingReadOnly = false;
 
             #region ISP20200757 資料交換 - Sunrise
             Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
@@ -699,9 +707,9 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
         /// <inheritdoc/>
         protected override void ClickUndo()
         {
-            base.ClickUndo();
             this.detailgrid.IsEditable = true;
             this.detailgrid.IsEditingReadOnly = false;
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>

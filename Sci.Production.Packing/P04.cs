@@ -936,8 +936,6 @@ where InvA.OrderID = '{0}'
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            this.detailgrid.IsEditable = true;
-            this.detailgrid.IsEditingReadOnly = false;
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("OrderQty"))
@@ -974,9 +972,9 @@ where InvA.OrderID = '{0}'
         /// <inheritdoc/>
         protected override void ClickUndo()
         {
-            base.ClickUndo();
             this.detailgrid.IsEditable = true;
             this.detailgrid.IsEditingReadOnly = false;
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>
@@ -1047,6 +1045,9 @@ where InvA.OrderID = '{0}'
                 DualResult failResult = new DualResult(false, "Create Order_CTN fail!");
                 return failResult;
             }
+
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
 
             return Ict.Result.True;
         }
