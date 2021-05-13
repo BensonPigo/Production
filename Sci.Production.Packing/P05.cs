@@ -570,6 +570,10 @@ where InvA.OrderID = '{0}'
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("Qty"))
             {
@@ -600,6 +604,14 @@ where InvA.OrderID = '{0}'
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
         }
 
         /// <inheritdoc/>
@@ -826,11 +838,6 @@ Carton has been output from the hanger system or transferred to clog.";
             else if (!result)
             {
                 this.ShowErr(result);
-            }
-            else
-            {
-                this.detailgrid.IsEditable = true;
-                this.detailgrid.IsEditingReadOnly = false;
             }
 
             base.ClickEditAfter();

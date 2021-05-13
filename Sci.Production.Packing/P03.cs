@@ -1050,11 +1050,6 @@ Carton has been output from the hanger system or transferred to clog.";
             {
                 this.ShowErr(result);
             }
-            else
-            {
-                this.detailgrid.IsEditable = true;
-                this.detailgrid.IsEditingReadOnly = false;
-            }
 
             base.ClickEditAfter();
             this.comboSortby.Text = string.Empty;
@@ -1256,6 +1251,9 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+
             #region ISP20200757 資料交換 - Sunrise
             Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
@@ -1269,6 +1267,14 @@ WHERE ID =  '{this.CurrentMaintain["ID"]}'";
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
         }
 
         /// <summary>
