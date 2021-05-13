@@ -570,6 +570,7 @@ where InvA.OrderID = '{0}'
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("Qty"))
             {
@@ -600,6 +601,23 @@ where InvA.OrderID = '{0}'
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>
@@ -803,20 +821,32 @@ where InvA.OrderID = '{0}'
                 return false;
             }
 
-            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
-            string cannotModifyMsg = @"Cannot edit.
-Carton has been output from the hanger system or transferred to clog.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
             this.CanEdit();
 
             return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit packing list detail.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result && result.Description == cannotModifyMsg)
+            {
+                MyUtility.Msg.InfoBox(cannotModifyMsg);
+                this.gridicon.SetReadOnly(true);
+                this.detailgrid.IsEditingReadOnly = true;
+                this.detailgrid.IsEditable = false;
+            }
+            else if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            base.ClickEditAfter();
         }
 
         /// <summary>

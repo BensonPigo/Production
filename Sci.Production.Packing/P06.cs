@@ -434,17 +434,6 @@ order by os.Seq",
                 return false;
             }
 
-            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
-            string cannotModifyMsg = @"Cannot edit.
-Carton has been output from the hanger system or transferred to clog.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -453,6 +442,23 @@ Carton has been output from the hanger system or transferred to clog.";
         /// </summary>
         protected override void ClickEditAfter()
         {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit packing list detail.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result && result.Description == cannotModifyMsg)
+            {
+                MyUtility.Msg.InfoBox(cannotModifyMsg);
+                this.gridicon.SetReadOnly(true);
+                this.detailgrid.IsEditingReadOnly = true;
+                this.detailgrid.IsEditable = false;
+            }
+            else if (!result)
+            {
+                this.ShowErr(result);
+            }
+
             base.ClickEditAfter();
 
             // 當表身有任何一個箱子被送到Clog：SP#不可以被修改
@@ -669,9 +675,20 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
             #region ISP20200757 資料交換 - Sunrise
             Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(this.CurrentMaintain["ID"].ToString(), string.Empty))
                 .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
@@ -685,6 +702,14 @@ group by oqd.Article,oqd.SizeCode, oqd.Qty",
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>

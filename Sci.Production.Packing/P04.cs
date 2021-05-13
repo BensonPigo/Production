@@ -556,17 +556,6 @@ order by os.Seq", dr["OrderID"].ToString(),
                 return false;
             }
 
-            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
-            string cannotModifyMsg = @"Cannot edit.
-Carton has been output from the hanger system or transferred to clog.";
-            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -575,6 +564,23 @@ Carton has been output from the hanger system or transferred to clog.";
         /// </summary>
         protected override void ClickEditAfter()
         {
+            Sunrise_FinishingProcesses sunrise_FinishingProcesses = new Sunrise_FinishingProcesses();
+            string cannotModifyMsg = @"Cannot edit packing list detail.
+Carton has been output from the hanger system or transferred to clog.";
+            DualResult result = sunrise_FinishingProcesses.CheckPackingListIsLock(this.CurrentMaintain["ID"].ToString(), cannotModifyMsg);
+
+            if (!result && result.Description == cannotModifyMsg)
+            {
+                MyUtility.Msg.InfoBox(cannotModifyMsg);
+                this.gridicon.SetReadOnly(true);
+                this.detailgrid.IsEditingReadOnly = true;
+                this.detailgrid.IsEditable = false;
+            }
+            else if (!result)
+            {
+                this.ShowErr(result);
+            }
+
             base.ClickEditAfter();
             this.txtbrand.ReadOnly = true;
 
@@ -595,7 +601,7 @@ Carton has been output from the hanger system or transferred to clog.";
                 this.gridicon.Insert.Enabled = true;
                 this.gridicon.Remove.Enabled = true;
             }
-
+            
             if (!MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]))
             {
                 this.dateCartonEstBooking.ReadOnly = true;
@@ -930,6 +936,7 @@ where InvA.OrderID = '{0}'
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("OrderQty"))
             {
@@ -960,6 +967,14 @@ where InvA.OrderID = '{0}'
                     .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUndo()
+        {
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
+            base.ClickUndo();
         }
 
         /// <inheritdoc/>
@@ -1030,6 +1045,9 @@ where InvA.OrderID = '{0}'
                 DualResult failResult = new DualResult(false, "Create Order_CTN fail!");
                 return failResult;
             }
+
+            this.detailgrid.IsEditable = true;
+            this.detailgrid.IsEditingReadOnly = false;
 
             return Ict.Result.True;
         }
