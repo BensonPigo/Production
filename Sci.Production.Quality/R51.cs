@@ -99,8 +99,8 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
             StringBuilder declare = new StringBuilder();
             if (!this.dateInspectionDate.Value1.Empty())
             {
-                sqlwhere1.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
-                sqlwhere2.Append("\r\nand Cast(SR.AddDate as Date) between @InspectionDate1 and @InspectionDate2");
+                sqlwhere1.Append("\r\nand SR.InspectionDate between @InspectionDate1 and @InspectionDate2");
+                sqlwhere2.Append("\r\nand SR.InspectionDate between @InspectionDate1 and @InspectionDate2");
                 this.Parameters.Add(new SqlParameter("@InspectionDate1p", SqlDbType.Date) { Value = this.dateInspectionDate.Value1 });
                 this.Parameters.Add(new SqlParameter("@InspectionDate2p", SqlDbType.Date) { Value = this.dateInspectionDate.Value2 });
                 declare.Append("\r\ndeclare @InspectionDate1 Date = @InspectionDate1p\r\ndeclare @InspectionDate2 Date = @InspectionDate2p");
@@ -159,14 +159,16 @@ outer apply(select ttlSecond_RD = DATEDIFF(Second, StartResolveDate, EndResolveD
 select
     SR.FactoryID,
     SR.SubProLocationID,
-	Convert(date,SR.AddDate) as AddDate,
+	SR.InspectionDate,
     SR.Shift,
 	[RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
     [Artwork] = Artwork.val,
 	B.OrderID,
+    Country.Alias,
 	BD.BundleGroup,
+    o.SeasonID,
 	O.styleID,
 	B.Colorid,
 	BD.SizeCode,
@@ -188,6 +190,7 @@ from SubProInsRecord SR WITH (NOLOCK)
 Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
 Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
 Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
+left join Country on Country.ID = o.Dest
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = BD.Bundleno
@@ -203,14 +206,16 @@ UNION
 select
     SR.FactoryID,
     SR.SubProLocationID,
-	Convert(date,SR.AddDate) as AddDate,
+	SR.InspectionDate,
     SR.Shift,
 	[RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
 	SR.SubProcessID,
 	SR.BundleNo,
     [Artwork] = Artwork.val,
 	BR.OrderID,
+    Country.Alias,
 	BRD.BundleGroup,
+    o.SeasonID,
 	O.styleID,
 	BR.Colorid,
 	BRD.SizeCode,
@@ -226,11 +231,12 @@ select
     {formatCol2}
 	iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
-    ,CustomColumn1
+    ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
 from SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
 Left join Orders O WITH (NOLOCK) on BR.OrderID=O.ID
+left join Country on Country.ID = o.Dest
 outer apply(SELECT val =  Stuff((select distinct concat( '+',SubprocessId)   
                                     from Bundle_Detail_Art bda with (nolock) 
                                     where bda.Bundleno = SR.BundleNo
@@ -289,13 +295,13 @@ drop table #tmp,#tmp2
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+            int customColumn = this.PrintData.Columns.Count; // 自定義欄位最後一欄
             if (this.CustomColumnDt != null)
             {
-                int col = this.radioSummary.Checked ? 25 : this.radioDetail_DefectType.Checked ? 26 : 28;
                 foreach (DataRow dr in this.CustomColumnDt.Rows)
                 {
-                    worksheet.Cells[1, col] = dr["DisplayName"];
-                    col++;
+                    worksheet.Cells[1, customColumn] = dr["DisplayName"];
+                    customColumn++;
                 }
             }
 
