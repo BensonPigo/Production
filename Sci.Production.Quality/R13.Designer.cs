@@ -68,27 +68,33 @@
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.label8.Location = new System.Drawing.Point(26, 72);
             this.label8.Name = "label8";
+            this.label8.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label8.Size = new System.Drawing.Size(105, 23);
             this.label8.TabIndex = 157;
             this.label8.Text = "Arrive W/H Date";
+            this.label8.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.label7.Location = new System.Drawing.Point(26, 42);
             this.label7.Name = "label7";
+            this.label7.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label7.Size = new System.Drawing.Size(105, 23);
             this.label7.TabIndex = 156;
             this.label7.Text = "Receiving ID";
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.label1.Location = new System.Drawing.Point(26, 12);
             this.label1.Name = "label1";
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label1.Size = new System.Drawing.Size(105, 23);
             this.label1.TabIndex = 155;
             this.label1.Text = "WK#";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // label2
             // 
