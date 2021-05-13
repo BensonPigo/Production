@@ -73,7 +73,7 @@ insert into dbo.Part(ID 				, Description 	, Partno 		, MasterGroupID 		, Machin
 				 t.UnitID= s.PoUnitID,
 				 t.CurrencyID= s.CurrencyID,
 				 t.Price= s.Price,
-				 --t.SuppID= s.SuppID, MMS可以編輯,所以不用update
+				 t.SuppID= iif(t.PurchaseFrom = 'T', s.SuppID, t.SuppID), --PurchaseFrom='T'時才需要更新
 				 t.IsMachine= s.IsMachine,
 				 t.IsAsset= s.IsAsset,
 				 t.Remark= s.Remark,
