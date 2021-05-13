@@ -38,6 +38,10 @@ namespace Sci.Production.Quality
             this.InitializeComponent();
             this.maindr = mainDr;
             this.ID = keyvalue1;
+            this.save.Location = new System.Drawing.Point(916, 8);
+            this.save.Size = new System.Drawing.Size(75, 30);
+            this.undo.Location = new System.Drawing.Point(916, 41);
+            this.undo.Size = new System.Drawing.Size(75, 30);
         }
 
         /// <inheritdoc/>
@@ -675,6 +679,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             this.btnEncode.Enabled = this.CanEdit && !this.EditMode && this.maindr["Status"].ToString() != "Approved";
 
             this.btnToExcel.Enabled = !this.EditMode;
+            this.btnUpdateTone.Enabled = this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", this.loginID, "Pass1", "ID");
             string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
@@ -973,6 +978,23 @@ select Roll,Dyelot,TicketYds,Scale,Result,Tone
 
                 this.displNoofDyelot.Text = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["Dyelot"])).Distinct()
                     .Count().ToString();
+            }
+        }
+
+        private void BtnUpdateTone_Click(object sender, EventArgs e)
+        {
+            this.grid.ValidateControl();
+            DataRow[] drs = ((DataTable)this.gridbs.DataSource).Select("Selected = 1");
+            if (drs.Length == 0)
+            {
+                return;
+            }
+
+            string tone = this.txtTone.Text;
+
+            foreach (DataRow item in drs)
+            {
+                item["Tone"] = tone;
             }
         }
     }
