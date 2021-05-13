@@ -231,7 +231,7 @@ select
     {formatCol2}
 	iif(isnull(ttlSecond_RD, 0) = 0, null, ttlSecond_RD),
 	SubProResponseTeamID
-    ,CustomColumn1
+    ,CustomColumn1--自定義欄位, 在最後一個若有變動,則輸出Excel部分也要一起改
 from SubProInsRecord SR WITH (NOLOCK)
 Left join BundleReplacement_Detail BRD WITH (NOLOCK) on SR.BundleNo=BRD.BundleNo
 Left join BundleReplacement BR WITH (NOLOCK) on BRD.ID=BR.ID
@@ -295,13 +295,13 @@ drop table #tmp,#tmp2
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
+            int customColumn = this.PrintData.Columns.Count; // 自定義欄位最後一欄
             if (this.CustomColumnDt != null)
             {
-                int col = this.radioSummary.Checked ? 25 : this.radioDetail_DefectType.Checked ? 26 : 28;
                 foreach (DataRow dr in this.CustomColumnDt.Rows)
                 {
-                    worksheet.Cells[1, col] = dr["DisplayName"];
-                    col++;
+                    worksheet.Cells[1, customColumn] = dr["DisplayName"];
+                    customColumn++;
                 }
             }
 
