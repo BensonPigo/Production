@@ -1078,7 +1078,15 @@ and o.mDivisionid = '{this.keyWord}'
                 iden++;
             }
 
-            this.ArticleSizeTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart(r));
+            this.ArticleSizeTb.AsEnumerable().ToList().ForEach(r =>
+            {
+                DualResult dualResult = this.AddPatternAllpart(r);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+            });
             #endregion
 
             this.gridCutRef.DataSource = this.CutRefTb; // 左上
@@ -1091,7 +1099,7 @@ and o.mDivisionid = '{this.keyWord}'
             this.ShowExcessDatas(where);
         }
 
-        private void AddPatternAllpart(DataRow r)
+        private DualResult AddPatternAllpart(DataRow r)
         {
             long iden = MyUtility.Convert.GetLong(r["iden"]);
             bool isCombineSubProcess = MyUtility.Convert.GetBool(r["isCombineSubProcess"]);
@@ -1133,6 +1141,12 @@ and o.mDivisionid = '{this.keyWord}'
                 this.allpartTb.Merge(dta);
             }
 
+            DualResult result = Prgs.InitialRFIDScan(dtp);
+            if (!result)
+            {
+                return result;
+            }
+
             this.patternTb.Merge(dtp);
             if (isCombineSubProcess)
             {
@@ -1140,6 +1154,8 @@ and o.mDivisionid = '{this.keyWord}'
             }
 
             r["TotalParts"] = MyUtility.Convert.GetInt(this.patternTb.Compute("Sum(Parts)", $"iden = {r["iden"]}"));
+
+            return new DualResult(true);
         }
 
         private DualResult CreatePattern(DataRow row)
@@ -1287,11 +1303,6 @@ and o.mDivisionid = '{this.keyWord}'
             pdr["iden"] = iden;
             pdr["CombineSubprocessGroup"] = 0;
             this.patternTbOri.Rows.Add(pdr);
-            DualResult result = Prgs.InitialRFIDScan(this.patternTbOri, iden);
-            if (!result)
-            {
-                return result;
-            }
 
             DBProxy.Current.DefaultTimeout = 0;
             return new DualResult(true);

@@ -2782,24 +2782,11 @@ DROP TABLE #beforeTmp
         /// <param name="dtPattern">dtPattern</param>
         /// <param name="iden">iden</param>
         /// <returns>DualResult</returns>
-        public static DualResult InitialRFIDScan(DataTable dtPattern, int iden = -1, string ukey = "")
+        public static DualResult InitialRFIDScan(DataTable dtPattern)
         {
             try
             {
-                EnumerableRowCollection<DataRow> initialTargetRow;
-
-                if (iden > -1)
-                {
-                    initialTargetRow = dtPattern.AsEnumerable().Where(s => MyUtility.Convert.GetInt(s["iden"]) == iden);
-                }
-                else if (!MyUtility.Check.Empty(ukey))
-                {
-                    initialTargetRow = dtPattern.AsEnumerable().Where(s => s["ukey"].ToString() == ukey);
-                }
-                else
-                {
-                    initialTargetRow = dtPattern.AsEnumerable();
-                }
+                EnumerableRowCollection<DataRow> initialTargetRow = dtPattern.AsEnumerable();
 
                 // 如果 該 Bundle Group , 有All Part , 那就只有 All Part 那筆 Bundle_Detail 的 RFID Scan=1 , 其餘 = 0
                 var existsAllPartsRow = initialTargetRow.Where(s => s["PatternCode"].ToString() == "ALLPARTS" && MyUtility.Convert.GetInt(s["parts"]) > 0);
@@ -2809,7 +2796,15 @@ DROP TABLE #beforeTmp
                     return new DualResult(true);
                 }
 
-                DataRow firstRow = initialTargetRow.Where(s => s["PatternCode"].ToString() != "ALLPARTS").First();
+                var excludeALLPARTS = initialTargetRow.Where(s => s["PatternCode"].ToString() != "ALLPARTS");
+
+                // 只有ALLPARTS Parts = 0的資料不勾選
+                if (!excludeALLPARTS.Any())
+                {
+                    return new DualResult(true);
+                }
+
+                DataRow firstRow = excludeALLPARTS.First();
 
                 var needRFIDScan = initialTargetRow.Where(s => s["PatternCode"].ToString() == firstRow["PatternCode"].ToString());
 
