@@ -109,7 +109,7 @@
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 172);
-            this.gridcont.Size = new System.Drawing.Size(984, 468);
+            this.gridcont.Size = new System.Drawing.Size(984, 490);
             // 
             // append
             // 
@@ -136,14 +136,14 @@
             // 
             this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.undo.Dock = System.Windows.Forms.DockStyle.None;
-            this.undo.Location = new System.Drawing.Point(916, 41);
+            this.undo.Location = new System.Drawing.Point(1093, 41);
             this.undo.Size = new System.Drawing.Size(75, 30);
             // 
             // save
             // 
             this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.save.Dock = System.Windows.Forms.DockStyle.None;
-            this.save.Location = new System.Drawing.Point(916, 8);
+            this.save.Location = new System.Drawing.Point(1093, 8);
             this.save.Size = new System.Drawing.Size(75, 30);
             // 
             // displayBrand
