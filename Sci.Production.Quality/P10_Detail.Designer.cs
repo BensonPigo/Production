@@ -87,10 +87,12 @@
             this.label29 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
+            this.label36 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.numTOPMehtodA = new Sci.Win.UI.NumericBox();
+            this.numTopMethodB_AAp = new Sci.Win.UI.NumericBox();
             this.numTopAAp = new Sci.Win.UI.NumericBox();
             this.numTopApB = new Sci.Win.UI.NumericBox();
             this.numTopAB = new Sci.Win.UI.NumericBox();
@@ -101,10 +103,12 @@
             this.label25 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.label32 = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
             this.numBottomMethodA = new Sci.Win.UI.NumericBox();
+            this.numBottomMethodB_AAp = new Sci.Win.UI.NumericBox();
             this.numBottomAAp = new Sci.Win.UI.NumericBox();
             this.numBottomApB = new Sci.Win.UI.NumericBox();
             this.numBottomAB = new Sci.Win.UI.NumericBox();
@@ -641,10 +645,10 @@
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.panel9);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1134, 420);
+            this.tabPage2.Size = new System.Drawing.Size(1134, 423);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Shrinkage";
             // 
@@ -654,7 +658,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1128, 414);
+            this.panel9.Size = new System.Drawing.Size(1128, 417);
             this.panel9.TabIndex = 62;
             // 
             // gridShrinkage
@@ -679,7 +683,7 @@
             this.gridShrinkage.RowTemplate.Height = 24;
             this.gridShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridShrinkage.ShowCellToolTips = false;
-            this.gridShrinkage.Size = new System.Drawing.Size(1128, 414);
+            this.gridShrinkage.Size = new System.Drawing.Size(1128, 417);
             this.gridShrinkage.TabIndex = 0;
             // 
             // tabSpirality
@@ -710,17 +714,19 @@
             this.panelTop.Controls.Add(this.label29);
             this.panelTop.Controls.Add(this.label20);
             this.panelTop.Controls.Add(this.label22);
+            this.panelTop.Controls.Add(this.label36);
             this.panelTop.Controls.Add(this.label24);
             this.panelTop.Controls.Add(this.label26);
             this.panelTop.Controls.Add(this.label28);
             this.panelTop.Controls.Add(this.numTOPMehtodA);
+            this.panelTop.Controls.Add(this.numTopMethodB_AAp);
             this.panelTop.Controls.Add(this.numTopAAp);
             this.panelTop.Controls.Add(this.numTopApB);
             this.panelTop.Controls.Add(this.numTopAB);
             this.panelTop.Location = new System.Drawing.Point(3, 3);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1042, 89);
-            this.panelTop.TabIndex = 57;
+            this.panelTop.TabIndex = 61;
             this.panelTop.Visible = false;
             // 
             // numTopCM
@@ -736,7 +742,7 @@
             0,
             0});
             this.numTopCM.Size = new System.Drawing.Size(73, 23);
-            this.numTopCM.TabIndex = 39;
+            this.numTopCM.TabIndex = 34;
             this.numTopCM.Value = new decimal(new int[] {
             0,
             0,
@@ -758,7 +764,7 @@
             0});
             this.numTOPMehtodB.ReadOnly = true;
             this.numTOPMehtodB.Size = new System.Drawing.Size(100, 23);
-            this.numTOPMehtodB.TabIndex = 38;
+            this.numTOPMehtodB.TabIndex = 29;
             this.numTOPMehtodB.Value = new decimal(new int[] {
             0,
             0,
@@ -815,6 +821,16 @@
             this.label22.TabIndex = 20;
             this.label22.Text = "FOR TOP:";
             // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label36.Location = new System.Drawing.Point(534, 34);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(29, 17);
+            this.label36.TabIndex = 22;
+            this.label36.Text = "AA\'";
+            // 
             // label24
             // 
             this.label24.AutoSize = true;
@@ -839,7 +855,7 @@
             // 
             this.label28.AutoSize = true;
             this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label28.Location = new System.Drawing.Point(823, 5);
+            this.label28.Location = new System.Drawing.Point(674, 34);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(26, 17);
             this.label28.TabIndex = 26;
@@ -866,6 +882,27 @@
             0,
             0,
             0});
+            // 
+            // numTopMethodB_AAp
+            // 
+            this.numTopMethodB_AAp.BackColor = System.Drawing.Color.White;
+            this.numTopMethodB_AAp.DecimalPlaces = 2;
+            this.numTopMethodB_AAp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopMethodB_AAp.Location = new System.Drawing.Point(569, 34);
+            this.numTopMethodB_AAp.Name = "numTopMethodB_AAp";
+            this.numTopMethodB_AAp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopMethodB_AAp.Size = new System.Drawing.Size(73, 23);
+            this.numTopMethodB_AAp.TabIndex = 32;
+            this.numTopMethodB_AAp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopMethodB_AAp.Validated += new System.EventHandler(this.NumTop_Validated);
             // 
             // numTopAAp
             // 
@@ -901,7 +938,7 @@
             0,
             0});
             this.numTopApB.Size = new System.Drawing.Size(73, 23);
-            this.numTopApB.TabIndex = 32;
+            this.numTopApB.TabIndex = 31;
             this.numTopApB.Value = new decimal(new int[] {
             0,
             0,
@@ -914,7 +951,7 @@
             this.numTopAB.BackColor = System.Drawing.Color.White;
             this.numTopAB.DecimalPlaces = 2;
             this.numTopAB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopAB.Location = new System.Drawing.Point(855, 5);
+            this.numTopAB.Location = new System.Drawing.Point(706, 34);
             this.numTopAB.Name = "numTopAB";
             this.numTopAB.NullValue = new decimal(new int[] {
             0,
@@ -922,7 +959,7 @@
             0,
             0});
             this.numTopAB.Size = new System.Drawing.Size(73, 23);
-            this.numTopAB.TabIndex = 34;
+            this.numTopAB.TabIndex = 33;
             this.numTopAB.Value = new decimal(new int[] {
             0,
             0,
@@ -938,10 +975,12 @@
             this.panelBottom.Controls.Add(this.label25);
             this.panelBottom.Controls.Add(this.label27);
             this.panelBottom.Controls.Add(this.label32);
+            this.panelBottom.Controls.Add(this.label37);
             this.panelBottom.Controls.Add(this.label33);
             this.panelBottom.Controls.Add(this.label34);
             this.panelBottom.Controls.Add(this.label35);
             this.panelBottom.Controls.Add(this.numBottomMethodA);
+            this.panelBottom.Controls.Add(this.numBottomMethodB_AAp);
             this.panelBottom.Controls.Add(this.numBottomAAp);
             this.panelBottom.Controls.Add(this.numBottomApB);
             this.panelBottom.Controls.Add(this.numBottomAB);
@@ -949,7 +988,7 @@
             this.panelBottom.Location = new System.Drawing.Point(3, 98);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1042, 93);
-            this.panelBottom.TabIndex = 60;
+            this.panelBottom.TabIndex = 62;
             this.panelBottom.Visible = false;
             // 
             // numBottomCM
@@ -965,7 +1004,7 @@
             0,
             0});
             this.numBottomCM.Size = new System.Drawing.Size(73, 23);
-            this.numBottomCM.TabIndex = 52;
+            this.numBottomCM.TabIndex = 39;
             this.numBottomCM.Value = new decimal(new int[] {
             0,
             0,
@@ -987,7 +1026,7 @@
             0});
             this.numBottomMethodB.ReadOnly = true;
             this.numBottomMethodB.Size = new System.Drawing.Size(100, 23);
-            this.numBottomMethodB.TabIndex = 51;
+            this.numBottomMethodB.TabIndex = 41;
             this.numBottomMethodB.Value = new decimal(new int[] {
             0,
             0,
@@ -1028,11 +1067,21 @@
             // 
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label32.Location = new System.Drawing.Point(478, 5);
+            this.label32.Location = new System.Drawing.Point(444, 5);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(82, 17);
+            this.label32.Size = new System.Drawing.Size(116, 17);
             this.label32.TabIndex = 40;
-            this.label32.Text = "FOR TOP:";
+            this.label32.Text = "FOR BOTTOM:";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label37.Location = new System.Drawing.Point(566, 34);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(29, 17);
+            this.label37.TabIndex = 41;
+            this.label37.Text = "AA\'";
             // 
             // label33
             // 
@@ -1058,7 +1107,7 @@
             // 
             this.label35.AutoSize = true;
             this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label35.Location = new System.Drawing.Point(857, 5);
+            this.label35.Location = new System.Drawing.Point(708, 34);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(26, 17);
             this.label35.TabIndex = 43;
@@ -1079,12 +1128,33 @@
             0});
             this.numBottomMethodA.ReadOnly = true;
             this.numBottomMethodA.Size = new System.Drawing.Size(100, 23);
-            this.numBottomMethodA.TabIndex = 44;
+            this.numBottomMethodA.TabIndex = 40;
             this.numBottomMethodA.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
+            // 
+            // numBottomMethodB_AAp
+            // 
+            this.numBottomMethodB_AAp.BackColor = System.Drawing.Color.White;
+            this.numBottomMethodB_AAp.DecimalPlaces = 2;
+            this.numBottomMethodB_AAp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomMethodB_AAp.Location = new System.Drawing.Point(601, 34);
+            this.numBottomMethodB_AAp.Name = "numBottomMethodB_AAp";
+            this.numBottomMethodB_AAp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomMethodB_AAp.Size = new System.Drawing.Size(73, 23);
+            this.numBottomMethodB_AAp.TabIndex = 37;
+            this.numBottomMethodB_AAp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomMethodB_AAp.Validated += new System.EventHandler(this.NumBottom_Validated);
             // 
             // numBottomAAp
             // 
@@ -1099,7 +1169,7 @@
             0,
             0});
             this.numBottomAAp.Size = new System.Drawing.Size(73, 23);
-            this.numBottomAAp.TabIndex = 45;
+            this.numBottomAAp.TabIndex = 35;
             this.numBottomAAp.Value = new decimal(new int[] {
             0,
             0,
@@ -1120,7 +1190,7 @@
             0,
             0});
             this.numBottomApB.Size = new System.Drawing.Size(73, 23);
-            this.numBottomApB.TabIndex = 46;
+            this.numBottomApB.TabIndex = 36;
             this.numBottomApB.Value = new decimal(new int[] {
             0,
             0,
@@ -1133,7 +1203,7 @@
             this.numBottomAB.BackColor = System.Drawing.Color.White;
             this.numBottomAB.DecimalPlaces = 2;
             this.numBottomAB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomAB.Location = new System.Drawing.Point(889, 5);
+            this.numBottomAB.Location = new System.Drawing.Point(740, 34);
             this.numBottomAB.Name = "numBottomAB";
             this.numBottomAB.NullValue = new decimal(new int[] {
             0,
@@ -1141,7 +1211,7 @@
             0,
             0});
             this.numBottomAB.Size = new System.Drawing.Size(73, 23);
-            this.numBottomAB.TabIndex = 47;
+            this.numBottomAB.TabIndex = 38;
             this.numBottomAB.Value = new decimal(new int[] {
             0,
             0,
@@ -1533,10 +1603,12 @@
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label36;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.Label label28;
         private Win.UI.NumericBox numTOPMehtodA;
+        private Win.UI.NumericBox numTopMethodB_AAp;
         private Win.UI.NumericBox numTopAAp;
         private Win.UI.NumericBox numTopApB;
         private Win.UI.NumericBox numTopAB;
@@ -1547,10 +1619,12 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.Label label35;
         private Win.UI.NumericBox numBottomMethodA;
+        private Win.UI.NumericBox numBottomMethodB_AAp;
         private Win.UI.NumericBox numBottomAAp;
         private Win.UI.NumericBox numBottomApB;
         private Win.UI.NumericBox numBottomAB;
