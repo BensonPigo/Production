@@ -46,7 +46,7 @@ namespace Sci.Production.Cutting
 
         private bool ByToneGenerate;
         private bool isShell;
-        private string w;
+        private string filterArticleGroup;
 
         /// <inheritdoc/>
         public P10_Generate(DataRow maindr, DataTable bundle_Detail, DataTable bundle_Detail_allpart, DataTable bundle_Detail_Qty, DataTable bundle_Detail_Art, DataTable bundle_Detail_CombineSubprocess, bool isShell)
@@ -164,8 +164,21 @@ group by sizeCode
             string articles = $"'{MyUtility.Convert.GetString(maindr["Article"]).Trim()}'";
             string fabricPanelCode = MyUtility.Convert.GetString(maindr["FabricPanelCode"]);
             Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
-            this.w = $"1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} ";
-            this.garmentarRC = this.GarmentTb.Select(this.w).TryCopyToDataTable(this.GarmentTb);
+            this.filterArticleGroup = $"1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, 1)} ";
+
+            string filterAllArticleGroup = $" F_CODE = '{fabricPanelCode}' ";
+            foreach (DataRow dr in articleGroupDT.Rows)
+            {
+                filterAllArticleGroup += $" or {dr[0]} = '{fabricPanelCode}' ";
+            }
+
+            // ISP20210652 如果by Size 在color combination找不到對應fabricPanelCode，就改找全部
+            if (this.GarmentTb.Select(this.filterArticleGroup).Length == 0)
+            {
+                this.filterArticleGroup = filterAllArticleGroup;
+            }
+
+            this.garmentarRC = this.GarmentTb.Select(this.filterArticleGroup).TryCopyToDataTable(this.GarmentTb);
             #endregion
 
             // 計算左上TotalQty
@@ -219,7 +232,7 @@ group by sizeCode
             int npart = 0;
             this.GarmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
             this.GarmentTb.Columns.Add("IsMain", typeof(bool));
-            DataRow[] garmentar = this.GarmentTb.Select(this.w);
+            DataRow[] garmentar = this.GarmentTb.Select(this.filterArticleGroup);
             Prgs.SetCombineSubprocessGroup_IsMain(garmentar);
 
             foreach (DataRow dr in garmentar)
@@ -400,7 +413,7 @@ drop table #tmp,#tmp2";
 
             if (this.allpartTb.Rows.Count == 0)
             {
-                DataRow[] garmentar = this.GarmentTb.Select(this.w);
+                DataRow[] garmentar = this.GarmentTb.Select(this.filterArticleGroup);
                 foreach (DataRow dr in garmentar)
                 {
                     bool f = false;

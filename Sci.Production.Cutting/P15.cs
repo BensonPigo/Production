@@ -1350,11 +1350,24 @@ and wd.orderid = 'EXCESS'
             string sizes = "'" + string.Join("','", sizelist) + "'";
             string articles = "'" + string.Join("','", articlelist) + "'";
             Prgs.GetGarmentListTable(cutref, poid, sizes, out this.GarmentTb, out DataTable articleGroupDT);
-            string w = $"orderid = '{poid}' and (1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, sizelist.Count)} )";
+            string filterArticleGroup = $"orderid = '{poid}' and (1=0 {Prgs.WhereArticleGroupColumn(cutref, poid, articles, fabricPanelCode, sizes, sizelist.Count)} )";
 
             this.GarmentTb.Columns.Add("CombineSubprocessGroup", typeof(int));
             this.GarmentTb.Columns.Add("IsMain", typeof(bool));
-            DataRow[] garmentar = this.GarmentTb.Select(w);
+            DataRow[] garmentar = this.GarmentTb.Select(filterArticleGroup);
+
+            // ISP20210652 如果by Size 在color combination找不到對應fabricPanelCode，就改找全部
+            if (garmentar.Length == 0)
+            {
+                string filterAllArticleGroup = $" F_CODE = '{fabricPanelCode}' ";
+                foreach (DataRow dr in articleGroupDT.Rows)
+                {
+                    filterAllArticleGroup += $" or {dr[0]} = '{fabricPanelCode}' ";
+                }
+
+                garmentar = this.GarmentTb.Select(filterAllArticleGroup);
+            }
+
             Prgs.SetCombineSubprocessGroup_IsMain(garmentar);
 
             foreach (DataRow dr in garmentar)
