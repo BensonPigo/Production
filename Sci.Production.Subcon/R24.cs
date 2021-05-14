@@ -270,7 +270,7 @@ namespace Sci.Production.Subcon
 
             sqlCmd.Append($@"
 -- by Poid step1
-select distinct o.poid 
+select distinct o.ID 
         , a.FactoryID
 		, a.MDivisionID
 		, artworktypeid = a.Category
@@ -340,7 +340,7 @@ from(
 			,apd.Qty*apd.Price*dbo.getRate('{this.ratetype}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
 			,ap.Category
 			,ap.FactoryId
-			,o.POID as OrderId 
+			,o.ID as OrderId 
 			,[CartonQty] = iif(li.IsCarton=1,apd.Qty,0)
 	from localap ap WITH (NOLOCK) 
 	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
@@ -349,7 +349,7 @@ from(
 	where 1=1
 	AND AP.Status = 'Approved'
 )a 
-inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.POID 
+inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.ID 
 where a.ap_qty > 0  
 
 select isnull(sum(a.ap_amt),0.00) ap_amt
@@ -366,54 +366,63 @@ group by a.Category,a.FactoryId,a.OrderId
 -- #tmp_orders by POID
 select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
  	,sum(aa.qty *Price) order_amt 
-	,t.poid
+	,t.ID
 	,bb.ArtworkTypeID
 into #tmp_orders
 from orders aa WITH (NOLOCK) 
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID 
-left join (select distinct poid,artworktypeid from #tmp) t on t.poid =aa.poid and bb.ArtworkTypeID = t.artworktypeid 
-group by  bb.ArtworkTypeID,t.poid
+left join (select distinct ID,artworktypeid from #tmp) t on t.ID =aa.ID and bb.ArtworkTypeID = t.artworktypeid 
+group by  bb.ArtworkTypeID,t.ID
 
 -- #tmp_final 
 select distinct t.FactoryID
 	,t.MDivisionID
     ,t.artworktypeid
-    ,t.POID
-    ,[Category] = (SELECT Category FROM Orders WHERE ID = t.POID)
-    ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.POID)=1,'Y','N')
+    ,aa.POID
+    ,[Category] = (SELECT Category FROM Orders WHERE ID = t.ID)
+    ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.ID)=1,'Y','N')
     ,aa.StyleID
     ,aa.SeasonID
     ,cc.BuyerID
     ,aa.BrandID 
-    ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr  
+    ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.id)) smr  
 	,os.os
-    ,x.ap_qty	
-	,[CartonQty] = x.CartonQty
+    ,x.ap_qty
+	,[CartonQty] = x.CartonQty --
     ,x.ap_amt
-    ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0, NULL, round(x.ap_amt / totalSamePoidQty.value,3))
-    ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  , NULL, round(y.order_amt/y.order_qty,3) )    
-    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL, round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
+	,y.order_qty,y.order_amt
     ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))
 into #tmp_final
 from #tmp t
-left join orders aa WITH (NOLOCK) on t.poid =aa.poid  
+left join orders aa WITH (NOLOCK) on t.ID =aa.ID  
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
-left join Brand cc WITH (NOLOCK) on aa.BrandID=cc.id  
-left join #tmp_localap x on t.artworktypeid = x.Category and t.POID = x.OrderId and t.FactoryID = x.FactoryId  	 
-left join #tmp_orders y on t.POID = y.poid  and t.artworktypeid = y.artworktypeid
-outer apply(select os=sum(qty) from orders o with(nolock) where o.poid = aa.poid)os
-outer apply(select value=sum(qty) from orders o with(nolock) where o.poid = t.poid)totalSamePoidQty
+left join Brand cc WITH (NOLOCK) on aa.BrandID=cc.id   
+left join #tmp_localap x on t.artworktypeid = x.Category and t.ID = x.OrderId and t.FactoryID = x.FactoryId  	 
+left join #tmp_orders y on t.ID = y.id  and t.artworktypeid = y.artworktypeid
+outer apply(select os=sum(qty) from orders o with(nolock) where o.id = aa.ID)os
+outer apply(select value=sum(qty) from orders o with(nolock) where o.id = t.id)totalSamePoidQty
 outer apply(
 	SELECT [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
 	FROM LocalPO_IrregularPrice al
 	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
     LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
-	WHERE al.POId = aa.poid  AND al.Category=t.artworktypeid
+	WHERE al.POId = aa.id  AND al.Category=t.artworktypeid
 )IrregularPrice 
 where 1=1 
 {sqlCmd_Where}
 
-select * from #tmp_final
+
+select t.FactoryId,t.MDivisionID,t.artworktypeid,t.POID,t.Category,t.Cancel,t.StyleID,t.SeasonID,t.BuyerID,t.BrandID,t.smr
+,[os] = sum(t.os)
+,[ap_qty] = sum(t.ap_qty)
+,[CartonQty] = sum(t.CartonQty)
+,[ap_amt] = sum(t.ap_amt)
+,[ap_price]=IIF(sum(t.os) IS NULL OR sum(t.os)=0, NULL, round(sum(t.ap_amt) / sum(t.os),3))
+,[std_price]=IIF(sum(t.order_qty)  IS NULL OR sum(t.order_qty)=0  , NULL, round(sum(t.order_amt)/sum(t.order_qty),3) )    
+,[percentage]=IIF(sum(t.order_qty)  IS NULL OR sum(t.order_qty)=0 OR sum(t.order_amt) IS NULL OR sum(t.order_amt) =0 ,NULL, round( (sum(t.ap_amt) / sum(t.order_qty))   /   (sum(t.order_amt)/sum(t.order_qty)),2)  )
+from #tmp_final t
+group by t.FactoryId,t.MDivisionID,t.artworktypeid,t.POID,t.Category,t.Cancel,t.StyleID,t.SeasonID,t.BuyerID,t.BrandID,t.smr
+
 
 -- #tmp_localap by SP
 select a.*
@@ -431,7 +440,7 @@ from(
 	inner join orders o with (nolock) on apd.OrderID = o.ID	
 	left join LocalItem li with (nolock) on li.RefNo=apd.Refno
 	where 1=1
-	 
+	AND AP.Status = 'Approved'
 )a 
 inner join #tmp_SP t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.ID 
 where a.ap_qty > 0  
