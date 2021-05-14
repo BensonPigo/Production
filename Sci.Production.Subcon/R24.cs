@@ -332,16 +332,6 @@ where c.Classify='P' {whereIncludeCancelOrder}
 
             sqlCmd.Append($@"
 -- #tmp_localap by POID
-select isnull(sum(a.ap_amt),0.00) ap_amt
-     , isnull(sum(a.ap_qty),0) ap_qty 
-	,a.Category
-	,a.FactoryId
-	,a.OrderId
-	,isnull(sum(a.CartonQty),0) CartonQty
-into  #tmp_localap
-from #tmp_localap_detail a
-group by a.Category,a.FactoryId,a.OrderId
-
 select a.*
 into #tmp_localap_detail
 from(
@@ -361,6 +351,16 @@ from(
 )a 
 inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.POID 
 where a.ap_qty > 0  
+
+select isnull(sum(a.ap_amt),0.00) ap_amt
+     , isnull(sum(a.ap_qty),0) ap_qty 
+	,a.Category
+	,a.FactoryId
+	,a.OrderId
+	,isnull(sum(a.CartonQty),0) CartonQty
+into  #tmp_localap
+from #tmp_localap_detail a
+group by a.Category,a.FactoryId,a.OrderId
 
 
 -- #tmp_orders by POID
@@ -416,17 +416,6 @@ where 1=1
 select * from #tmp_final
 
 -- #tmp_localap by SP
-select isnull(sum(a.ap_amt),0.00) ap_amt
-     , isnull(sum(a.ap_qty),0) ap_qty 
-	,a.Category
-	,a.FactoryId
-	,a.OrderId
-	,isnull(sum(a.CartonQty),0) CartonQty
-into  #tmp_localap_SP
-from #tmp_localap_detail_SP a
-group by a.Category,a.FactoryId,a.OrderId
-
-
 select a.*
 into #tmp_localap_detail_SP
 from(
@@ -446,6 +435,16 @@ from(
 )a 
 inner join #tmp_SP t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.ID 
 where a.ap_qty > 0  
+
+select isnull(sum(a.ap_amt),0.00) ap_amt
+     , isnull(sum(a.ap_qty),0) ap_qty 
+	,a.Category
+	,a.FactoryId
+	,a.OrderId
+	,isnull(sum(a.CartonQty),0) CartonQty
+into  #tmp_localap_SP
+from #tmp_localap_detail_SP a
+group by a.Category,a.FactoryId,a.OrderId
 
 
 -- #tmp_orders by SP
