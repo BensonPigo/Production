@@ -1536,7 +1536,7 @@ WHERE id = '{this.Deatilrow["ID"]}' and No = '{this.Deatilrow["No"]}' and Locati
 UPDATE [dbo].[Garment_Detail_Spirality]
    SET [MethodA_AAPrime] = {this.numBottomAAp.Value}
       ,[MethodA_APrimeB] = {this.numBottomApB.Value}
-      ,[MethodB_AAPrime] = {this.numTopMethodB_AAp.Value}
+      ,[MethodB_AAPrime] = {this.numBottomMethodB_AAp.Value}
       ,[MethodB_AB] = {this.numBottomAB.Value}
       ,[CM] = {this.numBottomCM.Value}
       ,[MethodA] = {this.numBottomMethodA.Value}
