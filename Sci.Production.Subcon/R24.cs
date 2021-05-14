@@ -339,6 +339,11 @@ select isnull(sum(a.ap_amt),0.00) ap_amt
 	,a.OrderId
 	,isnull(sum(a.CartonQty),0) CartonQty
 into  #tmp_localap
+from #tmp_localap_detail a
+group by a.Category,a.FactoryId,a.OrderId
+
+select a.*
+into #tmp_localap_detail
 from(
 	select 
 			apd.Qty ap_qty
@@ -355,8 +360,8 @@ from(
 	AND AP.Status = 'Approved'
 )a 
 inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.POID 
-where ap_qty > 0  
-group by a.Category,a.FactoryId,a.OrderId
+where a.ap_qty > 0  
+
 
 -- #tmp_orders by POID
 select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
@@ -418,6 +423,12 @@ select isnull(sum(a.ap_amt),0.00) ap_amt
 	,a.OrderId
 	,isnull(sum(a.CartonQty),0) CartonQty
 into  #tmp_localap_SP
+from #tmp_localap_detail_SP a
+group by a.Category,a.FactoryId,a.OrderId
+
+
+select a.*
+into #tmp_localap_detail_SP
 from(
 	select 
 			apd.Qty ap_qty
@@ -434,8 +445,8 @@ from(
 	 
 )a 
 inner join #tmp_SP t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.ID 
-where ap_qty > 0  
-group by a.Category,a.FactoryId,a.OrderId
+where a.ap_qty > 0  
+
 
 -- #tmp_orders by SP
 select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
@@ -490,7 +501,7 @@ where 1=1
 select * from #tmp_final_SP
 
 
-drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final,#tmp_final_SP,#tmp_localap_SP,#tmp_orders_SP,#tmp_SP
+drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final,#tmp_final_SP,#tmp_localap_SP,#tmp_orders_SP,#tmp_SP,#tmp_localap_detail,#tmp_localap_detail_SP
 ");
             #endregion
 
