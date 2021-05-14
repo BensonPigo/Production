@@ -1183,9 +1183,10 @@ order by LocationOrder ,seq";
                 DataRow dr = this.dtSpirality.Select("Location = 'T'")[0];
                 this.numTOPMehtodA.Value = MyUtility.Convert.GetDecimal(dr["MethodA"]);
                 this.numTOPMehtodB.Value = MyUtility.Convert.GetDecimal(dr["MethodB"]);
-                this.numTopAAp.Value = MyUtility.Convert.GetDecimal(dr["AAPrime"]);
-                this.numTopApB.Value = MyUtility.Convert.GetDecimal(dr["APrimeB"]);
-                this.numTopAB.Value = MyUtility.Convert.GetDecimal(dr["AB"]);
+                this.numTopAAp.Value = MyUtility.Convert.GetDecimal(dr["MethodA_AAPrime"]);
+                this.numTopApB.Value = MyUtility.Convert.GetDecimal(dr["MethodA_APrimeB"]);
+                this.numTopMethodB_AAp.Value = MyUtility.Convert.GetDecimal(dr["MethodB_AAPrime"]);
+                this.numTopAB.Value = MyUtility.Convert.GetDecimal(dr["MethodB_AB"]);
                 this.numTopCM.Value = MyUtility.Convert.GetDecimal(dr["CM"]);
             }
 
@@ -1195,9 +1196,10 @@ order by LocationOrder ,seq";
                 DataRow dr = this.dtSpirality.Select("Location = 'B'")[0];
                 this.numBottomMethodA.Value = MyUtility.Convert.GetDecimal(dr["MethodA"]);
                 this.numBottomMethodB.Value = MyUtility.Convert.GetDecimal(dr["MethodB"]);
-                this.numBottomAAp.Value = MyUtility.Convert.GetDecimal(dr["AAPrime"]);
-                this.numBottomApB.Value = MyUtility.Convert.GetDecimal(dr["APrimeB"]);
-                this.numBottomAB.Value = MyUtility.Convert.GetDecimal(dr["AB"]);
+                this.numBottomAAp.Value = MyUtility.Convert.GetDecimal(dr["MethodA_AAPrime"]);
+                this.numBottomApB.Value = MyUtility.Convert.GetDecimal(dr["MethodA_APrimeB"]);
+                this.numBottomMethodB_AAp.Value = MyUtility.Convert.GetDecimal(dr["MethodB_AAPrime"]);
+                this.numBottomAB.Value = MyUtility.Convert.GetDecimal(dr["MethodB_AB"]);
                 this.numBottomCM.Value = MyUtility.Convert.GetDecimal(dr["CM"]);
             }
         }
@@ -1610,18 +1612,20 @@ select * from [SampleGarmentTest_Detail_Shrinkage]  where id = {this.Deatilrow["
         {
             string sqlcmd = $@"
 UPDATE [dbo].[SampleGarment_Detail_Spirality]
-   SET [AAPrime] = {this.numTopAAp.Value}
-      ,[APrimeB] = {this.numTopApB.Value}
-      ,[AB] = {this.numTopAB.Value}
+   SET [MethodA_AAPrime] = {this.numTopAAp.Value}
+      ,[MethodA_APrimeB] = {this.numTopApB.Value}
+      ,[MethodB_AAPrime] = {this.numTopMethodB_AAp.Value}
+      ,[MethodB_AB] = {this.numTopAB.Value}
       ,[CM] = {this.numTopCM.Value}
       ,[MethodA] = {this.numTOPMehtodA.Value}
       ,[MethodB] = {this.numTOPMehtodB.Value}
 WHERE id = '{this.Deatilrow["ID"]}' and No = '{this.Deatilrow["No"]}' and Location = 'T'
 
 UPDATE [dbo].[SampleGarment_Detail_Spirality]
-   SET [AAPrime] = {this.numBottomAAp.Value}
-      ,[APrimeB] = {this.numBottomApB.Value}
-      ,[AB] = {this.numBottomAB.Value}
+   SET [MethodA_AAPrime] = {this.numBottomAAp.Value}
+      ,[MethodA_APrimeB] = {this.numBottomApB.Value}
+      ,[MethodB_AAPrime] = {this.numBottomMethodB_AAp.Value}
+      ,[MethodB_AB] = {this.numBottomAB.Value}
       ,[CM] = {this.numBottomCM.Value}
       ,[MethodA] = {this.numBottomMethodA.Value}
       ,[MethodB] = {this.numBottomMethodB.Value}
@@ -2031,13 +2035,13 @@ INSERT INTO SampleGarmentTest_Detail_FGWT
         private void NumTop_Validated(object sender, EventArgs e)
         {
             this.numTOPMehtodA.Value = this.numTopApB.Value == 0 ? 0 : this.numTopAAp.Value / this.numTopApB.Value * 100; // (AA’ / A’B) *100
-            this.numTOPMehtodB.Value = this.numTopAB.Value == 0 ? 0 : this.numTopAAp.Value / this.numTopAB.Value * 100; // (AA’ / AB) * 100
+            this.numTOPMehtodB.Value = this.numTopAB.Value == 0 ? 0 : this.numTopMethodB_AAp.Value / this.numTopAB.Value * 100; // (AA’ / MethodB_AB) * 100
         }
 
         private void NumBottom_Validated(object sender, EventArgs e)
         {
             this.numBottomMethodA.Value = this.numBottomApB.Value == 0 ? 0 : this.numBottomAAp.Value / this.numBottomApB.Value * 100; // (AA’ / A’B) *100
-            this.numBottomMethodB.Value = this.numBottomAB.Value == 0 ? 0 : this.numBottomAAp.Value / this.numBottomAB.Value * 100; // (AA’ / AB) * 100
+            this.numBottomMethodB.Value = this.numBottomAB.Value == 0 ? 0 : this.numBottomMethodB_AAp.Value / this.numBottomAB.Value * 100; // (AA’ / MethodB_AB) * 100
         }
     }
 }
