@@ -63,10 +63,27 @@ select ed.*
 ,ed.ToSeq1
 ,ed.ToSeq2
 ,[ToSEQ] = ed.ToSeq1  + ' '+ ed.ToSeq2
+,[Old_Qty] = misc.Qty - f_export.Qty
 from FtyExport_Detail ed WITH (NOLOCK) 
 left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
-where ed.ID = '{0}'", masterID);
+outer apply(
+	select Qty = isnull(sum(InQty),0) 
+	from Machine.dbo.MiscPO_Detail m
+	where m.ID = ed.TransactionID
+	and m.SEQ1 = ed.Seq1
+	and m.SEQ2 = ed.Seq2
+)misc
+outer apply(
+	select Qty = isnull(sum(fed.Qty) ,0)
+	from FtyExport_Detail fed
+	where fed.TransactionID = ed.TransactionID
+	and fed.Seq1 = ed.Seq1
+	and fed.Seq2 = ed.Seq2
+	and fed.ID != ed.ID
+)f_export
+where ed.ID = '{0}'
+", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -138,6 +155,23 @@ where ed.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+            DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
+            ns.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (this.radioPanel1.Value == "5")
+                    {
+                        if (Convert.ToInt32(e.FormattedValue) > Convert.ToInt32(dr["Old_Qty"]))
+                        {
+                            MyUtility.Msg.WarningBox($"<Q'ty>:{e.FormattedValue} cannot exceed original Qty:{dr["Old_Qty"]}");
+                            e.Cancel = true;
+                        }
+                    }
+                }
+            };
+
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("TransactionID", header: "ID#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -151,12 +185,16 @@ where ed.ID = '{0}'", masterID);
                 .Text("Supp", header: "Supplier", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Type", header: "Type", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Type", header: "Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
+                .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("Qty", header: "Q'ty", decimal_places: 2)
+                .Numeric("Qty", header: "Q'ty", decimal_places: 2, settings: ns)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "G.W.(kg)", decimal_places: 2);
+
+            this.detailgrid.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["NetKg"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["WeightKg"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         /// <inheritdoc/>
@@ -252,13 +290,6 @@ where ed.ID = '{0}'", masterID);
             {
                 this.txtVslvoyFltNo.Focus();
                 MyUtility.Msg.WarningBox("Vsl voy/Flt No. cannot be empty!!");
-                return false;
-            }
-
-            if (MyUtility.Check.Empty(this.txtUserHandle.TextBox1.Text))
-            {
-                this.txtUserHandle.TextBox1.Focus();
-                MyUtility.Msg.WarningBox("Handle cannot be empty!!");
                 return false;
             }
 
@@ -500,6 +531,10 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                     P04_ImportLocalPO callLocalPOForm = new P04_ImportLocalPO((DataTable)this.detailgridbs.DataSource);
                     callLocalPOForm.ShowDialog(this);
                     break;
+                case "5":
+                    P04_ImportMiscellaneous callMisc = new P04_ImportMiscellaneous((DataTable)this.detailgridbs.DataSource);
+                    callMisc.ShowDialog(this);
+                    break;
                 default:
                     break;
             }
@@ -518,6 +553,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
                 case "1":
                     this.txtLocalSupp.Visible = false;
                     this.txtSupplier.Visible = true;
+                    this.txtLocalSupp.IsMiscOverseas = false;
                     break;
                 case "2":
                     this.txtLocalSupp.Visible = true;
@@ -525,6 +561,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
 
                     this.txtLocalSupp.IsFactory = true;
                     this.txtLocalSupp.IsMisc = false;
+                    this.txtLocalSupp.IsMiscOverseas = false;
                     break;
                 case "3":
                     this.txtLocalSupp.Visible = true;
@@ -532,6 +569,7 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
 
                     this.txtLocalSupp.IsFactory = true;
                     this.txtLocalSupp.IsMisc = false;
+                    this.txtLocalSupp.IsMiscOverseas = false;
                     break;
                 case "4":
                     this.txtLocalSupp.Visible = true;
@@ -539,6 +577,15 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
 
                     this.txtLocalSupp.IsFactory = false;
                     this.txtLocalSupp.IsMisc = true;
+                    this.txtLocalSupp.IsMiscOverseas = false;
+                    break;
+                case "5":
+                    this.txtLocalSupp.Visible = true;
+                    this.txtSupplier.Visible = false;
+
+                    this.txtLocalSupp.IsFactory = false;
+                    this.txtLocalSupp.IsMisc = true;
+                    this.txtLocalSupp.IsMiscOverseas = true;
                     break;
                 default:
                     break;

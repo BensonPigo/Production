@@ -41,6 +41,7 @@
             this.displayPortofLoading = new Sci.Win.UI.DisplayBox();
             this.displayPortofDischarge = new Sci.Win.UI.DisplayBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioMiscellaneous = new Sci.Win.UI.RadioButton();
             this.radioLocalPurchase = new Sci.Win.UI.RadioButton();
             this.radioTransferOut = new Sci.Win.UI.RadioButton();
             this.radioTransferIn = new Sci.Win.UI.RadioButton();
@@ -55,7 +56,6 @@
             this.numNetKg = new Sci.Win.UI.NumericBox();
             this.label15 = new Sci.Win.UI.Label();
             this.numWeightKg = new Sci.Win.UI.NumericBox();
-            this.labelHandle = new Sci.Win.UI.Label();
             this.labelBLAWBNo = new Sci.Win.UI.Label();
             this.labelVslvoyFltNo = new Sci.Win.UI.Label();
             this.labelArrivePortDate = new Sci.Win.UI.Label();
@@ -68,7 +68,6 @@
             this.dateDoxRcvDate = new Sci.Win.UI.DateBox();
             this.btnExpenseData = new Sci.Win.UI.Button();
             this.btnImportData = new Sci.Win.UI.Button();
-            this.txtUserHandle = new Sci.Production.Class.Txtuser();
             this.txtdropdownlistContainerType = new Sci.Production.Class.Txtdropdownlist();
             this.txtSubconForwarder = new Sci.Production.Class.TxtsubconNoConfirm();
             this.labSisFtyWk = new Sci.Win.UI.Label();
@@ -126,13 +125,11 @@
             this.masterpanel.Controls.Add(this.btnExpenseData);
             this.masterpanel.Controls.Add(this.txtVslvoyFltNo);
             this.masterpanel.Controls.Add(this.txtBLAWBNo);
-            this.masterpanel.Controls.Add(this.txtUserHandle);
             this.masterpanel.Controls.Add(this.labelDoxRcvDate);
             this.masterpanel.Controls.Add(this.labelArriveWHDate);
             this.masterpanel.Controls.Add(this.labelArrivePortDate);
             this.masterpanel.Controls.Add(this.labelVslvoyFltNo);
             this.masterpanel.Controls.Add(this.labelBLAWBNo);
-            this.masterpanel.Controls.Add(this.labelHandle);
             this.masterpanel.Controls.Add(this.numWeightKg);
             this.masterpanel.Controls.Add(this.label15);
             this.masterpanel.Controls.Add(this.numNetKg);
@@ -196,13 +193,11 @@
             this.masterpanel.Controls.SetChildIndex(this.numNetKg, 0);
             this.masterpanel.Controls.SetChildIndex(this.label15, 0);
             this.masterpanel.Controls.SetChildIndex(this.numWeightKg, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBLAWBNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelVslvoyFltNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelArrivePortDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelArriveWHDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDoxRcvDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtUserHandle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtBLAWBNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtVslvoyFltNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnExpenseData, 0);
@@ -413,6 +408,7 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioMiscellaneous);
             this.radioPanel1.Controls.Add(this.radioLocalPurchase);
             this.radioPanel1.Controls.Add(this.radioTransferOut);
             this.radioPanel1.Controls.Add(this.radioTransferIn);
@@ -420,9 +416,23 @@
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Type", true));
             this.radioPanel1.Location = new System.Drawing.Point(228, 4);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(376, 25);
+            this.radioPanel1.Size = new System.Drawing.Size(544, 25);
             this.radioPanel1.TabIndex = 0;
             this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
+            // 
+            // radioMiscellaneous
+            // 
+            this.radioMiscellaneous.AutoSize = true;
+            this.radioMiscellaneous.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.radioMiscellaneous.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioMiscellaneous.Location = new System.Drawing.Point(382, 2);
+            this.radioMiscellaneous.Name = "radioMiscellaneous";
+            this.radioMiscellaneous.Size = new System.Drawing.Size(105, 19);
+            this.radioMiscellaneous.TabIndex = 6;
+            this.radioMiscellaneous.TabStop = true;
+            this.radioMiscellaneous.Text = "Miscellaneous";
+            this.radioMiscellaneous.UseVisualStyleBackColor = true;
+            this.radioMiscellaneous.Value = "5";
             // 
             // radioLocalPurchase
             // 
@@ -624,15 +634,6 @@
             0,
             0});
             // 
-            // labelHandle
-            // 
-            this.labelHandle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelHandle.Location = new System.Drawing.Point(606, 6);
-            this.labelHandle.Name = "labelHandle";
-            this.labelHandle.Size = new System.Drawing.Size(93, 23);
-            this.labelHandle.TabIndex = 31;
-            this.labelHandle.Text = "Handle";
-            // 
             // labelBLAWBNo
             // 
             this.labelBLAWBNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -748,16 +749,6 @@
             this.btnImportData.UseVisualStyleBackColor = true;
             this.btnImportData.Click += new System.EventHandler(this.BtnImportData_Click);
             // 
-            // txtUserHandle
-            // 
-            this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtUserHandle.DisplayBox1Binding = "";
-            this.txtUserHandle.Location = new System.Drawing.Point(702, 5);
-            this.txtUserHandle.Name = "txtUserHandle";
-            this.txtUserHandle.Size = new System.Drawing.Size(302, 23);
-            this.txtUserHandle.TabIndex = 20;
-            this.txtUserHandle.TextBox1Binding = "";
-            // 
             // txtdropdownlistContainerType
             // 
             this.txtdropdownlistContainerType.BackColor = System.Drawing.Color.White;
@@ -823,6 +814,7 @@
             this.txtLocalSupp.DisplayBox1Binding = "";
             this.txtLocalSupp.IsFactory = false;
             this.txtLocalSupp.IsMisc = false;
+            this.txtLocalSupp.IsMiscOverseas = false;
             this.txtLocalSupp.Location = new System.Drawing.Point(109, 117);
             this.txtLocalSupp.Name = "txtLocalSupp";
             this.txtLocalSupp.Size = new System.Drawing.Size(230, 23);
@@ -925,6 +917,7 @@
             this.txtLocalSupp1.DisplayBox1Binding = "";
             this.txtLocalSupp1.IsFactory = true;
             this.txtLocalSupp1.IsMisc = false;
+            this.txtLocalSupp1.IsMiscOverseas = false;
             this.txtLocalSupp1.Location = new System.Drawing.Point(109, 146);
             this.txtLocalSupp1.Name = "txtLocalSupp1";
             this.txtLocalSupp1.Size = new System.Drawing.Size(228, 23);
@@ -1043,7 +1036,6 @@
         private Win.UI.Label labelArrivePortDate;
         private Win.UI.Label labelVslvoyFltNo;
         private Win.UI.Label labelBLAWBNo;
-        private Win.UI.Label labelHandle;
         private Win.UI.NumericBox numWeightKg;
         private Win.UI.Label label15;
         private Win.UI.DateBox dateDoxRcvDate;
@@ -1051,7 +1043,6 @@
         private Win.UI.DateBox dateArrivePortDate;
         private Win.UI.TextBox txtVslvoyFltNo;
         private Win.UI.TextBox txtBLAWBNo;
-        private Class.Txtuser txtUserHandle;
         private Win.UI.Button btnImportData;
         private Win.UI.Button btnExpenseData;
         private Win.UI.TextBox txtSisFtyWK;
@@ -1072,5 +1063,6 @@
         private Win.UI.Label lbShipDate;
         private Win.UI.Button btnConsigneeMail;
         private Class.Txtsupplier txtSupplier;
+        private Win.UI.RadioButton radioMiscellaneous;
     }
 }
