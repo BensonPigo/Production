@@ -792,9 +792,9 @@
             this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label31.Location = new System.Drawing.Point(138, 60);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(303, 17);
+            this.label31.Size = new System.Drawing.Size(289, 17);
             this.label31.TabIndex = 37;
-            this.label31.Text = "6.\tMovement of side seam/outseam in CM";
+            this.label31.Text = "Movement of side seam/outseam in CM";
             // 
             // label30
             // 
@@ -1054,9 +1054,9 @@
             this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label23.Location = new System.Drawing.Point(172, 60);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(303, 17);
+            this.label23.Size = new System.Drawing.Size(289, 17);
             this.label23.TabIndex = 50;
-            this.label23.Text = "6.\tMovement of side seam/outseam in CM";
+            this.label23.Text = "Movement of side seam/outseam in CM";
             // 
             // label25
             // 
