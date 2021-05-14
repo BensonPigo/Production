@@ -125,6 +125,10 @@
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnToReport = new Sci.Win.UI.Button();
             this.btnDelete = new Sci.Win.UI.Button();
+            this.numTopMethodB_AAp = new Sci.Win.UI.NumericBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.numBottomMethodB_AAp = new Sci.Win.UI.NumericBox();
+            this.label37 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.panel9.SuspendLayout();
@@ -725,10 +729,12 @@
             this.panelTop.Controls.Add(this.label29);
             this.panelTop.Controls.Add(this.label20);
             this.panelTop.Controls.Add(this.label22);
+            this.panelTop.Controls.Add(this.label36);
             this.panelTop.Controls.Add(this.label24);
             this.panelTop.Controls.Add(this.label26);
             this.panelTop.Controls.Add(this.label28);
             this.panelTop.Controls.Add(this.numTOPMehtodA);
+            this.panelTop.Controls.Add(this.numTopMethodB_AAp);
             this.panelTop.Controls.Add(this.numTopAAp);
             this.panelTop.Controls.Add(this.numTopApB);
             this.panelTop.Controls.Add(this.numTopAB);
@@ -854,7 +860,7 @@
             // 
             this.label28.AutoSize = true;
             this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label28.Location = new System.Drawing.Point(823, 5);
+            this.label28.Location = new System.Drawing.Point(674, 34);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(26, 17);
             this.label28.TabIndex = 26;
@@ -929,7 +935,7 @@
             this.numTopAB.BackColor = System.Drawing.Color.White;
             this.numTopAB.DecimalPlaces = 2;
             this.numTopAB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopAB.Location = new System.Drawing.Point(855, 5);
+            this.numTopAB.Location = new System.Drawing.Point(706, 34);
             this.numTopAB.Name = "numTopAB";
             this.numTopAB.NullValue = new decimal(new int[] {
             0,
@@ -953,10 +959,12 @@
             this.panelBottom.Controls.Add(this.label25);
             this.panelBottom.Controls.Add(this.label27);
             this.panelBottom.Controls.Add(this.label32);
+            this.panelBottom.Controls.Add(this.label37);
             this.panelBottom.Controls.Add(this.label33);
             this.panelBottom.Controls.Add(this.label34);
             this.panelBottom.Controls.Add(this.label35);
             this.panelBottom.Controls.Add(this.numBottomMethodA);
+            this.panelBottom.Controls.Add(this.numBottomMethodB_AAp);
             this.panelBottom.Controls.Add(this.numBottomAAp);
             this.panelBottom.Controls.Add(this.numBottomApB);
             this.panelBottom.Controls.Add(this.numBottomAB);
@@ -1043,11 +1051,11 @@
             // 
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label32.Location = new System.Drawing.Point(478, 5);
+            this.label32.Location = new System.Drawing.Point(444, 5);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(82, 17);
+            this.label32.Size = new System.Drawing.Size(116, 17);
             this.label32.TabIndex = 40;
-            this.label32.Text = "FOR TOP:";
+            this.label32.Text = "FOR BOTTOM:";
             // 
             // label33
             // 
@@ -1073,7 +1081,7 @@
             // 
             this.label35.AutoSize = true;
             this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label35.Location = new System.Drawing.Point(857, 5);
+            this.label35.Location = new System.Drawing.Point(708, 34);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(26, 17);
             this.label35.TabIndex = 43;
@@ -1148,7 +1156,7 @@
             this.numBottomAB.BackColor = System.Drawing.Color.White;
             this.numBottomAB.DecimalPlaces = 2;
             this.numBottomAB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomAB.Location = new System.Drawing.Point(889, 5);
+            this.numBottomAB.Location = new System.Drawing.Point(740, 34);
             this.numBottomAB.Name = "numBottomAB";
             this.numBottomAB.NullValue = new decimal(new int[] {
             0,
@@ -1364,6 +1372,68 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
+            // numTopMethodB_AAp
+            // 
+            this.numTopMethodB_AAp.BackColor = System.Drawing.Color.White;
+            this.numTopMethodB_AAp.DecimalPlaces = 2;
+            this.numTopMethodB_AAp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopMethodB_AAp.Location = new System.Drawing.Point(569, 34);
+            this.numTopMethodB_AAp.Name = "numTopMethodB_AAp";
+            this.numTopMethodB_AAp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopMethodB_AAp.Size = new System.Drawing.Size(73, 23);
+            this.numTopMethodB_AAp.TabIndex = 30;
+            this.numTopMethodB_AAp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopMethodB_AAp.Validated += new System.EventHandler(this.NumTop_Validated);
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label36.Location = new System.Drawing.Point(534, 34);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(29, 17);
+            this.label36.TabIndex = 22;
+            this.label36.Text = "AA\'";
+            // 
+            // numBottomMethodB_AAp
+            // 
+            this.numBottomMethodB_AAp.BackColor = System.Drawing.Color.White;
+            this.numBottomMethodB_AAp.DecimalPlaces = 2;
+            this.numBottomMethodB_AAp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomMethodB_AAp.Location = new System.Drawing.Point(601, 34);
+            this.numBottomMethodB_AAp.Name = "numBottomMethodB_AAp";
+            this.numBottomMethodB_AAp.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomMethodB_AAp.Size = new System.Drawing.Size(73, 23);
+            this.numBottomMethodB_AAp.TabIndex = 45;
+            this.numBottomMethodB_AAp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomMethodB_AAp.Validated += new System.EventHandler(this.NumBottom_Validated);
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label37.Location = new System.Drawing.Point(566, 34);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(29, 17);
+            this.label37.TabIndex = 41;
+            this.label37.Text = "AA\'";
+            // 
             // P04_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1059, 572);
@@ -1507,5 +1577,9 @@
         private Win.UI.NumericBox numBottomAAp;
         private Win.UI.NumericBox numBottomApB;
         private Win.UI.NumericBox numBottomAB;
+        private System.Windows.Forms.Label label36;
+        private Win.UI.NumericBox numTopMethodB_AAp;
+        private System.Windows.Forms.Label label37;
+        private Win.UI.NumericBox numBottomMethodB_AAp;
     }
 }
