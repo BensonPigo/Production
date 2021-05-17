@@ -87,12 +87,18 @@ namespace Sci.Production.Subcon
                 #region sqlcmd
 
                 this.sqlCmd.Append(@"
+select PostSewingSubProcess,NoBundleCardAfterSubprocess,SubprocessId,Bundleno
+into #tmp_Bundle_Detail_Art 
+from Bundle_Detail_Art WITH (NOLOCK) 
+where PostSewingSubProcess = 1 or NoBundleCardAfterSubprocess = 1
+
+
 Select
     [Bundle#] = bt.BundleNo,
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
 	[FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -127,40 +133,34 @@ Select
 	,bt.PanelNo
 	,CutCellID
 into #tmp
-from BundleTransfer  bt WITH (NOLOCK)
+from BundleTransfer bt WITH (NOLOCK, Index(BundleTransferDate))
 left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
 left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
 left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select sub = 1
-    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.PostSewingSubProcess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as ps
 outer apply(
     select sub = 1
-    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
     where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno and bda.NoBundleCardAfterSubprocess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as nbs 
 outer apply(
-	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
+	SELECT top 1 [val] = DD.id + '-' + DD.NAME
 	FROM dropdownlist DD 
-	OUTER apply(
-			SELECT OB.kind, 
-				OCC.id, 
-				OCC.article, 
-				OCC.colorid, 
-				OCC.fabricpanelcode, 
-				OCC.patternpanel 
-			FROM order_colorcombo OCC WITH (NOLOCK)
-			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
-		) LIST 
-		WHERE LIST.id = b.poid 
-		AND LIST.patternpanel = b.patternpanel 
-		AND DD.[type] = 'FabricKind' 
-		AND DD.id = LIST.kind 
+	where exists (
+		SELECT 1 
+		FROM order_colorcombo OCC WITH (NOLOCK)
+		INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		AND OCC.id = b.poid
+		AND OCC.patternpanel = b.patternpanel
+		AND DD.id = OB.kind 
+	) 
 )FabricKind
 where 1=1
             ");
@@ -221,6 +221,10 @@ where 1=1
             else
             {
                 this.sqlCmd.Append($@"
+select PostSewingSubProcess,NoBundleCardAfterSubprocess,SubprocessId,Bundleno
+into #tmp_Bundle_Detail_Art 
+from Bundle_Detail_Art WITH (NOLOCK) 
+where PostSewingSubProcess = 1 or NoBundleCardAfterSubprocess = 1
 
 --Replace1
 
@@ -229,7 +233,7 @@ Select
     [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
     [FabricKind] = FabricKind.val,
     [Cut Ref#] = b.CutRef,
-    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
+    [SP#] = dbo.GetSinglelineSP((select OrderID from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = bd.BundleNo order by OrderID for XML RAW)),
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
@@ -264,40 +268,34 @@ Select
     ,bt.PanelNo
     ,bt.CutCellID
 into #tmp
-from BundleTransfer  bt WITH (NOLOCK, Index(BundleTransferDate))
-inner join Bundle_Detail bd on bd.BundleNo = bt.BundleNo
-left join Bundle b on b.id = bd.id
+from BundleTransfer bt WITH (NOLOCK, Index(BundleTransferDate))
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = bt.BundleNo
+left join Bundle b WITH (NOLOCK) on b.id = bd.id
 left join orders o WITH (NOLOCK) on o.Id = b.OrderId and o.MDivisionID  = b.MDivisionID 
 inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
 outer apply(
     select sub = 1
-    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
     where bda.Bundleno = bt.Bundleno and bda.PostSewingSubProcess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as ps
 outer apply(
     select sub = 1
-    from Bundle_Detail_Art bda WITH (NOLOCK) 
+    from #tmp_Bundle_Detail_Art bda WITH (NOLOCK) 
     where bda.Bundleno = bt.Bundleno and bda.NoBundleCardAfterSubprocess = 1
     and bda.SubprocessId = bt.SubprocessId
 ) as nbs 
 outer apply(
-	SELECT top 1 [val] = DD.id + '-' + DD.NAME 
+	SELECT top 1 [val] = DD.id + '-' + DD.NAME
 	FROM dropdownlist DD 
-	OUTER apply(
-			SELECT OB.kind, 
-				OCC.id, 
-				OCC.article, 
-				OCC.colorid, 
-				OCC.fabricpanelcode, 
-				OCC.patternpanel 
-			FROM order_colorcombo OCC WITH (NOLOCK)
-			INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
-		) LIST 
-		WHERE LIST.id = b.poid
-		AND LIST.patternpanel = b.patternpanel 
-		AND DD.[type] = 'FabricKind' 
-		AND DD.id = LIST.kind 
+	where exists (
+		SELECT 1 
+		FROM order_colorcombo OCC WITH (NOLOCK)
+		INNER JOIN order_bof OB WITH (NOLOCK) ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		AND OCC.id = b.poid
+		AND OCC.patternpanel = b.patternpanel
+		AND DD.id = OB.kind 
+	)
 )FabricKind
 where 1=1
 ");
