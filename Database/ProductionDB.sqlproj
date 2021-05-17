@@ -2647,6 +2647,7 @@
     <Build Include="dbo\Tables\TypeSelection.sql" />
     <Build Include="dbo\Tables\Garment_Detail_Spirality.sql" />
     <Build Include="dbo\Tables\SampleGarment_Detail_Spirality.sql" />
+    <Build Include="dbo\Tables\SewingOutput_DailyLock.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
