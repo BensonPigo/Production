@@ -247,6 +247,7 @@ and ID = '{Sci.Env.User.UserID}'"))
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .Text("ExportId", header: "WK#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 1
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
@@ -810,7 +811,8 @@ having f.balanceQty + sum(d.Qty) < 0
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
-                @"select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+                @"
+select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
 ,a.Roll
 ,a.Dyelot
 ,dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0) as [Description]
@@ -824,10 +826,25 @@ having f.balanceQty + sum(d.Qty) < 0
 ,a.ToSeq1
 ,a.ToSeq2
 ,[ToSeq] = a.ToSeq1 +' ' + a.ToSeq2
+,wk.ExportId
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.POID = FI.POID and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot
     and a.Roll = FI.Roll and a.StockType = FI.StockType
+outer apply(
+	select ExportId = Stuff((
+		select concat(',',ExportId)
+		from (
+				select 	distinct r.ExportId
+				from Receiving_Detail rd
+				inner join Receiving r on rd.Id = r.Id
+				where rd.PoId = a.POID and rd.Seq1 = a.Seq1
+				and rd.Seq2 = a.Seq2 and rd.Roll = a.Roll
+				and rd.Dyelot = a.Dyelot and rd.StockType = a.StockType
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) WK
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
