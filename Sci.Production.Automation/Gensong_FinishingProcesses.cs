@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
@@ -87,8 +88,6 @@ namespace Sci.Production.Automation
             this.automationErrMsg.suppAPIThread = suppAPIThread;
             string tableName = actionType == "Delete" ? "PackingList_Delete" : "PackingList";
 
-            Dictionary<string, object> dataTable = new Dictionary<string, object>();
-
             var structureID = listID.Split(',').Select(s => new { ID = s });
 
             string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure(tableName, structureID));
@@ -98,6 +97,9 @@ namespace Sci.Production.Automation
             {
                 DBProxy._OpenConnection("Production", out sqlConnection);
                 automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
+
+                this.SentShippingMarkToFinishingProcesses(listID, "ShippingMarkPic");
+                this.SentShippingMarkToFinishingProcesses(listID, "ShippingMarkStamp");
 
                 await SendWebAPIAsync(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
 
@@ -118,6 +120,79 @@ namespace Sci.Production.Automation
         }
 
         /// <summary>
+        /// SentShippingMarkToFinishingProcesses
+        /// </summary>
+        /// <param name="listID">List ID</param>
+        /// <param name="transTable">transTable</param>
+        private void SentShippingMarkToFinishingProcesses(string listID, string transTable)
+        {
+            if (!IsModuleAutomationEnable(GensongSuppID, moduleName))
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(listID))
+            {
+                return;
+            }
+
+            string apiThread = "SentPackingListToFinishingProcesses_Gensong";
+            string suppAPIThread = "api/GensongFinishingProcesses/SentDataByApiTag";
+            this.automationErrMsg.apiThread = apiThread;
+            this.automationErrMsg.suppAPIThread = suppAPIThread;
+
+            DataTable dtSCICtnNo;
+            string whereSCICtnNo = listID.Split(',').Select(s => $"'{s}'").JoinToString(",");
+            string sqlGetSCICtnNo = $"select distinct SCICtnNo from PackingList_Detail with (nolock) where ID in ({whereSCICtnNo})";
+            DualResult result = DBProxy.Current.Select(null, sqlGetSCICtnNo, out dtSCICtnNo);
+
+            if (!result)
+            {
+                throw result.GetException();
+            }
+
+            var listSCICtnNo = dtSCICtnNo.AsEnumerable();
+            int splitCount = 100;
+            int sendApiCount = MyUtility.Convert.GetInt(Math.Ceiling(listSCICtnNo.Count() / (double)splitCount));
+
+            for (int i = 0; i < sendApiCount; i++)
+            {
+                int skipCount = i * splitCount;
+                var structureSCICtnNo = listSCICtnNo.Skip(skipCount).Take(splitCount).Select(s => new { SCICtnNo = s["SCICtnNo"].ToString() });
+                string jsonBody = JsonConvert.SerializeObject(this.CreateGensongStructure(transTable, structureSCICtnNo));
+
+                Action sendAPI = async () =>
+                {
+                    AutomationCreateRecord automationCreateRecord = new AutomationCreateRecord(this.automationErrMsg, jsonBody);
+                    SqlConnection sqlConnection = new SqlConnection();
+                    try
+                    {
+                        DBProxy._OpenConnection("Production", out sqlConnection);
+                        automationCreateRecord.SaveAutomationCreateRecord(sqlConnection);
+
+                        await SendWebAPIAsync(UtilityAutomation.GetSciUrl(), suppAPIThread, jsonBody, this.automationErrMsg);
+
+                        DBProxy._OpenConnection("Production", out sqlConnection);
+                        automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!MyUtility.Check.Empty(automationCreateRecord.ukey))
+                        {
+                            DBProxy._OpenConnection("Production", out sqlConnection);
+                            automationCreateRecord.DeleteAutomationCreateRecord(sqlConnection);
+                        }
+
+                        this.automationErrMsg.SetErrInfo(ex, jsonBody);
+                        SaveAutomationErrMsg(this.automationErrMsg);
+                    }
+                };
+
+                sendAPI();
+            }
+        }
+
+        /// <summary>
         /// SentClogGarmentDisposeToFinishingProcesses_Gensong
         /// </summary>
         /// <param name="listID">List ID</param>
@@ -134,8 +209,6 @@ namespace Sci.Production.Automation
             this.automationErrMsg.apiThread = apiThread;
             this.automationErrMsg.suppAPIThread = suppAPIThread;
             string tableName = actionType == "ClogGarmentDispose_Delete" ? "ClogGarmentDispose_Delete" : "ClogGarmentDispose";
-
-            Dictionary<string, object> dataTable = new Dictionary<string, object>();
 
             var structureID = listID.Split(',').Select(s => new { ID = s });
 
