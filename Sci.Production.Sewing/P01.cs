@@ -4515,8 +4515,21 @@ drop table #tmp,#tmp2
 
         private bool CheckLock(string action)
         {
+            string sqlcmd = $@"select LockDate from SewingOutput_DailyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            {
+                if ((DateTime)dr["LockDate"] < ((DateTime)this.CurrentMaintain["OutputDate"]) &&
+                    (DateTime)this.CurrentMaintain["OutputDate"] <= DateTime.Today)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
+
             string outputDate = ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd");
-            string sqlcmd = $@"select 1 from SewingOutput_DailyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}' and LockDate < '{outputDate}'";
             string sqlcmd2 = $@"
 select 1
 from SewingOutput_DailyLock dl
@@ -4524,8 +4537,7 @@ inner join SewingOutput_DailyUnLock dul on dul.FactoryID = dl.FactoryID
 where dl.FactoryID = '{this.CurrentMaintain["FactoryID"]}'  and dl.LastLockDate < dul.UnLockDate
 and dul.OutputDate = '{outputDate}'
 ";
-            if ((MyUtility.Check.Seek(sqlcmd) && ((DateTime)this.CurrentMaintain["OutputDate"]) <= DateTime.Today) ||
-                MyUtility.Check.Seek(sqlcmd2))
+            if (MyUtility.Check.Seek(sqlcmd2))
             {
                 return true;
             }
