@@ -1390,7 +1390,18 @@ drop table #tmp,#tmp2";
                 return;
             }
             #endregion
-
+            #region Pattern ScanRFID 判斷不能全勾 , 只有一個 Cutpart 名稱能打勾
+            bool isMutiCutPartChecked = this.patternTb.AsEnumerable()
+                                        .Where(s => MyUtility.Convert.GetBool(s["RFIDScan"]))
+                                        .Select(s => s["PatternCode"].ToString())
+                                        .Distinct()
+                                        .Count() > 1;
+            if (isMutiCutPartChecked)
+            {
+                MyUtility.Msg.WarningBox("RFID Scan Only one CutPart can be checked");
+                return;
+            }
+            #endregion
             if (this.chkCombineSubprocess.Checked)
             {
                 string styleUkey = MyUtility.GetValue.Lookup("Styleukey", this.maindatarow["poid"].ToString(), "Orders", "ID");

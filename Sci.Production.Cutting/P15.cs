@@ -1092,7 +1092,8 @@ select
     wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
     wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.Article,
     isMain = cast(0 as bit),
-    CombineSubprocessGroup = cast(0 as tinyint)
+    CombineSubprocessGroup = cast(0 as tinyint),
+    [RFIDScan] = cast(0 as bit)
 from #bundleinfo wd
 
 union all
@@ -1103,7 +1104,8 @@ select distinct
 	Location='',wd.NoBundleCardAfterSubprocess_String,wd.PostSewingSubProcess_String,
     wd.MDivisionId,wd.StyleUkey,wd.Fabriccombo,wd.article,
     isMain = cast(0 as bit),
-    CombineSubprocessGroup = cast(0 as tinyint)
+    CombineSubprocessGroup = cast(0 as tinyint),
+    [RFIDScan] = cast(0 as bit)
 from #bundleinfo wd
 where not exists(select 1 from #bundleinfo c
     where c.MDivisionId = wd.MDivisionId and c.StyleUkey = wd.StyleUkey and c.Fabriccombo = wd.Fabriccombo and c.article = wd.article
@@ -1173,7 +1175,16 @@ and o.mDivisionid = '{this.keyWord}'
             this.qtyTb = this.GetNoofBundle(); // 依據右上撈出資料彙整出中上
 
             // 將下方兩表加入, 下方兩表改為直接對應左上(ISP20201755)
-            this.CutRefTb.AsEnumerable().ToList().ForEach(r => this.AddPatternAllpart(r));
+            this.CutRefTb.AsEnumerable().ToList().ForEach(r =>
+            {
+                DualResult dualResult = this.AddPatternAllpart(r);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return;
+                }
+            });
+
             foreach (DataRow dr in this.ArticleSizeTb.Rows)
             {
                 dr["iden"] = this.qtyTb.Select($"ukey={dr["ukey"]} and no={dr["no"]}")[0]["iden"];
@@ -1191,7 +1202,7 @@ and o.mDivisionid = '{this.keyWord}'
             this.ShowExcessDatas(where);
         }
 
-        private void AddPatternAllpart(DataRow r)
+        private DualResult AddPatternAllpart(DataRow r)
         {
             long ukey = MyUtility.Convert.GetLong(r["ukey"]);
             string m = MyUtility.Convert.GetString(r["MDivisionID"]);
@@ -1271,8 +1282,15 @@ and o.mDivisionid = '{this.keyWord}'
                 this.allpartTb.Merge(dta);
             }
 
+            DualResult result = Prgs.InitialRFIDScan(dtp);
+            if (!result)
+            {
+                return result;
+            }
+
             this.patternTb.Merge(dtp);
             this.CombineSubprocessIspair(ukey);
+            return new DualResult(true);
         }
 
         private void RemoveFtyColumn(DataTable dt)
@@ -1496,11 +1514,6 @@ and wd.orderid = 'EXCESS'
             pdr["ukey"] = ukey;
             pdr["CombineSubprocessGroup"] = 0;
             this.patternTbOri.Rows.Add(pdr);
-            DualResult result = Prgs.InitialRFIDScan(this.patternTbOri, ukey: ukey);
-            if (!result)
-            {
-                return result;
-            }
 
             DBProxy.Current.DefaultTimeout = 0;
             return new DualResult(true);
@@ -2785,6 +2798,23 @@ VALUES('{Sci.Env.User.Keyword}','{first.StyleUkey}','{drCut["Fabriccombo"]}','{f
             {
                 return false;
             }
+
+            #region Pattern ScanRFID 判斷不能全勾 , 只有一個 Cutpart 名稱能打勾
+            var isMutiCutPartChecked = selpatternList
+                                        .Where(s => s.RFIDScan)
+                                        .GroupBy(s => new
+                                        {
+                                            Ukey = s.Ukey,
+                                            PatternCode = s.PatternCode,
+                                        })
+                                        .GroupBy(s => s.Key.Ukey)
+                                        .Any(s => s.Count() > 1);
+            if (isMutiCutPartChecked)
+            {
+                MyUtility.Msg.WarningBox("RFID Scan Only one CutPart can be checked");
+                return false;
+            }
+            #endregion
 
             // item 自動帶入有可能超過20碼
             if (cutrefAy.AsEnumerable().Where(w => MyUtility.Convert.GetString(w["item"]).Length > 20).Any())

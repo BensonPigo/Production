@@ -251,6 +251,9 @@ order by bundlegroup,bundleno";
                 return;
             }
 
+            bool isShowRFIDScan = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select dbo.IsShowRFIDScan('{this.CurrentMaintain["POID"]}','{this.CurrentMaintain["PatternPanel"]}')", null));
+            this.detailgrid.Columns["RFIDScan"].Visible = isShowRFIDScan;
+
             this.QueryTable();
             string orderid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
             string cutref = MyUtility.Convert.GetString(this.CurrentMaintain["Cutref"]);
@@ -992,6 +995,8 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
                 this.CurrentMaintain.EndEdit();
             }
 
+            bool isShowRFIDScan = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select dbo.IsShowRFIDScan('{this.CurrentMaintain["POID"]}','{this.CurrentMaintain["PatternPanel"]}')", null));
+            this.detailgrid.Columns["RFIDScan"].Visible = isShowRFIDScan;
             ((DataTable)this.detailgridbs.DataSource).Clear();
         }
 
