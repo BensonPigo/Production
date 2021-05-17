@@ -72,6 +72,9 @@
             this.displNoofRoll = new Sci.Win.UI.DisplayBox();
             this.displNoofDyelot = new Sci.Win.UI.DisplayBox();
             this.btnPrintFormatReport4 = new System.Windows.Forms.Button();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtTone = new Sci.Win.UI.TextBox();
+            this.btnUpdateTone = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -79,13 +82,16 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnUpdateTone);
+            this.btmcont.Controls.Add(this.txtTone);
+            this.btmcont.Controls.Add(this.label3);
             this.btmcont.Controls.Add(this.btnPrintFormatReport4);
             this.btmcont.Controls.Add(this.btnPrintFormatReport8);
             this.btmcont.Controls.Add(this.button1);
             this.btmcont.Controls.Add(this.btnInspectedallpass);
             this.btmcont.Controls.Add(this.btnToExcel);
-            this.btmcont.Location = new System.Drawing.Point(0, 693);
-            this.btmcont.Size = new System.Drawing.Size(1008, 40);
+            this.btmcont.Location = new System.Drawing.Point(0, 663);
+            this.btmcont.Size = new System.Drawing.Size(1008, 76);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -96,31 +102,49 @@
             this.btmcont.Controls.SetChildIndex(this.button1, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport8, 0);
             this.btmcont.Controls.SetChildIndex(this.btnPrintFormatReport4, 0);
+            this.btmcont.Controls.SetChildIndex(this.label3, 0);
+            this.btmcont.Controls.SetChildIndex(this.txtTone, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnUpdateTone, 0);
             // 
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 172);
-            this.gridcont.Size = new System.Drawing.Size(984, 511);
+            this.gridcont.Size = new System.Drawing.Size(984, 490);
             // 
             // append
             // 
+            this.append.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.append.Dock = System.Windows.Forms.DockStyle.None;
+            this.append.Location = new System.Drawing.Point(9, 41);
             this.append.Visible = false;
             // 
             // revise
             // 
+            this.revise.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.revise.Dock = System.Windows.Forms.DockStyle.None;
+            this.revise.Location = new System.Drawing.Point(89, 41);
             this.revise.Visible = false;
             // 
             // delete
             // 
+            this.delete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.delete.Dock = System.Windows.Forms.DockStyle.None;
+            this.delete.Location = new System.Drawing.Point(169, 41);
             this.delete.Visible = false;
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(918, 5);
+            this.undo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.undo.Dock = System.Windows.Forms.DockStyle.None;
+            this.undo.Location = new System.Drawing.Point(1093, 41);
+            this.undo.Size = new System.Drawing.Size(75, 30);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(838, 5);
+            this.save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.save.Dock = System.Windows.Forms.DockStyle.None;
+            this.save.Location = new System.Drawing.Point(1093, 8);
+            this.save.Size = new System.Drawing.Size(75, 30);
             // 
             // displayBrand
             // 
@@ -393,7 +417,8 @@
             // 
             // btnToExcel
             // 
-            this.btnToExcel.Location = new System.Drawing.Point(742, 5);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Location = new System.Drawing.Point(820, 8);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(90, 30);
             this.btnToExcel.TabIndex = 130;
@@ -467,7 +492,7 @@
             // btnInspectedallpass
             // 
             this.btnInspectedallpass.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnInspectedallpass.Location = new System.Drawing.Point(264, 5);
+            this.btnInspectedallpass.Location = new System.Drawing.Point(283, 8);
             this.btnInspectedallpass.Name = "btnInspectedallpass";
             this.btnInspectedallpass.Size = new System.Drawing.Size(161, 30);
             this.btnInspectedallpass.TabIndex = 128;
@@ -478,7 +503,7 @@
             // button1
             // 
             this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.button1.Location = new System.Drawing.Point(97, 5);
+            this.button1.Location = new System.Drawing.Point(283, 41);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(161, 30);
             this.button1.TabIndex = 131;
@@ -488,8 +513,9 @@
             // 
             // btnPrintFormatReport8
             // 
+            this.btnPrintFormatReport8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrintFormatReport8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnPrintFormatReport8.Location = new System.Drawing.Point(578, 5);
+            this.btnPrintFormatReport8.Location = new System.Drawing.Point(673, 41);
             this.btnPrintFormatReport8.Name = "btnPrintFormatReport8";
             this.btnPrintFormatReport8.Size = new System.Drawing.Size(141, 30);
             this.btnPrintFormatReport8.TabIndex = 132;
@@ -535,8 +561,9 @@
             // 
             // btnPrintFormatReport4
             // 
+            this.btnPrintFormatReport4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrintFormatReport4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnPrintFormatReport4.Location = new System.Drawing.Point(431, 5);
+            this.btnPrintFormatReport4.Location = new System.Drawing.Point(673, 8);
             this.btnPrintFormatReport4.Name = "btnPrintFormatReport4";
             this.btnPrintFormatReport4.Size = new System.Drawing.Size(141, 30);
             this.btnPrintFormatReport4.TabIndex = 133;
@@ -544,9 +571,38 @@
             this.btnPrintFormatReport4.UseVisualStyleBackColor = true;
             this.btnPrintFormatReport4.Click += new System.EventHandler(this.BtnPrintFormatReport4_Click);
             // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label3.Location = new System.Drawing.Point(14, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(66, 23);
+            this.label3.TabIndex = 233;
+            this.label3.Text = "Tone/Grp";
+            // 
+            // txtTone
+            // 
+            this.txtTone.BackColor = System.Drawing.Color.White;
+            this.txtTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTone.Location = new System.Drawing.Point(82, 12);
+            this.txtTone.MaxLength = 8;
+            this.txtTone.Name = "txtTone";
+            this.txtTone.Size = new System.Drawing.Size(100, 23);
+            this.txtTone.TabIndex = 234;
+            // 
+            // btnUpdateTone
+            // 
+            this.btnUpdateTone.Location = new System.Drawing.Point(183, 8);
+            this.btnUpdateTone.Name = "btnUpdateTone";
+            this.btnUpdateTone.Size = new System.Drawing.Size(80, 30);
+            this.btnUpdateTone.TabIndex = 235;
+            this.btnUpdateTone.Text = "Update";
+            this.btnUpdateTone.UseVisualStyleBackColor = true;
+            this.btnUpdateTone.Click += new System.EventHandler(this.BtnUpdateTone_Click);
+            // 
             // P01_ShadeBond
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.ClientSize = new System.Drawing.Size(1008, 739);
             this.Controls.Add(this.displNoofDyelot);
             this.Controls.Add(this.displNoofRoll);
             this.Controls.Add(this.label2);
@@ -638,6 +694,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
+            this.btmcont.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -689,5 +746,8 @@
         private Win.UI.DisplayBox displNoofRoll;
         private Win.UI.DisplayBox displNoofDyelot;
         private System.Windows.Forms.Button btnPrintFormatReport4;
+        private Win.UI.Button btnUpdateTone;
+        private Win.UI.TextBox txtTone;
+        private Win.UI.Label label3;
     }
 }

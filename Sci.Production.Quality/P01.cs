@@ -481,6 +481,7 @@ and ActualYds > 0
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("WKNO", header: "Wkno", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("whseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(26), iseditingreadonly: true)
@@ -514,8 +515,7 @@ and ActualYds > 0
                 .Date("MoistureDate", header: "Last Moisture\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: moistureD)
 
                 .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
+                .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true);
             this.detailgrid.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             this.detailgrid.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
 

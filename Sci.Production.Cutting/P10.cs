@@ -210,7 +210,7 @@ outer apply
 		Select concat('+',Subprocessid)
 		From Bundle_Detail_art c WITH (NOLOCK) 
 		Where c.bundleno =a.bundleno and c.id = a.id 
-        Order by Ukey
+		Order by Ukey
 		For XML path('')
 	),1,1,'')
 ) as s
@@ -221,7 +221,7 @@ outer apply
 		Select concat('+',Subprocessid)
 		From Bundle_Detail_art c WITH (NOLOCK) 
 		Where c.bundleno =a.bundleno and c.id = a.id and c.NoBundleCardAfterSubprocess = 1
-        Order by Ukey
+		Order by Ukey
 		For XML path('')
 	),1,1,'')
 ) as ps
@@ -232,7 +232,7 @@ outer apply
 		Select concat('+',Subprocessid)
 		From Bundle_Detail_art c WITH (NOLOCK) 
 		Where c.bundleno =a.bundleno and c.id = a.id and c.PostSewingSubProcess = 1
-		Order by Subprocessid
+		Order by Ukey
 		For XML path('')
 	),1,1,'')
 ) as nbs

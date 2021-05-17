@@ -169,6 +169,7 @@ where 1=1
                 sqlCmd.Append(@"
 select
 	t.id,t.MDivisionID,t.FactoryID,t.ToMDivisionid,t.IssueDate,t.Status
+	,WK.ExportId
 	,td.POID, o.StyleID, p.Refno, p.ColorID, p.SizeSpec
 	,td.Seq1, td.Seq2, td.Roll, td.Dyelot
 	,[StockType] = case when td.StockType = 'B' then 'Bulk'
@@ -183,6 +184,20 @@ from TransferOut t with(nolock)
 inner join TransferOut_Detail td with(nolock) on td.id = t.id
 left join Po_Supp_Detail p WITH (NOLOCK) on td.poid = p.id and td.seq1 = p.seq1 and td.seq2 = p.seq2
 left join Orders o with(nolock) on o.id = td.poid
+outer apply(
+	select ExportId = Stuff((
+		select concat(',',ExportId)
+		from (
+				select 	distinct r.ExportId
+				from Receiving_Detail rd
+				inner join Receiving r on rd.Id = r.Id
+				where rd.PoId = td.POID and rd.Seq1 = td.Seq1
+				and rd.Seq2 = td.Seq2 and rd.Roll = td.Roll
+				and rd.Dyelot = td.Dyelot and rd.StockType = td.StockType
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) WK
 where 1=1
 ");
                 if (!MyUtility.Check.Empty(this.Issuedate1))

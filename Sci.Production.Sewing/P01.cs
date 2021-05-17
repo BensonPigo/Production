@@ -1232,6 +1232,11 @@ order by a.OrderId,os.Seq",
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            if (!this.CheckLock("modify"))
+            {
+                return false;
+            }
+
             if (!MyUtility.Check.Empty(this.CurrentMaintain["LockDate"]) && !MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
             {
                 MyUtility.Msg.WarningBox("This record already locked, can't modify.");
@@ -1462,6 +1467,11 @@ order by a.OrderId,os.Seq",
                 }
             }
             #endregion
+
+            if (!this.CheckLock("save"))
+            {
+                return false;
+            }
 
             #region 檢查資料是否已存在
             if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and SubConOutContractNumber ='{7}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))))
@@ -2811,8 +2821,8 @@ Remark : {callReason.ReturnRemark}
                 if (email.DialogResult == DialogResult.OK)
                 {
                     this.btnRequestUnlock.Enabled = false;
-                    string sqlcmd = $@"insert into SewingOutput_DailyUnlock(SewingOutputID,ReasonID,Remark,RequestDate,RequestName)
-values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}',@Remark,getdate(),'{Env.User.UserID}')";
+                    string sqlcmd = $@"insert into SewingOutput_DailyUnlock(SewingOutputID,ReasonID,Remark,RequestDate,RequestName,FactoryID,OutputDate)
+values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}',@Remark,getdate(),'{Env.User.UserID}','{this.CurrentMaintain["FactoryID"]}','{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}')";
                     List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@Remark", callReason.ReturnRemark) };
                     DualResult rs = DBProxy.Current.Execute("Production", sqlcmd, listPar);
                     if (!rs)
@@ -3024,6 +3034,26 @@ CLOSE Sewingoutput_cursor
 DEALLOCATE Sewingoutput_cursor --將cursor物件從記憶體移除
 ";
 
+            string sqlSewingOutput_DailyLock = $@"
+update SewingOutput_DailyLock
+set LockDate = ''
+where FactoryID = ''
+
+if not exists(select 1 from SewingOutput_DailyLock where FactoryID = '')
+begin
+INSERT INTO [dbo].[SewingOutput_DailyLock]
+           ([FactoryID]
+           ,[LockDate]
+           ,[LastLockName]
+           ,[LastLockDate])
+     VALUES
+           ('{this.CurrentMaintain["FactoryID"]}'
+           ,'{datelock}'
+           ,'{Sci.Env.User.UserID}'
+           ,GETDATE())
+end
+";
+
             using (TransactionScope scope = new TransactionScope())
             {
                 DualResult upResult;
@@ -3044,6 +3074,13 @@ DEALLOCATE Sewingoutput_cursor --將cursor物件從記憶體移除
                         this.ShowErr(upResult);
                         return;
                     }
+                }
+
+                if (!(upResult = DBProxy.Current.Execute(null, sqlSewingOutput_DailyLock)))
+                {
+                    scope.Dispose();
+                    this.ShowErr(upResult);
+                    return;
                 }
 
                 scope.Complete();
@@ -4473,6 +4510,41 @@ drop table #tmp,#tmp2
                 this.CurrentMaintain["Team"] = this.comboTeam.Text;
                 this.CurrentMaintain.EndEdit();
                 this.FromDQS();
+            }
+        }
+
+        private bool CheckLock(string action)
+        {
+            string sqlcmd = $@"select LockDate from SewingOutput_DailyLock where FactoryID = '{this.CurrentMaintain["FactoryID"]}'";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
+            {
+                if ((DateTime)dr["LockDate"] < ((DateTime)this.CurrentMaintain["OutputDate"]) &&
+                    (DateTime)this.CurrentMaintain["OutputDate"] <= DateTime.Today)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
+
+            string outputDate = ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd");
+            string sqlcmd2 = $@"
+select 1
+from SewingOutput_DailyLock dl
+inner join SewingOutput_DailyUnLock dul on dul.FactoryID = dl.FactoryID
+where dl.FactoryID = '{this.CurrentMaintain["FactoryID"]}'  and dl.LastLockDate < dul.UnLockDate
+and dul.OutputDate = '{outputDate}'
+";
+            if (MyUtility.Check.Seek(sqlcmd2))
+            {
+                return true;
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox($"This Output Date {outputDate} already lock, cannot {action} it.");
+                return false;
             }
         }
     }

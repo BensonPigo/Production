@@ -178,6 +178,7 @@ outer apply(
 	where d.ReasonTypeID = 'Delivery_OutStand' AND d.ID = o.OutstandingReason
 )OutstandingRemark
 where o.localOrder = 0
+and o.Qty <> 0
 and (p.INVNo ='' or p.INVNo is null)
 and not exists(
 	select 1 
