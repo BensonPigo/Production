@@ -630,7 +630,7 @@ from
             }
             catch (Exception ex)
             {
-                result = new DualResult(false, new BaseResult.MessageInfo(ex.Message.ToString()));
+                result = new DualResult(false, new BaseResult.MessageInfo(ex.ToString()));
             }
             finally
             {
@@ -1352,8 +1352,10 @@ from
 
             MakeDll.Func.ImageDataStruct ii = new MakeDll.Func.ImageDataStruct
             {
-                xaxis = "320",
-                yaxis = "365",
+                //xaxis = "320",
+                //yaxis = "365",
+                xaxis = "20",
+                yaxis = "20",
                 width = "120",
                 height = "120",
                 threshold = "250",
