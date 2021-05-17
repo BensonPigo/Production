@@ -55,6 +55,16 @@ namespace Sci.Production.Basic
                 this.btnBankDetail.ForeColor = Color.Black;
             }
 
+            // 編輯模式下, 且[Is Miscellaneous Supplier]有打勾才可以被修改
+            if (this.EditMode && this.chkisMisc.Checked)
+            {
+                this.chkOverseas.Enabled = true;
+            }
+            else
+            {
+                this.chkOverseas.Enabled = false;
+            }
+
             string sqlcmd = $@"
 SELECT * FROM LocalSupp_Bank_Detail WHERE Pkey=(
 SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND Status = 'Confirmed'ORDER BY ApproveDate DESC
@@ -273,6 +283,30 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         {
             this.CurrentMaintain["Status"] = "New";
             base.ClickNewAfter();
+        }
+
+        private void ChkisMisc_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                if (this.chkisMisc.Checked == false)
+                {
+                    this.chkOverseas.Checked = false;
+                    this.chkOverseas.Enabled = false;
+                }
+                else
+                {
+                    this.chkOverseas.Enabled = true;
+                }
+            }
+        }
+
+        private void ChkOverseas_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!this.chkisMisc.Checked)
+            {
+                this.chkOverseas.Checked = false;
+            }
         }
     }
 }

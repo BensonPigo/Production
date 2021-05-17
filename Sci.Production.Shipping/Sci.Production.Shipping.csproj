@@ -253,6 +253,12 @@
     <Compile Include="P03_COInformation.Designer.cs">
       <DependentUpon>P03_COInformation.cs</DependentUpon>
     </Compile>
+    <Compile Include="P04_ImportMiscellaneous.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P04_ImportMiscellaneous.Designer.cs">
+      <DependentUpon>P04_ImportMiscellaneous.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_BatchImportSO.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1057,6 +1063,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_COInformation.resx">
       <DependentUpon>P03_COInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P04_ImportMiscellaneous.resx">
+      <DependentUpon>P04_ImportMiscellaneous.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_BatchImportSO.resx">
       <DependentUpon>P05_BatchImportSO.cs</DependentUpon>

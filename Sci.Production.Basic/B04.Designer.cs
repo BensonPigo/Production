@@ -31,7 +31,7 @@ namespace Sci.Production.Basic
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelAbbreviation = new Sci.Win.UI.Label();
             this.labelNationality = new Sci.Win.UI.Label();
@@ -74,6 +74,7 @@ namespace Sci.Production.Basic
             this.chkJunk = new Sci.Win.UI.CheckBox();
             this.label4 = new Sci.Win.UI.Label();
             this.txtTaxNO = new Sci.Win.UI.TextBox();
+            this.chkOverseas = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -91,6 +92,7 @@ namespace Sci.Production.Basic
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkOverseas);
             this.detailcont.Controls.Add(this.txtTaxNO);
             this.detailcont.Controls.Add(this.label4);
             this.detailcont.Controls.Add(this.chkJunk);
@@ -436,13 +438,14 @@ namespace Sci.Production.Basic
             this.chkisMisc.TabIndex = 16;
             this.chkisMisc.Text = "Is Miscellaneous Supplier";
             this.chkisMisc.UseVisualStyleBackColor = true;
+            this.chkisMisc.CheckedChanged += new System.EventHandler(this.ChkisMisc_CheckedChanged);
             // 
             // chkIsSintexSubcon
             // 
             this.chkIsSintexSubcon.AutoSize = true;
             this.chkIsSintexSubcon.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsSintexSubcon", true));
             this.chkIsSintexSubcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIsSintexSubcon.Location = new System.Drawing.Point(585, 156);
+            this.chkIsSintexSubcon.Location = new System.Drawing.Point(585, 181);
             this.chkIsSintexSubcon.Name = "chkIsSintexSubcon";
             this.chkIsSintexSubcon.Size = new System.Drawing.Size(131, 21);
             this.chkIsSintexSubcon.TabIndex = 17;
@@ -496,14 +499,14 @@ namespace Sci.Production.Basic
             this.gridBankDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridBankDetail.Location = new System.Drawing.Point(0, 0);
             this.gridBankDetail.Name = "gridBankDetail";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBankDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBankDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBankDetail.RowTemplate.Height = 24;
@@ -572,7 +575,7 @@ namespace Sci.Production.Basic
             this.chkIsFreightForwarder.AutoSize = true;
             this.chkIsFreightForwarder.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsFreightForwarder", true));
             this.chkIsFreightForwarder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkIsFreightForwarder.Location = new System.Drawing.Point(585, 183);
+            this.chkIsFreightForwarder.Location = new System.Drawing.Point(585, 208);
             this.chkIsFreightForwarder.Name = "chkIsFreightForwarder";
             this.chkIsFreightForwarder.Size = new System.Drawing.Size(153, 21);
             this.chkIsFreightForwarder.TabIndex = 18;
@@ -610,6 +613,19 @@ namespace Sci.Production.Basic
             this.txtTaxNO.Name = "txtTaxNO";
             this.txtTaxNO.Size = new System.Drawing.Size(127, 23);
             this.txtTaxNO.TabIndex = 215;
+            // 
+            // chkOverseas
+            // 
+            this.chkOverseas.AutoSize = true;
+            this.chkOverseas.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsMiscOverseas", true));
+            this.chkOverseas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkOverseas.Location = new System.Drawing.Point(604, 154);
+            this.chkOverseas.Name = "chkOverseas";
+            this.chkOverseas.Size = new System.Drawing.Size(88, 21);
+            this.chkOverseas.TabIndex = 216;
+            this.chkOverseas.Text = "Overseas";
+            this.chkOverseas.UseVisualStyleBackColor = true;
+            this.chkOverseas.CheckedChanged += new System.EventHandler(this.ChkOverseas_CheckedChanged);
             // 
             // B04
             // 
@@ -695,5 +711,6 @@ namespace Sci.Production.Basic
         private Win.UI.CheckBox chkJunk;
         private Win.UI.TextBox txtTaxNO;
         private Win.UI.Label label4;
+        private Win.UI.CheckBox chkOverseas;
     }
 }
