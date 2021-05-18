@@ -97,8 +97,8 @@ select    [Selected] = 0 --0
         , t2.Ukey
         ,Barcode = isnull(ft.barcode,'')
         ,t1.InvNo,t1.ETA,t1.WhseArrival
-        ,[WHCommandReason] = w.Reason
-		,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 INNER JOIN Receiving t1 WITH (NOLOCK) ON t2.id= t1.Id
 left join orders o WITH (NOLOCK) on o.id = t2.PoId
@@ -110,9 +110,6 @@ left join FtyInventory ft on ft.POID = t2.PoId
                             and ft.StockType = t2.StockType 
                             and ft.Roll =t2.Roll 
                             and ft.Dyelot = t2.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 OUTER APPLY(
  SELECT [Value]=
 	 CASE WHEN f.MtlTypeID in ('EMB THREAD','SP THREAD','THREAD') THEN IIF(isnull(po3.SuppColor,'') = '',dbo.GetColorMultipleID(o.BrandID,po3.ColorID),po3.SuppColor)
@@ -170,16 +167,13 @@ select    [Selected] = 0 --0
         , t2.Ukey
         , t2.StockType
         ,t1.InvNo,t1.ETA,t1.WhseArrival
-        ,[WHCommandReason] = w.Reason
-		,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
 from dbo.Receiving_Detail t2 WITH (NOLOCK) 
 inner join Receiving t1 WITH (NOLOCK) on t2.Id = t1.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType 
-    and w.ID = t2.Id
 where 1=1
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -216,17 +210,14 @@ select distinct  [Selected] = 0 --0
 		, [ColorID] = Color.Value--16        
         , t2.Ukey      
         , t1.InvNo
-	    ,[WHCommandReason] = w.Reason
-		,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
 from dbo.TransferIn_Detail t2 WITH (NOLOCK) 
 inner join dbo.TransferIn t1 WITH (NOLOCK)  on t1.ID=t2.Id
 left join Po_Supp_Detail po3 WITH (NOLOCK)  on t2.poid = po3.id
                               and t2.seq1 = po3.seq1
                               and t2.seq2 = po3.seq2
 LEFT JOIN Fabric f WITH (NOLOCK) ON po3.SCIRefNo=f.SCIRefNo
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 outer apply(
 	select value = sum(Qty)
 	from TransferIn_Detail t WITH (NOLOCK) 
@@ -361,13 +352,10 @@ select  a.*
         , tmpQty.arqty -tmpQty.aiqqty as [avqty] 
         , [Old_Qty] = a.Qty
 		, [diffQty] = 0.00
-        , [WHCommandReason] = w.Reason
-		, [WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
         , [ori_Balance] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 from main a
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on a.PoId = w.POID
-	and a.Seq1= w.SEQ1 and a.Seq2 = w.SEQ2 and a.Roll = w.Roll and a.Dyelot = w.Dyelot and a.StockType = w.StockType
-    and w.ID = a.Id
 left join FtyInventory f on f.POID = a.Poid and f.Seq1 = a.Seq1 and f.Seq2 = a.Seq2 and f.Roll = a.Roll and f.Dyelot = a.Dyelot and f.StockType = a.StockType
 outer apply(
     select arqty = a.requestqty 
@@ -448,8 +436,8 @@ outer apply(
                 and iss.AutoPickQty <> 0
 				for xml path('')
 			),1,1,''))--14
-        ,[WHCommandReason] = w.Reason
-		,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
 from dbo.Issue_Detail t2 WITH (NOLOCK) 
 inner join dbo.issue t1 WITH (NOLOCK)  on t2.Id = t1.Id
 inner join dbo.Issue_Size t3 WITH (NOLOCK) on t2.ukey = t3.Issue_DetailUkey
@@ -462,9 +450,6 @@ left join dbo.FtyInventory FI on    t2.Poid = Fi.Poid
                                     and t2.roll = fi.roll 
                                     and t2.stocktype = fi.stocktype
                                     and t2.Dyelot = fi.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-    and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where  1=1  
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -488,16 +473,13 @@ select [Selected] = 0 --0
 ,[location] = dbo.Getlocation(Fi.ukey) --6
 , t2.Ukey
 , t2.id
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from dbo.issue_detail t2 WITH (NOLOCK) 
 inner join dbo.Issue t1 WITH (NOLOCK) on t1.id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2 = FI.Seq2 and FI.Dyelot = t2.Dyelot
     and t2.Roll = FI.Roll and FI.stocktype = 'B'   
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and t1.Type='C'
 and t1.Status = 'Confirmed'
@@ -539,8 +521,8 @@ select  [Selected] = 0 --0
 ,dbo.Getlocation(c.ukey) location--12
 , Isnull(c.inqty - c.outqty + c.adjustqty - c.ReturnQty, 0.00) as balance--13
 , t2.Ukey
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from dbo.issue_detail as t2 WITH (NOLOCK) 
 inner join issue t1 WITH (NOLOCK) on t2.Id=t1.Id
 left join Orders o on t2.poid = o.id
@@ -548,9 +530,6 @@ left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2
 left join PO_Supp p WITH (NOLOCK) on p.ID = po3.ID and po3.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = t2.poid and c.seq1 = t2.seq1 and c.seq2  = t2.seq2 
     and c.stocktype = 'B' and c.roll=t2.roll and t2.Dyelot = c.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 Where 1=1
 and t1.Type='D'
 and t1.Status = 'Confirmed'
@@ -769,12 +748,9 @@ SELECt [Selected] = 0 --0
 		, t.ID
 		, t.Ukey
 		, t.Seq1,t.Seq2,t.Roll,t.Dyelot,t.StockType,t.Type
-		,[WHCommandReason] = w.Reason
-		,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
 FROM final t
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t.PoId = w.POID
-	and t.Seq1= w.SEQ1 and t.Seq2 = w.SEQ2 and t.Roll = w.Roll and t.Dyelot = w.Dyelot and t.StockType = w.StockType
-    and w.ID = t.Id
 OUTER APPLY(
 	SELECT [Qty]=ISNULL(( SUM(Fty.InQty - Fty.OutQty + Fty.AdjustQty - Fty.ReturnQty )) ,0)
 	FROM PO_Supp_Detail psd 
@@ -814,16 +790,13 @@ select [Selected] = 0 --0
 ,t2.ukey
 ,t2.FtyInventoryUkey
 ,t1.Type,t1.FabricType
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory f WITH (NOLOCK) on t2.POID=f.POID 
     and t2.Seq1=f.Seq1 and t2.Seq2=f.Seq2 and t2.Roll=f.Roll and t2.Dyelot=f.Dyelot and t2.StockType=f.StockType
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and po3.FabricType='A'
 and t1.Status = 'Confirmed'
@@ -851,8 +824,8 @@ select [Selected] = 0 --0
 , t2.ukey
 , t2.FtyInventoryUkey
 , t2.Remark
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 , [ori_Balance] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
 from dbo.IssueLack_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueLack t1 WITH (NOLOCK) on t1.Id = t2.Id
@@ -864,9 +837,6 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.Roll = f.Roll 
 									and t2.Dyelot = f.Dyelot 
 									and t2.StockType = f.StockType
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and po3.FabricType='F'
 and t1.Status = 'Confirmed'
@@ -894,8 +864,8 @@ select [Selected] = 0 --0
 , location = dbo.Getlocation(f.Ukey) 
 , t2.ukey
 , t2.FtyInventoryUkey
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from dbo.IssueReturn_Detail t2 WITH (NOLOCK) 
 inner join dbo.IssueReturn t1 WITH (NOLOCK) on t1.Id = t2.Id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId 	and po3.seq1 = t2.SEQ1 
@@ -906,9 +876,6 @@ left join FtyInventory f WITH (NOLOCK) on t2.POID = f.POID
 									and t2.Roll = f.Roll 
 									and t2.Dyelot = f.Dyelot 
 									and t2.StockType = f.StockType
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -935,17 +902,14 @@ select [Selected] = 0 --0
 ,t2.ToSeq1
 ,t2.ToSeq2
 ,[ToSeq] = t2.ToSeq1 +' ' + t2.ToSeq2
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 , [ori_Balance] = fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
 from dbo.TransferOut_Detail t2 WITH (NOLOCK) 
 inner join TransferOut t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.POID = FI.POID and t2.Seq1 = FI.Seq1 and t2.Seq2 = FI.Seq2 and t2.Dyelot = FI.Dyelot
     and t2.Roll = FI.Roll and t2.StockType = FI.StockType
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -972,16 +936,13 @@ select [Selected] = 0 --0
 ,t2.ukey
 ,t2.ftyinventoryukey
 ,ColorID =dbo.GetColorMultipleID(po3.BrandId, po3.ColorID)
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from dbo.Adjust_Detail t2 WITH (NOLOCK) 
 inner join dbo.Adjust t1 WITH (NOLOCK) on t1.ID = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and t1.Type = 'B'
 and t1.Status = 'Confirmed'
@@ -1011,16 +972,13 @@ select [Selected] = 0 --0
     ,[location] = Getlocation.Value 
     ,[ColorID] = ColorID.Value
     ,[Description] = dbo.getmtldesc(po3.id,po3.seq1,po3.seq2,2,0)
-    ,[WHCommandReason] = w.Reason
-    ,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
 from dbo.Adjust_Detail t2 WITH (NOLOCK) 
 inner join dbo.Adjust t1 WITH (NOLOCK)  on t1.ID = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 outer apply (
     select   [Value] = stuff((	select ',' + MtlLocationID
 									from (	
@@ -1074,17 +1032,14 @@ t2.ReasonId,
 [reason_nm]=Reason.Name,
 t2.Ukey,
 ColorID =dbo.GetColorMultipleID(PO3.BrandId, PO3.ColorID)
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from Adjust_Detail t2
 inner join Adjust t1 on t2.ID = t1.id
 inner join PO_Supp_Detail PO3 on PO3.ID=t2.POID 
 inner join FtyInventory FTI on FTI.POID=t2.POID and FTI.Seq1=t2.Seq1
 	and FTI.Seq2=t2.Seq2 and FTI.Roll=t2.Roll and FTI.StockType='O'
     and PO3.SEQ1=t2.Seq1 and PO3.SEQ2=t2.Seq2 and FTI.Dyelot = t2.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 outer apply (
 	select Description from Fabric where SCIRefno=PO3.SCIRefno
 ) Fa
@@ -1120,16 +1075,13 @@ select
 	,reason_nm = (select Name FROM Reason WHERE id=ReasonId AND junk = 0 and ReasonTypeID='Stock_Remove')
     ,ColorID =dbo.GetColorMultipleID(po3.BrandId, po3.ColorID)
     ,t2.ukey
-    ,[WHCommandReason] = w.Reason
-    ,[WHCommandRemark] = w.Remark
+    ,[WHCommandReason] = ''
+	,[WHCommandRemark] = ''
 from Adjust_detail t2 WITH (NOLOCK) 
 inner join Adjust t1 WITH (NOLOCK) on t1.ID = t2.ID
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.id = t2.POID and po3.SEQ1 = t2.Seq1 and po3.SEQ2 = t2.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = po3.SCIRefno
 left join FtyInventory fi WITH (NOLOCK) on fi.POID = t2.POID and fi.Seq1 = t2.Seq1 and fi.Seq2 = t2.Seq2 and fi.Roll = t2.Roll and fi.StockType = t2.StockType and fi.Dyelot = t2.Dyelot
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 where 1=1
 and t1.Type = 'R'
 and t1.Status = 'Confirmed'
@@ -1163,8 +1115,8 @@ select [Selected] = 0 --0
 ,t2.ukey
 ,dbo.Getlocation(fi.ukey) location
 ,t1.Type
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 , [ori_Balance_From] = FI.InQty - FI.OutQty + FI.AdjustQty - FI.ReturnQty
 , [ori_Balance_To] = F_To.InQty - F_To.OutQty + F_To.AdjustQty - F_To.ReturnQty
 from dbo.SubTransfer_detail t2 WITH(NOLOCK) 
@@ -1182,9 +1134,6 @@ left join FtyInventory F_To on t2.ToPoid = F_To.poid
                             and t2.ToDyelot = F_To.Dyelot
                             and t2.ToRoll = F_To.roll 
                             and t2.ToStockType = F_To.stocktype
-left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
-	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
-	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='A'
 and t1.Status = 'Confirmed'
@@ -1221,8 +1170,8 @@ select    [Selected] = 0 --0
         , t2.ukey
         , location = dbo.Getlocation (fi.ukey)
         , t1.Type
-        ,[WHCommandReason] = w.Reason
-        ,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
         , [ori_Balance_From] = FI.InQty - FI.OutQty + FI.AdjustQty - FI.ReturnQty
         , [ori_Balance_To] = FI_To.InQty - FI_To.OutQty + FI_To.AdjustQty - FI_To.ReturnQty
 from dbo.SubTransfer_detail t2 WITH (NOLOCK) 
@@ -1242,9 +1191,6 @@ left join FtyInventory FI_To on  t2.ToPoid = FI_To.poid
                              and t2.ToRoll = FI_To.roll 
                              and t2.ToStocktype = FI_To.stocktype
                              and t2.ToDyelot = FI_To.Dyelot
-left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
-	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
-	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type = 'B'
 and t1.Status = 'Confirmed'
@@ -1280,8 +1226,8 @@ select [Selected] = 0 --0
     ,t2.ukey
     ,t2.tolocation
     ,t1.Type
-    ,[WHCommandReason] = w.Reason
-    ,[WHCommandRemark] = w.Remark
+    ,[WHCommandReason] = ''
+    ,[WHCommandRemark] = ''
 	, [ori_Balance_From] = F.InQty - F.OutQty + F.AdjustQty - F.ReturnQty
 	, [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.SubTransfer_Detail t2 WITH (NOLOCK) 
@@ -1299,9 +1245,6 @@ left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID
 										 and t2.ToRoll=f_to.Roll 
 										 and t2.ToDyelot=f_to.Dyelot 
 										 and t2.ToStockType=f_to.StockType
-left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
-	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
-	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type = 'E'
 and t1.Status = 'Confirmed'
@@ -1337,17 +1280,14 @@ select
 ,t2.ToLocation
 ,t2.ukey
 ,t1.Type
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 , [ori_Balance_From] = F.InQty - F.OutQty + F.AdjustQty - F.ReturnQty
 , [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.SubTransfer_Detail t2 WITH (NOLOCK) 
 inner join SubTransfer t1 WITH (NOLOCK) on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.FromPoId and po3.seq1 = t2.FromSeq1 
 and po3.SEQ2 = t2.FromSeq2
-left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
-	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
-	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 left join FtyInventory f WITH (NOLOCK) on t2.FromPOID=f.POID 
 									  and t2.FromSeq1=f.Seq1 
 									  and t2.FromSeq2=f.Seq2 
@@ -1382,16 +1322,13 @@ select [Selected] = 0 --0
 ,dbo.Getlocation(fi.ukey) location
 ,t2.ukey
 ,t2.FtyInventoryUkey
-,[WHCommandReason] = w.Reason
-,[WHCommandRemark] = w.Remark
+,[WHCommandReason] = ''
+,[WHCommandRemark] = ''
 from dbo.ReturnReceipt_Detail t2 WITH (NOLOCK) 
 inner join ReturnReceipt t1 WITH (NOLOCK)  on t1.Id = t2.id
 left join PO_Supp_Detail po3 WITH (NOLOCK) on po3.ID = t2.PoId and po3.seq1 = t2.SEQ1 and po3.SEQ2 = t2.seq2
 left join FtyInventory FI on t2.poid = fi.poid and t2.seq1 = fi.seq1 and t2.seq2 = fi.seq2
     and t2.roll = fi.roll and t2.stocktype = fi.stocktype and t2.Dyelot = fi.Dyelot 
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 Where 1=1
 and t1.Status = 'Confirmed'
 ";
@@ -1431,8 +1368,8 @@ select  [Selected] = 0 --0
                            for xml path(''))
                           , 1, 1, '') 
         ,t2.ToLocation
-        ,[WHCommandReason] = w.Reason
-        ,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
         , [ori_Balance_From] = Fi.InQty - Fi.OutQty + Fi.AdjustQty - Fi.ReturnQty
         , [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.BorrowBack_detail t2 WITH (NOLOCK) 
@@ -1450,9 +1387,6 @@ left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID
 			        	and t2.ToRoll=f_to.Roll 
 			        	and t2.ToDyelot=f_to.Dyelot 
 			        	and t2.ToStockType=f_to.StockType
-left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
-	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
-	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='A'
 and t1.Status = 'Confirmed'
@@ -1488,8 +1422,8 @@ select  [Selected] = 0 --0
         ,t2.ukey
         ,location = dbo.Getlocation(fi.ukey)
         ,t2.ToLocation
-        ,[WHCommandReason] = w.Reason
-        ,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
         , [ori_Balance_From] = Fi.InQty - Fi.OutQty + Fi.AdjustQty - Fi.ReturnQty
         , [ori_Balance_To] = f_to.InQty - f_to.OutQty + f_to.AdjustQty - f_to.ReturnQty
 from dbo.BorrowBack_detail t2 WITH (NOLOCK) 
@@ -1507,9 +1441,6 @@ left join FtyInventory f_to WITH (NOLOCK) on t2.ToPOID=f_to.POID
 			        	and t2.ToRoll=f_to.Roll 
 			        	and t2.ToDyelot=f_to.Dyelot 
 			        	and t2.ToStockType=f_to.StockType
-left join WHCommandReviseRecord_Transfer w WITH (NOLOCK) on w.ID = t2.Id
-	and t2.FromPOID = w.FromPOID and t2.FromSeq1= w.FromSEQ1 and t2.FromSeq2 = w.FromSEQ2 and t2.FromRoll = w.FromRoll and t2.FromDyelot = w.FromDyelot and t2.FromStockType = w.FromStockType
-	and t2.ToPOID = w.ToPOID and t2.ToSeq1 = w.ToSEQ1 and t2.ToSeq2 = w.ToSEQ2 and t2.ToRoll = w.ToRoll and t2.ToDyelot = w.ToDyelot and t2.ToStockType = w.ToDyelot
 Where 1=1
 and t1.Type='B'
 and t1.Status = 'Confirmed'
@@ -1553,16 +1484,13 @@ select  [Selected] = 0 --0
 	, arqty = ec.RequestQty + AccuReq.ReqQty
 	, aiqqty = AccuIssue.aiqqty
 	, avqty = (ec.RequestQty + AccuReq.ReqQty) - AccuIssue.aiqqty	
-    ,[WHCommandReason] = w.Reason
-    ,[WHCommandRemark] = w.Remark
+        ,[WHCommandReason] = ''
+		,[WHCommandRemark] = ''
     , [ori_Balance] = ft.InQty - ft.OutQty + ft.AdjustQty - ft.ReturnQty
 from dbo.Issue_Summary s WITH (NOLOCK) 
 left join Issue_Detail t2 WITH (NOLOCK) on t2.Id = s.Id and t2.Issue_SummaryUkey = s.Ukey
 inner join issue t1 WITH (NOLOCK) on t1.Id = s.Id
 left join Fabric f on s.SciRefno = f.SciRefno
-left join WHCommandReviseRecord_InOutAdjRet w WITH (NOLOCK) on t2.PoId = w.POID
-	and t2.Seq1= w.SEQ1 and t2.Seq2 = w.SEQ2 and t2.Roll = w.Roll and t2.Dyelot = w.Dyelot and t2.StockType = w.StockType
-    and w.ID = t2.Id
 left join FtyInventory ft WITH (NOLOCK) on ft.POID = t2.POID and ft.Seq1=t2.Seq1 and ft.Seq2 = t2.Seq2
 	and ft.Roll = t2.Roll and ft.Dyelot = t2.Dyelot and ft.StockType = t2.StockType
 outer apply(
@@ -3667,7 +3595,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                         break;
                 }
 
-                this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
+                //this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
