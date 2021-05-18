@@ -167,8 +167,8 @@ namespace Sci.Production.Warehouse
                 return false;
             }
 
-            // 檢查物料不能有WMS Location
-            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) || !MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            // 檢查物料不能有WMS Location && IsFromWMS = 0
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
             {
                 MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
                 return false;
@@ -378,8 +378,8 @@ and ID = '{Sci.Env.User.UserID}'"))
             string sqlcmd = string.Empty, sqlupd3 = string.Empty, ids = string.Empty;
             DualResult result, result2;
 
-            #region 檢查物料不能有WMS Location
-            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) || !MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            #region 檢查物料不能有WMS Location && IsFromWMS = 0
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
             {
                 MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
                 return;

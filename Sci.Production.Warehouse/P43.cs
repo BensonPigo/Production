@@ -141,8 +141,8 @@ Original Qty and Current Qty can't be equal!!",
                 return false;
             }
 
-            // 檢查物料不能有WMS Location
-            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) || !MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+            // 檢查物料不能有WMS Location && IsFromWMS = 0
+            if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
             {
                 MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
                 return false;
@@ -431,7 +431,7 @@ and ReasonTypeID='Stock_Adjust' AND junk = 0", e.FormattedValue), out dr, null))
             DualResult result, result2;
             DataTable datacheck;
 
-            #region 檢查物料不能有WMS Location
+            #region 檢查物料不能有WMS Location && IsFromWMS = 0
             if (!PublicPrg.Prgs.Chk_WMS_Location_Adj((DataTable)this.detailgridbs.DataSource) && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
             {
                 MyUtility.Msg.WarningBox("Material Location or Adjust is from WMS system cannot save or confirmed. ", "Warning");
