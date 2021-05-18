@@ -1045,6 +1045,12 @@ drop table #tmpFinal_step1
                     this.printData.Columns.Remove("Alias");
                     this.printData.Columns.Remove("CRDDate");
                     this.printData.Columns.Remove("CustPONo");
+                    if (this.type == "SP#")
+                    {
+                        this.printData.Columns.Remove("PRINTING (PCS)");
+                        this.printData.Columns.Remove("PRINTING PPU (PPU)");
+                        this.printData.Columns.Remove("SubCon");
+                    }
 
                     objApp = null;
                     worksheet = null;
@@ -1129,6 +1135,10 @@ where id = '{0}'", Env.User.Factory), null);
                     if (this.type == "SP#")
                     {
                         worksheet.get_Range("H:H").EntireColumn.Delete();
+                    }
+                    else
+                    {
+                        worksheet.get_Range("AR:AT").EntireColumn.Delete();
                     }
 
                     #region Save & Show Excel
