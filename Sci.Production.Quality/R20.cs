@@ -116,12 +116,12 @@ namespace Sci.Production.Quality
             string d1 = string.Empty, d2 = string.Empty;
             if (!MyUtility.Check.Empty(this.Period1))
             {
-                d1 = Convert.ToDateTime(this.Period1).ToString("d");
+                d1 = Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd");
             }
 
             if (!MyUtility.Check.Empty(this.Period2))
             {
-                d2 = Convert.ToDateTime(this.Period2).ToString("d");
+                d2 = Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd");
             }
 
             #region radiobtn_PerLine
@@ -132,12 +132,12 @@ namespace Sci.Production.Quality
                   #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 sqlWhere = string.Join(" and ", sqlList);
@@ -186,12 +186,12 @@ WHERE 1=1 AND A.InspectQty<>0
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))
@@ -266,12 +266,12 @@ EXEC sp_executesql @sql
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlList.Add(string.Format(" CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlList.Add(string.Format(" CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 sqlWhere = string.Join(" and ", sqlList);
@@ -325,12 +325,12 @@ WHERE 1=1 AND A.InspectQty<>0
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= ''{0}'' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= ''{0}'' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))
@@ -432,12 +432,12 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))
@@ -518,12 +518,12 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))
@@ -580,12 +580,12 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))
@@ -692,12 +692,12 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))
@@ -801,12 +801,12 @@ WHERE 1=1
                 #region Append畫面上的條件
                 if (!MyUtility.Check.Empty(this.Period1))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate >= '{0}' ", Convert.ToDateTime(this.Period1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Period2))
                 {
-                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and A.CDate <= '{0}' ", Convert.ToDateTime(this.Period2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.Factory))

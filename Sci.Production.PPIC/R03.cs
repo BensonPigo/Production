@@ -361,35 +361,35 @@ with tmpOrders as (
             {
                 if (!MyUtility.Check.Empty(this.buyerDlv1))
                 {
-                    sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.buyerDlv2))
                 {
-                    sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("yyyy/MM/dd")));
                 }
             }
             else
             {
                 if (!MyUtility.Check.Empty(this.buyerDlv1))
                 {
-                    sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.buyerDlv2))
                 {
-                    sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("yyyy/MM/dd")));
                 }
             }
 
             if (!MyUtility.Check.Empty(this.sciDlv1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDlv2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.cutoff1) || !MyUtility.Check.Empty(this.cutoff2))
@@ -397,12 +397,12 @@ with tmpOrders as (
                 sqlCmd.Append("and o.id in (select id from Order_QtyShip oq2 WITH (NOLOCK) where 1=1");
                 if (!MyUtility.Check.Empty(this.cutoff1))
                 {
-                    sqlCmd.Append(string.Format(" and oq2.SDPDate >= '{0}'", Convert.ToDateTime(this.cutoff1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and oq2.SDPDate >= '{0}'", Convert.ToDateTime(this.cutoff1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.cutoff2))
                 {
-                    sqlCmd.Append(string.Format(" and oq2.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoff2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and oq2.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoff2).ToString("yyyy/MM/dd")));
                 }
 
                 sqlCmd.Append(")");
@@ -410,32 +410,32 @@ with tmpOrders as (
 
             if (!MyUtility.Check.Empty(this.custRQS1))
             {
-                sqlCmd.Append(string.Format(" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.custRQS1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.custRQS1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.custRQS2))
             {
-                sqlCmd.Append(string.Format(" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.custRQS2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.custRQS2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.planDate1))
             {
-                sqlCmd.Append(string.Format(" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.planDate2))
             {
-                sqlCmd.Append(string.Format(" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.orderCfm1))
             {
-                sqlCmd.Append(string.Format(" and o.CFMDate >= '{0}'", Convert.ToDateTime(this.orderCfm1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CFMDate >= '{0}'", Convert.ToDateTime(this.orderCfm1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.orderCfm2))
             {
-                sqlCmd.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(this.orderCfm2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(this.orderCfm2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sp1))
@@ -1476,22 +1476,22 @@ OrderID as(
 
                         if (!MyUtility.Check.Empty(this.buyerDlv1))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.buyerDlv2))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.sciDlv1))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.sciDlv2))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.cutoff1) || !MyUtility.Check.Empty(this.cutoff2))
@@ -1499,12 +1499,12 @@ OrderID as(
                             sqlCmd.Append("and o.id in (select id from Order_QtyShip oq2 WITH (NOLOCK) where 1=1");
                             if (!MyUtility.Check.Empty(this.cutoff1))
                             {
-                                sqlCmd.Append(string.Format(" and oq2.SDPDate >= '{0}'", Convert.ToDateTime(this.cutoff1).ToString("d")));
+                                sqlCmd.Append(string.Format(" and oq2.SDPDate >= '{0}'", Convert.ToDateTime(this.cutoff1).ToString("yyyy/MM/dd")));
                             }
 
                             if (!MyUtility.Check.Empty(this.cutoff2))
                             {
-                                sqlCmd.Append(string.Format(" and oq2.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoff2).ToString("d")));
+                                sqlCmd.Append(string.Format(" and oq2.SDPDate <= '{0}'", Convert.ToDateTime(this.cutoff2).ToString("yyyy/MM/dd")));
                             }
 
                             sqlCmd.Append(")");
@@ -1512,32 +1512,32 @@ OrderID as(
 
                         if (!MyUtility.Check.Empty(this.custRQS1))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.custRQS1).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.CRDDate >= '{0}'", Convert.ToDateTime(this.custRQS1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.custRQS2))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.custRQS2).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.CRDDate <= '{0}'", Convert.ToDateTime(this.custRQS2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.planDate1))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.PlanDate >= '{0}'", Convert.ToDateTime(this.planDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.planDate2))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.PlanDate <= '{0}'", Convert.ToDateTime(this.planDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.orderCfm1))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.CFMDate >= '{0}'", Convert.ToDateTime(this.orderCfm1).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.CFMDate >= '{0}'", Convert.ToDateTime(this.orderCfm1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.orderCfm2))
                         {
-                            sqlcmd_sub.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(this.orderCfm2).ToString("d")));
+                            sqlcmd_sub.Append(string.Format(" and o.CFMDate <= '{0}'", Convert.ToDateTime(this.orderCfm2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.style))

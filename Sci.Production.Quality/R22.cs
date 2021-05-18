@@ -72,12 +72,12 @@ namespace Sci.Production.Quality
             string d1 = string.Empty, d2 = string.Empty;
             if (!MyUtility.Check.Empty(this.AuditDate1))
             {
-                d1 = Convert.ToDateTime(this.AuditDate1).ToString("d");
+                d1 = Convert.ToDateTime(this.AuditDate1).ToString("yyyy/MM/dd");
             }
 
             if (!MyUtility.Check.Empty(this.AuditDate2))
             {
-                d2 = Convert.ToDateTime(this.AuditDate2).ToString("d");
+                d2 = Convert.ToDateTime(this.AuditDate2).ToString("yyyy/MM/dd");
             }
 
             #region radioPerBrand
@@ -775,12 +775,12 @@ IF OBJECT_ID('tempdb.dbo.#ALL', 'U') IS NOT NULL
             string d1 = string.Empty, d2 = string.Empty;
             if (!MyUtility.Check.Empty(this.AuditDate1))
             {
-                d1 = Convert.ToDateTime(this.AuditDate1).ToString("d");
+                d1 = Convert.ToDateTime(this.AuditDate1).ToString("yyyy/MM/dd");
             }
 
             if (!MyUtility.Check.Empty(this.AuditDate1))
             {
-                d2 = Convert.ToDateTime(this.AuditDate1).ToString("d");
+                d2 = Convert.ToDateTime(this.AuditDate1).ToString("yyyy/MM/dd");
             }
 
             // 顯示筆數於PrintForm上Count欄位

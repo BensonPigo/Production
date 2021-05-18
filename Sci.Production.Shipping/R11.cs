@@ -236,18 +236,18 @@ as (
                             @"
 and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
 ",
-                            Convert.ToDateTime(this.date1).ToString("d"),
-                            Convert.ToDateTime(this.date2).ToString("d")));
+                            Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd"),
+                            Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -320,12 +320,12 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -430,22 +430,22 @@ as (
 			    where InvNo = g.ID)");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -553,12 +553,12 @@ PLData as (
 		  		where InvNo = p.ID)");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -675,18 +675,18 @@ as (
                             @"
 and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.PulloutDate >= '{0}' and p.PulloutDate <= '{1}')
 ",
-                            Convert.ToDateTime(this.date1).ToString("d"),
-                            Convert.ToDateTime(this.date2).ToString("d")));
+                            Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd"),
+                            Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -764,12 +764,12 @@ and exists(select 1 from PackingList p WITH (NOLOCK) where INVNo = g.ID and p.Pu
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -854,12 +854,12 @@ with ExportData as (
 	where e.Junk = 0");
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and e.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and e.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dest))
@@ -903,12 +903,12 @@ FtyExportData as (
 				where WKNo = f.ID)");
                 if (!MyUtility.Check.Empty(this.date1))
                 {
-                    sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.date2))
                 {
-                    sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dest))

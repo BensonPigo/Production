@@ -148,18 +148,18 @@ namespace Sci.Production.Subcon
                     {
                         sqlFilter1.Add(string.Format(
                             @"LP.apvdate is not null and LP.issuedate between '{0}' and '{1}'",
-                            Convert.ToDateTime(this.IssueDate1).ToString("d"), Convert.ToDateTime(this.IssueDate2).ToString("d")));
+                            Convert.ToDateTime(this.IssueDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.IssueDate2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.IssueDate1))
                         {
-                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and LP.issuedate >= '{0}' ", Convert.ToDateTime(this.IssueDate1).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and LP.issuedate >= '{0}' ", Convert.ToDateTime(this.IssueDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.IssueDate2))
                         {
-                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and  LP.issuedate <= '{0}' ", Convert.ToDateTime(this.IssueDate2).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and  LP.issuedate <= '{0}' ", Convert.ToDateTime(this.IssueDate2).ToString("yyyy/MM/dd")));
                         }
                     }
 
@@ -167,18 +167,18 @@ namespace Sci.Production.Subcon
                     {
                         sqlFilter1.Add(string.Format(
                             @"LP.apvdate is not null and o.SciDelivery between '{0}' and '{1}'",
-                            Convert.ToDateTime(this.SciDelivery1).ToString("d"), Convert.ToDateTime(this.SciDelivery2).ToString("d")));
+                            Convert.ToDateTime(this.SciDelivery1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.SciDelivery2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.SciDelivery1))
                         {
-                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery >= '{0}' ", Convert.ToDateTime(this.SciDelivery1).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery >= '{0}' ", Convert.ToDateTime(this.SciDelivery1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.SciDelivery2))
                         {
-                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery <= '{0}' ", Convert.ToDateTime(this.SciDelivery2).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"LP.apvdate is not null and o.SciDelivery <= '{0}' ", Convert.ToDateTime(this.SciDelivery2).ToString("yyyy/MM/dd")));
                         }
                     }
 
@@ -193,18 +193,18 @@ namespace Sci.Production.Subcon
                     {
                         sqlFilter1.Add(string.Format(
                             @"(LP.issuedate between '{0}' and '{1}')",
-                            Convert.ToDateTime(this.IssueDate1).ToString("d"), Convert.ToDateTime(this.IssueDate2).ToString("d")));
+                            Convert.ToDateTime(this.IssueDate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.IssueDate2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.IssueDate1))
                         {
-                            sqlFilter1.Add(string.Format(@"(LP.issuedate >= '{0}') ", Convert.ToDateTime(this.IssueDate1).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"(LP.issuedate >= '{0}') ", Convert.ToDateTime(this.IssueDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.IssueDate2))
                         {
-                            sqlFilter1.Add(string.Format(@"(LP.issuedate <= '{0}') ", Convert.ToDateTime(this.IssueDate2).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"(LP.issuedate <= '{0}') ", Convert.ToDateTime(this.IssueDate2).ToString("yyyy/MM/dd")));
                         }
                     }
 
@@ -212,18 +212,18 @@ namespace Sci.Production.Subcon
                     {
                         sqlFilter1.Add(string.Format(
                             @"(o.SciDelivery between '{0}' and '{1}')",
-                            Convert.ToDateTime(this.SciDelivery1).ToString("d"), Convert.ToDateTime(this.SciDelivery2).ToString("d")));
+                            Convert.ToDateTime(this.SciDelivery1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.SciDelivery2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.SciDelivery1))
                         {
-                            sqlFilter1.Add(string.Format(@"(o.SciDelivery >= '{0}') ", Convert.ToDateTime(this.SciDelivery1).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"(o.SciDelivery >= '{0}') ", Convert.ToDateTime(this.SciDelivery1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.SciDelivery2))
                         {
-                            sqlFilter1.Add(string.Format(@"(o.SciDelivery <= '{0}') ", Convert.ToDateTime(this.SciDelivery2).ToString("d")));
+                            sqlFilter1.Add(string.Format(@"(o.SciDelivery <= '{0}') ", Convert.ToDateTime(this.SciDelivery2).ToString("yyyy/MM/dd")));
                         }
                     }
 

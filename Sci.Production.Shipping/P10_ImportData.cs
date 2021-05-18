@@ -131,19 +131,19 @@ WHERE  g.shipplanid = ''
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateCutoffDate.Value))
             {
                 // 20161126 撈取DateBox1用法怪怪的
-                // sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateRange1.Value1).ToString("d"), (Convert.ToDateTime(dateRange1.Value1).AddDays(1)).ToString("d")));
-                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(this.dateCutoffDate.Value).ToString("d"), Convert.ToDateTime(this.dateCutoffDate.Value).AddDays(1).ToString("d")));
+                // sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(dateRange1.Value1).ToString("yyyy/MM/dd"), (Convert.ToDateTime(dateRange1.Value1).AddDays(1)).ToString("yyyy/MM/dd")));
+                sqlCmd.Append(string.Format(" and g.CutOffDate >= '{0}' and g.CutOffDate < '{1}'", Convert.ToDateTime(this.dateCutoffDate.Value).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.dateCutoffDate.Value).AddDays(1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtshipmode.SelectedValue))
@@ -228,9 +228,9 @@ where p.INVNo in ({0})
                     @"GB#:{0}~{1}, Buyer Delivery:{2}~{3}, Cut-off Date:{4}, Ship Mode:{5}, Brand:{6}, Forwarder:{7}, SP#:{8}",
                     MyUtility.Check.Empty(this.txtGBNoStart.Text) ? " " : this.txtGBNoStart.Text,
                     MyUtility.Check.Empty(this.txtGBNoEnd.Text) ? " " : this.txtGBNoEnd.Text,
-                    MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) ? " " : Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d"),
-                    MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) ? " " : Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d"),
-                    MyUtility.Check.Empty(this.dateCutoffDate.Value) ? " " : Convert.ToDateTime(this.dateCutoffDate.Value).ToString("d"),
+                    MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) ? " " : Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd"),
+                    MyUtility.Check.Empty(this.dateBuyerDelivery.Value2) ? " " : Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd"),
+                    MyUtility.Check.Empty(this.dateCutoffDate.Value) ? " " : Convert.ToDateTime(this.dateCutoffDate.Value).ToString("yyyy/MM/dd"),
                     MyUtility.Check.Empty(this.txtshipmode.SelectedValue) ? " " : this.txtshipmode.SelectedValue.ToString(),
                     MyUtility.Check.Empty(this.txtbrand.Text) ? " " : this.txtbrand.Text,
                     MyUtility.Check.Empty(this.txtSubconForwarder.TextBox1.Text) ? " " : this.txtSubconForwarder.TextBox1.Text,

@@ -86,12 +86,12 @@ with GB as
 
                 if (!MyUtility.Check.Empty(this.dateFCRDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateFCRDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}' ", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.txtCountryDestination.TextBox1.Text))
@@ -121,12 +121,12 @@ with GB as
 
                 if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.datePulloutDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("yyyy/MM/dd")));
                 }
 
                 sqlCmd.Append("), ");
@@ -191,12 +191,12 @@ where ");
 
                 if (!MyUtility.Check.Empty(this.datePulloutDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PulloutDate >= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.datePulloutDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and PulloutDate <= '{0}' ", Convert.ToDateTime(this.datePulloutDate.Value2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.txtShipmode.SelectedValue))

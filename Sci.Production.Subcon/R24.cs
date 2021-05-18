@@ -177,18 +177,18 @@ where c.Classify='P' {whereIncludeCancelOrder}
                     {
                         sqlCmd.Append(string.Format(
                             @" and a.apvdate is not null and a.issuedate between '{0}' and '{1}'",
-                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
+                            Convert.ToDateTime(this.APdate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.APdate2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.APdate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.APdate2).ToString("yyyy/MM/dd")));
                         }
                     }
 
@@ -203,18 +203,18 @@ where c.Classify='P' {whereIncludeCancelOrder}
                     {
                         sqlCmd.Append(string.Format(
                             @" and (a.issuedate between '{0}' and '{1}')",
-                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
+                            Convert.ToDateTime(this.APdate1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.APdate2).ToString("yyyy/MM/dd")));
                     }
                     else
                     {
                         if (!MyUtility.Check.Empty(this.APdate1))
                         {
-                            sqlCmd.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(this.APdate1).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(this.APdate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.APdate2))
                         {
-                            sqlCmd.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(this.APdate2).ToString("d")));
+                            sqlCmd.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(this.APdate2).ToString("yyyy/MM/dd")));
                         }
                     }
 

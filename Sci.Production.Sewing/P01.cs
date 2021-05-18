@@ -988,7 +988,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
             string checkDQSexists = $@"
 select 1
 from inspection ins WITH (NOLOCK)
-where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
@@ -1005,7 +1005,7 @@ and SunriseNid = 0
             checkDQSexists = $@"
 select 1
 from inspection ins WITH (NOLOCK)
-where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
@@ -1464,7 +1464,7 @@ order by a.OrderId,os.Seq",
             #endregion
 
             #region 檢查資料是否已存在
-            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and SubConOutContractNumber ='{7}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and SubConOutContractNumber ='{7}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))))
             {
                 MyUtility.Msg.WarningBox(string.Format(
                     "Date:{0}, Line:{1}, Shift:{2}, Team:{3},SubconOutFty:{4},SubConOutContractNumber:{5} already exist, can't save!!",
@@ -3079,7 +3079,7 @@ where OutputDate != convert(date,GETDATE())"));
                     ,Category
                 from SewingOutput
                 where 1=1
-                    and OutputDate = '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'
+                    and OutputDate = '{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")}'
                     and Status in('','NEW')
                     and FactoryID = '{Env.User.Factory}'
             ";
@@ -3087,11 +3087,11 @@ where OutputDate != convert(date,GETDATE())"));
             {
                 if (string.Compare(drData["Category"].ToString(), "M") == 0)
                 {
-                    MyUtility.Msg.WarningBox($@"<OutputDate>: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} does not daily lock in Sewing P02");
+                    MyUtility.Msg.WarningBox($@"<OutputDate>: {Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")} does not daily lock in Sewing P02");
                 }
                 else if (string.Compare(drData["Category"].ToString(), "O") == 0)
                 {
-                    MyUtility.Msg.WarningBox($@"<OutputDate>: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} does not daily lock in Sewing P01");
+                    MyUtility.Msg.WarningBox($@"<OutputDate>: {Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")} does not daily lock in Sewing P01");
                 }
 
                 return;
@@ -3162,7 +3162,7 @@ Outer apply (
 where s.OutputDate = '{0}'
 	  and s.FactoryID = '{1}'
       and (o.CateGory NOT IN ('G','A') or s.Category='M')  ",
-                Convert.ToDateTime(dateMaxOutputDate).ToString("d"),
+                Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd"),
                 Env.User.Factory));
 
             sqlCmd.Append(@"
@@ -3919,7 +3919,7 @@ order by ArtworkTypeID"),
 
             #region 產生R04 報表
             DataTable dtR04;
-            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("d")}'";
+            string sqlcmd = $"exec [dbo].[Send_SewingDailyOutput] '{Env.User.Factory}', '{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")}'";
             result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtR04);
             if (!result)
             {
@@ -3962,7 +3962,7 @@ order by ArtworkTypeID"),
                 {
                     string desc = $@"
 Hi all,
-     Output date: {Convert.ToDateTime(dateMaxOutputDate).ToString("d")} Factory: {Env.User.Factory} sewing output data is already daily lock, these attachments are system generated from Sewing R01(Daily CMP Report) and Sewing R04(Sewing Daily Output List). This mail is automatically sent, please do not reply directly.
+     Output date: {Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")} Factory: {Env.User.Factory} sewing output data is already daily lock, these attachments are system generated from Sewing R01(Daily CMP Report) and Sewing R04(Sewing Daily Output List). This mail is automatically sent, please do not reply directly.
       
 ";
                     if (MyUtility.Check.Seek("select * from mailto where id='020'", out drMail))
@@ -3971,7 +3971,7 @@ Hi all,
                         attachFiles.Add(excelFileR01);
                         attachFiles.Add(excelFileR04);
 
-                        string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("d")} ({Env.User.Factory})";
+                        string subject = drMail["Subject"].ToString() + $@"{Convert.ToDateTime(dateMaxOutputDate).ToString("yyyy/MM/dd")} ({Env.User.Factory})";
                         MailTo mail = new MailTo(dr["SendFrom"].ToString(), drMail["ToAddress"].ToString(), drMail["ccAddress"].ToString(), subject, desc, attachFiles, true, true);
                         mail.ShowDialog();
                     }
@@ -4000,7 +4000,7 @@ select
 	, [ImportFromDQS] = 1
 	, [AutoCreate] = 0
 from inspection ins WITH (NOLOCK)
-where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
@@ -4088,7 +4088,7 @@ select
 	, [QAQty] = sum(iif(ins.Status in ('Pass','Fixed'),1,0))
     , [ExistsSunriseNid] = sum(iif(ins.SunriseNid = 0,0,1))
 from inspection ins WITH (NOLOCK)
-where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 and FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 and Line = '{this.CurrentMaintain["SewingLineID"]}'
 and Team = '{this.CurrentMaintain["Team"]}'
@@ -4357,7 +4357,7 @@ order by a.OrderId,os.Seq
 
             string rftfrommes = $@"
 select t.OrderId
-	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
 	, FactoryID = '{this.CurrentMaintain["FactoryID"]}'
 	, InspectQty= t.InlineQty - DiffInspectQty.Qty
@@ -4374,7 +4374,7 @@ outer apply(
 	select Qty=count(*)
 	from Inspection ins with (nolock)
     inner join Inspection_Detail id with(nolock) on ins.id = id.id
-	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
            and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
            and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
            and ins.Team = '{this.CurrentMaintain["Team"]}'
@@ -4389,7 +4389,7 @@ outer apply(
     -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
     select Qty=count(*)
 	from Inspection ins with (nolock)
-	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
            and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
            and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
            and ins.Team = '{this.CurrentMaintain["Team"]}'
@@ -4404,7 +4404,7 @@ outer apply(
     -- 最後計算RFT 排除Fixed，但若同一天被Reject又被修好這時候也要抓進來並算reject。
     select Qty=count(*)
 	from Inspection ins with (nolock)
-	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("d")}'
+	where InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
            and ins.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
            and ins.Line = '{this.CurrentMaintain["SewingLineID"]}'
            and ins.Team = '{this.CurrentMaintain["Team"]}'

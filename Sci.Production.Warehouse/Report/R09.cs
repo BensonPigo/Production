@@ -122,12 +122,12 @@ namespace Sci.Production.Warehouse
             string whereStart = string.Empty;
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                whereStart += "and" + string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("d"));
+                whereStart += "and" + string.Format(" '{0}' <= o.BuyerDelivery ", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd"));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                whereStart += "and" + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d"));
+                whereStart += "and" + string.Format(" o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd"));
             }
 
             if (!MyUtility.Check.Empty(this.deadline1) || !MyUtility.Check.Empty(this.deadline2))
@@ -135,12 +135,12 @@ namespace Sci.Production.Warehouse
                 whereStart += " and exists(select 1 from Inventory inv with (nolock) where inv.POID = o.POID ";
                 if (!MyUtility.Check.Empty(this.deadline1))
                 {
-                    whereStart += string.Format(@" and '{0}' <= inv.deadline", Convert.ToDateTime(this.deadline1).ToString("d"));
+                    whereStart += string.Format(@" and '{0}' <= inv.deadline", Convert.ToDateTime(this.deadline1).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.deadline2))
                 {
-                    whereStart += string.Format(@" and inv.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("d"));
+                    whereStart += string.Format(@" and inv.deadline <= '{0}'", Convert.ToDateTime(this.deadline2).ToString("yyyy/MM/dd"));
                 }
 
                 whereStart += ")";
@@ -189,12 +189,12 @@ namespace Sci.Production.Warehouse
             {
                 if (!MyUtility.Check.Empty(this.eta1))
                 {
-                    whereFinal += string.Format(@" and '{0}' <= psd.ShipEta", Convert.ToDateTime(this.eta1).ToString("d"));
+                    whereFinal += string.Format(@" and '{0}' <= psd.ShipEta", Convert.ToDateTime(this.eta1).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.eta2))
                 {
-                    whereFinal += string.Format(@" and psd.ShipEta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("d"));
+                    whereFinal += string.Format(@" and psd.ShipEta <= '{0}'", Convert.ToDateTime(this.eta2).ToString("yyyy/MM/dd"));
                 }
             }
 

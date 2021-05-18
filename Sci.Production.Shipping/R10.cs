@@ -204,42 +204,42 @@ as (
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.date2))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate1))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate2))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.onBoardDate1))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.onBoardDate2))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate1))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate2))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.brand))
@@ -313,32 +313,32 @@ tmpPL as
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.date2))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate1))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate2))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate1))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate2))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.brand))
@@ -422,42 +422,42 @@ as (
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.date2))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate1))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate2))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.onBoardDate1))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.onBoardDate2))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate1))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate2))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.brand))
@@ -539,32 +539,32 @@ tmpPL as
 ");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.date2))
                         {
-                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate1))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.apApvDate2))
                         {
-                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate1))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.voucherDate2))
                         {
-                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                            sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                         }
 
                         if (!MyUtility.Check.Empty(this.brand))
@@ -1044,42 +1044,42 @@ with tmpGB as (
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -1192,32 +1192,32 @@ tmpPL as
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -1291,42 +1291,42 @@ where se.Junk = 0");
 
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -1576,32 +1576,32 @@ as (
                     #region 組條件
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))
@@ -1710,32 +1710,32 @@ left join SciFMS_AccountNo a on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))
@@ -2333,42 +2333,42 @@ as (
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.onBoardDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -2444,32 +2444,32 @@ tmpPL as
 ");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -2748,32 +2748,32 @@ as (
                     #region 組條件
                     if (!MyUtility.Check.Empty(this.date1))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival >= '{0}'", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.date2))
                     {
-                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and f.PortArrival <= '{0}'", Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate1))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) >= '{0}'", Convert.ToDateTime(this.apApvDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
-                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate1))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate >= '{0}'", Convert.ToDateTime(this.voucherDate1).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.voucherDate2))
                     {
-                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("d")));
+                        sqlCmd.Append(string.Format(" and s.VoucherDate <= '{0}'", Convert.ToDateTime(this.voucherDate2).ToString("yyyy/MM/dd")));
                     }
 
                     if (!MyUtility.Check.Empty(this.dest))

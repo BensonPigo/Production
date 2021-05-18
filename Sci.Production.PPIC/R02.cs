@@ -97,32 +97,32 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.sciDate1))
             {
-                sqlCmd.Append(string.Format(@" and sp.SCIDelivery >= '{0}'", Convert.ToDateTime(this.sciDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.SCIDelivery >= '{0}'", Convert.ToDateTime(this.sciDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDate2))
             {
-                sqlCmd.Append(string.Format(@" and sp.SCIDelivery <= '{0}'", Convert.ToDateTime(this.sciDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.SCIDelivery <= '{0}'", Convert.ToDateTime(this.sciDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.prodiveDate1))
             {
-                sqlCmd.Append(string.Format(@" and sp.ProvideDate >= '{0}'", Convert.ToDateTime(this.prodiveDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.ProvideDate >= '{0}'", Convert.ToDateTime(this.prodiveDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.prodiveDate2))
             {
-                sqlCmd.Append(string.Format(@" and sp.ProvideDate <= '{0}'", Convert.ToDateTime(this.prodiveDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.ProvideDate <= '{0}'", Convert.ToDateTime(this.prodiveDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.rcvDate1))
             {
-                sqlCmd.Append(string.Format(@" and sp.ReceiveDate >= '{0}'", Convert.ToDateTime(this.rcvDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.ReceiveDate >= '{0}'", Convert.ToDateTime(this.rcvDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.rcvDate2))
             {
-                sqlCmd.Append(string.Format(@" and sp.ReceiveDate <= '{0}'", Convert.ToDateTime(this.rcvDate2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and sp.ReceiveDate <= '{0}'", Convert.ToDateTime(this.rcvDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))

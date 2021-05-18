@@ -1793,7 +1793,7 @@ update Express set Status = 'Approved', StatusUpdateDate = GETDATE(), EditName =
                 Env.User.UserID,
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
-            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("d") + "'";
+            string shipDate = MyUtility.Check.Empty(this.CurrentMaintain["ShipDate"]) ? "NULL" : "'" + ((DateTime)this.CurrentMaintain["ShipDate"]).ToString("yyyy/MM/dd") + "'";
             updateCmd += $" update PackingList set PulloutDate = {shipDate} where ExpressID = '{this.CurrentMaintain["ID"]}' and type = 'F'";
 
             result = DBProxy.Current.Execute(null, updateCmd);

@@ -116,12 +116,12 @@ Where b.Qty - b.InQty >0
 
             if (!MyUtility.Check.Empty(issueDate1))
             {
-                strSQLCmd += $@" and a.issuedate between '{Convert.ToDateTime(issueDate1).ToString("d")}' and '{Convert.ToDateTime(issueDate2).ToString("d")}'";
+                strSQLCmd += $@" and a.issuedate between '{Convert.ToDateTime(issueDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(issueDate2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(deliveryDate1))
             {
-                strSQLCmd += $@" and o.BuyerDelivery between '{Convert.ToDateTime(deliveryDate1).ToString("d")}' and '{Convert.ToDateTime(deliveryDate2).ToString("d")}'";
+                strSQLCmd += $@" and o.BuyerDelivery between '{Convert.ToDateTime(deliveryDate1).ToString("yyyy/MM/dd")}' and '{Convert.ToDateTime(deliveryDate2).ToString("yyyy/MM/dd")}'";
             }
 
             if (!MyUtility.Check.Empty(spno1))

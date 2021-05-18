@@ -98,7 +98,7 @@ namespace Sci.Production.PPIC
                 DataRow currentData = this.CurrentMaintain;
                 this.ReloadDatas();
                 IList<DataRow> list = this.DataRows.ToList();
-                DataRow dr = list.FirstOrDefault(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("d") == Convert.ToDateTime(currentData["Date"]).ToString("d") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
+                DataRow dr = list.FirstOrDefault(x => x["FactoryID"].ToString() == currentData["FactoryID"].ToString() && Convert.ToDateTime(x["Date"]).ToString("yyyy/MM/dd") == Convert.ToDateTime(currentData["Date"]).ToString("yyyy/MM/dd") && x["SewingLineID"].ToString() == currentData["SewingLineID"].ToString());
                 if (dr != null)
                 {
                     int pos = list.IndexOf(dr);

@@ -91,8 +91,8 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.datekPIETA.Value1))
             {
-                this.KPIETA1 = ((DateTime)this.datekPIETA.Value1).ToString("d");
-                this.KPIETA2 = ((DateTime)this.datekPIETA.Value2).ToString("d");
+                this.KPIETA1 = ((DateTime)this.datekPIETA.Value1).ToString("yyyy/MM/dd");
+                this.KPIETA2 = ((DateTime)this.datekPIETA.Value2).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -102,8 +102,8 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.dateWhseArrival.Value1))
             {
-                this.WhseArrival1 = ((DateTime)this.dateWhseArrival.Value1).ToString("d");
-                this.WhseArrival2 = ((DateTime)this.dateWhseArrival.Value2).ToString("d");
+                this.WhseArrival1 = ((DateTime)this.dateWhseArrival.Value1).ToString("yyyy/MM/dd");
+                this.WhseArrival2 = ((DateTime)this.dateWhseArrival.Value2).ToString("yyyy/MM/dd");
             }
             else
             {
@@ -113,8 +113,8 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.dateETA.Value1))
             {
-                this.ETA1 = ((DateTime)this.dateETA.Value1).ToString("d");
-                this.ETA2 = ((DateTime)this.dateETA.Value2).ToString("d");
+                this.ETA1 = ((DateTime)this.dateETA.Value1).ToString("yyyy/MM/dd");
+                this.ETA2 = ((DateTime)this.dateETA.Value2).ToString("yyyy/MM/dd");
             }
             else
             {

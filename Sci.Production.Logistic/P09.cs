@@ -137,14 +137,14 @@ from (
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.TransferDate >= '{0}'", Convert.ToDateTime(this.dateTransferDate.Value1).ToString("d")));
+            and cr.TransferDate >= '{0}'", Convert.ToDateTime(this.dateTransferDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateTransferDate.Value2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.TransferDate <= '{0}'", Convert.ToDateTime(this.dateTransferDate.Value2).ToString("d")));
+            and cr.TransferDate <= '{0}'", Convert.ToDateTime(this.dateTransferDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))

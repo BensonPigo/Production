@@ -141,22 +141,22 @@ where pl.ID = pld.ID
 ");
                 if (!MyUtility.Check.Empty(this.dateEstBookingDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking >= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking >= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateEstBookingDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking <= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNBooking <= '{0}'", Convert.ToDateTime(this.dateEstBookingDate.Value2).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateEstArrivedDate.Value1))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive >= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value1).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive >= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.dateEstArrivedDate.Value2))
                 {
-                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive <= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value2).ToString("d")));
+                    sqlCmd.Append(string.Format(" and pl.EstCTNArrive <= '{0}'", Convert.ToDateTime(this.dateEstArrivedDate.Value2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -190,22 +190,22 @@ left join LocalSupp ls WITH (NOLOCK) on li.LocalSuppid = ls.ID
             sqlCmd.Append(string.Format(" where o.MDivisionID = '{0}'", Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.dateSewingInlineDate.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.dateSewingInlineDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateSewingInlineDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date)", Convert.ToDateTime(this.dateSewingInlineDate.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date)", Convert.ToDateTime(this.dateSewingInlineDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             sqlCmd.Append(@"  

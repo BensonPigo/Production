@@ -828,7 +828,7 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             string nameEN = MyUtility.GetValue.Lookup("NameEN", Env.User.Factory, "Factory ", "id");
             worksheet.Cells[1, 1] = nameEN;
             worksheet.Cells[3, 2] = MyUtility.Check.Empty(printData.Rows[0]["BuyerDelivery"]) ? string.Empty : Convert.ToDateTime(printData.Rows[0]["BuyerDelivery"]).ToShortDateString();
-            worksheet.Cells[3, 19] = Convert.ToDateTime(DateTime.Today).ToString("d");
+            worksheet.Cells[3, 19] = Convert.ToDateTime(DateTime.Today).ToString("yyyy/MM/dd");
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(printData.Rows[0]["CustCDID"]);
             worksheet.Cells[6, 1] = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(printData.Rows[0]["StyleID"]);

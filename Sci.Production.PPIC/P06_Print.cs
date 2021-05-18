@@ -38,10 +38,10 @@ namespace Sci.Production.PPIC
                 return false;
             }
 
-            this.delDate1 = MyUtility.Check.Empty(this.dateDelivery.Value1) ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("d");
-            this.delDate2 = MyUtility.Check.Empty(this.dateDelivery.Value2) ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("d");
-            this.sciDate1 = MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? string.Empty : Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d");
-            this.sciDate2 = MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? string.Empty : Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d");
+            this.delDate1 = MyUtility.Check.Empty(this.dateDelivery.Value1) ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("yyyy/MM/dd");
+            this.delDate2 = MyUtility.Check.Empty(this.dateDelivery.Value2) ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("yyyy/MM/dd");
+            this.sciDate1 = MyUtility.Check.Empty(this.dateSCIDelivery.Value1) ? string.Empty : Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("yyyy/MM/dd");
+            this.sciDate2 = MyUtility.Check.Empty(this.dateSCIDelivery.Value2) ? string.Empty : Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("yyyy/MM/dd");
             this.brand = this.txtbrand.Text;
             return base.ValidateInput();
         }
@@ -53,22 +53,22 @@ namespace Sci.Production.PPIC
 
             if (!MyUtility.Check.Empty(this.delDate1))
             {
-                filter.Append(string.Format("BuyerDelivery >= '{0}' and ", Convert.ToDateTime(this.delDate1).ToString("d")));
+                filter.Append(string.Format("BuyerDelivery >= '{0}' and ", Convert.ToDateTime(this.delDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.delDate2))
             {
-                filter.Append(string.Format("BuyerDelivery <= '{0}' and ", Convert.ToDateTime(this.delDate2).ToString("d")));
+                filter.Append(string.Format("BuyerDelivery <= '{0}' and ", Convert.ToDateTime(this.delDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDate1))
             {
-                filter.Append(string.Format("SciDelivery >= '{0}' and ", Convert.ToDateTime(this.sciDate1).ToString("d")));
+                filter.Append(string.Format("SciDelivery >= '{0}' and ", Convert.ToDateTime(this.sciDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDate2))
             {
-                filter.Append(string.Format("SciDelivery <= '{0}' and ", Convert.ToDateTime(this.sciDate2).ToString("d")));
+                filter.Append(string.Format("SciDelivery <= '{0}' and ", Convert.ToDateTime(this.sciDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))

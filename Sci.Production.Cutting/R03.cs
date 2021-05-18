@@ -288,52 +288,52 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.Est_CutDate1))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate >= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Est_CutDate2))
             {
-                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and wo.EstCutDate <= cast('{0}' as date) ", Convert.ToDateTime(this.Est_CutDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.ActCuttingDate1))
             {
-                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate >= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.ActCuttingDate2))
             {
-                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MincDate.MincoDate <= cast('{0}' as date) ", Convert.ToDateTime(this.ActCuttingDate2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.BuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= cast('{0}' as date)", Convert.ToDateTime(this.BuyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(this.BuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= cast('{0}' as date) ", Convert.ToDateTime(this.BuyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(this.SCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery >= cast('{0}' as date) ", Convert.ToDateTime(this.SCIDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.SCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SCIDelivery <= cast('{0}' as date)", Convert.ToDateTime(this.SCIDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingInline1))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.SewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine >= cast('{0}' as date)", Convert.ToDateTime(this.SewingInline1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SewingInline2))
             {
-                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.SewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.SewingInline2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Style))
@@ -343,32 +343,32 @@ where 1=1
 
             if (!MyUtility.Check.Empty(this.EarliestBuyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestBuyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestBuyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestBuyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestBuyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestBuyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSCIDelivery1))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestSCIDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI >= cast('{0}' as date)", Convert.ToDateTime(this.EarliestSCIDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSCIDelivery2))
             {
-                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSCIDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and MinSci.MinSCI <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSCIDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSewingInline1))
             {
-                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and c.SewInLine >= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.EarliestSewingInline2))
             {
-                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline2).ToString("d")));
+                sqlCmd.Append(string.Format(" and c.SewInLine <= cast('{0}' as date) ", Convert.ToDateTime(this.EarliestSewingInline2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.WorkOrder))

@@ -603,7 +603,7 @@ where a.RequestQty > a.StockQty",
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Cells[1, 1] = MyUtility.Convert.GetString(this.CurrentMaintain["MDivisionID"]);
             worksheet.Cells[4, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
-            worksheet.Cells[5, 2] = Convert.ToDateTime(this.CurrentMaintain["IssueDate"]).ToString("d");
+            worksheet.Cells[5, 2] = Convert.ToDateTime(this.CurrentMaintain["IssueDate"]).ToString("yyyy/MM/dd");
             worksheet.Cells[6, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
             worksheet.Cells[7, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["Remark"]);
 
@@ -614,7 +614,7 @@ where a.RequestQty > a.StockQty",
 
             worksheet.Cells[4, 6] = this.txtuserHandle.TextBox1.Text + " " + this.txtuserHandle.DisplayBox1.Text;
             worksheet.Cells[5, 6] = this.txtuserApprove.TextBox1.Text + " " + this.txtuserApprove.DisplayBox1.Text;
-            worksheet.Cells[6, 6] = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString("d");
+            worksheet.Cells[6, 6] = MyUtility.Check.Empty(this.CurrentMaintain["ApvDate"]) ? string.Empty : Convert.ToDateTime(this.CurrentMaintain["ApvDate"]).ToString("yyyy/MM/dd");
 
             int intRowsStart = 10;
             int dataRowCount = excelData.Rows.Count;

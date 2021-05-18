@@ -110,22 +110,22 @@ where o.Category = 'B'");
 
             if (!MyUtility.Check.Empty(this.buyerDelivery1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.buyerDelivery2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.SciDelivery1))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.SciDelivery1).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.SciDelivery1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
-                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
@@ -434,10 +434,10 @@ drop table #tmp,#tmp2
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Cells[2, 1] = string.Format(
                 "Buyer Delivery: {0} ~ {1}             SCI Delivery: {2} ~ {3}             M: {4}             Brand: {5}",
-                MyUtility.Check.Empty(this.buyerDelivery1) ? string.Empty : Convert.ToDateTime(this.buyerDelivery1).ToString("d"),
-                MyUtility.Check.Empty(this.buyerDelivery2) ? string.Empty : Convert.ToDateTime(this.buyerDelivery2).ToString("d"),
-                MyUtility.Check.Empty(this.SciDelivery1) ? string.Empty : Convert.ToDateTime(this.SciDelivery1).ToString("d"),
-                MyUtility.Check.Empty(this.sciDelivery2) ? string.Empty : Convert.ToDateTime(this.sciDelivery2).ToString("d"),
+                MyUtility.Check.Empty(this.buyerDelivery1) ? string.Empty : Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd"),
+                MyUtility.Check.Empty(this.buyerDelivery2) ? string.Empty : Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd"),
+                MyUtility.Check.Empty(this.SciDelivery1) ? string.Empty : Convert.ToDateTime(this.SciDelivery1).ToString("yyyy/MM/dd"),
+                MyUtility.Check.Empty(this.sciDelivery2) ? string.Empty : Convert.ToDateTime(this.sciDelivery2).ToString("yyyy/MM/dd"),
                 this.mDivision,
                 this.brand);
 

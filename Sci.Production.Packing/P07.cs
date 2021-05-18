@@ -85,12 +85,12 @@ and p.MDivisionID = '{0}'", Env.User.Keyword));
 
             if (!MyUtility.Check.Empty(this.dateFCRDate.Value1))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(this.dateFCRDate.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateFCRDate.Value2))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtSP_s.Text))

@@ -1424,7 +1424,7 @@ select * from @tempQtyBDown";
                 worksheet.Cells[titleShipModeRow, titleShipModeColumn] = MyUtility.Convert.GetString(dr["ShipModeID"]);
                 worksheet.Cells[titleInClogRow, titleInClogColumn] = (MyUtility.Check.Empty(MyUtility.Convert.GetString(printData.Tables[dr["ID"].ToString()].Rows[0]["InClogQty"])) ? "0" : MyUtility.Convert.GetString(printData.Tables[dr["ID"].ToString()].Rows[0]["InClogQty"])) + " / " + MyUtility.Convert.GetString(dr["CTNQty"]) + "   ( " + MyUtility.Convert.GetString(MyUtility.Math.Round(MyUtility.Convert.GetDecimal(printData.Tables[dr["ID"].ToString()].Rows[0]["InClogQty"]) / MyUtility.Convert.GetDecimal(dr["CTNQty"]), 4) * 100) + "% )";
                 worksheet.Cells[titleDestinationRow, titleDestinationColumn] = MyUtility.Convert.GetString(printData.Tables[dr["ID"].ToString()].Rows[0]["Alias"]);
-                worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]).ToString("d");
+                worksheet.Cells[titleShipmentDateRow, titleShipmentDateColumn] = MyUtility.Check.Empty(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]) ? "  /  /    " : Convert.ToDateTime(printData.Tables[dr["ID"].ToString()].Rows[0]["EstPulloutDate"]).ToString("yyyy/MM/dd");
                 #endregion
 
                 #region Set Body

@@ -108,7 +108,7 @@ namespace Sci.Production.Basic
                 holiday.label1.Text = date.Day.ToString();
                 holiday.Today = date;
                 DataTable findData;
-                DBProxy.Current.Select(null, string.Format("select * from holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", date.ToString("d"), Env.User.Factory), out findData);
+                DBProxy.Current.Select(null, string.Format("select * from holiday WITH (NOLOCK) where HolidayDate='{0}' and FactoryID = '{1}'", date.ToString("yyyy/MM/dd"), Env.User.Factory), out findData);
                 if (findData == null || findData.Rows.Count <= 0)
                 {
                     holiday.label2.Text = string.Empty;

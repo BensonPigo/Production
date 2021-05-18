@@ -69,8 +69,8 @@ namespace Sci.Production.Subcon
 
             this.condition.Append(string.Format(
                 @"Issue Date : {0} ~ {1};     ",
-                Convert.ToDateTime(this.issuedate1).ToString("d"),
-                Convert.ToDateTime(this.issuedate2).ToString("d")));
+                Convert.ToDateTime(this.issuedate1).ToString("yyyy/MM/dd"),
+                Convert.ToDateTime(this.issuedate2).ToString("yyyy/MM/dd")));
             return base.ValidateInput();
         }
 

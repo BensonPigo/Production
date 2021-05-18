@@ -92,12 +92,12 @@ as
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery >= '{0}' ", Convert.ToDateTime(this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
             {
-                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("d")));
+                sqlCmd.Append(string.Format(" and oq.BuyerDelivery <= '{0}' ", Convert.ToDateTime(this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.txtbrand.Text))

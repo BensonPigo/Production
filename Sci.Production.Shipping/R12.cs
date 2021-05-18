@@ -120,32 +120,32 @@ Where 1=1 ");
 
             if (!MyUtility.Check.Empty(this.FCR_date1))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(this.FCR_date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate >= '{0}'", Convert.ToDateTime(this.FCR_date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.FCR_date2))
             {
-                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.FCR_date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.FCR_date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Inv_date1))
             {
-                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}'", Convert.ToDateTime(this.Inv_date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.InvDate >= '{0}'", Convert.ToDateTime(this.Inv_date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Inv_date2))
             {
-                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}'", Convert.ToDateTime(this.Inv_date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and g.InvDate <= '{0}'", Convert.ToDateTime(this.Inv_date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Pull_date1))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.Pull_date1).ToString("d")));
+                sqlCmd.Append(string.Format(" and p.PulloutDate >= '{0}'", Convert.ToDateTime(this.Pull_date1).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.Pull_date2))
             {
-                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.Pull_date2).ToString("d")));
+                sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.Pull_date2).ToString("yyyy/MM/dd")));
             }
 
             if (!MyUtility.Check.Empty(this.GB1))

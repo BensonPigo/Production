@@ -206,12 +206,12 @@ where s.Status = 'Confirmed'
             {
                 if (!MyUtility.Check.Empty(this.buyerDelivery1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= o.BuyerDelivery", Convert.ToDateTime(this.buyerDelivery1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= o.BuyerDelivery", Convert.ToDateTime(this.buyerDelivery1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.buyerDelivery2))
                 {
-                    sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDelivery2).ToString("yyyy/MM/dd")));
                 }
             }
 
@@ -243,12 +243,12 @@ where s.Status = 'Confirmed'
             {
                 if (!MyUtility.Check.Empty(this.issueDate1))
                 {
-                    sqlCmd.Append(string.Format(@" and '{0}' <= s.issuedate", Convert.ToDateTime(this.issueDate1).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and '{0}' <= s.issuedate", Convert.ToDateTime(this.issueDate1).ToString("yyyy/MM/dd")));
                 }
 
                 if (!MyUtility.Check.Empty(this.issueDate2))
                 {
-                    sqlCmd.Append(string.Format(@" and s.issuedate <= '{0}'", Convert.ToDateTime(this.issueDate2).ToString("d")));
+                    sqlCmd.Append(string.Format(@" and s.issuedate <= '{0}'", Convert.ToDateTime(this.issueDate2).ToString("yyyy/MM/dd")));
                 }
             }
 

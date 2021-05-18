@@ -278,22 +278,22 @@ and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0) ",
 
                 if (!MyUtility.Check.Empty(inline_b))
                 {
-                    strSQLCmd += string.Format(" and ot.artworkoffline >= '{0}'", Convert.ToDateTime(inline_b).ToString("d"));
+                    strSQLCmd += string.Format(" and ot.artworkoffline >= '{0}'", Convert.ToDateTime(inline_b).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(inline_e))
                 {
-                    strSQLCmd += string.Format(" and ot.artworkinline <= '{0}'", Convert.ToDateTime(inline_e).ToString("d"));
+                    strSQLCmd += string.Format(" and ot.artworkinline <= '{0}'", Convert.ToDateTime(inline_e).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(sewinline_b))
                 {
-                    strSQLCmd += string.Format(" and ods.sewoffline >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("d"));
+                    strSQLCmd += string.Format(" and ods.sewoffline >= '{0}'", Convert.ToDateTime(sewinline_b).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(sewinline_e))
                 {
-                    strSQLCmd += string.Format(" and ods.sewinline <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("d"));
+                    strSQLCmd += string.Format(" and ods.sewinline <= '{0}'", Convert.ToDateTime(sewinline_e).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(artworktype))
@@ -303,22 +303,22 @@ and ods.qty > 0 and (ot.qty > 0 or ot.tms > 0) ",
 
                 if (!MyUtility.Check.Empty(delivery_b))
                 {
-                    strSQLCmd += string.Format(" and ods.sciDelivery >= '{0}'", Convert.ToDateTime(delivery_b).ToString("d"));
+                    strSQLCmd += string.Format(" and ods.sciDelivery >= '{0}'", Convert.ToDateTime(delivery_b).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(delivery_e))
                 {
-                    strSQLCmd += string.Format(" and ods.sciDelivery <= '{0}'", Convert.ToDateTime(delivery_e).ToString("d"));
+                    strSQLCmd += string.Format(" and ods.sciDelivery <= '{0}'", Convert.ToDateTime(delivery_e).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(approve_b))
                 {
-                    strSQLCmd += string.Format(" and ot.apvdate >= '{0}'", Convert.ToDateTime(approve_b).ToString("d"));
+                    strSQLCmd += string.Format(" and ot.apvdate >= '{0}'", Convert.ToDateTime(approve_b).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(approve_e))
                 {
-                    strSQLCmd += string.Format(" and ot.apvdate <= '{0}'", Convert.ToDateTime(approve_e).ToString("d"));
+                    strSQLCmd += string.Format(" and ot.apvdate <= '{0}'", Convert.ToDateTime(approve_e).ToString("yyyy/MM/dd"));
                 }
 
                 if (!MyUtility.Check.Empty(factory))
