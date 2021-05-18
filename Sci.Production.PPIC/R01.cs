@@ -1196,6 +1196,39 @@ where id = '{0}'", Env.User.Factory), null);
             }
         }
 
+        private string SelectPrintingDatabySP()
+        {
+            return $@"
+select distinct orderid
+into #tmpSP
+from #tmp_main
+
+select  ot.ID
+		,ColumnN = RTRIM(at.ID) + ' ('+at.ArtworkUnit+')'
+        , val =  iif(at.ArtworkUnit = 'PCS',isnull(ot.Qty,0),isnull(ot.Price,0) )
+		, Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ls.abb, ot.LocalSuppID), '')
+into #tmp2P
+from Order_TmsCost ot WITH (NOLOCK) 
+inner join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID and at.ID in('PRINTING','PRINTING PPU')
+left join LocalSupp ls on ls.id = ot.LocalSuppID
+where exists(select 1 from #tmpSP where orderid = ot.id)
+
+select id,ColumnN,val into #tmp3P from #tmp2P
+
+select id,[PRINTING (PCS)],[PRINTING PPU (PPU)]
+into #tmp4P
+from #tmp3P
+pivot(min(val) for ColumnN in ([PRINTING (PCS)],[PRINTING PPU (PPU)]))p
+
+select *
+into #tmp5P
+from #tmp4P t
+outer apply(select top 1 SubCon = supp from #tmp2P where id = t.id and supp <> '')s
+
+drop table #tmp2P,#tmp3P,#tmp4P
+";
+        }
+
         private DualResult Query_by_SP()
         {
             DualResult result;
@@ -1462,6 +1495,7 @@ drop table #tmpAllArtwork,#tmpArtWork
 
             #region Final
             sqlCmd.Append($@"
+{this.SelectPrintingDatabySP()}
 -----------------------------------------------------------------
 /*                           Final                            */
 -----------------------------------------------------------------
@@ -1508,6 +1542,9 @@ select  SewingLineID
         , Alias
         , ArtWork
         , IIF(Remark = '','',SUBSTRING(Remark,1,LEN(Remark)-1)) as Remark 
+        , t5.[PRINTING (PCS)]
+        , t5.[PRINTING PPU (PPU)]
+        , t5.SubCon
 from (
 	select t.* 
 			,isnull(pf.PFRemark,'') PFRemark
@@ -1520,6 +1557,7 @@ from (
 		left join #tmpOrderArtwork ta on ta.ID = t.OrderID 
         left join #tmp_CutInLine tc on tc.OrderID = t.OrderID
 ) a
+left join #tmp5P t5 on t5.id = a.orderid
 order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID
 
 
@@ -1956,6 +1994,9 @@ drop table #tmp_main,#tmp_PFRemark,#tmp_WorkHour,#tmpOrderArtwork,#tmp_Qty,#tmp_
             DBProxy.Current.DefaultTimeout = 900;
             result = DBProxy.Current.Select(null, sqlCmd.ToString().Substring(0, sqlCmd.Length - 1), out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
+            this.printData.Columns.Remove("TTL_PRINTING (PCS)");
+            this.printData.Columns.Remove("TTL_PRINTING PPU (PPU)");
+            this.printData.Columns.Remove("SubCon");
             return result;
         }
 

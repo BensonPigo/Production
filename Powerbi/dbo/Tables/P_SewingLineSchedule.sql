@@ -55,7 +55,10 @@
     [FabricType] NVARCHAR(500) NULL, 
     [Lining] VARCHAR(20) NULL, 
     [Gender] VARCHAR(10) NULL, 
-    [Construction] NVARCHAR(50) NULL
+    [Construction] NVARCHAR(50) NULL, 
+    [TTL_PRINTING (PCS)] NUMERIC(38, 6) NULL, 
+    [TTL_PRINTING PPU (PPU)] NUMERIC(38, 6) NULL, 
+    [SubCon] NVARCHAR(20) NULL
 );
 
 

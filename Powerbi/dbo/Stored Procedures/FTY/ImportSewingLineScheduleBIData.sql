@@ -1,7 +1,4 @@
-﻿-- =============================================
--- Create date: 2020/03/20
--- Description:	Data Query Logic by PMS.PPIC R01, Import Data to P_SewingLineSchedule
--- =============================================
+﻿
 CREATE PROCEDURE [dbo].[ImportSewingLineScheduleBIData]
 
 @StartDate Date,
@@ -100,7 +97,10 @@ WHEN MATCHED THEN
 	t.BrandID =  s.BrandID,
 	t.Orig_WorkHourPerDay =  s.Orig_WorkHourPerDay,
 	t.New_SwitchTime =  s.New_SwitchTime,
-	t.FirststCuttingOutputDate =  s.FirststCuttingOutputDate'
+	t.FirststCuttingOutputDate =  s.FirststCuttingOutputDate,
+	t.[TTL_PRINTING (PCS)] = s.[TTL_PRINTING (PCS)],
+	t.[TTL_PRINTING PPU (PPU)] = s.[TTL_PRINTING PPU (PPU)],
+	t.SubCon = s.SubCon'
 
 set @SqlCmd2 = '
 WHEN NOT MATCHED BY TARGET THEN
@@ -156,6 +156,9 @@ WHEN NOT MATCHED BY TARGET THEN
       ,[Orig_WorkHourPerDay]
       ,[New_SwitchTime]
       ,[FirststCuttingOutputDate]
+	  ,[TTL_PRINTING (PCS)]
+	  ,[TTL_PRINTING PPU (PPU)]
+	  ,SubCon
 	)
 	VALUES(
 	s.APSNo,
@@ -208,7 +211,10 @@ WHEN NOT MATCHED BY TARGET THEN
 	s.BrandID,
 	s.Orig_WorkHourPerDay,
 	s.New_SwitchTime,
-	s.FirststCuttingOutputDate	
+	s.FirststCuttingOutputDate,
+	s.[TTL_PRINTING (PCS)],
+	s.[TTL_PRINTING PPU (PPU)],
+	s.SubCon
 	)
 WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+''' THEN
 DELETE ;
