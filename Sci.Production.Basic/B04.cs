@@ -56,13 +56,20 @@ namespace Sci.Production.Basic
             }
 
             // 編輯模式下, 且[Is Miscellaneous Supplier]有打勾才可以被修改
-            if (this.EditMode && this.chkisMisc.Checked)
+            if (this.EditMode)
             {
-                this.chkOverseas.Enabled = true;
+                if (this.chkisMisc.Checked)
+                {
+                    this.chkOverseas.Enabled = true;
+                }
+                else
+                {
+                    this.chkOverseas.Enabled = false;
+                }
             }
             else
             {
-                this.chkOverseas.Enabled = false;
+                this.chkOverseas.Enabled = true;
             }
 
             string sqlcmd = $@"
@@ -289,6 +296,7 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
         {
             if (this.EditMode)
             {
+                this.chkOverseas.ReadOnly = false;
                 if (this.chkisMisc.Checked == false)
                 {
                     this.chkOverseas.Checked = false;
@@ -298,6 +306,10 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                 {
                     this.chkOverseas.Enabled = true;
                 }
+            }
+            else
+            {
+                this.chkOverseas.ReadOnly = true;
             }
         }
 
