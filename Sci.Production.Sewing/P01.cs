@@ -2912,13 +2912,6 @@ where ID = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            // 取得CurrentMaintain
-            if (this.CurrentMaintain == null)
-            {
-                this.tabs.SelectTab(1);
-                this.tabs.SelectTab(0);
-            }
-
             string datelock = ((DateTime)dailylock.LockDate).ToString("yyyy/MM/dd");
             base.ClickSend();
             string sqlcmdChk = $@"
@@ -3054,7 +3047,7 @@ INSERT INTO [dbo].[SewingOutput_DailyLock]
            ,[LastLockName]
            ,[LastLockDate])
      VALUES
-           ('{this.CurrentMaintain["FactoryID"]}'
+           ('{Env.User.Factory}'
            ,'{datelock}'
            ,'{Sci.Env.User.UserID}'
            ,GETDATE())
