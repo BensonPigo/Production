@@ -224,21 +224,15 @@ and ID = '{Sci.Env.User.UserID}'"))
             {
                 if (!MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
                 {
-                    this.editRemark.ReadOnly = true;
                     this.gridicon.Remove.Visible = false;
                     this.gridicon.Remove.Enabled = false;
                     this.btnImport.Enabled = false;
-                    this.col_reason.IsEditingReadOnly = true;
-                    this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.White;
                 }
                 else
                 {
-                    this.editRemark.ReadOnly = false;
                     this.gridicon.Remove.Visible = true;
                     this.gridicon.Remove.Enabled = true;
                     this.btnImport.Enabled = true;
-                    this.col_reason.IsEditingReadOnly = false;
-                    this.detailgrid.Columns["reasonid"].DefaultCellStyle.BackColor = Color.Pink;
                 }
             }
         }
@@ -270,7 +264,7 @@ and ID = '{Sci.Env.User.UserID}'"))
             DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
             ts.EditingMouseDown += (s, e) =>
             {
-                if (this.EditMode && e.Button == MouseButtons.Right && MyUtility.Check.Empty(this.CurrentMaintain["IsFromWMS"]))
+                if (this.EditMode && e.Button == MouseButtons.Right )
                 {
                     string sqlcmd = string.Empty;
                     IList<DataRow> x;
