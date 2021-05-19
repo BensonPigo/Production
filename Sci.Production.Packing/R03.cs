@@ -160,6 +160,7 @@ select pl.MDivisionID
 	, PackingListDetail_Sum.SciDelivery
 	, PackingListDetail_Sum.BuyerDelivery
 	, PackingListDetail_Sum.CustPONo
+    , PackingListDetail_Sum.POID
 	, PackingListDetail_Sum.ID
 	, Junk=iif(PackingListDetail_Sum.Junk = 1, 'Y', 'N')
 	, Dest=(select Alias from Country ct where ct.id=pl.Dest)
@@ -197,6 +198,7 @@ outer apply(
 	    ,o.Qty
 	    ,pd.DisposeFromClog
         ,o.FOC,o.LocalOrder
+        ,o.poid
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
 	where pd.ID = pl.ID
@@ -204,7 +206,7 @@ outer apply(
 	group by o.SciDelivery, o.BuyerDelivery, o.CustPONo, o.ID
 		,o.Junk, o.StyleID, o.BrandID, o.SewLine
 		,o.SewInLine, o.SewOffLine, o.Qty, pd.DisposeFromClog
-		,o.FOC, o.LocalOrder
+		,o.FOC, o.LocalOrder,o.poid
 )PackingListDetail_Sum
 where PackingListDetail_Sum.DisposeFromClog= 0
 {where}
@@ -221,6 +223,7 @@ select pl.MDivisionID
 	, PackingListDetail_Sum.SciDelivery
 	, PackingListDetail_Sum.BuyerDelivery
 	, PackingListDetail_Sum.CustPONo
+    , PackingListDetail_Sum.POID
 	, PackingListDetail_Sum.ID
 	, Junk=iif(PackingListDetail_Sum.Junk = 1, 'Y', 'N')
 	, Dest=(select Alias from Country ct where ct.id=pl.Dest)
@@ -260,6 +263,7 @@ outer apply(
 	    ,pd.DisposeFromClog
         ,o.FOC,o.LocalOrder
 		,d.Description
+        ,o.poid
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
 	outer apply(
@@ -284,7 +288,7 @@ outer apply(
 	group by o.SciDelivery, o.BuyerDelivery, o.CustPONo, o.ID
 		,o.Junk, o.StyleID, o.BrandID, o.SewLine
 		,o.SewInLine, o.SewOffLine, o.Qty, pd.DisposeFromClog
-		,o.FOC, o.LocalOrder, d.Description
+		,o.FOC, o.LocalOrder, d.Description, o.poid
 )PackingListDetail_Sum
 where PackingListDetail_Sum.DisposeFromClog= 0
 {where}
