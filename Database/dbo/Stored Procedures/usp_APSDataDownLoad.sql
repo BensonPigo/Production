@@ -182,7 +182,7 @@ BEGIN
 	FROM ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory
 		,['+ @apsservername + '].'+@apsdatabasename+'.dbo.Holiday
 	WHERE Holiday.FactoryId = Factory.Id
-		  and Holiday.FromDate >= DATEADD(DAY,-10,GETDATE())'
+		  and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.UPDATEDATE >= DATEADD(DAY,-10,GETDATE()))'
 	execute (@cmd)
 
 	--拆日期FromDate~ToDate
