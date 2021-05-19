@@ -2864,6 +2864,24 @@ inner join #tmp s on t2.Ukey = s.Ukey
                                     return;
                                 }
 
+                                // Balance = 0 清空Ftyinventory.Barcode
+                                string sqlcmdBarcode = $@"
+update t
+set t.Barcode=''
+from FtyInventory t
+inner join #tmp s on t.POID=s.POID 
+and t.Seq1=s.Seq1 and t.Seq2=s.seq2
+and t.Roll=s.Roll and t.Dyelot=s.Dyelot
+and t.StockType=s.StockType
+where t.InQty-t.OutQty+t.AdjustQty-t.ReturnQty = 0";
+
+                                if (!(result = MyUtility.Tool.ProcessWithDatatable(upd_list.CopyToDataTable(), string.Empty, sqlcmdBarcode, out result_upd_qty, "#tmp")))
+                                {
+                                    transactionscope.Dispose();
+                                    this.ShowErr(result);
+                                    return;
+                                }
+
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
                                 MyUtility.Msg.InfoBox("Revise successful");
@@ -3577,6 +3595,7 @@ inner join #tmp s on t.Ukey = s.Ukey
                                     return;
                                 }
 
+                                this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
                                 transactionscope.Complete();
                                 transactionscope.Dispose();
                                 MyUtility.Msg.InfoBox("Revise successful");
@@ -3594,8 +3613,6 @@ inner join #tmp s on t.Ukey = s.Ukey
                         #endregion
                         break;
                 }
-
-                //this.UpdateBarcode(this.strFunction, true, upd_list.CopyToDataTable());
 
                 // 將修改的資料存入Log
                 this.WriteInLog("Revise");
@@ -7001,7 +7018,7 @@ and exists(
                     if (data_Fty_Barcode_Part_Unconf_from.Count >= 1 && isConfirmed)
                     {
                         upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
-                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
 
                         // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf_from, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
@@ -7102,21 +7119,30 @@ and exists(
 
                     foreach (DataRow dr in dt.Rows)
                     {
-                        // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
-                        string strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
-
+                        string strBarcode = string.Empty;
                         string barcodeStatus = dr["BarcodeStatus"].ToString();
 
                         // ALL = 從部分轉變為全轉
                         if (barcodeStatus == "ALL")
                         {
                             // 整卷發出就使用原本Barcode
-                            dr["NewBarcode"] = strBarcode;
+                            dr["NewBarcode"] = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
                         }
 
                         // Part = 從全轉出變為部份出
                         else if (barcodeStatus == "Part")
                         {
+                            if (!MyUtility.Check.Empty(dr["ToBarcode"]) || !MyUtility.Check.Empty(dr["ToBarcode2"]))
+                            {
+                                // 目標有自己的Barcode, 則Ftyinventory跟記錄都是用自己的
+                                strBarcode = MyUtility.Check.Empty(dr["ToBarcode2"]) ? dr["ToBarcode"].ToString() : dr["ToBarcode2"].ToString();
+                            }
+                            else
+                            {
+                                // 目標沒Barcode, 則 來源有餘額(部分轉)就用來源Barocde_01++, 如果全轉就用來源Barocde
+                                strBarcode = MyUtility.Check.Empty(dr["FromBarcode2"]) ? dr["FromBarcode"].ToString() : dr["FromBarcode2"].ToString();
+                            }
+
                             // 要用自己的紀錄給補回
                             if (strBarcode.Contains("-"))
                             {
@@ -7348,9 +7374,13 @@ and exists(
                                                 Barcode = m.Field<string>("NewBarcode"),
                                             }).ToList();
 
+                    // 全轉
                     if (data_Fty_Barcode_Part_conf.Count >= 1 && isConfirmed)
                     {
+                        // 清空Balance =0 第一層Barcode資料
                         upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(70, null, false);
+
+                        // 將新的編碼Barcode更新到第二層
                         upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
 
                         // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
@@ -7369,8 +7399,23 @@ and exists(
 
                     if (data_Fty_Barcode_Part_Unconf.Count >= 1 && isConfirmed)
                     {
-                        upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(72, null, true);
-                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, false);
+                        // 將第二層barcode補回到第一層
+                        upd_Fty_Barcode_V1 = @"
+update t
+set t.Barcode = isnull(fb.Barcode,'')
+from FtyInventory t
+inner join #TmpSource s on t.POID = s.poid
+    and t.Seq1 = s.seq1  and t.Seq2 = s.seq2
+    and t.StockType = s.stocktype 
+    and t.Roll = s.roll 
+    and t.Dyelot = s.Dyelot
+left join FtyInventory_Barcode fb on fb.Ukey = t.Ukey
+and fb.TransactionID = s.TransactionID
+and t.Barcode = ''
+";
+
+                        // 將新的編碼Barcode更新到第二層
+                        upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(71, null, true);
 
                         // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
                         if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode_Part_Unconf, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
