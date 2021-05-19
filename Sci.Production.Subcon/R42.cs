@@ -161,6 +161,7 @@ outer apply(
 		AND OCC.patternpanel = b.patternpanel
 		AND DD.id = OB.kind 
 	) 
+    AND DD.[type] = 'FabricKind'
 )FabricKind
 where 1=1
             ");
@@ -296,6 +297,7 @@ outer apply(
 		AND OCC.patternpanel = b.patternpanel
 		AND DD.id = OB.kind 
 	)
+    AND DD.[type] = 'FabricKind'
 )FabricKind
 where 1=1
 ");
@@ -361,7 +363,7 @@ from #tmp
 
 drop table #tmp
 ");
-            DBProxy.Current.DefaultTimeout = 1800;  // 加長時間為30分鐘，避免timeout
+            DBProxy.Current.DefaultTimeout = 3600;  // 加長時間為30分鐘，避免timeout
             return Ict.Result.True;
         }
 
