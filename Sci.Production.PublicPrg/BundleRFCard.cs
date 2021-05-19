@@ -548,6 +548,17 @@ from
                             throw new Exception(result.Messages.ToString());
                         }
 
+                        // P48 Set image
+                        if (data[nowIndex].RFIDScan)
+                        {
+                            result = CardSetRfidScanImage(bundleRFCard);
+                            if (!result)
+                            {
+                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Set RfidScan Image Error " + BFPrintErrorMSG(result.Messages.ToString()));
+                                throw new Exception(result.Messages.ToString());
+                            }
+                        }
+
                         // P35
                         List<string> settings = new List<string>();
                         result = GetSettingText(data[nowIndex], out settings);
@@ -562,17 +573,6 @@ from
                         {
                             result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card SettingText TO Sram Error " + BFPrintErrorMSG(result.Messages.ToString()));
                             throw new Exception(result.Messages.ToString());
-                        }
-
-                        // P48 Set image
-                        if (data[nowIndex].RFIDScan)
-                        {
-                            result = CardSetRfidScanImage(bundleRFCard);
-                            if (!result)
-                            {
-                                result = BundleRFCardPrintErrorMsg(bundleRFCard, "Card Set RfidScan Image Error " + BFPrintErrorMSG(result.Messages.ToString()));
-                                throw new Exception(result.Messages.ToString());
-                            }
                         }
 
                         // P37 Barcode
@@ -1333,10 +1333,11 @@ from
         }
 
         /// <summary>
-        /// P48 Set RFID Image
+        /// CardSetRfidScanImage
         /// </summary>
+        /// <param name="bundleRFCard">bundleRFCard</param>
         /// <returns>DualResult</returns>
-        private static DualResult CardSetRfidScanImage(BundleRFCardUSB bundleRFCard)
+        public static DualResult CardSetRfidScanImage(BundleRFCardUSB bundleRFCard)
         {
             DualResult result = new DualResult(false);
             byte[] gbacmd = new byte[3];
@@ -1352,18 +1353,27 @@ from
 
             MakeDll.Func.ImageDataStruct ii = new MakeDll.Func.ImageDataStruct
             {
-                //xaxis = "320",
-                //yaxis = "365",
-                xaxis = "20",
-                yaxis = "20",
-                width = "120",
-                height = "120",
+                xaxis = "350",
+                yaxis = "45",
+                width = "100",
+                height = "100",
                 threshold = "250",
                 datapath = "data\\" + fileName,
                 filename = fileName,
-                rotation = "90",
+                rotation = "270",
                 property = "IMAGE",
             };
+
+            // 因為用.bat檔執行所取得目錄會是.bat檔該層，所以要先將data檔案夾複製到.bat檔目錄下
+            string cutDataPath = Directory.GetCurrentDirectory() + "\\data";
+            string srcImagePath = Application.StartupPath + "\\data\\" + fileName;
+            string destImagePath = Directory.GetCurrentDirectory() + "\\data\\" + fileName;
+            if (!Directory.Exists(cutDataPath))
+            {
+                Directory.CreateDirectory(cutDataPath);
+            }
+
+            File.Copy(srcImagePath, destImagePath, true);
 
             ret = MakeDll.Func.S_ImageToDithering(ii);
 
