@@ -3047,7 +3047,7 @@ INSERT INTO [dbo].[SewingOutput_DailyLock]
            ,[LastLockName]
            ,[LastLockDate])
      VALUES
-           ('{this.CurrentMaintain["FactoryID"]}'
+           ('{Env.User.Factory}'
            ,'{datelock}'
            ,'{Sci.Env.User.UserID}'
            ,GETDATE())
