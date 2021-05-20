@@ -69,7 +69,7 @@ left join FtyExport fe WITH (NOLOCK) on fe.ID = ed.ID
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 outer apply(
 	select Qty = isnull(sum(InQty),0) 
-	from Machine.dbo.MiscPO_Detail m
+	from dbo.SciMachine_MiscPO_Detail m
 	where m.ID = ed.TransactionID
 	and m.SEQ1 = ed.Seq1
 	and m.SEQ2 = ed.Seq2
