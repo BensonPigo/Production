@@ -91,9 +91,9 @@ select
 ,[Old_Qty] = mpd.InQty - ftyExport.Qty
 ,[NW]=0.00
 ,[GW]=0.00
-from Machine.dbo.MiscPO mp 
-inner join Machine.dbo.MiscPO_Detail mpd on mpd.ID = mp.ID
-left join Machine.dbo.Misc m on m.ID = mpd.MiscID
+from dbo.SciMachine_MiscPO mp 
+inner join dbo.SciMachine_MiscPO_Detail mpd on mpd.ID = mp.ID
+left join dbo.SciMachine_Misc m on m.ID = mpd.MiscID
 left join Production.dbo.LocalSupp ls on ls.ID = mp.LocalSuppID
 outer apply(
 	select Qty = isnull(sum(Qty),0)
