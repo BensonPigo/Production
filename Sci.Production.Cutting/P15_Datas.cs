@@ -177,6 +177,9 @@ namespace Sci.Production.Cutting
 
             /// <inheritdoc/>
             public int CombineSubprocessGroup { get; set; }
+
+            /// <inheritdoc/>
+            public bool RFIDScan { get; set; }
         }
     }
 }

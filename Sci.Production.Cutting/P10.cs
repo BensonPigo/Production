@@ -191,6 +191,7 @@ where MDivisionID = '{Env.User.Keyword}'";
                 .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
                 .Text("PostSewingSubProcess_String", header: "Post Sewing\r\nSubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NoBundleCardAfterSubprocess_String", header: "No Bundle Card\r\nAfter Subprocess", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .CheckBox("RFIDScan", header: "RFID Scan", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0)
             ;
             return base.OnGridSetup();
         }
@@ -249,6 +250,9 @@ order by bundlegroup,bundleno";
             {
                 return;
             }
+
+            bool isShowRFIDScan = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select dbo.IsShowRFIDScan('{this.CurrentMaintain["POID"]}','{this.CurrentMaintain["PatternPanel"]}')", null));
+            this.detailgrid.Columns["RFIDScan"].Visible = isShowRFIDScan;
 
             this.QueryTable();
             string orderid = MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]);
@@ -991,6 +995,8 @@ Where a.cutref='{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and 
                 this.CurrentMaintain.EndEdit();
             }
 
+            bool isShowRFIDScan = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select dbo.IsShowRFIDScan('{this.CurrentMaintain["POID"]}','{this.CurrentMaintain["PatternPanel"]}')", null));
+            this.detailgrid.Columns["RFIDScan"].Visible = isShowRFIDScan;
             ((DataTable)this.detailgridbs.DataSource).Clear();
         }
 
@@ -1182,9 +1188,10 @@ where b.poid = '{poid}'
                 }
             }
 
+            bool isShowRFIDScan = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select dbo.IsShowRFIDScan('{this.CurrentMaintain["POID"]}','{this.CurrentMaintain["PatternPanel"]}')", null));
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             this.detailgrid.ValidateControl();
-            var frm = new P10_Generate(this.CurrentMaintain, dt, this.Bundle_Detail_Allpart, this.Bundle_Detail_Qty, this.Bundle_Detail_Art, this.Bundle_Detail_CombineSubprocess, this.dispFabricKind.Text == "1-Shell");
+            var frm = new P10_Generate(this.CurrentMaintain, dt, this.Bundle_Detail_Allpart, this.Bundle_Detail_Qty, this.Bundle_Detail_Art, this.Bundle_Detail_CombineSubprocess, this.dispFabricKind.Text == "1-Shell", isShowRFIDScan);
             frm.ShowDialog(this);
 
             dt.DefaultView.Sort = "BundleGroup";

@@ -105,6 +105,7 @@ from (
         , [BundleID] = b.ID
         , a.BundleNo
         , b.SubCutNo
+        , a.RFIDScan
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -375,6 +376,7 @@ order by x.[Bundle]");
                     ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
                     FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
                     BundleID = row1["BundleID"].ToString(),
+                    RFIDScan = MyUtility.Convert.GetBool(row1["RFIDScan"]),
                 }).ToList();
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -499,6 +501,7 @@ order by x.[Bundle]");
                         No = GetNo(dr["Barcode"].ToString(), allNoDatas),
                         BundleID = dr["BundleID"].ToString(),
                         BundleNo = dr["BundleNo"].ToString(),
+                        RFIDScan = MyUtility.Convert.GetBool(dr["RFIDScan"]),
                     }).ToList();
 
                     this.ShowWaitMessage("Process Print!");

@@ -81,6 +81,8 @@
             this.grid_qty.AllowUserToAddRows = false;
             this.grid_qty.AllowUserToDeleteRows = false;
             this.grid_qty.AllowUserToResizeRows = false;
+            this.grid_qty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.grid_qty.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid_qty.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid_qty.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -113,6 +115,7 @@
             this.gridPattern.AllowUserToAddRows = false;
             this.gridPattern.AllowUserToDeleteRows = false;
             this.gridPattern.AllowUserToResizeRows = false;
+            this.gridPattern.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.gridPattern.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridPattern.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridPattern.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -147,19 +150,19 @@
             this.insertIntoRecordToolStripMenuItem,
             this.deleteRecordToolStripMenuItem});
             this.art_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.art_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
+            this.art_contextMenuStrip.Size = new System.Drawing.Size(167, 48);
             // 
             // insertIntoRecordToolStripMenuItem
             // 
             this.insertIntoRecordToolStripMenuItem.Name = "insertIntoRecordToolStripMenuItem";
-            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.insertIntoRecordToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.insertIntoRecordToolStripMenuItem.Text = "Insert into Record";
             this.insertIntoRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertIntoRecordToolStripMenuItem_Click);
             // 
             // deleteRecordToolStripMenuItem
             // 
             this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
-            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.deleteRecordToolStripMenuItem.Text = "Delete Record";
             this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
             // 
@@ -168,6 +171,8 @@
             this.grid_allpart.AllowUserToAddRows = false;
             this.grid_allpart.AllowUserToDeleteRows = false;
             this.grid_allpart.AllowUserToResizeRows = false;
+            this.grid_allpart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid_allpart.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid_allpart.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid_allpart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -201,24 +206,25 @@
             this.allpart_insert,
             this.allpart_delete});
             this.allpart_contextMenuStrip.Name = "art_contextMenuStrip";
-            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(176, 48);
+            this.allpart_contextMenuStrip.Size = new System.Drawing.Size(167, 48);
             // 
             // allpart_insert
             // 
             this.allpart_insert.Name = "allpart_insert";
-            this.allpart_insert.Size = new System.Drawing.Size(175, 22);
+            this.allpart_insert.Size = new System.Drawing.Size(166, 22);
             this.allpart_insert.Text = "Insert into Record";
             this.allpart_insert.Click += new System.EventHandler(this.Allpart_insert_Click);
             // 
             // allpart_delete
             // 
             this.allpart_delete.Name = "allpart_delete";
-            this.allpart_delete.Size = new System.Drawing.Size(175, 22);
+            this.allpart_delete.Size = new System.Drawing.Size(166, 22);
             this.allpart_delete.Text = "Delete Record";
             this.allpart_delete.Click += new System.EventHandler(this.Allpart_delete_Click);
             // 
             // btnOK
             // 
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.Location = new System.Drawing.Point(886, 486);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 30);
@@ -229,6 +235,7 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Location = new System.Drawing.Point(972, 486);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
@@ -239,6 +246,7 @@
             // 
             // btnGarment
             // 
+            this.btnGarment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGarment.Location = new System.Drawing.Point(10, 486);
             this.btnGarment.Name = "btnGarment";
             this.btnGarment.Size = new System.Drawing.Size(111, 30);
@@ -249,6 +257,7 @@
             // 
             // button_RighttoLeft
             // 
+            this.button_RighttoLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_RighttoLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
             this.button_RighttoLeft.Location = new System.Drawing.Point(509, 399);
             this.button_RighttoLeft.Name = "button_RighttoLeft";
@@ -260,6 +269,7 @@
             // 
             // button_LefttoRight
             // 
+            this.button_LefttoRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button_LefttoRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
             this.button_LefttoRight.Location = new System.Drawing.Point(509, 296);
             this.button_LefttoRight.Name = "button_LefttoRight";
@@ -355,6 +365,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
             this.label3.Location = new System.Drawing.Point(10, 194);
@@ -366,6 +377,7 @@
             // 
             // labelPatternPanel
             // 
+            this.labelPatternPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPatternPanel.Location = new System.Drawing.Point(12, 217);
             this.labelPatternPanel.Name = "labelPatternPanel";
             this.labelPatternPanel.Size = new System.Drawing.Size(93, 23);
@@ -374,6 +386,7 @@
             // 
             // displayPatternPanel
             // 
+            this.displayPatternPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayPatternPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPatternPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayPatternPanel.Location = new System.Drawing.Point(107, 217);
@@ -383,6 +396,7 @@
             // 
             // labelTotalParts
             // 
+            this.labelTotalParts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelTotalParts.Location = new System.Drawing.Point(161, 217);
             this.labelTotalParts.Name = "labelTotalParts";
             this.labelTotalParts.Size = new System.Drawing.Size(82, 23);
@@ -391,6 +405,7 @@
             // 
             // numTotalParts
             // 
+            this.numTotalParts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numTotalParts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalParts.IsSupportEditMode = false;
@@ -420,6 +435,9 @@
             this.grid_Size.AllowUserToAddRows = false;
             this.grid_Size.AllowUserToDeleteRows = false;
             this.grid_Size.AllowUserToResizeRows = false;
+            this.grid_Size.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid_Size.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid_Size.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid_Size.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -497,6 +515,7 @@
             // 
             // chkCombineSubprocess
             // 
+            this.chkCombineSubprocess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkCombineSubprocess.AutoSize = true;
             this.chkCombineSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkCombineSubprocess.Location = new System.Drawing.Point(216, 193);
@@ -509,7 +528,7 @@
             // 
             // chkNoneShellNoCreateAllParts
             // 
-            this.chkNoneShellNoCreateAllParts.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.chkNoneShellNoCreateAllParts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkNoneShellNoCreateAllParts.AutoSize = true;
             this.chkNoneShellNoCreateAllParts.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoneShellNoCreateAllParts.Location = new System.Drawing.Point(733, 194);
@@ -522,7 +541,7 @@
             // 
             // label5
             // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.BackColor = System.Drawing.Color.Transparent;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.label5.Location = new System.Drawing.Point(509, 194);
