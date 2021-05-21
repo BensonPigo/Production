@@ -421,23 +421,23 @@ where exists(select 1 from @APSColumnGroup where orderid = ot.id)
 
 declare @tmpPrintData TABLE(
 	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
-	[PRINTING (PCS)] numeric(38,6),
-	[PRINTING PPU (PPU)] numeric(38,6),
+	[TTL_PRINTING (PCS)] numeric(38,6),
+	[TTL_PRINTING PPU (PPU)] numeric(38,6),
 	SubCon nvarchar(20)
 )
 insert into @tmpPrintData
-select a.APSNo,t.[PRINTING (PCS)],t.[PRINTING PPU (PPU)],t.SubCon
+select a.APSNo, t.[PRINTING (PCS)] * t.Qty, t.[PRINTING PPU (PPU)] * t.Qty, t.SubCon
 from @APSColumnGroup a
 inner join (
-	select *
+	select t.*,s.SubCon,o.Qty
 	from (
 		select id,[PRINTING (PCS)],[PRINTING PPU (PPU)]
 		from (select id,ColumnN,val from @tmp2)x
 		pivot(min(val) for ColumnN in ([PRINTING (PCS)],[PRINTING PPU (PPU)]))p
 	) t
+	inner join Orders o on o.id = t.id
 	outer apply(select top 1 SubCon = supp from @tmp2 where id = t.id and supp <> '')s
 ) t on t.id = a.OrderID
-
 
 --填入資料串連欄位 by APSNo
 declare @APSMain TABLE(
@@ -539,8 +539,8 @@ select
 	al.Lining,
 	al.Gender,
 	al.Construction,
-	PrintingData.[PRINTING (PCS)],
-	PrintingData.[PRINTING PPU (PPU)],
+	PrintingData.[TTL_PRINTING (PCS)],
+	PrintingData.[TTL_PRINTING PPU (PPU)],
 	PrintingData.SubCon
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo

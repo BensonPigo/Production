@@ -1552,8 +1552,8 @@ select  SewingLineID
         , Alias
         , ArtWork
         , IIF(Remark = '','',SUBSTRING(Remark,1,LEN(Remark)-1)) as Remark 
-        , t5.[PRINTING (PCS)]
-        , t5.[PRINTING PPU (PPU)]
+        , [TTL_PRINTING (PCS)] = t5.[PRINTING (PCS)] * Qty
+        , [TTL_PRINTING PPU (PPU)] = t5.[PRINTING PPU (PPU)] * Qty
         , t5.SubCon
 from (
 	select t.* 
