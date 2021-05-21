@@ -156,19 +156,6 @@ BEGIN
 
 	--Holiday
 	BEGIN
-	--準備日期範圍
-	create table #dateranges ([holidaydate] [date])
-	declare @startDate date = DATEADD(DAY,-10,GETDATE()) 
-	declare @EndDate date = DATEADD(DAY,160,GETDATE())
-	while @startDate <= @EndDate
-	begin
-		insert into #dateranges 
-		values (@startDate)	
-		
-		set @startDate =  DATEADD(DAY, 1,@startDate)
-	end
-	set @startDate = DATEADD(DAY,-10,GETDATE()) 
-
 	--APS上的Holiday
 	CREATE TABLE #APSHoliday
 	([CODE] varchar(8), [Name] nvarchar(20), [FromDate] datetime, [ToDate] datetime)
@@ -185,11 +172,25 @@ BEGIN
 		  and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) or Holiday.UPDATEDATE >= DATEADD(DAY,-10,GETDATE()))'
 	execute (@cmd)
 
+	--準備日期範圍
+	create table #dateranges ([holidaydate] [date])
+	declare @startDate date = (select min(FromDate) from #APSHoliday)
+	declare @EndDate date = DATEADD(DAY,160,GETDATE())
+	declare @tempDate date = @startDate
+
+	while @tempDate <= @EndDate
+	begin
+		insert into #dateranges 
+		values (@tempDate)	
+		
+		set @tempDate =  DATEADD(DAY, 1,@tempDate)
+	end 
+
 	--拆日期FromDate~ToDate
 	select d.holidaydate,h.NAME,h.CODE
 	into #Holiday
 	from #dateranges d 
-	inner join #APSHoliday h on d.holidaydate between FromDate and ToDate
+	inner join #APSHoliday h on d.holidaydate between FromDate and ToDate 
 
 	--更新/新增Table Holiday
 	merge Holiday t
@@ -254,7 +255,8 @@ BEGIN
 	WHERE Factory.CODE = '''+ @factoryid + ''' 
 		  and Holiday.FactoryId = Factory.Id 
 		  and (Holiday.FromDate >= DATEADD(DAY,-10,GETDATE()) 
-			   or Holiday.ToDate >= DATEADD(DAY,-10,GETDATE()))'
+			   or Holiday.ToDate >= DATEADD(DAY,-10,GETDATE())
+			   or Holiday.UPDATEDATE >= DATEADD(DAY,-10,GETDATE()))'
 	execute (@cmd)
 
 	DECLARE cursor_holiday CURSOR FOR 
@@ -265,7 +267,7 @@ BEGIN
 		from Holiday h
 		left join  #tmpHoliday t on h.HolidayDate between CONVERT(DATE,t.FromDate) and CONVERT(DATE,t.ToDate)
 		where h.FactoryID = @factoryid 
-			  and h.HolidayDate >= CONVERT(DATE,DATEADD(DAY,-10,GETDATE()))
+			  and h.HolidayDate >= @startDate
 	) a
 	where a.Found = 0;
 
@@ -302,7 +304,7 @@ BEGIN
 
 	drop table #tmpHoliday;
 	END
-		
+
 	--WorkHour
 	--因為APS系統有3個WorkHour的資料來源，特殊時間(SPECIALCALENDAR)->生產線日曆(WORKCALENDARAPPLY, TARGETTYPE = 1)->工廠日曆(WORKCALENDARAPPLY, TARGETTYPE = 0)，回寫至PMS順序為工廠日曆->生產線日曆->特殊時間
 	BEGIN
