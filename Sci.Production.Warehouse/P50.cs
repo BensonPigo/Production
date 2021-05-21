@@ -475,6 +475,77 @@ where id = '{this.CurrentMaintain["ID"]}'
                     Task.Run(() => new Gensong_AutoWHFabric().SentAdjust_Detail_New(dtID))
                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                 }
+
+                // Adjust 產生barcode
+                DataTable dt = new DataTable();
+                string sqlcmd = $@"
+select
+[Barcode1] = f.Barcode
+,[OriBarcode] = fbOri.Barcode
+,[balanceQty] = f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty
+,[NewBarcode] = isnull(fbOri.Barcode,f.Barcode)
+,i2.Id,i2.POID,i2.Seq1,i2.Seq2,i2.StockType,i2.Roll,i2.Dyelot
+from Production.dbo.Adjust_Detail i2
+inner join Production.dbo.Adjust i on i2.Id=i.Id 
+inner join FtyInventory f on f.POID = i2.POID
+and f.Seq1 = i2.Seq1 and f.Seq2 = i2.Seq2
+and f.Roll = i2.Roll and f.Dyelot = i2.Dyelot
+and f.StockType = i2.StockType
+outer apply(
+	select *
+	from FtyInventory_Barcode t
+	where t.Ukey = f.Ukey
+	and t.TransactionID = i2.ID
+)fbOri
+where 1=1
+and exists(
+	select 1 from Production.dbo.PO_Supp_Detail 
+	where id = i2.Poid and seq1=i2.seq1 and seq2=i2.seq2 
+	and FabricType='F'
+)
+and i2.id = '{adjID}'
+
+";
+                DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+
+                var data_Fty_Barcode = (from m in dt.AsEnumerable().Where(s => s["NewBarcode"].ToString() != string.Empty)
+                                        select new
+                                        {
+                                            TransactionID = m.Field<string>("ID"),
+                                            poid = m.Field<string>("poid"),
+                                            seq1 = m.Field<string>("seq1"),
+                                            seq2 = m.Field<string>("seq2"),
+                                            stocktype = m.Field<string>("stocktype"),
+                                            roll = m.Field<string>("roll"),
+                                            dyelot = m.Field<string>("dyelot"),
+                                            Barcode = m.Field<string>("NewBarcode"),
+                                        }).ToList();
+
+                // confirmed 要刪除Barcode, 反之則從Ftyinventory_Barcode補回
+                string upd_Fty_Barcode_V1 = string.Empty;
+                string upd_Fty_Barcode_V2 = string.Empty;
+                DataTable resulttb;
+                if (data_Fty_Barcode.Count >= 1)
+                {
+                    // 更新Ftyinventory_Barcode 第二層
+                    upd_Fty_Barcode_V1 = Prgs.UpdateFtyInventory_IO(71, null, true);
+
+                    // 若Balance = 0 清空Ftyinventory.Barcode
+                    upd_Fty_Barcode_V2 = Prgs.UpdateFtyInventory_IO(70, null, false);
+
+                    // 需先更新upd_Fty_Barcode_V1, 才能更新upd_Fty_Barcode_V2, 順序不能變
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V1, out resulttb, "#TmpSource")))
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_Barcode, string.Empty, upd_Fty_Barcode_V2, out resulttb, "#TmpSource")))
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+                }
             }
         }
 

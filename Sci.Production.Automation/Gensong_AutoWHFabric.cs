@@ -1699,6 +1699,8 @@ and exists(
                             PoId = dr["PoId"].ToString(),
                             Seq1 = dr["Seq1"].ToString(),
                             Seq2 = dr["Seq2"].ToString(),
+                            Roll = dr["Roll"].ToString(),
+                            Dyelot = dr["Dyelot"].ToString(),
                             StockType = dr["StockType"].ToString(),
                             QtyBefore = (decimal)dr["QtyBefore"],
                             QtyAfter = (decimal)dr["QtyAfter"],
@@ -1706,7 +1708,7 @@ and exists(
                             Ukey = (long)dr["Ukey"],
                             Status = dr["Status"].ToString(),
                             CmdTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                        });
+                        }); ;
                     break;
                 case "SubTransfer_Detail":
                     bodyObject = dtDetail.AsEnumerable()
@@ -2616,6 +2618,8 @@ select distinct
 ,[PoId] = i2.POID
 ,[Seq1] = i2.Seq1
 ,[Seq2] = i2.Seq2
+,[Roll] = i2.Roll
+,[Dyelot] = i2.Dyelot
 ,[Ukey] = i2.ukey
 ,[StockType] = i2.StockType
 ,[QtyBefore] = i2.QtyBefore
