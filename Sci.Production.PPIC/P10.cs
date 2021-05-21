@@ -811,10 +811,18 @@ WHERE l.ID='{this.CurrentMaintain["ID"]}'
 SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID = '{this.CurrentMaintain["ID"]}' FOR XML PATH('')),1,1,'') 
 ";
             string relatedIssueLackID = MyUtility.GetValue.Lookup(sqlCheckIssueLack);
+
+            // IssueLackID 有值就不能UnConfirmed
             if (!MyUtility.Check.Empty(relatedIssueLackID))
             {
                 MyUtility.Msg.WarningBox($"This order has related issue# {relatedIssueLackID} , please delete it in Warehouse/P16 before unconfirm .");
                 return;
+            }
+
+            // PrepardStartDate 有值就不能UnConfirmed
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["PrepardStartDate"]))
+            {
+                MyUtility.Msg.WarningBox($"This order warehouse has already maintained Start Date in WH P53, please clean start date in WH P53 before unconfirm.");
             }
 
             DialogResult confirmResult;
@@ -884,6 +892,16 @@ SELECT Stuff((select distinct concat( ',',ID)   from IssueLack where RequestID =
             else
             {
                 this.btnAutoOutputQuery.Enabled = false;
+            }
+
+            // Lack.PrepareStartDate 與 Lack.PrepardFinishDate 皆有值才能Receive
+            if ((!MyUtility.Check.Empty(this.CurrentMaintain["PrepareStartDate"]) && !MyUtility.Check.Empty(this.CurrentMaintain["PrepardFinishDate"])) || (this.CurrentMaintain["Status"].ToString() == "Confirmed"))
+            {
+                this.IsSupportReceive = true;
+            }
+            else
+            {
+                this.IsSupportReceive = false;
             }
         }
 
