@@ -401,6 +401,43 @@ where exists( select 1 from @APSList where APSNo = s.APSNo)
 and (@subprocess = '' or
 	(@subprocess<> '' 
 	and exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @subprocess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ) ))
+	
+declare @tmp2 TABLE(
+	id varchar(13) NULL,
+	ColumnN varchar(50) null,
+	val numeric(38,6),
+	Supp varchar(50)
+)
+insert into @tmp2
+select  ot.ID
+		,ColumnN = RTRIM(at.ID) + ' ('+at.ArtworkUnit+')'
+        , val =  iif(at.ArtworkUnit = 'PCS',isnull(ot.Qty,0),isnull(ot.Price,0) )
+		, Supp = IIF(ot.ArtworkTypeID = 'PRINTING', IIF(ot.InhouseOSP = 'O', ls.abb, ot.LocalSuppID), '')
+from Order_TmsCost ot WITH (NOLOCK) 
+inner join ArtworkType at WITH (NOLOCK) on at.ID = ot.ArtworkTypeID and at.ID in('PRINTING','PRINTING PPU')
+left join LocalSupp ls on ls.id = ot.LocalSuppID
+where exists(select 1 from @APSColumnGroup where orderid = ot.id)
+
+
+declare @tmpPrintData TABLE(
+	[APSNo] [int] NULL INDEX IDX_TMP_APSColumnGroup CLUSTERED,
+	[TTL_PRINTING (PCS)] numeric(38,6),
+	[TTL_PRINTING PPU (PPU)] numeric(38,6),
+	SubCon nvarchar(20)
+)
+insert into @tmpPrintData
+select a.APSNo, t.[PRINTING (PCS)] * t.Qty, t.[PRINTING PPU (PPU)] * t.Qty, t.SubCon
+from @APSColumnGroup a
+inner join (
+	select t.*,s.SubCon,o.Qty
+	from (
+		select id,[PRINTING (PCS)],[PRINTING PPU (PPU)]
+		from (select id,ColumnN,val from @tmp2)x
+		pivot(min(val) for ColumnN in ([PRINTING (PCS)],[PRINTING PPU (PPU)]))p
+	) t
+	inner join Orders o on o.id = t.id
+	outer apply(select top 1 SubCon = supp from @tmp2 where id = t.id and supp <> '')s
+) t on t.id = a.OrderID
 
 --填入資料串連欄位 by APSNo
 declare @APSMain TABLE(
@@ -449,7 +486,10 @@ declare @APSMain TABLE(
 	[FabricType] [nvarchar](500) NULL,
 	[Lining] [varchar](20) NULL,
 	[Gender] [varchar](10) NULL,
-	[Construction] [nvarchar](50) NULL
+	[Construction] [nvarchar](50) NULL,
+	[TTL_PRINTING (PCS)] numeric(38,6),
+	[TTL_PRINTING PPU (PPU)] numeric(38,6),
+	SubCon nvarchar(20)
 )
 insert into @APSMain
 select
@@ -498,7 +538,10 @@ select
 	al.FabricType,
 	al.Lining,
 	al.Gender,
-	al.Construction
+	al.Construction,
+	PrintingData.[TTL_PRINTING (PCS)],
+	PrintingData.[TTL_PRINTING PPU (PPU)],
+	PrintingData.SubCon
 from @APSList al
 left join @APSCuttingOutput aco on al.APSNo = aco.APSNo
 left join @APSOrderQty aoo on al.APSNo = aoo.APSNo
@@ -526,7 +569,7 @@ outer apply (SELECT MaxSCIDelivery = Max(SCIDelivery),MinSCIDelivery = Min(SCIDe
                     MaxBuyerDelivery = Max(BuyerDelivery),MinBuyerDelivery = Min(BuyerDelivery)
                     from @APSColumnGroup where APSNo = al.APSNo) as OrderDateInfo
 outer apply (SELECT val =  Stuff((select distinct concat( ',',BrandID)   from @APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as BrandID
-
+outer apply (select * from @tmpPrintData where  APSNo = al.APSNo) as PrintingData
 --組出所有計畫最大Inline,最小Offline之間所有的日期，後面展開個計畫每日資料使用
 Declare @StartDate date
 Declare @EndDate date
@@ -959,12 +1002,17 @@ select
 	[SewingOutput]=apf.SewingOutput,
 	[ScannedQty]=apm.ScannedQty,
 	[ClogQty]=apm.ClogQty,
-	[BrandID]=apm.BrandID
+	[BrandID]=apm.BrandID,
+    apm.[TTL_PRINTING (PCS)],
+    apm.[TTL_PRINTING PPU (PPU)],
+    apm.SubCon
 from @APSMain apm
 inner join @APSExtendWorkDateFin apf on apm.APSNo = apf.APSNo
 order by apm.APSNo,apf.SewingStart
 
 
 END
+
+
 
 GO
