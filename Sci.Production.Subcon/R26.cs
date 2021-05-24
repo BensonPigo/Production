@@ -270,6 +270,7 @@ drop table #temp";
                 string sqlcd = string.Format(@"
 select DISTINCT c.FactoryID
 	        ,a.FactoryId
+            ,c.POID
 	        ,b.OrderId
 	        ,c.StyleID
 	        ,s.StyleName

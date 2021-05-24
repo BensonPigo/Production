@@ -1,10 +1,12 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -43,6 +45,60 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override bool OnToPrint(ReportDefinition report)
         {
+#if DEBUG
+            //string fileName = "rfidscan.png";
+            //Bitmap bitmap = new Bitmap("data\\" + fileName);
+
+//            MyUtility.Msg.InfoBox($@"
+//{System.Environment.CurrentDirectory}
+//{System.Windows.Forms.Application.StartupPath}
+//{Directory.GetCurrentDirectory()}
+//");
+            try
+            {
+                DualResult resulta = BundleRFCard.CardSetRfidScanImage(null);
+
+                if (!resulta)
+                {
+                    this.ShowErr(resulta);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+                return false;
+            }
+
+            // write DB
+            int cardUID = 1;
+            foreach (P10_PrintData item in this.p10_PrintDatas)
+            {
+                DualResult resultTest = BundleRFCard.UpdateBundleDetailRFUID(item.BundleID.ToString(), item.BundleNo.ToString(), cardUID.ToString());
+                if (!resultTest)
+                {
+                    this.ShowErr(resultTest);
+                    return false;
+                }
+
+                // write SunriseExch
+                if (item.RFIDScan)
+                {
+                    resultTest = BundleRFCard.UpdateSunriseExch(item.BundleNo.ToString(), cardUID.ToString());
+                    if (!resultTest)
+                    {
+                        this.ShowErr(resultTest);
+                        return false;
+                    }
+                }
+
+                cardUID++;
+            }
+
+            MyUtility.Msg.InfoBox("test update complete");
+            return true;
+            #endif
+
             if (this.radioBundleCardRF.Checked)
             {
                 // 是否有資料

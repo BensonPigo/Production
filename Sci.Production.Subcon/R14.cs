@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
@@ -25,7 +27,7 @@ namespace Sci.Production.Subcon
         private DateTime? Issuedate2;
         private DateTime? GLdate1;
         private DateTime? GLdate2;
-        private DataTable printData;
+        private DataTable[] printData;
 
         /// <inheritdoc/>
         public R14(ToolStripMenuItem menuitem)
@@ -141,14 +143,7 @@ namespace Sci.Production.Subcon
 
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(
-                @"
-                    select distinct c.POID, a.IssueDate ,a.ArtworkTypeID ,a.FactoryID,a.MDivisionID
-                    into #tmp1
-                    from ArtworkAP a WITH (NOLOCK) 
-                    inner join ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id  
-                    inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
-                ");
+            StringBuilder sqlCmd_Where = new StringBuilder();
 
             #region -- 條件組合 --
             switch (this.statusindex)
@@ -156,7 +151,7 @@ namespace Sci.Production.Subcon
                 case 0: // Only Approve
                     if (!MyUtility.Check.Empty(this.Issuedate1) && !MyUtility.Check.Empty(this.Issuedate2))
                     {
-                        sqlCmd.Append(string.Format(
+                        sqlCmd_Where.Append(string.Format(
                             @" where a.apvdate is not null and a.issuedate between '{0}' and '{1}'",
                             Convert.ToDateTime(this.Issuedate1).ToString("d"), Convert.ToDateTime(this.Issuedate2).ToString("d")));
                     }
@@ -164,25 +159,25 @@ namespace Sci.Production.Subcon
                     {
                         if (!MyUtility.Check.Empty(this.Issuedate1))
                         {
-                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.Issuedate1).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.Issuedate1).ToString("d")));
                         }
 
                         if (!MyUtility.Check.Empty(this.Issuedate2))
                         {
-                            sqlCmd.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.Issuedate2).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.Issuedate2).ToString("d")));
                         }
                     }
 
                     break;
 
                 case 1: // Only Unapprove
-                    sqlCmd.Append(@" where a.apvdate is null");
+                    sqlCmd_Where.Append(@" where a.apvdate is null");
                     break;
 
                 case 2: // All
                     if (!MyUtility.Check.Empty(this.Issuedate1) && !MyUtility.Check.Empty(this.Issuedate2))
                     {
-                        sqlCmd.Append(string.Format(
+                        sqlCmd_Where.Append(string.Format(
                             @" where (a.issuedate between '{0}' and '{1}')",
                             Convert.ToDateTime(this.Issuedate1).ToString("d"), Convert.ToDateTime(this.Issuedate2).ToString("d")));
                     }
@@ -190,12 +185,12 @@ namespace Sci.Production.Subcon
                     {
                         if (!MyUtility.Check.Empty(this.Issuedate1))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(this.Issuedate1).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where (a.issuedate >= '{0}') ", Convert.ToDateTime(this.Issuedate1).ToString("d")));
                         }
 
                         if (!MyUtility.Check.Empty(this.Issuedate2))
                         {
-                            sqlCmd.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(this.Issuedate2).ToString("d")));
+                            sqlCmd_Where.Append(string.Format(@" where (a.issuedate <= '{0}') ", Convert.ToDateTime(this.Issuedate2).ToString("d")));
                         }
                     }
 
@@ -204,73 +199,138 @@ namespace Sci.Production.Subcon
 
             if (!MyUtility.Check.Empty(this.spno1))
             {
-                sqlCmd.Append(" and b.orderid >= @spno1");
+                sqlCmd_Where.Append(" and b.orderid >= @spno1");
                 sp_spno1.Value = this.spno1;
                 cmds.Add(sp_spno1);
             }
 
             if (!MyUtility.Check.Empty(this.spno2))
             {
-                sqlCmd.Append(" and b.orderid <= @spno2");
+                sqlCmd_Where.Append(" and b.orderid <= @spno2");
                 sp_spno2.Value = this.spno2;
                 cmds.Add(sp_spno2);
             }
 
             if (!MyUtility.Check.Empty(this.GLdate1))
             {
-                sqlCmd.Append(" and a.VoucherDate >= @GLdate1");
+                sqlCmd_Where.Append(" and a.VoucherDate >= @GLdate1");
                 sp_gldate1.Value = this.GLdate1;
                 cmds.Add(sp_gldate1);
             }
 
             if (!MyUtility.Check.Empty(this.GLdate2))
             {
-                sqlCmd.Append(" and a.VoucherDate <= @GLdate2");
+                sqlCmd_Where.Append(" and a.VoucherDate <= @GLdate2");
                 sp_gldate2.Value = this.GLdate2;
                 cmds.Add(sp_gldate2);
             }
 
             if (!MyUtility.Check.Empty(this.artworktype))
             {
-                sqlCmd.Append(" and a.artworktypeid = @artworktype");
+                sqlCmd_Where.Append(" and a.artworktypeid = @artworktype");
                 sp_artworktype.Value = this.artworktype;
                 cmds.Add(sp_artworktype);
             }
 
             if (!MyUtility.Check.Empty(this.mdivision))
             {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
+                sqlCmd_Where.Append(" and a.mdivisionid = @MDivision");
                 sp_mdivision.Value = this.mdivision;
                 cmds.Add(sp_mdivision);
             }
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                sqlCmd.Append(" and a.factoryid = @factory");
+                sqlCmd_Where.Append(" and a.factoryid = @factory");
                 sp_factory.Value = this.factory;
                 cmds.Add(sp_factory);
             }
 
             #endregion
 
-            sqlCmd.Append(@"
+            sqlCmd.Append(
+                $@" -- by Poid step1
+                    select distinct c.POID, a.IssueDate ,a.ArtworkTypeID ,a.FactoryID,a.MDivisionID
+                    into #tmp1
+                    from ArtworkAP a WITH (NOLOCK) 
+                    inner join ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id  
+                    inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
+                    {sqlCmd_Where.ToString()}
 
-                    select  DISTINCT  POID ,ArtworkTypeID ,FactoryID ,MDivisionID
-                    into #tmp
-                    from #tmp1                                        
+                    -- by SP step1
+                    select distinct OrderID = c.ID, a.IssueDate ,a.ArtworkTypeID ,a.FactoryID,a.MDivisionID
+                    into #tmp_SP1
+                    from ArtworkAP a WITH (NOLOCK) 
+                    inner join ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id  
+                    inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
+                    {sqlCmd_Where.ToString()}
                 ");
 
+            string sqlcmd_where2 = string.Empty;
             if (!MyUtility.Check.Empty(this.artworktype))
             {
-                sqlCmd.Append(" where #tmp1.ArtworkTypeID = @artworktype");
+                sqlcmd_where2 = " where ArtworkTypeID = @artworktype";
             }
+
+            sqlCmd.Append($@"
+                    -- by Poid step2
+                    select  DISTINCT  POID ,ArtworkTypeID ,FactoryID ,MDivisionID
+                    into #tmp
+                    from #tmp1       
+                    {sqlcmd_where2}
+
+                    -- by SP step2
+                    select  DISTINCT  OrderID ,ArtworkTypeID ,FactoryID ,MDivisionID
+                    into #tmp_SP
+                    from #tmp_SP1  
+                    {sqlcmd_where2}
+                ");
+
+            #region sql 條件組合2
+
+            // 清空後再利用
+            sqlCmd_Where.Clear();
+
+            if (this.ordertypeindex >= 4)
+            {
+                // include Forecast
+                sqlCmd_Where.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
+            }
+            else
+            {
+                sqlCmd_Where.Append(string.Format(@" and aa.category in {0} ", this.ordertype));
+            }
+
+            if (this.chk_IrregularPriceReason.Checked)
+            {
+                if (this.artworktype.ToLower().TrimEnd() == "embroidery")
+                {
+                    // 價格異常的資料存在，卻沒有ReasonID
+                    sqlCmd_Where.Append(string.Format(@" AND IIF(y.order_qty=0, NULL,round(y.order_amt/y.order_qty,3)) < "));
+                    sqlCmd_Where.Append(string.Format(@" IIF(y.order_qty=0 OR (x.ap_amt=0 AND z.localap_amt=0),NULL, round(isnull(x.ap_amt,0.0) / y.order_qty,3) + round(z.localap_amt / y.order_qty,3)) "));
+                    sqlCmd_Where.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                }
+                else
+                {
+                    // 價格異常的資料存在，卻沒有ReasonID
+                    sqlCmd_Where.Append(string.Format(@"  AND IIF (y.order_qty=0,NULL,round(y.order_amt/y.order_qty,3)) < IIF (y.order_qty=0,NULL,round(x.ap_amt /y.order_qty,3))  "));
+                    sqlCmd_Where.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                }
+            }
+
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                sqlCmd_Where.Append(" and styleid = @style");
+                sp_style.Value = this.style;
+                cmds.Add(sp_style);
+            }
+            #endregion
 
             // 指定繡花條件時，有多撈取繡花線的成本
             if (this.artworktype.ToLower().TrimEnd() == "embroidery")
             {
-                sqlCmd.Append(string.Format(
-                    @"
-
+                sqlCmd.Append($@"
+-- by poid step3
                 select t.FactoryID
                 ,t.artworktypeid
                 ,aa.POID
@@ -340,8 +400,8 @@ namespace Sci.Production.Subcon
 	                select ap.currencyid,
 			                apd.Price,
 			                apd.apQty ap_qty
-			                ,apd.apQty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
-			                ,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
+			                ,apd.apQty*apd.Price*dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
+			                ,dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) rate
 	                from ArtworkAP ap WITH (NOLOCK) 
                     inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
                     inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
@@ -361,8 +421,8 @@ namespace Sci.Production.Subcon
 	                            select ap.currencyid,
 			                            apd.Price,
 			                            apd.Qty localap_qty
-			                            ,apd.Qty*apd.Price*dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) localap_amt
-			                            ,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
+			                            ,apd.Qty*apd.Price*dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) localap_amt
+			                            ,dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) rate
 	                            from localap ap WITH (NOLOCK) 
                                 inner join Localap_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
                                 inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
@@ -384,12 +444,131 @@ namespace Sci.Production.Subcon
 					WHERE al.POId = aa.POID AND al.ArtworkTypeId=t.ArtworkTypeId
 				)IrregularPrice 
                 where ap_qty > 0
-                ", this.ratetype, this.ordertype));
+                {sqlCmd_Where}
+                ORDER BY t.FactoryID, t.artworktypeid, aa.POID
+
+                -- by sp step 3
+                select t.FactoryID
+                ,t.artworktypeid
+                ,aa.ID
+                ,[Category] = (SELECT Category FROM Orders WHERE ID = t.OrderID)
+                ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.OrderID)=1,'Y','N')
+                ,aa.StyleID
+				,aa.SeasonID
+                ,cc.BuyerID
+                ,aa.BrandID
+                ,[SMR]=dbo.getTPEPass1(aa.SMR) 
+                ,xx.PCS
+                ,y.order_qty
+                ,x.ap_qty
+                ,[amount]=round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) 
+                ,[ttl_price]= CASE WHEN  y.order_qty = 0 THEN NULL
+                                   ELSE round(isnull(x.ap_amt,0.0) / y.order_qty,3) + round(z.localap_amt / y.order_qty,3)  --P3=P1+P2
+                                   END
+                ,[std_price]= CASE WHEN y.order_qty=0 THEN NULL
+                                   ELSE round(y.order_amt/y.order_qty,3) 
+                                   END               
+                ,[percentage]=CASE WHEN y.order_qty=0 OR y.order_amt=0 THEN NULL 
+                                   ELSE convert(varchar,
+                                                        round(
+                                                            (
+                                                                round(
+                                                                        (isnull(x.ap_amt,0.0) + isnull(z.localap_amt,0.0)) 
+                                                                          / 
+                                                                         y.order_qty
+                                                                    ,3)) 
+                                                                / 
+                                                                (round( 
+                                                                        y.order_amt/y.order_qty
+                                                                        ,3)
+                                                            )*100
+                                                        ,0)
+
+                                                  )+'%'
+                                   END
+
+                ,round(x.ap_amt,2)
+                ,[ap_price]= CASE WHEN  y.order_qty=0 THEN NULL
+                                   ELSE round(isnull(x.ap_amt,0.0) / y.order_qty,3)   --P1
+                                   END
+                ,[ap_percentage]= CASE WHEN y.order_amt=0 THEN NULL 
+                                   ELSE round(isnull(x.ap_amt,0.0) / y.order_amt,2) 
+                                   END
+                ,[localap_amt]= round(z.localap_amt,2) 
+                ,[localap_price]= CASE WHEN y.order_qty=0 THEN NULL
+                                   ELSE round(z.localap_amt / y.order_qty,3)   --P2
+                                   END
+                ,[local_percentage]=CASE WHEN y.order_amt = 0 THEN NULL
+                                   ELSE round(z.localap_amt / y.order_amt,2) 
+                                   END
+                ,[Responsible_Reason]=IIF(  IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' or (x.ap_amt + z.localap_amt) <= y.order_amt,
+                                            '',
+                                            ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')
+                                         ) 
+                
+                from #tmp_SP as t
+                left join orders aa on aa.id = t.OrderID
+                left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
+                left join Brand cc on aa.BrandID=cc.id
+                outer apply (
+	                select isnull(sum(t.ap_amt),0.00) ap_amt
+                , isnull(sum(t.ap_qty),0) ap_qty 
+	                from (
+	                select ap.currencyid,
+			                apd.Price,
+			                apd.apQty ap_qty
+			                ,apd.apQty*apd.Price*dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
+			                ,dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) rate
+	                from ArtworkAP ap WITH (NOLOCK) 
+                    inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+                    inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
+		                where ap.ArtworkTypeID = t.artworktypeid and orders.ID = aa.ID AND ap.Status = 'Approved') t
+		                ) x
+                outer apply(
+	                select orders.ID
+	                ,sum(orders.qty) order_qty
+	                ,sum(orders.qty*Price) order_amt 
+	                from orders WITH (NOLOCK) 
+	                inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
+	                where orders.id= aa.ID and ArtworkTypeID= t.artworktypeid
+	                group by orders.ID,ArtworkTypeID) y
+                outer apply (
+	                select isnull(sum(tt.localap_amt),0.00) localap_amt,isnull(sum(tt.localap_qty),0) localap_qty 
+	                from (
+	                            select ap.currencyid,
+			                            apd.Price,
+			                            apd.Qty localap_qty
+			                            ,apd.Qty*apd.Price*dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) localap_amt
+			                            ,dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) rate
+	                            from localap ap WITH (NOLOCK) 
+                                inner join Localap_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+                                inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
+		                            where ap.Category = 'EMB_THREAD' and orders.ID = aa.ID AND ap.Status = 'Approved'
+                            ) tt
+		                ) z
+                outer apply(
+                     select count(1) as PCS
+                            from orders O WITH (NOLOCK) 
+                            left join Order_article OA on OA.id=O.ID
+                            left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
+                            WHERE O.ID =aa.ID and artworktypeid ='EMBROIDERY'
+                        ) xx
+				outer apply(
+					SELECT  [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+					FROM ArtworkPO_IrregularPrice al
+					LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	                LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+					WHERE al.POId = aa.ID AND al.ArtworkTypeId=t.ArtworkTypeId
+				)IrregularPrice 
+                where ap_qty > 0
+                {sqlCmd_Where}
+                ORDER BY t.FactoryID, t.artworktypeid, aa.ID
+                ");
             }
             else
             {
-                sqlCmd.Append(string.Format(
-                    @"
+                sqlCmd.Append($@"
+                -- by Poid step 3
                 select t.FactoryID
                 ,t.artworktypeid
                 ,aa.POID
@@ -430,8 +609,8 @@ namespace Sci.Production.Subcon
 	                select ap.currencyid,
 			                apd.Price,
 			                apd.apQty ap_qty
-			                ,apd.apQty * apd.Price * dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
-			                ,dbo.getRate('{0}',ap.CurrencyID,'USD',ap.issuedate) rate
+			                ,apd.apQty * apd.Price * dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
+			                ,dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) rate
 	                from ArtworkAP ap WITH (NOLOCK) 
                     inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
                     inner join orders WITH (NOLOCK) on orders.id = apd.orderid
@@ -467,7 +646,91 @@ namespace Sci.Production.Subcon
 					WHERE al.POId = aa.POID AND al.ArtworkTypeId=t.ArtworkTypeId
 				)IrregularPrice 
                 where ap_qty > 0
-                ", this.ratetype, this.ordertype));
+                {sqlCmd_Where}
+                ORDER BY t.FactoryID, t.artworktypeid, aa.POID
+
+                -- by SP step 3
+                select t.FactoryID
+                ,t.artworktypeid
+                ,aa.ID
+                ,[Category] = (SELECT Category FROM Orders WHERE ID = t.OrderID)
+                ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.OrderID)=1,'Y','N')
+                ,aa.StyleID
+                ,aa.SeasonID
+                ,cc.BuyerID
+                ,aa.BrandID
+                ,[SMR]= dbo.getTPEPass1(aa.SMR) 
+                ,[PCS]= iif(t.artworktypeid ='EMBROIDERY',xx.PCS,yy.PCS) 
+                ,y.order_qty
+                ,x.ap_qty
+                ,[ap_amt]= round(x.ap_amt,2) 
+                ,[ap_price]= CASE WHEN y.order_qty=0 THEN NULL
+                                ELSE round(x.ap_amt / y.order_qty,3) 
+                                END
+                ,[std_price]= CASE WHEN y.order_qty=0 THEN NULL
+                                ELSE round(y.order_amt / y.order_qty,3) 
+                                END
+                ,[percentage]= CASE WHEN y.order_amt=0 or y.order_qty=0 THEN NULL
+                                ELSE round(
+                                            (x.ap_amt / y.order_qty) / (y.order_amt / y.order_qty)
+                                        ,2) 
+                                END
+                ,[Responsible_Reason]=IIF(  IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' or x.ap_amt <= y.order_amt,
+                                            '',
+                                            ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')
+                                            ) 
+
+                from #tmp_SP as t
+                left join orders aa on aa.id = t.OrderID
+                left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
+                left join Brand cc on aa.BrandID=cc.id
+                outer apply (
+	                select isnull(sum(t.ap_amt),0.00) ap_amt
+                , isnull(sum(t.ap_qty),0) ap_qty from (
+	                select ap.currencyid,
+			                apd.Price,
+			                apd.apQty ap_qty
+			                ,apd.apQty * apd.Price * dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) ap_amt
+			                ,dbo.getRate('{this.ratetype}',ap.CurrencyID,'USD',ap.issuedate) rate
+	                from ArtworkAP ap WITH (NOLOCK) 
+                    inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+                    inner join orders WITH (NOLOCK) on orders.id = apd.orderid
+		                where ap.ArtworkTypeID = t.artworktypeid and orders.ID = aa.ID AND ap.Status = 'Approved') t
+		                ) x		
+                outer apply(
+	                select orders.ID
+	                ,sum(orders.qty) order_qty
+	                ,sum(orders.qty*Price) order_amt 
+	                from orders WITH (NOLOCK) 
+	                inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
+	                where orders.ID= aa.ID and ArtworkTypeID= t.artworktypeid
+	                group by orders.ID,ArtworkTypeID
+                ) y
+                outer apply(
+                        select count(1) as PCS
+                            from orders O WITH (NOLOCK) 
+                            left join Order_article OA on OA.id=O.ID
+                            left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
+                            WHERE O.ID =aa.ID and artworktypeid = 'EMBROIDERY'
+                        ) xx
+                outer apply(
+                        select sum(OART.qty) as PCS
+                            from orders O WITH (NOLOCK) 
+                            left join Order_article OA on OA.id=O.ID
+                            left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
+                            WHERE O.ID =aa.ID and artworktypeid = 'PRINTING'
+                        ) yy
+                outer apply(
+	                SELECT  [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	                FROM ArtworkPO_IrregularPrice al
+	                LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	                LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+	                WHERE al.POId = aa.ID AND al.ArtworkTypeId=t.ArtworkTypeId
+                )IrregularPrice 
+                where ap_qty > 0
+                {sqlCmd_Where}
+                ORDER BY t.FactoryID, t.artworktypeid, aa.ID
+                ");
             }
             #endregion
 
@@ -487,42 +750,8 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            if (this.ordertypeindex >= 4)
-            {
-                // include Forecast
-                sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
-            }
-            else
-            {
-                sqlCmd.Append(string.Format(@" and aa.category in {0} ", this.ordertype));
-            }
-
-            if (this.chk_IrregularPriceReason.Checked)
-            {
-                if (this.artworktype.ToLower().TrimEnd() == "embroidery")
-                {
-                    // 價格異常的資料存在，卻沒有ReasonID
-                    sqlCmd.Append(string.Format(@" AND IIF(y.order_qty=0, NULL,round(y.order_amt/y.order_qty,3)) < "));
-                    sqlCmd.Append(string.Format(@" IIF(y.order_qty=0 OR (x.ap_amt=0 AND z.localap_amt=0),NULL, round(isnull(x.ap_amt,0.0) / y.order_qty,3) + round(z.localap_amt / y.order_qty,3)) "));
-                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
-                }
-                else
-                {
-                    // 價格異常的資料存在，卻沒有ReasonID
-                    sqlCmd.Append(string.Format(@"  AND IIF (y.order_qty=0,NULL,round(y.order_amt/y.order_qty,3)) < IIF (y.order_qty=0,NULL,round(x.ap_amt /y.order_qty,3))  "));
-                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.style))
-            {
-                sqlCmd.Append(" and styleid = @style");
-                sp_style.Value = this.style;
-                cmds.Add(sp_style);
-            }
-
             // ORDER BY
-            sqlCmd.Append(" ORDER BY t.FactoryID, t.artworktypeid, aa.POID ");
+            //sqlCmd.Append(" ORDER BY t.FactoryID, t.artworktypeid, aa.POID ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             if (!result)
@@ -540,23 +769,60 @@ namespace Sci.Production.Subcon
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData.Rows.Count);
+            this.SetCount(this.printData[0].Rows.Count);
 
-            if (this.printData.Rows.Count <= 0)
+            if (this.printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
+            Microsoft.Office.Interop.Excel.Application excel = new Excel.Application();
+            Microsoft.Office.Interop.Excel.Worksheet sheet;
+            string strPath = string.Empty;
+            string strExcelName = string.Empty;
+            int rowCnt = 0;
+
             if (this.artworktype.ToLower().TrimEnd() == "embroidery")
             {
-                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R14_Embroidery.xltx", 5);
+                strPath = Env.Cfg.XltPathDir + "\\Subcon_R14_Embroidery.xltx";
+                strExcelName = "Subcon_R14_Embroidery";
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(strPath, excel);
+                excel.Visible = false;
+                rowCnt = 6;
+                sheet = excel.ActiveWorkbook.Worksheets[1];
+                sheet.Select();
+                com.WriteTable(this.printData[0], rowCnt);
+
+                sheet = excel.ActiveWorkbook.Worksheets[2];
+                sheet.Select();
+                com.WriteTable(this.printData[1], rowCnt);
             }
             else
             {
-                MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R14.xltx", 4);
+                strPath = Env.Cfg.XltPathDir + "\\Subcon_R14.xltx";
+                strExcelName = "Subcon_R14";
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(strPath, excel);
+                excel.Visible = false;
+                rowCnt = 5;
+                sheet = excel.ActiveWorkbook.Worksheets[1];
+                sheet.Select();
+                com.WriteTable(this.printData[0], rowCnt);
+
+                sheet = excel.ActiveWorkbook.Worksheets[2];
+                sheet.Select();
+                com.WriteTable(this.printData[1], rowCnt);
             }
 
+            #region Save & Show Excel
+            string strExcelNameFinal = Class.MicrosoftFile.GetName(strExcelName);
+            excel.ActiveWorkbook.SaveAs(strExcelNameFinal);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(sheet);
+
+            strExcelNameFinal.OpenFile();
+            #endregion
             return true;
         }
 
