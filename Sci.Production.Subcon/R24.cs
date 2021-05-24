@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Subcon
 {
@@ -26,7 +28,7 @@ namespace Sci.Production.Subcon
         private DateTime? APdate2;
         private DateTime? GLdate1;
         private DateTime? GLdate2;
-        private DataTable printData;
+        private DataTable[] printData;
 
         /// <inheritdoc/>
         public R24(ToolStripMenuItem menuitem)
@@ -156,7 +158,118 @@ namespace Sci.Production.Subcon
             #region -- Sql Command --
             string whereIncludeCancelOrder = this.chkIncludeCancelOrder.Checked ? string.Empty : " and o.Junk = 0 ";
             StringBuilder sqlCmd = new StringBuilder();
+            StringBuilder sqlCmd_Where = new StringBuilder();
+
+            #region -- 條件組合 --
+            switch (this.statusindex)
+            {
+                case 0: // Only Approve
+                    if (!MyUtility.Check.Empty(this.APdate1) && !MyUtility.Check.Empty(this.APdate2))
+                    {
+                        sqlCmd_Where.Append(string.Format(
+                            @" and a.apvdate is not null and a.issuedate between '{0}' and '{1}'",
+                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(this.APdate1))
+                        {
+                            sqlCmd_Where.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.APdate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.APdate2))
+                        {
+                            sqlCmd_Where.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.APdate2).ToString("d")));
+                        }
+                    }
+
+                    break;
+
+                case 1: // Only Unapprove
+                    sqlCmd_Where.Append(@" and a.apvdate is null");
+                    break;
+
+                case 2: // All
+                    if (!MyUtility.Check.Empty(this.APdate1) && !MyUtility.Check.Empty(this.APdate2))
+                    {
+                        sqlCmd_Where.Append(string.Format(
+                            @" and (a.issuedate between '{0}' and '{1}')",
+                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
+                    }
+                    else
+                    {
+                        if (!MyUtility.Check.Empty(this.APdate1))
+                        {
+                            sqlCmd_Where.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(this.APdate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.APdate2))
+                        {
+                            sqlCmd_Where.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(this.APdate2).ToString("d")));
+                        }
+                    }
+
+                    break;
+            }
+
+            if (!MyUtility.Check.Empty(this.spno1))
+            {
+                sqlCmd_Where.Append(" and b.orderid >= @spno1");
+                sp_spno1.Value = this.spno1;
+                cmds.Add(sp_spno1);
+            }
+
+            if (!MyUtility.Check.Empty(this.spno2))
+            {
+                sqlCmd_Where.Append(" and b.orderid <= @spno2");
+                sp_spno2.Value = this.spno2;
+                cmds.Add(sp_spno2);
+            }
+
+            if (!MyUtility.Check.Empty(this.GLdate1))
+            {
+                sqlCmd_Where.Append(" and a.ApvDate >= @GLdate1");
+                sp_GLdate1.Value = this.GLdate1;
+                cmds.Add(sp_GLdate1);
+            }
+
+            if (!MyUtility.Check.Empty(this.GLdate2))
+            {
+                sqlCmd_Where.Append(" and a.ApvDate <= @GLdate2");
+                sp_GLdate2.Value = this.GLdate2;
+                cmds.Add(sp_GLdate2);
+            }
+
+            if (!MyUtility.Check.Empty(this.artworktype))
+            {
+                sqlCmd_Where.Append(" and a.category = @artworktype");
+                sp_artworktype.Value = this.artworktype;
+                cmds.Add(sp_artworktype);
+            }
+
+            if (!MyUtility.Check.Empty(this.mdivision))
+            {
+                sqlCmd_Where.Append(" and a.mdivisionid = @MDivision");
+                sp_mdivision.Value = this.mdivision;
+                cmds.Add(sp_mdivision);
+            }
+
+            if (!MyUtility.Check.Empty(this.factory))
+            {
+                sqlCmd_Where.Append(" and a.factoryid = @factory");
+                sp_factory.Value = this.factory;
+                cmds.Add(sp_factory);
+            }
+
+            if (!MyUtility.Check.Empty(this.artworktype))
+            {
+                sqlCmd_Where.Append(" and c.id = @artworktype");
+            }
+
+            #endregion
+
             sqlCmd.Append($@"
+-- by Poid step1
 select distinct o.poid 
         , a.FactoryID
 		, a.MDivisionID
@@ -167,130 +280,64 @@ inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id
 join ArtworkType c on a.Category = c.ID 
 inner join orders o WITH (NOLOCK) on o.id = b.OrderId 
 where c.Classify='P' {whereIncludeCancelOrder}
+{sqlCmd_Where}
+
+-- by SP step1
+select distinct o.ID 
+        , a.FactoryID
+		, a.MDivisionID
+		, artworktypeid = a.Category
+into #tmp_SP
+from dbo.localap a WITH (NOLOCK) 
+inner join dbo.LocalAP_Detail b WITH (NOLOCK) on b.id = a.id  
+join ArtworkType c on a.Category = c.ID 
+inner join orders o WITH (NOLOCK) on o.id = b.OrderId 
+where c.Classify='P' {whereIncludeCancelOrder}
+{sqlCmd_Where}
 ");
 
-            #region -- 條件組合 --
-            switch (this.statusindex)
+            sqlCmd_Where.Clear();
+            #region -- sqlCmd 條件組合 2 --
+            if (this.chk_IrregularPriceReason.Checked)
             {
-                case 0: // Only Approve
-                    if (!MyUtility.Check.Empty(this.APdate1) && !MyUtility.Check.Empty(this.APdate2))
-                    {
-                        sqlCmd.Append(string.Format(
-                            @" and a.apvdate is not null and a.issuedate between '{0}' and '{1}'",
-                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
-                    }
-                    else
-                    {
-                        if (!MyUtility.Check.Empty(this.APdate1))
-                        {
-                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and a.issuedate >= '{0}' ", Convert.ToDateTime(this.APdate1).ToString("d")));
-                        }
-
-                        if (!MyUtility.Check.Empty(this.APdate2))
-                        {
-                            sqlCmd.Append(string.Format(@" and a.apvdate is not null and  a.issuedate <= '{0}' ", Convert.ToDateTime(this.APdate2).ToString("d")));
-                        }
-                    }
-
-                    break;
-
-                case 1: // Only Unapprove
-                    sqlCmd.Append(@" and a.apvdate is null");
-                    break;
-
-                case 2: // All
-                    if (!MyUtility.Check.Empty(this.APdate1) && !MyUtility.Check.Empty(this.APdate2))
-                    {
-                        sqlCmd.Append(string.Format(
-                            @" and (a.issuedate between '{0}' and '{1}')",
-                            Convert.ToDateTime(this.APdate1).ToString("d"), Convert.ToDateTime(this.APdate2).ToString("d")));
-                    }
-                    else
-                    {
-                        if (!MyUtility.Check.Empty(this.APdate1))
-                        {
-                            sqlCmd.Append(string.Format(@" and (a.issuedate >= '{0}') ", Convert.ToDateTime(this.APdate1).ToString("d")));
-                        }
-
-                        if (!MyUtility.Check.Empty(this.APdate2))
-                        {
-                            sqlCmd.Append(string.Format(@" and (a.issuedate <= '{0}') ", Convert.ToDateTime(this.APdate2).ToString("d")));
-                        }
-                    }
-
-                    break;
+                // 價格異常的資料存在，卻沒有ReasonID
+                sqlCmd_Where.Append(string.Format(@" AND (y.order_qty=0 or x.ap_amt > isnull (y.order_amt, 0)) "));
+                sqlCmd_Where.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
             }
 
-            if (!MyUtility.Check.Empty(this.spno1))
+            if (this.ordertypeindex >= 4)
             {
-                sqlCmd.Append(" and b.orderid >= @spno1");
-                sp_spno1.Value = this.spno1;
-                cmds.Add(sp_spno1);
+                // include Forecast
+                sqlCmd_Where.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
+            }
+            else
+            {
+                sqlCmd_Where.Append(string.Format(@" and aa.category in {0} ", this.ordertype));
             }
 
-            if (!MyUtility.Check.Empty(this.spno2))
+            if (!MyUtility.Check.Empty(this.style))
             {
-                sqlCmd.Append(" and b.orderid <= @spno2");
-                sp_spno2.Value = this.spno2;
-                cmds.Add(sp_spno2);
+                sqlCmd_Where.Append(" and aa.styleid = @style");
+                sp_style.Value = this.style;
+                cmds.Add(sp_style);
             }
 
-            if (!MyUtility.Check.Empty(this.GLdate1))
+            if (!MyUtility.Check.Empty(this.brandid))
             {
-                sqlCmd.Append(" and a.ApvDate >= @GLdate1");
-                sp_GLdate1.Value = this.GLdate1;
-                cmds.Add(sp_GLdate1);
+                sqlCmd_Where.Append(" and aa.brandid = @brandid");
+                sp_brandid.Value = this.brandid;
+                cmds.Add(sp_brandid);
             }
-
-            if (!MyUtility.Check.Empty(this.GLdate2))
-            {
-                sqlCmd.Append(" and a.ApvDate <= @GLdate2");
-                sp_GLdate2.Value = this.GLdate2;
-                cmds.Add(sp_GLdate2);
-            }
-
-            if (!MyUtility.Check.Empty(this.artworktype))
-            {
-                sqlCmd.Append(" and a.category = @artworktype");
-                sp_artworktype.Value = this.artworktype;
-                cmds.Add(sp_artworktype);
-            }
-
-            if (!MyUtility.Check.Empty(this.mdivision))
-            {
-                sqlCmd.Append(" and a.mdivisionid = @MDivision");
-                sp_mdivision.Value = this.mdivision;
-                cmds.Add(sp_mdivision);
-            }
-
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                sqlCmd.Append(" and a.factoryid = @factory");
-                sp_factory.Value = this.factory;
-                cmds.Add(sp_factory);
-            }
-
             #endregion
 
-            if (!MyUtility.Check.Empty(this.artworktype))
-            {
-                sqlCmd.Append(" and c.id = @artworktype");
-            }
-
-            sqlCmd.Append(string.Format(
-                @"
--- #tmp_localap
-select isnull(sum(a.ap_amt),0.00) ap_amt
-     , isnull(sum(a.ap_qty),0) ap_qty 
-	,a.Category
-	,a.FactoryId
-	,a.OrderId
-	,isnull(sum(a.CartonQty),0) CartonQty
-into  #tmp_localap
+            sqlCmd.Append($@"
+-- #tmp_localap by POID
+select a.*
+into #tmp_localap_detail
 from(
 	select 
 			apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
+			,apd.Qty*apd.Price*dbo.getRate('{this.ratetype}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
 			,ap.Category
 			,ap.FactoryId
 			,o.POID as OrderId 
@@ -303,10 +350,20 @@ from(
 	AND AP.Status = 'Approved'
 )a 
 inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.POID 
-where ap_qty > 0  
+where a.ap_qty > 0  
+
+select isnull(sum(a.ap_amt),0.00) ap_amt
+     , isnull(sum(a.ap_qty),0) ap_qty 
+	,a.Category
+	,a.FactoryId
+	,a.OrderId
+	,isnull(sum(a.CartonQty),0) CartonQty
+into  #tmp_localap
+from #tmp_localap_detail a
 group by a.Category,a.FactoryId,a.OrderId
 
--- #tmp_orders
+
+-- #tmp_orders by POID
 select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
  	,sum(aa.qty *Price) order_amt 
 	,t.poid
@@ -354,7 +411,97 @@ outer apply(
 	WHERE al.POId = aa.poid  AND al.Category=t.artworktypeid
 )IrregularPrice 
 where 1=1 
-", this.ratetype));
+{sqlCmd_Where}
+
+select * from #tmp_final
+
+-- #tmp_localap by SP
+select a.*
+into #tmp_localap_detail_SP
+from(
+	select 
+			apd.Qty ap_qty
+			,apd.Qty*apd.Price*dbo.getRate('{this.ratetype}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
+			,ap.Category
+			,ap.FactoryId
+			,o.ID as OrderId 
+			,[CartonQty] = iif(li.IsCarton=1,apd.Qty,0)
+	from localap ap WITH (NOLOCK) 
+	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+	inner join orders o with (nolock) on apd.OrderID = o.ID	
+	left join LocalItem li with (nolock) on li.RefNo=apd.Refno
+	where 1=1
+	AND AP.Status = 'Approved'
+)a 
+inner join #tmp_SP t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.ID 
+where a.ap_qty > 0  
+
+select isnull(sum(a.ap_amt),0.00) ap_amt
+     , isnull(sum(a.ap_qty),0) ap_qty 
+	,a.Category
+	,a.FactoryId
+	,a.OrderId
+	,isnull(sum(a.CartonQty),0) CartonQty
+into  #tmp_localap_SP
+from #tmp_localap_detail_SP a
+group by a.Category,a.FactoryId,a.OrderId
+
+
+-- #tmp_orders by SP
+select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
+ 	,sum(aa.qty *Price) order_amt 
+	,t.id
+	,bb.ArtworkTypeID
+into #tmp_orders_SP
+from orders aa WITH (NOLOCK) 
+left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID 
+left join (select distinct ID,artworktypeid from #tmp_SP) t on t.ID =aa.ID and bb.ArtworkTypeID = t.artworktypeid 
+group by  bb.ArtworkTypeID,t.ID
+
+-- #tmp_final 
+select distinct t.FactoryID
+	,t.MDivisionID
+    ,t.artworktypeid
+    ,t.ID
+    ,[Category] = (SELECT Category FROM Orders WHERE ID = t.ID)
+    ,[Cancel] = IIF((SELECT Junk FROM Orders WHERE ID = t.ID)=1,'Y','N')
+    ,aa.StyleID
+    ,aa.SeasonID
+    ,cc.BuyerID
+    ,aa.BrandID 
+    ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.ID)) smr  
+	,os.os
+    ,x.ap_qty	
+	,[CartonQty] = x.CartonQty
+    ,x.ap_amt
+    ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0, NULL, round(x.ap_amt / totalSamePoidQty.value,3))
+    ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  , NULL, round(y.order_amt/y.order_qty,3) )    
+    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL, round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
+    ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))
+into #tmp_final_SP
+from #tmp_SP t
+left join orders aa WITH (NOLOCK) on t.ID =aa.ID  
+left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
+left join Brand cc WITH (NOLOCK) on aa.BrandID=cc.id  
+left join #tmp_localap_SP x on t.artworktypeid = x.Category and t.ID = x.OrderId and t.FactoryID = x.FactoryId  	 
+left join #tmp_orders_SP y on t.ID = y.ID  and t.artworktypeid = y.artworktypeid
+outer apply(select os=sum(qty) from orders o with(nolock) where o.ID = aa.ID)os
+outer apply(select value=sum(qty) from orders o with(nolock) where o.ID = t.ID)totalSamePoidQty
+outer apply(
+	SELECT [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	FROM LocalPO_IrregularPrice al
+	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+    LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+	WHERE al.POId = aa.ID  AND al.Category=t.artworktypeid
+)IrregularPrice 
+where 1=1 
+{sqlCmd_Where}
+
+select * from #tmp_final_SP
+
+
+drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final,#tmp_final_SP,#tmp_localap_SP,#tmp_orders_SP,#tmp_SP,#tmp_localap_detail,#tmp_localap_detail_SP
+");
             #endregion
 
             #region -- sqlCmd 條件組合 --
@@ -373,40 +520,6 @@ where 1=1
             }
             #endregion
 
-            if (this.chk_IrregularPriceReason.Checked)
-            {
-                // 價格異常的資料存在，卻沒有ReasonID
-                sqlCmd.Append(string.Format(@" AND (y.order_qty=0 or x.ap_amt > isnull (y.order_amt, 0)) "));
-                sqlCmd.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
-            }
-
-            if (this.ordertypeindex >= 4)
-            {
-                // include Forecast
-                sqlCmd.Append(string.Format(@" and (aa.category in {0} OR aa.IsForecast =1)", this.ordertype));
-            }
-            else
-            {
-                sqlCmd.Append(string.Format(@" and aa.category in {0} ", this.ordertype));
-            }
-
-            if (!MyUtility.Check.Empty(this.style))
-            {
-                sqlCmd.Append(" and aa.styleid = @style");
-                sp_style.Value = this.style;
-                cmds.Add(sp_style);
-            }
-
-            if (!MyUtility.Check.Empty(this.brandid))
-            {
-                sqlCmd.Append(" and aa.brandid = @brandid");
-                sp_brandid.Value = this.brandid;
-                cmds.Add(sp_brandid);
-            }
-
-            sqlCmd.Append(@" 
-select * from #tmp_final
-drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final");
             DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             DBProxy.Current.DefaultTimeout = 300;
@@ -425,15 +538,40 @@ drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final");
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData.Rows.Count);
+            this.SetCount(this.printData[0].Rows.Count);
 
-            if (this.printData.Rows.Count <= 0)
+            if (this.printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
-            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R24.xltx", 4);
+            Excel.Application excel = new Excel.Application();
+            Excel.Worksheet sheet;
+
+            string strPath = Env.Cfg.XltPathDir + "\\Subcon_R24.xltx";
+            string strExcelName = "Subcon_R24";
+            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(strPath, excel);
+            excel.Visible = false;
+            int rowCnt = 5;
+            sheet = excel.ActiveWorkbook.Worksheets[1];
+            sheet.Select();
+            com.WriteTable(this.printData[0], rowCnt);
+
+            sheet = excel.ActiveWorkbook.Worksheets[2];
+            sheet.Select();
+            com.WriteTable(this.printData[1], rowCnt);
+
+            //MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Subcon_R24.xltx", 4);
+            #region Save & Show Excel
+            string strExcelNameFinal = Class.MicrosoftFile.GetName(strExcelName);
+            excel.ActiveWorkbook.SaveAs(strExcelNameFinal);
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(sheet);
+
+            strExcelNameFinal.OpenFile();
+            #endregion
             return true;
         }
 

@@ -55,17 +55,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(438, 12);
             this.print.TabIndex = 11;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(438, 48);
             this.toexcel.TabIndex = 12;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(438, 84);
             this.close.TabIndex = 13;
             // 
             // labelFactory
@@ -348,7 +348,11 @@
             this.DefaultControlForEdit = "dateAPDate";
             this.IsSupportToPrint = false;
             this.Name = "R14";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R14. Sub-con Payment summary by SP#";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelArtworkType, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
