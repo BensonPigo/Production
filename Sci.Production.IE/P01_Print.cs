@@ -16,7 +16,6 @@ namespace Sci.Production.IE
         private DataRow masterData;
         private string artworktype;
         private string strLanguage;
-        private string custcdID;
         private string machineID;
         private decimal efficiency;
         private DataTable printData;
