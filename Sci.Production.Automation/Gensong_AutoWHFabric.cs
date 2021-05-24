@@ -2763,7 +2763,7 @@ select
 ,ir2.Dyelot
 ,ir2.StockType
 ,ir2.Ukey
-,[Barcode] = Barcode.value
+,[Barcode] = f.Barcode
 ,[Description] = dbo.getMtlDesc(ir2.POID,ir2.Seq1,ir2.Seq2,2,0)
 ,[QtyBefore] = ir2.QtyBefore
 ,[Status] = iif('{status}' = 'UnConfirmed', 'Delete' ,'{status}')
@@ -2772,12 +2772,6 @@ from Stocktaking_Detail ir2
 inner join Production.dbo.Stocktaking i on ir2.id = i.id
 inner join #tmp s on ir2.ID = s.Id
 left join FtyInventory f on ir2.FtyInventoryUkey = f.ukey
-outer apply(
-	select value = fb.Barcode
-	from Production.dbo.FtyInventory_Barcode fb
-	where fb.Ukey = f.Ukey
-    and fb.TransactionID = ir2.Id
-)Barcode
 where 1=1
 and exists(
     select 1
