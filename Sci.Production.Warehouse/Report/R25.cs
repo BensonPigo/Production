@@ -212,13 +212,9 @@ left join TPEPass1 TEPPOHandle on TEPPOHandle.id = po.POHandle
 left join TPEPass1 TEPPOSMR on TEPPOSMR.id = po.POSMR
 left join Fabric f with(nolock)on f.SCIRefno = psd.SCIRefno
 outer apply (
-    select [Packages] = sum(e.Packages)
-    from Export e with (nolock) 
-    where e.Blno in (
-        select distinct e2.BLNO
-        from Export e2 with (nolock) 
-        where e.id = e2.ID
-    )
+    select [Packages] = sum(e2.Packages)
+    from Export e2 with (nolock) 
+    where e2.Blno = e.Blno
 )e2
 OUTER APPLY(
 		SELECT [Val] = STUFF((
